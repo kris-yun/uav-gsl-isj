@@ -1,12 +1,12 @@
-﻿"""Unified ablation launch file - all modules as toggles, identical base params.
+"""Unified UAV-GSL ablation launch file after audit fixes.
 
-Usage: ros2 launch vgr_bridge vgr_gsl_unified_ablation.launch.py pwc_enabled:=true mac_enabled:=true sdr_enabled:=true
+All method modules are disabled by default. A clean baseline must keep:
+  pwc_enabled=false, psde_online_enabled=false, psde_final_enabled=false,
+  sdr_enabled=false, bwe_enabled=false, pgpt_enabled=false, hce_enabled=false.
 
-Module toggles (all default OFF for baseline):
-  pwc_enabled: Plume Wind Correction
-  mac_enabled: Plume Spatial Dispersion Estimator (renamed from MAC)
-  sdr_enabled: Richardson-Lucy Deconvolution Refinement
-  tdc_enabled: Temporal Deconvolution Correction
+Legacy mac_enabled is kept only for compatibility. Prefer the split flags:
+  psde_online_enabled: affects sourceProbability and therefore the online path.
+  psde_final_enabled: affects only final post-processing estimate.
 """
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, TimerAction
@@ -14,42 +14,94 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 
+def arg(name, default):
+    return DeclareLaunchArgument(name, default_value=str(default))
+
+
 def generate_launch_description():
     return LaunchDescription([
         # Data & scenario args
-        DeclareLaunchArgument("vgr_data_path", default_value=""),
-        DeclareLaunchArgument("config_id", default_value="2,4-1_fast"),
-        DeclareLaunchArgument("algorithm", default_value="PMFS"),
-        DeclareLaunchArgument("output_csv", default_value="/tmp/gsl_result.csv"),
-        DeclareLaunchArgument("server_results_file", default_value=""),
-        DeclareLaunchArgument("server_path_file", default_value=""),
-        DeclareLaunchArgument("source_x", default_value="-0.40"),
-        DeclareLaunchArgument("source_y", default_value="-2.90"),
-        DeclareLaunchArgument("source_z", default_value="-0.30"),
-        DeclareLaunchArgument("start_x", default_value="-5.0"),
-        DeclareLaunchArgument("start_y", default_value="-5.0"),
-        DeclareLaunchArgument("seed", default_value="0"),
-        DeclareLaunchArgument("budget_fraction", default_value="1.0"),
-        DeclareLaunchArgument("flight_height", default_value="1.0"),
-        DeclareLaunchArgument("dataset", default_value="VGR_House01"),
-        DeclareLaunchArgument("frontierWeight", default_value="0.0"),
-        DeclareLaunchArgument("edeWeight", default_value="0.0"),
+        arg("vgr_data_path", ""),
+        arg("config_id", "2,4-1_fast"),
+        arg("algorithm", "PMFS"),
+        arg("output_csv", "/tmp/gsl_result.csv"),
+        arg("server_results_file", ""),
+        arg("server_path_file", ""),
+        arg("source_x", "-0.40"),
+        arg("source_y", "-2.90"),
+        arg("source_z", "-0.30"),
+        arg("start_x", "-5.0"),
+        arg("start_y", "-5.0"),
+        arg("seed", "0"),
+        arg("budget_fraction", "1.0"),
+        arg("flight_height", "1.0"),
+        arg("dataset", "VGR_House01"),
+        arg("method_id", "baseline"),
+        arg("frontierWeight", "0.0"),
+        arg("edeWeight", "0.0"),
 
-        # Module toggles (all OFF by default = baseline)
-        DeclareLaunchArgument("pwc_enabled", default_value="false"),
-        DeclareLaunchArgument("mac_enabled", default_value="false"),
-        DeclareLaunchArgument("sdr_enabled", default_value="false"),
-        DeclareLaunchArgument("tdc_enabled", default_value="false"),
+        # Strict method toggles: all OFF by default = clean baseline.
+        arg("pwc_enabled", "false"),
+        arg("mac_enabled", "false"),                  # legacy alias; avoid using in new experiments
+        arg("psde_online_enabled", "false"),
+        arg("psde_final_enabled", "false"),
+        arg("sdr_enabled", "false"),
+        arg("tdc_enabled", "false"),
+        arg("bwe_enabled", "false"),
+        arg("pgpt_enabled", "false"),
+        arg("hce_enabled", "false"),
 
-        # Module params (fixed across all conditions)
-        DeclareLaunchArgument("pwc_beta", default_value="0.5"),
-        DeclareLaunchArgument("pwc_max_correction", default_value="5.0"),
-        DeclareLaunchArgument("pwc_min_wind", default_value="0.01"),
-        DeclareLaunchArgument("mac_flight_height", default_value="1.0"),
-        DeclareLaunchArgument("mac_source_height", default_value="0.0"),
-        DeclareLaunchArgument("mac_stability_class", default_value="3"),
-        DeclareLaunchArgument("mac_max_distance_weight", default_value="6.0"),
-        DeclareLaunchArgument("mac_distance_sigma", default_value="2.0"),
+        # BAPR params
+        arg("bapr_enabled", "false"),
+        arg("bapr_wall_penalty", "2.0"),
+        arg("bapr_wall_distance", "2.0"),
+        arg("bapr_sigmoid_steepness", "3.0"),
+        arg("bapr_dtf_radius", "10"),
+
+        # HSPB params
+        arg("hspb_enabled", "false"),
+        arg("hspb_min_hits", "3"),
+        arg("hspb_distance_scale", "1.0"),
+        arg("hspb_angular_spread", "0.35"),
+        arg("hspb_kernel_radius", "3"),
+        arg("gt_debug_logging", "false"),
+        arg("verbose_debug", "false"),
+
+        # Shared convention. true means wind vector is flow-to; upwind correction uses -wind.
+        arg("wind_vector_is_flow_to", "true"),
+
+        # PWC params
+        arg("pwc_beta", "0.5"),
+        arg("pwc_max_correction", "5.0"),
+        arg("pwc_min_wind", "0.01"),
+        arg("pwc_use_adaptive", "true"),
+        arg("pwc_plume_scale_factor", "1.0"),
+        arg("pwc_log_file", ""),
+
+        # PSDE params; legacy names retained to minimize code churn.
+        arg("mac_flight_height", "1.0"),
+        arg("mac_source_height", "0.0"),
+        arg("mac_stability_class", "3"),
+        arg("mac_min_distance", "0.5"),
+        arg("mac_max_distance_weight", "6.0"),
+        arg("mac_distance_sigma", "2.0"),
+        arg("mac_sigma_z_max", "3.0"),
+        arg("mac_min_hits", "5"),
+        arg("mac_online_update_stride", "3"),
+        arg("mac_online_boost_weight", "0.01"),
+
+        # SDR params
+        arg("sdr_rl_iterations", "10"),
+        arg("sdr_psf_size", "7"),
+        arg("sdr_blob_radius", "4.5"),
+        arg("sdr_min_hits", "5"),
+        arg("sdr_min_peak_mass_ratio", "0.0"),
+
+        # HCE/BWE params
+        arg("hce_min_concentration", "0.001"),
+        arg("bwe_alpha", "0.15"),
+        arg("bwe_alpha_fast", "0.40"),
+        arg("bwe_min_speed", "0.01"),
 
         Node(
             package="vgr_bridge",
@@ -96,7 +148,7 @@ def generate_launch_description():
             name="gsl_server",
             output="screen",
             parameters=[{
-                # === IDENTICAL base params for ALL conditions ===
+                # Identical base params for every condition.
                 "use_sim_time": False,
                 "maxSearchTime": 300.0,
                 "distanceThreshold": 0.5,
@@ -105,12 +157,33 @@ def generate_launch_description():
                 "resultsFile": LaunchConfiguration("server_results_file"),
                 "navigationPathFile": LaunchConfiguration("server_path_file"),
                 "use_wranf_supervisor": False,
+                "method_id": LaunchConfiguration("method_id"),
 
-                # Module toggles
+                # Method toggles
                 "pwc_enabled": LaunchConfiguration("pwc_enabled"),
                 "mac_enabled": LaunchConfiguration("mac_enabled"),
+                "psde_online_enabled": LaunchConfiguration("psde_online_enabled"),
+                "psde_final_enabled": LaunchConfiguration("psde_final_enabled"),
                 "sdr_enabled": LaunchConfiguration("sdr_enabled"),
                 "tdc_enabled": LaunchConfiguration("tdc_enabled"),
+                "bwe_enabled": LaunchConfiguration("bwe_enabled"),
+                "pgpt_enabled": LaunchConfiguration("pgpt_enabled"),
+                "hce_enabled": LaunchConfiguration("hce_enabled"),
+                "bapr_enabled": LaunchConfiguration("bapr_enabled"),
+                "bapr_wall_penalty": LaunchConfiguration("bapr_wall_penalty"),
+                "bapr_wall_distance": LaunchConfiguration("bapr_wall_distance"),
+                "bapr_sigmoid_steepness": LaunchConfiguration("bapr_sigmoid_steepness"),
+                "bapr_dtf_radius": LaunchConfiguration("bapr_dtf_radius"),
+                "hspb_enabled": LaunchConfiguration("hspb_enabled"),
+                "hspb_min_hits": LaunchConfiguration("hspb_min_hits"),
+                "hspb_distance_scale": LaunchConfiguration("hspb_distance_scale"),
+                "hspb_angular_spread": LaunchConfiguration("hspb_angular_spread"),
+                "hspb_kernel_radius": LaunchConfiguration("hspb_kernel_radius"),
+                "gt_debug_logging": LaunchConfiguration("gt_debug_logging"),
+                "verbose_debug": LaunchConfiguration("verbose_debug"),
+                "wind_vector_is_flow_to": LaunchConfiguration("wind_vector_is_flow_to"),
+
+                # Explicitly disable unrelated modules.
                 "adc_enabled": False,
                 "set_enabled": False,
                 "frg_enabled": False,
@@ -119,28 +192,40 @@ def generate_launch_description():
                 "spc_enabled": False,
                 "fssp_enabled": False,
 
-                # PWC params (fixed)
+                # PWC params
                 "pwc_beta": LaunchConfiguration("pwc_beta"),
                 "pwc_max_correction": LaunchConfiguration("pwc_max_correction"),
                 "pwc_min_wind": LaunchConfiguration("pwc_min_wind"),
-                "pwc_use_adaptive": True,
-                "pwc_plume_scale_factor": 1.0,
-                "pwc_log_file": "/tmp/pwc_log.csv",
+                "pwc_use_adaptive": LaunchConfiguration("pwc_use_adaptive"),
+                "pwc_plume_scale_factor": LaunchConfiguration("pwc_plume_scale_factor"),
+                "pwc_log_file": LaunchConfiguration("pwc_log_file"),
 
-                # PSDE params (fixed)
+                # PSDE params
                 "mac_flight_height": LaunchConfiguration("mac_flight_height"),
                 "mac_source_height": LaunchConfiguration("mac_source_height"),
                 "mac_stability_class": LaunchConfiguration("mac_stability_class"),
+                "mac_min_distance": LaunchConfiguration("mac_min_distance"),
                 "mac_max_distance_weight": LaunchConfiguration("mac_max_distance_weight"),
                 "mac_distance_sigma": LaunchConfiguration("mac_distance_sigma"),
+                "mac_sigma_z_max": LaunchConfiguration("mac_sigma_z_max"),
+                "mac_min_hits": LaunchConfiguration("mac_min_hits"),
+                "mac_online_update_stride": LaunchConfiguration("mac_online_update_stride"),
+                "mac_online_boost_weight": LaunchConfiguration("mac_online_boost_weight"),
 
-                # TDC params (fixed)
-                "tdc_iterations": 5,
-                "tdc_tau": 15.0,
-                "tdc_damping": 0.8,
-                "tdc_sharpen_strength": 0.5,
+                # SDR params
+                "sdr_rl_iterations": LaunchConfiguration("sdr_rl_iterations"),
+                "sdr_psf_size": LaunchConfiguration("sdr_psf_size"),
+                "sdr_blob_radius": LaunchConfiguration("sdr_blob_radius"),
+                "sdr_min_hits": LaunchConfiguration("sdr_min_hits"),
+                "sdr_min_peak_mass_ratio": LaunchConfiguration("sdr_min_peak_mass_ratio"),
 
-                # === Core PMFS params (MAPIRlab defaults, IDENTICAL) ===
+                # HCE/BWE params
+                "hce_min_concentration": LaunchConfiguration("hce_min_concentration"),
+                "bwe_alpha": LaunchConfiguration("bwe_alpha"),
+                "bwe_alpha_fast": LaunchConfiguration("bwe_alpha_fast"),
+                "bwe_min_speed": LaunchConfiguration("bwe_min_speed"),
+
+                # Core PMFS params. These must remain identical across conditions.
                 "scale": 25,
                 "convergence_thr": 1.5,
                 "minExplorationIterations": 3,

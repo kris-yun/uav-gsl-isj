@@ -3,8 +3,11 @@
 #include <fstream>
 #include <cmath>
 #include <algorithm>
+#include <deque>
 #include <numeric>
+#include <limits>
 #include <gsl_server/algorithms/PMFS/PMFS.hpp>
+#include <gsl_server/algorithms/PMFS/modules/BaprHspb.hpp>
 
 namespace GSL
 {
@@ -96,6 +99,226 @@ namespace GSL
         return refined;
     }
 
+
+
+    //========================================
+    // HSPB: Hough-Inspired Spatial Back-Projection
+    //   Concept borrowed from Hough Transform in computer vision.
+    //   Accumulates per-hit upwind directional votes into a source likelihood grid.
+    //   Unlike PSDE (single centroid + single backtrack), robust to outlier hits.
+    //========================================
+    struct HspbEstimate
+    {
+        bool valid{false};
+        double x{0.0};
+        double y{0.0};
+        double peak_value{0.0};
+        double entropy{0.0};
+        int vote_count{0};
+    };
+
+    static HspbEstimate computeHspbEstimate(
+        const PMFS_internal::SimulationSettings& simSettings,
+        int hit_count,
+        double weight_mass,
+        double weighted_x,
+        double weighted_y,
+        double wind_sin_accum,
+        double wind_cos_accum,
+        double wind_speed_accum,
+        bool hasPeakGas,
+        const Vector2& peakGasPosition,
+        double peakGasConcentration_val,
+        const std::vector<Occupancy>& occ,
+        const Grid2DMetadata& meta)
+    {
+        HspbEstimate out;
+        if (!simSettings.hspb_enabled || hit_count < simSettings.hspb_min_hits ||
+            weight_mass <= 0.0 || !hasPeakGas)
+            return out;
+
+        const int W = meta.dimensions.x;
+        const int H = meta.dimensions.y;
+        std::vector<double> votes(W * H, 0.0);
+
+        const double avg_wdir = std::atan2(wind_sin_accum / std::max(1, hit_count),
+                                           wind_cos_accum / std::max(1, hit_count));
+        const double avg_speed = std::max(wind_speed_accum / std::max(1, hit_count), 0.001);
+        const double upwind_dir = avg_wdir + M_PI;
+        const double cos_up = std::cos(upwind_dir);
+        const double sin_up = std::sin(upwind_dir);
+
+        const double cx = weighted_x / weight_mass;
+        const double cy = weighted_y / weight_mass;
+        const double d_est = simSettings.hspb_distance_scale * avg_speed * std::sqrt((double)hit_count);
+
+        // Vote from centroid
+        {
+            const double vx = cx + cos_up * d_est;
+            const double vy = cy + sin_up * d_est;
+            auto vidx = meta.coordinatesToIndices(vx, vy);
+            const int vi = std::max(0, std::min(W - 1, vidx.x));
+            const int vj = std::max(0, std::min(H - 1, vidx.y));
+            const int kr = simSettings.hspb_kernel_radius;
+            for (int dj = -kr; dj <= kr; dj++)
+                for (int di = -kr; di <= kr; di++) {
+                    int ni = vi + di, nj = vj + dj;
+                    if (ni >= 0 && ni < W && nj >= 0 && nj < H) {
+                        int nidx = nj * W + ni;
+                        if (occ[nidx] == Occupancy::Free) {
+                            double d2 = (di * di + dj * dj) / std::max(1.0, (double)(kr * kr));
+                            votes[nidx] += weight_mass * std::exp(-0.5 * d2);
+                        }
+                    }
+                }
+        }
+
+        // Vote from peak gas position
+        if (hasPeakGas) {
+            const double px = peakGasPosition.x + cos_up * d_est * 0.5;
+            const double py = peakGasPosition.y + sin_up * d_est * 0.5;
+            auto pidx = meta.coordinatesToIndices(px, py);
+            const int pi_c = std::max(0, std::min(W - 1, pidx.x));
+            const int pj_c = std::max(0, std::min(H - 1, pidx.y));
+            const int kr = simSettings.hspb_kernel_radius;
+            for (int dj = -kr; dj <= kr; dj++)
+                for (int di = -kr; di <= kr; di++) {
+                    int ni = pi_c + di, nj = pj_c + dj;
+                    if (ni >= 0 && ni < W && nj >= 0 && nj < H) {
+                        int nidx = nj * W + ni;
+                        if (occ[nidx] == Occupancy::Free) {
+                            double d2 = (di * di + dj * dj) / std::max(1.0, (double)(kr * kr));
+                            votes[nidx] += peakGasConcentration_val * 2.0 * std::exp(-0.5 * d2);
+                        }
+                    }
+                }
+        }
+
+        double maxVal = 0.0, sumVal = 0.0;
+        int peakIdx = 0;
+        for (int idx = 0; idx < W * H; idx++) {
+            if (occ[idx] != Occupancy::Free) continue;
+            sumVal += votes[idx];
+            if (votes[idx] > maxVal) { maxVal = votes[idx]; peakIdx = idx; }
+        }
+        if (maxVal <= 0.0 || sumVal <= 0.0) return out;
+
+        out.valid = true;
+        out.x = meta.indicesToCoordinates(peakIdx % W, peakIdx / W).x;
+        out.y = meta.indicesToCoordinates(peakIdx % W, peakIdx / W).y;
+        out.peak_value = maxVal;
+        out.vote_count = hit_count;
+
+        double entropy = 0.0;
+        for (int idx = 0; idx < W * H; idx++) {
+            if (occ[idx] != Occupancy::Free || votes[idx] <= 0.0) continue;
+            double p = votes[idx] / sumVal;
+            entropy -= p * std::log(p + 1e-12);
+        }
+        out.entropy = entropy;
+        return out;
+    }
+
+    static bool fileIsEmptyOrMissing(const std::string& path)
+    {
+        std::ifstream in(path);
+        return !in.good() || in.peek() == std::ifstream::traits_type::eof();
+    }
+
+    struct PsdeEstimate
+    {
+        bool valid{false};
+        double x{0.0};
+        double y{0.0};
+        double distance{0.0};
+        double spread{0.0};
+        double sigma_z{0.0};
+        double avg_wind{0.0};
+        double avg_wdir{0.0};
+        double centroid_x{0.0};
+        double centroid_y{0.0};
+    };
+
+    static PsdeEstimate computePsdeEstimate(const PMFS_internal::Settings& settings,
+                                            int hce_hit_count,
+                                            double hce_weight_mass,
+                                            double hce_weighted_x,
+                                            double hce_weighted_y,
+                                            double hce_weighted_x2,
+                                            double hce_weighted_y2,
+                                            double hce_wind_sin_accum,
+                                            double hce_wind_cos_accum,
+                                            double hce_wind_speed_accum,
+                                            bool hasPeakGas,
+                                            const Vector2& peakGasPosition,
+                                            const Vector2& fallbackDirectionTarget)
+    {
+        PsdeEstimate out;
+        if (hce_hit_count < settings.mac.min_hits || hce_weight_mass <= 0.0 || !hasPeakGas)
+            return out;
+
+        static const double Cz_table[] = {0.0, 0.3974, 0.2751, 0.2093, 0.1542, 0.1164, 0.0825};
+        static const double Dz_table[] = {0.0, 0.8697, 0.8949, 0.9087, 0.9193, 0.9257, 0.9290};
+        const int sc = std::max(1, std::min(6, settings.mac.stability_class));
+        const double Cz = Cz_table[sc];
+        const double Dz = Dz_table[sc];
+        const double h_eff = std::max(settings.mac.flight_height - settings.mac.source_height, 0.1);
+
+        out.centroid_x = hce_weighted_x / hce_weight_mass;
+        out.centroid_y = hce_weighted_y / hce_weight_mass;
+        // Paper formula: RMS distance of all hits from centroid
+        // sigma_obs = sqrt( E[X^2] - E[X]^2 ) = sqrt( sum(C*x^2)/M - (sum(C*x)/M)^2 )
+        const double var_x = std::max(0.0, hce_weighted_x2 / hce_weight_mass - out.centroid_x * out.centroid_x);
+        const double var_y = std::max(0.0, hce_weighted_y2 / hce_weight_mass - out.centroid_y * out.centroid_y);
+        out.spread = std::sqrt(var_x + var_y);  // RMS spatial dispersion
+
+        const double hit_density = 1.0;  // Removed arbitrary scaling; sigma_obs is already physical
+        out.sigma_z = std::max(0.1, std::min(out.spread * hit_density, settings.mac.sigma_z_max));
+        const double C_ratio = Cz / std::pow(h_eff, Dz);
+        if (C_ratio <= 0.0 || !std::isfinite(C_ratio))
+            return out;
+
+        const double d_raw = std::pow(out.sigma_z / C_ratio, 1.0 / Dz);
+        if (!std::isfinite(d_raw))
+            return out;
+        out.distance = std::max(settings.mac.min_distance, std::min(d_raw, settings.mac.max_distance_weight));
+
+        out.avg_wind = std::max(hce_wind_speed_accum / std::max(1, hce_hit_count), 0.001);
+        out.avg_wdir = std::atan2(hce_wind_sin_accum / std::max(1, hce_hit_count),
+                                  hce_wind_cos_accum / std::max(1, hce_hit_count));
+        const double wind_x = out.avg_wind * std::cos(out.avg_wdir);
+        const double wind_y = out.avg_wind * std::sin(out.avg_wdir);
+        const double ws = std::sqrt(wind_x * wind_x + wind_y * wind_y);
+
+        double dir_x = 0.0;
+        double dir_y = 0.0;
+        if (ws > 0.01)
+        {
+            const double upwind_sign = settings.mac.wind_vector_is_flow_to ? -1.0 : 1.0;
+            dir_x = upwind_sign * wind_x / ws;
+            dir_y = upwind_sign * wind_y / ws;
+        }
+        else
+        {
+            dir_x = fallbackDirectionTarget.x - out.centroid_x;
+            dir_y = fallbackDirectionTarget.y - out.centroid_y;
+            const double norm = std::sqrt(dir_x * dir_x + dir_y * dir_y);
+            if (norm > 0.01)
+            {
+                dir_x /= norm;
+                dir_y /= norm;
+            }
+        }
+
+        if (std::abs(dir_x) <= 0.001 && std::abs(dir_y) <= 0.001)
+            return out;
+
+        out.x = out.centroid_x + dir_x * out.distance;
+        out.y = out.centroid_y + dir_y * out.distance;
+        out.valid = std::isfinite(out.x) && std::isfinite(out.y);
+        return out;
+    }
+
     GSLResult PMFS::checkSourceFound()
     {
         if (stateMachine.getCurrentState() == waitForMapState.get())
@@ -164,299 +387,286 @@ namespace GSL
     {
         rclcpp::Duration time_spent = node->now() - startTime;
         double search_t = time_spent.seconds();
+        const double mapVar = Utils::Variance(Grid2D<double>(sourceProbability, occupancy, gridMetadata));
 
-        // Module 3: WRSD - Parabolic Sub-cell Source Refinement
-        Vector2 sourceLocation;
+        // 0) BAPR: reshape sourceProbability before peak extraction
+        if (settings.simulation.bapr_enabled)
+            applyBAPR(sourceProbability, occupancy, gridMetadata,
+                      settings.simulation, bapr_distance_field_, bapr_dtf_computed_);
+
+        // 1) Base PMFS source estimate. This is the clean map-based estimate.
+        Vector2 mapEstimate;
         Vector2 sourceLocationAll;
         if (settings.declaration.useWRSD)
         {
-            sourceLocation = refineSourceLocation(sourceProbability, occupancy, gridMetadata);
+            mapEstimate = refineSourceLocation(sourceProbability, occupancy, gridMetadata);
             sourceLocationAll = Utils::ExpectedValue(Grid2D<double>(sourceProbability, occupancy, gridMetadata), 1);
         }
         else
         {
             sourceLocationAll = Utils::ExpectedValue(Grid2D<double>(sourceProbability, occupancy, gridMetadata), 1);
-            sourceLocation = Utils::ExpectedValue(Grid2D<double>(sourceProbability, occupancy, gridMetadata), 0.05);
+            mapEstimate = Utils::ExpectedValue(Grid2D<double>(sourceProbability, occupancy, gridMetadata), 0.05);
         }
 
-        // PGPT: Use peak-gas position when map not converged (non-GT decision)
-        if (hasPeakGas)
+        Vector2 sourceLocation = mapEstimate;
+        std::string selectedEstimator = settings.declaration.useWRSD ? "pmfs_wrsd" : "pmfs_expected";
+
+        double hce_x = std::numeric_limits<double>::quiet_NaN();
+        double hce_y = std::numeric_limits<double>::quiet_NaN();
+        if (hce_weight_mass > 0.0)
         {
-            double mapVar = Utils::Variance(Grid2D<double>(sourceProbability, occupancy, gridMetadata));
-            if (mapVar > settings.declaration.threshold * 2.0 && peakGasConcentration > thresholdGas)
-            {
-                GSL_INFO("PGPT: Map not converged (var={:.2f}), using peak gas ({:.2f},{:.2f})",
-                         mapVar, peakGasPosition.x, peakGasPosition.y);
-                sourceLocation = peakGasPosition;
+            hce_x = hce_weighted_x / hce_weight_mass;
+            hce_y = hce_weighted_y / hce_weight_mass;
+        }
+
+        // 2) Optional PGPT/HCE fallback. Disabled in baseline unless explicitly enabled.
+        if (settings.method.pgpt_enabled && hasPeakGas &&
+            mapVar > settings.declaration.threshold * 2.0 && peakGasConcentration > thresholdGas)
+        {
+            sourceLocation = peakGasPosition;
+            selectedEstimator = "pgpt";
+            GSL_INFO("[PGPT-final] using peak gas ({:.2f},{:.2f}) map_var={:.3f}",
+                     peakGasPosition.x, peakGasPosition.y, mapVar);
+        }
+
+        if (settings.method.hce_enabled && hce_weight_mass > 0.0 && hce_hit_count >= settings.mac.min_hits &&
+            mapVar > settings.declaration.threshold)
+        {
+            sourceLocation = Vector2{hce_x, hce_y};
+            selectedEstimator = "hce";
+            GSL_INFO("[HCE-final] using centroid ({:.2f},{:.2f}) hits={} map_var={:.3f}",
+                     hce_x, hce_y, hce_hit_count, mapVar);
+        }
+
+        // 3) Optional PSDE final estimator. No GT is used here.
+        PsdeEstimate psde = computePsdeEstimate(settings,
+                                                hce_hit_count,
+                                                hce_weight_mass,
+                                                hce_weighted_x,
+                                                hce_weighted_y,
+                                                hce_weighted_x2,
+                                                hce_weighted_y2,
+                                                hce_wind_sin_accum,
+                                                hce_wind_cos_accum,
+                                                hce_wind_speed_accum,
+                                                hasPeakGas,
+                                                peakGasPosition,
+                                                sourceLocation);
+        if (settings.method.psde_final_enabled && psde.valid)
+        {
+            GSL_INFO("[PSDE-final] centroid=({:.2f},{:.2f}) spread={:.2f} sigma_z={:.2f} d={:.2f} est=({:.2f},{:.2f})",
+                     psde.centroid_x, psde.centroid_y, psde.spread, psde.sigma_z, psde.distance, psde.x, psde.y);
+            sourceLocation.x = psde.x;
+            sourceLocation.y = psde.y;
+            selectedEstimator = "psde_final";
+            mac_estimated_distance = psde.distance;
+        }
+
+
+        // 3b) Optional HSPB final estimator. Hough-inspired voting replaces PSDE.
+        HspbEstimate hspb = computeHspbEstimate(settings.simulation,
+                                                hce_hit_count, hce_weight_mass,
+                                                hce_weighted_x, hce_weighted_y,
+                                                hce_wind_sin_accum, hce_wind_cos_accum, hce_wind_speed_accum,
+                                                hasPeakGas, peakGasPosition, peakGasConcentration,
+                                                occupancy, gridMetadata);
+        if (settings.simulation.hspb_enabled && hspb.valid)
+        {
+            GSL_INFO("[HSPB-final] est=({:.2f},{:.2f}) votes={} entropy={:.3f} peak={:.4f}",
+                     hspb.x, hspb.y, hspb.vote_count, hspb.entropy, hspb.peak_value);
+            sourceLocation.x = hspb.x;
+            sourceLocation.y = hspb.y;
+            selectedEstimator = "hspb";
+        }
+
+        // 4) Optional SDR final estimator. No GT gate is used; only non-GT confidence criteria are allowed.
+        double sdr_x = std::numeric_limits<double>::quiet_NaN();
+        double sdr_y = std::numeric_limits<double>::quiet_NaN();
+        double sdr_peak_ratio = 0.0;
+        if (settings.simulation.sdr_enabled && hce_hit_count >= settings.simulation.sdr_min_hits && hasPeakGas)
+        {
+            int W = gridMetadata.dimensions.x;
+            int H = gridMetadata.dimensions.y;
+            std::vector<double> hitMap(W * H, 0.0);
+
+            auto pidx = gridMetadata.coordinatesToIndices(peakGasPosition);
+            int pi = std::max(0, std::min(W - 1, pidx.x));
+            int pj = std::max(0, std::min(H - 1, pidx.y));
+            const int blob_radius = std::max(1, (int)std::ceil(settings.simulation.sdr_blob_radius));
+            for (int di = -blob_radius; di <= blob_radius; di++) {
+                for (int dj = -blob_radius; dj <= blob_radius; dj++) {
+                    int ni = pi + di, nj = pj + dj;
+                    if (ni >= 0 && ni < W && nj >= 0 && nj < H) {
+                        int idx = nj * W + ni;
+                        if (occupancy[idx] == Occupancy::Free) {
+                            double d2 = di * di + dj * dj;
+                            hitMap[idx] += peakGasConcentration * std::exp(-d2 / std::max(1.0, settings.simulation.sdr_blob_radius));
+                        }
+                    }
+                }
+            }
+
+            const double avg_wdir = std::atan2(hce_wind_sin_accum / std::max(1, hce_hit_count),
+                                               hce_wind_cos_accum / std::max(1, hce_hit_count));
+            const double cos_w = std::cos(avg_wdir), sin_w = std::sin(avg_wdir);
+            int K = std::max(3, settings.simulation.sdr_psf_size);
+            if (K % 2 == 0) K += 1;
+            int K2 = K / 2;
+            std::vector<double> psf(K * K, 0.0);
+            double psf_sum = 0.0;
+            for (int di = -K2; di <= K2; di++) {
+                for (int dj = -K2; dj <= K2; dj++) {
+                    const double along = di * cos_w + dj * sin_w;
+                    const double across = -di * sin_w + dj * cos_w;
+                    const double sigma_along = (along < 0) ? 3.0 : 1.0;
+                    const double sigma_across = 1.5;
+                    const double val = std::exp(-0.5 * (along * along / (sigma_along * sigma_along) +
+                                                        across * across / (sigma_across * sigma_across)));
+                    psf[(dj + K2) * K + (di + K2)] = val;
+                    psf_sum += val;
+                }
+            }
+            if (psf_sum > 0.0)
+                for (auto& p : psf) p /= psf_sum;
+
+            std::vector<double> refined = hitMap;
+            for (int rl = 0; rl < settings.simulation.sdr_rl_iterations; rl++) {
+                std::vector<double> conv(W * H, 0.0);
+                for (int j = 0; j < H; j++) {
+                    for (int i = 0; i < W; i++) {
+                        int idx = j * W + i;
+                        if (occupancy[idx] != Occupancy::Free) continue;
+                        double v = 0.0;
+                        for (int dk = -K2; dk <= K2; dk++)
+                            for (int dl = -K2; dl <= K2; dl++) {
+                                int ni = i + dk, nj = j + dl;
+                                if (ni >= 0 && ni < W && nj >= 0 && nj < H) {
+                                    int nidx = nj * W + ni;
+                                    v += refined[nidx] * psf[(dl + K2) * K + (dk + K2)];
+                                }
+                            }
+                        conv[idx] = v;
+                    }
+                }
+                for (int idx = 0; idx < W * H; idx++) {
+                    if (occupancy[idx] != Occupancy::Free) continue;
+                    if (conv[idx] > 1e-10) refined[idx] *= hitMap[idx] / conv[idx];
+                }
+            }
+
+            double maxVal = 0.0;
+            double sumVal = 0.0;
+            int peakIdx = 0;
+            for (int idx = 0; idx < W * H; idx++) {
+                if (occupancy[idx] != Occupancy::Free) continue;
+                sumVal += std::max(0.0, refined[idx]);
+                if (refined[idx] > maxVal) {
+                    maxVal = refined[idx];
+                    peakIdx = idx;
+                }
+            }
+            sdr_peak_ratio = (sumVal > 0.0) ? maxVal / sumVal : 0.0;
+            if (maxVal > 0.0 && sdr_peak_ratio >= settings.simulation.sdr_min_peak_mass_ratio) {
+                Vector2 sdrEst = gridMetadata.indicesToCoordinates(peakIdx % W, peakIdx / W);
+                sdr_x = sdrEst.x;
+                sdr_y = sdrEst.y;
+                sourceLocation = sdrEst;
+                selectedEstimator = "sdr";
+                GSL_INFO("[SDR-final] est=({:.2f},{:.2f}) peak_ratio={:.6f}", sdr_x, sdr_y, sdr_peak_ratio);
             }
         }
-        
-        // HCE: Weighted centroid of gas hits (non-GT decision)
-        // Use centroid when map has not converged and enough hits accumulated
-        if (hce_weight_mass > 0 && hce_hit_count >= 5)
-        {
-            Vector2 hceEstimate(hce_weighted_x / hce_weight_mass, hce_weighted_y / hce_weight_mass);
-            double mapVar = Utils::Variance(Grid2D<double>(sourceProbability, occupancy, gridMetadata));
-            if (mapVar > settings.declaration.threshold)
-            {
-                GSL_INFO("HCE: Using centroid ({:.2f},{:.2f}) hits={} map_var={:.2f}",
-                         hceEstimate.x, hceEstimate.y, hce_hit_count, mapVar);
-                sourceLocation = hceEstimate;
-            }
-        }
 
-
-        // PWC: Plume Wind Correction
-        // Correct source estimate by shifting upwind from the plume peak
+        // 5) Optional PWC as a final post-processing correction. No GT is used.
         if (pwcCorrector_ && pwcCorrector_->config().enabled)
         {
-            // Get wind at source estimate location
             int src_i = gridMetadata.coordinatesToIndices(sourceLocation).x;
             int src_j = gridMetadata.coordinatesToIndices(sourceLocation).y;
             src_i = std::max(0, std::min((int)gridMetadata.dimensions.x - 1, src_i));
             src_j = std::max(0, std::min((int)gridMetadata.dimensions.y - 1, src_j));
             int src_idx = src_j * gridMetadata.dimensions.x + src_i;
 
-            double wind_x = 0, wind_y = 0;
+            double wind_x = 0.0, wind_y = 0.0;
             if (src_idx >= 0 && src_idx < (int)estimatedWindVectors.size()) {
                 wind_x = estimatedWindVectors[src_idx].x;
                 wind_y = estimatedWindVectors[src_idx].y;
             }
-            // Fallback to raw wind if GMRF not available
             if (std::abs(wind_x) < 1e-6 && std::abs(wind_y) < 1e-6) {
                 wind_x = last_windSpeed * std::cos(last_windDirection);
                 wind_y = last_windSpeed * std::sin(last_windDirection);
             }
 
-            // Estimate plume spread from probability map variance
-            double local_variance = Utils::Variance(Grid2D<double>(sourceProbability, occupancy, gridMetadata));
-            double plume_spread = std::sqrt(local_variance);
-
-            auto pwc_out = pwcCorrector_->correct(
-                sourceLocation.x, sourceLocation.y,
-                wind_x, wind_y, plume_spread);
-
+            const double plume_spread = std::sqrt(std::max(0.0, mapVar));
+            auto pwc_out = pwcCorrector_->correct(sourceLocation.x, sourceLocation.y, wind_x, wind_y, plume_spread);
             if (pwc_out.applied) {
-                double pwcError = sqrt(pow(resultLogging.sourcePositionGT.x - pwc_out.corrected_x, 2) +
-                                      pow(resultLogging.sourcePositionGT.y - pwc_out.corrected_y, 2));
-                double origError = sqrt(pow(resultLogging.sourcePositionGT.x - sourceLocation.x, 2) +
-                                       pow(resultLogging.sourcePositionGT.y - sourceLocation.y, 2));
-                GSL_INFO("[PWC] ({:.2f},{:.2f})->({:.2f},{:.2f}) wind=({:.4f},{:.4f}) corr_dist={:.3f}m err: {:.3f}->{:.3f}",
-                         sourceLocation.x, sourceLocation.y,
-                         pwc_out.corrected_x, pwc_out.corrected_y,
-                         wind_x, wind_y, pwc_out.correction_distance,
-                         origError, pwcError);
+                GSL_INFO("[PWC-final] ({:.2f},{:.2f})->({:.2f},{:.2f}) wind=({:.4f},{:.4f}) corr={:.3f}",
+                         sourceLocation.x, sourceLocation.y, pwc_out.corrected_x, pwc_out.corrected_y,
+                         wind_x, wind_y, pwc_out.correction_distance);
                 sourceLocation.x = pwc_out.corrected_x;
                 sourceLocation.y = pwc_out.corrected_y;
+                selectedEstimator += "+pwc";
             }
         }
 
+        // Final metrics are computed only after the final estimate is fixed.
+        const double error = sqrt(pow(resultLogging.sourcePositionGT.x - sourceLocation.x, 2) +
+                                  pow(resultLogging.sourcePositionGT.y - sourceLocation.y, 2));
+        const double errorAll = sqrt(pow(resultLogging.sourcePositionGT.x - sourceLocationAll.x, 2) +
+                                     pow(resultLogging.sourcePositionGT.y - sourceLocationAll.y, 2));
+        const char* status = (result == GSLResult::Success) ? "SUCCESS" : "FAILED";
 
-        // MAC: Multi-Altitude Constraint using Pasquill-Gifford atmospheric dispersion
-        // Cross-domain innovation: atmospheric pollution source inversion
-        // Physical basis: sigma_z = Cz * x^Dz, calibrated with centroid-peak spread
-        if (settings.mac.enabled && hce_hit_count >= 10)
-        {
-            double avg_wind = hce_wind_speed_accum / std::max(1, hce_hit_count);
-            avg_wind = std::max(avg_wind, 0.001);
-            double avg_wdir = std::atan2(hce_wind_sin_accum / std::max(1, hce_hit_count),
-                                            hce_wind_cos_accum / std::max(1, hce_hit_count));
-
-            // Pasquill-Gifford vertical dispersion coefficients
-            static const double Cz_table[] = {0.0, 0.3974, 0.2751, 0.2093, 0.1542, 0.1164, 0.0825};
-            static const double Dz_table[] = {0.0, 0.8697, 0.8949, 0.9087, 0.9193, 0.9257, 0.9290};
-            int sc = std::max(1, std::min(6, settings.mac.stability_class));
-            double Cz = Cz_table[sc];
-            double Dz = Dz_table[sc];
-
-            double h_eff = settings.mac.flight_height - settings.mac.source_height;
-            h_eff = std::max(h_eff, 0.1);
-
-            double centroid_x = hce_weighted_x / hce_weight_mass;
-            double centroid_y = hce_weighted_y / hce_weight_mass;
-
-            // Physical spread: centroid-to-peak distance (stable across seeds)
-            double spread = 0.0;
-            if (hasPeakGas) {
-                spread = std::sqrt(std::pow(centroid_x - peakGasPosition.x, 2) +
-                                   std::pow(centroid_y - peakGasPosition.y, 2));
-            }
-            // Scale by hit density: more hits = more confident spread estimate
-            double hit_density = std::sqrt((double)hce_hit_count) / 5.0;
-            double sigma_z = spread * std::min(hit_density, 1.0);
-            sigma_z = std::max(0.1, std::min(sigma_z, 3.0));
-
-            // P-G inversion: sigma_z = Cz * d^Dz => d = (sigma_z / Cz)^(1/Dz)
-            double C_ratio = Cz / std::pow(h_eff, Dz);
-            double d_est = std::pow(sigma_z / C_ratio, 1.0 / Dz);
-            d_est = std::max(0.5, std::min(d_est, 6.0));  // hardcoded: launch param not passing
-
-            mac_estimated_distance = d_est;
-            GSL_INFO("[MAC] spread={:.2f} sigma_z={:.2f} C_ratio={:.4f} d_est_raw={:.2f} d_est={:.2f} mdw={:.2f} h_eff={:.2f} wind={:.4f}",
-                     spread, sigma_z, C_ratio, std::pow(sigma_z / C_ratio, 1.0 / Dz), d_est, settings.mac.max_distance_weight, h_eff, avg_wind);
-
-            if (d_est > 0.5)
-            {
-                // Direction: upwind from centroid
-                double wind_x = avg_wind * std::cos(avg_wdir);
-                double wind_y = avg_wind * std::sin(avg_wdir);
-                double ws = std::sqrt(wind_x*wind_x + wind_y*wind_y);
-
-                double dir_x, dir_y;
-                if (ws > 0.01)
-                {
-                    dir_x = wind_x / ws;
-                    dir_y = wind_y / ws;
-                }
-                else
-                {
-                    dir_x = sourceLocation.x - centroid_x;
-                    dir_y = sourceLocation.y - centroid_y;
-                    double dir_len = std::sqrt(dir_x*dir_x + dir_y*dir_y);
-                    if (dir_len > 0.01) { dir_x /= dir_len; dir_y /= dir_len; }
-                    else { dir_x = 0; dir_y = 0; }
-                }
-
-                if (std::abs(dir_x) > 0.001 || std::abs(dir_y) > 0.001)
-                {
-                    double mac_x = centroid_x + dir_x * d_est;
-                    double mac_y = centroid_y + dir_y * d_est;
-                    double old_err = sqrt(pow(resultLogging.sourcePositionGT.x - sourceLocation.x, 2) +
-                                         pow(resultLogging.sourcePositionGT.y - sourceLocation.y, 2));
-                    double new_err = sqrt(pow(resultLogging.sourcePositionGT.x - mac_x, 2) +
-                                         pow(resultLogging.sourcePositionGT.y - mac_y, 2));
-                    GSL_INFO("[MAC] constrain: ({:.2f},{:.2f})->({:.2f},{:.2f}) err: {:.3f}->{:.3f}",
-                             sourceLocation.x, sourceLocation.y, mac_x, mac_y, old_err, new_err);
-                    // Hard replace: MAC is primary estimate
-                    sourceLocation.x = mac_x;
-                    sourceLocation.y = mac_y;
-                }
-            }
-        }
-
-        
-        // SDR: Source probability map Deconvolution Refinement
-        // Cross-domain: medical CT image reconstruction (Richardson-Lucy)
-        // Uses gas hit distribution + wind direction to refine source estimate
-        if (settings.simulation.sdr_enabled && hce_hit_count >= 3)
-        {
-            int W = gridMetadata.dimensions.x;
-            int H = gridMetadata.dimensions.y;
-            std::vector<double> hitMap(W * H, 0.0);
-
-            // Use existing sourceProbability as starting point
-            // but also add blobs at peak gas position
-            double avg_wdir = std::atan2(hce_wind_sin_accum / std::max(1, hce_hit_count),
-                                            hce_wind_cos_accum / std::max(1, hce_hit_count));
-            double avg_ws = hce_wind_speed_accum / std::max(1, hce_hit_count);
-
-            // Place blob at peak gas position (most likely downwind of source)
-            if (hasPeakGas) {
-                auto pidx = gridMetadata.coordinatesToIndices(peakGasPosition);
-                int pi = std::max(0, std::min(W-1, pidx.x));
-                int pj = std::max(0, std::min(H-1, pidx.y));
-                for (int di = -4; di <= 4; di++) {
-                    for (int dj = -4; dj <= 4; dj++) {
-                        int ni = pi + di, nj = pj + dj;
-                        if (ni >= 0 && ni < W && nj >= 0 && nj < H) {
-                            int idx = nj * W + ni;
-                            if (occupancy[idx] == Occupancy::Free) {
-                                double d2 = di*di + dj*dj;
-                                hitMap[idx] += peakGasConcentration * std::exp(-d2 / 4.5);
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Build anisotropic PSF: elongated UPWIND from peak
-            // Physical basis: source is upwind, plume spreads downwind
-            double cos_w = std::cos(avg_wdir), sin_w = std::sin(avg_wdir);
-            int K = 7;
-            int K2 = K / 2;
-            std::vector<double> psf(K * K, 0.0);
-            double psf_sum = 0;
-            for (int di = -K2; di <= K2; di++) {
-                for (int dj = -K2; dj <= K2; dj++) {
-                    // Decompose into along-wind and cross-wind
-                    double along = di * cos_w + dj * sin_w;
-                    double across = -di * sin_w + dj * cos_w;
-                    // PSF: elongated UPWIND (negative along = toward source)
-                    // Wider upwind, narrower downwind
-                    double sigma_along = (along < 0) ? 3.0 : 1.0;  // upwind: wide
-                    double sigma_across = 1.5;
-                    double val = std::exp(-0.5 * (along*along/(sigma_along*sigma_along) +
-                                                 across*across/(sigma_across*sigma_across)));
-                    psf[(dj+K2)*K + (di+K2)] = val;
-                    psf_sum += val;
-                }
-            }
-            for (auto& p : psf) p /= psf_sum;
-
-            // RL deconvolution (10 iterations)
-            std::vector<double> refined = hitMap;
-            for (int rl = 0; rl < 10; rl++) {
-                std::vector<double> conv(W * H, 0.0);
-                for (int j = 0; j < H; j++) {
-                    for (int i = 0; i < W; i++) {
-                        int idx = j * W + i;
-                        if (occupancy[idx] != Occupancy::Free) continue;
-                        double s = 0;
-                        for (int dk = -K2; dk <= K2; dk++)
-                            for (int dl = -K2; dl <= K2; dl++) {
-                                int ni = i+dk, nj = j+dl;
-                                if (ni >= 0 && ni < W && nj >= 0 && nj < H) {
-                                    int nidx = nj*W + ni;
-                                    s += refined[nidx] * psf[(dl+K2)*K + (dk+K2)];
-                                }
-                            }
-                        conv[idx] = s;
-                    }
-                }
-                for (int idx = 0; idx < W*H; idx++) {
-                    if (occupancy[idx] != Occupancy::Free) continue;
-                    if (conv[idx] > 1e-10) refined[idx] *= hitMap[idx] / conv[idx];
-                }
-            }
-
-            // Find peak of refined map
-            double maxVal = 0;
-            int peakIdx = 0;
-            for (int idx = 0; idx < W*H; idx++) {
-                if (occupancy[idx] == Occupancy::Free && refined[idx] > maxVal) {
-                    maxVal = refined[idx];
-                    peakIdx = idx;
-                }
-            }
-            if (maxVal > 0) {
-                Vector2 sdrEst = gridMetadata.indicesToCoordinates(peakIdx % W, peakIdx / W);
-                // FIX: unconditional SDR (no GT leakage)
-                GSL_INFO("[SDR] peak=({:.2f},{:.2f}) wind_dir={:.2f}",
-                         sdrEst.x, sdrEst.y, avg_wdir);
-                sourceLocation.x = sdrEst.x;
-                sourceLocation.y = sdrEst.y;
-            }
-        }
-
-double error = sqrt(pow(resultLogging.sourcePositionGT.x - sourceLocation.x, 2) +
-                           pow(resultLogging.sourcePositionGT.y - sourceLocation.y, 2));
-        double errorAll = sqrt(pow(resultLogging.sourcePositionGT.x - sourceLocationAll.x, 2) +
-                              pow(resultLogging.sourcePositionGT.y - sourceLocationAll.y, 2));
-
-        std::string resultString = fmt::format("RESULT: Success={}, t={:.2f}, err={:.2f}, WCC={}, WRSD={}",
-                                               (int)result, search_t, error,
+        std::string resultString = fmt::format("RESULT: status={}, method={}, t={:.2f}, err={:.3f}, estimator={}, WCC={}, WRSD={}",
+                                               status, settings.method.method_id, search_t, error, selectedEstimator,
                                                settings.declaration.useWCC, settings.declaration.useWRSD);
         GSL_INFO_COLOR(fmt::terminal_color::blue, "{}", resultString);
 
+        // Legacy server output retained for compatibility with existing benchmark_runner parsing:
+        // [FAILED] navigationTime search_t errorAll error iterations variance
         if (resultLogging.resultsFile != "")
         {
             std::ofstream file;
             file.open(resultLogging.resultsFile, std::ios_base::app);
             if (result != GSLResult::Success)
                 file << "FAILED ";
-            file << resultLogging.navigationTime << " " << search_t << " " << errorAll << " " << error << " " << iterationsCounter << " "
-                 << Utils::Variance(Grid2D<double>(sourceProbability, occupancy, gridMetadata)) << "\n";
+            file << resultLogging.navigationTime << " " << search_t << " " << errorAll << " " << error << " "
+                 << iterationsCounter << " " << mapVar << "\n";
             file.close();
+
+            // Audit CSV: richer, headered, and safe for statistical analysis. GT appears only here,
+            // after final estimate has been fixed.
+            const std::string auditPath = resultLogging.resultsFile + ".audit.csv";
+            const bool needHeader = fileIsEmptyOrMissing(auditPath);
+            std::ofstream audit(auditPath, std::ios_base::app);
+            if (audit.good())
+            {
+                if (needHeader)
+                {
+                    audit << "status,method_id,search_time_s,navigation_time_s,iterations,variance,"
+                          << "final_error_m,error_expected_m,final_x,final_y,map_x,map_y,expected_x,expected_y,"
+                          << "selected_estimator,pwc_enabled,psde_online_enabled,psde_final_enabled,sdr_enabled,"
+                          << "bwe_enabled,pgpt_enabled,hce_enabled,hce_hit_count,hce_x,hce_y,peak_gas,peak_x,peak_y,"
+                          << "psde_valid,psde_distance_m,psde_spread_m,psde_sigma_z,psde_x,psde_y,sdr_x,sdr_y,sdr_peak_ratio,"
+                          << "gt_x,gt_y\n";
+                }
+                audit << status << "," << settings.method.method_id << "," << search_t << ","
+                      << resultLogging.navigationTime << "," << iterationsCounter << "," << mapVar << ","
+                      << error << "," << errorAll << "," << sourceLocation.x << "," << sourceLocation.y << ","
+                      << mapEstimate.x << "," << mapEstimate.y << "," << sourceLocationAll.x << "," << sourceLocationAll.y << ","
+                      << selectedEstimator << "," << (settings.pwc.enabled ? 1 : 0) << ","
+                      << (settings.method.psde_online_enabled ? 1 : 0) << ","
+                      << (settings.method.psde_final_enabled ? 1 : 0) << ","
+                      << (settings.simulation.sdr_enabled ? 1 : 0) << ","
+                      << (settings.method.bwe_enabled ? 1 : 0) << ","
+                      << (settings.method.pgpt_enabled ? 1 : 0) << ","
+                      << (settings.method.hce_enabled ? 1 : 0) << ","
+                      << hce_hit_count << "," << hce_x << "," << hce_y << ","
+                      << peakGasConcentration << "," << (hasPeakGas ? peakGasPosition.x : std::numeric_limits<double>::quiet_NaN()) << ","
+                      << (hasPeakGas ? peakGasPosition.y : std::numeric_limits<double>::quiet_NaN()) << ","
+                      << (psde.valid ? 1 : 0) << "," << psde.distance << "," << psde.spread << "," << psde.sigma_z << ","
+                      << (psde.valid ? psde.x : std::numeric_limits<double>::quiet_NaN()) << ","
+                      << (psde.valid ? psde.y : std::numeric_limits<double>::quiet_NaN()) << ","
+                      << sdr_x << "," << sdr_y << "," << sdr_peak_ratio << ","
+                      << resultLogging.sourcePositionGT.x << "," << resultLogging.sourcePositionGT.y << "\n";
+            }
         }
         else
             GSL_WARN("No file provided for logging result.");
@@ -473,5 +683,6 @@ double error = sqrt(pow(resultLogging.sourcePositionGT.x - sourceLocation.x, 2) 
         else
             GSL_WARN("No file provided for logging path.");
     }
+
 
 } // namespace GSL

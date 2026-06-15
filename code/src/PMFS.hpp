@@ -64,10 +64,12 @@ namespace GSL
         Vector2 peakGasPosition = {0, 0};
         bool hasPeakGas = false;
         
-        // HCE: Hit Centroid Estimator (sensor network localization)
+        // HCE/PSDE/SDR hit statistics. These are collected only when their flags are enabled.
         double hce_weighted_x = 0.0;
         double hce_weighted_y = 0.0;
         double hce_weight_mass = 0.0;
+        double hce_weighted_x2 = 0.0;  // sum(C_i * x_i^2)
+        double hce_weighted_y2 = 0.0;  // sum(C_i * y_i^2)
         double hce_wind_sin_accum = 0.0;
         double hce_wind_cos_accum = 0.0;
         double hce_wind_speed_accum = 0.0;
@@ -107,14 +109,29 @@ namespace GSL
         double last_windSpeed{0.0};
         double last_windDirection{0.0};
 
+        // BWE wind-smoothing state. Class members avoid cross-run contamination.
+        bool bwe_initialized{false};
+        double bwe_ema_sin{0.0};
+        double bwe_ema_cos{1.0};
+        double bwe_ema_speed{0.0};
+        int number_of_updates{0};
+
+
         // PWC: Plume Wind Correction
         std::unique_ptr<uav_gsl_pwc::PwcCorrector> pwcCorrector_;
 
         // TDC: Temporal Deconvolution state
         double tdc_prev_concentration{0.0};
 
-        // MAC: Multi-Altitude Constraint state
+        // PSDE legacy state
         double mac_estimated_distance{-1.0};
+
+        // BAPR: boundary distance transform cache
+        std::vector<double> bapr_distance_field_;
+        bool bapr_dtf_computed_{false};
+
+        // HSPB: vote grid for visualization/debug
+        std::vector<double> hspb_vote_grid_;
 
         IF_GUI(PMFS_internal::UI ui;)
     };
