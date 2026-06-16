@@ -97,20 +97,20 @@ namespace GSL
 #endif
         stateMachine.forceSetState(waitForMapState.get());
 
-        // PWC: Initialize Plume Wind Correction (moved from processGasAndWindMeasurements)
-        {
-            uav_gsl_pwc::Config pcfg;
-            pcfg.enabled = settings.pwc.enabled;
-            pcfg.beta = settings.pwc.beta;
-            pcfg.max_correction = settings.pwc.max_correction;
-            pcfg.min_wind = settings.pwc.min_wind;
-            pcfg.use_adaptive = settings.pwc.use_adaptive;
-            pcfg.plume_scale_factor = settings.pwc.plume_scale_factor;
-            pcfg.wind_vector_is_flow_to = settings.pwc.wind_vector_is_flow_to;
-            pcfg.log_file = settings.pwc.log_file;
-            pwcCorrector_ = std::make_unique<uav_gsl_pwc::PwcCorrector>(pcfg);
-            GSL_INFO("[PWC] Init in Initialize() enabled={} beta={}", pcfg.enabled, pcfg.beta);
-        }
+// DISABLED_OLD_PWC:         // PWC: Initialize Plume Wind Correction (moved from processGasAndWindMeasurements)
+// DISABLED_OLD_PWC:         {
+// DISABLED_OLD_PWC:             uav_gsl_pwc::Config pcfg;
+// DISABLED_OLD_PWC:             pcfg.enabled = settings.pwc.enabled;
+// DISABLED_OLD_PWC:             pcfg.beta = settings.pwc.beta;
+// DISABLED_OLD_PWC:             pcfg.max_correction = settings.pwc.max_correction;
+// DISABLED_OLD_PWC:             pcfg.min_wind = settings.pwc.min_wind;
+// DISABLED_OLD_PWC:             pcfg.use_adaptive = settings.pwc.use_adaptive;
+// DISABLED_OLD_PWC:             pcfg.plume_scale_factor = settings.pwc.plume_scale_factor;
+// DISABLED_OLD_PWC:             pcfg.wind_vector_is_flow_to = settings.pwc.wind_vector_is_flow_to;
+// DISABLED_OLD_PWC:             pcfg.log_file = settings.pwc.log_file;
+// DISABLED_OLD_PWC:             pwcCorrector_ = std::make_unique<uav_gsl_pwc::PwcCorrector>(pcfg);
+// DISABLED_OLD_PWC:             GSL_INFO("[PWC] Init in Initialize() enabled={} beta={}", pcfg.enabled, pcfg.beta);
+// DISABLED_OLD_PWC:         }
     }
 
     void PMFS::declareParameters()
@@ -210,6 +210,21 @@ namespace GSL
         settings.pwc.plume_scale_factor = getParam<double>("pwc_plume_scale_factor", 1.0);
         settings.pwc.wind_vector_is_flow_to = getParam<bool>("wind_vector_is_flow_to", true);
         settings.pwc.log_file = getParam<std::string>("pwc_log_file", "");
+
+        // PWC: Initialize after parameters are read
+        {
+            uav_gsl_pwc::Config pcfg;
+            pcfg.enabled = settings.pwc.enabled;
+            pcfg.beta = settings.pwc.beta;
+            pcfg.max_correction = settings.pwc.max_correction;
+            pcfg.min_wind = settings.pwc.min_wind;
+            pcfg.use_adaptive = settings.pwc.use_adaptive;
+            pcfg.plume_scale_factor = settings.pwc.plume_scale_factor;
+            pcfg.wind_vector_is_flow_to = settings.pwc.wind_vector_is_flow_to;
+            pcfg.log_file = settings.pwc.log_file;
+            pwcCorrector_ = std::make_unique<uav_gsl_pwc::PwcCorrector>(pcfg);
+            GSL_INFO("[PWC] Init (post-params) enabled={} beta={}", pcfg.enabled, pcfg.beta);
+        }
 
         // TDC: disabled by default. Requires timestamp-based validation before use in the paper.
         settings.tdc.enabled = getParam<bool>("tdc_enabled", false);
