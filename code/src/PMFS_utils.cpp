@@ -559,18 +559,38 @@ namespace GSL
                 Vector2 sdrEst = gridMetadata.indicesToCoordinates(peakIdx % W, peakIdx / W);
                 sdr_x = sdrEst.x;
                 sdr_y = sdrEst.y;
-                // DQA: SDR override based on RAW hit count (pre-TDC).
-                // This prevents TDC from inflating the hit count and forcing SDR on corrupted data.
+                // ITS: Inertia Tensor Selection. From astronomical image analysis.
+                // Computes eccentricity of hit distribution to adaptively control SDR.
+                // Circular hits (near source) -> skip SDR. Elongated (far source) -> use SDR.
                 if (raw_hce_hit_count >= 5) {
-                    sourceLocation = sdrEst;
-                    selectedEstimator = "sdr";
-                    GSL_INFO("[DQA] SDR override (raw_hits={}, peak={:.4f})", raw_hce_hit_count, sdr_peak_ratio);
-                } else {
-                    GSL_INFO("[DQA] SDR skipped (raw_hits={}), keeping {}", raw_hce_hit_count, selectedEstimator);
-                }
-                GSL_INFO("[SDR-final] est=({:.2f},{:.2f}) peak_ratio={:.6f}", sdr_x, sdr_y, sdr_peak_ratio);
-            }
-        }
+                    double cx = 0.0, cy = 0.0;
+                    for (auto& p : raw_hit_positions_) { cx += p.first; cy += p.second; }
+                    int n = raw_hit_positions_.size();
+                    cx /= n; cy /= n;
+                    double mxx = 0.0, myy = 0.0, mxy = 0.0;
+                    for (auto& p : raw_hit_positions_) {
+                        double dx = p.first - cx, dy = p.second - cy;
+                        mxx += dx * dx;
+                        myy += dy * dy;
+                        mxy += dx * dy;
+                    }
+                    mxx /= n; myy /= n; mxy /= n;
+                    double trace = mxx + myy;
+                    double det = mxx * myy - mxy * mxy;
+                    double disc = std::sqrt(std::max(0.0, trace * trace / 4.0 - det));
+                    double lambda1 = trace / 2.0 + disc;
+                    double lambda2 = trace / 2.0 - disc;
+                    double ecc = (lambda1 > 1e-10) ? std::sqrt(1.0 - lambda2 / lambda1) : 0.0;
+                    const double ecc_threshold = 0.7;
+                    // Continuous blend: w=ecc interpolates between baseline and SDR.
+                    // ecc~0 (circular) -> keep baseline; ecc~1 (elongated) -> use SDR.
+                    double total_var = mxx + myy;
+                    double var_norm = std::min(1.0, total_var / 9.0);
+                    double w = ecc * var_norm;
+                    sourceLocation.x = (1.0 - w) * sourceLocation.x + w * sdrEst.x;
+                    sourceLocation.y = (1.0 - w) * sourceLocation.y + w * sdrEst.y;
+                    selectedEstimator = "its_blend";
+                    GSL_INFO("[ITS] blend: ecc={:.3f} var={:.3f} varN={:.3f} w={:.3f} est=({:.2f},{:.2f})", ecc, total_var, var_norm, w, sourceLocation.x, sourceLocation.y);
 
         // 5) Optional PWC as a final post-processing correction. No GT is used.
         if (pwcCorrector_ && pwcCorrector_->config().enabled)
@@ -681,4 +701,7 @@ namespace GSL
     }
 
 
+}
 } // namespace GSL
+}
+}
