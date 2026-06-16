@@ -3,7 +3,6 @@
 #include <gsl_server/algorithms/Common/Utils/Math.hpp>
 #include <gsl_server/algorithms/Common/Utils/Pointers.hpp>
 #include <gsl_server/algorithms/PMFS/PMFS.hpp>
-#include <gsl_server/algorithms/PMFS/modules/BaprHspb.hpp>
 #include <cmath>
 #include <algorithm>
 #include <gsl_server/algorithms/PMFS/PMFSLib.hpp>
@@ -57,6 +56,15 @@ namespace GSL
         tdc_prev_concentration = 0.0;
         mac_estimated_distance = -1.0;
         bwe_initialized = false;
+        total_gas_detections_ = 0;
+        raw_hit_positions_.clear();
+        raw_hit_concentrations_.clear();
+        raw_peakGasConcentration = 0.0;
+        raw_peakGasPosition = {0,0};
+        raw_hasPeakGas = false;
+        raw_hce_hit_count = 0;
+        asa_update_count_ = 0;
+        asa_accumulated_map_.clear();
         bwe_ema_sin = 0.0;
         bwe_ema_cos = 1.0;
         bwe_ema_speed = 0.0;
@@ -173,19 +181,19 @@ namespace GSL
         settings.simulation.sdr_min_hits = getParam<int>("sdr_min_hits", 5);
         settings.simulation.sdr_min_peak_mass_ratio = getParam<double>("sdr_min_peak_mass_ratio", 0.0);
 
-        // BAPR params
-        settings.simulation.bapr_enabled = getParam<bool>("bapr_enabled", false);
-        settings.simulation.bapr_wall_penalty = getParam<double>("bapr_wall_penalty", 2.0);
-        settings.simulation.bapr_wall_distance = getParam<double>("bapr_wall_distance", 2.0);
-        settings.simulation.bapr_sigmoid_steepness = getParam<double>("bapr_sigmoid_steepness", 3.0);
-        settings.simulation.bapr_dtf_radius = getParam<int>("bapr_dtf_radius", 10);
+        // ASA params
+        settings.simulation.asa_enabled = getParam<bool>("asa_enabled", false);
+        settings.simulation.asa_ema_alpha = getParam<double>("asa_ema_alpha", 0.15);
 
-        // HSPB params
-        settings.simulation.hspb_enabled = getParam<bool>("hspb_enabled", false);
-        settings.simulation.hspb_min_hits = getParam<int>("hspb_min_hits", 3);
-        settings.simulation.hspb_distance_scale = getParam<double>("hspb_distance_scale", 1.0);
-        settings.simulation.hspb_angular_spread = getParam<double>("hspb_angular_spread", 0.35);
-        settings.simulation.hspb_kernel_radius = getParam<int>("hspb_kernel_radius", 3);
+        // MHC params
+        settings.simulation.mhc_enabled = getParam<bool>("mhc_enabled", false);
+        settings.simulation.mhc_open_radius = getParam<int>("mhc_open_radius", 1);
+        settings.simulation.mhc_close_radius = getParam<double>("mhc_close_radius", 2.0);
+
+        // SPW params
+        settings.simulation.spw_enabled = getParam<bool>("spw_enabled", false);
+        settings.simulation.spw_gamma = getParam<double>("spw_gamma", 0.5);
+        settings.simulation.spw_min_updates = getParam<int>("spw_min_updates", 3);
 
         GSL_INFO("[METHOD] id={} BWE={} PGPT={} HCE={} PWC={} PSDE_online={} PSDE_final={} SDR={} wind_flow_to={}",
                  settings.method.method_id, settings.method.bwe_enabled, settings.method.pgpt_enabled,
@@ -267,6 +275,18 @@ namespace GSL
         const double raw_concentration = concentration;
         const double raw_wind_speed = windSpeed;
         const double raw_wind_direction = windDirection;
+        
+        // Track raw (pre-TDC) gas hits for SDR
+        if (raw_concentration > thresholdGas) {
+            raw_hit_positions_.push_back({currentRobotPosition.x, currentRobotPosition.y});
+            raw_hit_concentrations_.push_back(raw_concentration);
+            raw_hce_hit_count++;
+            if (raw_concentration > raw_peakGasConcentration) {
+                raw_peakGasConcentration = raw_concentration;
+                raw_peakGasPosition = currentRobotPosition;
+                raw_hasPeakGas = true;
+            }
+        }
 
         if (movingState) {
             auto* pmfs_moving = dynamic_cast<MovingStatePMFS*>(movingState.get());
@@ -275,17 +295,31 @@ namespace GSL
             }
         }
 
-        // TDC: first-order inverse filter. Disabled by default; use only in dedicated delay experiments.
-        if (settings.tdc.enabled)
+        // TDC: Adaptive temporal deconvolution. Gain decays with accumulated gas detections.
+        // In sparse-hit regime (total_detections_ ~ 0): high tau boosts weak signals above threshold.
+        // In hit-rich regime (total_detections_ > 20): low tau avoids interfering with SDR.
+        // Near-threshold gating: TDC only boosts signals that are close to but below threshold.
+        // This prevents TDC from corrupting already-strong signals (House02 scenario).
+        const bool tdc_near_threshold = raw_concentration > thresholdGas * 0.2 
+                                      && raw_concentration < thresholdGas * 1.5;
+        if (settings.tdc.enabled && (!settings.simulation.mhc_enabled || tdc_near_threshold))
         {
             const double dt = std::max(settings.simulation.deltaTime, 0.1);
-            const double dCdt = (concentration - tdc_prev_concentration) / dt;
-            const double corrected = std::max(0.0, concentration + settings.tdc.tau * dCdt * settings.tdc.damping);
-            concentration = (1.0 - settings.tdc.sharpen_strength) * concentration
+            const double dCdt = (raw_concentration - tdc_prev_concentration) / dt;  // BUGFIX: use raw, not corrected
+            double tau_eff = settings.tdc.tau;
+            if (settings.tdc.adaptive) {
+                const double decay = std::exp(-total_gas_detections_ / std::max(1.0, settings.tdc.tau_decay_n0));
+                tau_eff = settings.tdc.tau_min + (settings.tdc.tau - settings.tdc.tau_min) * decay;
+            }
+            const double corrected = std::max(0.0, raw_concentration + tau_eff * dCdt * settings.tdc.damping);
+            concentration = (1.0 - settings.tdc.sharpen_strength) * raw_concentration
                           + settings.tdc.sharpen_strength * corrected;
-            tdc_prev_concentration = concentration;
+            tdc_prev_concentration = raw_concentration;  // BUGFIX: store raw for next derivative
+            if (raw_concentration > thresholdGas)
+                total_gas_detections_++;
             if (settings.method.verbose_debug)
-                GSL_INFO("[TDC] raw={:.4f} corrected={:.4f} dCdt={:.6f}", raw_concentration, concentration, dCdt);
+                GSL_INFO("[TDC] raw={:.4f} corrected={:.4f} dCdt={:.6f} tau={:.1f} hits={}",
+                         raw_concentration, concentration, dCdt, tau_eff, total_gas_detections_);
         }
 
         // BWE: optional EMA wind smoother. It is not Bayesian; it is ablated separately.
@@ -336,10 +370,10 @@ namespace GSL
         const bool need_peak = settings.method.pgpt_enabled || settings.method.hce_enabled ||
                                settings.method.psde_online_enabled || settings.method.psde_final_enabled ||
                                settings.simulation.sdr_enabled || settings.pwc.enabled ||
-                               settings.simulation.hspb_enabled;
+                               settings.simulation.spw_enabled;
         const bool need_hit_stats = settings.method.hce_enabled || settings.method.psde_online_enabled ||
                                     settings.method.psde_final_enabled || settings.simulation.sdr_enabled ||
-                                    settings.simulation.hspb_enabled;
+                                    settings.simulation.spw_enabled;
 
         if (need_peak && concentration > settings.method.hce_min_concentration && concentration > peakGasConcentration)
         {
@@ -480,11 +514,17 @@ namespace GSL
             {
                 simulations.updateSourceProbability(settings.simulation.refineFraction);
 
-                // BAPR: reshape sourceProbability to penalize wall-adjacent peaks
-                if (settings.simulation.bapr_enabled) {
-                    applyBAPR(sourceProbability, occupancy, gridMetadata,
-                              settings.simulation, bapr_distance_field_, bapr_dtf_computed_);
-                    GSL_INFO("[BAPR-online] reshaped sourceProbability, iter={}", iterationsCounter);
+                // ASA: accumulate temporal average of sourceProbability
+                if (settings.simulation.asa_enabled) {
+                    if (asa_accumulated_map_.empty()) {
+                        asa_accumulated_map_ = sourceProbability;
+                    } else {
+                        const double alpha = settings.simulation.asa_ema_alpha;
+                        for (size_t i = 0; i < sourceProbability.size(); i++)
+                            asa_accumulated_map_[i] = (1.0 - alpha) * asa_accumulated_map_[i] + alpha * sourceProbability[i];
+                    }
+                    asa_update_count_++;
+                    GSL_INFO("[ASA-online] accumulated {} updates, iter={}", asa_update_count_, iterationsCounter);
                 }
             }
 

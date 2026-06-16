@@ -7,7 +7,6 @@
 #include <numeric>
 #include <limits>
 #include <gsl_server/algorithms/PMFS/PMFS.hpp>
-#include <gsl_server/algorithms/PMFS/modules/BaprHspb.hpp>
 
 namespace GSL
 {
@@ -102,127 +101,59 @@ namespace GSL
 
 
     //========================================
-    // HSPB: Hough-Inspired Spatial Back-Projection
-    //   Concept borrowed from Hough Transform in computer vision.
-    //   Accumulates per-hit upwind directional votes into a source likelihood grid.
-    //   Unlike PSDE (single centroid + single backtrack), robust to outlier hits.
-    //========================================
-    struct HspbEstimate
-    {
-        bool valid{false};
-        double x{0.0};
-        double y{0.0};
-        double peak_value{0.0};
-        double entropy{0.0};
-        int vote_count{0};
-    };
-
-    static HspbEstimate computeHspbEstimate(
-        const PMFS_internal::SimulationSettings& simSettings,
-        int hit_count,
-        double weight_mass,
-        double weighted_x,
-        double weighted_y,
-        double wind_sin_accum,
-        double wind_cos_accum,
-        double wind_speed_accum,
-        bool hasPeakGas,
-        const Vector2& peakGasPosition,
-        double peakGasConcentration_val,
-        const std::vector<Occupancy>& occ,
-        const Grid2DMetadata& meta)
-    {
-        HspbEstimate out;
-        if (!simSettings.hspb_enabled || hit_count < simSettings.hspb_min_hits ||
-            weight_mass <= 0.0 || !hasPeakGas)
-            return out;
-
-        const int W = meta.dimensions.x;
-        const int H = meta.dimensions.y;
-        std::vector<double> votes(W * H, 0.0);
-
-        const double avg_wdir = std::atan2(wind_sin_accum / std::max(1, hit_count),
-                                           wind_cos_accum / std::max(1, hit_count));
-        const double avg_speed = std::max(wind_speed_accum / std::max(1, hit_count), 0.001);
-        const double upwind_dir = avg_wdir + M_PI;
-        const double cos_up = std::cos(upwind_dir);
-        const double sin_up = std::sin(upwind_dir);
-
-        const double cx = weighted_x / weight_mass;
-        const double cy = weighted_y / weight_mass;
-        const double d_est = simSettings.hspb_distance_scale * avg_speed * std::sqrt((double)hit_count);
-
-        // Vote from centroid
-        {
-            const double vx = cx + cos_up * d_est;
-            const double vy = cy + sin_up * d_est;
-            auto vidx = meta.coordinatesToIndices(vx, vy);
-            const int vi = std::max(0, std::min(W - 1, vidx.x));
-            const int vj = std::max(0, std::min(H - 1, vidx.y));
-            const int kr = simSettings.hspb_kernel_radius;
-            for (int dj = -kr; dj <= kr; dj++)
-                for (int di = -kr; di <= kr; di++) {
-                    int ni = vi + di, nj = vj + dj;
-                    if (ni >= 0 && ni < W && nj >= 0 && nj < H) {
-                        int nidx = nj * W + ni;
-                        if (occ[nidx] == Occupancy::Free) {
-                            double d2 = (di * di + dj * dj) / std::max(1.0, (double)(kr * kr));
-                            votes[nidx] += weight_mass * std::exp(-0.5 * d2);
-                        }
-                    }
-                }
-        }
-
-        // Vote from peak gas position
-        if (hasPeakGas) {
-            const double px = peakGasPosition.x + cos_up * d_est * 0.5;
-            const double py = peakGasPosition.y + sin_up * d_est * 0.5;
-            auto pidx = meta.coordinatesToIndices(px, py);
-            const int pi_c = std::max(0, std::min(W - 1, pidx.x));
-            const int pj_c = std::max(0, std::min(H - 1, pidx.y));
-            const int kr = simSettings.hspb_kernel_radius;
-            for (int dj = -kr; dj <= kr; dj++)
-                for (int di = -kr; di <= kr; di++) {
-                    int ni = pi_c + di, nj = pj_c + dj;
-                    if (ni >= 0 && ni < W && nj >= 0 && nj < H) {
-                        int nidx = nj * W + ni;
-                        if (occ[nidx] == Occupancy::Free) {
-                            double d2 = (di * di + dj * dj) / std::max(1.0, (double)(kr * kr));
-                            votes[nidx] += peakGasConcentration_val * 2.0 * std::exp(-0.5 * d2);
-                        }
-                    }
-                }
-        }
-
-        double maxVal = 0.0, sumVal = 0.0;
-        int peakIdx = 0;
-        for (int idx = 0; idx < W * H; idx++) {
-            if (occ[idx] != Occupancy::Free) continue;
-            sumVal += votes[idx];
-            if (votes[idx] > maxVal) { maxVal = votes[idx]; peakIdx = idx; }
-        }
-        if (maxVal <= 0.0 || sumVal <= 0.0) return out;
-
-        out.valid = true;
-        out.x = meta.indicesToCoordinates(peakIdx % W, peakIdx / W).x;
-        out.y = meta.indicesToCoordinates(peakIdx % W, peakIdx / W).y;
-        out.peak_value = maxVal;
-        out.vote_count = hit_count;
-
-        double entropy = 0.0;
-        for (int idx = 0; idx < W * H; idx++) {
-            if (occ[idx] != Occupancy::Free || votes[idx] <= 0.0) continue;
-            double p = votes[idx] / sumVal;
-            entropy -= p * std::log(p + 1e-12);
-        }
-        out.entropy = entropy;
-        return out;
-    }
-
     static bool fileIsEmptyOrMissing(const std::string& path)
     {
         std::ifstream in(path);
         return !in.good() || in.peek() == std::ifstream::traits_type::eof();
+    }
+
+
+    //========================================
+    // MHC: Morphological Hit-map Cleanup
+    //   Concept from image processing morphology (Serra, 1982).
+    //   Opening removes isolated noise hits; closing fills gaps in hit clusters.
+    //   Applied to the binary hit map before SDR deconvolution.
+    //========================================
+    static std::vector<double> morphOpen(const std::vector<double>& src, int W, int H,
+                                         const std::vector<Occupancy>& occ, int radius)
+    {
+        // Erosion: min in neighborhood
+        std::vector<double> eroded(W * H, 0.0);
+        for (int j = 0; j < H; j++)
+            for (int i = 0; i < W; i++) {
+                int idx = j * W + i;
+                if (occ[idx] != Occupancy::Free) continue;
+                double minVal = src[idx];
+                for (int dj = -radius; dj <= radius; dj++)
+                    for (int di = -radius; di <= radius; di++) {
+                        int ni = i + di, nj = j + dj;
+                        if (ni >= 0 && ni < W && nj >= 0 && nj < H) {
+                            int nidx = nj * W + ni;
+                            if (occ[nidx] == Occupancy::Free)
+                                minVal = std::min(minVal, src[nidx]);
+                        }
+                    }
+                eroded[idx] = minVal;
+            }
+        // Dilation: max in neighborhood
+        std::vector<double> opened(W * H, 0.0);
+        for (int j = 0; j < H; j++)
+            for (int i = 0; i < W; i++) {
+                int idx = j * W + i;
+                if (occ[idx] != Occupancy::Free) continue;
+                double maxVal = eroded[idx];
+                for (int dj = -radius; dj <= radius; dj++)
+                    for (int di = -radius; di <= radius; di++) {
+                        int ni = i + di, nj = j + dj;
+                        if (ni >= 0 && ni < W && nj >= 0 && nj < H) {
+                            int nidx = nj * W + ni;
+                            if (occ[nidx] == Occupancy::Free)
+                                maxVal = std::max(maxVal, eroded[nidx]);
+                        }
+                    }
+                opened[idx] = maxVal;
+            }
+        return opened;
     }
 
     struct PsdeEstimate
@@ -389,10 +320,12 @@ namespace GSL
         double search_t = time_spent.seconds();
         const double mapVar = Utils::Variance(Grid2D<double>(sourceProbability, occupancy, gridMetadata));
 
-        // 0) BAPR: reshape sourceProbability before peak extraction
-        if (settings.simulation.bapr_enabled)
-            applyBAPR(sourceProbability, occupancy, gridMetadata,
-                      settings.simulation, bapr_distance_field_, bapr_dtf_computed_);
+        // 0) ASA: use accumulated temporal average for final estimate
+        if (settings.simulation.asa_enabled && !asa_accumulated_map_.empty() && asa_update_count_ > 0)
+        {
+            sourceProbability = asa_accumulated_map_;
+            GSL_INFO("[ASA-final] using accumulated average over {} updates", asa_update_count_);
+        }
 
         // 1) Base PMFS source estimate. This is the clean map-based estimate.
         Vector2 mapEstimate;
@@ -463,33 +396,75 @@ namespace GSL
         }
 
 
-        // 3b) Optional HSPB final estimator. Hough-inspired voting replaces PSDE.
-        HspbEstimate hspb = computeHspbEstimate(settings.simulation,
-                                                hce_hit_count, hce_weight_mass,
-                                                hce_weighted_x, hce_weighted_y,
-                                                hce_wind_sin_accum, hce_wind_cos_accum, hce_wind_speed_accum,
-                                                hasPeakGas, peakGasPosition, peakGasConcentration,
-                                                occupancy, gridMetadata);
-        if (settings.simulation.hspb_enabled && hspb.valid)
+        // 3b) Optional SPW final estimator. Matched-filter weighting of sourceProbability by hitMap.
+        if (settings.simulation.spw_enabled && hasPeakGas &&
+            iterationsCounter >= (uint)settings.simulation.spw_min_updates)
         {
-            GSL_INFO("[HSPB-final] est=({:.2f},{:.2f}) votes={} entropy={:.3f} peak={:.4f}",
-                     hspb.x, hspb.y, hspb.vote_count, hspb.entropy, hspb.peak_value);
-            sourceLocation.x = hspb.x;
-            sourceLocation.y = hspb.y;
-            selectedEstimator = "hspb";
+            const int W = gridMetadata.dimensions.x;
+            const int H = gridMetadata.dimensions.y;
+            std::vector<double> weighted(W * H, 0.0);
+            double total = 0.0;
+            const double gamma = settings.simulation.spw_gamma;
+
+            // Build a normalized hit-likelihood map from peak gas position
+            // Using Gaussian blob centered at peak gas location
+            // Use raw (pre-TDC) peak for SDR blob construction
+            const Vector2& sdr_peak = raw_hasPeakGas ? raw_peakGasPosition : peakGasPosition;
+            const double sdr_peak_conc = raw_hasPeakGas ? raw_peakGasConcentration : peakGasConcentration;
+            auto pidx = gridMetadata.coordinatesToIndices(sdr_peak);
+            int pi = std::max(0, std::min(W - 1, pidx.x));
+            int pj = std::max(0, std::min(H - 1, pidx.y));
+            std::vector<double> hitLikelihood(W * H, 1e-8);
+            const int radius = 8;
+            for (int dj = -radius; dj <= radius; dj++)
+                for (int di = -radius; di <= radius; di++) {
+                    int ni = pi + di, nj = pj + dj;
+                    if (ni >= 0 && ni < W && nj >= 0 && nj < H) {
+                        int idx = nj * W + ni;
+                        if (occupancy[idx] == Occupancy::Free) {
+                            double d2 = (di * di + dj * dj) / std::max(1.0, (double)(radius * radius / 4.0));
+                            hitLikelihood[idx] = peakGasConcentration * std::exp(-0.5 * d2) + 1e-8;
+                        }
+                    }
+                }
+
+            // Element-wise: weighted = sourceProb * hitLikelihood^gamma
+            for (int idx = 0; idx < W * H; idx++) {
+                if (occupancy[idx] != Occupancy::Free) continue;
+                weighted[idx] = sourceProbability[idx] * std::pow(hitLikelihood[idx], gamma);
+                total += weighted[idx];
+            }
+
+            if (total > 0.0) {
+                // Normalize and find peak
+                double maxVal = 0.0;
+                int peakIdx = 0;
+                for (int idx = 0; idx < W * H; idx++) {
+                    if (occupancy[idx] != Occupancy::Free) continue;
+                    weighted[idx] /= total;
+                    if (weighted[idx] > maxVal) { maxVal = weighted[idx]; peakIdx = idx; }
+                }
+                Vector2 spwEst = gridMetadata.indicesToCoordinates(peakIdx % W, peakIdx / W);
+                sourceLocation = spwEst;
+                selectedEstimator = "spw";
+                GSL_INFO("[SPW-final] est=({:.2f},{:.2f}) gamma={:.2f}", spwEst.x, spwEst.y, gamma);
+            }
         }
 
         // 4) Optional SDR final estimator. No GT gate is used; only non-GT confidence criteria are allowed.
         double sdr_x = std::numeric_limits<double>::quiet_NaN();
         double sdr_y = std::numeric_limits<double>::quiet_NaN();
         double sdr_peak_ratio = 0.0;
-        if (settings.simulation.sdr_enabled && hce_hit_count >= settings.simulation.sdr_min_hits && hasPeakGas)
+        if (settings.simulation.sdr_enabled && hce_hit_count >= settings.simulation.sdr_min_hits && (raw_hasPeakGas || hasPeakGas))
         {
             int W = gridMetadata.dimensions.x;
             int H = gridMetadata.dimensions.y;
             std::vector<double> hitMap(W * H, 0.0);
 
-            auto pidx = gridMetadata.coordinatesToIndices(peakGasPosition);
+            // Use raw (pre-TDC) peak for SDR blob construction
+            const Vector2& sdr_peak = raw_hasPeakGas ? raw_peakGasPosition : peakGasPosition;
+            const double sdr_peak_conc = raw_hasPeakGas ? raw_peakGasConcentration : peakGasConcentration;
+            auto pidx = gridMetadata.coordinatesToIndices(sdr_peak);
             int pi = std::max(0, std::min(W - 1, pidx.x));
             int pj = std::max(0, std::min(H - 1, pidx.y));
             const int blob_radius = std::max(1, (int)std::ceil(settings.simulation.sdr_blob_radius));
@@ -500,9 +475,23 @@ namespace GSL
                         int idx = nj * W + ni;
                         if (occupancy[idx] == Occupancy::Free) {
                             double d2 = di * di + dj * dj;
-                            hitMap[idx] += peakGasConcentration * std::exp(-d2 / std::max(1.0, settings.simulation.sdr_blob_radius));
+                            hitMap[idx] += sdr_peak_conc * std::exp(-d2 / std::max(1.0, settings.simulation.sdr_blob_radius));
                         }
                     }
+                }
+            }
+
+            // MHC: adaptive morphological cleanup. Skip when hits are sparse.
+            if (settings.simulation.mhc_enabled && hce_hit_count >= 10) {
+                int nonzero = 0;
+                for (int idx = 0; idx < W * H; idx++)
+                    if (occupancy[idx] == Occupancy::Free && hitMap[idx] > 1e-10) nonzero++;
+                int mr = (nonzero > 10) ? std::max(1, settings.simulation.mhc_open_radius) : 0;
+                if (mr > 0) {
+                    hitMap = morphOpen(hitMap, W, H, occupancy, mr);
+                    GSL_INFO("[MHC-adapt] cleaned {} cells radius={}", nonzero, mr);
+                } else {
+                    GSL_INFO("[MHC-adapt] skipped ({} cells)", nonzero);
                 }
             }
 
@@ -570,8 +559,15 @@ namespace GSL
                 Vector2 sdrEst = gridMetadata.indicesToCoordinates(peakIdx % W, peakIdx / W);
                 sdr_x = sdrEst.x;
                 sdr_y = sdrEst.y;
-                sourceLocation = sdrEst;
-                selectedEstimator = "sdr";
+                // DQA: SDR override based on RAW hit count (pre-TDC).
+                // This prevents TDC from inflating the hit count and forcing SDR on corrupted data.
+                if (raw_hce_hit_count >= 5) {
+                    sourceLocation = sdrEst;
+                    selectedEstimator = "sdr";
+                    GSL_INFO("[DQA] SDR override (raw_hits={}, peak={:.4f})", raw_hce_hit_count, sdr_peak_ratio);
+                } else {
+                    GSL_INFO("[DQA] SDR skipped (raw_hits={}), keeping {}", raw_hce_hit_count, selectedEstimator);
+                }
                 GSL_INFO("[SDR-final] est=({:.2f},{:.2f}) peak_ratio={:.6f}", sdr_x, sdr_y, sdr_peak_ratio);
             }
         }

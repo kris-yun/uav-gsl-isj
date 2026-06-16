@@ -47,23 +47,29 @@ def generate_launch_description():
         arg("psde_final_enabled", "false"),
         arg("sdr_enabled", "false"),
         arg("tdc_enabled", "false"),
+        arg("tdc_adaptive", "true"),
+        arg("tdc_tau_min", "1.0"),
+        arg("tdc_tau_decay_n0", "15.0"),
         arg("bwe_enabled", "false"),
         arg("pgpt_enabled", "false"),
         arg("hce_enabled", "false"),
 
         # BAPR params
-        arg("bapr_enabled", "false"),
-        arg("bapr_wall_penalty", "2.0"),
-        arg("bapr_wall_distance", "2.0"),
-        arg("bapr_sigmoid_steepness", "3.0"),
-        arg("bapr_dtf_radius", "10"),
+        arg("asa_enabled", "false"),
+        
+        
+        
+        arg("asa_ema_alpha", "0.15"),
+        arg("mhc_enabled", "false"),
+        arg("mhc_open_radius", "1"),
+        arg("mhc_close_radius", "2.0"),
 
         # HSPB params
-        arg("hspb_enabled", "false"),
-        arg("hspb_min_hits", "3"),
-        arg("hspb_distance_scale", "1.0"),
-        arg("hspb_angular_spread", "0.35"),
-        arg("hspb_kernel_radius", "3"),
+        arg("spw_enabled", "false"),
+        arg("spw_gamma", "0.5"),
+        arg("spw_min_updates", "3"),
+        
+        
         arg("gt_debug_logging", "false"),
         arg("verbose_debug", "false"),
 
@@ -166,19 +172,25 @@ def generate_launch_description():
                 "psde_final_enabled": LaunchConfiguration("psde_final_enabled"),
                 "sdr_enabled": LaunchConfiguration("sdr_enabled"),
                 "tdc_enabled": LaunchConfiguration("tdc_enabled"),
+                "tdc_adaptive": LaunchConfiguration("tdc_adaptive"),
+                "tdc_tau_min": LaunchConfiguration("tdc_tau_min"),
+                "tdc_tau_decay_n0": LaunchConfiguration("tdc_tau_decay_n0"),
                 "bwe_enabled": LaunchConfiguration("bwe_enabled"),
                 "pgpt_enabled": LaunchConfiguration("pgpt_enabled"),
                 "hce_enabled": LaunchConfiguration("hce_enabled"),
-                "bapr_enabled": LaunchConfiguration("bapr_enabled"),
-                "bapr_wall_penalty": LaunchConfiguration("bapr_wall_penalty"),
-                "bapr_wall_distance": LaunchConfiguration("bapr_wall_distance"),
-                "bapr_sigmoid_steepness": LaunchConfiguration("bapr_sigmoid_steepness"),
-                "bapr_dtf_radius": LaunchConfiguration("bapr_dtf_radius"),
-                "hspb_enabled": LaunchConfiguration("hspb_enabled"),
-                "hspb_min_hits": LaunchConfiguration("hspb_min_hits"),
-                "hspb_distance_scale": LaunchConfiguration("hspb_distance_scale"),
-                "hspb_angular_spread": LaunchConfiguration("hspb_angular_spread"),
-                "hspb_kernel_radius": LaunchConfiguration("hspb_kernel_radius"),
+                "asa_enabled": LaunchConfiguration("asa_enabled"),
+                
+                
+                
+                "asa_ema_alpha": LaunchConfiguration("asa_ema_alpha"),
+                "mhc_enabled": LaunchConfiguration("mhc_enabled"),
+                "mhc_open_radius": LaunchConfiguration("mhc_open_radius"),
+                "mhc_close_radius": LaunchConfiguration("mhc_close_radius"),
+                "spw_enabled": LaunchConfiguration("spw_enabled"),
+                "spw_gamma": LaunchConfiguration("spw_gamma"),
+                "spw_min_updates": LaunchConfiguration("spw_min_updates"),
+                
+                
                 "gt_debug_logging": LaunchConfiguration("gt_debug_logging"),
                 "verbose_debug": LaunchConfiguration("verbose_debug"),
                 "wind_vector_is_flow_to": LaunchConfiguration("wind_vector_is_flow_to"),

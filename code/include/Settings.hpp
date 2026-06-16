@@ -71,19 +71,19 @@ namespace GSL::PMFS_internal
         int sdr_min_hits = 5;
         double sdr_min_peak_mass_ratio = 0.0;
 
-        // BAPR: Boundary-Aware Probability Reshaping (medical image segmentation distance transform)
-        bool bapr_enabled = false;
-        double bapr_wall_penalty = 2.0;
-        double bapr_wall_distance = 2.0;
-        double bapr_sigmoid_steepness = 3.0;
-        int bapr_dtf_radius = 10;
+        // ASA: Accumulated Source probability Averaging (temporal ensemble smoothing)
+        bool asa_enabled = false;
+        double asa_ema_alpha = 0.15;
 
-        // HSPB: Hough-Inspired Spatial Back-Projection (CV Hough Transform)
-        bool hspb_enabled = false;
-        int hspb_min_hits = 3;
-        double hspb_distance_scale = 1.0;
-        double hspb_angular_spread = 0.35;
-        int hspb_kernel_radius = 3;
+        // SPW: Source-Probability Weighting by hit-map (matched filtering)
+        bool spw_enabled = false;
+        double spw_gamma = 0.5;
+        int spw_min_updates = 3;
+
+        // MHC: Morphological Hit-map Cleanup (image processing morphology)
+        bool mhc_enabled = false;
+        int mhc_open_radius = 1;
+        double mhc_close_radius = 2;
 
         double proximity_weight = 0.5;
         double proximity_sigma = 3.0;
@@ -180,6 +180,9 @@ namespace GSL::PMFS_internal
             double tau{15.0};
             double damping{0.8};
             double sharpen_strength{0.5};
+            bool adaptive{true};
+            double tau_min{1.0};
+            double tau_decay_n0{15.0};
         } tdc;
 
         // PSDE: Plume Spatial Dispersion Estimator. Legacy launch name may still use mac_*.

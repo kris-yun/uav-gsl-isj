@@ -122,13 +122,23 @@ namespace GSL
 
         // TDC: Temporal Deconvolution state
         double tdc_prev_concentration{0.0};
+        int total_gas_detections_{0};
+        // Raw hit positions (before TDC modification) for SDR
+        std::vector<std::pair<double,double>> raw_hit_positions_;
+        std::vector<double> raw_hit_concentrations_;
+        // Raw peak gas (pre-TDC)
+        double raw_peakGasConcentration{0.0};
+        Vector2 raw_peakGasPosition{0,0};
+        bool raw_hasPeakGas{false};
+        int raw_hce_hit_count{0};
+        std::vector<double> mhc_cleaned_;
 
         // PSDE legacy state
         double mac_estimated_distance{-1.0};
 
-        // BAPR: boundary distance transform cache
-        std::vector<double> bapr_distance_field_;
-        bool bapr_dtf_computed_{false};
+        // ASA: Accumulated Source probability Averaging (temporal ensemble)
+        std::vector<double> asa_accumulated_map_;
+        int asa_update_count_{0};
 
         // HSPB: vote grid for visualization/debug
         std::vector<double> hspb_vote_grid_;
