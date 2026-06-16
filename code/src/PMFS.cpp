@@ -54,6 +54,9 @@ namespace GSL
         hceRefinementActive = false;
         hceRefinedTarget = {0, 0, 0};
         tdc_prev_concentration = 0.0;
+        tdc_ema_dCdt = 0.0;
+        mti_ema_concentration = 0.0;
+        mti_extra_hits_ = 0;
         mac_estimated_distance = -1.0;
         bwe_initialized = false;
         total_gas_detections_ = 0;
@@ -189,6 +192,10 @@ namespace GSL
         settings.simulation.mhc_enabled = getParam<bool>("mhc_enabled", false);
         settings.simulation.mhc_open_radius = getParam<int>("mhc_open_radius", 1);
         settings.simulation.mhc_close_radius = getParam<double>("mhc_close_radius", 2.0);
+        settings.simulation.mti_enabled = getParam<bool>("mti_enabled", false);
+        settings.simulation.mti_alpha = getParam<double>("mti_alpha", 0.15);
+        settings.simulation.mti_threshold_ratio = getParam<double>("mti_threshold_ratio", 0.3);
+        settings.simulation.mti_hit_gain = getParam<double>("mti_hit_gain", 0.3);
 
         // SPW params
         settings.simulation.spw_enabled = getParam<bool>("spw_enabled", false);
@@ -295,33 +302,42 @@ namespace GSL
             }
         }
 
-        // TDC: Adaptive temporal deconvolution. Gain decays with accumulated gas detections.
-        // In sparse-hit regime (total_detections_ ~ 0): high tau boosts weak signals above threshold.
-        // In hit-rich regime (total_detections_ > 20): low tau avoids interfering with SDR.
-        // Near-threshold gating: TDC only boosts signals that are close to but below threshold.
-        // This prevents TDC from corrupting already-strong signals (House02 scenario).
-        const bool tdc_near_threshold = raw_concentration > thresholdGas * 0.2 
-                                      && raw_concentration < thresholdGas * 1.5;
-        if (settings.tdc.enabled && (!settings.simulation.mhc_enabled || tdc_near_threshold))
+        // TDC v2: Noise-robust temporal deconvolution with EMA-smoothed derivative.
+        // Problem: raw dCdt is noisy for MOX sensors, causing false positive hits.
+        // Fix: (1) EMA smooth derivative, (2) min-ramp gate, (3) correction clamp.
         {
             const double dt = std::max(settings.simulation.deltaTime, 0.1);
-            const double dCdt = (raw_concentration - tdc_prev_concentration) / dt;  // BUGFIX: use raw, not corrected
-            double tau_eff = settings.tdc.tau;
-            if (settings.tdc.adaptive) {
-                const double decay = std::exp(-total_gas_detections_ / std::max(1.0, settings.tdc.tau_decay_n0));
-                tau_eff = settings.tdc.tau_min + (settings.tdc.tau - settings.tdc.tau_min) * decay;
+            const double dCdt_raw = (raw_concentration - tdc_prev_concentration) / dt;
+            tdc_prev_concentration = raw_concentration;
+            
+            // EMA smoothing: alpha=0.3 gives ~3-sample time constant
+            tdc_ema_dCdt = 0.3 * dCdt_raw + 0.7 * tdc_ema_dCdt;
+            const double dCdt = tdc_ema_dCdt;
+            
+            // Only boost on positive ramp (concentration increasing)
+            // and only if raw signal is non-negligible (>5% of threshold)
+            const bool tdc_rising = dCdt > thresholdGas * 0.05 / dt;
+            const bool tdc_nonzero = raw_concentration > thresholdGas * 0.05;
+            
+            if (settings.tdc.enabled && tdc_rising && tdc_nonzero) {
+                double tau_eff = settings.tdc.tau;
+                if (settings.tdc.adaptive) {
+                    const double decay = std::exp(-total_gas_detections_ / std::max(1.0, settings.tdc.tau_decay_n0));
+                    tau_eff = settings.tdc.tau_min + (settings.tdc.tau - settings.tdc.tau_min) * decay;
+                }
+                double boosted = raw_concentration + tau_eff * dCdt * settings.tdc.damping;
+                // Clamp: correction cannot exceed 3x raw or 2x threshold
+                boosted = std::min(boosted, std::max(raw_concentration * 3.0, thresholdGas * 2.0));
+                boosted = std::max(0.0, boosted);
+                concentration = (1.0 - settings.tdc.sharpen_strength) * raw_concentration
+                              + settings.tdc.sharpen_strength * boosted;
+                if (raw_concentration > thresholdGas)
+                    total_gas_detections_++;
+                if (settings.method.verbose_debug)
+                    GSL_INFO("[TDC-v2] raw={:.4f} corr={:.4f} dCdt_raw={:.6f} dCdt_ema={:.6f} tau={:.1f}",
+                             raw_concentration, concentration, dCdt_raw, dCdt, tau_eff);
             }
-            const double corrected = std::max(0.0, raw_concentration + tau_eff * dCdt * settings.tdc.damping);
-            concentration = (1.0 - settings.tdc.sharpen_strength) * raw_concentration
-                          + settings.tdc.sharpen_strength * corrected;
-            tdc_prev_concentration = raw_concentration;  // BUGFIX: store raw for next derivative
-            if (raw_concentration > thresholdGas)
-                total_gas_detections_++;
-            if (settings.method.verbose_debug)
-                GSL_INFO("[TDC] raw={:.4f} corrected={:.4f} dCdt={:.6f} tau={:.1f} hits={}",
-                         raw_concentration, concentration, dCdt, tau_eff, total_gas_detections_);
         }
-
         // BWE: optional EMA wind smoother. It is not Bayesian; it is ablated separately.
         if (settings.method.bwe_enabled)
         {
@@ -361,6 +377,22 @@ namespace GSL
             const bool gas_hit = concentration > thresholdGas;
             PMFSLib::EstimateHitProbabilities(grid, *visibilityMap, settings.hitProbability, gas_hit,
                                               windDirection, windSpeed, robotGridPos);
+
+            // MTI: MOX Temporal Integration. Accumulates weak signals over time.
+            if (settings.simulation.mti_enabled) {
+                mti_ema_concentration = settings.simulation.mti_alpha * raw_concentration
+                    + (1.0 - settings.simulation.mti_alpha) * mti_ema_concentration;
+                const double mti_thresh = thresholdGas * settings.simulation.mti_threshold_ratio;
+                if (mti_ema_concentration > mti_thresh && !gas_hit) {
+                    PMFSLib::EstimateHitProbabilities(grid, *visibilityMap, settings.hitProbability,
+                        true, windDirection, windSpeed, robotGridPos);
+                    mti_extra_hits_++;
+                    if (settings.method.verbose_debug)
+                        GSL_INFO("[MTI] ema={:.4f} thresh={:.4f} extra_hits={}",
+                                 mti_ema_concentration, mti_thresh, mti_extra_hits_);
+                }
+            }
+
             if (settings.method.verbose_debug)
                 GSL_INFO("[MEAS] rawC={:.4f} C={:.4f} rawWind=({:.3f},{:.3f}) wind=({:.3f},{:.3f}) hit={}",
                          raw_concentration, concentration, raw_wind_speed, raw_wind_direction,

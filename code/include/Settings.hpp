@@ -84,6 +84,11 @@ namespace GSL::PMFS_internal
         bool mhc_enabled = false;
         int mhc_open_radius = 1;
         double mhc_close_radius = 2;
+        // MTI: MOX Temporal Integration (bio-inspired signal accumulation)
+        bool mti_enabled = false;
+        double mti_alpha = 0.15;
+        double mti_threshold_ratio = 0.3;
+        double mti_hit_gain = 0.3;
 
         double proximity_weight = 0.5;
         double proximity_sigma = 3.0;

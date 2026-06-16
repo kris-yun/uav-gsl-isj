@@ -63,6 +63,10 @@ def generate_launch_description():
         arg("mhc_enabled", "false"),
         arg("mhc_open_radius", "1"),
         arg("mhc_close_radius", "2.0"),
+        arg("mti_enabled", "false"),
+        arg("mti_alpha", "0.15"),
+        arg("mti_threshold_ratio", "0.3"),
+        arg("mti_hit_gain", "0.3"),
 
         # HSPB params
         arg("spw_enabled", "false"),
@@ -186,6 +190,10 @@ def generate_launch_description():
                 "mhc_enabled": LaunchConfiguration("mhc_enabled"),
                 "mhc_open_radius": LaunchConfiguration("mhc_open_radius"),
                 "mhc_close_radius": LaunchConfiguration("mhc_close_radius"),
+                "mti_enabled": LaunchConfiguration("mti_enabled"),
+                "mti_alpha": LaunchConfiguration("mti_alpha"),
+                "mti_threshold_ratio": LaunchConfiguration("mti_threshold_ratio"),
+                "mti_hit_gain": LaunchConfiguration("mti_hit_gain"),
                 "spw_enabled": LaunchConfiguration("spw_enabled"),
                 "spw_gamma": LaunchConfiguration("spw_gamma"),
                 "spw_min_updates": LaunchConfiguration("spw_min_updates"),

@@ -121,6 +121,10 @@ namespace GSL
         std::unique_ptr<uav_gsl_pwc::PwcCorrector> pwcCorrector_;
 
         // TDC: Temporal Deconvolution state
+        double tdc_ema_dCdt{0.0};  // EMA-smoothed derivative for noise robustness
+        // MTI: MOX Temporal Integration state
+        double mti_ema_concentration{0.0};
+        int mti_extra_hits_{0};
         double tdc_prev_concentration{0.0};
         int total_gas_detections_{0};
         // Raw hit positions (before TDC modification) for SDR
