@@ -1,0 +1,15 @@
+--- a/PMFS_utils.cpp
++++ b/PMFS_utils.cpp
+@@ -629,33 +629,38 @@
+             if (maxVal > 0.0 && sdr_peak_ratio >= settings.simulation.sdr_min_peak_mass_ratio) {
+                 Vector2 sdrEst = gridMetadata.indicesToCoordinates(peakIdx % W, peakIdx / W);
+                 sdr_x = sdrEst.x;
+                 sdr_y = sdrEst.y;
+-                // ITS: Inertia Tensor Selection. From astronomical image analysis.
+-                // Computes eccentricity of hit distribution to adaptively control SDR.
+-                // Circular hits (near source) -> skip SDR. Elongated (far source) -> use SDR.
++                // ITS-G: Inertia Tensor Gating (from astronomical image analysis).
++                // Gate SDR application based on hit distribution shape.
++                // Eccentric hits (elongated downwind) indicate far source -> apply SDR.
+                 if (raw_hce_hit_count >= 5) {
+@@ Diff truncated @@

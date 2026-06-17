@@ -255,6 +255,14 @@ namespace GSL::PMFS_internal
         bool review_modules_verbose{false};
     } review;
 
-    };
+    
+    struct CfarSettings {
+        bool enabled{false};
+        int window_size{20};
+        double guard_factor{1.5};
+        double min_threshold{0.001};
+        double max_threshold{0.5};
+    } cfar;
+};
 
 } // namespace GSL::PMFS_internal

@@ -97,20 +97,20 @@ namespace GSL
 #endif
         stateMachine.forceSetState(waitForMapState.get());
 
-        // PWC: Initialize Plume Wind Correction (moved from processGasAndWindMeasurements)
-        {
-            uav_gsl_pwc::Config pcfg;
-            pcfg.enabled = settings.pwc.enabled;
-            pcfg.beta = settings.pwc.beta;
-            pcfg.max_correction = settings.pwc.max_correction;
-            pcfg.min_wind = settings.pwc.min_wind;
-            pcfg.use_adaptive = settings.pwc.use_adaptive;
-            pcfg.plume_scale_factor = settings.pwc.plume_scale_factor;
-            pcfg.wind_vector_is_flow_to = settings.pwc.wind_vector_is_flow_to;
-            pcfg.log_file = settings.pwc.log_file;
-            pwcCorrector_ = std::make_unique<uav_gsl_pwc::PwcCorrector>(pcfg);
-            GSL_INFO("[PWC] Init in Initialize() enabled={} beta={}", pcfg.enabled, pcfg.beta);
-        }
+// DISABLED_OLD_PWC:         // PWC: Initialize Plume Wind Correction (moved from processGasAndWindMeasurements)
+// DISABLED_OLD_PWC:         {
+// DISABLED_OLD_PWC:             uav_gsl_pwc::Config pcfg;
+// DISABLED_OLD_PWC:             pcfg.enabled = settings.pwc.enabled;
+// DISABLED_OLD_PWC:             pcfg.beta = settings.pwc.beta;
+// DISABLED_OLD_PWC:             pcfg.max_correction = settings.pwc.max_correction;
+// DISABLED_OLD_PWC:             pcfg.min_wind = settings.pwc.min_wind;
+// DISABLED_OLD_PWC:             pcfg.use_adaptive = settings.pwc.use_adaptive;
+// DISABLED_OLD_PWC:             pcfg.plume_scale_factor = settings.pwc.plume_scale_factor;
+// DISABLED_OLD_PWC:             pcfg.wind_vector_is_flow_to = settings.pwc.wind_vector_is_flow_to;
+// DISABLED_OLD_PWC:             pcfg.log_file = settings.pwc.log_file;
+// DISABLED_OLD_PWC:             pwcCorrector_ = std::make_unique<uav_gsl_pwc::PwcCorrector>(pcfg);
+// DISABLED_OLD_PWC:             GSL_INFO("[PWC] Init in Initialize() enabled={} beta={}", pcfg.enabled, pcfg.beta);
+// DISABLED_OLD_PWC:         }
     }
 
     void PMFS::declareParameters()
@@ -211,12 +211,34 @@ namespace GSL
         settings.pwc.wind_vector_is_flow_to = getParam<bool>("wind_vector_is_flow_to", true);
         settings.pwc.log_file = getParam<std::string>("pwc_log_file", "");
 
+        // PWC: Initialize after parameters are read
+        {
+            uav_gsl_pwc::Config pcfg;
+            pcfg.enabled = settings.pwc.enabled;
+            pcfg.beta = settings.pwc.beta;
+            pcfg.max_correction = settings.pwc.max_correction;
+            pcfg.min_wind = settings.pwc.min_wind;
+            pcfg.use_adaptive = settings.pwc.use_adaptive;
+            pcfg.plume_scale_factor = settings.pwc.plume_scale_factor;
+            pcfg.wind_vector_is_flow_to = settings.pwc.wind_vector_is_flow_to;
+            pcfg.log_file = settings.pwc.log_file;
+            pwcCorrector_ = std::make_unique<uav_gsl_pwc::PwcCorrector>(pcfg);
+            GSL_INFO("[PWC] Init (post-params) enabled={} beta={}", pcfg.enabled, pcfg.beta);
+        }
+
         // TDC: disabled by default. Requires timestamp-based validation before use in the paper.
         settings.tdc.enabled = getParam<bool>("tdc_enabled", false);
         settings.tdc.iterations = getParam<int>("tdc_iterations", 5);
         settings.tdc.tau = getParam<double>("tdc_tau", 15.0);
         settings.tdc.damping = getParam<double>("tdc_damping", 0.8);
         settings.tdc.sharpen_strength = getParam<double>("tdc_sharpen_strength", 0.5);
+
+        // CFAR: Constant False Alarm Rate adaptive threshold (radar signal processing)
+        settings.cfar.enabled = getParam<bool>("cfar_enabled", false);
+        settings.cfar.window_size = getParam<int>("cfar_window_size", 20);
+        settings.cfar.guard_factor = getParam<double>("cfar_guard_factor", 1.5);
+        settings.cfar.min_threshold = getParam<double>("cfar_min_threshold", 0.001);
+        settings.cfar.max_threshold = getParam<double>("cfar_max_threshold", 0.5);
 
         // PSDE. Keep legacy mac_enabled compatibility, but expose online/final effects separately.
         const bool legacy_mac_enabled = getParam<bool>("mac_enabled", false);
@@ -481,7 +503,23 @@ namespace GSL
         else
         {
             Grid2D<HitProbability> grid(hitProbability, occupancy, gridMetadata);
-            const bool gas_hit = concentration > thresholdGas;
+            // CFAR: adaptive threshold based on local noise floor (radar signal processing)
+            double effective_threshold = thresholdGas;
+            if (settings.cfar.enabled) {
+                cfar_window_.push_back(raw_concentration);
+                if ((int)cfar_window_.size() > settings.cfar.window_size)
+                    cfar_window_.erase(cfar_window_.begin());
+                if (cfar_window_.size() >= 3) {
+                    std::vector<double> sorted = cfar_window_;
+                    std::sort(sorted.begin(), sorted.end());
+                    double q25 = sorted[sorted.size() / 4];
+                    effective_threshold = std::max(settings.cfar.min_threshold,
+                        std::min(settings.cfar.max_threshold, q25 * settings.cfar.guard_factor));
+                    if (settings.method.verbose_debug)
+                        GSL_INFO("[CFAR] thresh={:.4f} noise={:.4f} window={}", effective_threshold, q25, cfar_window_.size());
+                }
+            }
+            const bool gas_hit = concentration > effective_threshold;
             PMFSLib::EstimateHitProbabilities(grid, *visibilityMap, settings.hitProbability, gas_hit,
                                               windDirection, windSpeed, robotGridPos);
 

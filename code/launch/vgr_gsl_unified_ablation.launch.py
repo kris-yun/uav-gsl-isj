@@ -121,6 +121,12 @@ def generate_launch_description():
         arg("eae_miss_threshold", "3"),
         arg("eae_extend_search_on_low_evidence", "true"),
         arg("eae_max_extension_factor", "2.0"),
+        arg("cfar_enabled", "false"),
+        arg("cfar_window_size", "20"),
+        arg("cfar_guard_factor", "1.5"),
+        arg("cfar_min_threshold", "0.001"),
+        arg("cfar_max_threshold", "0.5"),
+
         # Shared convention. true means wind vector is flow-to; upwind correction uses -wind.
         arg("wind_vector_is_flow_to", "true"),
 

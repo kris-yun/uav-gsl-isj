@@ -159,6 +159,7 @@ namespace GSL
         double eae_original_max_search_time_{300.0};
         // CUSUM stability tracking
         std::vector<Vector2> review_peak_history_;
+    std::vector<double> cfar_window_;  // CFAR sliding window
 
         // Review innovation module state (EGS, DIRL, RGC)
         std::vector<uav_gsl_review::HitSample> review_hit_archive_;
