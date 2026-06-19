@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 namespace GSL {
 
@@ -8,6 +8,7 @@ public:
     virtual double plumeHitProbability() const = 0;
     virtual double plumeHitOnThreshold() const = 0;
     virtual double plumeHitOffThreshold() const = 0;
+    virtual bool plumeSoftEvidenceEnabled() const { return true; }
 };
 
 }  // namespace GSL

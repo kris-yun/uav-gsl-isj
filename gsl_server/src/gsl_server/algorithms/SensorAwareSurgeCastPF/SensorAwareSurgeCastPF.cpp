@@ -1,4 +1,5 @@
 #include "SensorAwareSurgeCastPF.hpp"
+#include "gsl_server/core/GSLResult.hpp"
 
 #include "angles/angles.h"
 #include "gsl_server/algorithms/PlumeTracking/MovingStatePlumeTracking.hpp"
@@ -78,6 +79,13 @@ void SensorAwareSurgeCastPF::Initialize() {
     very_near_estimate_count_ = 0;
     independent_bouts_ = 0;
     gt_source_reached_ = false;
+    last_raw_hit_ = false;
+    raw_sample_count_ = 0;
+    raw_hit_count_ = 0;
+    sepf_update_count_ = 0;
+    iasc_goal_count_ = 0;
+    invalid_goal_count_ = 0;
+    planning_failure_count_ = 0;
     pose_history_ = uav_gsl::PoseHistory(20.0);
     sensor_.reset();
     policy_.reset();
@@ -107,9 +115,10 @@ void SensorAwareSurgeCastPF::OnUpdate() {
     }
     // Check declaration periodically (once per second) so it fires during movement
     {
+        static double last_check_s = 0.0;
         const double now_s = node->now().seconds();
-        if (currentResult == GSLResult::Running && now_s - last_check_s_ > 1.0) {
-            last_check_s_ = now_s;
+        if (currentResult == GSLResult::Running && now_s - last_check_s > 1.0) {
+            last_check_s = now_s;
             currentResult = checkSourceFound();
         }
     }
@@ -125,11 +134,20 @@ float SensorAwareSurgeCastPF::gasCallback(
     if (use_sdbe_) {
         latest_evidence_ = sensor_.update(ppm, dt_s);
     } else {
-        // Bypass SDBE: use raw gas as simple threshold hit
-        latest_evidence_.hit_probability = std::min(1.0, ppm / 2.0);
-        latest_evidence_.confidence = 0.5;
-        latest_evidence_.bout_onset = ppm > 0.5;
+        const bool raw_hit = ppm > thresholdGas;
+        latest_evidence_.raw = ppm;
+        latest_evidence_.filtered = ppm;
+        latest_evidence_.baseline = 0.0;
+        latest_evidence_.latent_excess = std::max(0.0, static_cast<double>(ppm));
+        latest_evidence_.noise_sigma = 0.0;
+        latest_evidence_.z_score = raw_hit ? 1.0 : 0.0;
+        latest_evidence_.hit_probability = raw_hit ? 1.0 : 0.0;
+        latest_evidence_.confidence = 1.0;
         latest_evidence_.estimated_delay_s = 0.0;
+        latest_evidence_.bout_onset = raw_hit && !last_raw_hit_;
+        latest_evidence_.bout_offset = !raw_hit && last_raw_hit_;
+        latest_evidence_.in_bout = raw_hit;
+        last_raw_hit_ = raw_hit;
     }
     if (latest_evidence_.bout_onset) ++independent_bouts_;
     return ppm;
@@ -161,36 +179,44 @@ double SensorAwareSurgeCastPF::windConcentration() const {
 
 void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
     double concentration, double windSpeed, double windDirection) {
-    (void)concentration;  // SDBE is updated from every raw gas callback.
-    ensureParticleFilterInitialized();
-
+    (void)concentration;
     recent_wind_directions_.push_back(windDirection);
     if (recent_wind_directions_.size() > 30) recent_wind_directions_.pop_front();
 
     const double now_s = node->now().seconds();
-    const uav_gsl::Vec2 delayed_position = pose_history_.delayCompensated(
-        now_s, latest_evidence_.estimated_delay_s);
+    double posterior_spread_m = 0.0;
 
-    uav_gsl::SoftEvidenceParticleFilter::Observation observation;
-    observation.sensing_position = delayed_position;
-    observation.hit_probability = latest_evidence_.hit_probability;
-    observation.evidence_confidence = latest_evidence_.confidence;
-    observation.wind_flow_to_rad = windDirection;
-    observation.wind_speed = windSpeed;
-    observation.wind_sigma_rad = pf_config_.default_wind_sigma_rad;
-    // Use the actual gas-sensor sampling interval captured in gasCallback().
-    // Recomputing now-last_gas_time_s_ here would collapse to nearly zero because
-    // last_gas_time_s_ has already been updated by the callback.
-    observation.dt_s = std::max(0.01, latest_measurement_dt_s_);
+    if (use_sepf_) {
+        ensureParticleFilterInitialized();
+        const double delay = use_sdbe_ ? latest_evidence_.estimated_delay_s : 0.0;
+        const uav_gsl::Vec2 sensing_position = pose_history_.delayCompensated(now_s, delay);
+        uav_gsl::SoftEvidenceParticleFilter::Observation observation;
+        observation.sensing_position = sensing_position;
+        observation.hit_probability = latest_evidence_.hit_probability;
+        observation.evidence_confidence = latest_evidence_.confidence;
+        observation.wind_flow_to_rad = windDirection;
+        observation.wind_speed = windSpeed;
+        observation.wind_sigma_rad = pf_config_.default_wind_sigma_rad;
+        observation.dt_s = std::max(0.01, latest_measurement_dt_s_);
+        latest_estimate_ = pf_->update(observation, [this](const uav_gsl::Vec2& p) {
+            return isPointFree(Vector2(p.x, p.y));
+        });
+        ++sepf_update_count_;
+        posterior_spread_m = std::sqrt(std::max(0.0, latest_estimate_.covariance_trace));
+        if (pcr_decl_) {
+            const double entropy_est = 0.5 * std::log(std::max(1e-12, latest_estimate_.covariance_trace));
+            pcr_decl_->addSnapshot(now_s, latest_estimate_.covariance_trace, entropy_est);
+        }
+    } else {
+        latest_estimate_.mean = {currentRobotPose.pose.pose.position.x,
+                                 currentRobotPose.pose.pose.position.y};
+        latest_estimate_.covariance_trace = std::numeric_limits<double>::quiet_NaN();
+        latest_estimate_.effective_sample_size = 0.0;
+    }
 
-    latest_estimate_ = pf_->update(observation, [this](const uav_gsl::Vec2& p) {
-        return isPointFree(Vector2(p.x, p.y));
-    });
-
-    // Feed snapshot to PCR-D declaration module
-    if (pcr_decl_) {
-        const double entropy_est = 0.5 * std::log(std::max(1e-12, latest_estimate_.covariance_trace));
-        pcr_decl_->addSnapshot(now_s, latest_estimate_.covariance_trace, entropy_est);
+    if (!use_iasc_) {
+        SurgeCast::processGasAndWindMeasurements(concentration, windSpeed, windDirection);
+        return;
     }
 
     uav_gsl::AdaptiveSurgeCast::Input policy_input;
@@ -200,13 +226,11 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
     policy_input.wind_speed = windSpeed;
     policy_input.wind_direction_rad = windDirection;
     policy_input.wind_concentration = windConcentration();
-    policy_input.posterior_spread_m = std::sqrt(std::max(0.0, latest_estimate_.covariance_trace));
+    policy_input.posterior_spread_m = use_sepf_ ? posterior_spread_m : 1.0;
 
     auto decision = policy_.decide(policy_input);
 
-    // Chemotaxis-inspired Linger Module (CLM):
-    // When gas hit probability is high, reduce step size to linger near source.
-    // This allows the particle filter to collect more measurements and converge.
+    // Chemotaxis-inspired Linger Module (CLM)
     const double hit_prob = latest_evidence_.hit_probability;
     if (hit_prob > 0.5 && use_iasc_) {
         const double linger_factor = std::max(0.20, 1.0 - hit_prob);
@@ -215,20 +239,35 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
     }
 
     sendAdaptiveGoal(decision);
+    ++iasc_goal_count_;
 }
 
 void SensorAwareSurgeCastPF::sendAdaptiveGoal(
     const uav_gsl::AdaptiveSurgeCast::Decision& decision) {
-    // Bypass checkGoal: VGR sim handles obstacles in nav callback
     NavigateToPose::Goal goal;
-    goal.pose.header.frame_id = "map";
-    goal.pose.header.stamp = node->now();
-    goal.pose.pose.position.x = currentRobotPose.pose.pose.position.x +
-                                decision.step_m * std::cos(decision.heading_rad);
-    goal.pose.pose.position.y = currentRobotPose.pose.pose.position.y +
-                                decision.step_m * std::sin(decision.heading_rad);
-    goal.pose.pose.orientation =
-        Utils::createQuaternionMsgFromYaw(angles::normalize_angle(decision.heading_rad));
+    double step = decision.step_m;
+    bool valid = false;
+    for (int attempt = 0; attempt < 15 && step >= 0.2; ++attempt) {
+        goal.pose.header.frame_id = "map";
+        goal.pose.header.stamp = node->now();
+        goal.pose.pose.position.x = currentRobotPose.pose.pose.position.x +
+                                    step * std::cos(decision.heading_rad);
+        goal.pose.pose.position.y = currentRobotPose.pose.pose.position.y +
+                                    step * std::sin(decision.heading_rad);
+        goal.pose.pose.orientation =
+            Utils::createQuaternionMsgFromYaw(angles::normalize_angle(decision.heading_rad));
+        if (movingState->checkGoal(goal)) {
+            valid = true;
+            break;
+        }
+        step -= 0.2;
+        ++invalid_goal_count_;
+    }
+    if (!valid) {
+        ++planning_failure_count_;
+        setExplorationGoal();
+        return;
+    }
 
     auto* moving = dynamic_cast<MovingStatePlumeTracking*>(movingState.get());
     if (!moving) throw std::runtime_error("unexpected moving state type");
@@ -246,11 +285,17 @@ void SensorAwareSurgeCastPF::sendAdaptiveGoal(
     movingState->sendGoal(goal);
 }
 
-
 GSLResult SensorAwareSurgeCastPF::checkSourceFound() {
     const double elapsed_s = (node->now() - startTime).seconds();
-    if (static_cast<int>(elapsed_s) % 10 == 0 && static_cast<int>(elapsed_s) > 0) {
+
+    if (!use_sepf_) {
+        if (elapsed_s > resultLogging.maxSearchTime) {
+            saveResultsToFile(GSLResult::Failure);
+            return GSLResult::Failure;
+        }
+        return GSLResult::Running;
     }
+
     if (elapsed_s > resultLogging.maxSearchTime) {
         // On timeout, use best estimate instead of current
         if (best_estimate_valid_) {
@@ -296,10 +341,7 @@ GSLResult SensorAwareSurgeCastPF::checkSourceFound() {
     // No hand-tuned thresholds - adapts to particle count automatically
     const bool pcr_declare = pcr_decl_ && pcr_decl_->shouldDeclare(elapsed_s);
 
-    // GT-proximity REMOVED: was data leak
-
     if (pcr_declare) {
-        // Position validation: use CURRENT (not best) cov_trace + tighter thresholds
         const bool posterior_converged = (cov_trace < 1.0);
         const bool evidence_sufficient = (independent_bouts_ >= 4);
         const bool estimate_stable = (stable_count_ >= 3);
@@ -319,30 +361,47 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
     if (pf_) latest_estimate_ = pf_->estimate();
     const double dx = latest_estimate_.mean.x - resultLogging.sourcePositionGT.x;
     const double dy = latest_estimate_.mean.y - resultLogging.sourcePositionGT.y;
-    const double final_error_m = std::hypot(dx, dy);  // Evaluation only; never used in decisions.
+    const double final_error_m = std::hypot(dx, dy);
 
     const double elapsed_s = (node->now() - startTime).seconds();
     const bool declared_success = result == GSLResult::Success;
     const bool timeout = result == GSLResult::Failure &&
                          elapsed_s >= resultLogging.maxSearchTime;
 
+    const std::string estimate_type = use_sepf_ ? "posterior_mean" : "terminal_pose";
+
     std::ofstream output(audit_file_, std::ios::app);
     if (output.tellp() == 0) {
-        output << "status,declared_success,timeout,estimate_x,estimate_y,gt_x,gt_y,"
-                  "final_error_m,localized_success_05m,localized_success_1m,"
-                  "localized_success_2m,p_hit,bout_count,cov_trace,ess,search_time_s\n";
+        output << "run_id,status,declared_success,timeout,estimate_type,"
+               << "estimate_x,estimate_y,gt_x,gt_y,"
+               << "final_error_m,localized_success_05m,localized_success_1m,"
+               << "localized_success_2m,"
+               << "use_sdbe,use_iasc,use_sepf,"
+               << "p_hit,bout_count,raw_sample_count,raw_hit_count,"
+               << "cov_trace,ess,sepf_update_count,"
+               << "iasc_goal_count,invalid_goal_count,planning_failure_count,"
+               << "search_time_s\n";
     }
     output << std::setprecision(10)
+           << "run" << ','
            << static_cast<int>(result) << ','
            << declared_success << ',' << timeout << ','
+           << estimate_type << ','
            << latest_estimate_.mean.x << ',' << latest_estimate_.mean.y << ','
            << resultLogging.sourcePositionGT.x << ',' << resultLogging.sourcePositionGT.y << ','
            << final_error_m << ','
            << (final_error_m <= 0.5) << ',' << (final_error_m <= 1.0) << ','
            << (final_error_m <= 2.0) << ','
+           << static_cast<int>(use_sdbe_) << ','
+           << static_cast<int>(use_iasc_) << ','
+           << static_cast<int>(use_sepf_) << ','
            << latest_evidence_.hit_probability << ',' << independent_bouts_ << ','
+           << raw_sample_count_ << ',' << raw_hit_count_ << ','
            << latest_estimate_.covariance_trace << ','
-           << latest_estimate_.effective_sample_size << ',' << elapsed_s << '\n';
+           << latest_estimate_.effective_sample_size << ','
+           << sepf_update_count_ << ','
+           << iasc_goal_count_ << ',' << invalid_goal_count_ << ',' << planning_failure_count_ << ','
+           << elapsed_s << '\n';
     output.close();
 
     Algorithm::saveResultsToFile(result);

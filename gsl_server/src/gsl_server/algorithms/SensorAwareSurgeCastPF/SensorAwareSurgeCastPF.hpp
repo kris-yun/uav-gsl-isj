@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "gsl_server/algorithms/PlumeTracking/SurgeCast/SurgeCast.hpp"
 #include "SoftPlumeEvidenceProvider.hpp"
 #include "uav_gsl/AdaptiveSurgeCast.hpp"
@@ -20,6 +20,7 @@ public:
     double plumeHitProbability() const override { return latest_evidence_.hit_probability; }
     double plumeHitOnThreshold() const override { return sensor_config_.hit_on_probability; }
     double plumeHitOffThreshold() const override { return sensor_config_.hit_off_probability; }
+    bool plumeSoftEvidenceEnabled() const override { return use_sdbe_; }
 
 protected:
     void declareParameters() override;
@@ -46,6 +47,17 @@ private:
     bool use_sdbe_{true};
     bool use_iasc_{true};
     bool use_sepf_{true};
+    bool last_raw_hit_{false};
+
+    // Audit counters
+    std::size_t raw_sample_count_{0};
+    std::size_t raw_hit_count_{0};
+    std::size_t sepf_update_count_{0};
+    std::size_t iasc_goal_count_{0};
+    std::size_t invalid_goal_count_{0};
+    std::size_t planning_failure_count_{0};
+    std::size_t resampling_count_{0};
+    std::size_t pf_degeneracy_count_{0};
 
     // Best estimate tracking for improved declaration
     uav_gsl::SoftEvidenceParticleFilter::Estimate best_estimate_;
