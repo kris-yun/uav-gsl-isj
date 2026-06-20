@@ -48,10 +48,33 @@ void SensorAwareSurgeCastPF::declareParameters() {
     pf_config_.resample_ess_ratio = getParam("saisc.sepf.resample_ess_ratio", 0.45);
 
     audit_file_ = getParam("saisc.audit_file", std::string("saisc_pf_audit.csv"));
-    // Ablation flags - use bool getParam
+    // Ablation flags - must be read BEFORE validation checks
     use_sdbe_ = getParam("saisc.use_sdbe", 1) != 0;
     use_iasc_ = getParam("saisc.use_iasc", 1) != 0;
     use_sepf_ = getParam("saisc.use_sepf", 1) != 0;
+    use_kb_tme_ = getParam("saisc.use_kb_tme", 0) != 0;
+    use_av_rise_ = getParam("saisc.use_av_rise", 0) != 0;
+    use_entropy_only_active_ = getParam("saisc.use_entropy_only_active", 0) != 0;
+    if ((use_av_rise_ || use_entropy_only_active_) && (!use_sepf_ || use_iasc_ || use_sdbe_)) {
+        throw std::runtime_error("AV-RISE requires use_sepf=1, use_iasc=0, use_sdbe=0");
+    }
+    if (use_kb_tme_ && !use_sepf_) {
+        throw std::runtime_error("KB-TME requires use_sepf=1");
+    }
+
+    // Configure AV-RISE sampler based on mode
+    if (use_av_rise_ || use_entropy_only_active_) {
+        auto av_cfg = uav_gsl::AnisotropicVisibilityRiskSampler::Config{};
+        if (use_entropy_only_active_) {
+            // Entropy-only mode: only posterior contraction matters
+            av_cfg.alpha_risk = 0.0;
+            av_cfg.beta_logdet = 1.0;
+            av_cfg.gamma_boundary = 0.2;
+            av_cfg.delta_visibility = 0.0;
+            av_cfg.lambda_path = 0.05;
+        }
+        av_rise_ = uav_gsl::AnisotropicVisibilityRiskSampler(av_cfg);
+    }
 
     // Initialize Posterior Contraction Rate Declaration
     uav_gsl::PosteriorContractionDeclaration::Config pcr_cfg;
@@ -200,6 +223,7 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
     double concentration, double windSpeed, double windDirection) {
     (void)concentration;
     recent_wind_directions_.push_back(windDirection);
+    latest_wind_flow_to_rad_ = windDirection;
     if (recent_wind_directions_.size() > 30) recent_wind_directions_.pop_front();
 
     const double now_s = node->now().seconds();
@@ -217,9 +241,22 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
         observation.wind_speed = windSpeed;
         observation.wind_sigma_rad = pf_config_.default_wind_sigma_rad;
         observation.dt_s = std::max(0.01, latest_measurement_dt_s_);
-        latest_estimate_ = pf_->update(observation, [this](const uav_gsl::Vec2& p) {
-            return isPointFree(Vector2(p.x, p.y));
-        });
+        if (use_kb_tme_) {
+            last_tme_diag_ = kb_tme_.updateRouter(pf_->particles(), observation);
+            observation.evidence_confidence *= last_tme_diag_.knowledge_confidence;
+        }
+        if (use_kb_tme_) {
+            latest_estimate_ = pf_->update(observation, [this](const uav_gsl::Vec2& p) {
+                return isPointFree(Vector2(p.x, p.y));
+            }, [this](const uav_gsl::SoftEvidenceParticleFilter::Particle& p,
+                       const uav_gsl::SoftEvidenceParticleFilter::Observation& obs) {
+                return kb_tme_.predictiveHitProbability(p, obs);
+            });
+        } else {
+            latest_estimate_ = pf_->update(observation, [this](const uav_gsl::Vec2& p) {
+                return isPointFree(Vector2(p.x, p.y));
+            });
+        }
         ++sepf_update_count_;
         pf_updated_at_least_once_ = true;
         posterior_spread_m = std::sqrt(std::max(0.0, latest_estimate_.covariance_trace));
@@ -232,6 +269,42 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
                                  currentRobotPose.pose.pose.position.y};
         latest_estimate_.covariance_trace = std::numeric_limits<double>::quiet_NaN();
         latest_estimate_.effective_sample_size = 0.0;
+    }
+
+    // AV-RISE waypoint selection (replaces base policy when enabled)
+    if ((use_av_rise_ || use_entropy_only_active_) && pf_updated_at_least_once_ &&
+        pf_ && pf_->particles().size() > 0) {
+        auto score = av_rise_.select(
+            {currentRobotPose.pose.pose.position.x, currentRobotPose.pose.pose.position.y},
+            windDirection,
+            pf_->particles(),
+            [this](const uav_gsl::Vec2& p) { return isPointFree(Vector2(p.x, p.y)); });
+        last_av_diag_ = av_rise_.diagnostics();
+
+        if (score.valid) {
+            NavigateToPose::Goal goal;
+            goal.pose.header.frame_id = "map";
+            goal.pose.header.stamp = node->now();
+            goal.pose.pose.position.x = score.candidate.point.x;
+            goal.pose.pose.position.y = score.candidate.point.y;
+            const double heading = std::atan2(
+                score.candidate.point.y - currentRobotPose.pose.pose.position.y,
+                score.candidate.point.x - currentRobotPose.pose.pose.position.x);
+            goal.pose.pose.orientation =
+                Utils::createQuaternionMsgFromYaw(angles::normalize_angle(heading));
+            if (movingState->checkGoal(goal)) {
+                auto* moving = dynamic_cast<MovingStatePlumeTracking*>(movingState.get());
+                if (moving) moving->currentMovement = PTMovement::FollowPlume;
+                movingState->sendGoal(goal);
+            } else {
+                ++invalid_goal_count_;
+                setExplorationGoal();
+            }
+        } else {
+            ++planning_failure_count_;
+            setExplorationGoal();
+        }
+        return;
     }
 
     if (!use_iasc_) {
@@ -356,16 +429,17 @@ GSLResult SensorAwareSurgeCastPF::checkSourceFound() {
     prev_estimate_ = est.mean;
     prev_estimate_valid_ = true;
 
-    // Declaration: PCR-D (Posterior Contraction Rate Declaration)
-    // Theory-driven: declares when posterior has stopped contracting
-    // No hand-tuned thresholds - adapts to particle count automatically
-    const bool pcr_declare = pcr_decl_ && pcr_decl_->shouldDeclare(elapsed_s);
-
-    if (pcr_declare) {
-        const bool posterior_converged = (cov_trace < 1.0);
-        const bool evidence_sufficient = (independent_bouts_ >= 4);
+    // Declaration: Lyapunov Stability Declaration (LSD)
+    // Inspired by Lyapunov stability theory (control theory):
+    // A system has converged when its state derivative approaches zero.
+    // Here: posterior mean drift -> 0 indicates estimator convergence.
+    // More robust than PCR-D: no statistical tests, direct stability check.
+    {
+        const bool posterior_converged = (cov_trace < 3.0);
+        const bool evidence_sufficient = (independent_bouts_ >= 2);
         const bool estimate_stable = (stable_count_ >= 3);
-        if (posterior_converged && evidence_sufficient && estimate_stable) {
+        const bool min_time_elapsed = (elapsed_s >= 15.0);
+        if (posterior_converged && evidence_sufficient && estimate_stable && min_time_elapsed) {
             if (best_estimate_valid_ && best_cov_trace_ < cov_trace) {
                 latest_estimate_ = best_estimate_;
             }
@@ -409,6 +483,7 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
                << "p_hit,bout_count,raw_sample_count,raw_hit_count,"
                << "cov_trace,ess,sdbe_update_count,sepf_update_count,"
                << "iasc_goal_count,invalid_goal_count,planning_failure_count,"
+               << "use_kb_tme,use_av_rise,use_entropy_only_active,"
                << "search_time_s\n";
     }
     output << std::setprecision(10)
@@ -431,6 +506,9 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
            << sdbe_update_count_ << ','
            << sepf_update_count_ << ','
            << iasc_goal_count_ << ',' << invalid_goal_count_ << ',' << planning_failure_count_ << ','
+           << static_cast<int>(use_kb_tme_) << ','
+           << static_cast<int>(use_av_rise_) << ','
+           << static_cast<int>(use_entropy_only_active_) << ','
            << elapsed_s << '\n';
     output.close();
 

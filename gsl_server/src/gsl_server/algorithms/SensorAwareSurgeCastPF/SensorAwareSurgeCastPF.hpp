@@ -6,6 +6,8 @@
 #include "uav_gsl/SensorBoutEstimator.hpp"
 #include "uav_gsl/SoftEvidenceParticleFilter.hpp"
 #include "uav_gsl/PosteriorContractionDeclaration.hpp"
+#include "uav_gsl/TestTimeMixturePlumeLikelihood.hpp"
+#include "uav_gsl/AnisotropicVisibilityRiskSampler.hpp"
 #include <deque>
 #include <fstream>
 #include <memory>
@@ -88,6 +90,16 @@ private:
     double windConcentration() const;
     void ensureParticleFilterInitialized();
     void sendAdaptiveGoal(const uav_gsl::AdaptiveSurgeCast::Decision& decision);
+    // KITE-SEPF 2026 modules
+    bool use_kb_tme_{false};
+    bool use_av_rise_{false};
+    bool use_entropy_only_active_{false};
+    uav_gsl::TestTimeMixturePlumeLikelihood kb_tme_;
+    uav_gsl::TestTimeMixturePlumeLikelihood::Diagnostics last_tme_diag_;
+    uav_gsl::AnisotropicVisibilityRiskSampler av_rise_;
+    uav_gsl::AnisotropicVisibilityRiskSampler::Diagnostics last_av_diag_;
+    double latest_wind_flow_to_rad_{0.0};
+
 };
 
 }  // namespace GSL

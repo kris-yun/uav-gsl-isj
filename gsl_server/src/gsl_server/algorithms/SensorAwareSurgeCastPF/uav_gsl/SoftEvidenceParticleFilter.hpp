@@ -73,6 +73,7 @@ public:
     };
 
     using FreeSpacePredicate = std::function<bool(const Vec2&)>;
+    using PredictiveLikelihoodFn = std::function<double(const Particle&, const Observation&)>;
 
     SoftEvidenceParticleFilter() : SoftEvidenceParticleFilter(Config{}) {}
 
@@ -111,14 +112,17 @@ public:
     }
 
     Estimate update(const Observation& observation,
-                    const FreeSpacePredicate& is_free = {}) {
+                    const FreeSpacePredicate& is_free = {},
+                    const PredictiveLikelihoodFn& custom_likelihood = {}) {
         if (particles_.empty()) throw std::runtime_error("particle filter is not initialized");
         validateObservation(observation);
 
         std::vector<double> log_weights(particles_.size());
         double maximum_log_weight = -std::numeric_limits<double>::infinity();
         for (std::size_t i = 0; i < particles_.size(); ++i) {
-            const double predicted = predictedHitProbability(particles_[i], observation);
+            const double predicted = custom_likelihood
+                ? custom_likelihood(particles_[i], observation)
+                : predictedHitProbability(particles_[i], observation);
             const double soft_log_likelihood =
                 observation.hit_probability * std::log(predicted) +
                 (1.0 - observation.hit_probability) * std::log(1.0 - predicted);
