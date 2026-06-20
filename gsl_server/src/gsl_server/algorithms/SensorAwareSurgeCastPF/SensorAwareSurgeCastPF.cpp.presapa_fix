@@ -57,10 +57,6 @@ void SensorAwareSurgeCastPF::declareParameters() {
     use_entropy_only_active_ = getParam("saisc.use_entropy_only_active", 0) != 0;
     use_sapa_hpa_ = getParam("saisc.use_sapa_hpa", 0) != 0;
     use_sapa_sig_ = getParam("saisc.use_sapa_sig", 0) != 0;
-    use_sage_ = getParam("saisc.use_sage", 0) != 0;
-    sage_cooldown_s_ = getParam("saisc.sage_cooldown_s", 8.0);
-    sage_path_budget_m_ = getParam("saisc.sage_path_budget_m", 25.0);
-    sage_max_scan_steps_ = getParam("saisc.sage_max_scan_steps", 3);
     if ((use_av_rise_ || use_entropy_only_active_) && (!use_sepf_ || use_iasc_ || use_sdbe_)) {
         throw std::runtime_error("AV-RISE requires use_sepf=1, use_iasc=0, use_sdbe=0");
     }
@@ -296,17 +292,6 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
                 sapa_sig_.addObservation(sapa_obs);
             }
         }
-
-        // SAGE: buffer observations for support diagnosis
-        if (use_sage_ && pf_updated_at_least_once_) {
-            uav_gsl::SageObservation so;
-            so.pose = {sensing_position.x, sensing_position.y};
-            so.gas_ppm = latest_evidence_.hit_probability;
-            so.wind_dir_flow_to_rad = robust_wind;
-            so.confidence = latest_evidence_.confidence;
-            sage_obs_buffer_.push_back(so);
-            if (sage_obs_buffer_.size() > 500) sage_obs_buffer_.erase(sage_obs_buffer_.begin());
-        }
         if (pcr_decl_) {
             const double entropy_est = 0.5 * std::log(std::max(1e-12, latest_estimate_.covariance_trace));
             pcr_decl_->addSnapshot(now_s, latest_estimate_.covariance_trace, entropy_est);
@@ -352,56 +337,6 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
             setExplorationGoal();
         }
         return;
-    }
-
-
-    // SAGE: Support-Aware Gap-closing Exploration
-    if (use_sage_ && pf_updated_at_least_once_ && pf_ && pf_->particles().size() > 0) {
-        auto est = pf_->estimate();
-        uav_gsl::Pose2D post_mean = {est.mean.x, est.mean.y};
-        last_sage_diag_ = sage_explorer_.diagnose(post_mean, sage_obs_buffer_);
-        bool should_activate = last_sage_diag_.support_gap > sage_explorer_.getParams().tau_gap && sepf_update_count_ >= 15 && est.covariance_trace > 2.0
-            && sage_scan_steps_used_ < sage_max_scan_steps_
-            && sage_path_budget_used_m_ < sage_path_budget_m_
-            && (now_s - sage_last_activation_s_) >= sage_cooldown_s_;
-        if (!should_activate) {
-            ++sage_pass_through_count_;
-        } else {
-            uav_gsl::SageCandidate selected;
-            std::vector<uav_gsl::SageCandidate> cands;
-            bool ok = sage_explorer_.select(post_mean,
-                {currentRobotPose.pose.pose.position.x, currentRobotPose.pose.pose.position.y},
-                sage_obs_buffer_, windDirection, &selected, nullptr, &cands);
-            sage_candidate_count_ += cands.size();
-            if (ok && selected.score >= sage_explorer_.getParams().min_score) {
-                NavigateToPose::Goal goal;
-                goal.pose.header.frame_id = "map";
-                goal.pose.header.stamp = node->now();
-                goal.pose.pose.position.x = selected.waypoint.x;
-                goal.pose.pose.position.y = selected.waypoint.y;
-                double hdg = std::atan2(selected.waypoint.y - currentRobotPose.pose.pose.position.y,
-                                        selected.waypoint.x - currentRobotPose.pose.pose.position.x);
-                goal.pose.pose.orientation = Utils::createQuaternionMsgFromYaw(angles::normalize_angle(hdg));
-                if (movingState->checkGoal(goal)) {
-                    auto* mv = dynamic_cast<MovingStatePlumeTracking*>(movingState.get());
-                    if (mv) mv->currentMovement = PTMovement::Exploration;
-                    movingState->sendGoal(goal);
-                    ++sage_selected_count_;
-                    last_sage_candidate_ = selected;
-                    sage_last_activation_s_ = now_s;
-                    ++sage_scan_steps_used_;
-                    sage_path_budget_used_m_ += std::hypot(
-                        selected.waypoint.x - currentRobotPose.pose.pose.position.x,
-                        selected.waypoint.y - currentRobotPose.pose.pose.position.y);
-                    return;
-                } else {
-                    ++sage_invalid_goal_count_;
-                    sage_last_activation_s_ = now_s;
-                }
-            } else {
-                ++sage_fallback_count_;
-            }
-        }
     }
 
     // PGN: Posterior-Guided Navigation
@@ -626,7 +561,7 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
                << "p_hit,bout_count,raw_sample_count,raw_hit_count,"
                << "cov_trace,ess,sdbe_update_count,sepf_update_count,"
                << "iasc_goal_count,invalid_goal_count,planning_failure_count,"
-               << "use_kb_tme,use_av_rise,use_entropy_only_active,use_sapa_hpa,use_sapa_sig,sapa_shift,sapa_support,sapa_ess,sapa_decl,use_sage,sage_activations,sage_candidates,sage_selected,sage_invalid,sage_passthrough,sage_fallback,sage_gap_final,sage_rank_final,sage_vis_final,sage_boundary_final,"
+               << "use_kb_tme,use_av_rise,use_entropy_only_active,use_sapa_hpa,use_sapa_sig,sapa_shift,sapa_support,sapa_ess,sapa_decl,"
                << "search_time_s\n";
     }
     output << std::setprecision(10)
@@ -658,17 +593,6 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
            << last_sapa_decision_.support.support_score << ','
            << last_sapa_metrics_.expert_ess << ','
            << static_cast<int>(last_sapa_decision_.allowed) << ','
-               << static_cast<int>(use_sage_) << ','
-               << sage_activation_count_ << ','
-               << sage_candidate_count_ << ','
-               << sage_selected_count_ << ','
-               << sage_invalid_goal_count_ << ','
-               << sage_pass_through_count_ << ','
-               << sage_fallback_count_ << ','
-               << last_sage_diag_.support_gap << ','
-               << last_sage_diag_.rank_score << ','
-               << last_sage_diag_.visibility_score << ','
-               << last_sage_diag_.boundary_support << ','
            << elapsed_s << '\n';
     output.close();
 

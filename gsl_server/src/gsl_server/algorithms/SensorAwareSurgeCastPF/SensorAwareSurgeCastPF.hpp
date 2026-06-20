@@ -10,6 +10,7 @@
 #include "uav_gsl/ShiftAwareSEPFParameterAdapter.hpp"
 #include "uav_gsl/SupportIdentifiabilityGate.hpp"
 #include "uav_gsl/AnisotropicVisibilityRiskSampler.hpp"
+#include "uav_gsl/SupportGapExplorer.hpp"
 #include <deque>
 #include <fstream>
 #include <memory>
@@ -109,6 +110,25 @@ private:
     uav_gsl::SupportIdentifiabilityGate sapa_sig_;
     uav_gsl::DeclarationDecision last_sapa_decision_;
     double latest_wind_flow_to_rad_{0.0};
+    // SAGE: Support-Aware Gap-closing Exploration
+    bool use_sage_{false};
+    uav_gsl::SupportGapExplorer sage_explorer_;
+    uav_gsl::SageDiagnostics last_sage_diag_;
+    uav_gsl::SageCandidate last_sage_candidate_;
+    std::uint64_t sage_activation_count_{0};
+    std::uint64_t sage_candidate_count_{0};
+    std::uint64_t sage_selected_count_{0};
+    std::uint64_t sage_pass_through_count_{0};
+    std::uint64_t sage_fallback_count_{0};
+    std::uint64_t sage_invalid_goal_count_{0};
+    double sage_path_budget_used_m_{0.0};
+    double sage_last_activation_s_{-999.0};
+    double sage_cooldown_s_{8.0};
+    double sage_path_budget_m_{25.0};
+    int sage_max_scan_steps_{3};
+    int sage_scan_steps_used_{0};
+    std::vector<uav_gsl::SageObservation> sage_obs_buffer_;
+
 
 };
 
