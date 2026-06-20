@@ -55,6 +55,8 @@ void SensorAwareSurgeCastPF::declareParameters() {
     use_kb_tme_ = getParam("saisc.use_kb_tme", 0) != 0;
     use_av_rise_ = getParam("saisc.use_av_rise", 0) != 0;
     use_entropy_only_active_ = getParam("saisc.use_entropy_only_active", 0) != 0;
+    use_sapa_hpa_ = getParam("saisc.use_sapa_hpa", 0) != 0;
+    use_sapa_sig_ = getParam("saisc.use_sapa_sig", 0) != 0;
     if ((use_av_rise_ || use_entropy_only_active_) && (!use_sepf_ || use_iasc_ || use_sdbe_)) {
         throw std::runtime_error("AV-RISE requires use_sepf=1, use_iasc=0, use_sdbe=0");
     }
@@ -270,6 +272,26 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
         ++sepf_update_count_;
         pf_updated_at_least_once_ = true;
         posterior_spread_m = std::sqrt(std::max(0.0, latest_estimate_.covariance_trace));
+
+        // SAPA-HPA: adapt likelihood parameters online
+        if (use_sapa_hpa_ && pf_ && pf_->particles().size() > 0) {
+            uav_gsl::SAPAObservation sapa_obs;
+            sapa_obs.pose_x = sensing_position.x;
+            sapa_obs.pose_y = sensing_position.y;
+            sapa_obs.wind_u = windSpeed * std::cos(windDirection);
+            sapa_obs.wind_v = windSpeed * std::sin(windDirection);
+            sapa_obs.gas_ppm = latest_evidence_.hit_probability;
+            sapa_obs.hit_probability = latest_evidence_.hit_probability;
+            sapa_obs.confidence = latest_evidence_.confidence;
+            std::vector<uav_gsl::SAPAParticle> sapa_cloud;
+            for (const auto& p : pf_->particles()) {
+                sapa_cloud.push_back({p.source.x, p.source.y, std::max(0.0, p.weight)});
+            }
+            last_sapa_metrics_ = sapa_adapter_.observe(sapa_cloud, sapa_obs);
+            if (use_sapa_sig_) {
+                sapa_sig_.addObservation(sapa_obs);
+            }
+        }
         if (pcr_decl_) {
             const double entropy_est = 0.5 * std::log(std::max(1e-12, latest_estimate_.covariance_trace));
             pcr_decl_->addSnapshot(now_s, latest_estimate_.covariance_trace, entropy_est);
@@ -472,6 +494,17 @@ GSLResult SensorAwareSurgeCastPF::checkSourceFound() {
     prev_estimate_ = est.mean;
     prev_estimate_valid_ = true;
 
+    // SAPA-SIG: Support/Identifiability Gate
+    if (use_sapa_sig_ && pf_updated_at_least_once_ && pf_) {
+        uav_gsl::SAPAPosteriorSummary post;
+        post.mean_x = latest_estimate_.mean.x;
+        post.mean_y = latest_estimate_.mean.y;
+        post.cov_trace = cov_trace;
+        post.particle_ess = latest_estimate_.effective_sample_size;
+        last_sapa_decision_ = sapa_sig_.evaluate(post, sapa_adapter_,
+            last_sapa_metrics_.shift_score, last_sapa_metrics_.expert_ess);
+    }
+
     // Declaration: Lyapunov Stability Declaration (LSD)
     // Inspired by Lyapunov stability theory (control theory):
     // A system has converged when its state derivative approaches zero.
@@ -482,7 +515,9 @@ GSLResult SensorAwareSurgeCastPF::checkSourceFound() {
         const bool evidence_sufficient = (independent_bouts_ >= 2);
         const bool estimate_stable = (stable_count_ >= 3);
         const bool min_time_elapsed = (elapsed_s >= 15.0);
-        if (posterior_converged && evidence_sufficient && estimate_stable && min_time_elapsed) {
+        // SAPA-SIG can reject declaration
+        bool sapa_allows = !use_sapa_sig_ || last_sapa_decision_.allowed;
+        if (posterior_converged && evidence_sufficient && estimate_stable && min_time_elapsed && sapa_allows) {
             if (best_estimate_valid_ && best_cov_trace_ < cov_trace) {
                 latest_estimate_ = best_estimate_;
             }
@@ -526,7 +561,7 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
                << "p_hit,bout_count,raw_sample_count,raw_hit_count,"
                << "cov_trace,ess,sdbe_update_count,sepf_update_count,"
                << "iasc_goal_count,invalid_goal_count,planning_failure_count,"
-               << "use_kb_tme,use_av_rise,use_entropy_only_active,"
+               << "use_kb_tme,use_av_rise,use_entropy_only_active,use_sapa_hpa,use_sapa_sig,sapa_shift,sapa_support,sapa_ess,sapa_decl,"
                << "search_time_s\n";
     }
     output << std::setprecision(10)
@@ -552,6 +587,12 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
            << static_cast<int>(use_kb_tme_) << ','
            << static_cast<int>(use_av_rise_) << ','
            << static_cast<int>(use_entropy_only_active_) << ','
+           << static_cast<int>(use_sapa_hpa_) << ','
+           << static_cast<int>(use_sapa_sig_) << ','
+           << last_sapa_metrics_.shift_score << ','
+           << last_sapa_decision_.support.support_score << ','
+           << last_sapa_metrics_.expert_ess << ','
+           << static_cast<int>(last_sapa_decision_.allowed) << ','
            << elapsed_s << '\n';
     output.close();
 

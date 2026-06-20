@@ -7,6 +7,8 @@
 #include "uav_gsl/SoftEvidenceParticleFilter.hpp"
 #include "uav_gsl/PosteriorContractionDeclaration.hpp"
 #include "uav_gsl/TestTimeMixturePlumeLikelihood.hpp"
+#include "uav_gsl/ShiftAwareSEPFParameterAdapter.hpp"
+#include "uav_gsl/SupportIdentifiabilityGate.hpp"
 #include "uav_gsl/AnisotropicVisibilityRiskSampler.hpp"
 #include <deque>
 #include <fstream>
@@ -98,6 +100,14 @@ private:
     uav_gsl::TestTimeMixturePlumeLikelihood::Diagnostics last_tme_diag_;
     uav_gsl::AnisotropicVisibilityRiskSampler av_rise_;
     uav_gsl::AnisotropicVisibilityRiskSampler::Diagnostics last_av_diag_;
+    // SAPA-HPA: Shift-Aware Parameter Adaptation
+    bool use_sapa_hpa_{false};
+    uav_gsl::ShiftAwareSEPFParameterAdapter sapa_adapter_;
+    uav_gsl::SAPAAdapterMetrics last_sapa_metrics_;
+    // SAPA-SIG: Support/Identifiability Gate
+    bool use_sapa_sig_{false};
+    uav_gsl::SupportIdentifiabilityGate sapa_sig_;
+    uav_gsl::DeclarationDecision last_sapa_decision_;
     double latest_wind_flow_to_rad_{0.0};
 
 };
