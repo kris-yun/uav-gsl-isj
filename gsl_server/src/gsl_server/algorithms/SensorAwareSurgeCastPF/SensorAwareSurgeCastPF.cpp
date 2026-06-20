@@ -233,11 +233,21 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
         ensureParticleFilterInitialized();
         const double delay = use_sdbe_ ? latest_evidence_.estimated_delay_s : 0.0;
         const uav_gsl::Vec2 sensing_position = pose_history_.delayCompensated(now_s, delay);
+        // RWE: Robust Wind Estimation - circular median resists outlier wind readings
+        double robust_wind = windDirection;
+        if (recent_wind_directions_.size() >= 5) {
+            std::vector<double> cw, sw;
+            for (double wd : recent_wind_directions_) { cw.push_back(std::cos(wd)); sw.push_back(std::sin(wd)); }
+            std::nth_element(cw.begin(), cw.begin() + cw.size()/2, cw.end());
+            std::nth_element(sw.begin(), sw.begin() + sw.size()/2, sw.end());
+            double mc = cw[cw.size()/2], ms = sw[sw.size()/2];
+            if (mc*mc + ms*ms > 1e-12) robust_wind = std::atan2(ms, mc);
+        }
         uav_gsl::SoftEvidenceParticleFilter::Observation observation;
         observation.sensing_position = sensing_position;
         observation.hit_probability = latest_evidence_.hit_probability;
         observation.evidence_confidence = latest_evidence_.confidence;
-        observation.wind_flow_to_rad = windDirection;
+        observation.wind_flow_to_rad = robust_wind;
         observation.wind_speed = windSpeed;
         observation.wind_sigma_rad = pf_config_.default_wind_sigma_rad;
         observation.dt_s = std::max(0.01, latest_measurement_dt_s_);
