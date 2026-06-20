@@ -317,6 +317,39 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
         return;
     }
 
+    // PGN: Posterior-Guided Navigation
+    // When posterior is tight, navigate to posterior mean (Bayesian optimization prior-guided search)
+    // When posterior is loose, use standard SurgeCast exploration
+    if (!use_iasc_ && use_sepf_ && pf_updated_at_least_once_ && pf_) {
+        const auto pgn_est = pf_->estimate();
+        const double pgn_cov = pgn_est.covariance_trace;
+        if (pgn_cov < 1.5 && independent_bouts_ >= 2) {
+            // Posterior is tight enough - navigate to mean
+            const double pgn_dx = pgn_est.mean.x - currentRobotPose.pose.pose.position.x;
+            const double pgn_dy = pgn_est.mean.y - currentRobotPose.pose.pose.position.y;
+            const double pgn_dist = std::hypot(pgn_dx, pgn_dy);
+            if (pgn_dist > 0.3) {
+                NavigateToPose::Goal goal;
+                goal.pose.header.frame_id = "map";
+                goal.pose.header.stamp = node->now();
+                const double pgn_step = std::min(pgn_dist, 1.5);
+                goal.pose.pose.position.x = currentRobotPose.pose.pose.position.x + pgn_step * pgn_dx / pgn_dist;
+                goal.pose.pose.position.y = currentRobotPose.pose.pose.position.y + pgn_step * pgn_dy / pgn_dist;
+                goal.pose.pose.orientation = Utils::createQuaternionMsgFromYaw(
+                    angles::normalize_angle(std::atan2(pgn_dy, pgn_dx)));
+                if (movingState->checkGoal(goal)) {
+                    auto* pgn_moving = dynamic_cast<MovingStatePlumeTracking*>(movingState.get());
+                    if (pgn_moving) pgn_moving->currentMovement = PTMovement::FollowPlume;
+                    movingState->sendGoal(goal);
+                    return;
+                }
+            }
+        }
+        // Fallback to standard SurgeCast
+        SurgeCast::processGasAndWindMeasurements(concentration, windSpeed, windDirection);
+        return;
+    }
+
     if (!use_iasc_) {
         SurgeCast::processGasAndWindMeasurements(concentration, windSpeed, windDirection);
         return;
