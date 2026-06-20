@@ -9,6 +9,7 @@
 #include <cmath>
 #include <iomanip>
 #include <limits>
+#include <numeric>
 
 namespace GSL {
 
@@ -80,6 +81,11 @@ void SensorAwareSurgeCastPF::Initialize() {
     independent_bouts_ = 0;
     gt_source_reached_ = false;
     last_raw_hit_ = false;
+    pf_updated_at_least_once_ = false;
+    final_estimate_type_ = "unset";
+    time_to_first_reliable_bout_s_ = std::numeric_limits<double>::quiet_NaN();
+    last_bout_onset_s_ = std::numeric_limits<double>::quiet_NaN();
+    reacquisition_times_s_.clear();
     raw_sample_count_ = 0;
     raw_hit_count_ = 0;
     sepf_update_count_ = 0;
@@ -127,12 +133,16 @@ void SensorAwareSurgeCastPF::OnUpdate() {
 float SensorAwareSurgeCastPF::gasCallback(
     const olfaction_msgs::msg::GasSensor::SharedPtr msg) {
     const float ppm = SurgeCast::gasCallback(msg);
+    ++raw_sample_count_;
+    const bool raw_hit_for_audit = ppm > thresholdGas;
+    if (raw_hit_for_audit) ++raw_hit_count_;
     const double now_s = node->now().seconds();
     const double dt_s = last_gas_time_s_ < 0.0 ? 0.1 : std::max(1e-3, now_s - last_gas_time_s_);
     last_gas_time_s_ = now_s;
     latest_measurement_dt_s_ = dt_s;
     if (use_sdbe_) {
         latest_evidence_ = sensor_.update(ppm, dt_s);
+        ++sdbe_update_count_;
     } else {
         const bool raw_hit = ppm > thresholdGas;
         latest_evidence_.raw = ppm;
@@ -149,7 +159,16 @@ float SensorAwareSurgeCastPF::gasCallback(
         latest_evidence_.in_bout = raw_hit;
         last_raw_hit_ = raw_hit;
     }
-    if (latest_evidence_.bout_onset) ++independent_bouts_;
+    if (latest_evidence_.bout_onset) {
+        ++independent_bouts_;
+        if (!std::isfinite(time_to_first_reliable_bout_s_) && latest_evidence_.hit_probability >= sensor_config_.hit_on_probability) {
+            time_to_first_reliable_bout_s_ = (node->now() - startTime).seconds();
+        }
+        if (std::isfinite(last_bout_onset_s_)) {
+            reacquisition_times_s_.push_back(now_s - last_bout_onset_s_);
+        }
+        last_bout_onset_s_ = now_s;
+    }
     return ppm;
 }
 
@@ -202,6 +221,7 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
             return isPointFree(Vector2(p.x, p.y));
         });
         ++sepf_update_count_;
+        pf_updated_at_least_once_ = true;
         posterior_spread_m = std::sqrt(std::max(0.0, latest_estimate_.covariance_trace));
         if (pcr_decl_) {
             const double entropy_est = 0.5 * std::log(std::max(1e-12, latest_estimate_.covariance_trace));
@@ -368,7 +388,16 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
     const bool timeout = result == GSLResult::Failure &&
                          elapsed_s >= resultLogging.maxSearchTime;
 
-    const std::string estimate_type = use_sepf_ ? "posterior_mean" : "terminal_pose";
+    if (use_sepf_) {
+        if (pf_ && pf_updated_at_least_once_) {
+            final_estimate_type_ = "sepf_mean";
+        } else {
+            final_estimate_type_ = "sepf_missing";
+        }
+    } else {
+        final_estimate_type_ = "terminal_pose";
+    }
+    const std::string estimate_type = final_estimate_type_;
 
     std::ofstream output(audit_file_, std::ios::app);
     if (output.tellp() == 0) {
@@ -378,7 +407,7 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
                << "localized_success_2m,"
                << "use_sdbe,use_iasc,use_sepf,"
                << "p_hit,bout_count,raw_sample_count,raw_hit_count,"
-               << "cov_trace,ess,sepf_update_count,"
+               << "cov_trace,ess,sdbe_update_count,sepf_update_count,"
                << "iasc_goal_count,invalid_goal_count,planning_failure_count,"
                << "search_time_s\n";
     }
@@ -399,6 +428,7 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
            << raw_sample_count_ << ',' << raw_hit_count_ << ','
            << latest_estimate_.covariance_trace << ','
            << latest_estimate_.effective_sample_size << ','
+           << sdbe_update_count_ << ','
            << sepf_update_count_ << ','
            << iasc_goal_count_ << ',' << invalid_goal_count_ << ',' << planning_failure_count_ << ','
            << elapsed_s << '\n';

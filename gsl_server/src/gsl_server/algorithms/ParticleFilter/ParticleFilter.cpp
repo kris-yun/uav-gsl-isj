@@ -26,6 +26,7 @@ namespace GSL
         mu = getParam<double>("mu", 0.9);
         Sp = getParam<double>("Sp", 0.01);
         Rconv = getParam<double>("Rconv", 0.5);
+        pf_estimate_file_ = getParam<std::string>("pf_estimate_file", "");
     }
 
     PoseStamped ParticleFilter::windCallback(const olfaction_msgs::msg::Anemometer::SharedPtr msg)
@@ -316,4 +317,40 @@ namespace GSL
             estimationMarkers->publish(estimation);
         }
     }
+
+    void ParticleFilter::saveResultsToFile(GSLResult result)
+    {
+        GSL_INFO("PF saveResultsToFile called, pf_file=[{}]", pf_estimate_file_);
+        // Compute mean of estimated source locations
+        double mean_x = 0, mean_y = 0;
+        if (!estimatedLocations.empty()) {
+            for (const auto& loc : estimatedLocations) {
+                mean_x += loc.x;
+                mean_y += loc.y;
+            }
+            mean_x /= estimatedLocations.size();
+            mean_y /= estimatedLocations.size();
+        } else {
+            // Fallback to terminal pose
+            mean_x = currentRobotPose.pose.pose.position.x;
+            mean_y = currentRobotPose.pose.pose.position.y;
+        }
+
+        // Write PF estimate to CSV for B2 baseline reader
+        if (!pf_estimate_file_.empty()) {
+            std::ofstream pf_out(pf_estimate_file_, std::ios::trunc);
+            if (pf_out.is_open()) {
+                pf_out << "estimate_x,estimate_y,pf_mean_x,pf_mean_y,num_estimations" << std::endl;
+                pf_out << std::setprecision(10)
+                       << mean_x << "," << mean_y << ","
+                       << mean_x << "," << mean_y << ","
+                       << estimatedLocations.size() << std::endl;
+                pf_out.close();
+            }
+        }
+
+        // Call base class saveResultsToFile
+        Algorithm::saveResultsToFile(result);
+    }
+
 } // namespace GSL
