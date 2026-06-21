@@ -154,6 +154,9 @@ class BeaconExplorer {
     return best;
   }
 
+  int observationCount() const { return static_cast<int>(observations_.size()); }
+  bool observationHit(int idx) const { return observations_.at(static_cast<size_t>(idx)).hit; }
+
  private:
   double kernel(double x, double y, double ox, double oy) const {
     const double d2 = (x - ox) * (x - ox) + (y - oy) * (y - oy);

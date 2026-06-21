@@ -63,6 +63,7 @@ void SensorAwareSurgeCastPF::declareParameters() {
     beacon_cooldown_s_ = getParam("saisc.beacon_cooldown_s", 8.0);
     beacon_path_budget_m_ = getParam("saisc.beacon_path_budget_m", 25.0);
     beacon_max_goals_ = getParam("saisc.beacon_max_goals", 6);
+    use_beacon_tr_ = getParam("saisc.use_beacon_tr", 0) != 0;
     sage_path_budget_m_ = getParam("saisc.sage_path_budget_m", 25.0);
     sage_max_scan_steps_ = getParam("saisc.sage_max_scan_steps", 3);
     if ((use_av_rise_ || use_entropy_only_active_) && (!use_sepf_ || use_iasc_ || use_sdbe_)) {
@@ -374,7 +375,7 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
 
 
 
-    // BEACON: coverage-first exploration when support is not ready
+    // BEACON / BEACON-TR: coverage-first exploration when support is not ready
     if (use_beacon_ && !beacon_support_ready_ && pf_updated_at_least_once_
         && beacon_invalid_goal_count_ < 3
         && beacon_goal_count_ < static_cast<std::uint64_t>(beacon_max_goals_)
@@ -384,21 +385,106 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
         std::vector<uav_gsl::BeaconCandidate> bcands;
         const double ux = currentRobotPose.pose.pose.position.x;
         const double uy = currentRobotPose.pose.pose.position.y;
-        // Grid-based candidate generation around current position
-        const double radii[] = {1.0, 1.5, 2.0};
+
+        // Select radii: adaptive (TR) or fixed
+        std::vector<double> active_radii;
+        std::string tr_regime_str = "fixed";
+        std::string tr_ladder_id = "fixed";
+        if (use_beacon_tr_) {
+            uav_gsl::BeaconTREvidenceState ev;
+            ev.total_samples = static_cast<int>(raw_sample_count_);
+            ev.sepf_update_count = static_cast<int>(sepf_update_count_);
+            ev.support_ready = beacon_support_ready_;
+            ev.anisotropic_visibility_score =
+                static_cast<double>(beacon_explorer_.angularVisibilityBins()) / 8.0;
+            int total_obs = static_cast<int>(beacon_explorer_.observationCount());
+            int hit_obs = 0;
+            for (int i = 0; i < beacon_explorer_.observationCount(); ++i) {
+                if (beacon_explorer_.observationHit(i)) ++hit_obs;
+            }
+            ev.hit_rate_recent = total_obs > 0
+                ? static_cast<double>(hit_obs) / static_cast<double>(total_obs) : 0.0;
+            ev.boundary_count_recent =
+                static_cast<int>(beacon_explorer_.boundarySupport() * total_obs);
+
+            auto regime = beacon_tr_adapter_.classifyRegime(ev);
+            auto [lid, radii_vec] = beacon_tr_adapter_.radiusLadder(regime);
+            active_radii = radii_vec;
+            tr_ladder_id = lid;
+            if (regime == uav_gsl::BeaconTRRegime::EarlyBootstrap) tr_regime_str = "early_bootstrap";
+            else if (regime == uav_gsl::BeaconTRRegime::NominalSupported) tr_regime_str = "nominal_supported";
+            else if (regime == uav_gsl::BeaconTRRegime::SparseUnsupported) tr_regime_str = "sparse_unsupported";
+            else tr_regime_str = "saturated_unsupported";
+        } else {
+            active_radii = {1.0, 1.5, 2.0};
+        }
+
         const int n_angles = 8;
-        for (double r : radii) {
+        for (double r : active_radii) {
             for (int k = 0; k < n_angles; ++k) {
                 double a = 2.0 * M_PI * k / n_angles;
                 double cx = ux + r * std::cos(a);
                 double cy = uy + r * std::sin(a);
                 if (isPointFree(Vector2(cx, cy))) {
-                    bcands.push_back({cx, cy, r, 0.1, 0.05}); // reduced invalid_goal_risk and timeout_risk
+                    bcands.push_back({cx, cy, r, 0.1, 0.05});
                 }
             }
         }
         if (!bcands.empty()) {
-            auto best = beacon_explorer_.select(bcands);
+            std::optional<uav_gsl::BeaconScore> best;
+            if (use_beacon_tr_) {
+                // Build TR candidates from beacon candidates
+                std::vector<uav_gsl::BeaconTRCandidate> tr_cands;
+                for (const auto& bc : bcands) {
+                    auto [p_est, u_est] = beacon_explorer_.predictHitAndUncertainty(bc.x, bc.y);
+                    uav_gsl::BeaconTRCandidate tc;
+                    tc.x = bc.x; tc.y = bc.y;
+                    tc.radius_m = bc.path_cost_m;
+                    tc.family = (bc.path_cost_m <= 2.0) ? "local" :
+                                (bc.path_cost_m <= 3.5) ? "medium" : "global";
+                    tc.p_hit = p_est;
+                    tc.uncertainty = u_est;
+                    tc.path_cost_m = bc.path_cost_m;
+                    tc.invalid_goal_risk = bc.invalid_goal_risk;
+                    tc.timeout_risk = bc.timeout_risk;
+                    tc.revisit_penalty = 0.0;
+                    tr_cands.push_back(tc);
+                }
+                uav_gsl::BeaconTREvidenceState ev_for_select;
+                ev_for_select.total_samples = static_cast<int>(raw_sample_count_);
+                ev_for_select.sepf_update_count = static_cast<int>(sepf_update_count_);
+                ev_for_select.support_ready = beacon_support_ready_;
+                int total_obs2 = static_cast<int>(beacon_explorer_.observationCount());
+                int hit_obs2 = 0;
+                for (int i = 0; i < beacon_explorer_.observationCount(); ++i) {
+                    if (beacon_explorer_.observationHit(i)) ++hit_obs2;
+                }
+                ev_for_select.hit_rate_recent = total_obs2 > 0
+                    ? static_cast<double>(hit_obs2) / static_cast<double>(total_obs2) : 0.0;
+                ev_for_select.boundary_count_recent =
+                    static_cast<int>(beacon_explorer_.boundarySupport() * total_obs2);
+                ev_for_select.anisotropic_visibility_score =
+                    static_cast<double>(beacon_explorer_.angularVisibilityBins()) / 8.0;
+
+                auto tr_sel = beacon_tr_adapter_.select(ev_for_select, tr_cands);
+                if (tr_sel.has_value()) {
+                    // Convert TR selection back to BeaconScore for sendGoal
+                    uav_gsl::BeaconCandidate bc_conv;
+                    bc_conv.x = tr_sel->candidate.x;
+                    bc_conv.y = tr_sel->candidate.y;
+                    bc_conv.path_cost_m = tr_sel->candidate.path_cost_m;
+                    bc_conv.invalid_goal_risk = tr_sel->candidate.invalid_goal_risk;
+                    bc_conv.timeout_risk = tr_sel->candidate.timeout_risk;
+                    best = beacon_explorer_.scoreCandidate(bc_conv);
+                    beacon_tr_last_regime_ = tr_regime_str;
+                    beacon_tr_last_radius_m_ = tr_sel->candidate.radius_m;
+                    beacon_tr_last_ladder_id_ = tr_ladder_id;
+                    if (tr_sel->candidate.radius_m > 2.0) ++beacon_tr_global_scan_count_;
+                    else ++beacon_tr_local_scan_count_;
+                }
+            } else {
+                best = beacon_explorer_.select(bcands);
+            }
             if (best.has_value() && best->score > 0.0) {
                 NavigateToPose::Goal goal;
                 goal.pose.header.frame_id = "map";
@@ -418,7 +504,7 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
                     return;
                 } else {
                     ++beacon_invalid_goal_count_;
-                    beacon_last_goal_s_ = now_s + beacon_cooldown_s_ * 2.0; // extra cooldown on invalid goal
+                    beacon_last_goal_s_ = now_s + beacon_cooldown_s_ * 2.0;
                 }
             }
         }
@@ -695,7 +781,7 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
                << "p_hit,bout_count,raw_sample_count,raw_hit_count,"
                << "cov_trace,ess,sdbe_update_count,sepf_update_count,"
                << "iasc_goal_count,invalid_goal_count,planning_failure_count,"
-               << "use_kb_tme,use_av_rise,use_entropy_only_active,use_sapa_hpa,use_sapa_sig,sapa_shift,sapa_support,sapa_ess,sapa_decl,use_sage,sage_activations,sage_candidates,sage_selected,sage_invalid,sage_passthrough,sage_fallback,sage_gap_final,sage_rank_final,sage_vis_final,sage_boundary_final,use_beacon,beacon_support_ready,beacon_goals,beacon_invalid,beacon_budget_used,beacon_boundary,beacon_vis_bins,beacon_p_hit_sel,beacon_unc_sel,beacon_score_sel,beacon_reason_sel,"
+               << "use_kb_tme,use_av_rise,use_entropy_only_active,use_sapa_hpa,use_sapa_sig,sapa_shift,sapa_support,sapa_ess,sapa_decl,use_sage,sage_activations,sage_candidates,sage_selected,sage_invalid,sage_passthrough,sage_fallback,sage_gap_final,sage_rank_final,sage_vis_final,sage_boundary_final,use_beacon,beacon_support_ready,beacon_goals,beacon_invalid,beacon_budget_used,beacon_boundary,beacon_vis_bins,beacon_p_hit_sel,beacon_unc_sel,beacon_score_sel,beacon_reason_sel,beacon_tr_enabled,beacon_tr_regime,beacon_tr_radius_m,beacon_tr_ladder_id,beacon_tr_global_scans,beacon_tr_local_scans,"
                << "search_time_s\n";
     }
     output << std::setprecision(10)
@@ -749,6 +835,12 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
                << last_beacon_score_.uncertainty << ','
                << last_beacon_score_.score << ','
                << last_beacon_score_.selected_reason << ','
+               << static_cast<int>(use_beacon_tr_) << ','
+               << beacon_tr_last_regime_ << ','
+               << beacon_tr_last_radius_m_ << ','
+               << beacon_tr_last_ladder_id_ << ','
+               << beacon_tr_global_scan_count_ << ','
+               << beacon_tr_local_scan_count_ << ','
            << elapsed_s << '\n';
     output.close();
 

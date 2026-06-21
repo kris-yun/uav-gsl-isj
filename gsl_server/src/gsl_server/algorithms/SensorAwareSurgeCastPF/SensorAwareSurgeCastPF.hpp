@@ -12,6 +12,7 @@
 #include "uav_gsl/AnisotropicVisibilityRiskSampler.hpp"
 #include "uav_gsl/SupportGapExplorer.hpp"
 #include "uav_gsl/BeaconExplorer.hpp"
+#include "uav_gsl/BeaconTrustRegionRadiusAdapter.hpp"
 #include <deque>
 #include <fstream>
 #include <memory>
@@ -124,6 +125,15 @@ private:
     double beacon_cooldown_s_{8.0};
     double beacon_path_budget_m_{25.0};
     int beacon_max_goals_{6};
+
+    // BEACON-TR: Trust-Region Radius Adaptation
+    bool use_beacon_tr_{false};
+    uav_gsl::BeaconTrustRegionRadiusAdapter beacon_tr_adapter_;
+    std::string beacon_tr_last_regime_{"none"};
+    double beacon_tr_last_radius_m_{0.0};
+    std::string beacon_tr_last_ladder_id_{"none"};
+    int beacon_tr_global_scan_count_{0};
+    int beacon_tr_local_scan_count_{0};
 
     // SAGE: Support-Aware Gap-closing Exploration
     bool use_sage_{false};
