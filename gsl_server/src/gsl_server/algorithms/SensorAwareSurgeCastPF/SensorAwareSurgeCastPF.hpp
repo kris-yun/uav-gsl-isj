@@ -11,6 +11,7 @@
 #include "uav_gsl/SupportIdentifiabilityGate.hpp"
 #include "uav_gsl/AnisotropicVisibilityRiskSampler.hpp"
 #include "uav_gsl/SupportGapExplorer.hpp"
+#include "uav_gsl/BeaconExplorer.hpp"
 #include <deque>
 #include <fstream>
 #include <memory>
@@ -110,6 +111,20 @@ private:
     uav_gsl::SupportIdentifiabilityGate sapa_sig_;
     uav_gsl::DeclarationDecision last_sapa_decision_;
     double latest_wind_flow_to_rad_{0.0};
+    // BEACON: Boundary Evidence Acquisition with Coverage-first Online Navigation
+    bool use_beacon_{false};
+    uav_gsl::BeaconExplorer beacon_explorer_;
+    uav_gsl::BeaconScore last_beacon_score_;
+    bool beacon_support_ready_{false};
+    double beacon_support_ready_time_s_{-1.0};
+    std::uint64_t beacon_goal_count_{0};
+    std::uint64_t beacon_invalid_goal_count_{0};
+    double beacon_path_budget_used_m_{0.0};
+    double beacon_last_goal_s_{-999.0};
+    double beacon_cooldown_s_{8.0};
+    double beacon_path_budget_m_{25.0};
+    int beacon_max_goals_{6};
+
     // SAGE: Support-Aware Gap-closing Exploration
     bool use_sage_{false};
     uav_gsl::SupportGapExplorer sage_explorer_;

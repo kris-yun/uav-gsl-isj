@@ -59,6 +59,10 @@ void SensorAwareSurgeCastPF::declareParameters() {
     use_sapa_sig_ = getParam("saisc.use_sapa_sig", 0) != 0;
     use_sage_ = getParam("saisc.use_sage", 0) != 0;
     sage_cooldown_s_ = getParam("saisc.sage_cooldown_s", 8.0);
+    use_beacon_ = getParam("saisc.use_beacon", 0) != 0;
+    beacon_cooldown_s_ = getParam("saisc.beacon_cooldown_s", 8.0);
+    beacon_path_budget_m_ = getParam("saisc.beacon_path_budget_m", 25.0);
+    beacon_max_goals_ = getParam("saisc.beacon_max_goals", 6);
     sage_path_budget_m_ = getParam("saisc.sage_path_budget_m", 25.0);
     sage_max_scan_steps_ = getParam("saisc.sage_max_scan_steps", 3);
     if ((use_av_rise_ || use_entropy_only_active_) && (!use_sepf_ || use_iasc_ || use_sdbe_)) {
@@ -297,6 +301,20 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
             }
         }
 
+
+        // BEACON: collect hit/no-hit observations
+        if (use_beacon_ && pf_updated_at_least_once_) {
+            uav_gsl::BeaconObservation bo;
+            bo.x = sensing_position.x;
+            bo.y = sensing_position.y;
+            bo.gas_ppm = latest_evidence_.hit_probability;
+            bo.hit = latest_evidence_.hit_probability >= 0.5;
+            bo.wind_dir_flow_to_rad = robust_wind;
+            bo.t = now_s;
+            beacon_explorer_.addObservation(bo);
+            beacon_support_ready_ = beacon_explorer_.supportReady();
+            if (beacon_support_ready_ && beacon_support_ready_time_s_ < 0) beacon_support_ready_time_s_ = now_s;
+        }
         // SAGE: buffer observations for support diagnosis
         if (use_sage_ && pf_updated_at_least_once_) {
             uav_gsl::SageObservation so;
@@ -354,6 +372,56 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
         return;
     }
 
+
+
+    // BEACON: coverage-first exploration when support is not ready
+    if (use_beacon_ && !beacon_support_ready_ && pf_updated_at_least_once_
+        && beacon_goal_count_ < static_cast<std::uint64_t>(beacon_max_goals_)
+        && beacon_path_budget_used_m_ < beacon_path_budget_m_
+        && (now_s - beacon_last_goal_s_) >= beacon_cooldown_s_) {
+        // Generate candidates from map coverage, NOT from posterior mean
+        std::vector<uav_gsl::BeaconCandidate> bcands;
+        const double ux = currentRobotPose.pose.pose.position.x;
+        const double uy = currentRobotPose.pose.pose.position.y;
+        // Grid-based candidate generation around current position
+        const double radii[] = {1.5, 2.5, 3.5};
+        const int n_angles = 8;
+        for (double r : radii) {
+            for (int k = 0; k < n_angles; ++k) {
+                double a = 2.0 * M_PI * k / n_angles;
+                double cx = ux + r * std::cos(a);
+                double cy = uy + r * std::sin(a);
+                if (isPointFree(Vector2(cx, cy))) {
+                    bcands.push_back({cx, cy, r, 0.0, 0.0});
+                }
+            }
+        }
+        if (!bcands.empty()) {
+            auto best = beacon_explorer_.select(bcands);
+            if (best.has_value() && best->score > 0.0) {
+                NavigateToPose::Goal goal;
+                goal.pose.header.frame_id = "map";
+                goal.pose.header.stamp = node->now();
+                goal.pose.pose.position.x = best->candidate.x;
+                goal.pose.pose.position.y = best->candidate.y;
+                double hdg = std::atan2(best->candidate.y - uy, best->candidate.x - ux);
+                goal.pose.pose.orientation = Utils::createQuaternionMsgFromYaw(angles::normalize_angle(hdg));
+                if (movingState->checkGoal(goal)) {
+                    auto* mv = dynamic_cast<MovingStatePlumeTracking*>(movingState.get());
+                    if (mv) mv->currentMovement = PTMovement::Exploration;
+                    movingState->sendGoal(goal);
+                    ++beacon_goal_count_;
+                    last_beacon_score_ = best.value();
+                    beacon_last_goal_s_ = now_s;
+                    beacon_path_budget_used_m_ += best->candidate.path_cost_m;
+                    return;
+                } else {
+                    ++beacon_invalid_goal_count_;
+                    beacon_last_goal_s_ = now_s;
+                }
+            }
+        }
+    }
 
     // SAGE: Support-Aware Gap-closing Exploration
     if (use_sage_ && pf_updated_at_least_once_ && pf_ && pf_->particles().size() > 0) {
@@ -626,7 +694,7 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
                << "p_hit,bout_count,raw_sample_count,raw_hit_count,"
                << "cov_trace,ess,sdbe_update_count,sepf_update_count,"
                << "iasc_goal_count,invalid_goal_count,planning_failure_count,"
-               << "use_kb_tme,use_av_rise,use_entropy_only_active,use_sapa_hpa,use_sapa_sig,sapa_shift,sapa_support,sapa_ess,sapa_decl,use_sage,sage_activations,sage_candidates,sage_selected,sage_invalid,sage_passthrough,sage_fallback,sage_gap_final,sage_rank_final,sage_vis_final,sage_boundary_final,"
+               << "use_kb_tme,use_av_rise,use_entropy_only_active,use_sapa_hpa,use_sapa_sig,sapa_shift,sapa_support,sapa_ess,sapa_decl,use_sage,sage_activations,sage_candidates,sage_selected,sage_invalid,sage_passthrough,sage_fallback,sage_gap_final,sage_rank_final,sage_vis_final,sage_boundary_final,use_beacon,beacon_support_ready,beacon_goals,beacon_invalid,beacon_budget_used,beacon_boundary,beacon_vis_bins,beacon_p_hit_sel,beacon_unc_sel,beacon_score_sel,beacon_reason_sel,"
                << "search_time_s\n";
     }
     output << std::setprecision(10)
@@ -669,6 +737,17 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
                << last_sage_diag_.rank_score << ','
                << last_sage_diag_.visibility_score << ','
                << last_sage_diag_.boundary_support << ','
+               << static_cast<int>(use_beacon_) << ','
+               << static_cast<int>(beacon_support_ready_) << ','
+               << beacon_goal_count_ << ','
+               << beacon_invalid_goal_count_ << ','
+               << beacon_path_budget_used_m_ << ','
+               << beacon_explorer_.boundarySupport() << ','
+               << beacon_explorer_.angularVisibilityBins() << ','
+               << last_beacon_score_.p_hit << ','
+               << last_beacon_score_.uncertainty << ','
+               << last_beacon_score_.score << ','
+               << last_beacon_score_.selected_reason << ','
            << elapsed_s << '\n';
     output.close();
 
