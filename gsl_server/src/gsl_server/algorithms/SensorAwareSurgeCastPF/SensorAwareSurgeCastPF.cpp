@@ -376,6 +376,7 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
 
     // BEACON: coverage-first exploration when support is not ready
     if (use_beacon_ && !beacon_support_ready_ && pf_updated_at_least_once_
+        && beacon_invalid_goal_count_ < 3
         && beacon_goal_count_ < static_cast<std::uint64_t>(beacon_max_goals_)
         && beacon_path_budget_used_m_ < beacon_path_budget_m_
         && (now_s - beacon_last_goal_s_) >= beacon_cooldown_s_) {
@@ -384,7 +385,7 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
         const double ux = currentRobotPose.pose.pose.position.x;
         const double uy = currentRobotPose.pose.pose.position.y;
         // Grid-based candidate generation around current position
-        const double radii[] = {1.5, 2.5, 3.5};
+        const double radii[] = {1.0, 1.5, 2.0};
         const int n_angles = 8;
         for (double r : radii) {
             for (int k = 0; k < n_angles; ++k) {
@@ -392,7 +393,7 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
                 double cx = ux + r * std::cos(a);
                 double cy = uy + r * std::sin(a);
                 if (isPointFree(Vector2(cx, cy))) {
-                    bcands.push_back({cx, cy, r, 0.0, 0.0});
+                    bcands.push_back({cx, cy, r, 0.1, 0.05}); // reduced invalid_goal_risk and timeout_risk
                 }
             }
         }
@@ -417,7 +418,7 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
                     return;
                 } else {
                     ++beacon_invalid_goal_count_;
-                    beacon_last_goal_s_ = now_s;
+                    beacon_last_goal_s_ = now_s + beacon_cooldown_s_ * 2.0; // extra cooldown on invalid goal
                 }
             }
         }
