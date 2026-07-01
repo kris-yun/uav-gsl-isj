@@ -1,4 +1,9 @@
-#pragma once
+﻿#pragma once
+// OPGSL: Optimal-Path Gas Source Localization with SD-NBV framework
+// SD-NBV = Spatial Deconvolution + Next-Best-View
+// Central idea: 3D Bayesian posterior over source location drives ALL decisions.
+// No hardcoded state machine. Every action maximizes expected information gain.
+
 #include <gsl_server/algorithms/Common/Algorithm.hpp>
 #include <gsl_server/algorithms/Common/States/MovingState.hpp>
 #include <Eigen/Dense>
@@ -13,6 +18,7 @@
 
 namespace GSL {
 class OPGSL;
+
 class MovingStateOPGSL : public MovingState {
 public:
     MovingStateOPGSL(Algorithm* _algorithm);
@@ -24,14 +30,51 @@ private:
     NavigateToPose::Goal posToGoal(float x, float y, float z);
 };
 
+// ============================================================
+// Gaussian Process for height-concentration modeling
+// ============================================================
+class SimpleGP {
+public:
+    struct Hyperparams {
+        float length_scale = 0.8f;
+        float signal_var = 1.0f;
+        float noise_var = 0.1f;
+    };
+    void reset(float z_init, float z_min, float z_max) {
+        z_min_ = z_min; z_max_ = z_max;
+        xs_.clear(); ys_.clear();
+        best_z_ = z_init; best_y_ = -1e9f;
+        hyper_ = {0.8f, 1.0f, 0.1f};
+    }
+    void addObservation(float z, float y) {
+        xs_.push_back(z); ys_.push_back(y);
+        if (y > best_y_) { best_y_ = y; best_z_ = z; }
+    }
+    float getNextZ(float z_current, bool use_ucb = true);
+    float getNextZAnchored(float z_current, float anchor_z, float anchor_weight);
+    float getBestZ() const { return best_z_; }
+    void setLengthScale(float ls) { hyper_.length_scale = ls; }
+    const std::vector<float>& getXS() const { return xs_; }
+    const std::vector<float>& getYS() const { return ys_; }
+private:
+    Hyperparams hyper_;
+    std::vector<float> xs_, ys_;
+    float best_z_ = 0.3f, best_y_ = -1e9f;
+    float z_min_ = -1.0f, z_max_ = 3.0f;
+    float kernel(float a, float b) const {
+        float d = (a - b) / hyper_.length_scale;
+        return hyper_.signal_var * std::exp(-0.5f * d * d);
+    }
+};
+
+// ============================================================
+// OPGSL Main Class — SD-NBV Framework
+// ============================================================
 class OPGSL : public Algorithm {
     friend class MovingStateOPGSL;
 public:
     explicit OPGSL(std::shared_ptr<rclcpp::Node> _node);
     void Initialize() override;
-
-    // 3D Altitude phases
-    enum class AltPhase { EXPLORE, CALIBRATE, TRACK };
 
 protected:
     void declareParameters() override;
@@ -42,7 +85,7 @@ protected:
     void OnCompleteNavigation(GSLResult result, State* previousState) override;
 
 private:
-    // Core modules (WR-SFE + WA-IG)
+    // ---- Core Modules (retained from validated implementations) ----
     WATS::WR_SFE field_estimator_;
     WATS::WR_SFE::Config field_cfg_;
     WATS::WA_IG info_gain_;
@@ -53,7 +96,7 @@ private:
     bool use_bout_ = true;
     bool use_adaptive_step_ = true;
 
-    // General state
+    // ---- General state ----
     int step_count_ = 0;
     float elapsed_time_ = 0.0f;
     float latest_wind_x_ = 0.0f, latest_wind_y_ = 0.0f, latest_wind_speed_ = 0.0f;
@@ -80,14 +123,15 @@ private:
     int max_run_steps_ = 8;
 
     // Convergence
-    float convergence_min_time_ = 15.0f, convergence_entropy_threshold_ = 5.0f;
+    float convergence_min_time_ = 30.0f, convergence_entropy_threshold_ = 5.0f;
     int convergence_min_bouts_ = 2, convergence_stable_steps_ = 5, stable_steps_count_ = 0;
 
     // Wind history
+    std::vector<float> obs_history_x_, obs_history_y_, obs_history_c_;
     std::deque<float> wind_dir_history_;
     static constexpr int kWindHistorySize = 10;
 
-    // Module 1: Levy Flight state
+    // Module 1: Lévy Flight state
     int levy_step_remaining_ = 0;
     float levy_angle_ = 0.0f;
 
@@ -109,102 +153,120 @@ private:
     double last_update_time_ = 0.0;
     bool need_next_goal_ = false;
 
+    // ---- Core functions ----
     float smoothWindDirection() const;
     void clipToMapBounds(float& x, float& y) const;
-    void infotaxisStep(float& best_x, float& best_y);
+
+    // SD-NBV unified decision: selects next (x,y) based on 3D posterior + field
+    void sdnbvStep(float& best_x, float& best_y);
+    void infotaxisStep(float& best_x, float& best_y); // wrapper for backward compat
     void levyExploration(float& best_x, float& best_y, float cx, float cy);
 
-    // ============================================================
-    // 3D Adaptive Altitude Controller
-    // ============================================================
+    // ---- Optional modules (disabled by default) ----
+    // BH-EX: Basin-Hopping Exploration
+    bool use_bhex_ = false;
+    int bhex_stagnation_count_ = 0;
+    int bhex_stagnation_threshold_ = 5;
+    float bhex_temperature_ = 2.0f;
+    float bhex_cooling_ = 0.95f;
+    float bhex_min_temp_ = 0.1f;
+    float bhex_best_conc_ = 0.0f;
+    float bhex_best_x_ = 0.0f, bhex_best_y_ = 0.0f;
+    bool bhex_jump_pending_ = false;
+    float bhex_jump_x_ = 0.0f, bhex_jump_y_ = 0.0f;
+    void bhexCheckStagnation(float current_conc, float cx, float cy);
 
-    // Phase state
-    AltPhase alt_phase_ = AltPhase::EXPLORE;
-    float current_altitude_ = 0.3f;  // current flight altitude (z)
+    // WAZ: Wind-Aligned Zigzag
+    bool use_waz_ = false;
+    int waz_phase_ = 0;
+    float waz_step_size_ = 1.5f;
+    int waz_steps_per_leg_ = 4;
+    int waz_step_count_ = 0;
+    void wazExplore(float& out_x, float& out_y, float cx, float cy);
 
-    // Altitude bounds
-    float z_min_ = 0.0f;     // minimum altitude
-    float z_max_ = 3.0f;     // maximum altitude
+    // SC: Surge-Cast plume tracking
+    bool use_sc_ = false;
+    int sc_mode_ = 0;
+    int sc_cast_dir_ = 1;
+    float sc_cast_step_ = 1.5f;
+    int sc_cast_legs_ = 0;
+    float sc_surge_start_x_ = 0, sc_surge_start_y_ = 0;
+    float sc_last_surge_dir_x_ = 0, sc_last_surge_dir_y_ = 0;
+    float sc_source_est_x_ = 0, sc_source_est_y_ = 0;
+    int sc_source_est_count_ = 0;
+    float sc_max_cast_ = 8.0f;
+    int sc_consecutive_hits_ = 0;
+    int sc_consecutive_misses_ = 0;
+    float sc_surge_step_ = 0.8f;
+    void scStep(float& out_x, float& out_y, float cx, float cy);
 
-    // --- ESC (Extremum Seeking Control) for gradient tracking ---
-    struct ESCState {
-        float z_hat = 0.3f;       // center estimate
-        float omega = 0.5f;       // perturbation frequency (rad/step)
-        float amplitude = 0.8f;   // perturbation amplitude
-        float amplitude_init = 0.8f;
-        float lambda = 0.02f;     // amplitude decay rate
-        float K = 0.3f;           // update gain
-        float alpha_h = 0.3f;     // high-pass filter coefficient
-        float alpha_l = 0.7f;     // low-pass filter coefficient
-        float eta = 0.0f;         // high-pass filter state
-        float G_hat = 0.0f;       // low-pass filtered gradient estimate
-        float prev_y = 0.0f;      // previous measurement
-        int t = 0;                // time step counter
-        float z_min = 0.0f;
-        float z_max = 3.0f;
+    // ---- SD-NBV: 3D Source Posterior (central belief state) ----
+    float z_min_ = -1.0f, z_max_ = 3.0f;
 
-        float getZ() const {
-            return z_hat + amplitude * std::sin(omega * static_cast<float>(t));
-        }
+    class SourcePosterior3D {
+    public:
+        // Log-probability grid
+        std::vector<std::vector<std::vector<float>>> grid;
+        int nx_ = 20, ny_ = 20, nz_ = 10;
+        float x_min_ = -5, x_max_ = 5, y_min_ = -8, y_max_ = 1, z_min_ = -1.0f, z_max_ = 3.0f;
+        float dx_, dy_, dz_;
+        bool initialized_ = false;
 
-        void update(float measurement) {
-            t++;
-            // High-pass filter: remove DC component
-            eta = alpha_h * (eta + measurement - prev_y);
-            // Demodulate: extract gradient
-            float a_safe = std::max(amplitude, 0.01f);
-            float demod = eta * std::sin(omega * static_cast<float>(t)) * (2.0f / a_safe);
-            // Low-pass filter: smooth gradient estimate
-            G_hat = alpha_l * G_hat + (1.0f - alpha_l) * demod;
-            // Update center estimate (gradient ascent)
-            z_hat += K * G_hat;
-            z_hat = std::clamp(z_hat, z_min, z_max);
-            // Decay amplitude
-            amplitude *= (1.0f - lambda);
-            amplitude = std::max(amplitude, 0.01f);
-            prev_y = measurement;
-        }
+        struct NBVResult {
+            float x, y, z;
+            float expected_info_gain;
+        };
 
-        void reset(float z_init, float z_lo, float z_hi) {
-            z_hat = z_init;
-            z_min = z_lo; z_max = z_hi;
-            amplitude = amplitude_init;
-            eta = 0.0f; G_hat = 0.0f; prev_y = 0.0f; t = 0;
-        }
+        void init(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
+        void update(float cx, float cy, float cz, float concentration,
+                    float wind_x, float wind_y, float wind_speed);
+        void getMAP(float& mx, float& my, float& mz) const;
+        float getEntropy() const;
+        NBVResult selectNBV(float robot_x, float robot_y, float robot_z,
+                            float wind_x, float wind_y, float wind_speed) const;
+        // FIM: identify which dimension has highest uncertainty
+        void getFIMEigenvalues(float& eig_x, float& eig_y, float& eig_z) const;
+        float plumeLogLikelihood(float sx, float sy, float sz,
+                                  float cx, float cy, float cz,
+                                  float wind_x, float wind_y, float wind_speed) const;
+        void reset();
     };
-    ESCState esc_;
+    SourcePosterior3D posterior3d_;
 
-    // --- Lévy height exploration ---
+    // ---- GP Height Model ----
+    SimpleGP gp_;
+    float current_altitude_ = 0.3f;
+
+    // ---- Lévy height exploration ----
     float levyHeight(float z_current);
     int levy_height_step_remaining_ = 0;
     float levy_height_target_ = 0.3f;
 
-    // --- Significant Layer scanning (WMO radiosonde) ---
+    // ---- Significant Layer scanning ----
     struct LayerPoint {
         float z;
         float concentration;
     };
-    std::vector<LayerPoint> layer_profile_;    // measured concentration profile
-    std::vector<float> significant_layers_;     // detected significant layer altitudes
+    std::vector<LayerPoint> layer_profile_;
+    std::vector<float> significant_layers_;
     bool calibration_active_ = false;
     int calibration_step_ = 0;
-    std::vector<float> calibration_z_sequence_;  // z positions to visit during calibration
+    std::vector<float> calibration_z_sequence_;
     int calibration_index_ = 0;
+    int calibration_count_ = 0;
     float best_calibrated_z_ = 0.3f;
 
     void startCalibration();
-    void significantLayerRecursion(float z_lo, float c_lo, float z_hi, float c_hi,
-                                    float threshold, std::vector<LayerPoint>& profile);
     void processCalibrationMeasurement(float z, float concentration);
 
-    // --- Altitude posterior with temporal decay ---
-    static constexpr int kNumZBins = 28;  // [0.0, 3.0] in 0.1m steps
-    float z_posterior_[28] = {0};          // log-posterior
-    float z_decay_rate_ = 0.01f;          // temporal decay rate gamma
+    // ---- Altitude posterior with temporal decay ----
+    static constexpr int kNumZBins = 28;
+    float z_posterior_[28] = {0};
+    float z_decay_rate_ = 0.01f;
     void updateAltitudePosterior(float z, float concentration);
     float getPosteriorBestZ() const;
 
-    // --- MaxConc-z baseline (reviewer criticism #5) ---
+    // ---- MaxConc-z baseline ----
     struct ZConcRecord {
         float z;
         float concentration;
@@ -214,18 +276,26 @@ private:
     int max_conc_window_ = 20;
     float maxConcAltitude() const;
 
-    // --- Phase management ---
-    int consecutive_miss_threshold_ = 10;  // go back to EXPLORE after N misses
-    void updateAltitudePhase(float concentration);
+    // ---- SD-NBV altitude selection (FIM-driven, no state machine) ----
     float selectTargetAltitude();
-
-    // --- Ablation toggles ---
-    bool use_esc_altitude_ = true;     // ESC gradient tracking
-    bool use_levy_altitude_ = true;    // Lévy height exploration
-    bool use_layer_scan_ = true;       // Significant layer scanning
-    bool use_altitude_decay_ = true;   // Posterior temporal decay
-
-    // --- Logging ---
     void logAltitudeState();
+
+    // ---- Ablation toggles ----
+    bool use_gp_altitude_ = true;
+    bool use_levy_altitude_ = true;
+    bool use_layer_scan_ = true;
+    bool use_altitude_decay_ = true;
+    bool use_sdnbv_ = true;  // Enable SD-NBV framework
+
+    // EIG (legacy, kept for compatibility)
+    bool use_eig_height_ = false;
+    static constexpr int kNumHeights = 9;
+    float eig_heights_[9] = {0.3f, 0.5f, 1.0f, 1.5f, 1.8f, 2.0f, 2.2f, 2.5f, 3.0f};
+    float eig_height_posterior_[9] = {0};
+    float eig_selected_height_ = 2.0f;
+    int eig_height_update_count_ = 0;
+    float eig_height_update_interval_ = 5.0f;
+    void updateHeightPosterior(float concentration, float rx, float ry);
+    float selectBestHeight();
 };
 } // namespace GSL
