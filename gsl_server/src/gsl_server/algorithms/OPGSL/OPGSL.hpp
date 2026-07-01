@@ -60,7 +60,7 @@ private:
     Hyperparams hyper_;
     std::vector<float> xs_, ys_;
     float best_z_ = 0.3f, best_y_ = -1e9f;
-    float z_min_ = 0.1f, z_max_ = 3.0f;
+    float z_min_ = -1.0f, z_max_ = 3.0f;
     float kernel(float a, float b) const {
         float d = (a - b) / hyper_.length_scale;
         return hyper_.signal_var * std::exp(-0.5f * d * d);
@@ -127,6 +127,7 @@ private:
     int convergence_min_bouts_ = 2, convergence_stable_steps_ = 5, stable_steps_count_ = 0;
 
     // Wind history
+    std::vector<float> obs_history_x_, obs_history_y_, obs_history_c_;
     std::deque<float> wind_dir_history_;
     static constexpr int kWindHistorySize = 10;
 
@@ -200,14 +201,14 @@ private:
     void scStep(float& out_x, float& out_y, float cx, float cy);
 
     // ---- SD-NBV: 3D Source Posterior (central belief state) ----
-    float z_min_ = 0.1f, z_max_ = 3.0f;
+    float z_min_ = -1.0f, z_max_ = 3.0f;
 
     class SourcePosterior3D {
     public:
         // Log-probability grid
         std::vector<std::vector<std::vector<float>>> grid;
         int nx_ = 20, ny_ = 20, nz_ = 10;
-        float x_min_ = -5, x_max_ = 5, y_min_ = -8, y_max_ = 1, z_min_ = 0.1f, z_max_ = 3.0f;
+        float x_min_ = -5, x_max_ = 5, y_min_ = -8, y_max_ = 1, z_min_ = -1.0f, z_max_ = 3.0f;
         float dx_, dy_, dz_;
         bool initialized_ = false;
 

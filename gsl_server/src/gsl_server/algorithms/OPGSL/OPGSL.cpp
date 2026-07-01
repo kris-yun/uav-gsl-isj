@@ -162,26 +162,42 @@ void OPGSL::SourcePosterior3D::reset() {
 float OPGSL::SourcePosterior3D::plumeLogLikelihood(float sx, float sy, float sz,
                                                      float cx, float cy, float cz,
                                                      float wind_x, float wind_y, float wind_speed) const {
-    // Wind-relative plume model
     float dx = cx - sx, dy = cy - sy, dz = cz - sz;
-    float ws = std::max(wind_speed, 0.05f);
-    float wn = std::sqrt(wind_x*wind_x + wind_y*wind_y) + 1e-6f;
-    float wx = wind_x/wn, wy = wind_y/wn;
-    float d_along = dx*wx + dy*wy;
-    float d_cross = std::abs(dx*wy - dy*wx);
-    float d_vert = std::abs(dz);
-    // Gaussian plume approximation
-    float sigma_y = 0.8f * std::sqrt(std::max(d_along, 0.1f) + 0.5f);
-    float sigma_z = 0.5f * std::sqrt(std::max(d_along, 0.1f) + 0.5f);
-    float log_lik = -d_cross*d_cross/(2*sigma_y*sigma_y) - d_vert*d_vert/(2*sigma_z*sigma_z);
-    // Upwind penalty
-    if (d_along < 0) log_lik -= 2.0f * std::abs(d_along);
-    return log_lik;
+    float dist2 = dx*dx + dy*dy + dz*dz;
+    float wn = std::sqrt(wind_x*wind_x + wind_y*wind_y);
+
+    if (wn < 0.08f) {
+        // ISOTROPIC DIFFUSION MODEL for indoor/low-wind scenarios
+        float sigma = 0.6f;
+        float log_lik = -dist2 / (sigma * sigma) - 0.3f * std::sqrt(dist2);
+        if (dz < -0.5f) log_lik -= 0.5f * (dz + 0.5f) * (dz + 0.5f);
+        return log_lik;
+    } else {
+        // Wind-advected Gaussian plume
+        float wx = wind_x/wn, wy = wind_y/wn;
+        float d_along = dx*wx + dy*wy;
+        float d_cross = std::abs(dx*wy - dy*wx);
+        float d_vert = std::abs(dz);
+        float sigma_y = 0.8f * std::sqrt(std::max(d_along, 0.1f) + 0.5f);
+        float sigma_z = 0.5f * std::sqrt(std::max(d_along, 0.1f) + 0.5f);
+        float log_lik = -d_cross*d_cross/(2*sigma_y*sigma_y) - d_vert*d_vert/(2*sigma_z*sigma_z);
+        if (d_along < 0) log_lik -= 2.0f * std::abs(d_along);
+        float dist_xy = std::sqrt(dx*dx + dy*dy);
+        log_lik -= 0.4f * dist_xy;
+        return log_lik;
+    }
 }
 
 void OPGSL::SourcePosterior3D::update(float cx, float cy, float cz, float concentration,
                                        float wind_x, float wind_y, float wind_speed) {
     if (!initialized_) return;
+    // Temporal decay
+    float decay = 0.995f;
+    for (int ii = 0; ii < nx_; ii++)
+        for (int jj = 0; jj < ny_; jj++)
+            for (int kk = 0; kk < nz_; kk++)
+                grid[ii][jj][kk] *= decay;
+
     float max_log = -1e9f;
     for (int i = 0; i < nx_; i++) {
         for (int j = 0; j < ny_; j++) {
@@ -193,7 +209,7 @@ void OPGSL::SourcePosterior3D::update(float cx, float cy, float cz, float concen
                 // Weight by concentration
                 float weight;
                 if (concentration > 0.01f) {
-                    weight = std::sqrt(concentration);
+                    weight = std::clamp(std::sqrt(concentration) * 1.5f, 0.0f, 3.0f);
                 } else {
                     weight = -0.05f;
                 }
@@ -280,8 +296,8 @@ OPGSL::SourcePosterior3D::NBVResult OPGSL::SourcePosterior3D::selectNBV(
     for (float dx = -search_radius; dx <= search_radius; dx += step) {
         for (float dy = -search_radius; dy <= search_radius; dy += step) {
             for (float dz = -0.5f; dz <= 1.5f; dz += 0.3f) {
-                float cx = robot_x + dx;
-                float cy = robot_y + dy;
+                float cx = std::clamp(robot_x + dx, x_min_ + 0.5f, x_max_ - 0.5f);
+                float cy = std::clamp(robot_y + dy, y_min_ + 0.5f, y_max_ - 0.5f);
                 float cz = std::clamp(robot_z + dz, z_min_, z_max_);
                 // Compute expected information gain
                 float mean_c = 0.0f;
@@ -312,6 +328,8 @@ OPGSL::SourcePosterior3D::NBVResult OPGSL::SourcePosterior3D::selectNBV(
                 float eig = var_c;
                 float dist = std::sqrt(dx*dx + dy*dy + dz*dz);
                 eig *= std::exp(-0.1f * dist);
+                float upwind_bonus = -(dx*wind_x + dy*wind_y) / (wind_speed + 0.01f);
+                if (wind_speed > 0.1f) eig *= std::exp(0.2f * upwind_bonus);
                 if (eig > best_eig) {
                     best_eig = eig;
                     result.x = cx; result.y = cy; result.z = cz;
@@ -333,6 +351,25 @@ void OPGSL::sdnbvStep(float& best_x, float& best_y) {
     // Update 3D posterior with current observation
     if (latest_gas_ > 0.001f) {
         posterior3d_.update(cx, cy, current_altitude_, latest_gas_, wx, wy, ws);
+    }
+
+    // SURGE-CAST: if wind > 0.3 and we have hits, move toward MAP
+    if (ws > 0.3f && gas_hit_count_ > 3 && step_count_ > 3) {
+        float wn = std::sqrt(wx*wx + wy*wy);
+        if (wn > 0.01f) {
+            float map_x, map_y, map_z;
+            posterior3d_.getMAP(map_x, map_y, map_z);
+            float to_map_x = map_x - cx;
+            float to_map_y = map_y - cy;
+            float to_map_d = std::sqrt(to_map_x*to_map_x + to_map_y*to_map_y);
+            if (to_map_d > 0.3f) {
+                best_x = cx + step_size_ * to_map_x / to_map_d;
+                best_y = cy + step_size_ * to_map_y / to_map_d;
+                GSL_INFO("SDNBV: surge-to-MAP ({:.2f},{:.2f}) d={:.2f}", best_x, best_y, to_map_d);
+                clipToMapBounds(best_x, best_y);
+                return;
+            }
+        }
     }
 
     // Get FIM eigenvalues to decide what to explore
@@ -423,6 +460,7 @@ void OPGSL::sdnbvStep(float& best_x, float& best_y) {
     best_x = best_gx * resolution_ - map_half_size_;
     best_y = best_gy * resolution_ - map_half_size_;
 
+    clipToMapBounds(best_x, best_y);
     // Lévy exploration if stagnating
     if (use_levy_ && consecutive_misses_ > 8) {
         levyExploration(best_x, best_y, cx, cy);
@@ -456,7 +494,7 @@ void OPGSL::processGasAndWindMeasurements(double concentration, double windSpeed
     updateAltitudePosterior(cz, latest_gas_);
 
     // Update GP with current observation
-    if (use_gp_altitude_ && latest_gas_ > 0.001f) {
+    if (use_gp_altitude_ && latest_gas_ > 0.001f && calibration_count_ > 0) {
         gp_.addObservation(cz, latest_gas_);
     }
 
@@ -523,6 +561,15 @@ void OPGSL::processGasAndWindMeasurements(double concentration, double windSpeed
         processCalibrationMeasurement(cz, latest_gas_);
     }
 
+    // Record observation history for gradient estimation
+    obs_history_x_.push_back(cx);
+    obs_history_y_.push_back(cy);
+    obs_history_c_.push_back(latest_gas_);
+    if ((int)obs_history_x_.size() > 30) {
+        obs_history_x_.erase(obs_history_x_.begin());
+        obs_history_y_.erase(obs_history_y_.begin());
+        obs_history_c_.erase(obs_history_c_.begin());
+    }
     prev_gas_ = latest_gas_;
 
     // Trigger navigation after measurement
@@ -774,7 +821,7 @@ void OPGSL::scStep(float& out_x, float& out_y, float cx, float cy) {
 GSLResult OPGSL::checkSourceFound() {
     if (elapsed_time_ < convergence_min_time_) return GSLResult::Running;
     if (gas_hit_count_ < convergence_min_bouts_) return GSLResult::Running;
-    if (step_count_ < 50) return GSLResult::Running;
+    if (step_count_ < 30) return GSLResult::Running;
 
     auto field = field_estimator_.computeField();
     float cx = currentRobotPosition.x, cy = currentRobotPosition.y;
@@ -784,7 +831,7 @@ GSLResult OPGSL::checkSourceFound() {
     float dx = map_x - cx, dy = map_y - cy;
     float dist_to_peak = std::sqrt(dx*dx + dy*dy);
     float dz = std::abs(map_z - current_altitude_);
-    bool near_peak = dist_to_peak < 1.5f;
+    bool near_peak = dist_to_peak < 2.0f;
     bool entropy_low = field.field_entropy < convergence_entropy_threshold_;
     bool z_stable = dz < 1.5f;
 
