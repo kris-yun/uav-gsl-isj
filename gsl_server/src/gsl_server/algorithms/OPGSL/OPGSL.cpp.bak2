@@ -63,7 +63,7 @@ void OPGSL::declareParameters() {
     n_cells_ = getParam<int>("opgsl.grid.n_cells", 40);
     resolution_ = getParam<double>("opgsl.grid.resolution", 0.5);
     map_half_size_ = n_cells_ * resolution_ / 2.0f;
-    convergence_entropy_threshold_ = getParam<double>("opgsl.convergence.entropy_threshold", 4.0);
+    convergence_entropy_threshold_ = getParam<double>("opgsl.convergence.entropy_threshold", 2.0);
     convergence_min_bouts_ = getParam<int>("opgsl.convergence.min_bouts", 5);
     convergence_stable_steps_ = getParam<int>("opgsl.convergence.stable_steps", 5);
     convergence_min_time_ = getParam<double>("opgsl.convergence.min_time", 30.0);
@@ -74,7 +74,6 @@ void OPGSL::declareParameters() {
     use_bhex_ = getParam<bool>("opgsl.modules.bhex", false);
     use_waz_ = getParam<bool>("opgsl.modules.waz", false);
     use_sc_ = getParam<bool>("opgsl.modules.sc", false);
-    use_upwind_tracking_ = getParam<bool>("opgsl.modules.upwind_tracking", true);
     // SD-NBV toggles
     use_sdnbv_ = getParam<bool>("opgsl.sdnbv.enabled", true);
     use_gp_altitude_ = getParam<bool>("opgsl.altitude.gp", true);
@@ -428,21 +427,24 @@ void OPGSL::sdnbvStep(float& best_x, float& best_y) {
         }
     }
 
-    // -- Phase 1: Coarse downwind exploration (steps 1-6) --
-    if (step_count_ <= 6) {
-        float coarse_step = 1.2f;
-        if (step_count_ == 3 && ws > 0.1f) {
+    // -- Phase 1: Coarse exploration (steps 1-12) --
+    if (step_count_ <= 12) {
+        float coarse_step = 1.2f;  // V5.1: reduced from 2.0 to avoid stuck
+        // Cross-wind sweep every 3 steps to break x-lock
+        if (step_count_ > 2 && step_count_ % 3 == 0 && ws > 0.1f) {
             float wn = std::sqrt(wx*wx + wy*wy);
             if (wn > 0.01f) {
                 float perp_x = -wy / wn;
                 float perp_y =  wx / wn;
-                best_x = cx + coarse_step * perp_x;
-                best_y = cy + coarse_step * perp_y;
+                float sign = (step_count_ % 6 == 0) ? 1.0f : -1.0f;
+                best_x = cx + sign * coarse_step * perp_x;
+                best_y = cy + sign * coarse_step * perp_y;
                 clipToMapBounds(best_x, best_y);
                 GSL_INFO("SDNBV-P1: cross-wind ({:.2f},{:.2f})", best_x, best_y);
                 return;
             }
         }
+        // If we have gas hits, navigate toward best hit area
         if (best_hit_conc_ > 0.01f) {
             float dx = best_hit_x_ - cx, dy = best_hit_y_ - cy;
             float d = std::sqrt(dx*dx + dy*dy);
@@ -450,10 +452,12 @@ void OPGSL::sdnbvStep(float& best_x, float& best_y) {
                 best_x = cx + std::min(coarse_step, d * 0.6f) * dx / d;
                 best_y = cy + std::min(coarse_step, d * 0.6f) * dy / d;
                 clipToMapBounds(best_x, best_y);
-                GSL_INFO("SDNBV-P1: best-hit ({:.2f},{:.2f}) d={:.2f} c={:.3f}", best_x, best_y, d, best_hit_conc_);
+                GSL_INFO("SDNBV-P1: best-hit nav ({:.2f},{:.2f}) d={:.2f} c={:.3f}",
+                         best_x, best_y, d, best_hit_conc_);
                 return;
             }
         }
+        // Downwind + slight cross-wind exploration
         if (ws > 0.05f) {
             float wn = std::sqrt(wx*wx + wy*wy);
             float down_x = wx / wn, down_y = wy / wn;
@@ -468,29 +472,11 @@ void OPGSL::sdnbvStep(float& best_x, float& best_y) {
             best_y = 0.15f + radius * std::sin(angle);
         }
         clipToMapBounds(best_x, best_y);
-        GSL_INFO("SDNBV-P1: explore ({:.2f},{:.2f}) step={}", best_x, best_y, step_count_);
+        GSL_INFO("SDNBV-P1: coarse explore ({:.2f},{:.2f}) step={}", best_x, best_y, step_count_);
         return;
     }
 
-    // -- Phase 1.5: Upwind plume-tracking (steps 7-16) --
-    // Plume drifts DOWNWIND from source. Going UPWIND traces back to source.
-    // Concentration decreases while moving upwind - this is NORMAL, not overshoot.
-    // After 10 upwind steps (~8m), the UAV is near the source area.
-    // Phase 2 EFE then uses updated posterior observations to converge.
-    if (use_upwind_tracking_ && step_count_ >= 7 && step_count_ <= 16 && ws > 0.05f) {
-        float wn = std::sqrt(wx*wx + wy*wy);
-        float upwind_x = -wx / wn;
-        float upwind_y = -wy / wn;
-        float nav_step = 0.8f;
-        best_x = cx + nav_step * upwind_x;
-        best_y = cy + nav_step * upwind_y;
-        clipToMapBounds(best_x, best_y);
-        GSL_INFO("SDNBV-P1.5: UPWIND ({:.2f},{:.2f}) ws={:.2f} c={:.3f}",
-                 best_x, best_y, ws, latest_gas_);
-        return;
-    }
-
-    // -- Phase 2: EFE-driven fine convergence (steps 19+) --
+    // -- Phase 2: Fine convergence (steps 16+) --
     // Adaptive step: high conc -> small step, low conc -> large step
     float fine_step;
     if (latest_gas_ > 0.1f) fine_step = 0.5f;
@@ -562,7 +548,7 @@ void OPGSL::sdnbvStep(float& best_x, float& best_y) {
     // principled objective, replacing ad-hoc NBV heuristics.
     // ================================================================
 
-    if (use_sdnbv_ && step_count_ > 18) {
+    if (use_sdnbv_ && step_count_ > 12) {
         float eig_x, eig_y, eig_z;
         posterior3d_.getFIMEigenvalues(eig_x, eig_y, eig_z);
         float H_current = posterior3d_.getEntropy();
@@ -610,17 +596,6 @@ void OPGSL::sdnbvStep(float& best_x, float& best_y) {
                     float d_hit = std::sqrt((cand_x-best_hit_x_)*(cand_x-best_hit_x_) +
                                             (cand_y-best_hit_y_)*(cand_y-best_hit_y_));
                     pragmatic = std::max(pragmatic, std::exp(-0.3f * d_hit));
-                }
-                // Upwind bonus: prefer candidates against the wind (source is upwind)
-                if (ws > 0.1f) {
-                    float wn = std::sqrt(wx*wx + wy*wy);
-                    float upwind_x = -wx / wn;
-                    float upwind_y = -wy / wn;
-                    float dx_c = cand_x - cx;
-                    float dy_c = cand_y - cy;
-                    float d_c = std::sqrt(dx_c*dx_c + dy_c*dy_c) + 0.1f;
-                    float alignment = (dx_c * upwind_x + dy_c * upwind_y) / d_c;
-                    pragmatic += 0.2f * std::max(0.0f, alignment);
                 }
 
                 // EFE: balance explore/exploit
@@ -1089,7 +1064,7 @@ GSLResult OPGSL::checkSourceFound() {
     bool near_best_hit = std::sqrt((best_hit_x_-cx)*(best_hit_x_-cx) + (best_hit_y_-cy)*(best_hit_y_-cy)) < 1.0f;
     bool entropy_low = field.field_entropy < convergence_entropy_threshold_;
     bool z_ok = dz < 1.0f;
-    bool high_conc = best_hit_conc_ > 0.08f;  // VGR: lower threshold for intermittent plumes
+    bool high_conc = best_hit_conc_ > 0.3f;
 
     // V5.2: all paths require MAP reasonably close to robot
     bool map_reasonable = dist_to_peak < 3.0f;
@@ -1109,7 +1084,7 @@ GSLResult OPGSL::checkSourceFound() {
     }
     // V5.2: fast exit requires MAP also near robot (not just best_hit)
     float map_dist = std::sqrt((map_x-cx)*(map_x-cx) + (map_y-cy)*(map_y-cy));
-    if (step_count_ >= 20 && best_hit_conc_ > 0.05f && near_best_hit && map_dist < 2.5f) {
+    if (step_count_ >= 20 && best_hit_conc_ > 0.5f && near_best_hit && map_dist < 2.0f) {
         GSL_INFO("OPGSL-SDNBV FAST EXIT: best_c={:.3f} near_hit={} map_dist={:.2f} step={}",
                  best_hit_conc_, near_best_hit, map_dist, step_count_);
         return GSLResult::Success;
@@ -1174,15 +1149,8 @@ void MovingStateOPGSL::chooseGoalAndMove() {
     if (opgsl_->last_update_time_ > 0) opgsl_->elapsed_time_ += static_cast<float>(now - opgsl_->last_update_time_);
     opgsl_->last_update_time_ = now;
 
-    // Select target altitude
-    // During Phase 1 & 1.5 (steps 1-16): stay at default flight height
-    // During Phase 2 (steps 17+): use adaptive altitude selection
-    float tz;
-    if (opgsl_->step_count_ < 17) {
-        tz = 0.3f;  // Fixed during exploration/upwind tracking
-    } else {
-        tz = opgsl_->selectTargetAltitude();
-    }
+    // Select target altitude (FIM-driven, no state machine)
+    float tz = opgsl_->selectTargetAltitude();
     opgsl_->current_altitude_ = tz;
 
     // Select horizontal target (SD-NBV)

@@ -286,6 +286,7 @@ private:
     bool use_layer_scan_ = true;
     bool use_altitude_decay_ = true;
     bool use_sdnbv_ = true;  // Enable SD-NBV framework
+    bool use_upwind_tracking_ = true;  // Phase 1.5 upwind tracking
 
     // EIG (legacy, kept for compatibility)
     bool use_eig_height_ = false;
