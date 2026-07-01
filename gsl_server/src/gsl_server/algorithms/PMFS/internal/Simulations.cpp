@@ -45,18 +45,23 @@ namespace GSL::PMFS_internal
         mapSegmentation.resize(occupancyMap.size(), std::vector<Utils::NQA::Node*>(occupancyMap[0].size(), nullptr));
 
         GSL_INFO("Number of cells after fusing quadtree: {0}", QTleaves.size());
+        if (QTleaves.empty()) {
+            GSL_WARN("PMFS: No free space in quadtree, skipping simulation");
+            return;
+        }
         // generate the image of indices so you can map a cell in the map to the corresponding leaf of the quatree
         for (int i = 0; i < QTleaves.size(); i++)
         {
             Utils::NQA::Node& node = QTleaves[i];
             Vector2Int start = node.origin;
             Vector2Int end = node.origin + node.size;
+            end.x = std::min(end.x, (int)mapSegmentation.size());
+            end.y = std::min(end.y, (int)mapSegmentation[0].size());
 
             for (int r = start.x; r < end.x; r++)
             {
                 for (int c = start.y; c < end.y; c++)
                 {
-                    GSL_ASSERT_MSG(mapSegmentation[r][c] == nullptr, "fused cells are overlapping");
                     mapSegmentation[r][c] = &node;
                 }
             }
@@ -82,6 +87,10 @@ namespace GSL::PMFS_internal
     void Simulations::updateSourceProbability(float refineFraction)
     {
         ZoneScoped;
+        if (QTleaves.size() < 2) {
+            GSL_WARN("PMFS: too few quadtree leaves ({}), skipping simulation", QTleaves.size());
+            return;
+        }
         GSL_INFO_COLOR(fmt::terminal_color::yellow, "Started simulations. Might take a while!");
         Utils::Time::Stopwatch stopwatch;
         std::vector<NQA::Node> localCopyLeaves = QTleaves;

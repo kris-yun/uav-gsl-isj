@@ -14,8 +14,6 @@
 #include "uav_gsl/BeaconExplorer.hpp"
 #include "uav_gsl/BeaconTrustRegionRadiusAdapter.hpp"
 #include "uav_gsl/EvidenceSplatBeaconPlanner.hpp"
-#include "uav_gsl/TemporalPointProcessLikelihood.hpp"
-#include "uav_gsl/HiddenMarkovPlumeModel.hpp"
 #include <deque>
 #include <fstream>
 #include <memory>
@@ -59,8 +57,6 @@ private:
     bool use_sdbe_{true};
     bool use_iasc_{true};
     bool use_sepf_{true};
-    bool use_pcrd_{false};
-    bool use_pgn_{false};
     bool last_raw_hit_{false};
 
     // Audit counters
@@ -69,11 +65,6 @@ private:
     std::uint64_t sdbe_update_count_{0};
     std::uint64_t sepf_update_count_{0};
     std::uint64_t iasc_goal_count_{0};
-    std::string iasc_mode_{"none"};
-    double iasc_goal_x_{0.0};
-    double iasc_goal_y_{0.0};
-    double plume_loss_time_s_{0.0};
-    double posterior_spread_m_{0.0};
     std::uint64_t invalid_goal_count_{0};
     std::uint64_t planning_failure_count_{0};
     std::uint64_t resampling_count_{0};
@@ -93,8 +84,6 @@ private:
     bool gt_source_reached_{false};
     double last_check_s_{0.0};
     std::unique_ptr<uav_gsl::PosteriorContractionDeclaration> pcr_decl_;
-    int pcr_window_n_{0}; double pcr_slope_{0.0}; double pcr_contraction_rate_{0.0};
-    bool pcr_decision_{false}; int pcr_decl_count_{0};
 
 
     // V3 audit fields
@@ -124,7 +113,6 @@ private:
     uav_gsl::SupportIdentifiabilityGate sapa_sig_;
     uav_gsl::DeclarationDecision last_sapa_decision_;
     double latest_wind_flow_to_rad_{0.0};
-    double latest_wind_speed_m_s_{0.0};
     // BEACON: Boundary Evidence Acquisition with Coverage-first Online Navigation
     bool use_beacon_{false};
     uav_gsl::BeaconExplorer beacon_explorer_;
@@ -160,20 +148,11 @@ private:
     double esb_last_boundary_score_{0.0};
     double esb_last_confidence_{0.0};
     double esb_last_frontier_gain_{0.0};
-    // TPP-L: Temporal Point Process Likelihood
-    // HMM-PM: Hidden Markov Plume Model
-    bool use_hmm_{false};
-    uav_gsl::HiddenMarkovPlumeModel hmm_;
-    uav_gsl::HMMDiagnostics last_hmm_diag_;
-    bool use_tpp_{false};
-    uav_gsl::TemporalPointProcessLikelihood tpp_;
-    uav_gsl::TPPDiagnostics last_tpp_diag_;
     int esb_goals_issued_{0};
     int esb_invalid_goals_{0};
 
     // SAGE: Support-Aware Gap-closing Exploration
     bool use_sage_{false};
-    int pgn_goal_count_{0};
     uav_gsl::SupportGapExplorer sage_explorer_;
     uav_gsl::SageDiagnostics last_sage_diag_;
     uav_gsl::SageCandidate last_sage_candidate_;

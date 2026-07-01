@@ -1,0 +1,274 @@
+#pragma once
+#include <gsl_server/algorithms/Common/Algorithm.hpp>
+#include <gsl_server/algorithms/Common/States/MovingState.hpp>
+#include <Eigen/Dense>
+#include <vector>
+#include <set>
+#include <deque>
+#include <fstream>
+#include <cmath>
+#include <algorithm>
+#include <random>
+#include "WATS_GSL.hpp"
+
+namespace GSL {
+class OPGSL;
+class MovingStateOPGSL : public MovingState {
+public:
+    MovingStateOPGSL(Algorithm* _algorithm);
+    void chooseGoalAndMove() override;
+protected:
+    void Fail() override;
+private:
+    OPGSL* opgsl_;
+    NavigateToPose::Goal posToGoal(float x, float y, float z);
+};
+
+class OPGSL : public Algorithm {
+    friend class MovingStateOPGSL;
+public:
+    explicit OPGSL(std::shared_ptr<rclcpp::Node> _node);
+    void Initialize() override;
+
+    // 3D Altitude phases
+    enum class AltPhase { EXPLORE, CALIBRATE, TRACK };
+
+protected:
+    void declareParameters() override;
+    void processGasAndWindMeasurements(double concentration, double windSpeed, double windDirection) override;
+    GSLResult checkSourceFound() override;
+    void saveResultsToFile(GSLResult result) override;
+    void OnUpdate() override;
+    void OnCompleteNavigation(GSLResult result, State* previousState) override;
+
+private:
+    // Core modules (WR-SFE + WA-IG)
+    WATS::WR_SFE field_estimator_;
+    WATS::WR_SFE::Config field_cfg_;
+    WATS::WA_IG info_gain_;
+    WATS::WA_IG::Config ig_cfg_;
+
+    // Innovation module toggles
+    bool use_levy_ = true;
+    bool use_bout_ = true;
+    bool use_adaptive_step_ = true;
+
+    // General state
+    int step_count_ = 0;
+    float elapsed_time_ = 0.0f;
+    float latest_wind_x_ = 0.0f, latest_wind_y_ = 0.0f, latest_wind_speed_ = 0.0f;
+    float latest_gas_ = 0.0f;
+    int gas_hit_count_ = 0;
+    float last_hit_x_ = 0.0f, last_hit_y_ = 0.0f;
+    float best_hit_x_ = 0.0f, best_hit_y_ = 0.0f, best_hit_conc_ = 0.0f;
+    int consecutive_misses_ = 0;
+    float last_hit_time_ = 0.0f;
+    float southernmost_hit_y_ = 1e6f, southernmost_hit_x_ = 0.0f;
+    float northernmost_hit_y_ = -1e6f;
+    float westernmost_hit_x_ = 1e6f, easternmost_hit_x_ = -1e6f;
+    int total_measurements_ = 0;
+
+    // Grid config
+    int n_cells_ = 40;
+    float resolution_ = 0.5f, map_half_size_ = 10.0f;
+
+    // Chemotaxis state
+    float prev_gas_ = 0.0f, run_length_ = 0.8f;
+    float run_direction_x_ = 0.0f, run_direction_y_ = -1.0f;
+    int run_steps_remaining_ = 0, tumble_count_ = 0;
+    float gradient_threshold_ = 0.002f, max_step_ = 1.0f;
+    int max_run_steps_ = 8;
+
+    // Convergence
+    float convergence_min_time_ = 30.0f, convergence_entropy_threshold_ = 5.0f;
+    int convergence_min_bouts_ = 2, convergence_stable_steps_ = 5, stable_steps_count_ = 0;
+
+    // Wind history
+    std::deque<float> wind_dir_history_;
+    static constexpr int kWindHistorySize = 10;
+
+    // Module 1: Levy Flight state
+    int levy_step_remaining_ = 0;
+    float levy_angle_ = 0.0f;
+
+    // Module 2: Bout-Level state
+    bool bout_active_ = false;
+    float bout_start_time_ = 0.0f;
+    float bout_peak_conc_ = 0.0f;
+    int bout_count_ = 0;
+    float time_since_last_bout_ = 0.0f;
+
+    // Module 3: Adaptive Step state
+    float step_size_ = 0.8f;
+    float prev_gradient_mag_ = 0.0f;
+
+    // Misc
+    std::string audit_file_;
+    std::ofstream audit_stream_;
+    std::mt19937 rng_;
+    double last_update_time_ = 0.0;
+    bool need_next_goal_ = false;
+
+    float smoothWindDirection() const;
+    void clipToMapBounds(float& x, float& y) const;
+    void infotaxisStep(float& best_x, float& best_y);
+    void levyExploration(float& best_x, float& best_y, float cx, float cy);
+
+    // BH-EX: Basin-Hopping Exploration
+    bool use_bhex_ = false;
+    int bhex_stagnation_count_ = 0;
+    int bhex_stagnation_threshold_ = 5;
+    float bhex_temperature_ = 2.0f;
+    float bhex_cooling_ = 0.95f;
+    float bhex_min_temp_ = 0.1f;
+    float bhex_best_conc_ = 0.0f;
+    float bhex_best_x_ = 0.0f, bhex_best_y_ = 0.0f;
+    bool bhex_jump_pending_ = false;
+    float bhex_jump_x_ = 0.0f, bhex_jump_y_ = 0.0f;
+    void bhexCheckStagnation(float current_conc, float cx, float cy);
+
+    // WAZ: Wind-Aligned Zigzag exploration
+    bool use_waz_ = false;
+    int waz_phase_ = 0;
+    float waz_step_size_ = 1.5f;
+    int waz_steps_per_leg_ = 4;
+    int waz_step_count_ = 0;
+    void wazExplore(float& out_x, float& out_y, float cx, float cy);
+
+    // SC: Surge-Cast plume tracking framework
+    bool use_sc_ = false;
+    int sc_mode_ = 0;
+    int sc_cast_dir_ = 1;
+    float sc_cast_step_ = 1.5f;
+    int sc_cast_legs_ = 0;
+    float sc_surge_start_x_ = 0, sc_surge_start_y_ = 0;
+    float sc_last_surge_dir_x_ = 0, sc_last_surge_dir_y_ = 0;
+    float sc_source_est_x_ = 0, sc_source_est_y_ = 0;
+    int sc_source_est_count_ = 0;
+    float sc_max_cast_ = 8.0f;
+    int sc_consecutive_hits_ = 0;
+    int sc_consecutive_misses_ = 0;
+    float sc_surge_step_ = 0.8f;
+    void scStep(float& out_x, float& out_y, float cx, float cy);
+
+    // ============================================================
+    // 3D Adaptive Altitude Controller (NEW)
+    // ============================================================
+
+    // Phase state
+    AltPhase alt_phase_ = AltPhase::EXPLORE;
+    float current_altitude_ = 0.3f;
+
+    // Altitude bounds
+    float z_min_ = 0.0f;
+    float z_max_ = 3.0f;
+
+    // --- ESC (Extremum Seeking Control) ---
+    struct ESCState {
+        float z_hat = 0.3f;
+        float omega = 0.5f;
+        float amplitude = 0.8f;
+        float amplitude_init = 0.8f;
+        float lambda = 0.005f;
+        float K = 0.3f;
+        float alpha_h = 0.3f;
+        float alpha_l = 0.7f;
+        float eta = 0.0f;
+        float G_hat = 0.0f;
+        float prev_y = 0.0f;
+        int t = 0;
+        float z_min = 0.0f;
+        float z_max = 3.0f;
+
+        float getZ() const {
+            return z_hat + amplitude * std::sin(omega * static_cast<float>(t));
+        }
+
+        void update(float measurement) {
+            t++;
+            eta = alpha_h * eta + (measurement - prev_y);
+            float a_safe = std::max(amplitude, 0.01f);
+            float demod = eta * std::sin(omega * static_cast<float>(t)) * (2.0f / a_safe);
+            G_hat = alpha_l * G_hat + (1.0f - alpha_l) * demod;
+            z_hat += K * G_hat;
+            z_hat = std::clamp(z_hat, z_min, z_max);
+            amplitude *= (1.0f - lambda);
+            amplitude = std::max(amplitude, 0.01f);
+            prev_y = measurement;
+        }
+
+        void reset(float z_init, float z_lo, float z_hi) {
+            z_hat = z_init;
+            z_min = z_lo; z_max = z_hi;
+            amplitude = amplitude_init;
+            eta = 0.0f; G_hat = 0.0f; prev_y = 0.0f; t = 0;
+        }
+    };
+    ESCState esc_;
+
+    // --- Lévy height exploration ---
+    float levyHeight(float z_current);
+    int levy_height_step_remaining_ = 0;
+    float levy_height_target_ = 0.3f;
+
+    // --- Significant Layer scanning ---
+    struct LayerPoint {
+        float z;
+        float concentration;
+    };
+    std::vector<LayerPoint> layer_profile_;
+    std::vector<float> significant_layers_;
+    bool calibration_active_ = false;
+    int calibration_step_ = 0;
+    std::vector<float> calibration_z_sequence_;
+    int calibration_index_ = 0;
+    float best_calibrated_z_ = 0.3f;
+
+    void startCalibration();
+    void processCalibrationMeasurement(float z, float concentration);
+
+    // --- Altitude posterior with temporal decay ---
+    static constexpr int kNumZBins = 28;
+    float z_posterior_[28] = {0};
+    float z_decay_rate_ = 0.01f;
+    void updateAltitudePosterior(float z, float concentration);
+    float getPosteriorBestZ() const;
+
+    // --- MaxConc-z baseline ---
+    struct ZConcRecord {
+        float z;
+        float concentration;
+        float time;
+    };
+    std::deque<ZConcRecord> z_conc_history_;
+    int max_conc_window_ = 20;
+    float maxConcAltitude() const;
+
+    // --- Phase management ---
+    int consecutive_miss_threshold_ = 15;
+    float calibration_cooldown_ = 0.0f;
+    float calibration_cooldown_duration_ = 60.0f;
+    int calibration_count_ = 0;
+    int max_calibrations_ = 3;
+    void updateAltitudePhase(float concentration);
+    float selectTargetAltitude();
+    void logAltitudeState();
+
+    // --- Ablation toggles ---
+    bool use_esc_altitude_ = true;
+    bool use_levy_altitude_ = true;
+    bool use_layer_scan_ = true;
+    bool use_altitude_decay_ = true;
+
+    // EIG (legacy, kept for compatibility - disabled when 3D altitude is active)
+    bool use_eig_height_ = false;
+    static constexpr int kNumHeights = 9;
+    float eig_heights_[9] = {0.3f, 0.5f, 1.0f, 1.5f, 1.8f, 2.0f, 2.2f, 2.5f, 3.0f};
+    float eig_height_posterior_[9] = {0};
+    float eig_selected_height_ = 2.0f;
+    int eig_height_update_count_ = 0;
+    float eig_height_update_interval_ = 5.0f;
+    void updateHeightPosterior(float concentration, float rx, float ry);
+    float selectBestHeight();
+};
+} // namespace GSL

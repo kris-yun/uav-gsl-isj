@@ -1,0 +1,667 @@
+#pragma once
+#include <gsl_server/algorithms/Common/Algorithm.hpp>
+#include <gsl_server/algorithms/Common/States/MovingState.hpp>
+#include <Eigen/Dense>
+#include <vector>
+#include <set>
+#include <deque>
+#include <fstream>
+#include <cmath>
+#include <algorithm>
+#include <random>
+#include "WATS_GSL.hpp"
+
+namespace GSL {
+class OPGSL;
+class MovingStateOPGSL : public MovingState {
+public:
+    MovingStateOPGSL(Algorithm* _algorithm);
+    void chooseGoalAndMove() override;
+protected:
+    void Fail() override;
+private:
+    OPGSL* opgsl_;
+    NavigateToPose::Goal posToGoal(float x, float y, float z);
+};
+
+class OPGSL : public Algorithm {
+    friend class MovingStateOPGSL;
+public:
+    explicit OPGSL(std::shared_ptr<rclcpp::Node> _node);
+    void Initialize() override;
+
+    // 3D Altitude phases
+    enum class AltPhase { EXPLORE, CALIBRATE, TRACK };
+
+protected:
+    void declareParameters() override;
+    void processGasAndWindMeasurements(double concentration, double windSpeed, double windDirection) override;
+    GSLResult checkSourceFound() override;
+    void saveResultsToFile(GSLResult result) override;
+    void OnUpdate() override;
+    void OnCompleteNavigation(GSLResult result, State* previousState) override;
+
+private:
+    // Core modules (WR-SFE + WA-IG)
+    WATS::WR_SFE field_estimator_;
+    WATS::WR_SFE::Config field_cfg_;
+    WATS::WA_IG info_gain_;
+    WATS::WA_IG::Config ig_cfg_;
+
+    // Innovation module toggles
+    bool use_levy_ = true;
+    bool use_bout_ = true;
+    bool use_adaptive_step_ = true;
+
+    // General state
+    int step_count_ = 0;
+    float elapsed_time_ = 0.0f;
+    float latest_wind_x_ = 0.0f, latest_wind_y_ = 0.0f, latest_wind_speed_ = 0.0f;
+    float latest_gas_ = 0.0f;
+    int gas_hit_count_ = 0;
+    float last_hit_x_ = 0.0f, last_hit_y_ = 0.0f;
+    float best_hit_x_ = 0.0f, best_hit_y_ = 0.0f, best_hit_conc_ = 0.0f;
+    int consecutive_misses_ = 0;
+    float last_hit_time_ = 0.0f;
+    float southernmost_hit_y_ = 1e6f, southernmost_hit_x_ = 0.0f;
+    float northernmost_hit_y_ = -1e6f;
+    float westernmost_hit_x_ = 1e6f, easternmost_hit_x_ = -1e6f;
+    int total_measurements_ = 0;
+
+    // Grid config
+    int n_cells_ = 40;
+    float resolution_ = 0.5f, map_half_size_ = 10.0f;
+
+    // Chemotaxis state
+    float prev_gas_ = 0.0f, run_length_ = 0.8f;
+    float run_direction_x_ = 0.0f, run_direction_y_ = -1.0f;
+    int run_steps_remaining_ = 0, tumble_count_ = 0;
+    float gradient_threshold_ = 0.002f, max_step_ = 1.0f;
+    int max_run_steps_ = 8;
+
+    // Convergence
+    float convergence_min_time_ = 30.0f, convergence_entropy_threshold_ = 5.0f;
+    int convergence_min_bouts_ = 2, convergence_stable_steps_ = 5, stable_steps_count_ = 0;
+
+    // Wind history
+    std::deque<float> wind_dir_history_;
+    static constexpr int kWindHistorySize = 10;
+
+    // Module 1: Levy Flight state
+    int levy_step_remaining_ = 0;
+    float levy_angle_ = 0.0f;
+
+    // Module 2: Bout-Level state
+    bool bout_active_ = false;
+    float bout_start_time_ = 0.0f;
+    float bout_peak_conc_ = 0.0f;
+    int bout_count_ = 0;
+    float time_since_last_bout_ = 0.0f;
+
+    // Module 3: Adaptive Step state
+    float step_size_ = 0.8f;
+    float prev_gradient_mag_ = 0.0f;
+
+    // Misc
+    std::string audit_file_;
+    std::ofstream audit_stream_;
+    std::mt19937 rng_;
+    double last_update_time_ = 0.0;
+    bool need_next_goal_ = false;
+
+    float smoothWindDirection() const;
+    void clipToMapBounds(float& x, float& y) const;
+    void infotaxisStep(float& best_x, float& best_y);
+    void levyExploration(float& best_x, float& best_y, float cx, float cy);
+
+    // BH-EX: Basin-Hopping Exploration
+    bool use_bhex_ = false;
+    int bhex_stagnation_count_ = 0;
+    int bhex_stagnation_threshold_ = 5;
+    float bhex_temperature_ = 2.0f;
+    float bhex_cooling_ = 0.95f;
+    float bhex_min_temp_ = 0.1f;
+    float bhex_best_conc_ = 0.0f;
+    float bhex_best_x_ = 0.0f, bhex_best_y_ = 0.0f;
+    bool bhex_jump_pending_ = false;
+    float bhex_jump_x_ = 0.0f, bhex_jump_y_ = 0.0f;
+    void bhexCheckStagnation(float current_conc, float cx, float cy);
+
+    // WAZ: Wind-Aligned Zigzag exploration
+    bool use_waz_ = false;
+    int waz_phase_ = 0;
+    float waz_step_size_ = 1.5f;
+    int waz_steps_per_leg_ = 4;
+    int waz_step_count_ = 0;
+    void wazExplore(float& out_x, float& out_y, float cx, float cy);
+
+    // SC: Surge-Cast plume tracking framework
+    bool use_sc_ = false;
+    int sc_mode_ = 0;
+    int sc_cast_dir_ = 1;
+    float sc_cast_step_ = 1.5f;
+    int sc_cast_legs_ = 0;
+    float sc_surge_start_x_ = 0, sc_surge_start_y_ = 0;
+    float sc_last_surge_dir_x_ = 0, sc_last_surge_dir_y_ = 0;
+    float sc_source_est_x_ = 0, sc_source_est_y_ = 0;
+    int sc_source_est_count_ = 0;
+    float sc_max_cast_ = 8.0f;
+    int sc_consecutive_hits_ = 0;
+    int sc_consecutive_misses_ = 0;
+    float sc_surge_step_ = 0.8f;
+    void scStep(float& out_x, float& out_y, float cx, float cy);
+
+    // ============================================================
+    // 3D Adaptive Altitude Controller (NEW)
+    // ============================================================
+
+    // Phase state
+    AltPhase alt_phase_ = AltPhase::EXPLORE;
+    float current_altitude_ = 0.3f;
+
+    // Altitude bounds
+    float z_min_ = 0.0f;
+    float z_max_ = 3.0f;
+
+// --- BO+GP (Bayesian Optimization with Gaussian Process, 2025) ---
+    struct GPState {
+        struct Obs { float z; float c; };
+        std::deque<Obs> obs;
+        int max_window = 50;
+        float length_scale = 0.5f;
+        float sigma_f = 1.0f;
+        float sigma_n = 0.05f;
+        float z_min = 0.1f;
+        float z_max = 3.0f;
+        std::vector<float> alpha_cache;
+        std::vector<float> z_cache;
+        bool cache_valid = false;
+
+        void addObs(float z, float c) {
+            obs.push_back({z, c});
+            if ((int)obs.size() > max_window) obs.pop_front();
+            cache_valid = false;
+        }
+
+        float kernel(float z1, float z2) const {
+            float r = std::abs(z1 - z2);
+            float s = std::sqrt(5.0f) * r / length_scale;
+            return sigma_f * sigma_f * (1.0f + s + s * s / 3.0f) * std::exp(-s);
+        }
+
+        void fit() {
+            int n = (int)obs.size();
+            if (n < 2) { cache_valid = true; return; }
+            z_cache.resize(n);
+            std::vector<float> y(n);
+            for (int i = 0; i < n; i++) { z_cache[i] = obs[i].z; y[i] = obs[i].c; }
+            std::vector<std::vector<float>> A(n, std::vector<float>(n + 1));
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    A[i][j] = kernel(z_cache[i], z_cache[j]);
+                    if (i == j) A[i][j] += sigma_n * sigma_n;
+                }
+                A[i][n] = y[i];
+            }
+            for (int col = 0; col < n; col++) {
+                int pivot = col;
+                for (int row = col + 1; row < n; row++)
+                    if (std::abs(A[row][col]) > std::abs(A[pivot][col])) pivot = row;
+                std::swap(A[col], A[pivot]);
+                float diag = A[col][col];
+                if (std::abs(diag) < 1e-10f) diag = 1e-10f;
+                for (int j = col; j <= n; j++) A[col][j] /= diag;
+                for (int row = 0; row < n; row++) {
+                    if (row == col) continue;
+                    float factor = A[row][col];
+                    for (int j = col; j <= n; j++) A[row][j] -= factor * A[col][j];
+                }
+            }
+            alpha_cache.resize(n);
+            for (int i = 0; i < n; i++) alpha_cache[i] = A[i][n];
+            cache_valid = true;
+        }
+
+        void predict(float z_star, float& mean, float& var) const {
+            int n = (int)obs.size();
+            if (n < 2) { mean = (n == 1) ? obs[0].c : 0.0f; var = sigma_f * sigma_f; return; }
+            std::vector<float> k_star(n);
+            for (int i = 0; i < n; i++) k_star[i] = kernel(z_star, z_cache[i]);
+            mean = 0.0f;
+            for (int i = 0; i < n; i++) mean += k_star[i] * alpha_cache[i];
+            float k_ss = kernel(z_star, z_star);
+            float correction = 0.0f;
+            for (int i = 0; i < n; i++) correction += k_star[i] * k_star[i] / (sigma_f * sigma_f + sigma_n * sigma_n);
+            var = std::max(0.0f, k_ss - correction * sigma_f * sigma_f);
+        }
+
+        float getNextZ() {
+            if (!cache_valid) fit();
+            int n = (int)obs.size();
+            if (n < 3) {
+                static std::mt19937 rng(std::random_device{}());
+                return std::uniform_real_distribution<float>(z_min, z_max)(rng);
+            }
+            int n_grid = 50;
+            float best_z = (z_min + z_max) / 2.0f;
+            float best_ucb = -1e30f;
+            float beta = std::max(0.5f, 0.5f * std::log((float)n + 1.0f));
+            for (int i = 0; i <= n_grid; i++) {
+                float z = z_min + (z_max - z_min) * (float)i / (float)n_grid;
+                float mu, var;
+                predict(z, mu, var);
+                float ucb = mu + std::sqrt(beta) * std::sqrt(std::max(0.0f, var));
+                if (ucb > best_ucb) { best_ucb = ucb; best_z = z; }
+            }
+            return best_z;
+        }
+
+        float getNextZAnchored(float calib_z) {
+            float gp_z = getNextZ();
+            // Blend: 70% calibration anchor + 30% GP (prevents UCB drift)
+            // As more observations arrive, gradually trust GP more
+            int n = (int)obs.size();
+            // Lower GP weight: calibration data is more reliable than GP
+            float gp_weight = std::min(0.15f, 0.05f + 0.01f * (float)n);
+            return calib_z * (1.0f - gp_weight) + gp_z * gp_weight;
+        }
+
+        void reset(float z_init, float z_lo, float z_hi) {
+            obs.clear(); alpha_cache.clear(); z_cache.clear();
+            cache_valid = false; z_min = z_lo; z_max = z_hi;
+        }
+    };
+    GPState gp_;
+
+    // --- IG-AI: Fisher Information Matrix (3x3 for s_x, s_y, s_z) ---
+    struct FisherInfo {
+        float Ixx = 0.0f, Ixy = 0.0f, Ixz = 0.0f;
+        float Iyy = 0.0f, Iyz = 0.0f;
+        float Izz = 0.0f;
+        float lambda_min = 0.0f;       // Smallest eigenvalue
+        float explore_dir_x = 0.0f;    // Eigenvector for min eigenvalue
+        float explore_dir_y = 0.0f;
+        float explore_dir_z = 0.0f;
+
+        void computeFromField(const WATS::WR_SFE::FieldEstimate& field, int n_cells, float resolution, float map_half_size,
+                              float z_min, float z_max, float current_z, const float z_posterior[], int n_z_bins) {
+            // FIM from field posterior: I_ij = sum_cells p(cell) * dlog p(cell)/d theta_i * dlog p(cell)/d theta_j
+            // Approximate with finite differences on the log-field
+            float total = 0.0f;
+            float mean_x = 0.0f, mean_y = 0.0f;
+            // Compute mean and total from exp(log_field)
+            for (int i = 0; i < n_cells; i++) {
+                for (int j = 0; j < n_cells; j++) {
+                    float p = std::exp(field.log_field(i, j));
+                    float cx = i * resolution - map_half_size;
+                    float cy = j * resolution - map_half_size;
+                    total += p;
+                    mean_x += p * cx;
+                    mean_y += p * cy;
+                }
+            }
+            if (total < 1e-10f) return;
+            mean_x /= total; mean_y /= total;
+
+            // Compute covariance (inverse of FIM ≈ covariance for Gaussian posterior)
+            float Cxx = 0.0f, Cxy = 0.0f, Cyy = 0.0f;
+            for (int i = 0; i < n_cells; i++) {
+                for (int j = 0; j < n_cells; j++) {
+                    float p = std::exp(field.log_field(i, j)) / total;
+                    float dx = i * resolution - map_half_size - mean_x;
+                    float dy = j * resolution - map_half_size - mean_y;
+                    Cxx += p * dx * dx;
+                    Cxy += p * dx * dy;
+                    Cyy += p * dy * dy;
+                }
+            }
+
+            // FIM = inverse of covariance (for Gaussian)
+            float det = Cxx * Cyy - Cxy * Cxy;
+            if (det < 1e-10f) det = 1e-10f;
+            Ixx = Cyy / det;
+            Ixy = -Cxy / det;
+            Iyy = Cxx / det;
+
+            // Height FIM from z posterior
+            float z_mean = 0.0f, z_var = 0.0f, z_total = 0.0f;
+            for (int k = 0; k < n_z_bins; k++) {
+                float z_k = z_min + (z_max - z_min) * ((float)k + 0.5f) / (float)n_z_bins;
+                float p = std::exp(z_posterior[k]);
+                z_total += p;
+                z_mean += p * z_k;
+            }
+            if (z_total > 1e-10f) {
+                z_mean /= z_total;
+                for (int k = 0; k < n_z_bins; k++) {
+                    float z_k = z_min + (z_max - z_min) * ((float)k + 0.5f) / (float)n_z_bins;
+                    float p = std::exp(z_posterior[k]) / z_total;
+                    z_var += p * (z_k - z_mean) * (z_k - z_mean);
+                }
+                Izz = (z_var > 1e-6f) ? 1.0f / z_var : 100.0f;
+            }
+
+            // Cross-terms (simplified: assume independence between xy and z)
+            Ixz = 0.0f; Iyz = 0.0f;
+
+            // Eigenvalue of 2x2 xy block (smallest eigenvalue = direction of max uncertainty)
+            float trace = Ixx + Iyy;
+            float diff = Ixx - Iyy;
+            float disc = std::sqrt(diff * diff + 4.0f * Ixy * Ixy);
+            lambda_min = (trace - disc) / 2.0f;
+            // Eigenvector for lambda_min
+            float vx = -Ixy, vy = Ixx - lambda_min;
+            float vn = std::sqrt(vx*vx + vy*vy);
+            if (vn > 1e-6f) { explore_dir_x = vx/vn; explore_dir_y = vy/vn; }
+            else { explore_dir_x = 1.0f; explore_dir_y = 0.0f; }
+            // z explore direction: always toward highest uncertainty in z
+            explore_dir_z = (z_var > 0.1f) ? 1.0f : 0.0f;  // explore z if uncertain
+        }
+
+        // Natural gradient step: Δθ = -F^{-1} ∇L
+        // For exploration: move in direction of SMALLEST FIM eigenvalue (most uncertain)
+        float getExploreStep(float base_step) const {
+            // Step size inversely proportional to min eigenvalue
+            // When lambda_min is small (uncertain), step is large
+            float step = base_step / (lambda_min + 0.1f);
+            return std::clamp(step, 0.2f, 2.0f);
+        }
+    };
+    FisherInfo fim_;
+
+    // ============================================================
+    // Spatial Deconvolution + NBV: 3D Source Posterior
+    // Replaces: old EXPLORE/CALIBRATE/TRACK state machine
+    // ============================================================
+    struct SourcePosterior3D {
+        // 3D grid: P(sx, sy, sz | observations)
+        // Dimensions: nx_ x ny_ x nz_
+        static constexpr int nx_ = 20, ny_ = 20, nz_ = 10;
+        float grid[nx_][ny_][nz_];  // log-posterior
+        float x_min_ = -5.0f, x_max_ = 5.0f;
+        float y_min_ = -8.0f, y_max_ = 1.0f;
+        float z_min_ = 0.1f, z_max_ = 3.0f;
+        float dx_, dy_, dz_;
+        bool initialized_ = false;
+
+        void init(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax) {
+            x_min_ = xmin; x_max_ = xmax;
+            y_min_ = ymin; y_max_ = ymax;
+            z_min_ = zmin; z_max_ = zmax;
+            dx_ = (x_max_ - x_min_) / nx_;
+            dy_ = (y_max_ - y_min_) / ny_;
+            dz_ = (z_max_ - z_min_) / nz_;
+            // Uniform prior
+            float log_prior = -std::log((float)(nx_ * ny_ * nz_));
+            for (int i = 0; i < nx_; i++)
+                for (int j = 0; j < ny_; j++)
+                    for (int k = 0; k < nz_; k++)
+                        grid[i][j][k] = log_prior;
+            initialized_ = true;
+        }
+
+        // Plume forward model: predict log-concentration at (ox,oy,oz) given source at (sx,sy,sz)
+        // Simplified Gaussian plume: c ∝ exp(-d²/(2σ²)) with wind drift
+        float plumeLogLikelihood(float sx, float sy, float sz,
+                                  float ox, float oy, float oz,
+                                  float wind_x, float wind_y, float wind_speed) const {
+            // Distance from source to observation
+            float dx = ox - sx, dy = oy - sy, dz = oz - sz;
+            float d2 = dx*dx + dy*dy + dz*dz;
+
+            // Anisotropic sigma: wider along wind direction
+            float sigma_along = 1.0f + wind_speed * 2.0f;  // wider downwind
+            float sigma_across = 0.8f;
+            float sigma_z = 0.5f;
+
+            // Project distance into wind-aligned coordinates
+            if (wind_speed > 0.1f) {
+                float wx = wind_x / wind_speed, wy = wind_y / wind_speed;
+                float d_along = dx * wx + dy * wy;
+                float d_across = dx * (-wy) + dy * wx;
+                d2 = (d_along*d_along)/(sigma_along*sigma_along)
+                   + (d_across*d_across)/(sigma_across*sigma_across)
+                   + (dz*dz)/(sigma_z*sigma_z);
+            } else {
+                d2 = d2 / (sigma_across * sigma_across);
+            }
+
+            // Log-likelihood: Gaussian kernel
+            return -0.5f * d2;
+        }
+
+        // Bayesian update: incorporate new observation (ox,oy,oz) -> concentration c
+        void update(float ox, float oy, float oz, float concentration,
+                    float wind_x, float wind_y, float wind_speed) {
+            if (!initialized_) return;
+            if (concentration < 0.001f) return;  // skip near-zero
+
+            // Log-likelihood scaling: higher concentration = stronger evidence
+            float log_c = std::log(1.0f + concentration);
+
+            for (int i = 0; i < nx_; i++) {
+                float sx = x_min_ + (i + 0.5f) * dx_;
+                for (int j = 0; j < ny_; j++) {
+                    float sy = y_min_ + (j + 0.5f) * dy_;
+                    for (int k = 0; k < nz_; k++) {
+                        float sz = z_min_ + (k + 0.5f) * dz_;
+                        float log_lik = plumeLogLikelihood(sx, sy, sz, ox, oy, oz,
+                                                           wind_x, wind_y, wind_speed);
+                        grid[i][j][k] += log_c * log_lik;
+                    }
+                }
+            }
+
+            // Normalize (log-sum-exp trick)
+            float max_log = -1e30f;
+            for (int i = 0; i < nx_; i++)
+                for (int j = 0; j < ny_; j++)
+                    for (int k = 0; k < nz_; k++)
+                        max_log = std::max(max_log, grid[i][j][k]);
+            float log_sum = 0.0f;
+            for (int i = 0; i < nx_; i++)
+                for (int j = 0; j < ny_; j++)
+                    for (int k = 0; k < nz_; k++)
+                        log_sum += std::exp(grid[i][j][k] - max_log);
+            log_sum = std::log(log_sum + 1e-10f) + max_log;
+            for (int i = 0; i < nx_; i++)
+                for (int j = 0; j < ny_; j++)
+                    for (int k = 0; k < nz_; k++)
+                        grid[i][j][k] -= log_sum;
+        }
+
+        // Get MAP estimate (peak of posterior)
+        void getMAP(float& sx, float& sy, float& sz) const {
+            int best_i = 0, best_j = 0, best_k = 0;
+            float best_val = -1e30f;
+            for (int i = 0; i < nx_; i++)
+                for (int j = 0; j < ny_; j++)
+                    for (int k = 0; k < nz_; k++)
+                        if (grid[i][j][k] > best_val) {
+                            best_val = grid[i][j][k];
+                            best_i = i; best_j = j; best_k = k;
+                        }
+            sx = x_min_ + (best_i + 0.5f) * dx_;
+            sy = y_min_ + (best_j + 0.5f) * dy_;
+            sz = z_min_ + (best_k + 0.5f) * dz_;
+        }
+
+        // Get marginal posterior over z (integrate out x,y)
+        void getMarginalZ(float z_marg[nz_]) const {
+            for (int k = 0; k < nz_; k++) {
+                float log_sum = -1e30f;
+                float max_log = -1e30f;
+                for (int i = 0; i < nx_; i++)
+                    for (int j = 0; j < ny_; j++)
+                        max_log = std::max(max_log, grid[i][j][k]);
+                float sum = 0.0f;
+                for (int i = 0; i < nx_; i++)
+                    for (int j = 0; j < ny_; j++)
+                        sum += std::exp(grid[i][j][k] - max_log);
+                z_marg[k] = std::log(sum + 1e-10f) + max_log;
+            }
+            // Normalize
+            float max_z = -1e30f;
+            for (int k = 0; k < nz_; k++) max_z = std::max(max_z, z_marg[k]);
+            float total = 0.0f;
+            for (int k = 0; k < nz_; k++) total += std::exp(z_marg[k] - max_z);
+            for (int k = 0; k < nz_; k++) z_marg[k] -= std::log(total + 1e-10f);
+        }
+
+        // NBV: Select next observation point (x,y,z) that maximizes expected info gain
+        void selectNBV(float robot_x, float robot_y, float robot_z,
+                       float& best_x, float& best_y, float& best_z,
+                       float wind_x, float wind_y, float wind_speed,
+                       std::mt19937& rng) const {
+            // Candidate positions: grid of (x,y,z) around current position
+            float best_eig = -1e30f;
+            best_x = robot_x; best_y = robot_y; best_z = robot_z;
+
+            // Current entropy
+            float H_current = 0.0f;
+            for (int i = 0; i < nx_; i++)
+                for (int j = 0; j < ny_; j++)
+                    for (int k = 0; k < nz_; k++) {
+                        float p = std::exp(grid[i][j][k]);
+                        if (p > 1e-10f) H_current -= p * grid[i][j][k];
+                    }
+
+            // Try candidate positions (coarse grid around robot)
+            float step_xy = 1.0f, step_z = 0.3f;
+            float range_xy = 3.0f, range_z = 1.5f;
+            for (float dx = -range_xy; dx <= range_xy; dx += step_xy) {
+                for (float dy = -range_xy; dy <= range_xy; dy += step_xy) {
+                    for (float dz = -range_z; dz <= range_z; dz += step_z) {
+                        float cx = robot_x + dx, cy = robot_y + dy, cz = robot_z + dz;
+                        // Clamp to map bounds
+                        cx = std::clamp(cx, x_min_, x_max_);
+                        cy = std::clamp(cy, y_min_, y_max_);
+                        cz = std::clamp(cz, z_min_, z_max_);
+
+                        // Compute expected EIG at this candidate
+                        // EIG = H_current - E_c[H_after]
+                        // Approximate: use posterior mean concentration as expected observation
+                        float mean_c = 0.0f;
+                        for (int i = 0; i < nx_; i++)
+                            for (int j = 0; j < ny_; j++)
+                                for (int k = 0; k < nz_; k++) {
+                                    float sx = x_min_ + (i + 0.5f) * dx_;
+                                    float sy = y_min_ + (j + 0.5f) * dy_;
+                                    float sz = z_min_ + (k + 0.5f) * dz_;
+                                    float p = std::exp(grid[i][j][k]);
+                                    float log_lik = plumeLogLikelihood(sx, sy, sz, cx, cy, cz,
+                                                                       wind_x, wind_y, wind_speed);
+                                    mean_c += p * std::exp(log_lik);
+                                }
+
+                        // Approximate entropy reduction
+                        // Higher concentration variance at this point = more informative
+                        float var_c = 0.0f;
+                        for (int i = 0; i < nx_; i++)
+                            for (int j = 0; j < ny_; j++)
+                                for (int k = 0; k < nz_; k++) {
+                                    float sx = x_min_ + (i + 0.5f) * dx_;
+                                    float sy = y_min_ + (j + 0.5f) * dy_;
+                                    float sz = z_min_ + (k + 0.5f) * dz_;
+                                    float p = std::exp(grid[i][j][k]);
+                                    float log_lik = plumeLogLikelihood(sx, sy, sz, cx, cy, cz,
+                                                                       wind_x, wind_y, wind_speed);
+                                    float c_pred = std::exp(log_lik);
+                                    var_c += p * (c_pred - mean_c) * (c_pred - mean_c);
+                                }
+
+                        // EIG approximation: variance of predicted concentration
+                        // (high variance = this observation will discriminate between hypotheses)
+                        float eig = var_c;
+
+                        // Penalty for distance (prefer closer points)
+                        float dist = std::sqrt(dx*dx + dy*dy + dz*dz);
+                        eig *= std::exp(-0.1f * dist);
+
+                        if (eig > best_eig) {
+                            best_eig = eig;
+                            best_x = cx; best_y = cy; best_z = cz;
+                        }
+                    }
+                }
+            }
+        }
+
+        void reset() {
+            float log_prior = -std::log((float)(nx_ * ny_ * nz_));
+            for (int i = 0; i < nx_; i++)
+                for (int j = 0; j < ny_; j++)
+                    for (int k = 0; k < nz_; k++)
+                        grid[i][j][k] = log_prior;
+        }
+    };
+    SourcePosterior3D posterior3d_;
+
+
+
+    // --- Lévy height exploration ---
+    float levyHeight(float z_current);
+    int levy_height_step_remaining_ = 0;
+    float levy_height_target_ = 0.3f;
+
+    // --- Significant Layer scanning ---
+    struct LayerPoint {
+        float z;
+        float concentration;
+    };
+    std::vector<LayerPoint> layer_profile_;
+    std::vector<float> significant_layers_;
+    bool calibration_active_ = false;
+    int calibration_step_ = 0;
+    std::vector<float> calibration_z_sequence_;
+    int calibration_index_ = 0;
+    float best_calibrated_z_ = 0.3f;
+
+    void startCalibration();
+    void processCalibrationMeasurement(float z, float concentration);
+
+    // --- Altitude posterior with temporal decay ---
+    static constexpr int kNumZBins = 28;
+    float z_posterior_[28] = {0};
+    float z_decay_rate_ = 0.01f;
+    void updateAltitudePosterior(float z, float concentration);
+    float getPosteriorBestZ() const;
+
+    // --- MaxConc-z baseline ---
+    struct ZConcRecord {
+        float z;
+        float concentration;
+        float time;
+    };
+    std::deque<ZConcRecord> z_conc_history_;
+    int max_conc_window_ = 20;
+    float maxConcAltitude() const;
+
+    // --- Phase management ---
+    int consecutive_miss_threshold_ = 15;
+    float calibration_cooldown_ = 0.0f;
+    float calibration_cooldown_duration_ = 60.0f;
+    int calibration_count_ = 0;
+    int max_calibrations_ = 3;
+    void updateAltitudePhase(float concentration);
+    float selectTargetAltitude();
+    void logAltitudeState();
+
+    // --- Ablation toggles ---
+    bool use_gp_altitude_ = true;
+    bool use_levy_altitude_ = true;
+    bool use_layer_scan_ = true;
+    bool use_altitude_decay_ = true;
+
+    // EIG (legacy, kept for compatibility - disabled when 3D altitude is active)
+    bool use_eig_height_ = false;
+    static constexpr int kNumHeights = 9;
+    float eig_heights_[9] = {0.3f, 0.5f, 1.0f, 1.5f, 1.8f, 2.0f, 2.2f, 2.5f, 3.0f};
+    float eig_height_posterior_[9] = {0};
+    float eig_selected_height_ = 2.0f;
+    int eig_height_update_count_ = 0;
+    float eig_height_update_interval_ = 5.0f;
+    void updateHeightPosterior(float concentration, float rx, float ry);
+    float selectBestHeight();
+};
+} // namespace GSL

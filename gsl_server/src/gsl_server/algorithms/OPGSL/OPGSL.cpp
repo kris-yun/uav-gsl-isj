@@ -1,0 +1,913 @@
+﻿#include "OPGSL.hpp"
+#include "gsl_server/core/GSLResult.hpp"
+#include <gsl_server/algorithms/Common/States/WaitForMapState.hpp>
+#include <gsl_server/algorithms/Common/States/WaitForGasState.hpp>
+#include <gsl_server/algorithms/Common/States/StopAndMeasureState.hpp>
+#include "gsl_server/core/Logging.hpp"
+#include "gsl_server/core/Vectors.hpp"
+#include "gsl_server/algorithms/Common/Utils/Math.hpp"
+#include "gsl_server/algorithms/Common/Utils/RosUtils.hpp"
+#include <angles/angles.h>
+#include <cmath>
+#include <iomanip>
+#include <limits>
+#include <numeric>
+
+namespace GSL {
+
+// ============================================================
+// SimpleGP Implementation
+// ============================================================
+float SimpleGP::getNextZ(float z_current, bool use_ucb) {
+    if (xs_.empty()) return std::clamp(z_current, z_min_, z_max_);
+    if (xs_.size() == 1) {
+        float explore_z = z_current + 0.3f * ((best_z_ > z_current) ? 1.0f : -1.0f);
+        return std::clamp(explore_z, z_min_, z_max_);
+    }
+    int n = xs_.size();
+    Eigen::VectorXf y(n);
+    for (int i = 0; i < n; i++) y(i) = ys_[i];
+    Eigen::MatrixXf K(n, n);
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            K(i,j) = kernel(xs_[i], xs_[j]) + (i==j ? hyper_.noise_var : 0.0f);
+    Eigen::MatrixXf K_inv = K.inverse();
+    float best_score = -1e9f;
+    float best_z = best_z_;
+    int n_cand = 20;
+    for (int i = 0; i <= n_cand; i++) {
+        float z = z_min_ + (z_max_ - z_min_) * i / n_cand;
+        Eigen::VectorXf k_star(n);
+        for (int j = 0; j < n; j++) k_star(j) = kernel(z, xs_[j]);
+        float mu = k_star.transpose() * K_inv * y;
+        float sigma2 = kernel(z, z) - k_star.transpose() * K_inv * k_star;
+        float sigma = std::sqrt(std::max(sigma2, 0.0f));
+        float score = use_ucb ? (mu + 1.5f * sigma) : mu;
+        if (score > best_score) { best_score = score; best_z = z; }
+    }
+    return std::clamp(best_z, z_min_, z_max_);
+}
+
+float SimpleGP::getNextZAnchored(float z_current, float anchor_z, float anchor_weight) {
+    float gp_z = getNextZ(z_current, true);
+    return std::clamp(gp_z * (1.0f - anchor_weight) + anchor_z * anchor_weight, z_min_, z_max_);
+}
+
+// ============================================================
+// OPGSL Constructor & Parameters
+// ============================================================
+OPGSL::OPGSL(std::shared_ptr<rclcpp::Node> _node) : Algorithm(_node) { rng_.seed(std::random_device{}()); }
+
+void OPGSL::declareParameters() {
+    Algorithm::declareParameters();
+    n_cells_ = getParam<int>("opgsl.grid.n_cells", 40);
+    resolution_ = getParam<double>("opgsl.grid.resolution", 0.5);
+    map_half_size_ = n_cells_ * resolution_ / 2.0f;
+    convergence_entropy_threshold_ = getParam<double>("opgsl.convergence.entropy_threshold", 2.0);
+    convergence_min_bouts_ = getParam<int>("opgsl.convergence.min_bouts", 5);
+    convergence_stable_steps_ = getParam<int>("opgsl.convergence.stable_steps", 5);
+    convergence_min_time_ = getParam<double>("opgsl.convergence.min_time", 30.0);
+    audit_file_ = getParam<std::string>("opgsl.audit_file", "");
+    use_levy_ = getParam<bool>("opgsl.modules.levy", true);
+    use_bout_ = getParam<bool>("opgsl.modules.bout", true);
+    use_adaptive_step_ = getParam<bool>("opgsl.modules.adaptive_step", true);
+    use_bhex_ = getParam<bool>("opgsl.modules.bhex", false);
+    use_waz_ = getParam<bool>("opgsl.modules.waz", false);
+    use_sc_ = getParam<bool>("opgsl.modules.sc", false);
+    // SD-NBV toggles
+    use_sdnbv_ = getParam<bool>("opgsl.sdnbv.enabled", true);
+    use_gp_altitude_ = getParam<bool>("opgsl.altitude.gp", true);
+    use_levy_altitude_ = getParam<bool>("opgsl.altitude.levy", true);
+    use_layer_scan_ = getParam<bool>("opgsl.altitude.layer_scan", true);
+    use_altitude_decay_ = getParam<bool>("opgsl.altitude.decay", true);
+    z_min_ = getParam<double>("opgsl.altitude.z_min", -1.0);
+    z_max_ = getParam<double>("opgsl.altitude.z_max", 3.0);
+    GSL_INFO("OPGSL-SDNBV params: grid={} res={:.1f} levy={} bout={} adaptive={} sdnbv={} gp_alt={}",
+             n_cells_, resolution_, use_levy_, use_bout_, use_adaptive_step_, use_sdnbv_, use_gp_altitude_);
+}
+
+// ============================================================
+// Initialize
+// ============================================================
+void OPGSL::Initialize() {
+    field_cfg_.n_cells = n_cells_; field_cfg_.resolution = resolution_;
+    field_cfg_.map_half_size = map_half_size_; field_cfg_.max_observations = 200;
+    field_cfg_.observation_decay = 0.998f; field_cfg_.bandwidth_base = 1.2f;
+    field_cfg_.bandwidth_wind_factor = 1.5f; field_cfg_.n_ensemble = 3;
+    field_estimator_.init(field_cfg_);
+    ig_cfg_.exploration_weight = 0.3f; ig_cfg_.wind_bonus = 0.5f;
+    ig_cfg_.uncertainty_weight = 0.4f; ig_cfg_.visit_penalty = 0.2f;
+    info_gain_.init(ig_cfg_);
+    waitForMapState = std::make_unique<WaitForMapState>(this);
+    waitForGasState = std::make_unique<WaitForGasState>(this);
+    stopAndMeasureState = std::make_unique<StopAndMeasureState>(this);
+    movingState = std::make_unique<MovingStateOPGSL>(this);
+    Algorithm::Initialize(); stateMachine.forceSetState(waitForMapState.get());
+    prev_gas_ = 0.0f;
+    best_hit_conc_ = 0.0f; best_hit_x_ = 0.0f; best_hit_y_ = 0.0f;
+    run_length_ = 0.8f; run_direction_x_ = 0.0f; run_direction_y_ = -1.0f;
+    run_steps_remaining_ = 0; tumble_count_ = 0; gradient_threshold_ = 0.002f;
+    max_step_ = 1.0f; max_run_steps_ = 8; need_next_goal_ = false;
+    bout_active_ = false; bout_start_time_ = 0.0f; bout_peak_conc_ = 0.0f;
+    bout_count_ = 0; time_since_last_bout_ = 0.0f;
+    step_size_ = 0.8f; prev_gradient_mag_ = 0.0f;
+    levy_step_remaining_ = 0; levy_angle_ = 0.0f;
+    bhex_stagnation_count_ = 0; waz_phase_ = 0; waz_step_count_ = 0;
+    sc_mode_ = 0; sc_cast_dir_ = 1; sc_cast_legs_ = 0; sc_source_est_count_ = 0;
+    sc_consecutive_hits_ = 0; sc_consecutive_misses_ = 0;
+    bhex_temperature_ = 2.0f; bhex_best_conc_ = 0.0f; bhex_jump_pending_ = false;
+    // Legacy EIG (disabled by default)
+    use_eig_height_ = false;
+    for (int k = 0; k < kNumHeights; k++) eig_height_posterior_[k] = 0.0f;
+    eig_selected_height_ = 2.0f; eig_height_update_count_ = 0;
+    // SD-NBV: Initialize 3D source posterior
+    posterior3d_.init(-7.5f, 3.9f, -7.9f, 0.82f, z_min_, z_max_);
+    // Altitude state (no state machine)
+    current_altitude_ = 0.3f;
+    gp_.reset(0.3f, z_min_, z_max_);
+    levy_height_step_remaining_ = 0; levy_height_target_ = 0.3f;
+    layer_profile_.clear(); significant_layers_.clear();
+    calibration_active_ = false; calibration_step_ = 0;
+    calibration_z_sequence_.clear(); calibration_index_ = 0;
+    best_calibrated_z_ = 0.3f;
+    for (int i = 0; i < kNumZBins; i++) z_posterior_[i] = 0.0f;
+    z_conc_history_.clear();
+    wind_dir_history_.clear();
+    GSL_INFO("OPGSL-SDNBV initialized: grid={} res={:.1f} z=[{:.1f},{:.1f}]",
+             n_cells_, resolution_, z_min_, z_max_);
+}
+
+// ============================================================
+// SourcePosterior3D Implementation
+// ============================================================
+void OPGSL::SourcePosterior3D::init(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax) {
+    x_min_ = xmin; x_max_ = xmax; y_min_ = ymin; y_max_ = ymax;
+    z_min_ = zmin; z_max_ = zmax;
+    dx_ = (x_max_ - x_min_) / nx_;
+    dy_ = (y_max_ - y_min_) / ny_;
+    dz_ = (z_max_ - z_min_) / nz_;
+    grid.resize(nx_, std::vector<std::vector<float>>(ny_, std::vector<float>(nz_, 0.0f)));
+    reset();
+    initialized_ = true;
+}
+
+void OPGSL::SourcePosterior3D::reset() {
+    float log_prior = -std::log(static_cast<float>(nx_ * ny_ * nz_));
+    for (int i = 0; i < nx_; i++)
+        for (int j = 0; j < ny_; j++)
+            for (int k = 0; k < nz_; k++)
+                grid[i][j][k] = log_prior;
+}
+
+float OPGSL::SourcePosterior3D::plumeLogLikelihood(float sx, float sy, float sz,
+                                                     float cx, float cy, float cz,
+                                                     float wind_x, float wind_y, float wind_speed) const {
+    // Wind-relative plume model
+    float dx = cx - sx, dy = cy - sy, dz = cz - sz;
+    float ws = std::max(wind_speed, 0.05f);
+    float wn = std::sqrt(wind_x*wind_x + wind_y*wind_y) + 1e-6f;
+    float wx = wind_x/wn, wy = wind_y/wn;
+    float d_along = dx*wx + dy*wy;
+    float d_cross = std::abs(dx*wy - dy*wx);
+    float d_vert = std::abs(dz);
+    // Gaussian plume approximation
+    float sigma_y = 0.8f * std::sqrt(std::max(d_along, 0.1f) + 0.5f);
+    float sigma_z = 0.5f * std::sqrt(std::max(d_along, 0.1f) + 0.5f);
+    float log_lik = -d_cross*d_cross/(2*sigma_y*sigma_y) - d_vert*d_vert/(2*sigma_z*sigma_z);
+    // Upwind penalty
+    if (d_along < 0) log_lik -= 2.0f * std::abs(d_along);
+    return log_lik;
+}
+
+void OPGSL::SourcePosterior3D::update(float cx, float cy, float cz, float concentration,
+                                       float wind_x, float wind_y, float wind_speed) {
+    if (!initialized_) return;
+    float max_log = -1e9f;
+    for (int i = 0; i < nx_; i++) {
+        for (int j = 0; j < ny_; j++) {
+            for (int k = 0; k < nz_; k++) {
+                float sx = x_min_ + (i+0.5f) * dx_;
+                float sy = y_min_ + (j+0.5f) * dy_;
+                float sz = z_min_ + (k+0.5f) * dz_;
+                float log_lik = plumeLogLikelihood(sx, sy, sz, cx, cy, cz, wind_x, wind_y, wind_speed);
+                // Weight by concentration
+                float weight;
+                if (concentration > 0.01f) {
+                    weight = std::sqrt(concentration);
+                } else {
+                    weight = -0.05f;
+                }
+                grid[i][j][k] += weight * log_lik;
+                if (grid[i][j][k] > max_log) max_log = grid[i][j][k];
+            }
+        }
+    }
+    // Log-sum-exp normalization
+    float log_sum = -1e9f;
+    for (int i = 0; i < nx_; i++)
+        for (int j = 0; j < ny_; j++)
+            for (int k = 0; k < nz_; k++) {
+                grid[i][j][k] -= max_log;
+                log_sum = std::log(std::exp(log_sum) + std::exp(grid[i][j][k]));
+            }
+    for (int i = 0; i < nx_; i++)
+        for (int j = 0; j < ny_; j++)
+            for (int k = 0; k < nz_; k++)
+                grid[i][j][k] -= log_sum;
+}
+
+void OPGSL::SourcePosterior3D::getMAP(float& mx, float& my, float& mz) const {
+    float best = -1e9f;
+    int bi=0, bj=0, bk=0;
+    for (int i = 0; i < nx_; i++)
+        for (int j = 0; j < ny_; j++)
+            for (int k = 0; k < nz_; k++)
+                if (grid[i][j][k] > best) { best = grid[i][j][k]; bi=i; bj=j; bk=k; }
+    mx = x_min_ + (bi+0.5f) * dx_;
+    my = y_min_ + (bj+0.5f) * dy_;
+    mz = z_min_ + (bk+0.5f) * dz_;
+}
+
+float OPGSL::SourcePosterior3D::getEntropy() const {
+    float H = 0.0f;
+    for (int i = 0; i < nx_; i++)
+        for (int j = 0; j < ny_; j++)
+            for (int k = 0; k < nz_; k++) {
+                float p = std::exp(grid[i][j][k]);
+                if (p > 1e-15f) H -= p * grid[i][j][k];
+            }
+    return H;
+}
+
+void OPGSL::SourcePosterior3D::getFIMEigenvalues(float& eig_x, float& eig_y, float& eig_z) const {
+    // Compute marginal entropies as proxy for FIM eigenvalues
+    // Higher entropy = less information = need more observations in that dimension
+    // Compute marginal distributions
+    std::vector<float> marg_x(nx_, 0.0f), marg_y(ny_, 0.0f), marg_z(nz_, 0.0f);
+    for (int i = 0; i < nx_; i++)
+        for (int j = 0; j < ny_; j++)
+            for (int k = 0; k < nz_; k++) {
+                float p = std::exp(grid[i][j][k]);
+                marg_x[i] += p; marg_y[j] += p; marg_z[k] += p;
+            }
+    auto entropy1d = [](const std::vector<float>& marg) -> float {
+        float H = 0.0f;
+        for (float p : marg) if (p > 1e-15f) H -= p * std::log(p);
+        return H;
+    };
+    float Hx = entropy1d(marg_x);
+    float Hy = entropy1d(marg_y);
+    float Hz = entropy1d(marg_z);
+    // FIM eigenvalue ∝ 1/entropy (more entropy = less information)
+    eig_x = 1.0f / (Hx + 0.1f);
+    eig_y = 1.0f / (Hy + 0.1f);
+    eig_z = 1.0f / (Hz + 0.1f);
+}
+
+OPGSL::SourcePosterior3D::NBVResult OPGSL::SourcePosterior3D::selectNBV(
+    float robot_x, float robot_y, float robot_z,
+    float wind_x, float wind_y, float wind_speed) const {
+    NBVResult result;
+    result.x = robot_x; result.y = robot_y; result.z = robot_z;
+    result.expected_info_gain = -1e9f;
+    // Get MAP as reference point
+    float map_x, map_y, map_z;
+    getMAP(map_x, map_y, map_z);
+    // Evaluate candidate positions in a grid around the robot
+    float search_radius = 3.0f;
+    float step = 0.8f;
+    float best_eig = -1e9f;
+    for (float dx = -search_radius; dx <= search_radius; dx += step) {
+        for (float dy = -search_radius; dy <= search_radius; dy += step) {
+            for (float dz = -0.5f; dz <= 1.5f; dz += 0.3f) {
+                float cx = robot_x + dx;
+                float cy = robot_y + dy;
+                float cz = std::clamp(robot_z + dz, z_min_, z_max_);
+                // Compute expected information gain
+                float mean_c = 0.0f;
+                for (int i = 0; i < nx_; i++)
+                    for (int j = 0; j < ny_; j++)
+                        for (int k = 0; k < nz_; k++) {
+                            float sx = x_min_ + (i+0.5f) * dx_;
+                            float sy = y_min_ + (j+0.5f) * dy_;
+                            float sz = z_min_ + (k+0.5f) * dz_;
+                            float p = std::exp(grid[i][j][k]);
+                            float log_lik = plumeLogLikelihood(sx, sy, sz, cx, cy, cz,
+                                                               wind_x, wind_y, wind_speed);
+                            mean_c += p * std::exp(log_lik);
+                        }
+                float var_c = 0.0f;
+                for (int i = 0; i < nx_; i++)
+                    for (int j = 0; j < ny_; j++)
+                        for (int k = 0; k < nz_; k++) {
+                            float sx = x_min_ + (i+0.5f) * dx_;
+                            float sy = y_min_ + (j+0.5f) * dy_;
+                            float sz = z_min_ + (k+0.5f) * dz_;
+                            float p = std::exp(grid[i][j][k]);
+                            float log_lik = plumeLogLikelihood(sx, sy, sz, cx, cy, cz,
+                                                               wind_x, wind_y, wind_speed);
+                            float c_pred = std::exp(log_lik);
+                            var_c += p * (c_pred - mean_c) * (c_pred - mean_c);
+                        }
+                float eig = var_c;
+                float dist = std::sqrt(dx*dx + dy*dy + dz*dz);
+                eig *= std::exp(-0.1f * dist);
+                if (eig > best_eig) {
+                    best_eig = eig;
+                    result.x = cx; result.y = cy; result.z = cz;
+                    result.expected_info_gain = eig;
+                }
+            }
+        }
+    }
+    return result;
+}
+
+// ============================================================
+// SD-NBV Step: unified decision for next position
+// ============================================================
+void OPGSL::sdnbvStep(float& best_x, float& best_y) {
+    float cx = currentRobotPosition.x, cy = currentRobotPosition.y;
+    float wx = latest_wind_x_, wy = latest_wind_y_, ws = latest_wind_speed_;
+
+    // Update 3D posterior with current observation
+    if (latest_gas_ > 0.001f) {
+        posterior3d_.update(cx, cy, current_altitude_, latest_gas_, wx, wy, ws);
+    }
+
+    // Get FIM eigenvalues to decide what to explore
+    float eig_x, eig_y, eig_z;
+    posterior3d_.getFIMEigenvalues(eig_x, eig_y, eig_z);
+    float max_eig = std::max({eig_x, eig_y, eig_z});
+
+    // NBV: select position that maximizes expected information gain
+    if (use_sdnbv_ && step_count_ > 5) {
+        auto nbv = posterior3d_.selectNBV(cx, cy, current_altitude_, wx, wy, ws);
+        if (nbv.expected_info_gain > 0.001f) {
+            best_x = nbv.x;
+            best_y = nbv.y;
+            GSL_INFO("SDNBV: NBV=({:.2f},{:.2f}) EIG={:.4f} FIM=({:.2f},{:.2f},{:.2f})",
+                     best_x, best_y, nbv.expected_info_gain, eig_x, eig_y, eig_z);
+            return;
+        }
+    }
+
+    // Fallback: use field estimator (WR-SFE) + wind-aware info gain
+    auto field = field_estimator_.computeField();
+    // Low-wind mode: concentration gradient climbing
+    // In near-zero wind, WR-SFE fails. Use pure gradient ascent on concentration.
+    if (ws < 0.05f) {
+        // Track last few observations for gradient estimation
+        static float last_cx = 0, last_cy = 0, last_conc = 0;
+        float grad_x = 0, grad_y = 0;
+        if (last_conc > 0.001f && step_count_ > 1) {
+            float dx = cx - last_cx;
+            float dy = cy - last_cy;
+            float d = std::sqrt(dx*dx + dy*dy);
+            if (d > 0.01f) {
+                float conc_gradient = (latest_gas_ - last_conc) / d;
+                // Move in gradient direction (uphill)
+                grad_x = conc_gradient * dx / d;
+                grad_y = conc_gradient * dy / d;
+            }
+        }
+        last_cx = cx; last_cy = cy; last_conc = latest_gas_;
+
+        // If gradient is significant, follow it; otherwise use best hit
+        float grad_mag = std::sqrt(grad_x*grad_x + grad_y*grad_y);
+        if (grad_mag > 0.001f && latest_gas_ > 0.01f) {
+            // Follow gradient with adaptive step
+            float step = std::min(step_size_, 1.0f);
+            best_x = cx + step * grad_x / grad_mag;
+            best_y = cy + step * grad_y / grad_mag;
+            GSL_INFO("SDNBV: gradient climb ({:.2f},{:.2f}) grad={:.4f}", best_x, best_y, grad_mag);
+        } else if (best_hit_conc_ > 0.01f) {
+            // Navigate toward best hit position
+            float dx = best_hit_x_ - cx;
+            float dy = best_hit_y_ - cy;
+            float d = std::sqrt(dx*dx + dy*dy);
+            if (d > 0.1f) {
+                float step = std::min(step_size_, d);
+                best_x = cx + step * dx / d;
+                best_y = cy + step * dy / d;
+            } else {
+                // Near best hit: explore nearby
+                best_x = cx + std::uniform_real_distribution<float>(-0.5f, 0.5f)(rng_);
+                best_y = cy + std::uniform_real_distribution<float>(-0.5f, 0.5f)(rng_);
+            }
+            GSL_INFO("SDNBV: best-hit nav ({:.2f},{:.2f}) best_conc={:.3f}", best_x, best_y, best_hit_conc_);
+        } else {
+            // No gas detected yet: spiral exploration
+            float angle = step_count_ * 2.39996323f;  // golden angle
+            float radius = 0.5f + 0.1f * step_count_;
+            radius = std::min(radius, 3.0f);
+            best_x = -0.9f + radius * std::cos(angle);  // start position
+            best_y = 0.15f + radius * std::sin(angle);
+            GSL_INFO("SDNBV: spiral explore ({:.2f},{:.2f})", best_x, best_y);
+        }
+        clipToMapBounds(best_x, best_y);
+        return;
+    }
+
+    // Wind-aware infotaxis: choose cell with highest info gain
+    int best_gx = n_cells_/2, best_gy = n_cells_/2;
+    float best_ig = -1e9f;
+    int robot_gx = std::clamp(int((cx + map_half_size_) / resolution_), 0, n_cells_-1);
+    int robot_gy = std::clamp(int((cy + map_half_size_) / resolution_), 0, n_cells_-1);
+    for (int gx = 0; gx < n_cells_; gx++) {
+        for (int gy = 0; gy < n_cells_; gy++) {
+            float ig = info_gain_.compute(field, gx, gy, n_cells_, cx, cy, wx, wy, resolution_, map_half_size_);
+            if (ig > best_ig) { best_ig = ig; best_gx = gx; best_gy = gy; }
+        }
+    }
+    best_x = best_gx * resolution_ - map_half_size_;
+    best_y = best_gy * resolution_ - map_half_size_;
+
+    // Lévy exploration if stagnating
+    if (use_levy_ && consecutive_misses_ > 8) {
+        levyExploration(best_x, best_y, cx, cy);
+        GSL_INFO("SDNBV: Lévy exploration ({:.2f},{:.2f}) misses={}", best_x, best_y, consecutive_misses_);
+    }
+
+    GSL_INFO("SDNBV: IG target ({:.2f},{:.2f}) ig={:.4f} ws={:.3f}", best_x, best_y, best_ig, ws);
+}
+
+void OPGSL::infotaxisStep(float& best_x, float& best_y) {
+    sdnbvStep(best_x, best_y);
+}
+
+// ============================================================
+// Gas & Wind Processing
+// ============================================================
+void OPGSL::processGasAndWindMeasurements(double concentration, double windSpeed, double windDirection) {
+    total_measurements_++;
+    latest_gas_ = static_cast<float>(concentration);
+    latest_wind_speed_ = static_cast<float>(windSpeed);
+    latest_wind_x_ = static_cast<float>(windSpeed * std::cos(windDirection));
+    latest_wind_y_ = static_cast<float>(windSpeed * std::sin(windDirection));
+
+    float cx = currentRobotPosition.x, cy = currentRobotPosition.y;
+    float cz = current_altitude_;
+
+    // Update field estimator
+    field_estimator_.addObservation(latest_gas_, cx, cy, latest_wind_x_, latest_wind_y_, elapsed_time_);
+
+    // Update altitude posterior
+    updateAltitudePosterior(cz, latest_gas_);
+
+    // Update GP with current observation
+    if (use_gp_altitude_ && latest_gas_ > 0.001f) {
+        gp_.addObservation(cz, latest_gas_);
+    }
+
+    // Track max concentration
+    if (latest_gas_ > best_hit_conc_) {
+        best_hit_conc_ = latest_gas_;
+        best_hit_x_ = cx; best_hit_y_ = cy;
+    }
+
+    // Bout detection (Module 2)
+    if (use_bout_) {
+        if (latest_gas_ > 0.01f) {
+            if (!bout_active_) {
+                bout_active_ = true;
+                bout_start_time_ = elapsed_time_;
+                bout_peak_conc_ = latest_gas_;
+            } else {
+                bout_peak_conc_ = std::max(bout_peak_conc_, latest_gas_);
+            }
+            consecutive_misses_ = 0;
+            gas_hit_count_++;
+            last_hit_x_ = cx; last_hit_y_ = cy;
+            last_hit_time_ = elapsed_time_;
+        } else {
+            if (bout_active_) {
+                bout_active_ = false;
+                bout_count_++;
+                time_since_last_bout_ = 0.0f;
+            }
+            consecutive_misses_++;
+            time_since_last_bout_ += 1.0f;
+        }
+    } else {
+        if (latest_gas_ > 0.01f) {
+            gas_hit_count_++;
+            last_hit_x_ = cx; last_hit_y_ = cy;
+            consecutive_misses_ = 0;
+        } else {
+            consecutive_misses_++;
+        }
+    }
+
+    // Wind history
+    wind_dir_history_.push_back(windDirection);
+    if (wind_dir_history_.size() > kWindHistorySize) wind_dir_history_.pop_front();
+
+    // Adaptive step (Module 3)
+    if (use_adaptive_step_) {
+        float gradient_mag = std::abs(latest_gas_ - prev_gas_);
+        if (gradient_mag > prev_gradient_mag_ * 1.2f) {
+            step_size_ = std::max(0.3f, step_size_ * 0.85f);
+        } else if (gradient_mag < prev_gradient_mag_ * 0.5f && gradient_mag > 0.001f) {
+            step_size_ = std::min(1.5f, step_size_ * 1.1f);
+        }
+        prev_gradient_mag_ = gradient_mag;
+    }
+
+    // Z conc history
+    z_conc_history_.push_back({cz, latest_gas_, elapsed_time_});
+    if (z_conc_history_.size() > max_conc_window_) z_conc_history_.pop_front();
+
+    // Layer scan processing
+    if (calibration_active_) {
+        processCalibrationMeasurement(cz, latest_gas_);
+    }
+
+    prev_gas_ = latest_gas_;
+
+    // Trigger navigation after measurement
+    auto check = checkSourceFound();
+    if (check != GSLResult::Running) {
+        GSL_INFO("OPGSL-SDNBV: search complete, result={}", (int)check);
+        saveResultsToFile(check);
+        return;
+    }
+    movingState->chooseGoalAndMove();
+}
+
+// ============================================================
+// Altitude Selection (FIM-driven, no state machine)
+// ============================================================
+float OPGSL::selectTargetAltitude() {
+    // Get FIM eigenvalues to determine z uncertainty
+    float eig_x, eig_y, eig_z;
+    posterior3d_.getFIMEigenvalues(eig_x, eig_y, eig_z);
+
+    // If z dimension has highest uncertainty, prioritize altitude exploration
+    bool z_needs_exploration = (eig_z > eig_x * 1.5f && eig_z > eig_y * 1.5f);
+
+    // If calibration hasn't been done yet and enough steps, start it
+    if (use_layer_scan_ && step_count_ > 10 && calibration_count_ < 1 && !calibration_active_) {
+        startCalibration();
+    }
+
+    // If actively calibrating, follow calibration sequence
+    if (calibration_active_) {
+        if (calibration_index_ < calibration_z_sequence_.size()) {
+            return calibration_z_sequence_[calibration_index_];
+        } else {
+            calibration_active_ = false;
+            calibration_count_++;
+            best_calibrated_z_ = getPosteriorBestZ();
+            GSL_INFO("SDNBV calibration done: best_z={:.2f}", best_calibrated_z_);
+        }
+    }
+
+    // SD-NBV altitude: default to standard height
+    float target_z = 0.3f;
+    float gp_z = use_gp_altitude_ ? gp_.getNextZAnchored(current_altitude_, best_calibrated_z_, 0.3f) : current_altitude_;
+    float post_z = getPosteriorBestZ();
+    float maxc_z = maxConcAltitude();
+
+    // Weighted combination based on data availability
+    if (gp_.getXS().size() >= 3) {
+        // GP has enough data: trust it more
+        target_z = 0.5f * gp_z + 0.3f * post_z + 0.2f * maxc_z;
+    } else if (z_needs_exploration) {
+        // Z dimension uncertain: use Lévy exploration
+        target_z = levyHeight(current_altitude_);
+    } else {
+        // Default: use posterior + max concentration
+        target_z = 0.6f * post_z + 0.4f * maxc_z;
+    }
+
+    // If we have calibrated, blend in the calibrated value
+    if (calibration_count_ > 0) {
+        target_z = 0.5f * target_z + 0.5f * best_calibrated_z_;
+    }
+
+    return std::clamp(target_z, z_min_, z_max_);
+}
+
+// ============================================================
+// Levy Flight
+// ============================================================
+void OPGSL::levyExploration(float& best_x, float& best_y, float cx, float cy) {
+    if (levy_step_remaining_ <= 0) {
+        // New Levy step
+        std::uniform_real_distribution<float> udist(0.0f, 1.0f);
+        float u = udist(rng_);
+        float beta = 2.0f, l_min = 0.3f, l_max = 3.0f;
+        float exponent = 1.0f / (beta - 1.0f);
+        float l = l_min * std::pow(1.0f - u * (1.0f - std::pow(l_min/l_max, beta-1.0f)), -exponent);
+        levy_step_remaining_ = std::max(1, int(l / 0.5f));
+        levy_angle_ = std::uniform_real_distribution<float>(0, 2*M_PI)(rng_);
+    }
+    float dist = step_size_;
+    best_x = cx + dist * std::cos(levy_angle_);
+    best_y = cy + dist * std::sin(levy_angle_);
+    clipToMapBounds(best_x, best_y);
+    levy_step_remaining_--;
+}
+
+float OPGSL::levyHeight(float z_current) {
+    if (levy_height_step_remaining_ <= 0) {
+        std::uniform_real_distribution<float> udist(0.0f, 1.0f);
+        float u = udist(rng_);
+        float beta = 2.0f, l_min = 0.2f, l_max = 2.0f;
+        float exponent = 1.0f / (beta - 1.0f);
+        float l = l_min * std::pow(1.0f - u * (1.0f - std::pow(l_min/l_max, beta-1.0f)), -exponent);
+        levy_height_step_remaining_ = std::max(1, int(l / 0.3f));
+        float dir = (udist(rng_) > 0.5f) ? 1.0f : -1.0f;
+        levy_height_target_ = std::clamp(z_current + dir * l, z_min_, z_max_);
+    }
+    levy_height_step_remaining_--;
+    return levy_height_target_;
+}
+
+// ============================================================
+// Calibration (layer scan)
+// ============================================================
+void OPGSL::startCalibration() {
+    calibration_active_ = true;
+    calibration_step_ = 0;
+    calibration_z_sequence_.clear();
+    // Sweep from z_min to z_max
+    for (float z = z_min_; z <= z_max_; z += 0.3f) {
+        calibration_z_sequence_.push_back(z);
+    }
+    calibration_index_ = 0;
+    GSL_INFO("SDNBV calibration started: {} z levels", calibration_z_sequence_.size());
+}
+
+void OPGSL::processCalibrationMeasurement(float z, float concentration) {
+    layer_profile_.push_back({z, concentration});
+    if (calibration_index_ < calibration_z_sequence_.size()) {
+        calibration_index_++;
+    }
+}
+
+// ============================================================
+// Altitude helpers
+// ============================================================
+void OPGSL::updateAltitudePosterior(float z, float concentration) {
+    int bin = std::clamp(int((z - z_min_) / (z_max_ - z_min_) * kNumZBins), 0, kNumZBins-1);
+    // Temporal decay
+    for (int i = 0; i < kNumZBins; i++) z_posterior_[i] *= (1.0f - z_decay_rate_);
+    // Update with concentration
+    z_posterior_[bin] += concentration;
+}
+
+float OPGSL::getPosteriorBestZ() const {
+    int best_bin = 0;
+    float best_val = -1e9f;
+    for (int i = 0; i < kNumZBins; i++) {
+        if (z_posterior_[i] > best_val) { best_val = z_posterior_[i]; best_bin = i; }
+    }
+    return z_min_ + (best_bin + 0.5f) * (z_max_ - z_min_) / kNumZBins;
+}
+
+float OPGSL::maxConcAltitude() const {
+    if (z_conc_history_.empty()) return current_altitude_;
+    float best_z = z_conc_history_[0].z;
+    float best_c = z_conc_history_[0].concentration;
+    for (const auto& rec : z_conc_history_) {
+        if (rec.concentration > best_c) { best_c = rec.concentration; best_z = rec.z; }
+    }
+    return best_z;
+}
+
+// ============================================================
+// Utilities
+// ============================================================
+float OPGSL::smoothWindDirection() const {
+    if (wind_dir_history_.empty()) return 0.0f;
+    float sx = 0.0f, sy = 0.0f;
+    for (float d : wind_dir_history_) { sx += std::cos(d); sy += std::sin(d); }
+    return std::atan2(sy, sx);
+}
+
+void OPGSL::clipToMapBounds(float& x, float& y) const {
+    float margin = 0.5f;
+    x = std::clamp(x, -map_half_size_ + margin, map_half_size_ - margin);
+    y = std::clamp(y, -map_half_size_ + margin, map_half_size_ - margin);
+}
+
+void OPGSL::logAltitudeState() {
+    float eig_x, eig_y, eig_z;
+    posterior3d_.getFIMEigenvalues(eig_x, eig_y, eig_z);
+    float map_x, map_y, map_z;
+    posterior3d_.getMAP(map_x, map_y, map_z);
+    GSL_INFO("SDNBV-Alt: z={:.2f} post_MAP=({:.2f},{:.2f},{:.2f}) FIM=({:.2f},{:.2f},{:.2f}) gp_best={:.2f}",
+             current_altitude_, map_x, map_y, map_z, eig_x, eig_y, eig_z, gp_.getBestZ());
+}
+
+// ============================================================
+// Optional modules (BH-EX, WAZ, SC) - kept for ablation
+// ============================================================
+void OPGSL::bhexCheckStagnation(float current_conc, float cx, float cy) {
+    if (current_conc > bhex_best_conc_) {
+        bhex_best_conc_ = current_conc; bhex_best_x_ = cx; bhex_best_y_ = cy;
+        bhex_stagnation_count_ = 0;
+    } else {
+        bhex_stagnation_count_++;
+    }
+    if (bhex_stagnation_count_ >= bhex_stagnation_threshold_) {
+        bhex_jump_pending_ = true;
+        bhex_jump_x_ = cx + std::normal_distribution<float>(0, bhex_temperature_)(rng_);
+        bhex_jump_y_ = cy + std::normal_distribution<float>(0, bhex_temperature_)(rng_);
+        clipToMapBounds(bhex_jump_x_, bhex_jump_y_);
+        bhex_temperature_ *= bhex_cooling_;
+        bhex_stagnation_count_ = 0;
+    }
+}
+
+void OPGSL::wazExplore(float& out_x, float& out_y, float cx, float cy) {
+    float wind_dir = smoothWindDirection();
+    float perp = wind_dir + M_PI/2.0f;
+    if (waz_phase_ == 0) {
+        out_x = cx + waz_step_size_ * std::cos(perp);
+        out_y = cy + waz_step_size_ * std::sin(perp);
+    } else {
+        out_x = cx - waz_step_size_ * std::cos(perp);
+        out_y = cy - waz_step_size_ * std::sin(perp);
+    }
+    waz_step_count_++;
+    if (waz_step_count_ >= waz_steps_per_leg_) {
+        waz_phase_ = 1 - waz_phase_;
+        waz_step_count_ = 0;
+    }
+    clipToMapBounds(out_x, out_y);
+}
+
+void OPGSL::scStep(float& out_x, float& out_y, float cx, float cy) {
+    // Surge-Cast plume tracking
+    if (latest_gas_ > 0.01f) {
+        sc_consecutive_hits_++;
+        sc_consecutive_misses_ = 0;
+        if (sc_mode_ == 1) { sc_mode_ = 0; sc_cast_legs_ = 0; }
+        float wind_dir = std::atan2(latest_wind_y_, latest_wind_x_);
+        out_x = cx + sc_surge_step_ * std::cos(wind_dir);
+        out_y = cy + sc_surge_step_ * std::sin(wind_dir);
+        sc_source_est_x_ = 0.9f * sc_source_est_x_ + 0.1f * cx;
+        sc_source_est_y_ = 0.9f * sc_source_est_y_ + 0.1f * cy;
+        sc_source_est_count_++;
+    } else {
+        sc_consecutive_misses_++;
+        sc_consecutive_hits_ = 0;
+        if (sc_consecutive_misses_ > 3) sc_mode_ = 1;
+        if (sc_mode_ == 1) {
+            float wind_dir = std::atan2(latest_wind_y_, latest_wind_x_);
+            float perp = wind_dir + M_PI/2.0f * sc_cast_dir_;
+            out_x = cx + sc_cast_step_ * std::cos(perp);
+            out_y = cy + sc_cast_step_ * std::sin(perp);
+            sc_cast_legs_++;
+            if (sc_cast_legs_ > 5) { sc_cast_dir_ *= -1; sc_cast_legs_ = 0; }
+        }
+    }
+    clipToMapBounds(out_x, out_y);
+}
+
+// ============================================================
+// Convergence & Results
+// ============================================================
+GSLResult OPGSL::checkSourceFound() {
+    if (elapsed_time_ < convergence_min_time_) return GSLResult::Running;
+    if (gas_hit_count_ < convergence_min_bouts_) return GSLResult::Running;
+    if (step_count_ < 50) return GSLResult::Running;
+
+    auto field = field_estimator_.computeField();
+    float cx = currentRobotPosition.x, cy = currentRobotPosition.y;
+    // Use posterior MAP for convergence check
+    float map_x, map_y, map_z;
+    posterior3d_.getMAP(map_x, map_y, map_z);
+    float dx = map_x - cx, dy = map_y - cy;
+    float dist_to_peak = std::sqrt(dx*dx + dy*dy);
+    float dz = std::abs(map_z - current_altitude_);
+    bool near_peak = dist_to_peak < 1.5f;
+    bool entropy_low = field.field_entropy < convergence_entropy_threshold_;
+    bool z_stable = dz < 1.5f;
+
+    if (near_peak && entropy_low && z_stable) {
+        stable_steps_count_++;
+    } else {
+        stable_steps_count_ = 0;
+    }
+
+    if (stable_steps_count_ >= convergence_stable_steps_) {
+        GSL_INFO("OPGSL-SDNBV CONVERGED: entropy={:.2f} dist={:.2f} z_dist={:.2f} hits={} step={}",
+                 field.field_entropy, dist_to_peak, dz, gas_hit_count_, step_count_);
+        return GSLResult::Success;
+    }
+    if (step_count_ >= 500) return GSLResult::Failure;
+    return GSLResult::Running;
+}
+
+void OPGSL::saveResultsToFile(GSLResult result) {
+    float map_x, map_y, map_z;
+    posterior3d_.getMAP(map_x, map_y, map_z);
+    auto field = field_estimator_.computeField();
+    float field_x = field.peak_x, field_y = field.peak_y;
+    float maxc_z = maxConcAltitude();
+    float post_z = getPosteriorBestZ();
+    GSL_INFO("OPGSL-SDNBV RESULT: posterior_MAP=({:.2f},{:.2f},{:.2f}) field=({:.2f},{:.2f}) "
+             "maxc_z={:.2f} post_z={:.2f} steps={} hits={} t={:.1f}s",
+             map_x, map_y, map_z, field_x, field_y, maxc_z, post_z,
+             step_count_, gas_hit_count_, elapsed_time_);
+    if (!audit_file_.empty()) {
+        audit_stream_.open(audit_file_, std::ios::app);
+        if (audit_stream_.is_open()) {
+            audit_stream_ << std::fixed << std::setprecision(3)
+                          << map_x << "," << map_y << "," << map_z << ","
+                          << field_x << "," << field_y << ","
+                          << maxc_z << "," << post_z << ","
+                          << step_count_ << "," << gas_hit_count_ << "," << elapsed_time_ << ","
+                          << (int)result << "\n";
+            audit_stream_.close();
+        }
+    }
+}
+
+void OPGSL::OnUpdate() {
+    Algorithm::OnUpdate();
+}
+
+void OPGSL::OnCompleteNavigation(GSLResult result, State* previousState) {
+    stateMachine.forceSetState(stopAndMeasureState.get());
+}
+
+// ============================================================
+// MovingStateOPGSL
+// ============================================================
+MovingStateOPGSL::MovingStateOPGSL(Algorithm* _algorithm) : MovingState(_algorithm) {
+    opgsl_ = dynamic_cast<OPGSL*>(_algorithm);
+}
+
+NavigateToPose::Goal MovingStateOPGSL::posToGoal(float x, float y, float z) {
+    NavigateToPose::Goal g;
+    g.pose.pose.position.x = x;
+    g.pose.pose.position.y = y;
+    g.pose.pose.position.z = z;
+    g.pose.pose.orientation.w = 1.0f;
+    return g;
+}
+
+void MovingStateOPGSL::chooseGoalAndMove() {
+    if (!opgsl_) { GSL_ERROR("OPGSL pointer null"); return; }
+    opgsl_->step_count_++;
+    double now = opgsl_->node->now().seconds();
+    if (opgsl_->last_update_time_ > 0) opgsl_->elapsed_time_ += static_cast<float>(now - opgsl_->last_update_time_);
+    opgsl_->last_update_time_ = now;
+
+    // Select target altitude (FIM-driven, no state machine)
+    float tz = opgsl_->selectTargetAltitude();
+    opgsl_->current_altitude_ = tz;
+
+    // Select horizontal target (SD-NBV)
+    float tx, ty;
+    opgsl_->infotaxisStep(tx, ty);
+
+    // Log state
+    opgsl_->logAltitudeState();
+    GSL_INFO("OPGSL-SDNBV step={} ({:.2f},{:.2f},{:.2f}) hits={} t={:.1f}",
+             opgsl_->step_count_, tx, ty, tz, opgsl_->gas_hit_count_, opgsl_->elapsed_time_);
+
+    float cx = opgsl_->currentRobotPosition.x, cy = opgsl_->currentRobotPosition.y;
+    auto goal = posToGoal(tx, ty, tz);
+    if (checkGoal(goal)) { sendGoal(goal); return; }
+
+    // Fallback: try shorter distances
+    float dx = tx-cx, dy = ty-cy, d = std::sqrt(dx*dx+dy*dy);
+    if (d > 0.1f) {
+        float dirx = dx/d, diry = dy/d;
+        float fa[] = {0.75f, 0.5f, 0.3f, 0.2f};
+        for (float f : fa) {
+            float fx = cx+dirx*d*f, fy = cy+diry*d*f;
+            opgsl_->clipToMapBounds(fx, fy);
+            auto fg = posToGoal(fx, fy, tz);
+            if (checkGoal(fg)) { sendGoal(fg); GSL_INFO("OPGSL-SDNBV fb1 ({:.2f},{:.2f},{:.2f})", fx, fy, tz); return; }
+        }
+    }
+    // Random fallback
+    for (int i = 0; i < 8; i++) {
+        float ang = std::uniform_real_distribution<float>(0, 2*M_PI)(opgsl_->rng_);
+        float dist = std::uniform_real_distribution<float>(0.3f, 1.5f)(opgsl_->rng_);
+        float rx = cx+dist*std::cos(ang), ry = cy+dist*std::sin(ang);
+        opgsl_->clipToMapBounds(rx, ry);
+        auto rg = posToGoal(rx, ry, tz);
+        if (checkGoal(rg)) { sendGoal(rg); GSL_INFO("OPGSL-SDNBV fb2 ({:.2f},{:.2f},{:.2f})", rx, ry, tz); return; }
+    }
+    GSL_ERROR("OPGSL-SDNBV ALL fallbacks failed!");
+}
+
+void MovingStateOPGSL::Fail() {
+    if (!opgsl_) return;
+    float ang = std::uniform_real_distribution<float>(0, 2*M_PI)(opgsl_->rng_);
+    float nx = opgsl_->currentRobotPosition.x + 1.5f*std::cos(ang);
+    float ny = opgsl_->currentRobotPosition.y + 1.5f*std::sin(ang);
+    opgsl_->clipToMapBounds(nx, ny);
+    auto goal = posToGoal(nx, ny, opgsl_->current_altitude_);
+    if (checkGoal(goal)) sendGoal(goal);
+}
+
+} // namespace GSL

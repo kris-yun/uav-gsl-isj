@@ -117,6 +117,7 @@ public:
         return (n * sum_ty - sum_t * sum_y) / denom;
     }
 
+    std::size_t snapshotCount() const { return snapshots_.size(); }
     double currentEntropy() const {
         if (snapshots_.empty()) return 0.0;
         return snapshots_.back().entropy;

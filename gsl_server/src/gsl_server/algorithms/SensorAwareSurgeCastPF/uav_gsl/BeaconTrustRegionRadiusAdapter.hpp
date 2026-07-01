@@ -67,12 +67,13 @@ class BeaconTrustRegionRadiusAdapter {
   std::vector<double> local_radii{1.0, 1.5, 2.0};
   std::vector<double> medium_radii{1.5, 2.5, 3.5};
   std::vector<double> global_radii{2.0, 3.5, 5.0};
-  int min_samples = 20;
-  int min_updates = 15;
+  int min_samples = 10;
+  int min_updates = 5;
   int min_boundary_count = 3;
   double sparse_hit_rate = 0.15;
   double saturated_hit_rate = 0.85;
   BeaconTRWeights weights;
+  mutable double cached_hit_rate_ = 0.0;
 
   BeaconTRRegime classifyRegime(const BeaconTREvidenceState& e) const {
     if (e.total_samples < min_samples || e.sepf_update_count < min_updates) {
@@ -87,6 +88,7 @@ class BeaconTrustRegionRadiusAdapter {
     if (e.hit_rate_recent < sparse_hit_rate || e.boundary_count_recent < min_boundary_count) {
       return BeaconTRRegime::SparseUnsupported;
     }
+    cached_hit_rate_ = e.hit_rate_recent;
     return BeaconTRRegime::NominalSupported;
   }
 

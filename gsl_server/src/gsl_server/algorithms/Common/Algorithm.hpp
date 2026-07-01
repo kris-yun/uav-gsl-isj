@@ -111,6 +111,7 @@ namespace GSL
         {
             std::vector<PoseWithCovarianceStamped> robotPosesVector;
             Vector2 sourcePositionGT;
+            float sourcePositionGT_z = 0.0f;
             double maxSearchTime;
             double distanceThreshold;
 

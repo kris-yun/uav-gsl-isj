@@ -169,5 +169,11 @@ std::shared_ptr<GSL::Algorithm> GSLServer::createAlgorithm(const std::string nam
     else if (name == SAISC_PF_NAME)
         return std::make_shared<GSL::SensorAwareSurgeCastPF>(shared_from_this());
 #endif
+#if ENABLE_OPGSL
+    else if (name == OPGSL_NAME)
+        return std::make_shared<GSL::OPGSL>(shared_from_this());
+    else if (name == WC_RIF_GSL_NAME)
+        return std::make_shared<GSL::WC_RIF_GSL>(shared_from_this());
+#endif
     return nullptr;
 }

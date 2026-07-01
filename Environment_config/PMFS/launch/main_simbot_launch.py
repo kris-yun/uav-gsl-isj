@@ -66,6 +66,8 @@ def launch_setup(context, *args, **kwargs):
                     {"openMoveSetExpasion": 5},
                     {"explorationProbability": 0.05},
                     {"convergence_thr": 1.5},
+                    # WC-RIF wind convention (GADEN uses upwind)
+                    {"wcrif.wind_convention_upwind": True},
 
                     # GrGSL
                     {"useDiffusionTerm": True},

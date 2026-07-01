@@ -1,0 +1,582 @@
+#include "OPGSL.hpp"
+#include "gsl_server/core/GSLResult.hpp"
+#include <gsl_server/algorithms/Common/States/WaitForMapState.hpp>
+#include <gsl_server/algorithms/Common/States/WaitForGasState.hpp>
+#include <gsl_server/algorithms/Common/States/StopAndMeasureState.hpp>
+#include "gsl_server/core/Logging.hpp"
+#include "gsl_server/core/Vectors.hpp"
+#include "gsl_server/algorithms/Common/Utils/Math.hpp"
+#include "gsl_server/algorithms/Common/Utils/RosUtils.hpp"
+#include <angles/angles.h>
+#include <cmath>
+#include <iomanip>
+#include <limits>
+#include <numeric>
+
+namespace GSL {
+
+OPGSL::OPGSL(std::shared_ptr<rclcpp::Node> _node) : Algorithm(_node) { rng_.seed(std::random_device{}()); }
+
+void OPGSL::declareParameters() {
+    Algorithm::declareParameters();
+    n_cells_ = getParam<int>("opgsl.grid.n_cells", 40);
+    resolution_ = getParam<double>("opgsl.grid.resolution", 0.5);
+    map_half_size_ = n_cells_ * resolution_ / 2.0f;
+    convergence_entropy_threshold_ = getParam<double>("opgsl.convergence.entropy_threshold", 5.0);
+    convergence_min_bouts_ = getParam<int>("opgsl.convergence.min_bouts", 5); // FIX2: was 2
+    convergence_stable_steps_ = getParam<int>("opgsl.convergence.stable_steps", 5);
+    convergence_min_time_ = getParam<double>("opgsl.convergence.min_time", 30.0);
+    use_eig_height_ = getParam<bool>("opgsl.eig_height.enable", true); // FIX2: was 15
+    audit_file_ = getParam<std::string>("opgsl.audit_file", "");
+    // Innovation module toggles
+    use_levy_ = getParam<bool>("opgsl.modules.levy", true);
+    use_bout_ = getParam<bool>("opgsl.modules.bout", true);
+    use_adaptive_step_ = getParam<bool>("opgsl.modules.adaptive_step", true);
+    use_bhex_ = getParam<bool>("opgsl.modules.bhex", false);
+    use_waz_ = getParam<bool>("opgsl.modules.waz", false);
+    use_sc_ = getParam<bool>("opgsl.modules.sc", false);
+    GSL_INFO("WAZ_DEBUG: use_waz_={}", use_waz_);
+}
+
+void OPGSL::Initialize() {
+    field_cfg_.n_cells = n_cells_; field_cfg_.resolution = resolution_;
+    field_cfg_.map_half_size = map_half_size_; field_cfg_.max_observations = 200;
+    field_cfg_.observation_decay = 0.998f; field_cfg_.bandwidth_base = 1.2f;
+    field_cfg_.bandwidth_wind_factor = 1.5f; field_cfg_.n_ensemble = 3;
+    field_estimator_.init(field_cfg_);
+    ig_cfg_.exploration_weight = 0.3f; ig_cfg_.wind_bonus = 0.5f;
+    ig_cfg_.uncertainty_weight = 0.4f; ig_cfg_.visit_penalty = 0.2f;
+    info_gain_.init(ig_cfg_);
+    waitForMapState = std::make_unique<WaitForMapState>(this);
+    waitForGasState = std::make_unique<WaitForGasState>(this);
+    stopAndMeasureState = std::make_unique<StopAndMeasureState>(this);
+    movingState = std::make_unique<MovingStateOPGSL>(this);
+    Algorithm::Initialize(); stateMachine.forceSetState(waitForMapState.get());
+    prev_gas_ = 0.0f;
+    best_hit_conc_ = 0.0f; best_hit_x_ = 0.0f; best_hit_y_ = 0.0f; run_length_ = 0.8f; run_direction_x_ = 0.0f; run_direction_y_ = -1.0f;
+    run_steps_remaining_ = 0; tumble_count_ = 0; gradient_threshold_ = 0.002f;
+    max_step_ = 1.0f; max_run_steps_ = 8;
+    need_next_goal_ = false;
+    // Bout-level state
+    bout_active_ = false; bout_start_time_ = 0.0f; bout_peak_conc_ = 0.0f;
+    bout_count_ = 0; time_since_last_bout_ = 0.0f;
+    // Adaptive step state
+    step_size_ = 0.8f; prev_gradient_mag_ = 0.0f;
+    // Levy state
+    levy_step_remaining_ = 0; levy_angle_ = 0.0f;
+    bhex_stagnation_count_ = 0; waz_phase_ = 0; waz_step_count_ = 0; sc_mode_ = 0; sc_cast_dir_ = 1; sc_cast_legs_ = 0; sc_source_est_count_ = 0; sc_consecutive_hits_ = 0; sc_consecutive_misses_ = 0; bhex_temperature_ = 2.0f; bhex_best_conc_ = 0.0f;
+    // Initialize EIG height posterior (uniform)
+    for (int k = 0; k < kNumHeights; k++) eig_height_posterior_[k] = 0.0f;
+    eig_selected_height_ = 2.0f;
+    eig_height_update_count_ = 0; bhex_jump_pending_ = false;
+    GSL_INFO("OPGSL initialized: grid={}x{} res={:.1f}m levy={} bout={} adaptive={}",
+             n_cells_, n_cells_, resolution_, use_levy_, use_bout_, use_adaptive_step_, use_bhex_);
+}
+
+void OPGSL::OnUpdate() {
+    Algorithm::OnUpdate();
+    if (need_next_goal_) {
+        need_next_goal_ = false;
+        double now = node->now().seconds();
+        if (last_update_time_ > 0) elapsed_time_ += static_cast<float>(now - last_update_time_);
+        last_update_time_ = now;
+        auto check = checkSourceFound();
+        if (check != GSLResult::Running) {
+            GSL_INFO("OPGSL: search complete, result={}", (int)check);
+            saveResultsToFile(check);
+            return;
+        }
+        GSL_INFO("OPGSL: selecting next goal (hits={} elapsed={:.1f}s)", gas_hit_count_, elapsed_time_);
+        movingState->chooseGoalAndMove();
+    }
+}
+
+void OPGSL::OnCompleteNavigation(GSLResult result, State* previousState) {
+    stateMachine.forceSetState(stopAndMeasureState.get());
+}
+
+void OPGSL::processGasAndWindMeasurements(double concentration, double windSpeed, double windDirection) {
+    total_measurements_++;
+    latest_gas_ = static_cast<float>(concentration);
+    latest_wind_speed_ = static_cast<float>(windSpeed);
+    latest_wind_x_ = static_cast<float>(windSpeed * std::cos(windDirection));
+    latest_wind_y_ = static_cast<float>(windSpeed * std::sin(windDirection));
+    wind_dir_history_.push_back(static_cast<float>(windDirection));
+    if (wind_dir_history_.size() > kWindHistorySize) wind_dir_history_.pop_front();
+    if (latest_wind_speed_ < 0.05f && !wind_dir_history_.empty()) {
+        float sd = smoothWindDirection();
+        latest_wind_x_ = 0.1f * std::cos(sd); latest_wind_y_ = 0.1f * std::sin(sd);
+        latest_wind_speed_ = 0.1f;
+    }
+
+    // ========== Module 2: Bout-Level Detection ==========
+    // Instead of simple threshold, detect gas "bouts" (episodes of sustained detection)
+    // Inspired by temporal point process theory from financial math
+    if (use_bout_) {
+        time_since_last_bout_ += 0.1f; // approximate dt
+        if (concentration > 0.01) {
+            if (!bout_active_) {
+                // Start new bout
+                bout_active_ = true;
+                bout_start_time_ = elapsed_time_;
+                bout_peak_conc_ = static_cast<float>(concentration);
+            } else {
+                // Continue bout - track peak
+                bout_peak_conc_ = std::max(bout_peak_conc_, static_cast<float>(concentration));
+            }
+        } else {
+            if (bout_active_) {
+                // Bout ended - record it as a discrete event
+                bout_active_ = false;
+                bout_count_++;
+                time_since_last_bout_ = 0.0f;
+                // Use peak concentration of bout as observation weight
+                gas_hit_count_++;
+                last_hit_x_ = currentRobotPosition.x;
+                last_hit_y_ = currentRobotPosition.y;
+                last_hit_time_ = elapsed_time_;
+                consecutive_misses_ = 0;
+                // Weight observation by bout peak (stronger bout = more reliable)
+                float bout_weight = std::min(1.0f, bout_peak_conc_ / 0.1f);
+                field_estimator_.addObservation(bout_weight * static_cast<float>(concentration),
+                    currentRobotPosition.x, currentRobotPosition.y,
+                    latest_wind_x_, latest_wind_y_, elapsed_time_);
+                GSL_INFO("BOUT_END #{} peak={:.4f} weight={:.2f} pos=({:.2f},{:.2f})",
+                         bout_count_, bout_peak_conc_, bout_weight,
+                         currentRobotPosition.x, currentRobotPosition.y);
+            } else {
+                consecutive_misses_++;
+            }
+        }
+    } else {
+        // Original simple threshold
+        if (concentration > 0.01) {
+            gas_hit_count_++; last_hit_x_ = currentRobotPosition.x; last_hit_y_ = currentRobotPosition.y;
+            if (concentration > best_hit_conc_) { best_hit_conc_ = concentration; best_hit_x_ = currentRobotPosition.x; best_hit_y_ = currentRobotPosition.y; }
+            if (concentration > best_hit_conc_) { best_hit_conc_ = concentration; best_hit_x_ = currentRobotPosition.x; best_hit_y_ = currentRobotPosition.y; }
+            last_hit_time_ = elapsed_time_; consecutive_misses_ = 0;
+        } else { consecutive_misses_++; }
+        field_estimator_.addObservation(static_cast<float>(concentration),
+            currentRobotPosition.x, currentRobotPosition.y,
+            latest_wind_x_, latest_wind_y_, elapsed_time_);
+// EIG height posterior update
+    if (use_eig_height_) updateHeightPosterior(static_cast<float>(concentration), currentRobotPosition.x, currentRobotPosition.y);
+    }
+
+    // Track spatial extent of hits
+    if (concentration > 0.01) {
+        if (currentRobotPosition.y < southernmost_hit_y_) { southernmost_hit_y_ = currentRobotPosition.y; southernmost_hit_x_ = currentRobotPosition.x; }
+        if (currentRobotPosition.y > northernmost_hit_y_) northernmost_hit_y_ = currentRobotPosition.y;
+        if (currentRobotPosition.x < westernmost_hit_x_) westernmost_hit_x_ = currentRobotPosition.x;
+        if (currentRobotPosition.x > easternmost_hit_x_) easternmost_hit_x_ = currentRobotPosition.x;
+    }
+    need_next_goal_ = true;
+    // BH-EX: track stagnation
+    if (use_bhex_) bhexCheckStagnation(latest_gas_, currentRobotPosition.x, currentRobotPosition.y);
+}
+
+float OPGSL::smoothWindDirection() const {
+    if (wind_dir_history_.empty()) return 0;
+    float ss = 0, cs = 0;
+    for (float d : wind_dir_history_) { ss += std::sin(d); cs += std::cos(d); }
+    return std::atan2(ss / wind_dir_history_.size(), cs / wind_dir_history_.size());
+}
+
+
+// === EIG Adaptive Height Selection ===
+void OPGSL::updateHeightPosterior(float concentration, float rx, float ry) {
+    // Update height posterior based on observed concentration at current position.
+    // Use vertical concentration profile: gas rises, so higher concentrations
+    // suggest source is at similar or lower height.
+    // This is a heuristic based on the physical structure of gas plumes.
+    
+    if (concentration < 0.001f) return;  // no meaningful reading
+    
+    // For each candidate height, estimate expected concentration at current (x,y)
+    // using a simple vertical decay model: conc ~ exp(-|z_robot - z_source|^2 / (2*sigma_z^2))
+    // This is a rough approximation; real implementation would use pre-computed lookup table.
+    float sigma_z = 1.5f;  // vertical spread parameter (meters)
+    
+    for (int k = 0; k < kNumHeights; k++) {
+        float z_source = eig_heights_[k];
+        float z_robot = 0.3f;  // current flight height (should be parameterized)
+        float dz = z_robot - z_source;
+        float expected_ratio = std::exp(-(dz * dz) / (2.0f * sigma_z * sigma_z));
+        
+        // Compare observed concentration with expected ratio
+        // If observed > expected: this height is plausible (boost)
+        // If observed < expected: this height is less plausible (penalize)
+        // Use log-likelihood update
+        float p_hit = std::min(0.9f, expected_ratio);
+        if (concentration > 0.1f) {  // hit
+            eig_height_posterior_[k] += std::log(std::max(p_hit, 1e-6f));
+        } else {  // miss
+            eig_height_posterior_[k] += std::log(std::max(1.0f - p_hit, 1e-6f));
+        }
+    }
+    
+    eig_height_update_count_++;
+}
+
+float OPGSL::selectBestHeight() {
+    // Find height with maximum posterior
+    int best_k = 0;
+    float best_val = eig_height_posterior_[0];
+    for (int k = 1; k < kNumHeights; k++) {
+        if (eig_height_posterior_[k] > best_val) {
+            best_val = eig_height_posterior_[k];
+            best_k = k;
+        }
+    }
+    return eig_heights_[best_k];
+}
+GSLResult OPGSL::checkSourceFound() {
+    if (elapsed_time_ >= resultLogging.maxSearchTime) {
+        auto centroid = field_estimator_.computeWeightedCentroid(20);
+        float est_x = centroid.x, est_y = centroid.y;
+        if (centroid.weight_sum < 1e-6f) { auto f = field_estimator_.computeField(); est_x = f.peak_x; est_y = f.peak_y; }
+        GSL_INFO("OPGSL timeout: centroid=({:.2f},{:.2f}) gas_hits={} bouts={}", est_x, est_y, gas_hit_count_, bout_count_);
+        if (gas_hit_count_ >= 2) {
+            // SC: if we have surge trajectory data, use it for source estimate
+            if (use_sc_ && sc_source_est_count_ >= 2) {
+                float sc_est_x = sc_source_est_x_ / sc_source_est_count_;
+                float sc_est_y = sc_source_est_y_ / sc_source_est_count_;
+                GSL_INFO("SC: source estimate from {} trajectories: ({:.2f},{:.2f})", sc_source_est_count_, sc_est_x, sc_est_y);
+            }
+            currentResult = GSLResult::Success; return GSLResult::Success;
+        }
+        return GSLResult::Failure;
+    }
+    if (elapsed_time_ > convergence_min_time_ && gas_hit_count_ >= convergence_min_bouts_) {
+        auto c2 = field_estimator_.computeWeightedCentroid(20);
+        float ex2 = c2.x, ey2 = c2.y;
+        if (c2.weight_sum < 1e-6f) { auto f2 = field_estimator_.computeField(); ex2 = f2.peak_x; ey2 = f2.peak_y; }
+        float conc = (c2.spread > 0.01f) ? (1.0f / (1.0f + c2.spread)) : 0.0f;
+        float ddx = ex2 - currentRobotPosition.x, ddy = ey2 - currentRobotPosition.y;
+        float ddist = std::sqrt(ddx*ddx + ddy*ddy);
+        // Best-hit anchor: if centroid drifted far from best gas hit, pull back
+        if (best_hit_conc_ > 0.01f) {
+            float bh_dx = best_hit_x_ - ex2, bh_dy = best_hit_y_ - ey2;
+            float bh_dist = std::sqrt(bh_dx*bh_dx + bh_dy*bh_dy);
+            if (bh_dist > 2.0f) {
+                ex2 = 0.3f * ex2 + 0.7f * best_hit_x_;
+                ey2 = 0.3f * ey2 + 0.7f * best_hit_y_;
+                ddx = ex2 - currentRobotPosition.x; ddy = ey2 - currentRobotPosition.y;
+                ddist = std::sqrt(ddx*ddx + ddy*ddy);
+                GSL_INFO("BEST_HIT_ANCHOR: centroid drifted {:.1f}m from best_hit, blended to ({:.2f},{:.2f})", bh_dist, ex2, ey2);
+            }
+        }
+        if (conc > 0.6f && ddist < 0.8f) { // FIX2: was 0.4/1.5
+            GSL_INFO("OPGSL early convergence: centroid=({:.2f},{:.2f}) conc={:.2f} dist={:.2f}", ex2, ey2, conc, ddist);
+            currentResult = GSLResult::Success; return GSLResult::Success;
+        }
+    }
+    return GSLResult::Running;
+}
+
+void OPGSL::saveResultsToFile(GSLResult result) { Algorithm::saveResultsToFile(result); }
+
+void OPGSL::clipToMapBounds(float& x, float& y) const {
+    float m = 0.5f, h = map_half_size_;
+    x = std::max(-h+m, std::min(h-m, x)); y = std::max(-h+m, std::min(h-m, y));
+}
+
+// ========== Module 1: Levy Flight Exploration ==========
+// From ecology/physics: heavy-tailed step length distribution for sparse target search
+// More efficient than Brownian motion (golden angle spiral) for sparse gas detections
+// Reference: Viswanathan et al. Nature 1996; recent 2025 applications in foraging optimization
+void OPGSL::levyExploration(float& best_x, float& best_y, float cx, float cy) {
+    if (levy_step_remaining_ > 0) {
+        // Continue current Levy step
+        levy_step_remaining_--;
+        float step = std::min(run_length_, max_step_);
+        best_x = cx + step * std::cos(levy_angle_);
+        best_y = cy + step * std::sin(levy_angle_);
+    } else {
+        // Generate new Levy step
+        // Levy distribution: P(l) ~ l^(-mu), mu in [1.5, 2.5]
+        // We use mu=2 (Cauchy-like) for optimal sparse search
+        float u = std::uniform_real_distribution<float>(0.001f, 1.0f)(rng_);
+        float levy_length = 0.5f / std::tan(u * M_PI / 2.0f); // Cauchy distribution
+        levy_length = std::min(levy_length, 5.0f); // cap at 5m
+        levy_length = std::max(levy_length, 0.3f); // min 0.3m
+        
+        // Random direction with wind bias
+        levy_angle_ = std::uniform_real_distribution<float>(0, 2*M_PI)(rng_);
+        if (latest_wind_speed_ > 0.02f) {
+            float wind_dir = std::atan2(latest_wind_y_, latest_wind_x_);
+            // Bias exploration upwind (toward source)
+            levy_angle_ = wind_dir + M_PI + std::uniform_real_distribution<float>(-0.5f, 0.5f)(rng_);
+        }
+        
+        levy_step_remaining_ = std::max(1, static_cast<int>(levy_length / max_step_));
+        run_length_ = levy_length / levy_step_remaining_;
+        
+        best_x = cx + run_length_ * std::cos(levy_angle_);
+        best_y = cy + run_length_ * std::sin(levy_angle_);
+        
+        GSL_INFO("LEVY step len={:.2f}m steps={} angle={:.1f}deg",
+                 levy_length, levy_step_remaining_, levy_angle_ * 180.0f / M_PI);
+    }
+}
+
+
+// BH-EX: Basin-Hopping Exploration
+void OPGSL::bhexCheckStagnation(float current_conc, float cx, float cy) {
+    if (!use_bhex_) return;
+    if (current_conc > bhex_best_conc_) {
+        bhex_best_conc_ = current_conc;
+        bhex_best_x_ = cx;
+        bhex_best_y_ = cy;
+        bhex_stagnation_count_ = 0; waz_phase_ = 0; waz_step_count_ = 0; sc_mode_ = 0; sc_cast_dir_ = 1; sc_cast_legs_ = 0; sc_source_est_count_ = 0; sc_consecutive_hits_ = 0; sc_consecutive_misses_ = 0;
+    } else {
+        bhex_stagnation_count_++;
+    }
+    if (bhex_stagnation_count_ >= bhex_stagnation_threshold_) {
+        float jump_range = 2.0f + bhex_temperature_ * 3.0f;
+        std::uniform_real_distribution<float> dist_x(-jump_range, jump_range);
+        std::uniform_real_distribution<float> dist_y(-jump_range, jump_range);
+        float cand_x = bhex_best_x_ + dist_x(rng_);
+        float cand_y = bhex_best_y_ + dist_y(rng_);
+        clipToMapBounds(cand_x, cand_y);
+        bhex_jump_x_ = cand_x;
+        bhex_jump_y_ = cand_y;
+        bhex_jump_pending_ = true;
+        bhex_temperature_ = std::max(bhex_min_temp_, bhex_temperature_ * bhex_cooling_);
+        bhex_stagnation_count_ = 0; waz_phase_ = 0; waz_step_count_ = 0; sc_mode_ = 0; sc_cast_dir_ = 1; sc_cast_legs_ = 0; sc_source_est_count_ = 0; sc_consecutive_hits_ = 0; sc_consecutive_misses_ = 0;
+        GSL_INFO("BH-EX: jump to ({:.2f},{:.2f}) T={:.2f} best_conc={:.4f}",
+                 cand_x, cand_y, bhex_temperature_, bhex_best_conc_);
+    }
+}
+
+
+
+// SC: Surge-Cast plume tracking
+// Cast: sweep perpendicular to wind when no gas
+// Surge: move upwind when gas detected
+void OPGSL::scStep(float& out_x, float& out_y, float cx, float cy) {
+    float wind_dir = std::atan2(latest_wind_y_, latest_wind_x_);
+    float upwind_x = -std::cos(wind_dir);
+    float upwind_y = -std::sin(wind_dir);
+    float cross_x = -upwind_y; // perpendicular
+    float cross_y = upwind_x;
+
+    if (sc_mode_ == 1) {
+        // SURGE: move upwind
+        float step = sc_surge_step_;
+        out_x = cx + step * upwind_x;
+        out_y = cy + step * upwind_y;
+        GSL_INFO("SC-SURGE: ({:.2f},{:.2f}) -> ({:.2f},{:.2f}) hits={} misses={}", cx, cy, out_x, out_y, sc_consecutive_hits_, sc_consecutive_misses_);
+    } else {
+        // CAST: sweep crosswind
+        float cast_dist = sc_cast_step_ * sc_cast_dir_;
+        out_x = cx + cast_dist * cross_x;
+        out_y = cy + cast_dist * cross_y;
+        // Also drift slightly upwind during cast
+        out_x += 0.3f * sc_cast_step_ * upwind_x;
+        out_y += 0.3f * sc_cast_step_ * upwind_y;
+        GSL_INFO("SC-CAST: ({:.2f},{:.2f}) -> ({:.2f},{:.2f}) dir={} legs={}", cx, cy, out_x, out_y, sc_cast_dir_, sc_cast_legs_);
+    }
+}
+void OPGSL::wazExplore(float& out_x, float& out_y, float cx, float cy) {
+    GSL_INFO("WAZ: explore phase={} step={} wind=({:.2f},{:.2f})", waz_phase_, waz_step_count_, latest_wind_x_, latest_wind_y_);
+    float wind_dir = std::atan2(latest_wind_y_, latest_wind_x_);
+    float upwind = wind_dir + M_PI;
+    float cross_R = upwind + M_PI / 2.0f;
+    float cross_L = upwind - M_PI / 2.0f;
+    float angles[4] = {upwind, cross_R, wind_dir, cross_L};
+    float angle = angles[waz_phase_ % 4];
+    out_x = cx + waz_step_size_ * std::cos(angle);
+    out_y = cy + waz_step_size_ * std::sin(angle);
+    waz_step_count_++;
+    if (waz_step_count_ >= waz_steps_per_leg_) {
+        waz_step_count_ = 0;
+        waz_phase_ = (waz_phase_ + 1) % 4;
+        GSL_INFO("WAZ: phase change to {} angle={:.1f}deg", waz_phase_, angle * 180.0f / M_PI);
+    }
+    if (latest_wind_speed_ < 0.01f) {
+        info_gain_.exploreGoldenAngle(out_x, out_y, cx, cy,
+            latest_wind_x_, latest_wind_y_, waz_step_size_, step_count_, map_half_size_);
+    }
+}
+void OPGSL::infotaxisStep(float& best_x, float& best_y) {
+    float cx = currentRobotPosition.x, cy = currentRobotPosition.y;
+    
+    // BH-EX: check for pending jump
+    if (use_bhex_ && bhex_jump_pending_) {
+        bhex_jump_pending_ = false;
+        best_x = bhex_jump_x_;
+        best_y = bhex_jump_y_;
+        GSL_INFO("BH-EX: executing jump to ({:.2f},{:.2f})", best_x, best_y);
+        clipToMapBounds(best_x, best_y);
+        return;
+    }
+
+    if (gas_hit_count_ == 0) {
+        // No gas detected yet: choose exploration strategy
+        if (use_waz_) {
+            wazExplore(best_x, best_y, cx, cy);
+        } else if (use_levy_) {
+            // Module 1: Levy flight exploration (more efficient for sparse targets)
+            levyExploration(best_x, best_y, cx, cy);
+        } else {
+            // Original: golden angle spiral
+            info_gain_.exploreGoldenAngle(best_x, best_y, cx, cy,
+                latest_wind_x_, latest_wind_y_, 0.8f, step_count_, map_half_size_);
+        }
+        clipToMapBounds(best_x, best_y);
+        return;
+    }
+    
+    // Gas detected:
+    if (use_sc_) {
+        // Surge-Cast mode: track plume with surge-cast
+        if (latest_gas_ > 0.01f) {
+            sc_consecutive_hits_++;
+            sc_consecutive_misses_ = 0;
+            if (sc_consecutive_hits_ >= 2 && sc_mode_ == 0) {
+                // Switch to surge mode
+                sc_mode_ = 1;
+                sc_surge_start_x_ = cx;
+                sc_surge_start_y_ = cy;
+                GSL_INFO("SC: CAST -> SURGE at ({:.2f},{:.2f})", cx, cy);
+            }
+        } else {
+            sc_consecutive_misses_++;
+            sc_consecutive_hits_ = 0;
+            if (sc_consecutive_misses_ >= 3 && sc_mode_ == 1) {
+                // Lost plume: switch to cast
+                sc_mode_ = 0;
+                sc_cast_legs_++;
+                sc_cast_dir_ *= -1; // alternate cast direction
+                // Record surge trajectory for source estimation
+                sc_source_est_x_ += cx;
+                sc_source_est_y_ += cy;
+                sc_source_est_count_++;
+                GSL_INFO("SC: SURGE -> CAST at ({:.2f},{:.2f}) est_count={}", cx, cy, sc_source_est_count_);
+            }
+        }
+        scStep(best_x, best_y, cx, cy);
+        clipToMapBounds(best_x, best_y);
+        prev_gas_ = latest_gas_;
+        return;
+    }
+
+    // Original chemotaxis fallback
+    auto centroid = field_estimator_.computeWeightedCentroid(20);
+    if (centroid.weight_sum > 1e-6f) {
+        float ex = centroid.x, ey = centroid.y;
+        float dx = ex - cx, dy = ey - cy;
+        float dist = std::sqrt(dx*dx + dy*dy);
+        float grad = latest_gas_ - prev_gas_;
+        float gradient_mag = std::abs(grad);
+        
+        // ========== Module 3: Adaptive Step Size ==========
+        // From optimization theory: adjust step based on gradient magnitude
+        // Large gradient -> take bigger steps (confident direction)
+        // Small gradient -> take smaller steps (refine search)
+        // Prevents oscillation around the source
+        if (use_adaptive_step_) {
+            // Momentum-like adaptive step
+            float momentum = 0.7f;
+            float target_step = max_step_;
+            if (gradient_mag > 0.01f) {
+                // Strong gradient: large step
+                target_step = std::min(max_step_, dist * 0.5f);
+            } else if (gradient_mag > 0.001f) {
+                // Moderate gradient: medium step
+                target_step = std::min(max_step_ * 0.5f, dist * 0.3f);
+            } else {
+                // Weak/no gradient: small step for refinement
+                target_step = std::min(max_step_ * 0.2f, 0.3f);
+            }
+            step_size_ = momentum * step_size_ + (1.0f - momentum) * target_step;
+            prev_gradient_mag_ = gradient_mag;
+        } else {
+            step_size_ = max_step_;
+        }
+        
+        if (dist > 0.5f) {
+            float step = std::min(step_size_, dist * 0.4f);
+            best_x = cx + (dx/dist) * step;
+            best_y = cy + (dy/dist) * step;
+        } else if (grad > 0.001f) {
+            best_x = cx + run_direction_x_ * step_size_ * 0.3f;
+            best_y = cy + run_direction_y_ * step_size_ * 0.3f;
+        } else {
+            float ang = std::uniform_real_distribution<float>(0, 2*M_PI)(rng_);
+            run_direction_x_ = std::cos(ang); run_direction_y_ = std::sin(ang);
+            best_x = cx + run_direction_x_ * step_size_ * 0.3f;
+            best_y = cy + run_direction_y_ * step_size_ * 0.3f;
+        }
+        GSL_INFO("CHEMOTAX step={} target=({:.2f},{:.2f}) centroid=({:.2f},{:.2f}) dist={:.2f} grad={:.4f} step_size={:.2f} hits={}",
+                 step_count_, best_x, best_y, ex, ey, dist, grad, step_size_, gas_hit_count_);
+    } else {
+        if (use_waz_) {
+            wazExplore(best_x, best_y, cx, cy);
+        } else if (use_levy_) {
+            levyExploration(best_x, best_y, cx, cy);
+        } else {
+            float ang = std::uniform_real_distribution<float>(0, 2*M_PI)(rng_);
+            float step = std::min(run_length_, max_step_);
+            best_x = cx + step*std::cos(ang); best_y = cy + step*std::sin(ang);
+        }
+    }
+    clipToMapBounds(best_x, best_y); prev_gas_ = latest_gas_;
+}
+
+// ========== MovingStateOPGSL ==========
+MovingStateOPGSL::MovingStateOPGSL(Algorithm* _algorithm) : MovingState(_algorithm) { opgsl_ = dynamic_cast<OPGSL*>(_algorithm); }
+
+NavigateToPose::Goal MovingStateOPGSL::posToGoal(float x, float y) {
+    NavigateToPose::Goal g;
+    g.pose.header.frame_id = "map"; g.pose.header.stamp = opgsl_->node->now();
+    g.pose.pose.position.x = x; g.pose.pose.position.y = y;
+    g.pose.pose.position.z = 1.0f; g.pose.pose.orientation.w = 1.0f;
+    return g;
+}
+
+void MovingStateOPGSL::chooseGoalAndMove() {
+    if (!opgsl_) { GSL_ERROR("OPGSL pointer null"); return; }
+    opgsl_->step_count_++;
+    double now = opgsl_->node->now().seconds();
+    if (opgsl_->last_update_time_ > 0) opgsl_->elapsed_time_ += static_cast<float>(now - opgsl_->last_update_time_);
+    opgsl_->last_update_time_ = now;
+    float tx, ty; opgsl_->infotaxisStep(tx, ty);
+    GSL_INFO("OPGSL step={} target=({:.2f},{:.2f}) gas_hits={} elapsed={:.1f}", opgsl_->step_count_, tx, ty, opgsl_->gas_hit_count_, opgsl_->elapsed_time_);
+    float cx = opgsl_->currentRobotPosition.x, cy = opgsl_->currentRobotPosition.y;
+    auto goal = posToGoal(tx, ty);
+    if (checkGoal(goal)) { sendGoal(goal); return; }
+    float dx = tx-cx, dy = ty-cy, d = std::sqrt(dx*dx+dy*dy);
+    if (d > 0.1f) {
+        float dirx = dx/d, diry = dy/d;
+        float fa[] = {0.75f, 0.5f, 0.3f, 0.2f};
+        for (float f : fa) {
+            float fx = cx+dirx*d*f, fy = cy+diry*d*f;
+            opgsl_->clipToMapBounds(fx, fy);
+            auto fg = posToGoal(fx, fy);
+            if (checkGoal(fg)) { sendGoal(fg); GSL_INFO("OPGSL fb1 ({:.2f},{:.2f})", fx, fy); return; }
+        }
+    }
+    for (int i = 0; i < 8; i++) {
+        float ang = std::uniform_real_distribution<float>(0, 2*M_PI)(opgsl_->rng_);
+        float dist = std::uniform_real_distribution<float>(0.3f, 1.5f)(opgsl_->rng_);
+        float rx = cx+dist*std::cos(ang), ry = cy+dist*std::sin(ang);
+        opgsl_->clipToMapBounds(rx, ry);
+        auto rg = posToGoal(rx, ry);
+        if (checkGoal(rg)) { sendGoal(rg); GSL_INFO("OPGSL fb2 ({:.2f},{:.2f})", rx, ry); return; }
+    }
+    GSL_ERROR("OPGSL ALL fallbacks failed!");
+}
+
+void MovingStateOPGSL::Fail() {
+    if (!opgsl_) return;
+    float ang = std::uniform_real_distribution<float>(0, 2*M_PI)(opgsl_->rng_);
+    float nx = opgsl_->currentRobotPosition.x + 1.5f*std::cos(ang);
+    float ny = opgsl_->currentRobotPosition.y + 1.5f*std::sin(ang);
+    opgsl_->clipToMapBounds(nx, ny);
+    auto goal = posToGoal(nx, ny);
+    if (checkGoal(goal)) sendGoal(goal);
+}
+
+} // namespace GSL

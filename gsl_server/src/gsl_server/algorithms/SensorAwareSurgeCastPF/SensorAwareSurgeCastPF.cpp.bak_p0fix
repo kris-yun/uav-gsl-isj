@@ -46,21 +46,12 @@ void SensorAwareSurgeCastPF::declareParameters() {
     pf_config_.default_wind_sigma_rad =
         getParam("saisc.sepf.wind_sigma_deg", 15.0) * uav_gsl::kPi / 180.0;
     pf_config_.resample_ess_ratio = getParam("saisc.sepf.resample_ess_ratio", 0.45);
-    // ATL: Adaptive Tempered Likelihood
-    pf_config_.temperature_tau = getParam("saisc.sepf.temperature_tau", 1.0);
-    pf_config_.tau_adaptive = getParam("saisc.sepf.tau_adaptive", 0) != 0;
-    pf_config_.tau_ess_target_ratio = getParam("saisc.sepf.tau_ess_target_ratio", 0.5);
-    pf_config_.tau_alpha = getParam("saisc.sepf.tau_alpha", 0.3);
-    pf_config_.tau_min = getParam("saisc.sepf.tau_min", 0.5);
-    pf_config_.tau_max = getParam("saisc.sepf.tau_max", 3.0);
 
     audit_file_ = getParam("saisc.audit_file", std::string("saisc_pf_audit.csv"));
     // Ablation flags - must be read BEFORE validation checks
     use_sdbe_ = getParam("saisc.use_sdbe", 1) != 0;
     use_iasc_ = getParam("saisc.use_iasc", 1) != 0;
     use_sepf_ = getParam("saisc.use_sepf", 1) != 0;
-    use_pcrd_ = getParam("saisc.use_pcrd", 0) != 0;
-    use_pgn_ = getParam("saisc.use_pgn", 0) != 0;
     use_kb_tme_ = getParam("saisc.use_kb_tme", 0) != 0;
     use_av_rise_ = getParam("saisc.use_av_rise", 0) != 0;
     use_entropy_only_active_ = getParam("saisc.use_entropy_only_active", 0) != 0;
@@ -74,33 +65,6 @@ void SensorAwareSurgeCastPF::declareParameters() {
     beacon_max_goals_ = getParam("saisc.beacon_max_goals", 6);
     use_beacon_tr_ = getParam("saisc.use_beacon_tr", 0) != 0;
     use_evidence_splat_beacon_ = getParam("saisc.use_evidence_splat_beacon", 0) != 0;
-
-
-    // HMM-PM parameters
-    use_hmm_ = getParam("saisc.use_hmm", 0) != 0;
-    {
-        uav_gsl::HiddenMarkovPlumeModel::Config hmm_cfg;
-        hmm_cfg.p_stay_present = getParam("saisc.hmm.stay_present", 0.7);
-        hmm_cfg.p_stay_absent = getParam("saisc.hmm.stay_absent", 0.85);
-        hmm_cfg.wind_speed_gain = getParam("saisc.hmm.wind_speed_gain", 0.5);
-        hmm_cfg.present_boost = getParam("saisc.hmm.present_boost", 3.0);
-        hmm_cfg.absent_suppress = getParam("saisc.hmm.absent_suppress", 0.05);
-        hmm_ = uav_gsl::HiddenMarkovPlumeModel(hmm_cfg);
-    }
-    // TPP-L parameters
-    use_tpp_ = getParam("saisc.use_tpp", 0) != 0;
-    {
-        uav_gsl::TemporalPointProcessLikelihood::Config tpp_cfg;
-        tpp_cfg.background_rate_mu = getParam("saisc.tpp.mu", 0.05);
-        tpp_cfg.excitation_alpha = getParam("saisc.tpp.alpha", 0.3);
-        tpp_cfg.triggering_decay_beta = getParam("saisc.tpp.beta", 2.0);
-        tpp_cfg.refractory_period_s = getParam("saisc.tpp.refractory_s", 0.5);
-        tpp_cfg.observation_window_s = getParam("saisc.tpp.window_s", 60.0);
-        tpp_cfg.likelihood_gain = getParam("saisc.tpp.gain", 1.5);
-        tpp_cfg.use_wind_modulation = getParam("saisc.tpp.wind_mod", 1) != 0;
-        tpp_cfg.wind_alignment_gain = getParam("saisc.tpp.wind_gain", 0.3);
-        tpp_ = uav_gsl::TemporalPointProcessLikelihood(tpp_cfg);
-    }
     if (use_evidence_splat_beacon_) {
         uav_gsl::EvidenceSplatParams esb_params;
         esb_planner_ = std::make_unique<uav_gsl::EvidenceSplatBeaconPlanner>(esb_params);
@@ -243,102 +207,12 @@ float SensorAwareSurgeCastPF::gasCallback(
             reacquisition_times_s_.push_back(now_s - last_bout_onset_s_);
         }
         last_bout_onset_s_ = now_s;
-
-        if (use_tpp_) {
-            tpp_.onBoutOnset(now_s);
-        }
-    }
-
-    // SEPF inline update: update particle filter on every gas reading
-    // This ensures SEPF gets data even when UAV never enters StopAndMeasure state
-    if (use_sepf_) {
-        ensureParticleFilterInitialized();
-        if (!pf_) return 0.0f;
-        const double delay = use_sdbe_ ? latest_evidence_.estimated_delay_s : 0.0;
-        const uav_gsl::Vec2 sensing_position = pose_history_.delayCompensated(now_s, delay);
-        double robust_wind = latest_wind_flow_to_rad_;
-        if (recent_wind_directions_.size() >= 5) {
-            std::vector<double> cw, sw;
-            for (double wd : recent_wind_directions_) { cw.push_back(std::cos(wd)); sw.push_back(std::sin(wd)); }
-            std::nth_element(cw.begin(), cw.begin() + cw.size()/2, cw.end());
-            std::nth_element(sw.begin(), sw.begin() + sw.size()/2, sw.end());
-            double mc = cw[cw.size()/2], ms = sw[sw.size()/2];
-            if (mc*mc + ms*ms > 1e-12) robust_wind = std::atan2(ms, mc);
-        }
-        uav_gsl::SoftEvidenceParticleFilter::Observation obs;
-        obs.sensing_position = sensing_position;
-        obs.hit_probability = latest_evidence_.hit_probability;
-        obs.evidence_confidence = latest_evidence_.confidence;
-        obs.wind_flow_to_rad = robust_wind;
-        obs.wind_speed = std::abs(latest_wind_speed_m_s_);
-        obs.wind_sigma_rad = pf_config_.default_wind_sigma_rad;
-        obs.dt_s = std::max(0.01, dt_s);
-
-
-        // HMM-PM: update hidden plume state for per-particle modulation
-        if (use_hmm_) {
-            double ws = std::abs(latest_wind_speed_m_s_);
-            last_hmm_diag_ = hmm_.update(
-                latest_evidence_.hit_probability,
-                ws,
-                0.5  // alignment computed per-particle in custom_likelihood
-            );
-            // Do NOT modify obs.evidence_confidence here; modulation is per-particle below
-        }
-        // TPP-L: modify observation using temporal point process intensity
-        if (use_tpp_) {
-            last_tpp_diag_ = tpp_.computeIntensity(now_s, latest_evidence_.confidence);
-            // Boost/suppress hit_probability based on TPP conditional intensity
-            double modifier = last_tpp_diag_.tpp_likelihood_modifier;
-            obs.hit_probability = std::clamp(obs.hit_probability * modifier, 0.0, 1.0);
-            obs.evidence_confidence = std::clamp(obs.evidence_confidence * modifier, 0.0, 1.0);
-        }
-        // Per-particle HMM modulation via custom_likelihood
-        // Key insight: global scalar modifier does NOT change particle ranking after normalization.
-        // Instead, apply HMM state as a per-particle log-likelihood weight based on
-        // wind-source geometry: downwind particles get different treatment than upwind ones.
-        auto is_free_fn = [this](const uav_gsl::Vec2& p) { return isPointFree(Vector2(p.x, p.y)); };
-        if (use_hmm_) {
-            const double hmm_p_present = last_hmm_diag_.p_present;
-            const double hmm_p_absent = last_hmm_diag_.p_absent;
-            const double present_boost = 3.0;   // boost downwind particles when plume detected
-            const double absent_suppress = 0.05; // suppress downwind particles when no plume
-            const uav_gsl::Vec2 s_pos = sensing_position;
-            const double w_dir = robust_wind;
-            auto* pf_raw = pf_.get();
-            latest_estimate_ = pf_->update(obs, is_free_fn,
-                [pf_raw, s_pos, w_dir, hmm_p_present, hmm_p_absent,
-                 present_boost, absent_suppress]
-                (const uav_gsl::SoftEvidenceParticleFilter::Particle& p,
-                 const uav_gsl::SoftEvidenceParticleFilter::Observation& o) -> double {
-                // Base predicted hit probability from plume model
-                double base = pf_raw->predictedHitProbability(p, o);
-                // Per-particle wind alignment: +1 = downwind, -1 = upwind
-                double dx = p.source.x - s_pos.x;
-                double dy = p.source.y - s_pos.y;
-                double angle = std::atan2(dy, dx);
-                double alignment = std::cos(w_dir - angle);
-                // HMM-dependent scaling: downwind particles get boosted when plume present,
-                // suppressed when plume absent; upwind particles get opposite treatment
-                double present_scale = 1.0 + (present_boost - 1.0) * std::max(0.0, alignment);
-                double absent_scale = 1.0 - (1.0 - absent_suppress) * std::max(0.0, alignment);
-                double hmm_scale = hmm_p_present * present_scale + hmm_p_absent * absent_scale;
-                return std::clamp(base * hmm_scale, 1e-6, 1.0 - 1e-6);
-            });
-        } else {
-            latest_estimate_ = pf_->update(obs, is_free_fn);
-        }
-        ++sepf_update_count_;
-        posterior_spread_m_ = std::sqrt(std::max(0.0, latest_estimate_.covariance_trace));
-        pf_updated_at_least_once_ = true;
     }
     return ppm;
 }
 
 void SensorAwareSurgeCastPF::ensureParticleFilterInitialized() {
     if (pf_) return;
-    // Guard: map must be loaded before creating particle filter
-    if (map.info.width == 0 || map.info.height == 0 || map.info.resolution <= 0.0) return;
     pf_config_.bounds.min_x = map.info.origin.position.x;
     pf_config_.bounds.min_y = map.info.origin.position.y;
     pf_config_.bounds.max_x = pf_config_.bounds.min_x + map.info.width * map.info.resolution;
@@ -363,9 +237,6 @@ double SensorAwareSurgeCastPF::windConcentration() const {
 
 void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
     double concentration, double windSpeed, double windDirection) {
-    RCLCPP_WARN(node->get_logger(), "PGWM called: conc=%.3f ws=%.3f wd=%.2f use_sepf=%d use_iasc=%d",
-        concentration, windSpeed, windDirection, (int)use_sepf_, (int)use_iasc_);
-    latest_wind_speed_m_s_ = windSpeed;
     (void)concentration;
     recent_wind_directions_.push_back(windDirection);
     latest_wind_flow_to_rad_ = windDirection;
@@ -450,21 +321,6 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
             beacon_support_ready_ = beacon_explorer_.supportReady();
             if (beacon_support_ready_ && beacon_support_ready_time_s_ < 0) beacon_support_ready_time_s_ = now_s;
         }
-
-        // ESB P0 FIX: feed sensor observations into Evidence-Splat BEACON
-        if (use_evidence_splat_beacon_ && esb_planner_) {
-            uav_gsl::EvidenceSample es;
-            es.x = sensing_position.x;
-            es.y = sensing_position.y;
-            es.gas_ppm = latest_evidence_.hit_probability;
-            es.hit = latest_evidence_.hit_probability >= 0.5;
-            es.wind_dir_flow_to_rad = robust_wind;
-            es.wind_speed_ms = windSpeed;
-            es.sensor_confidence = latest_evidence_.confidence;
-            es.age_s = 0.0;
-            esb_planner_->addSample(es);
-        }
-
         // SAGE: buffer observations for support diagnosis
         if (use_sage_ && pf_updated_at_least_once_) {
             uav_gsl::SageObservation so;
@@ -752,8 +608,7 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
     // PGN: Posterior-Guided Navigation
     // When posterior is tight, navigate to posterior mean (Bayesian optimization prior-guided search)
     // When posterior is loose, use standard SurgeCast exploration
-    if (use_pgn_ && !use_iasc_ && use_sepf_ && pf_updated_at_least_once_ && pf_) {
-        ++pgn_goal_count_;
+    if (!use_iasc_ && use_sepf_ && pf_updated_at_least_once_ && pf_) {
         const auto pgn_est = pf_->estimate();
         const double pgn_cov = pgn_est.covariance_trace;
         if (pgn_cov < 1.5 && independent_bouts_ >= 2) {
@@ -779,13 +634,11 @@ void SensorAwareSurgeCastPF::processGasAndWindMeasurements(
             }
         }
         // Fallback to standard SurgeCast
-        RCLCPP_WARN(node->get_logger(), "PGWM: PGN fallback to SurgeCast");
         SurgeCast::processGasAndWindMeasurements(concentration, windSpeed, windDirection);
         return;
     }
 
     if (!use_iasc_) {
-        RCLCPP_WARN(node->get_logger(), "PGWM: !use_iasc_ fallback to SurgeCast");
         SurgeCast::processGasAndWindMeasurements(concentration, windSpeed, windDirection);
         return;
     }
@@ -834,13 +687,6 @@ void SensorAwareSurgeCastPF::sendAdaptiveGoal(
         step -= 0.2;
         ++invalid_goal_count_;
     }
-    // Record IASC diagnostics
-    iasc_goal_x_ = goal.pose.pose.position.x;
-    iasc_goal_y_ = goal.pose.pose.position.y;
-    if (decision.mode == uav_gsl::AdaptiveSurgeCast::Mode::Surge) iasc_mode_ = "surge";
-    else if (decision.mode == uav_gsl::AdaptiveSurgeCast::Mode::Cast) iasc_mode_ = "cast";
-    else iasc_mode_ = "explore";
-
     if (!valid) {
         ++planning_failure_count_;
         setExplorationGoal();
@@ -925,15 +771,7 @@ GSLResult SensorAwareSurgeCastPF::checkSourceFound() {
             last_sapa_metrics_.shift_score, last_sapa_metrics_.expert_ess);
     }
 
-    // PCR-D: Posterior Contraction Rate Declaration
-    if (use_pcrd_ && pcr_decl_) {
-        pcr_decl_->addSnapshot(elapsed_s, cov_trace, 0.0);
-        pcr_decision_ = pcr_decl_->shouldDeclare(elapsed_s);
-        pcr_contraction_rate_ = pcr_decl_->currentContractionRate();
-    }
-
-    // Declaration: Lyapunov Stability Declaration (LSD) / PCR-D
-
+    // Declaration: Lyapunov Stability Declaration (LSD)
     // Inspired by Lyapunov stability theory (control theory):
     // A system has converged when its state derivative approaches zero.
     // Here: posterior mean drift -> 0 indicates estimator convergence.
@@ -945,8 +783,7 @@ GSLResult SensorAwareSurgeCastPF::checkSourceFound() {
         const bool min_time_elapsed = (elapsed_s >= 15.0);
         // SAPA-SIG can reject declaration
         bool sapa_allows = !use_sapa_sig_ || last_sapa_decision_.allowed;
-        bool pcrd_declarable = use_pcrd_ && pcr_decision_;
-        if ((pcrd_declarable || (posterior_converged && evidence_sufficient && estimate_stable && min_time_elapsed)) && sapa_allows) {
+        if (posterior_converged && evidence_sufficient && estimate_stable && min_time_elapsed && sapa_allows) {
             if (best_estimate_valid_ && best_cov_trace_ < cov_trace) {
                 latest_estimate_ = best_estimate_;
             }
@@ -959,17 +796,7 @@ GSLResult SensorAwareSurgeCastPF::checkSourceFound() {
 }
 
 void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
-    if (pf_) {
-        latest_estimate_ = pf_->estimate();
-    } else {
-        // B0 baseline: use terminal pose as estimate
-        latest_estimate_.mean = {
-            currentRobotPose.pose.pose.position.x,
-            currentRobotPose.pose.pose.position.y
-        };
-        latest_estimate_.covariance_trace = std::numeric_limits<double>::quiet_NaN();
-        latest_estimate_.effective_sample_size = 0.0;
-    }
+    if (pf_) latest_estimate_ = pf_->estimate();
     const double dx = latest_estimate_.mean.x - resultLogging.sourcePositionGT.x;
     const double dy = latest_estimate_.mean.y - resultLogging.sourcePositionGT.y;
     const double final_error_m = std::hypot(dx, dy);
@@ -1000,8 +827,8 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
                << "p_hit,bout_count,raw_sample_count,raw_hit_count,"
                << "cov_trace,ess,sdbe_update_count,sepf_update_count,"
                << "iasc_goal_count,invalid_goal_count,planning_failure_count,"
-               << "use_kb_tme,use_av_rise,use_entropy_only_active,use_sapa_hpa,use_sapa_sig,sapa_shift,sapa_support,sapa_ess,sapa_decl,use_sage,sage_activations,sage_candidates,sage_selected,sage_invalid,sage_passthrough,sage_fallback,sage_gap_final,sage_rank_final,sage_vis_final,sage_boundary_final,use_beacon,beacon_support_ready,beacon_goals,beacon_invalid,beacon_budget_used,beacon_boundary,beacon_vis_bins,beacon_p_hit_sel,beacon_unc_sel,beacon_score_sel,beacon_reason_sel,beacon_tr_enabled,beacon_tr_regime,beacon_tr_radius_m,beacon_tr_ladder_id,beacon_tr_global_scans,beacon_tr_local_scans,hmm_enabled,hmm_p_present,hmm_state,hmm_modifier,tpp_enabled,tpp_intensity,tpp_modifier,tpp_bout_count,tpp_ibi_cv,esb_enabled,esb_goals,esb_invalid,esb_family,esb_radius,esb_score,esb_hit_support,esb_nohit_support,esb_coverage,esb_boundary,esb_confidence,esb_frontier,esb_regime,esb_sample_count,"
-               << "search_time_s,declaration_rule,pcr_window_n,pcr_slope,pcr_contraction_rate,pcr_decision,use_pcrd,use_pgn,pgn_goal_count,iasc_mode,iasc_goal_x,iasc_goal_y,plume_loss_time_s,posterior_spread_m\n";
+               << "use_kb_tme,use_av_rise,use_entropy_only_active,use_sapa_hpa,use_sapa_sig,sapa_shift,sapa_support,sapa_ess,sapa_decl,use_sage,sage_activations,sage_candidates,sage_selected,sage_invalid,sage_passthrough,sage_fallback,sage_gap_final,sage_rank_final,sage_vis_final,sage_boundary_final,use_beacon,beacon_support_ready,beacon_goals,beacon_invalid,beacon_budget_used,beacon_boundary,beacon_vis_bins,beacon_p_hit_sel,beacon_unc_sel,beacon_score_sel,beacon_reason_sel,beacon_tr_enabled,beacon_tr_regime,beacon_tr_radius_m,beacon_tr_ladder_id,beacon_tr_global_scans,beacon_tr_local_scans,esb_enabled,esb_goals,esb_invalid,esb_family,esb_radius,esb_score,esb_hit_support,esb_nohit_support,esb_coverage,esb_boundary,esb_confidence,esb_frontier,esb_regime,"
+               << "search_time_s\n";
     }
     output << std::setprecision(10)
            << "run" << ','
@@ -1071,22 +898,9 @@ void SensorAwareSurgeCastPF::saveResultsToFile(GSLResult result) {
                << esb_last_coverage_ << ','
                << esb_last_boundary_score_ << ','
                << esb_last_confidence_ << ','
-               << esb_last_frontier_gain_ << ','
-           << (esb_planner_ ? esb_planner_->regime() : std::string("disabled")) << ',' << (esb_planner_ ? static_cast<int>(esb_planner_->samples().size()) : 0) << ','
-               << elapsed_s << ','
-               << (pcr_decision_ ? "pcrd" : (use_pcrd_ ? "pcrd_rejected" : "lsd")) << ','
-               << pcr_window_n_ << ','
-               << pcr_slope_ << ','
-               << pcr_contraction_rate_ << ','
-               << static_cast<int>(pcr_decision_) << ','
-               << static_cast<int>(use_pcrd_) << ','
-               << static_cast<int>(use_pgn_) << ','
-               << pgn_goal_count_ << ','
-               << iasc_mode_ << ','
-               << iasc_goal_x_ << ','
-               << iasc_goal_y_ << ','
-               << plume_loss_time_s_ << ','
-               << posterior_spread_m_ << '\n';
+               << esb_last_frontier_gain_ << ',' << ','
+           << (esb_planner_ ? esb_planner_->regime() : std::string("disabled")) << ','
+               << elapsed_s << '\n';
     output.close();
 
     Algorithm::saveResultsToFile(result);

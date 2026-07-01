@@ -100,6 +100,7 @@ include(src/gsl_server/algorithms/GrGSL/CMakeLists.txt)
 include(src/gsl_server/algorithms/PMFS/CMakeLists.txt)
 # DISABLED include(src/gsl_server/algorithms/Semantics/CMakeLists.txt) # There is further modularity inside of this file!
 include(src/gsl_server/algorithms/SensorAwareSurgeCastPF/CMakeLists.txt)
+include(src/gsl_server/algorithms/OPGSL/CMakeLists.txt)
 
 
 
@@ -116,4 +117,5 @@ install(
 	DESTINATION share/${PROJECT_NAME}
 )
 target_compile_definitions(gsl_actionserver_node PRIVATE ENABLE_SENSOR_AWARE_SC_PF=1)
+target_compile_definitions(gsl_actionserver_node PRIVATE ENABLE_OPGSL=1)
 ament_package()

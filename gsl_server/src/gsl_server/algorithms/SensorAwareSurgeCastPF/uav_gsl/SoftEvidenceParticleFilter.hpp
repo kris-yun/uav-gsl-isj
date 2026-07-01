@@ -42,6 +42,13 @@ public:
         double jitter_wind_bias_rad{2.0 * kPi / 180.0};
         double maximum_wind_bias_rad{35.0 * kPi / 180.0};
         std::uint64_t random_seed{1};
+        // ATL: Adaptive Tempered Likelihood parameters
+        double temperature_tau{1.0};      // temperature scaling (>1 = softer likelihood)
+        bool tau_adaptive{false};         // enable adaptive tau based on ESS
+        double tau_ess_target_ratio{0.5}; // target ESS/N ratio
+        double tau_alpha{0.3};            // adaptation speed
+        double tau_min{0.5};              // minimum tau
+        double tau_max{3.0};              // maximum tau
     };
 
     struct Particle {
@@ -117,6 +124,22 @@ public:
         if (particles_.empty()) throw std::runtime_error("particle filter is not initialized");
         validateObservation(observation);
 
+        // ATL: compute adaptive temperature before particle loop
+        double tau = config_.temperature_tau;
+        if (config_.tau_adaptive && updates_ > 0) {
+            // Estimate current ESS from existing weights
+            double wsum = 0.0, w2sum = 0.0;
+            for (const auto& p : particles_) { wsum += p.weight; w2sum += p.weight * p.weight; }
+            double ess_cur = (w2sum > 0.0) ? (wsum * wsum / w2sum) : 1.0;
+            double ess_target = config_.tau_ess_target_ratio * static_cast<double>(particles_.size());
+            // Increase tau when ESS is low (posterior too concentrated)
+            double ess_ratio = ess_target / std::max(ess_cur, 1.0);
+            tau = config_.temperature_tau * std::pow(ess_ratio, config_.tau_alpha);
+            tau = std::clamp(tau, config_.tau_min, config_.tau_max);
+        }
+        current_tau_ = tau;  // store for diagnostics
+        const double inv_tau = 1.0 / tau;
+
         std::vector<double> log_weights(particles_.size());
         double maximum_log_weight = -std::numeric_limits<double>::infinity();
         for (std::size_t i = 0; i < particles_.size(); ++i) {
@@ -129,7 +152,7 @@ public:
             const double confidence = clamp(observation.evidence_confidence, 0.0, 1.0);
             const double prior_log = std::log(std::max(config_.minimum_probability,
                                                        particles_[i].weight));
-            log_weights[i] = prior_log + confidence * soft_log_likelihood;
+            log_weights[i] = prior_log + inv_tau * confidence * soft_log_likelihood;
             maximum_log_weight = std::max(maximum_log_weight, log_weights[i]);
         }
 
@@ -199,12 +222,14 @@ public:
 
     const std::vector<Particle>& particles() const { return particles_; }
     const Config& config() const { return config_; }
+    double currentTau() const { return current_tau_; }
 
 private:
     Config config_;
     std::mt19937_64 rng_;
     std::vector<Particle> particles_;
     std::size_t updates_{0};
+    double current_tau_{1.0};
     std::vector<Vec2> estimate_history_;
 
     void validateConfig() const {
@@ -233,6 +258,7 @@ private:
         }
     }
 
+public:
     double predictedHitProbability(const Particle& particle,
                                    const Observation& observation) const {
         const double sigma = observation.wind_sigma_rad > 0.0

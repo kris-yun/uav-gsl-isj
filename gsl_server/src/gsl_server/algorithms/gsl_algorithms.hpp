@@ -63,3 +63,14 @@
 #else
     #define SAISC_PF_NAME "(NOT COMPILED) SensorAwareSurgeCastPF"
 #endif
+
+#if ENABLE_OPGSL
+    #define OPGSL_NAME "OPGSL"
+    #define WC_RIF_GSL_NAME "WC_RIF_GSL"
+    #include <gsl_server/algorithms/OPGSL/WC_RIF_GSL.hpp>
+    #include <gsl_server/algorithms/OPGSL/OPGSL.hpp>
+#else
+    #define OPGSL_NAME "(NOT COMPILED) OPGSL"
+    #define WC_RIF_GSL_NAME "WC_RIF_GSL"
+    #include <gsl_server/algorithms/OPGSL/WC_RIF_GSL.hpp>
+#endif

@@ -60,6 +60,7 @@ namespace GSL
         resultLogging.distanceThreshold = getParam<double>("distanceThreshold", 0.5);
         resultLogging.sourcePositionGT.x = getParam<float>("ground_truth_x", 0.0);
         resultLogging.sourcePositionGT.y = getParam<float>("ground_truth_y", 0.0);
+        resultLogging.sourcePositionGT_z = getParam<float>("ground_truth_z", 0.0);
         resultLogging.resultsFile = getParam<std::string>("resultsFile", "");
         resultLogging.navigationPathFile = getParam<std::string>("navigationPathFile", "");
 
