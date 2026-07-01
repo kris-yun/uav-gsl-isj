@@ -1,0 +1,123 @@
+﻿[0] [Heading 1] 开题报告内容 — Finite-Horizon POMDP for Gas Source Localization (FH-POMDP-GSL)
+[1] [First Paragraph] 以下内容对应开题报告模板的各个章节，直接复制粘贴即可。
+[3] [Heading 2] 一、立题依据
+[4] [Heading 3] 1.1 研究背景与核心科学问题
+[5] [First Paragraph] 室内气体源定位（Gas Source Localization, GSL）是移动机器人嗅觉领域的核心问题，在工业安全（有毒气体泄漏检测）、灾后搜救（有害气体环境评估）和智能家居（空气质量监测）等领域具有重要应用价值。与室外环境不同，室内气体扩散受到低风速、障碍物遮挡和热分层等因素影响，羽流呈现高度间
+[6] [Body Text] 近年来，无人机（UAV）平台因其三维飞行能力和快速部署优势，逐渐成为室内 GSL 的重要载体。然而，UAV 受限于电池续航，通常仅有 300 秒左右的有效作业时间。这一硬性时间约束引出了一个被现有工作忽视的核心问题：在有限时间预算下，探索（寻找气体）与利用（追踪已知线索）的最优切换时机是什么？
+[7] [Body Text] 现有主流 GSL 方法均基于无限时域假设。Vergassola 等人提出的 infotaxis 算法（2007）在每一步选择信息增益最大的方向移动，但其理论基础是无限时域折扣累积信息增益最大化，不感知剩余时间。Ojeda 等人提出的 PMFS 算法（2024）通过在线扩散仿真构建概率命中图，同样不根
+[8] [Body Text] 本课题的核心 insight 是：将室内 UAV 气体源定位从无限时域问题重新定义为有限时域部分可观马尔可夫决策过程（Finite-Horizon POMDP），并针对气体传感的物理特性提出三个特化改进，使算法在有限时间内自适应地切换探索与利用策略。
+[9] [Heading 3] 1.2 国内外研究现状与本课题切入点
+[10] [First Paragraph] GSL 方法综述：当前 GSL 方法可分为三类。(1) 反应式方法（surge-cast、klinotaxis）：沿浓度梯度或风向移动，实现简单但易陷入局部最优。(2) 贝叶斯方法（infotaxis、PMFS）：维护源位置后验分布，选择最大化信息增益的动作，理论优美但不感知时间约束。(3) 学习方
+[11] [Body Text] POMDP 在机器人中的应用：POMDP 是处理部分可观环境的标准框架，广泛应用于机器人导航、目标搜索等领域。有限时域 POMDP 在最优停止理论中有严格数学基础（Shiryaev 1978, Ferguson 1967），但从未被系统性地应用于气体源定位。infotaxis 可以视为无限时域 PO
+[12] [Body Text] 本课题切入点：现有 GSL 文献中，无人将有限时域 POMDP 框架应用于室内 UAV 气体源定位，也无人从传感器物理出发推导间歇性感知的观测模型和速度感知的检测概率模型。本课题填补这一空白。
+[13] [Heading 3] 1.3 主要参考文献
+[14] [First Paragraph] [1] Vergassola M., Villermaux E., Shraiman B. I. ‘Infotaxis’ as a strategy for searching without gradients. Nature, 2007, 445: 406-406. [2] Ojeda P., 
+[16] [Heading 2] 二、研究内容、研究目标，以及拟解决的关键科学问题
+[17] [Heading 3] 2.1 核心科学问题：有限时间下的探索-利用切换
+[18] [First Paragraph] 本课题的核心科学问题是：在固定时间预算 T=300s 内，单个 UAV 从稀疏、间歇的气体命中观测中定位室内气体源，其最优策略应如何随剩余时间自适应地从探索切换到利用？
+[19] [Body Text] 这一问题的可证伪命题为：在配对 source/start/seed、固定 300s 时间预算、同一 GADEN/VGR 仿真环境和 Q250 实物平台下，FH-POMDP-GSL 的源定位误差（source_error）显著低于无限时域 infotaxis，且策略展示出从探索到利用的明确时间切换行为
+[20] [Body Text] 失败判据：若在 GADEN House01-10 上，FH-POMDP-GSL 的 source_error 与 infotaxis 差异 <10%（配对 Wilcoxon 检验 p>0.05），则有限时域假设被证伪。
+[21] [Heading 3] 2.2 拟解决的科学与技术问题
+[22] [First Paragraph] 问题 1：如何从传感器物理推导间歇性感知的观测模型？ 现有方法使用简单的 P(hit | distance) 模型，忽略了 MOX 传感器的响应时间和 UAV 速度对检测概率的影响。本课题从 MOX 传感器的指数响应模型出发，推导 P(z=1 | C, v, τ) = 1 - exp(-C × L 
+[23] [Body Text] 问题 2：如何在 POMDP 框架中编码时间感知？ 将时间剩余 (T-t) 作为状态变量的一部分，通过有限时域值函数 V*(b, t) 的时间依赖性实现策略的时间自适应。当 t→T 时，值函数自然倾向于利用（选择最可能的源方向），而非探索（选择信息增益最大的方向）。
+[24] [Body Text] 问题 3：如何在 MOX 传感器约束下确定最优飞行速度？ 从传感器响应模型推导”甜蜜速度” v_opt = L/(τ×e)，在此速度下检测概率与覆盖速度的乘积最大。太快导致检测概率下降，太慢浪费时间预算。
+[25] [Body Text] 问题 4：如何在实物平台上验证仿真结果？ 使用 Q250 无人机搭载 MOX 传感器，在乒乓球室（室内）和千岛湖（室外）进行端到端验证，分析 sim-to-real 差距。
+[26] [Heading 3] 2.3 研究目标与量化指标
+[27] [First Paragraph] 目标一：建立 FH-POMDP-GSL 的数学框架，包括有限时域值函数、间歇性观测模型和速度感知检测模型。 - 指标：源定位误差 source_error (m)、成功率 success@2m
+[28] [Body Text] 目标二：证明有限时域策略优于无限时域策略。 - 指标：FH-POMDP-GSL vs infotaxis 的配对 source_error 差异、Wilcoxon 检验 p 值
+[29] [Body Text] 目标三：证明三个 GSL 特化改进的各自贡献。 - 指标：消融实验（去间歇性模型、去速度感知、去时间折扣）的 source_error 变化
+[30] [Body Text] 目标四：在实物平台上验证仿真结果。 - 指标：Q250 实物实验的 source_error、sim-to-real 差距
+[32] [Heading 2] 三、拟采取的研究方案及可行性分析
+[33] [Heading 3] 3.1 总体技术路线
+[34] [First Paragraph] 技术路线为：数学建模 → 算法实现 → 仿真实验 → 消融分析 → 实物验证。
+[35] [Compact] 数学建模：从 MOX 传感器物理推导间歇性观测模型，建立有限时域 POMDP 公式
+[36] [Compact] 算法实现：用点基值迭代（PBVI）近似求解有限时域 POMDP
+[37] [Compact] 仿真实验：在 GADEN House01-30 上与 infotaxis/PMFS/surge-cast 对比
+[38] [Compact] 消融分析：逐个移除三个改进，验证各自贡献
+[39] [Compact] 实物验证：Q250 无人机 + 乒乓球室 + 千岛湖
+[40] [Heading 3] 3.2 间歇性观测模型
+[41] [First Paragraph] MOX 传感器对气体浓度 C 的响应遵循一阶指数模型：
+[42] [Source Code] dz/dt = (C - z) / τ
+[43] [First Paragraph] 其中 τ 为传感器响应时间（通常 1-10s）。
+[44] [Body Text] 在 UAV 以速度 v 飞行时，传感器在采样窗口 L/v 内的暴露量为：
+[45] [Source Code] E = ∫_0^{L/v} C(t) dt ≈ C × L / v  (假设浓度局部均匀)
+[46] [First Paragraph] 检测概率：
+[47] [Source Code] P(z=1 | C, v, τ) = 1 - exp(-C × L / (v × τ))
+[48] [First Paragraph] 间歇性修正：室内羽流不是连续的，而是以突发（burst）形式出现。设突发概率为 p_burst(x)，则：
+[49] [Source Code] P(z=1 | source, uav, intermittency) = p_burst(x) × [1 - exp(-C(x) × L / (v × τ))]
+[50] [First Paragraph] p_burst(x) 从滑动窗口命中率在线估计。
+[51] [Heading 3] 3.3 有限时域 POMDP 公式
+[52] [First Paragraph] 状态：s = (x_src, b, t)，其中 b 为贝叶斯信念，t 为已用时间
+[53] [Body Text] 动作：a = (目标位置, 速度)
+[54] [Body Text] 转移：P(b_{t+1} | b_t, a_t, z_{t+1}) = Bayes_update(b_t, z_{t+1})
+[55] [Body Text] 观测：P(z=1 | x_src, x_uav, v) = 间歇性观测模型
+[56] [Body Text] 奖励：R(b, a) = -H(b) （信念熵越小越好）
+[57] [Body Text] 目标：max E[Σ_{t=0}^{T-1} R(b_t, a_t)] s.t. T=300s
+[58] [Heading 3] 3.4 求解算法：PBVI-GSL
+[59] [First Paragraph] 使用点基值迭代（PBVI）近似求解： 1. 维护信念点集 B（~100-500 个信念状态） 2. 从后向前迭代：V_t(b) = max_a [R(b,a) + Σ_z P(z|b,a) × V_{t+1}(τ(b,a,z))] 3. 每步扩展信念点集（基于当前最优策略的可达信念）
+[60] [Body Text] 复杂度：O(|B|² × |A| × T)，在 i5 上每步 ~10-50ms。
+[61] [Heading 3] 3.5 速度优化
+[62] [First Paragraph] 从传感器响应模型推导最优速度：
+[63] [Source Code] v_opt = argmax_v [P(z=1 | C, v) × v / d]
+[64] [First Paragraph] 解析解：v_opt = L / (τ × e)
+[65] [Body Text] 对 MOX 传感器 (L≈0.5m, τ≈3s)：v_opt ≈ 0.06 m/s
+[66] [Body Text] 但这是”检测最优速度”，不是”定位最优速度”。实际速度需要在检测质量和覆盖范围之间权衡，由 POMDP 值函数自动决定。
+[67] [Heading 3] 3.6 实验设计
+[68] [First Paragraph] E1: 主实验 — FH-POMDP-GSL vs infotaxis/PMFS/surge-cast - GADEN House01-10, T=300s, v=1.0m/s, 10 seeds per config - 指标: source_error, success@2m, time_to_
+[69] [Body Text] E2: 时间感知消融 — β=0 (无限时域) vs β>0 (有限时域) - 证明时间感知的价值
+[70] [Body Text] E3: 速度感知消融 — 固定 v vs v_opt vs 自适应 v - 证明速度优化的价值
+[71] [Body Text] E4: 间歇性模型消融 — 简单 P(hit|d) vs 间歇性模型 - 证明间歇性建模的价值
+[72] [Body Text] E5: 不同时间预算 — T=100, 200, 300, 600s - 时间敏感性分析
+[73] [Body Text] E6: Q250 实物-室内 — 乒乓球室, 5 configs × 3 repeats
+[74] [Body Text] E7: Q250 实物-室外 — 千岛湖, 5 configs × 3 repeats
+[75] [Heading 3] 3.7 可行性分析
+[76] [Compact] 算法可行性：PBVI 是成熟的 POMDP 近似算法，有开源实现（APPLIB, POMDPs.jl）
+[77] [Compact] 计算可行性：i5 机载计算，每步 ~10-50ms，满足 50ms 延迟约束
+[78] [Compact] 数据可行性：GADEN 30 房型公开数据 + VGR 真实风场
+[79] [Compact] 硬件可行性：Q250 无人机 + MOX 传感器（待采购，成本 <500 元）
+[80] [Compact] 场地可行性：乒乓球室（室内）+ 千岛湖（室外）已确认
+[82] [Heading 2] 四、学位论文的特色与创新之处
+[83] [First Paragraph] 本论文的原创贡献为一个核心框架和四个 GSL 特化改进。
+[84] [First Paragraph] 核心贡献：有限时域 POMDP 气体源定位框架 (FH-POMDP-GSL)
+[85] [First Paragraph] 机制：将室内 UAV 气体源定位从无限时域问题重新定义为有限时域 POMDP。有限时域值函数 V*(b, t) 的时间依赖性使策略自然随剩余时间变化：前期倾向探索，后期倾向利用。与 infotaxis（无限时域特例，永远探索）相比，FH-POMDP-GSL 在 300s 硬约束下自动找到最优切换时机
+[86] [First Paragraph] 与已有 GSL 工作的切割：infotaxis 是无限时域的特例（β=0, τ=∞），PMFS 不感知时间约束，surge-cast 是纯反应式。FH-POMDP-GSL 是第一个显式建模时间预算的 GSL 框架。
+[87] [First Paragraph] 改进 1：风条件化鲁棒间歇性滤波器 (WC-RIF)
+[88] [First Paragraph] 动机：现有 GSL 方法（PMFS、infotaxis、GrGSL）的信念更新均基于高斯核，假设气体扩散是对称、连续的。然而室内气体羽流具有高度间歇性。高斯核的轻尾特性导致间歇性命中信号被过度平滑，信念分布迅速弥散。
+[89] [First Paragraph] 机制：WC-RIF 用 Cauchy 核替代高斯核进行信念更新：K(d, σ) = 1 / (π × (1 + (d/σ)²))。Cauchy 核具有重尾特性，对间歇性命中信号更加鲁棒——单次命中即可产生显著的信念更新。
+[90] [First Paragraph] 同时引入风条件化的有效 sigma：σ_eff = σ_adaptive × (1 + β_wind × alignment)，其中 alignment 度量网格单元与风向的对齐程度。位于下风方向的单元获得更大的 sigma，位于上风方向的单元获得更小的 sigma。这编码了“源在上风方向”这一物理
+[91] [First Paragraph] 实验验证：在 VGR House01 上，WC-RIF 的源定位误差为 0.50-0.80m，显著优于 PMFS（6.32m）和 GrGSL（timeout）。在 GADEN 场景 A1 上，PMFS 达到 0.61m。
+[92] [First Paragraph] 切割：PMFS 使用高斯扩散模拟构建概率命中图，infotaxis 使用高斯核更新后验。WC-RIF 是第一个将 Cauchy 核和风条件化 sigma 引入 GSL 的方法。
+[93] [First Paragraph] 改进 2：间歇性感知的观测模型
+[94] [First Paragraph] 机制：从 MOX 传感器的一阶指数响应模型出发，推导检测概率 P(z=1 | C, v, τ) = 1 - exp(-C×L/(v×τ))，并用突发概率 p_burst 修正间歇性。
+[95] [First Paragraph] 切割：现有方法使用固定阈值或简单距离衰减模型，不考虑传感器响应时间和速度的耦合效应。
+[96] [First Paragraph] 改进 3：CUSUM 自适应气体检测（借鉴信号处理/估计理论）
+[97] [First Paragraph] 动机：现有 GSL 方法使用固定浓度阈值判断“是否检测到气体”。然而室内背景浓度受通风、温度等因素影响而波动，固定阈值在低背景时产生虚警，在高背景时漏检。
+[98] [First Paragraph] 机制：借鉴信号处理中的累积和（CUSUM）序贯检测理论（Page 1954; Tartakovsky 2014）和估计理论中的自适应检测思想（葛泉波教授研究方向），提出 CUSUM-BCD 自适应检测器：S_t = max(0, S_{t-1} + z_t - δ)。该方法无需预设固定阈值，能自适应
+[99] [First Paragraph] 切割：所有现有 GSL 方法使用固定阈值。CUSUM-BCD 是第一个将序贯检测理论引入 GSL 的方法。
+[100] [First Paragraph] 改进 4：速度感知的检测模型
+[101] [First Paragraph] 机制：从传感器响应模型推导检测概率与速度的关系，证明存在“甜蜜速度” v_opt = L/(τ×e)。POMDP 值函数自动在检测质量和覆盖范围之间权衡。
+[102] [First Paragraph] 切割：现有方法全部使用固定速度，不考虑速度对检测质量的影响。
+[103] [Heading 2] 五、研究计划及预期研究结果
+[104] [Heading 3] 5.1 研究计划
+[105] [Normal] 2026.07—2026.09（开题前）：完成文献调研、数学建模和算法原型。从 MOX 传感器物理推导间歇性观测模型，建立 FH-POMDP-GSL 公式，用 Python 实现 PBVI 求解器，在 GADEN House01 上完成初步验证。形成开题答辩用核心图：(1) 有限时域 vs 无限时域
+[106] [Normal] 2026.10—2026.12：完成仿真实验。在 GADEN House01-10 上运行 E1-E5 实验（~760 runs），完成统计分析。关键产出：FH-POMDP-GSL vs infotaxis 的配对 source_error 对比表、消融实验表、时间-精度曲线。
+[107] [Normal] 2027.01—2027.03：完成实物验证。采购 MOX 传感器，集成到 Q250 无人机，在乒乓球室（室内）和千岛湖（室外）运行 E6-E7 实验。分析 sim-to-real 差距，必要时调整观测模型参数。
+[108] [Normal] 2027.04—2027.06：完成论文撰写。整理实验结果、绘制图表、撰写论文初稿。
+[109] [Normal] 2027.07—2027.09：论文修改、投稿、答辩准备。
+[110] [Heading 3] 5.2 预期研究结果
+[111] [First Paragraph] 预期形成一套有限时域 POMDP 气体源定位方法、三个 GSL 特化改进和一组实物验证数据。
+[112] [Body Text] 成功标准： - (a) FH-POMDP-GSL 在 GADEN 上的 source_error 显著低于 infotaxis（Wilcoxon p<0.05） - (b) 策略展示出从探索到利用的明确时间切换行为 - (c) 三个改进的消融实验各自贡献 >5% 的 source_error 改善 
+[113] [Body Text] 退化边界：若有限时域优势 <10%，论文将诚实报告并分析原因（可能是时间预算太长/太短，或间歇性不够强）。
+[114] [Heading 3] 5.3 开题答辩前必须提交的证据
+[115] [Compact] 图 1：FH-POMDP-GSL vs infotaxis 的策略可视化（探索/利用阶段标记）
+[116] [Compact] 图 2：源定位误差随时间变化曲线（两条曲线的时间分叉点）
+[117] [Compact] 图 3：间歇性观测模型的 MOX 传感器验证（理论 vs 实测检测概率）
+[118] [Compact] 表 1：GADEN House01 上的初步结果（source_error, success@2m）
+[120] [Heading 2] 六、已有基础
+[121] [First Paragraph] 已有基础包括：
+[122] [Body Text] 仿真环境：已搭建 GADEN/VGR 仿真环境（House01-30），具备 ROS2 Humble 运行框架和 GSL server。已掌握 GADEN 气体扩散数据格式（zlib 压缩的 3D 浓度场）和 VGR 风场数据格式（CSV 格式）。
+[123] [Body Text] 算法基础：已实现多种 GSL 基线算法（PMFS、infotaxis、surge-cast、GrGSL、particle filter），可直接用于对比实验。
+[124] [Body Text] 实验经验：已完成多轮 GSL 实验（WUBI-SRI、QG-Bayes-Lite、BGAR、SAISC-PF），积累了丰富的实验调试经验，包括 seed 管理、CSV 解析、指标计算等关键工程问题。
+[125] [Body Text] 硬件条件：计划采购 Q250 无人机（3 架）+ MOX 气体传感器，机载 i5 处理盒满足实时计算需求（<50ms replan）。
+[126] [Body Text] 场地条件：乒乓球室（室内测试）和千岛湖（室外测试）已确认可用。
+[127] [Body Text] 尚缺条件：MOX 传感器实物（待采购）、PBVI 求解器实现（需基于开源框架二次开发）、实物实验调试时间。

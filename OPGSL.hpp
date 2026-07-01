@@ -9,68 +9,9 @@
 #include <cmath>
 #include <algorithm>
 #include <random>
+#include "WATS_GSL.hpp"
 
 namespace GSL {
-
-class GridPosteriorOP {
-public:
-    struct Config {
-        int n_cells = 60;
-        float resolution = 1.0f;
-        float map_half_size = 30.0f;
-        float source_rate_Q = 1.0f;
-        float sigma_y_a = 0.1f;
-        float sigma_y_b = 0.9f;
-        float sigma_z_a = 0.05f;
-        float sigma_z_b = 0.85f;
-        float min_wind_speed = 0.03f;
-        float sense_radius_m = 8.0f;
-        float detection_threshold = 0.01f;
-        float uav_height_z = 1.0f;
-        float source_height_z = 0.0f;
-    };
-    void init(const Config& cfg);
-    void update(float gas_reading, float robot_x, float robot_y, float wind_x, float wind_y);
-    void getEstimate(float& ex, float& ey) const;
-    float entropy() const;
-    float covarianceTrace() const;
-    const Eigen::MatrixXf& logPosterior() const { return log_posterior_; }
-    int nCells() const { return cfg_.n_cells; }
-    int posToGridX(float x) const;
-    int posToGridY(float y) const;
-    void gridToPos(int gx, int gy, float& px, float& py) const;
-private:
-    void normalize();
-    Config cfg_;
-    Eigen::MatrixXf log_posterior_;
-    Eigen::MatrixXf grid_x_, grid_y_;
-};
-
-class OPSolverOP {
-public:
-    struct Config {
-        float sense_radius_m = 8.0f;
-        int replan_interval = 5;
-        int max_waypoints = 8;
-        float uav_speed = 1.0f;
-        float exploration_bonus = 0.15f;
-    };
-    struct Path {
-        std::vector<std::pair<float,float>> waypoints;
-        float total_reward = 0.0f;
-        float total_cost = 0.0f;
-    };
-    void init(const Config& cfg);
-    Path solve(const GridPosteriorOP& posterior, float cur_x, float cur_y,
-               float remaining_time, const std::set<std::pair<int,int>>& visited);
-    void infotaxisStep(const GridPosteriorOP& posterior, float robot_x, float robot_y,
-                       float wind_x, float wind_y, float& best_x, float& best_y);
-private:
-    float informationGain(const GridPosteriorOP& posterior, int gx, int gy,
-                          float robot_x, float robot_y) const;
-    Config cfg_;
-};
-
 class OPGSL;
 class MovingStateOPGSL : public MovingState {
 public:
@@ -94,35 +35,77 @@ protected:
     GSLResult checkSourceFound() override;
     void saveResultsToFile(GSLResult result) override;
     void OnUpdate() override;
+    void OnCompleteNavigation(GSLResult result, State* previousState) override;
 private:
-    GridPosteriorOP grid_;
-    GridPosteriorOP::Config grid_cfg_;
-    OPSolverOP solver_;
-    OPSolverOP::Config solver_cfg_;
+    // Core modules (WR-SFE + WA-IG)
+    WATS::WR_SFE field_estimator_;
+    WATS::WR_SFE::Config field_cfg_;
+    WATS::WA_IG info_gain_;
+    WATS::WA_IG::Config ig_cfg_;
+
+    // Innovation module toggles
+    bool use_levy_ = true;          // Module 1: Levy Flight exploration
+    bool use_bout_ = true;          // Module 2: Bout-level detection
+    bool use_adaptive_step_ = true; // Module 3: Adaptive step size
+
+    // General state
     int step_count_ = 0;
     float elapsed_time_ = 0.0f;
-    float latest_wind_x_ = 0.0f;
-    float latest_wind_y_ = 0.0f;
-    float latest_wind_speed_ = 0.0f;
+    float latest_wind_x_ = 0.0f, latest_wind_y_ = 0.0f, latest_wind_speed_ = 0.0f;
     float latest_gas_ = 0.0f;
     int gas_hit_count_ = 0;
+    float last_hit_x_ = 0.0f, last_hit_y_ = 0.0f;
+    int consecutive_misses_ = 0;
+    float last_hit_time_ = 0.0f;
+    float southernmost_hit_y_ = 1e6f, southernmost_hit_x_ = 0.0f;
+    float northernmost_hit_y_ = -1e6f;
+    float westernmost_hit_x_ = 1e6f, easternmost_hit_x_ = -1e6f;
     int total_measurements_ = 0;
-    std::set<std::pair<int,int>> visited_cells_;
-    OPSolverOP::Path current_path_;
-    int waypoint_idx_ = 0;
-    float convergence_cov_threshold_ = 2.0f;
-    int convergence_min_bouts_ = 2;
-    int convergence_stable_steps_ = 5;
-    float convergence_min_time_ = 15.0f;
-    int stable_steps_count_ = 0;
+
+    // Grid config
+    int n_cells_ = 40;
+    float resolution_ = 0.5f, map_half_size_ = 10.0f;
+
+    // Chemotaxis state
+    float prev_gas_ = 0.0f, run_length_ = 0.8f;
+    float run_direction_x_ = 0.0f, run_direction_y_ = -1.0f;
+    int run_steps_remaining_ = 0, tumble_count_ = 0;
+    float gradient_threshold_ = 0.002f, max_step_ = 1.0f;
+    int max_run_steps_ = 8;
+
+    // Convergence
+    float convergence_min_time_ = 15.0f, convergence_entropy_threshold_ = 5.0f;
+    int convergence_min_bouts_ = 2, convergence_stable_steps_ = 5, stable_steps_count_ = 0;
+
+    // Wind history
     std::deque<float> wind_dir_history_;
     static constexpr int kWindHistorySize = 10;
+
+    // Module 1: Levy Flight state
+    int levy_step_remaining_ = 0;
+    float levy_angle_ = 0.0f;
+
+    // Module 2: Bout-Level state
+    bool bout_active_ = false;
+    float bout_start_time_ = 0.0f;
+    float bout_peak_conc_ = 0.0f;
+    int bout_count_ = 0;
+    float time_since_last_bout_ = 0.0f;
+
+    // Module 3: Adaptive Step state
+    float step_size_ = 0.8f;
+    float prev_gradient_mag_ = 0.0f;
+
+    // Misc
     std::string audit_file_;
     std::ofstream audit_stream_;
     std::mt19937 rng_;
     double last_update_time_ = 0.0;
-    void logAudit(const std::string& msg);
-    float smoothWindDirection() const;
-};
+    bool need_next_goal_ = false;
 
+    float smoothWindDirection() const;
+    void clipToMapBounds(float& x, float& y) const;
+    void infotaxisStep(float& best_x, float& best_y);
+    void levyExploration(float& best_x, float& best_y, float cx, float cy);
+};
 } // namespace GSL
