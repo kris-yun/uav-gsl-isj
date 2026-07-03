@@ -1,0 +1,24 @@
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Gas Source Localization Methods}
+
+\textbf{Bio-inspired algorithms} adapt the chemotaxis strategies of organisms. The pulse-cast paradigm~\cite{ref1,ref2} alternates between upwind tracking (pulse) and cross-wind search (cast). While effective in open environments, these methods require continuous plume contact and use fixed parameters that cannot adapt to intermittent signals.
+
+\textbf{Probabilistic mapping methods} (PMFS~\cite{ref6}, GrGSL~\cite{ref7}) maintain a probabilistic source estimate by integrating gas concentration measurements with wind field data. PMFS uses online dispersion simulation to update source probability maps. However, these methods depend on parametric plume models (typically Gaussian) that may not match the actual filament-based dispersion.
+
+\textbf{Information-theoretic methods} (Infotaxis~\cite{ref8}) select actions to maximize expected information gain. Recent extensions include dual-mode search~\cite{ref4} and physics-guided approaches. However, none provides formal stopping guarantees.
+
+\subsection{Conformal Prediction and Sequential Inference}
+
+Conformal prediction (CP)~\cite{ref9} provides distribution-free prediction intervals under exchangeability. Adaptive CP (ACI)~\cite{ref15} extends CP to non-exchangeable settings via online convex optimization. However, ACI only guarantees long-run average coverage, not coverage at any specific stopping time.
+
+Anytime-valid inference (AVI)~\cite{ref10,ref11} addresses this limitation through e-processes and confidence sequences that are valid at all stopping times. The key tool is Ville's inequality for non-negative super-martingales. To our knowledge, AVI has not been applied to robotic source localization.
+
+\subsection{Blackwell Approachability}
+
+Blackwell's approachability theorem~\cite{ref12} characterizes when a player can force the average payoff in a repeated game to converge to a target set. Recent work by Principato and Stoltz~\cite{ref13} applies Blackwell theory to sequential conformal inference, providing a game-theoretic perspective on coverage-efficiency tradeoffs.
+
+\subsection{Gap in the Literature}
+
+No existing work combines anytime-valid stopping guarantees with risk-adjusted search for GSL. Our framework fills this gap by providing (i) distribution-free stopping via e-processes, (ii) risk-adjusted search via information-directed sampling, and (iii) a unified theoretical foundation via Blackwell approachability.

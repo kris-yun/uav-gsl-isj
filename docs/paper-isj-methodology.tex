@@ -1,0 +1,110 @@
+\section{Method}
+\label{sec:method}
+
+\subsection{Problem Formulation}
+
+Let $s^* \in \mathcal{X} \subset \mathbb{R}^2$ denote the unknown source position. At each time step $t$, the UAV at position $x_t$ receives a gas concentration reading $z_t$ and wind vector $w_t$. The posterior distribution over source positions is updated via Bayes' rule:
+\begin{equation}
+\pi_{t+1}(s) \propto \pi_t(s) \cdot p(z_t \mid x_t, s, w_t)
+\label{eq:bayes}
+\end{equation}
+The MAP estimate is $\hat{s}_t = \arg\max_s \pi_t(s)$.
+
+We define \textbf{plume contact dependency} as the property that a method's search direction is determined by the current gas reading $z_t$. SurgeCast has this property: its direction = $\text{upwind}(z_t)$, which fails when $z_t \approx 0$. Our posterior-based approach does not: its direction = $\arg\max_a \text{EIG}(a \mid \pi_t)$, which works even when $z_t \approx 0$ because the posterior accumulates information from all past observations.
+
+\subsection{Search Strategy: Risk-Adjusted Information-Directed Sampling}
+
+The expected information gain (EIG) of action $a$ is:
+\begin{equation}
+\text{EIG}(a \mid \pi_t) = H(\pi_t) - \mathbb{E}_{z \sim p(z \mid a, \pi_t)}[H(\pi_{t+1})]
+\label{eq:eig}
+\end{equation}
+where $H(\pi) = -\int \pi(s) \log \pi(s) \, ds$ is the posterior entropy.
+
+Standard Infotaxis selects $a^* = \arg\max_a \text{EIG}(a \mid \pi_t)$. We employ a risk-adjusted variant (W-RAIG):
+\begin{equation}
+a^* = \arg\max_a \left[ \text{EIG}(a \mid \pi_t) - \beta \sqrt{\text{Var}[\text{EIG}(a \mid \pi_t)]} \right]
+\label{eq:wraig}
+\end{equation}
+where $\beta > 0$ controls risk aversion. When $\beta = 0$, this reduces to Infotaxis; as $\beta \to \infty$, the strategy becomes maximally conservative.
+
+\textit{Blackwell Interpretation.} In the game-theoretic framework, the UAV (player) chooses $a_t$ while the environment (adversary) determines conditions $b_t$ (wind, plume). The W-RAIG strategy approximately minimizes the distance to the target set $\mathcal{C} = \{(c, e) : c \geq 1-\alpha, e \geq -\varepsilon\}$ in Blackwell's approachability problem.
+
+\subsection{Stopping Criterion: Anytime-Valid e-Process}
+
+\subsubsection{Sequential Hypothesis Test}
+
+We formulate the stopping decision as:
+\begin{itemize}
+\item $H_0$: ``MAP has not converged'' ($\hat{s}_t \notin B_\varepsilon(s^*)$)
+\item $H_1$: ``MAP has converged'' ($\hat{s}_t \in B_\varepsilon(s^*)$)
+\end{itemize}
+
+\subsubsection{e-Value Construction}
+
+At each step $t$, we compute an e-value:
+\begin{equation}
+E_t = \exp\left(\eta \cdot (\theta - r_t)\right)
+\label{eq:evalue}
+\end{equation}
+where $r_t = \|\hat{s}_t - \hat{s}_{t-1}\|$ is the MAP residual, $\theta$ is the convergence threshold, and $\eta > 0$ is a learning rate.
+
+Properties:
+\begin{itemize}
+\item When $r_t < \theta$ (converging): $E_t > 1$ (evidence for $H_1$)
+\item When $r_t > \theta$ (not converged): $E_t < 1$ (evidence for $H_0$)
+\item Under $H_0$: $\mathbb{E}[E_t] \leq 1$ (super-martingale condition)
+\end{itemize}
+
+\subsubsection{e-Process and Stopping Rule}
+
+The e-process is the cumulative product:
+\begin{equation}
+M_T = \prod_{t=1}^{T} E_t
+\label{eq:eprocess}
+\end{equation}
+
+The stopping rule is:
+\begin{equation}
+\tau = \min\{T : M_T \geq 1/\delta\}
+\label{eq:stopping}
+\end{equation}
+
+\begin{theorem}[Anytime-Valid Stopping]
+\label{thm:anytime}
+Under the super-martingale condition $\mathbb{E}[E_t \mid \mathcal{F}_{t-1}] \leq 1$ for all $t$:
+\begin{equation}
+\mathbb{P}\left(\sup_T M_T \geq 1/\delta\right) \leq \delta
+\label{eq:ville}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+This follows from Ville's inequality for non-negative super-martingales~\cite{ref11}. Since $M_T$ is a product of non-negative random variables with $\mathbb{E}[E_t \mid \mathcal{F}_{t-1}] \leq 1$, $M_T$ is a non-negative super-martingale. Ville's inequality then gives $\mathbb{P}(\sup_T M_T \geq 1/\delta) \leq \delta$.
+\end{proof}
+
+The key advantage over conformal prediction: \textbf{no exchangeability assumption is required}. The guarantee holds for any stopping time $\tau$, including data-dependent rules.
+
+\subsubsection{Practical Implementation}
+
+We implement a warm-up period of $N = 15$ steps during which the e-process does not evaluate, allowing the posterior to burn in. After warm-up, the e-process accumulates evidence from MAP residuals. The DDM component provides complementary evidence using posterior entropy change rates as the log-likelihood ratio, with a 5-step warm-up to prevent false positives.
+
+\subsection{Unified Framework via Blackwell Approachability}
+
+\begin{proposition}[Approachability]
+\label{prop:approachability}
+Under conditions (i) posterior consistency ($\pi_t \to \delta_{s^*}$ as $t \to \infty$ under identifiability) and (ii) action richness ($\exists a : \text{EIG}(a \mid \pi_t) > 0$ for $\pi_t \neq \delta_{s^*}$), the target set $\mathcal{C}$ is approachable.
+\end{proposition}
+
+\begin{proof}
+By Blackwell's Theorem~1~\cite{ref12}, $\mathcal{C}$ is approachable if and only if for all adversary strategies $q \in \Delta(\mathcal{B})$, there exists a player strategy $p \in \Delta(\mathcal{A})$ such that $m(p, q) \in \mathcal{C}$. Condition (i) ensures coverage converges to $1-\alpha$; condition (ii) ensures the player can always find informative actions. Together, they satisfy Blackwell's dual condition.
+\end{proof}
+
+\begin{proposition}[Search-Stop Coupling]
+\label{prop:coupling}
+The W-RAIG search strategy accelerates the e-process: $\mathbb{E}[\tau_{\text{W-RAIG}}] \leq \mathbb{E}[\tau_{\text{random}}]$.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+W-RAIG maximizes information gain, which increases posterior convergence rate. Faster convergence means smaller MAP residuals $r_t$, which means larger e-values $E_t$, which means the e-process $M_T$ crosses the threshold $1/\delta$ sooner.
+\end{proof}
