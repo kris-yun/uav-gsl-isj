@@ -1,87 +1,109 @@
-﻿# Build artifacts
+# Temporary files
+*.tmp
+*.bak
+*.orig
+*~
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Build
 build/
 install/
 log/
-*.pyc
-__pycache__/
+*.o
+*.so
+*.dll
+*.exe
+
+# Archives
+*.zip
+*.tar.gz
+*.tar.bz2
+*.7z
+
+# Data files (large)
+*.csv
+*.json
+*.xml
+*.txt
+*.dat
+*.bin
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.npy
+*.npz
+*.parquet
+
+# ROS
+*.launch
+*.launch.py
 
 # IDE
 .vscode/
 .idea/
+*.code-workspace
 
 # OS
-Thumbs.db
 .DS_Store
+Thumbs.db
+desktop.ini
 
-# Large data
-*.bag
-*.db3
-*.zip
-*.tar.gz
-
-# Codex internal
-.codex/
-.codex-skills-upload/
-.codex_skill_staging/
-
-# Old root-level files (not in subdirs)
-/*.py
-/*.sh
-/*.cpp
-/*.hpp
-/*.txt
-/*.json
-/*.xml
-/*.b64
-/*.csv
-
-# Old directories
-Courtroom_*/
-ASCi/
-ChasingGhosts/
-arxiv*/
-ESB_*/
-HANDOFF*/
-Lab/
-SAISC_*/
-WRANF_*/
-WiR_*/
-_cbol*/
-ablation_study/
-adaptive_altitude/
-aris_repo/
-automation/
-b64*/
-baseline*/
-configs/
-data_lake/
-debate*/
-experiments/
-figures/
-fss_package/
-handoff*/
-idea-stage/
-inputs/
-literature_review/
-m8m_*/
-modules/
-official_pmfs/
-opgsl_package/
-outputs/
-paper_summary/
-papers/
-patches/
-pro_review*/
-refine-logs/
-reports/
-research*/
-review*/
-tmp_*/
-tools/
-uav_gsl_*/
-vm_*/
-workspace/
-wranf/
-.aris/
-.claude/
-CLAUDE.md
+# Project-specific temporary files
+OPGSL*.cpp
+OPGSL*.hpp
+WATS_GSL*.hpp
+SensorAwareSurgeCastPF*.cpp
+DDM_Stopping.hpp
+CP_Stopping.hpp
+bhex_*.hpp
+*.hpp.cp_sbd
+*.cpp.cp_sbd
+fix_*.py
+check_*.py
+analyze_*.py
+run_*.py
+debug_*.py
+extract_*.py
+search_*.py
+gen_*.py
+deploy_*.py
+update_*.py
+write_*.py
+tmp_*.py
+tmp_*.sh
+tmp_*.hpp
+tmp_*.cpp
+b64_*
+*.b64
+*_
+_*
+ESB_*.zip
+GasSourceLocalization-*.zip
+UAV_GSL_PRO_*.zip
+WATS_GSL_*.zip
+SAISC_PF_*.zip
+handoff_*.tar.gz
+experiment_*.csv
+experiment_*.json
+*.log
+*.bak2
+*.bak3
+# Keep specific important files
+!docs/
+!scripts/
+!references/
+!src/
+!README.md
+!.gitignore
+!LICENSE
