@@ -98,3 +98,51 @@ s.t. DDM-Stop(t) 或 CP-Stop(t) 触发时终止
 5. 搜索 2025-2026 跨领域创新文献
 6. 更新开题报告 (template.doc 格式)
 7. 撰写论文初稿
+---
+
+## 最新更新（2026-07-03）
+
+### 多Agent专家审查结果
+
+三位专家（ISJ副主编、审稿人、代码专家）审查评分：**4.5-5.5/10**，当前不可投稿。
+
+#### 致命问题
+
+1. **SurgeCast在2/3场景优于我们**
+   - SensorAwareSurgeCastPF是MAPIRlab官方实现，在gsl_server包中
+   - House02: SurgeCast 0.3-0.5m vs 我们 1.6-2.0m
+   - House03: SurgeCast 0.8-1.5m vs 我们 1.2-1.3m
+   - 只有House01我们更好（1.0m vs 3.0m）
+
+2. **统计不显著**
+   - Full vs Baseline: p=0.89, Cliff's δ=0.000
+   - 3 seeds太少，Wilcoxon检验无法拒绝零假设
+
+3. **CPonly > Full 消融矛盾**
+   - CPonly在House02达0.19m，Full在House02是1.6-2.0m
+   - 说明DDM+W-RAIG反而降低了CP的性能
+
+4. **CP Exchangeability假设被违反**
+   - 序贯贝叶斯更新破坏i.i.d.假设
+   - 需要adaptive CP或理论证明
+
+5. **模块是"浅层移植"**
+   - DDM本质=带时间衰减的SPRT变体
+   - 缺乏GSL-specific理论贡献
+
+#### 已解决的问题
+
+- ✅ 无数据泄露（OPGSL.cpp未引用ground_truth）
+- ✅ 扩展消融map_dist已从日志恢复
+- ✅ benchmark_runner method名问题已修复（用M7_full_saisc_pf）
+- ✅ 统计分析脚本已编写
+
+#### 正在进行
+
+- 🔄 10-seed消融实验（VM上运行中，136/240完成）
+- ⚠️ 很多run的distance提取失败（cleanup误杀或日志解析问题）
+
+### 交接文档
+
+完整交接文档见: `docs/PROJECT_HANDOFF.md`
+多Agent审查报告见: `docs/MULTI_AGENT_REVIEW_20260703.md`
