@@ -1,0 +1,361 @@
+#pragma once
+// OPGSL: Optimal-Path Gas Source Localization with SD-NBV framework
+// SD-NBV = Spatial Deconvolution + Next-Best-View
+// Central idea: 3D Bayesian posterior over source location drives ALL decisions.
+// No hardcoded state machine. Every action maximizes expected information gain.
+
+#include <gsl_server/algorithms/Common/Algorithm.hpp>
+#include <gsl_server/algorithms/Common/States/MovingState.hpp>
+#include <Eigen/Dense>
+#include <vector>
+#include <set>
+#include <deque>
+#include <fstream>
+#include <cmath>
+#include <algorithm>
+#include <random>
+#include "WATS_GSL.hpp"
+#include "CP_Stopping.hpp"
+#include "DDM_Stopping.hpp"
+
+namespace GSL {
+class OPGSL;
+
+class MovingStateOPGSL : public MovingState {
+public:
+    MovingStateOPGSL(Algorithm* _algorithm);
+    void chooseGoalAndMove() override;
+protected:
+    void Fail() override;
+private:
+    OPGSL* opgsl_;
+    NavigateToPose::Goal posToGoal(float x, float y, float z);
+};
+
+// ============================================================
+// Gaussian Process for height-concentration modeling
+// ============================================================
+class SimpleGP {
+public:
+    struct Hyperparams {
+        float length_scale = 0.8f;
+        float signal_var = 1.0f;
+        float noise_var = 0.1f;
+    };
+    void reset(float z_init, float z_min, float z_max) {
+        z_min_ = z_min; z_max_ = z_max;
+        xs_.clear(); ys_.clear();
+        best_z_ = z_init; best_y_ = -1e9f;
+        hyper_ = {0.8f, 1.0f, 0.1f};
+    }
+    void addObservation(float z, float y) {
+        xs_.push_back(z); ys_.push_back(y);
+        if (y > best_y_) { best_y_ = y; best_z_ = z; }
+    }
+    float getNextZ(float z_current, bool use_ucb = true);
+    float getNextZAnchored(float z_current, float anchor_z, float anchor_weight);
+    float getBestZ() const { return best_z_; }
+    void setLengthScale(float ls) { hyper_.length_scale = ls; }
+    const std::vector<float>& getXS() const { return xs_; }
+    const std::vector<float>& getYS() const { return ys_; }
+private:
+    Hyperparams hyper_;
+    std::vector<float> xs_, ys_;
+    float best_z_ = 0.3f, best_y_ = -1e9f;
+    float z_min_ = -1.0f, z_max_ = 3.0f;
+    float kernel(float a, float b) const {
+        float d = (a - b) / hyper_.length_scale;
+        return hyper_.signal_var * std::exp(-0.5f * d * d);
+    }
+};
+
+// ============================================================
+// OPGSL Main Class — SD-NBV Framework
+// ============================================================
+class OPGSL : public Algorithm {
+    friend class MovingStateOPGSL;
+public:
+    explicit OPGSL(std::shared_ptr<rclcpp::Node> _node);
+    void Initialize() override;
+
+protected:
+    void declareParameters() override;
+    void processGasAndWindMeasurements(double concentration, double windSpeed, double windDirection) override;
+    GSLResult checkSourceFound() override;
+    void saveResultsToFile(GSLResult result) override;
+    void OnUpdate() override;
+    void OnCompleteNavigation(GSLResult result, State* previousState) override;
+
+private:
+    // ---- Core Modules (retained from validated implementations) ----
+    WATS::WR_SFE field_estimator_;
+    WATS::WR_SFE::Config field_cfg_;
+    WATS::WA_IG info_gain_;
+    WATS::WA_IG::Config ig_cfg_;
+
+    // Innovation module toggles
+    bool use_levy_ = true;
+    bool use_bout_ = true;
+    bool use_adaptive_step_ = true;
+
+    // ---- General state ----
+    int step_count_ = 0;
+    float elapsed_time_ = 0.0f;
+    float latest_wind_x_ = 0.0f, latest_wind_y_ = 0.0f, latest_wind_speed_ = 0.0f;
+    float latest_gas_ = 0.0f;
+    int gas_hit_count_ = 0;
+    float last_hit_x_ = 0.0f, last_hit_y_ = 0.0f;
+    float best_hit_x_ = 0.0f, best_hit_y_ = 0.0f, best_hit_conc_ = 0.0f;
+    int consecutive_misses_ = 0;
+    float last_hit_time_ = 0.0f;
+    float southernmost_hit_y_ = 1e6f, southernmost_hit_x_ = 0.0f;
+    float northernmost_hit_y_ = -1e6f;
+    float westernmost_hit_x_ = 1e6f, easternmost_hit_x_ = -1e6f;
+    int total_measurements_ = 0;
+
+    // Grid config
+    int n_cells_ = 40;
+    float resolution_ = 0.5f, map_half_size_ = 10.0f;
+
+    // Chemotaxis state
+    float prev_gas_ = 0.0f, run_length_ = 0.8f;
+    float run_direction_x_ = 0.0f, run_direction_y_ = -1.0f;
+    int run_steps_remaining_ = 0, tumble_count_ = 0;
+    float gradient_threshold_ = 0.002f, max_step_ = 1.0f;
+    int max_run_steps_ = 8;
+
+    // Convergence
+    float convergence_min_time_ = 30.0f, convergence_entropy_threshold_ = 5.0f;
+    int convergence_min_bouts_ = 2, convergence_stable_steps_ = 5, stable_steps_count_ = 0;
+    bool convergence_reported_ = false;
+
+    // Wind history
+    std::vector<float> obs_history_x_, obs_history_y_, obs_history_c_;
+    std::deque<float> wind_dir_history_;
+    static constexpr int kWindHistorySize = 10;
+
+    // Module 1: Lévy Flight state
+    int levy_step_remaining_ = 0;
+    float levy_angle_ = 0.0f;
+
+    // Module 2: Bout-Level state
+    bool bout_active_ = false;
+    float bout_start_time_ = 0.0f;
+    float bout_peak_conc_ = 0.0f;
+    int bout_count_ = 0;
+    float time_since_last_bout_ = 0.0f;
+
+    // Module 3: Adaptive Step state
+    float step_size_ = 0.8f;
+    float prev_gradient_mag_ = 0.0f;
+
+    // Misc
+    std::string audit_file_;
+    std::ofstream audit_stream_;
+    std::mt19937 rng_;
+    double last_update_time_ = 0.0;
+    bool need_next_goal_ = false;
+
+    // ---- Core functions ----
+    float smoothWindDirection() const;
+    void clipToMapBounds(float& x, float& y) const;
+
+    // SD-NBV unified decision: selects next (x,y) based on 3D posterior + field
+    void sdnbvStep(float& best_x, float& best_y);
+    void infotaxisStep(float& best_x, float& best_y); // wrapper for backward compat
+    void levyExploration(float& best_x, float& best_y, float cx, float cy);
+
+    // ---- Optional modules (disabled by default) ----
+    // BH-EX: Basin-Hopping Exploration
+    bool use_bhex_ = false;
+    int bhex_stagnation_count_ = 0;
+    int bhex_stagnation_threshold_ = 5;
+    float bhex_temperature_ = 2.0f;
+    float bhex_cooling_ = 0.95f;
+    float bhex_min_temp_ = 0.1f;
+    float bhex_best_conc_ = 0.0f;
+    float bhex_best_x_ = 0.0f, bhex_best_y_ = 0.0f;
+    bool bhex_jump_pending_ = false;
+    float bhex_jump_x_ = 0.0f, bhex_jump_y_ = 0.0f;
+    void bhexCheckStagnation(float current_conc, float cx, float cy);
+
+    // WAZ: Wind-Aligned Zigzag
+    bool use_waz_ = false;
+    int waz_phase_ = 0;
+    float waz_step_size_ = 1.5f;
+    int waz_steps_per_leg_ = 4;
+    int waz_step_count_ = 0;
+    void wazExplore(float& out_x, float& out_y, float cx, float cy);
+
+    // SC: Surge-Cast plume tracking
+    bool use_sc_ = false;
+    int sc_mode_ = 0;
+    int sc_cast_dir_ = 1;
+    float sc_cast_step_ = 1.5f;
+    int sc_cast_legs_ = 0;
+    float sc_surge_start_x_ = 0, sc_surge_start_y_ = 0;
+    float sc_last_surge_dir_x_ = 0, sc_last_surge_dir_y_ = 0;
+    float sc_source_est_x_ = 0, sc_source_est_y_ = 0;
+    int sc_source_est_count_ = 0;
+    float sc_max_cast_ = 8.0f;
+    int sc_consecutive_hits_ = 0;
+    int sc_consecutive_misses_ = 0;
+    float sc_surge_step_ = 0.8f;
+    void scStep(float& out_x, float& out_y, float cx, float cy);
+
+    // ---- SD-NBV: 3D Source Posterior (central belief state) ----
+    float z_min_ = -1.0f, z_max_ = 3.0f;
+
+    class SourcePosterior3D {
+    public:
+        // Log-probability grid
+        std::vector<std::vector<std::vector<float>>> grid;
+        int nx_ = 20, ny_ = 20, nz_ = 10;
+        float x_min_ = -5, x_max_ = 5, y_min_ = -8, y_max_ = 1, z_min_ = -1.0f, z_max_ = 3.0f;
+        float dx_, dy_, dz_;
+        bool initialized_ = false;
+
+        struct NBVResult {
+            float x, y, z;
+            float expected_info_gain;
+        };
+
+        void init(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
+        void update(float cx, float cy, float cz, float concentration,
+                    float wind_x, float wind_y, float wind_speed);
+        void getMAP(float& mx, float& my, float& mz) const;
+        float getEntropy() const;
+        NBVResult selectNBV(float robot_x, float robot_y, float robot_z,
+                            float wind_x, float wind_y, float wind_speed) const;
+        // FIM: identify which dimension has highest uncertainty
+        void getFIMEigenvalues(float& eig_x, float& eig_y, float& eig_z) const;
+        float plumeLogLikelihood(float sx, float sy, float sz,
+                                  float cx, float cy, float cz,
+                                  float wind_x, float wind_y, float wind_speed) const;
+        void reset();
+    };
+    SourcePosterior3D posterior3d_;
+
+    // ---- GP Height Model ----
+    SimpleGP gp_;
+    float current_altitude_ = 0.3f;
+
+    // ---- Lévy height exploration ----
+    float levyHeight(float z_current);
+    int levy_height_step_remaining_ = 0;
+    float levy_height_target_ = 0.3f;
+
+    // ---- Significant Layer scanning ----
+    struct LayerPoint {
+        float z;
+        float concentration;
+    };
+    std::vector<LayerPoint> layer_profile_;
+    std::vector<float> significant_layers_;
+    bool calibration_active_ = false;
+    int calibration_step_ = 0;
+    std::vector<float> calibration_z_sequence_;
+    int calibration_index_ = 0;
+    int calibration_count_ = 0;
+    float best_calibrated_z_ = 0.3f;
+
+    void startCalibration();
+    void processCalibrationMeasurement(float z, float concentration);
+
+    // ---- Altitude posterior with temporal decay ----
+    static constexpr int kNumZBins = 28;
+    float z_posterior_[28] = {0};
+    float z_decay_rate_ = 0.01f;
+    void updateAltitudePosterior(float z, float concentration);
+    float getPosteriorBestZ() const;
+
+    // ---- MaxConc-z baseline ----
+    struct ZConcRecord {
+        float z;
+        float concentration;
+        float time;
+    };
+    std::deque<ZConcRecord> z_conc_history_;
+    int max_conc_window_ = 20;
+    float maxConcAltitude() const;
+
+    // ---- SD-NBV altitude selection (FIM-driven, no state machine) ----
+    float selectTargetAltitude();
+    void logAltitudeState();
+
+    // ---- Ablation toggles ----
+    bool use_gp_altitude_ = true;
+    bool use_levy_altitude_ = true;
+    bool use_layer_scan_ = true;
+    bool use_altitude_decay_ = true;
+    bool use_sdnbv_ = true;  // Enable SD-NBV framework
+    bool use_upwind_tracking_ = true;  // Phase 1.5 upwind tracking
+    
+    // ---- SBD: Sequential Bayesian Design module ----
+    bool use_sbd_ = false;
+    float eig_threshold_ = 0.01f;
+    float cusum_threshold_ = 5.0f;
+    float cusum_stat_ = 0.0f;
+    int sbd_stable_count_ = 0;
+    float cusum_drift_ = 0.1f;
+    Eigen::MatrixXf eig_field_;
+    Eigen::MatrixXf prev_posterior_;
+    void computeEIGField();
+    void computeWRAIGField();
+    float computePosteriorKL(const Eigen::MatrixXf& prev, const Eigen::MatrixXf& curr);
+
+    // CP: Conformal Prediction stopping
+    bool use_cp_ = true;
+    CP::EProcessStopping cp_stopping_;
+    CP::SourceConfidenceRegion cp_region_;
+    float cp_width_threshold_ = 1.5f;
+    int cp_stable_required_ = 3;
+    float cp_prev_mx_ = 0.0f, cp_prev_my_ = 0.0f;
+
+    // DDM: Drift-Diffusion Model stopping (neuroscience-inspired)
+    bool use_ddm_ = true;
+    DDM::DDMStopping ddm_stopping_;
+    float ddm_prev_map_x_ = 0.0f, ddm_prev_map_y_ = 0.0f;
+
+    // W-RAIG: Wasserstein Risk-Aware Information Gain
+    bool use_wraig_ = true;
+    WATS::WRAIG wraig_;
+    WATS::WRAIG::Config wraig_cfg_;
+    Eigen::MatrixXf wraig_field_;
+
+    // EIG (legacy, kept for compatibility)
+    bool use_eig_height_ = false;
+    static constexpr int kNumHeights = 9;
+    float eig_heights_[9] = {0.3f, 0.5f, 1.0f, 1.5f, 1.8f, 2.0f, 2.2f, 2.5f, 3.0f};
+    float eig_height_posterior_[9] = {0};
+    float eig_selected_height_ = 2.0f;
+    int eig_height_update_count_ = 0;
+    float eig_height_update_interval_ = 5.0f;
+    void updateHeightPosterior(float concentration, float rx, float ry);
+    float selectBestHeight();
+
+    // EDPA-GSL Layer 1
+    void updatePosteriorEventDriven(float cx, float cy, float cz,
+                                     bool detected, float concentration,
+                                     float wind_x, float wind_y, float wind_speed);
+    // EDPA-GSL Layer 2
+    struct AdaptiveEIGResult { float x,y,z,eig_value,gamma; };
+    AdaptiveEIGResult computeAdaptiveEIG();
+    float computeEIGGlobal(float cx,float cy,float cz,float wx,float wy,float ws);
+    float computeEIGLocal(float cx,float cy,float cz,float wx,float wy,float ws);
+    // EDPA-GSL Layer 3
+    struct CredibleRegionStopping {
+        float epsilon=1.5f,alpha=0.10f,eta=5.0f,delta=0.10f;
+        float e_process=0.0f,prev_radius=-1.0f;
+        int warmup_steps=3; bool fired=false;
+    };
+    CredibleRegionStopping cr_stopping_;
+    float computeCredibleRegionRadius();
+    bool use_edpa_=false; bool edpa_should_stop_=false; bool use_event_driven_posterior_=false;
+    float detection_threshold_=0.01f;
+    float arrival_rate_lambda0_=1.0f,arrival_rate_ell_=2.0f,arrival_rate_alphaw_=0.5f;
+    float initial_entropy_=1.0f; bool entropy_initialized_=false;
+
+};
+
+} // namespace GSL
