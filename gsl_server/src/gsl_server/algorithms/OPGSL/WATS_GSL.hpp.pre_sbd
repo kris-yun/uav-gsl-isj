@@ -366,10 +366,6 @@ public:
         return result;
     }
 
-    // SBD: expose ensemble fields for EIG computation
-    const std::vector<Eigen::MatrixXf>& ensembleFields() const { return ensemble_fields_; }
-    int ensembleSize() const { return cfg_.n_ensemble; }
-
 private:
     Config cfg_;
     std::deque<Observation> observations_;
@@ -459,8 +455,6 @@ public:
     }
 
     // Posterior concentration metric: 0=uniform, 1=fully peaked
-    // SBD: expose ensemble fields for EIG computation
-
     float posteriorConcentration(const WR_SFE::FieldEstimate& field) const {
         if (field.n_observations < 2) return 0.0f;
         int count = 0;
@@ -481,81 +475,6 @@ public:
     Config cfg_;
 };
 
-
-// ============================================================
-// Module 4: Wasserstein Risk-Aware Information Gain (W-RAIG)
-// ============================================================
-// Key idea: Standard EIG (Infotaxis) is risk-neutral. W-RAIG adds a
-// risk penalty that discourages actions whose information gain is
-// uncertain across the posterior ensemble. This prevents the UAV from
-// committing to actions that look good on average but have high variance.
-//
-// Mathematical formulation:
-//   W-RAIG(a) = E_m[EIG_m(a)] - beta * sqrt(Var_m[EIG_m(a)])
-// where the expectation is over ensemble members m=1..M.
-//
-// When beta=0: W-RAIG = standard EIG = Infotaxis (degenerate case)
-// When beta>0: risk-averse, prefer actions with consistent information gain
-//
-// Connection to CVaR: As beta -> infinity, W-RAIG selects the action
-// that maximizes the worst-case EIG across ensemble members, which is
-// equivalent to CVaR-alpha with alpha -> 0.
-//
-// References:
-//   - Rockafellar & Uryasev (2000) "Optimization of conditional value-at-risk"
-//   - Husmeier et al. (2025) "Risk-sensitive Bayesian optimization"
-//   -棫田 et al. (2024) "Sequential design with risk measures"
-
-class WRAIG {
-public:
-    struct Config {
-        float beta = 0.5f;            // Risk aversion coefficient [0,inf)
-        float min_eig_threshold = 1e-4f; // Minimum EIG to consider
-        int n_ensemble = 3;           // Number of ensemble members
-    };
-
-    void init(const Config& cfg) { cfg_ = cfg; }
-
-    // Compute risk-aware information gain for a candidate cell
-    // given ensemble EIG values from different field estimator members
-    float compute(float mean_eig, float var_eig) const {
-        if (mean_eig < cfg_.min_eig_threshold) return 0.0f;
-        float risk_penalty = cfg_.beta * std::sqrt(std::max(var_eig, 0.0f));
-        return std::max(0.0f, mean_eig - risk_penalty);
-    }
-
-    // Compute W-RAIG field over entire grid
-    // Input: ensemble EIG fields from n_ensemble members
-    // Output: risk-adjusted EIG field
-    void computeField(const std::vector<Eigen::MatrixXf>& ensemble_eig,
-                      Eigen::MatrixXf& wraig_field) const {
-        int N = ensemble_eig[0].rows();
-        int M = ensemble_eig[0].cols();
-        int n_e = ensemble_eig.size();
-        wraig_field = Eigen::MatrixXf::Zero(N, M);
-
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
-                // Compute mean and variance of EIG across ensemble
-                float sum = 0.0f, sum2 = 0.0f;
-                for (int e = 0; e < n_e; e++) {
-                    float v = ensemble_eig[e](i, j);
-                    sum += v;
-                    sum2 += v * v;
-                }
-                float mean_eig = sum / n_e;
-                float var_eig = (sum2 / n_e) - (mean_eig * mean_eig);
-                wraig_field(i, j) = compute(mean_eig, var_eig);
-            }
-        }
-    }
-
-    // Infotaxis degenerate case: when beta=0, returns standard EIG
-    bool isInfotaxisDegenerate() const { return cfg_.beta < 1e-6f; }
-
-private:
-    Config cfg_;
-};
-
 } // namespace WATS
 } // namespace GSL
+

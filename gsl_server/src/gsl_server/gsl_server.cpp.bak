@@ -121,11 +121,7 @@ void GSLServer::execute(std::shared_ptr<rclcpp_action::ServerGoalHandle<DoGSL>> 
         actionResult->success = false;
         GSL_INFO("Could not find the source. Sorry!");
     }
-    try {
-        goal_handle->succeed(actionResult);
-    } catch (const std::exception& e) {
-        GSL_ERROR("Failed to publish result (goal may have been cancelled): {}", e.what());
-    }
+    goal_handle->succeed(actionResult);
 }
 
 std::shared_ptr<GSL::Algorithm> GSLServer::createAlgorithm(const std::string name)

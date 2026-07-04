@@ -333,29 +333,5 @@ private:
     float eig_height_update_interval_ = 5.0f;
     void updateHeightPosterior(float concentration, float rx, float ry);
     float selectBestHeight();
-
-    // EDPA-GSL Layer 1
-    void updatePosteriorEventDriven(float cx, float cy, float cz,
-                                     bool detected, float concentration,
-                                     float wind_x, float wind_y, float wind_speed);
-    // EDPA-GSL Layer 2
-    struct AdaptiveEIGResult { float x,y,z,eig_value,gamma; };
-    AdaptiveEIGResult computeAdaptiveEIG();
-    float computeEIGGlobal(float cx,float cy,float cz,float wx,float wy,float ws);
-    float computeEIGLocal(float cx,float cy,float cz,float wx,float wy,float ws);
-    // EDPA-GSL Layer 3
-    struct CredibleRegionStopping {
-        float epsilon=1.5f,alpha=0.10f,eta=5.0f,delta=0.10f;
-        float e_process=0.0f,prev_radius=-1.0f;
-        int warmup_steps=3; bool fired=false;
-    };
-    CredibleRegionStopping cr_stopping_;
-    float computeCredibleRegionRadius();
-    bool use_edpa_=false; bool edpa_should_stop_=false; bool use_event_driven_posterior_=false;
-    float detection_threshold_=0.01f;
-    float arrival_rate_lambda0_=1.0f,arrival_rate_ell_=2.0f,arrival_rate_alphaw_=0.5f;
-    float initial_entropy_=1.0f; bool entropy_initialized_=false;
-
 };
-
 } // namespace GSL

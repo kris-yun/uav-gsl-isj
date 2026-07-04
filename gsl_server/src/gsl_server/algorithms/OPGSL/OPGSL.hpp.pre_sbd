@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 // OPGSL: Optimal-Path Gas Source Localization with SD-NBV framework
 // SD-NBV = Spatial Deconvolution + Next-Best-View
 // Central idea: 3D Bayesian posterior over source location drives ALL decisions.
@@ -15,8 +15,6 @@
 #include <algorithm>
 #include <random>
 #include "WATS_GSL.hpp"
-#include "CP_Stopping.hpp"
-#include "DDM_Stopping.hpp"
 
 namespace GSL {
 class OPGSL;
@@ -127,7 +125,6 @@ private:
     // Convergence
     float convergence_min_time_ = 30.0f, convergence_entropy_threshold_ = 5.0f;
     int convergence_min_bouts_ = 2, convergence_stable_steps_ = 5, stable_steps_count_ = 0;
-    bool convergence_reported_ = false;
 
     // Wind history
     std::vector<float> obs_history_x_, obs_history_y_, obs_history_c_;
@@ -290,38 +287,6 @@ private:
     bool use_altitude_decay_ = true;
     bool use_sdnbv_ = true;  // Enable SD-NBV framework
     bool use_upwind_tracking_ = true;  // Phase 1.5 upwind tracking
-    
-    // ---- SBD: Sequential Bayesian Design module ----
-    bool use_sbd_ = false;
-    float eig_threshold_ = 0.01f;
-    float cusum_threshold_ = 5.0f;
-    float cusum_stat_ = 0.0f;
-    int sbd_stable_count_ = 0;
-    float cusum_drift_ = 0.1f;
-    Eigen::MatrixXf eig_field_;
-    Eigen::MatrixXf prev_posterior_;
-    void computeEIGField();
-    void computeWRAIGField();
-    float computePosteriorKL(const Eigen::MatrixXf& prev, const Eigen::MatrixXf& curr);
-
-    // CP: Conformal Prediction stopping
-    bool use_cp_ = true;
-    CP::EProcessStopping cp_stopping_;
-    CP::SourceConfidenceRegion cp_region_;
-    float cp_width_threshold_ = 1.5f;
-    int cp_stable_required_ = 3;
-    float cp_prev_mx_ = 0.0f, cp_prev_my_ = 0.0f;
-
-    // DDM: Drift-Diffusion Model stopping (neuroscience-inspired)
-    bool use_ddm_ = true;
-    DDM::DDMStopping ddm_stopping_;
-    float ddm_prev_map_x_ = 0.0f, ddm_prev_map_y_ = 0.0f;
-
-    // W-RAIG: Wasserstein Risk-Aware Information Gain
-    bool use_wraig_ = true;
-    WATS::WRAIG wraig_;
-    WATS::WRAIG::Config wraig_cfg_;
-    Eigen::MatrixXf wraig_field_;
 
     // EIG (legacy, kept for compatibility)
     bool use_eig_height_ = false;
@@ -333,29 +298,5 @@ private:
     float eig_height_update_interval_ = 5.0f;
     void updateHeightPosterior(float concentration, float rx, float ry);
     float selectBestHeight();
-
-    // EDPA-GSL Layer 1
-    void updatePosteriorEventDriven(float cx, float cy, float cz,
-                                     bool detected, float concentration,
-                                     float wind_x, float wind_y, float wind_speed);
-    // EDPA-GSL Layer 2
-    struct AdaptiveEIGResult { float x,y,z,eig_value,gamma; };
-    AdaptiveEIGResult computeAdaptiveEIG();
-    float computeEIGGlobal(float cx,float cy,float cz,float wx,float wy,float ws);
-    float computeEIGLocal(float cx,float cy,float cz,float wx,float wy,float ws);
-    // EDPA-GSL Layer 3
-    struct CredibleRegionStopping {
-        float epsilon=1.5f,alpha=0.10f,eta=5.0f,delta=0.10f;
-        float e_process=0.0f,prev_radius=-1.0f;
-        int warmup_steps=3; bool fired=false;
-    };
-    CredibleRegionStopping cr_stopping_;
-    float computeCredibleRegionRadius();
-    bool use_edpa_=false; bool edpa_should_stop_=false; bool use_event_driven_posterior_=false;
-    float detection_threshold_=0.01f;
-    float arrival_rate_lambda0_=1.0f,arrival_rate_ell_=2.0f,arrival_rate_alphaw_=0.5f;
-    float initial_entropy_=1.0f; bool entropy_initialized_=false;
-
 };
-
 } // namespace GSL

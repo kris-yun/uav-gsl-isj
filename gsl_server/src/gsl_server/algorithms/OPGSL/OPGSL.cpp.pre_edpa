@@ -161,7 +161,7 @@ void OPGSL::Initialize() {
     for (int k = 0; k < kNumHeights; k++) eig_height_posterior_[k] = 0.0f;
     eig_selected_height_ = 2.0f; eig_height_update_count_ = 0;
     // SD-NBV: Initialize 3D source posterior
-    posterior3d_.init(-1.0f, 11.0f, -1.0f, 11.0f, z_min_, z_max_);
+    posterior3d_.init(-7.5f, 3.9f, -7.9f, 0.82f, z_min_, z_max_);
     // Altitude state (no state machine)
     current_altitude_ = 0.3f;
     gp_.reset(0.3f, z_min_, z_max_);
@@ -282,7 +282,7 @@ void OPGSL::SourcePosterior3D::update(float cx, float cy, float cz, float concen
                 if (concentration > 0.01f) {
                     weight = std::clamp(std::sqrt(concentration) * 1.5f, 0.0f, 3.0f);
                 } else {
-                    weight = 0.3f;  // Enhanced non-detection information
+                    weight = 0.001f;  // Bug3 fix: weak positive, not negative
                 }
                 grid[i][j][k] += weight * log_lik;
                 if (grid[i][j][k] > max_log) max_log = grid[i][j][k];

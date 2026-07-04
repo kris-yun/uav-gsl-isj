@@ -1,4 +1,4 @@
-#include "OPGSL.hpp"
+﻿#include "OPGSL.hpp"
 #include "gsl_server/core/GSLResult.hpp"
 #include <gsl_server/algorithms/Common/States/WaitForMapState.hpp>
 #include <gsl_server/algorithms/Common/States/WaitForGasState.hpp>
@@ -31,7 +31,7 @@ float SimpleGP::getNextZ(float z_current, bool use_ucb) {
     for (int i = 0; i < n; i++)
         for (int j = 0; j < n; j++)
             K(i,j) = kernel(xs_[i], xs_[j]) + (i==j ? hyper_.noise_var : 0.0f);
-    auto K_ldlt = K.ldlt();
+    Eigen::MatrixXf K_inv = K.inverse();
     float best_score = -1e9f;
     float best_z = best_z_;
     int n_cand = 20;
@@ -39,8 +39,8 @@ float SimpleGP::getNextZ(float z_current, bool use_ucb) {
         float z = z_min_ + (z_max_ - z_min_) * i / n_cand;
         Eigen::VectorXf k_star(n);
         for (int j = 0; j < n; j++) k_star(j) = kernel(z, xs_[j]);
-        float mu = k_star.transpose() * K_ldlt.solve(y);
-        float sigma2 = kernel(z, z) - k_star.transpose() * K_ldlt.solve(k_star);
+        float mu = k_star.transpose() * K_inv * y;
+        float sigma2 = kernel(z, z) - k_star.transpose() * K_inv * k_star;
         float sigma = std::sqrt(std::max(sigma2, 0.0f));
         float score = use_ucb ? (mu + 1.5f * sigma) : mu;
         if (score > best_score) { best_score = score; best_z = z; }
@@ -75,39 +75,6 @@ void OPGSL::declareParameters() {
     use_waz_ = getParam<bool>("opgsl.modules.waz", false);
     use_sc_ = getParam<bool>("opgsl.modules.sc", false);
     use_upwind_tracking_ = getParam<bool>("opgsl.modules.upwind_tracking", true);
-    // SBD module parameters
-    use_sbd_ = getParam<bool>("opgsl.modules.sbd", false);
-    int seed_param = getParam<int>("opgsl.seed", -1);
-    if (seed_param >= 0) { GSL_INFO("RNG seed param={} (exploration remains random)", seed_param); }
-    rng_.seed(std::random_device{}());  // Always random for diverse exploration
-    use_cp_ = getParam<bool>("opgsl.modules.cp", true);
-    cp_width_threshold_ = getParam<float>("opgsl.cp.width_threshold", 1.5f);
-    cp_stable_required_ = getParam<int>("opgsl.cp.stable_steps", 3);
-    CP::EProcessConfig cp_cfg;
-    cp_cfg.delta = getParam<float>("opgsl.cp.alpha", 0.10f);
-    cp_cfg.convergence_thresh = cp_width_threshold_;
-    cp_cfg.stable_req = cp_stable_required_;
-    cp_stopping_ = CP::EProcessStopping(cp_cfg);
-    GSL_INFO("SBD DEBUG: use_sbd_={} use_cp_={}", use_sbd_, use_cp_);
-    // DDM: Drift-Diffusion Model stopping parameters
-    use_ddm_ = getParam<bool>("opgsl.modules.ddm", true);
-    DDM::DDMConfig ddm_cfg;
-    ddm_cfg.gamma_urgency = getParam<float>("opgsl.ddm.urgency", 0.005f);
-    ddm_cfg.theta_min = getParam<float>("opgsl.ddm.theta_min", 1.5f);
-    ddm_cfg.leak_lambda = getParam<float>("opgsl.ddm.leak", 0.05f);
-    ddm_cfg.min_obs = getParam<int>("opgsl.ddm.min_obs", 25);
-    ddm_cfg.min_time = getParam<float>("opgsl.ddm.min_time", 60.0f);
-    ddm_stopping_ = DDM::DDMStopping(ddm_cfg);
-    // W-RAIG: Risk-Aware Information Gain parameters
-    use_wraig_ = getParam<bool>("opgsl.modules.wraig", true);
-    wraig_cfg_.beta = getParam<float>("opgsl.wraig.beta", 0.5f);
-    wraig_cfg_.n_ensemble = 3;
-    wraig_.init(wraig_cfg_);
-    GSL_INFO("DDM: enabled={} urgency={:.4f} | W-RAIG: enabled={} beta={:.2f}",
-             use_ddm_, ddm_cfg.gamma_urgency, use_wraig_, wraig_cfg_.beta);
-    eig_threshold_ = getParam<double>("opgsl.sbd.eig_threshold", 0.01);
-    cusum_threshold_ = getParam<double>("opgsl.sbd.cusum_threshold", 5.0);
-    cusum_drift_ = getParam<double>("opgsl.sbd.cusum_drift", 0.1);
     // SD-NBV toggles
     use_sdnbv_ = getParam<bool>("opgsl.sdnbv.enabled", true);
     use_gp_altitude_ = getParam<bool>("opgsl.altitude.gp", true);
@@ -116,8 +83,8 @@ void OPGSL::declareParameters() {
     use_altitude_decay_ = getParam<bool>("opgsl.altitude.decay", true);
     z_min_ = getParam<double>("opgsl.altitude.z_min", -1.0);
     z_max_ = getParam<double>("opgsl.altitude.z_max", 3.0);
-    GSL_INFO("OPGSL-ActiveInference params: grid={} res={:.1f} levy={} bout={} adaptive={} sdnbv={} gp_alt={} sbd={}",
-             n_cells_, resolution_, use_levy_, use_bout_, use_adaptive_step_, use_sdnbv_, use_gp_altitude_, use_sbd_);
+    GSL_INFO("OPGSL-ActiveInference params: grid={} res={:.1f} levy={} bout={} adaptive={} sdnbv={} gp_alt={}",
+             n_cells_, resolution_, use_levy_, use_bout_, use_adaptive_step_, use_sdnbv_, use_gp_altitude_);
 }
 
 // ============================================================
@@ -132,12 +99,6 @@ void OPGSL::Initialize() {
     ig_cfg_.exploration_weight = 0.3f; ig_cfg_.wind_bonus = 0.5f;
     ig_cfg_.uncertainty_weight = 0.4f; ig_cfg_.visit_penalty = 0.2f;
     info_gain_.init(ig_cfg_);
-    // SBD initialization
-    if (use_sbd_) {
-        eig_field_ = Eigen::MatrixXf::Zero(n_cells_, n_cells_);
-        prev_posterior_ = Eigen::MatrixXf::Constant(n_cells_, n_cells_, -std::log((float)(n_cells_*n_cells_)));
-        GSL_INFO("SBD MODULE ENABLED: eig_threshold={:.4f} cusum_threshold={:.1f} use_sbd={}", eig_threshold_, cusum_threshold_, use_sbd_);
-    }
     waitForMapState = std::make_unique<WaitForMapState>(this);
     waitForGasState = std::make_unique<WaitForGasState>(this);
     stopAndMeasureState = std::make_unique<StopAndMeasureState>(this);
@@ -161,7 +122,7 @@ void OPGSL::Initialize() {
     for (int k = 0; k < kNumHeights; k++) eig_height_posterior_[k] = 0.0f;
     eig_selected_height_ = 2.0f; eig_height_update_count_ = 0;
     // SD-NBV: Initialize 3D source posterior
-    posterior3d_.init(-1.0f, 11.0f, -1.0f, 11.0f, z_min_, z_max_);
+    posterior3d_.init(-7.5f, 3.9f, -7.9f, 0.82f, z_min_, z_max_);
     // Altitude state (no state machine)
     current_altitude_ = 0.3f;
     gp_.reset(0.3f, z_min_, z_max_);
@@ -282,7 +243,7 @@ void OPGSL::SourcePosterior3D::update(float cx, float cy, float cz, float concen
                 if (concentration > 0.01f) {
                     weight = std::clamp(std::sqrt(concentration) * 1.5f, 0.0f, 3.0f);
                 } else {
-                    weight = 0.3f;  // Enhanced non-detection information
+                    weight = 0.001f;  // Bug3 fix: weak positive, not negative
                 }
                 grid[i][j][k] += weight * log_lik;
                 if (grid[i][j][k] > max_log) max_log = grid[i][j][k];
@@ -520,7 +481,7 @@ void OPGSL::sdnbvStep(float& best_x, float& best_y) {
         // If concentration is already HIGH near current position, we are near the source.
         // Skip upwind tracking and go directly to EFE convergence.
         // This handles cases where source is DOWNWIND from plume detection area.
-        if (false) {  // DISABLED: always go upwind
+        if (best_hit_conc_ > 0.15f) {
             // Check if best hit is within 2m of current position
             float bh_dx = best_hit_x_ - cx, bh_dy = best_hit_y_ - cy;
             float bh_dist = std::sqrt(bh_dx*bh_dx + bh_dy*bh_dy);
@@ -552,77 +513,6 @@ void OPGSL::sdnbvStep(float& best_x, float& best_y) {
             return;
         }
     }
-
-    // ====== SBD: Sequential Bayesian Design (Phase 2 alternative) ======
-    // Replaces EFE with EIG-maximization from clinical trial design
-    // Key insight: each waypoint is a Bayesian experiment maximizing expected information gain
-    if (use_sbd_ && step_count_ > 16) {
-        // Safety: ensure EIG field is initialized
-        if (eig_field_.rows() == 0 || eig_field_.cols() == 0) {
-            eig_field_ = Eigen::MatrixXf::Zero(n_cells_, n_cells_);
-            prev_posterior_ = Eigen::MatrixXf::Constant(n_cells_, n_cells_, -std::log((float)(n_cells_*n_cells_)));
-        }
-        // 1. Compute EIG field from ensemble
-        computeEIGField();
-        // 1b. Compute W-RAIG field (risk-aware version)
-        if (use_wraig_) computeWRAIGField();
-
-        // 2. CUSUM-BCD: posterior change detection
-        auto field = field_estimator_.computeField();
-        float kl_change = computePosteriorKL(prev_posterior_, field.log_field);
-        cusum_stat_ = std::max(0.0f, cusum_stat_ + kl_change - cusum_drift_);
-        prev_posterior_ = field.log_field;
-
-        // 3. Check convergence: posterior STABLE when KL change stays low
-        if (kl_change < 0.01f) {
-            sbd_stable_count_++;
-        } else {
-            sbd_stable_count_ = 0;
-        }
-        if (sbd_stable_count_ >= 5) {
-            GSL_INFO("SBD: Posterior STABLE (kl={:.6f} stable_count={} > 5), moving to MAP",
-                     kl_change, sbd_stable_count_);
-            float map_x, map_y, map_z;
-            posterior3d_.getMAP(map_x, map_y, map_z);
-            best_x = map_x;
-            best_y = map_y;
-            clipToMapBounds(best_x, best_y);
-            return;
-        }
-
-        // 4. Find EIG-max cell
-        int max_i, max_j;
-        float max_eig = (use_wraig_ && wraig_field_.rows() > 0) ? wraig_field_.maxCoeff(&max_i, &max_j) : eig_field_.maxCoeff(&max_i, &max_j);
-
-        // 5. Interim analysis: EIG low -> trigger Levy exploration
-        if (max_eig < eig_threshold_) {
-            GSL_INFO("SBD: EIG low ({:.5f} < {:.4f}), triggering Levy exploration", max_eig, eig_threshold_);
-            levyExploration(best_x, best_y, cx, cy);
-            return;
-        }
-
-        // 6. Navigate to EIG-max cell (adaptive allocation)
-        float target_x = max_i * resolution_ - map_half_size_;
-        float target_y = max_j * resolution_ - map_half_size_;
-        float dx = target_x - cx, dy = target_y - cy;
-        float d = std::sqrt(dx*dx + dy*dy);
-
-        // Adaptive step size based on EIG magnitude
-        float step_size = std::min(1.5f, std::max(0.5f, d * 0.6f));
-        if (d > 0.2f) {
-            best_x = cx + step_size * dx / d;
-            best_y = cy + step_size * dy / d;
-        } else {
-            best_x = target_x;
-            best_y = target_y;
-        }
-        clipToMapBounds(best_x, best_y);
-        GSL_INFO("SBD: EIG-max ({:.2f},{:.2f}) eig={:.5f} cusum={:.3f} step={}",
-                 best_x, best_y, max_eig, cusum_stat_, step_count_);
-        return;
-    }
-
-
 
     // -- Phase 2: EFE-driven fine convergence (steps 19+) --
     // Adaptive step: high conc -> small step, low conc -> large step
@@ -695,7 +585,8 @@ void OPGSL::sdnbvStep(float& best_x, float& best_y) {
     // This naturally balances exploration and exploitation under one
     // principled objective, replacing ad-hoc NBV heuristics.
     // ================================================================
-        if (use_sdnbv_ && step_count_ > 18) {
+
+    if (use_sdnbv_ && step_count_ > 18) {
         float eig_x, eig_y, eig_z;
         posterior3d_.getFIMEigenvalues(eig_x, eig_y, eig_z);
         float H_current = posterior3d_.getEntropy();
@@ -855,103 +746,6 @@ void OPGSL::sdnbvStep(float& best_x, float& best_y) {
     GSL_INFO("SDNBV: IG target ({:.2f},{:.2f}) ig={:.4f} ws={:.3f}", best_x, best_y, best_ig, ws);
 }
 
-
-// ============================================================
-// SBD: Sequential Bayesian Design - EIG Field Computation
-// ============================================================
-void OPGSL::computeEIGField() {
-    auto& ensemble = field_estimator_.ensembleFields();
-    int n_e = field_estimator_.ensembleSize();
-    if (n_e == 0 || eig_field_.rows() == 0) return;
-
-    int rows = std::min((int)eig_field_.rows(), (int)ensemble[0].rows());
-    int cols = std::min((int)eig_field_.cols(), (int)ensemble[0].cols());
-    eig_field_.setZero();
-
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            float eig = 0.0f;
-            float p_marginal = 0.0f;
-            std::vector<float> p_e(n_e);
-            for (int e = 0; e < n_e; e++) {
-                float log_val = ensemble[e](i, j);
-                p_e[e] = 1.0f / (1.0f + std::exp(-std::clamp(log_val, -20.0f, 20.0f)));
-                p_marginal += p_e[e];
-            }
-            p_marginal /= n_e;
-
-            for (int e = 0; e < n_e; e++) {
-                float pe = p_e[e];
-                if (pe > 1e-7f && pe < 1.0f - 1e-7f && p_marginal > 1e-7f && p_marginal < 1.0f - 1e-7f) {
-                    eig += (1.0f / n_e) * (
-                        pe * std::log(pe / p_marginal) +
-                        (1.0f - pe) * std::log((1.0f - pe) / (1.0f - p_marginal))
-                    );
-                }
-            }
-            eig_field_(i, j) = eig;
-        }
-    }
-}
-
-float OPGSL::computePosteriorKL(const Eigen::MatrixXf& prev, const Eigen::MatrixXf& curr) {
-    if (prev.rows() == 0) return 0.0f;
-    float kl = 0.0f;
-    int N = prev.rows();
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
-            float p = std::exp(prev(i, j));
-            float q = std::exp(curr(i, j));
-            if (p > 1e-10f && q > 1e-10f) {
-                kl += p * std::log(p / q);
-            }
-        }
-    }
-    return kl;
-}
-
-
-void OPGSL::computeWRAIGField() {
-    if (!use_wraig_ || eig_field_.rows() == 0) return;
-    auto& ensemble = field_estimator_.ensembleFields();
-    int n_e = ensemble.size();
-    if (n_e < 2) return;
-
-    int rows = eig_field_.rows();
-    int cols = eig_field_.cols();
-    wraig_field_ = Eigen::MatrixXf::Zero(rows, cols);
-
-    // For each grid cell, compute EIG for each ensemble member
-    std::vector<Eigen::MatrixXf> ensemble_eig(n_e);
-    for (int e = 0; e < n_e; e++) {
-        ensemble_eig[e] = Eigen::MatrixXf::Zero(rows, cols);
-    }
-
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            float p_marginal = 0.0f;
-            std::vector<float> p_e(n_e);
-            for (int e = 0; e < n_e; e++) {
-                float log_val = ensemble[e](i, j);
-                p_e[e] = 1.0f / (1.0f + std::exp(-std::clamp(log_val, -20.0f, 20.0f)));
-                p_marginal += p_e[e];
-            }
-            p_marginal /= n_e;
-            for (int e = 0; e < n_e; e++) {
-                float pe = p_e[e];
-                float eig = 0.0f;
-                if (pe > 1e-7f && pe < 1.0f - 1e-7f && p_marginal > 1e-7f && p_marginal < 1.0f - 1e-7f) {
-                    eig = pe * std::log(pe / p_marginal) +
-                          (1.0f - pe) * std::log((1.0f - pe) / (1.0f - p_marginal));
-                }
-                ensemble_eig[e](i, j) = eig;
-            }
-        }
-    }
-    wraig_.computeField(ensemble_eig, wraig_field_);
-    GSL_INFO("W-RAIG field computed: beta={:.2f}", wraig_cfg_.beta);
-}
-
 void OPGSL::infotaxisStep(float& best_x, float& best_y) {
     sdnbvStep(best_x, best_y);
 }
@@ -971,54 +765,6 @@ void OPGSL::processGasAndWindMeasurements(double concentration, double windSpeed
 
     // Update field estimator
     field_estimator_.addObservation(latest_gas_, cx, cy, latest_wind_x_, latest_wind_y_, elapsed_time_);
-
-    // CP: update confidence region
-    if (use_cp_) {
-        float mx, my, mz;
-        posterior3d_.getMAP(mx, my, mz);
-        cp_region_.addMAP(mx, my, mz);
-        // BUG-1 fix: use member variables instead of static
-        float residual = std::sqrt((mx - cp_prev_mx_) * (mx - cp_prev_mx_) + (my - cp_prev_my_) * (my - cp_prev_my_));
-        cp_stopping_.addObs(residual);
-        cp_prev_mx_ = mx; cp_prev_my_ = my;
-    }
-
-    // DDM: accumulate evidence for stopping decision (FIXED: posterior entropy change rate)
-    // Fix: old formula had step-1 false positive (map_move=0, gas high -> huge LLR)
-    // New: posterior-based LLR with warm-up period
-    if (use_ddm_) {
-        float mx, my, mz;
-        posterior3d_.getMAP(mx, my, mz);
-        float map_move = std::sqrt((mx - ddm_prev_map_x_) * (mx - ddm_prev_map_x_) +
-                                    (my - ddm_prev_map_y_) * (my - ddm_prev_map_y_));
-
-        // Warm-up: don't accumulate evidence in first 5 steps
-        // The posterior needs time to burn in before we trust its state
-        if (step_count_ > 5) {
-            // Posterior change rate: negative when converging (good)
-            float posterior_change = map_move;
-
-            // Gas evidence: only matters if posterior is still moving
-            // If posterior is stable AND gas is consistent -> source found
-            float gas_consistency = 0.0f;
-            if (map_move < 0.5f) {  // Posterior is relatively stable
-                // Check if gas readings are consistent with source at MAP
-                float dist_to_map = std::sqrt((cx - mx)*(cx - mx) + (cy - my)*(cy - my));
-                float expected_conc = std::exp(-dist_to_map * dist_to_map / 2.0f);
-                gas_consistency = latest_gas_ * expected_conc;
-            }
-
-            // LLR: evidence FOR convergence
-            // Positive when: posterior stable AND gas consistent
-            // Negative when: posterior still moving
-            float llr = gas_consistency - 0.5f * posterior_change;
-
-            ddm_stopping_.addObservation(llr, elapsed_time_);
-        }
-
-        ddm_prev_map_x_ = mx;
-        ddm_prev_map_y_ = my;
-    }
 
     // Update altitude posterior
     updateAltitudePosterior(cz, latest_gas_);
@@ -1350,10 +1096,9 @@ void OPGSL::scStep(float& out_x, float& out_y, float cx, float cy) {
 // ============================================================
 GSLResult OPGSL::checkSourceFound() {
     // V5: Relaxed early constraints for faster convergence
-    if (convergence_reported_) return GSLResult::Success;
-    if (elapsed_time_ < 5.0f) return GSLResult::Running;
+    if (elapsed_time_ < 15.0f) return GSLResult::Running;
     if (gas_hit_count_ < 3) return GSLResult::Running;
-    if (step_count_ < 5) return GSLResult::Running;
+    if (step_count_ < 15) return GSLResult::Running;
 
     auto field = field_estimator_.computeField();
     float cx = currentRobotPosition.x, cy = currentRobotPosition.y;
@@ -1362,30 +1107,6 @@ GSLResult OPGSL::checkSourceFound() {
     float dx = map_x - cx, dy = map_y - cy;
     float dist_to_peak = std::sqrt(dx*dx + dy*dy);
     float dz = std::abs(map_z - current_altitude_);
-
-    // BUG-5 fix: Actually use CP stopping criterion
-    if (use_cp_ && cp_stopping_.shouldStop()) {
-        float mx, my, mz; posterior3d_.getMAP(mx, my, mz);
-        GSL_INFO("CP-STOP: converged at step={} MAP=({:.2f},{:.2f},{:.2f}) width={:.3f}",
-                 step_count_, mx, my, mz, cp_stopping_.getWidth());
-        convergence_reported_ = true; return GSLResult::Success;
-    }
-
-    // DDM: Drift-Diffusion Model evidence-accumulation stopping
-    if (use_ddm_ && ddm_stopping_.shouldStop()) {
-        float mx, my, mz; posterior3d_.getMAP(mx, my, mz);
-        GSL_INFO("DDM-STOP: converged at step={} MAP=({:.2f},{:.2f},{:.2f}) evidence={:.3f} theta={:.3f}",
-                 step_count_, mx, my, mz, ddm_stopping_.getEvidence(), ddm_stopping_.getAdaptiveThreshold());
-        convergence_reported_ = true; return GSLResult::Success;
-    }
-
-    // BUG-5 fix: Actually use CP stopping criterion
-    if (use_cp_ && cp_stopping_.shouldStop()) {
-        float mx, my, mz; posterior3d_.getMAP(mx, my, mz);
-        GSL_INFO("CP-STOP: converged at step={} MAP=({:.2f},{:.2f},{:.2f}) width={:.3f}",
-                 step_count_, mx, my, mz, cp_stopping_.getWidth());
-        convergence_reported_ = true; return GSLResult::Success;
-    }
 
     // V5: Multiple convergence paths
     bool near_map = dist_to_peak < 1.5f;
@@ -1408,21 +1129,14 @@ GSLResult OPGSL::checkSourceFound() {
     if (stable_steps_count_ >= 3) {
         GSL_INFO("OPGSL-SDNBV CONVERGED: entropy={:.2f} dist={:.2f} z_dist={:.2f} hits={} step={} best_c={:.3f}",
                  field.field_entropy, dist_to_peak, dz, gas_hit_count_, step_count_, best_hit_conc_);
-        convergence_reported_ = true; return GSLResult::Success;
+        return GSLResult::Success;
     }
     // V5.2: fast exit requires MAP also near robot (not just best_hit)
     float map_dist = std::sqrt((map_x-cx)*(map_x-cx) + (map_y-cy)*(map_y-cy));
     if (step_count_ >= 20 && best_hit_conc_ > 0.05f && near_best_hit && map_dist < 2.5f) {
         GSL_INFO("OPGSL-SDNBV FAST EXIT: best_c={:.3f} near_hit={} map_dist={:.2f} step={}",
                  best_hit_conc_, near_best_hit, map_dist, step_count_);
-        convergence_reported_ = true; return GSLResult::Success;
-    }
-    // BUG-4 fix: Removed forced 250s timeout - let algorithm converge naturally
-    // Only hard timeout at 300s (from maxSearchTime param)
-    if (elapsed_time_ > 295.0f && !convergence_reported_) {
-        float mx, my, mz; posterior3d_.getMAP(mx, my, mz);
-        GSL_INFO("HARD TIMEOUT: MAP=({:.2f},{:.2f},{:.2f}) step={}", mx, my, mz, step_count_);
-        convergence_reported_ = true; return GSLResult::Success;
+        return GSLResult::Success;
     }
     if (step_count_ >= 300) return GSLResult::Failure;
     return GSLResult::Running;

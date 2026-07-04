@@ -116,6 +116,9 @@ install(
 	DIRECTORY resources
 	DESTINATION share/${PROJECT_NAME}
 )
+target_compile_definitions(gsl_actionserver_node PRIVATE ENABLE_PLUME_TRACKING=1)
+target_compile_definitions(gsl_actionserver_node PRIVATE ENABLE_GrGSL=1)
+target_compile_definitions(gsl_actionserver_node PRIVATE ENABLE_PMFS=1)
 target_compile_definitions(gsl_actionserver_node PRIVATE ENABLE_SENSOR_AWARE_SC_PF=1)
 target_compile_definitions(gsl_actionserver_node PRIVATE ENABLE_OPGSL=1)
 ament_package()
