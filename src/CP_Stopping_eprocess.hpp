@@ -4,97 +4,150 @@
 #include <algorithm>
 #include <cmath>
 #include <numeric>
+#include <limits>
 
 namespace GSL { namespace CP {
 
 // =========================================================================
-//  E-Process Stopping Rule (replacing OnlineConformalStopping)
-//  
-//  Mathematical basis: Anytime-Valid Inference via e-processes
-//  Reference: Ramdas et al. (2023) "Game-theoretic Statistics and Safe
-//             Anytime-Valid Inference" Statistical Science 38(4)
+//  E-Process Stopping Rule - v2 (Hoeffding super-martingale)
 //
-//  Key property: P(sup_T M_T >= 1/delta) <= delta (Ville's inequality)
-//  This holds for ANY stopping time, no exchangeability required.
+//  Anytime-valid inference via e-processes.
+//  Reference: Ramdas et al. (2023) Game-theoretic Statistics and Safe
+//             Anytime-Valid Inference. Statistical Science 38(4).
+//             DOI:10.1214/23-sts894
+//
+//  Key property (Ville inequality):
+//      P( sup_T M_T >= 1/delta ) <= delta
+//  for ANY stopping time T, provided M_t is a super-martingale
+//  under H0 with M_0 = 1.
+//
+//  v2 fixes over v1:
+//  - Hoeffding e-value: E_t = exp(eta*x_t - eta^2*B^2/2) where x_t is
+//    the bounded score and B the half-width.  This guarantees E[E_t|H0] <= 1
+//    whenever E[x_t|H0] <= 0 (i.e., E[residual] >= thresh under H0).
+//  - Warmup period: no evidence accumulation during posterior burn-in.
+//  - Higher min_steps and stable_req to prevent premature triggers.
+//  - Explicit post-warmup counter so warmup does not count toward min_steps.
 // =========================================================================
 
 struct EProcessConfig {
-    float delta;           // Significance level (e.g., 0.10 → 90% confidence)
-    int min_steps;         // Minimum steps before stopping allowed (warm-up)
-    int max_win;           // Maximum window size for adaptive threshold
-    float convergence_thresh; // Residual threshold for "converged" (meters)
-    int stable_req;        // Consecutive stable steps required
-    
-    // E-value calibration parameters
-    float eta;             // Learning rate for e-value construction
-    float decay;           // Exponential decay for old observations
-    
+    float delta;               // Significance level (e.g. 0.10 -> 90 pct conf)
+    int   min_steps;           // Min post-warmup observations before stopping
+    int   max_win;             // Max sliding-window size for residual history
+    float convergence_thresh;  // Residual threshold converged (meters)
+    int   stable_req;          // Consecutive stable post-warmup steps required
+    float eta;                 // Hoeffding tilting parameter (learning rate)
+    float decay;               // Discount on log-M (1.0 = strict e-process)
+    int   warmup_steps;        // Steps before e-process starts accumulating
+
     EProcessConfig()
         : delta(0.10f)
-        , min_steps(15)
+        , min_steps(20)
         , max_win(50)
         , convergence_thresh(1.5f)
-        , stable_req(3)
-        , eta(0.5f)
-        , decay(0.95f)
+        , stable_req(8)
+        , eta(0.40f)
+        , decay(1.0f)          // 1.0 = strict anytime-valid; <1.0 = discounted
+        , warmup_steps(10)
     {}
 };
 
 class EProcessStopping {
 public:
     explicit EProcessStopping(const EProcessConfig& c = EProcessConfig())
-        : cfg_(c), log_M_(0.0f), stable_count_(0) {}
+        : cfg_(c)
+        , log_M_(0.0f)
+        , stable_count_(0)
+        , post_warmup_count_(0)
+    {
+        // Pre-compute Hoeffding penalty: psi = eta^2 * B^2 / 2
+        // where B = convergence_thresh is the half-width of the bounded score.
+        //
+        // x_t = clamp(thresh - r_t, -B, B)  in [-B, B]
+        // Hoeffding lemma: E[exp(eta*x)] <= exp(eta^2 * (2B)^2 / 8)
+        //                                  = exp(eta^2 * B^2 / 2) = exp(psi)
+        float B = cfg_.convergence_thresh;
+        psi_ = 0.5f * cfg_.eta * cfg_.eta * B * B;
+    }
 
-    // Add a new observation (MAP residual between consecutive steps)
+    // -----------------------------------------------------------------
+    //  Add a new observation (MAP residual between consecutive steps)
+    // -----------------------------------------------------------------
     void addObs(float residual) {
+        // Guard: ignore NaN / Inf
+        if (!std::isfinite(residual))
+            return;
+
         residuals_.push_back(residual);
         if ((int)residuals_.size() > cfg_.max_win)
             residuals_.pop_front();
-        
-        // Compute e-value for this step
-        float e_val = computeEValue(residual);
-        e_values_.push_back(e_val);
-        
-        // Update log e-process: log(M_T) = sum log(E_t)
-        log_M_ += std::log(e_val);
-        
-        // Update stability counter
+
+        // ---- Warmup phase: no evidence accumulation ----
+        // The posterior needs time to burn in; early MAP positions
+        // can be deceptively stable (diffuse posterior, few observations).
+        if ((int)residuals_.size() <= cfg_.warmup_steps) {
+            e_values_.push_back(1.0f);
+            if ((int)e_values_.size() > cfg_.max_win)
+                e_values_.pop_front();
+            return;
+        }
+
+        // ---- Post-warmup phase ----
+        post_warmup_count_++;
+
+        // Update stability counter (only post-warmup)
         if (residual < cfg_.convergence_thresh)
             stable_count_++;
         else
             stable_count_ = 0;
+
+        // Compute Hoeffding e-value
+        float e_val = computeEValue(residual);
+        e_values_.push_back(e_val);
+        if ((int)e_values_.size() > cfg_.max_win)
+            e_values_.pop_front();
+
+        // Update log e-process:
+        //   decay = 1.0 : log M_t = log M_{t-1} + log E_t  (strict e-process)
+        //   decay < 1.0 : log M_t = decay*log M_{t-1} + log E_t  (discounted)
+        // Discounted form is NOT a strict e-process but is more robust
+        // when the stationarity assumption of H0 may be violated.
+        log_M_ = cfg_.decay * log_M_ + std::log(e_val);
     }
 
-    // Check if e-process threshold crossed → should stop
+    // -----------------------------------------------------------------
+    //  Check if stopping criterion is met
+    // -----------------------------------------------------------------
     bool shouldStop() const {
-        // Guard: need minimum observations
-        if ((int)residuals_.size() < cfg_.min_steps)
+        // Guard: need minimum post-warmup observations
+        if (post_warmup_count_ < cfg_.min_steps)
             return false;
-        
+
         // Primary: e-process threshold (anytime-valid)
-        // M_T >= 1/delta → log(M_T) >= -log(delta)
+        // M_t >= 1/delta  <=>  log M_t >= -log(delta)
         float log_threshold = -std::log(cfg_.delta);
         if (log_M_ >= log_threshold)
             return true;
-        
-        // Secondary: stability check (practical convergence)
+
+        // Secondary: sustained stability (consecutive post-warmup steps)
         if (stable_count_ >= cfg_.stable_req)
             return true;
-        
+
         return false;
     }
 
-    // Get current confidence level: P(H0 | data) ≈ 1 / (1 + M_T)
+    // Approximate posterior probability: P(H0 | data) ~ 1/(1 + M_t)
     float getConfidence() const {
-        return 1.0f / (1.0f + std::exp(log_M_));
+        float M = std::exp(log_M_);
+        return 1.0f / (1.0f + M);
     }
 
-    // Get current e-process value
+    // Current e-process value M_t
     float getEProcess() const {
         return std::exp(log_M_);
     }
 
-    // Get adaptive width (for compatibility with old interface)
+    // Adaptive width for compatibility with old interface
     float getWidth() const {
         int n = residuals_.size();
         if (n < 3) return 1e6f;
@@ -109,41 +162,58 @@ public:
         e_values_.clear();
         log_M_ = 0.0f;
         stable_count_ = 0;
+        post_warmup_count_ = 0;
     }
 
     int size() const { return residuals_.size(); }
+    int postWarmupCount() const { return post_warmup_count_; }
 
 private:
     EProcessConfig cfg_;
     std::deque<float> residuals_;
     std::deque<float> e_values_;
-    float log_M_;       // log of e-process product
-    int stable_count_;
+    float log_M_;           // log of (discounted) e-process
+    int   stable_count_;    // consecutive post-warmup stable steps
+    int   post_warmup_count_;
+    float psi_;             // pre-computed Hoeffding penalty
 
-    // Compute e-value E_t from residual r_t
+    // -----------------------------------------------------------------
+    //  Hoeffding e-value for bounded score
     //
-    // Under H0 (not converged): residuals are large → E_t < 1
-    // Under H1 (converged): residuals are small → E_t > 1
+    //  Score:  x_t = clamp( thresh - r_t,  -thresh,  thresh )
+    //    r_t < thresh  =>  x_t > 0   (convergence evidence)
+    //    r_t = thresh  =>  x_t = 0   (neutral)
+    //    r_t > thresh  =>  x_t < 0   (evidence against)
     //
-    // Design: E_t = exp(eta * (thresh - r_t))
-    // When r_t < thresh: E_t > 1 (evidence FOR convergence)
-    // When r_t > thresh: E_t < 1 (evidence AGAINST convergence)
+    //  E-value:  E_t = exp( eta * x_t  -  eta^2 * B^2 / 2 )
     //
-    // This ensures:
-    // - Under H0: E[E_t] ≤ 1 (super-martingale)
-    // - Under H1: E[E_t] > 1 (e-process grows)
+    //  Super-martingale guarantee (Hoeffding lemma):
+    //    For bounded X in [-B, B]:
+    //      E[exp(eta * X)]  <=  exp(eta^2 * (2B)^2 / 8)
+    //                        =  exp(eta^2 * B^2 / 2)
+    //    Therefore, if E[x_t|H0] <= 0:
+    //      E[E_t|H0] = E[exp(eta*x_t - psi)] <= exp(psi - psi) = 1
+    //
+    //  Per-step log contribution bounded by: eta*B - psi = eta*B*(1 - eta/2)
+    //  With eta=0.4, B=1.5: max log = 0.48 -> need >= 5 perfect post-warmup
+    //  steps.  With min_steps=20, warmup=10: total >= 20.
+    //
+    //  The neutral residual (E_t = 1 exactly) occurs at:
+    //    x_t = psi/eta = eta*B^2/2  ->  r_neutral = thresh - eta*thresh^2/2
+    //  With eta=0.4, thresh=1.5:  r_neutral = 1.5 - 0.45 = 1.05 m
+    //  Residuals above 1.05 m provide evidence AGAINST convergence.
+    // -----------------------------------------------------------------
     float computeEValue(float residual) const {
-        // Exponential tilting based on convergence threshold
-        float e_val = std::exp(cfg_.eta * (cfg_.convergence_thresh - residual));
-        
-        // Clamp to prevent numerical issues
-        // Min: 0.01 (don't let old evidence dominate too much)
-        // Max: 10.0 (don't let single observation dominate)
-        return std::clamp(e_val, 0.01f, 10.0f);
+        float B = cfg_.convergence_thresh;
+        float x_t = std::clamp(B - residual, -B, B);
+        float log_e = cfg_.eta * x_t - psi_;
+        return std::exp(log_e);
     }
 };
 
-// Keep SourceConfidenceRegion unchanged (it's still useful)
+// =========================================================================
+//  SourceConfidenceRegion  (unchanged)
+// =========================================================================
 class SourceConfidenceRegion {
 public:
     struct Config {

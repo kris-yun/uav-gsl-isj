@@ -113,6 +113,11 @@ private:
     float westernmost_hit_x_ = 1e6f, easternmost_hit_x_ = -1e6f;
     int total_measurements_ = 0;
 
+    // V8: Start position capture (replaces hardcoded spiral center)
+    float start_x_ = 0.0f, start_y_ = 0.0f;
+    bool start_pos_captured_ = false;
+    bool no_gas_in_phase1_ = false;  // Track if Phase 1 found any gas
+
     // Grid config
     int n_cells_ = 40;
     float resolution_ = 0.5f, map_half_size_ = 10.0f;
@@ -132,6 +137,7 @@ private:
     // Wind history
     std::vector<float> obs_history_x_, obs_history_y_, obs_history_c_;
     std::deque<float> wind_dir_history_;
+    float wind_confidence_ = 0.5f;  // Wind direction stability [0,1]
     static constexpr int kWindHistorySize = 10;
 
     // Module 1: Lévy Flight state
@@ -151,6 +157,7 @@ private:
 
     // Misc
     std::string audit_file_;
+    std::string data_path_;
     std::ofstream audit_stream_;
     std::mt19937 rng_;
     double last_update_time_ = 0.0;
@@ -229,6 +236,17 @@ private:
                             float wind_x, float wind_y, float wind_speed) const;
         // FIM: identify which dimension has highest uncertainty
         void getFIMEigenvalues(float& eig_x, float& eig_y, float& eig_z) const;
+        float poissonRate(float sx, float sy, float cx, float cy, float wind_x, float wind_y, float wind_speed) const;
+        void binaryEventUpdate(float cx, float cy, float cz, float concentration, float detection_threshold, float wind_x, float wind_y, float wind_speed);
+        bool use_event_driven_ = false;
+        float detection_threshold_ = 0.01f;
+        float arrival_rate_lambda0_ = 2.0f;
+        float arrival_rate_ell_ = 3.0f;
+        float arrival_rate_alphaw_ = 0.5f;
+        float wind_confidence_ = 0.5f;  // Wind direction stability [0,1]
+        // Adaptive discounted posterior: entropy-based forgetting
+        float posterior_alpha_ = 0.95f;       // standard discount factor
+        float posterior_mix_gamma_ = 0.05f;  // conditional mixing strength
         float plumeLogLikelihood(float sx, float sy, float sz,
                                   float cx, float cy, float cz,
                                   float wind_x, float wind_y, float wind_speed) const;
@@ -258,6 +276,7 @@ private:
     int calibration_index_ = 0;
     int calibration_count_ = 0;
     float best_calibrated_z_ = 0.3f;
+    // V7.1: MAP stagnation tracking
 
     void startCalibration();
     void processCalibrationMeasurement(float z, float concentration);
@@ -306,7 +325,7 @@ private:
 
     // CP: Conformal Prediction stopping
     bool use_cp_ = true;
-    CP::OnlineConformalStopping cp_stopping_;
+    CP::EProcessStopping cp_stopping_;
     CP::SourceConfidenceRegion cp_region_;
     float cp_width_threshold_ = 1.5f;
     int cp_stable_required_ = 3;
@@ -333,5 +352,29 @@ private:
     float eig_height_update_interval_ = 5.0f;
     void updateHeightPosterior(float concentration, float rx, float ry);
     float selectBestHeight();
+
+    // EDPA-GSL Layer 1
+    void updatePosteriorEventDriven(float cx, float cy, float cz,
+                                     bool detected, float concentration,
+                                     float wind_x, float wind_y, float wind_speed);
+    // EDPA-GSL Layer 2
+    struct AdaptiveEIGResult { float x,y,z,eig_value,gamma; };
+    AdaptiveEIGResult computeAdaptiveEIG();
+    float computeEIGGlobal(float cx,float cy,float cz,float wx,float wy,float ws);
+    float computeEIGLocal(float cx,float cy,float cz,float wx,float wy,float ws);
+    // EDPA-GSL Layer 3
+    struct CredibleRegionStopping {
+        float epsilon=1.5f,alpha=0.10f,eta=5.0f,delta=0.10f;
+        float e_process=0.0f,prev_radius=-1.0f;
+        int warmup_steps=3; bool fired=false;
+    };
+    CredibleRegionStopping cr_stopping_;
+    float computeCredibleRegionRadius();
+    bool use_edpa_=false; bool edpa_should_stop_=false; bool use_event_driven_posterior_=false;
+    float detection_threshold_=0.01f;
+    float arrival_rate_lambda0_=1.0f,arrival_rate_ell_=2.0f,arrival_rate_alphaw_=0.5f;
+    float initial_entropy_=1.0f; bool entropy_initialized_=false;
+
 };
+
 } // namespace GSL

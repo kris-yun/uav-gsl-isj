@@ -68,26 +68,43 @@ void OPGSL::declareParameters() {
     convergence_stable_steps_ = getParam<int>("opgsl.convergence.stable_steps", 5);
     convergence_min_time_ = getParam<double>("opgsl.convergence.min_time", 30.0);
     audit_file_ = getParam<std::string>("opgsl.audit_file", "");
+    data_path_ = getParam<std::string>("opgsl.data_path", "");
     use_levy_ = getParam<bool>("opgsl.modules.levy", true);
     use_bout_ = getParam<bool>("opgsl.modules.bout", true);
     use_adaptive_step_ = getParam<bool>("opgsl.modules.adaptive_step", true);
     use_bhex_ = getParam<bool>("opgsl.modules.bhex", false);
     use_waz_ = getParam<bool>("opgsl.modules.waz", false);
     use_sc_ = getParam<bool>("opgsl.modules.sc", false);
+    // Event-driven binary model parameters (Poisson filament arrival)
+    posterior3d_.use_event_driven_ = getParam<bool>("opgsl.event_driven.enabled", false);
+    posterior3d_.detection_threshold_ = getParam<float>("opgsl.event_driven.detection_threshold", 0.01f);
+    posterior3d_.arrival_rate_lambda0_ = getParam<float>("opgsl.event_driven.lambda0", 2.0f);
+    posterior3d_.arrival_rate_ell_ = getParam<float>("opgsl.event_driven.ell", 3.0f);
+    posterior3d_.arrival_rate_alphaw_ = getParam<float>("opgsl.event_driven.alpha_w", 0.5f);
+    use_edpa_ = getParam<bool>("opgsl.edpa.enabled", false);
+    GSL_INFO("Event-driven model: enabled={} lambda0={:.1f} ell={:.1f} alpha_w={:.2f} threshold={:.3f}",
+             posterior3d_.use_event_driven_, posterior3d_.arrival_rate_lambda0_, posterior3d_.arrival_rate_ell_, posterior3d_.arrival_rate_alphaw_, posterior3d_.detection_threshold_);
+
     use_upwind_tracking_ = getParam<bool>("opgsl.modules.upwind_tracking", true);
     // SBD module parameters
     use_sbd_ = getParam<bool>("opgsl.modules.sbd", false);
     int seed_param = getParam<int>("opgsl.seed", -1);
-    if (seed_param >= 0) { GSL_INFO("RNG seed param={} (exploration remains random)", seed_param); }
-    rng_.seed(std::random_device{}());  // Always random for diverse exploration
+    if (seed_param >= 0) { GSL_INFO("Using deterministic seed={}", seed_param); }
+    if (seed_param >= 0) {
+        rng_.seed(seed_param);
+        GSL_INFO("RNG seeded with param={}", seed_param);
+    } else {
+        rng_.seed(std::random_device{}());
+        GSL_INFO("RNG seeded randomly");
+    }
     use_cp_ = getParam<bool>("opgsl.modules.cp", true);
     cp_width_threshold_ = getParam<float>("opgsl.cp.width_threshold", 1.5f);
     cp_stable_required_ = getParam<int>("opgsl.cp.stable_steps", 3);
-    CP::StoppingConfig cp_cfg;
-    cp_cfg.alpha = getParam<float>("opgsl.cp.alpha", 0.10f);
-    cp_cfg.w_thresh = cp_width_threshold_;
+    CP::EProcessConfig cp_cfg;
+    cp_cfg.delta = getParam<float>("opgsl.cp.alpha", 0.10f);
+    cp_cfg.convergence_thresh = cp_width_threshold_;
     cp_cfg.stable_req = cp_stable_required_;
-    cp_stopping_ = CP::OnlineConformalStopping(cp_cfg);
+    cp_stopping_ = CP::EProcessStopping(cp_cfg);
     GSL_INFO("SBD DEBUG: use_sbd_={} use_cp_={}", use_sbd_, use_cp_);
     // DDM: Drift-Diffusion Model stopping parameters
     use_ddm_ = getParam<bool>("opgsl.modules.ddm", true);
@@ -161,7 +178,48 @@ void OPGSL::Initialize() {
     for (int k = 0; k < kNumHeights; k++) eig_height_posterior_[k] = 0.0f;
     eig_selected_height_ = 2.0f; eig_height_update_count_ = 0;
     // SD-NBV: Initialize 3D source posterior
-    posterior3d_.init(-7.5f, 3.9f, -7.9f, 0.82f, z_min_, z_max_);
+    // Adaptive grid: read environment bounds from OccupancyGrid3D.csv
+    {
+        float emin_x=-5, emax_x=5, emin_y=-5, emax_y=5;
+        if (!data_path_.empty()) {
+            std::string occ_file = data_path_ + "/OccupancyGrid3D.csv";
+            std::ifstream occf(occ_file);
+            if (occf.is_open()) {
+                std::string line;
+                while (std::getline(occf, line)) {
+                    if (line.rfind("#env_min", 0) == 0) {
+                        auto pos = line.find(' ');
+                        if (pos != std::string::npos) {
+                            std::istringstream iss(line.substr(pos));
+                            iss >> emin_x >> emin_y;
+                        }
+                    } else if (line.rfind("#env_max", 0) == 0) {
+                        auto pos = line.find(' ');
+                        if (pos != std::string::npos) {
+                            std::istringstream iss(line.substr(pos));
+                            iss >> emax_x >> emax_y;
+                        }
+                    }
+                }
+                occf.close();
+                GSL_INFO("SDNBV: grid from OccupancyGrid: [{:.1f},{:.1f}]x[{:.1f},{:.1f}]", emin_x, emax_x, emin_y, emax_y);
+            } else {
+                GSL_WARN("SDNBV: OccupancyGrid not found at {}, using default [-5,5]", occ_file);
+            }
+        }
+        // Adaptive n_cells: maintain ~0.4m resolution regardless of env size
+        float env_w = emax_x - emin_x;
+        float env_h = emax_y - emin_y;
+        float target_res = 0.4f;
+        int nx_auto = std::max(16, std::min(50, (int)(env_w / target_res)));
+        int ny_auto = std::max(16, std::min(50, (int)(env_h / target_res)));
+        int nz_auto = posterior3d_.nz_;
+        posterior3d_.nx_ = nx_auto;
+        posterior3d_.ny_ = ny_auto;
+        GSL_INFO("SDNBV: adaptive grid {}x{}x{}, res ~{:.2f}m, bounds [{:.1f},{:.1f}]x[{:.1f},{:.1f}]",
+                 nx_auto, ny_auto, nz_auto, target_res, emin_x, emax_x, emin_y, emax_y);
+        posterior3d_.init(emin_x, emax_x, emin_y, emax_y, z_min_, z_max_);
+    }
     // Altitude state (no state machine)
     current_altitude_ = 0.3f;
     gp_.reset(0.3f, z_min_, z_max_);
@@ -259,11 +317,127 @@ float OPGSL::SourcePosterior3D::plumeLogLikelihood(float sx, float sy, float sz,
     return log_lik;
 }
 
+float OPGSL::SourcePosterior3D::poissonRate(float sx, float sy, float cx, float cy,
+                                             float wind_x, float wind_y, float wind_speed) const {
+    // ============================================================
+    // GBI-based Detection Probability (Generalized Bayesian Inference)
+    //
+    // Replaces the exponential decay model exp(-d/ell) with a logistic
+    // detection probability that better matches indoor gas dispersion.
+    //
+    // Theory: Bissiri et al. 2016 (JRSS-B), Fong et al. 2021 (Biometrika)
+    // The loss function does not need to be the true likelihood;
+    // GBI guarantees convergence to the optimal approximation under
+    // model misspecification when eta < 1.
+    //
+    // Key improvement over exp(-d/ell):
+    // - exp(-d/1.0) at 3m = 0.05 (too low, misses real detections)
+    // - sigmoid(-1.5*(d-3.0)) at 3m = 0.50 (matches GADEN observations)
+    // ============================================================
+    float dx = cx - sx, dy = cy - sy;
+    float dist = std::sqrt(dx*dx + dy*dy);
+    float wn = std::sqrt(wind_x*wind_x + wind_y*wind_y);
+
+    // Logistic detection probability
+    // d0 = 3.0m: characteristic detection range for indoor GADEN
+    // gamma = 1.5: transition sharpness (higher = sharper boundary)
+    float d0 = 1.5f;
+    float gamma = 2.0f;
+    float spatial = 1.0f / (1.0f + std::exp(gamma * (dist - d0)));
+
+    // Wind modulation with confidence gating
+    float wind_mod = 1.0f;
+    if (wn > 0.05f && dist > 0.01f) {
+        float cos_theta = (dx * wind_x + dy * wind_y) / (dist * wn);
+        float alpha_w_eff = arrival_rate_alphaw_ * wind_confidence_;
+        wind_mod = 1.0f + alpha_w_eff * cos_theta;
+        wind_mod = std::max(wind_mod, 0.1f);
+    }
+
+    // Clamp to valid probability range
+    return std::clamp(spatial * wind_mod, 0.01f, 0.99f);
+}
+
+void OPGSL::SourcePosterior3D::binaryEventUpdate(float cx, float cy, float cz,
+                                                   float concentration, float detection_threshold,
+                                                   float wind_x, float wind_y, float wind_speed) {
+    if (!initialized_) return;
+    bool detected = (concentration > detection_threshold);
+
+    // === Adaptive decay based on wind stability ===
+    // When wind is stable: decay=0.999 (trust history, ~100-step half-life)
+    // When wind is chaotic: decay=0.99 (forget faster, ~30-step half-life)
+    // Ge Quanbo: state-dependent random forgetting
+    float decay = 0.99f + 0.009f * wind_confidence_;  // range [0.99, 0.999]
+    for (int ii = 0; ii < nx_; ii++)
+        for (int jj = 0; jj < ny_; jj++)
+            for (int kk = 0; kk < nz_; kk++)
+                grid[ii][jj][kk] *= decay;
+
+    // === GBI Tempered Update (Bissiri et al. 2016, JRSS-B) ===
+    //
+    // Standard Bayes: p(s|data) propto p(s) * L(data|s)
+    // Problem: when L is misspecified, posterior converges to wrong value.
+    //
+    // Generalized Bayes: p(s|data) propto p(s) * exp(-eta * loss(data, s))
+    // eta in (0,1): tempering prevents over-commitment to misspecified model
+    // eta -> 1: standard Bayes (trust model completely)
+    // eta -> 0: ignore observation (trust prior)
+    //
+    // Our adaptive eta:
+    // - Gas detected + stable wind: eta high (0.6-0.9) -> trust observation
+    // - Gas detected + chaotic wind: eta medium -> partial trust
+    // - No gas + stable wind: eta medium (0.15-0.5) -> non-detection informative
+    // - No gas + chaotic wind: eta low -> non-detection unreliable
+    float eta;
+    if (detected) {
+        eta = 0.6f + 0.3f * wind_confidence_;  // [0.6, 0.9]
+    } else {
+        eta = 0.15f + 0.35f * wind_confidence_;  // [0.15, 0.5]
+    }
+    float dt_measure = 3.0f;
+    float max_log = -1e9f;
+    for (int i = 0; i < nx_; i++) {
+        for (int j = 0; j < ny_; j++) {
+            for (int k = 0; k < nz_; k++) {
+                float sx = x_min_ + (i+0.5f) * dx_;
+                float sy = y_min_ + (j+0.5f) * dy_;
+                float phi = poissonRate(sx, sy, cx, cy, wind_x, wind_y, wind_speed);
+                // phi is now a valid probability in [0.01, 0.99]
+                float log_lik;
+                if (detected) {
+                    log_lik = std::log(phi);         // log P(detect | source at s)
+                } else {
+                    log_lik = std::log(1.0f - phi);  // log P(no detect | source at s)
+                }
+                grid[i][j][k] += eta * log_lik;
+                if (grid[i][j][k] > max_log) max_log = grid[i][j][k];
+            }
+        }
+    }
+    float log_sum = -1e9f;
+    for (int i = 0; i < nx_; i++)
+        for (int j = 0; j < ny_; j++)
+            for (int k = 0; k < nz_; k++) {
+                grid[i][j][k] -= max_log;
+                log_sum = std::log(std::exp(log_sum) + std::exp(grid[i][j][k]));
+            }
+    for (int i = 0; i < nx_; i++)
+        for (int j = 0; j < ny_; j++)
+            for (int k = 0; k < nz_; k++)
+                grid[i][j][k] -= log_sum;
+}
+
 void OPGSL::SourcePosterior3D::update(float cx, float cy, float cz, float concentration,
                                        float wind_x, float wind_y, float wind_speed) {
     if (!initialized_) return;
-    // Temporal decay
-    float decay = 0.995f;
+    // Dispatch to binary event model if enabled
+    if (use_event_driven_) {
+        binaryEventUpdate(cx, cy, cz, concentration, detection_threshold_, wind_x, wind_y, wind_speed);
+        return;
+    }
+    // Temporal decay (adaptive to wind confidence)
+    float decay = 0.98f + 0.015f * wind_confidence_;  // range [0.98, 0.995]
     for (int ii = 0; ii < nx_; ii++)
         for (int jj = 0; jj < ny_; jj++)
             for (int kk = 0; kk < nz_; kk++)
@@ -282,7 +456,7 @@ void OPGSL::SourcePosterior3D::update(float cx, float cy, float cz, float concen
                 if (concentration > 0.01f) {
                     weight = std::clamp(std::sqrt(concentration) * 1.5f, 0.0f, 3.0f);
                 } else {
-                    weight = 0.001f;  // Bug3 fix: weak positive, not negative
+                    weight = 0.3f;  // Enhanced non-detection information
                 }
                 grid[i][j][k] += weight * log_lik;
                 if (grid[i][j][k] > max_log) max_log = grid[i][j][k];
@@ -425,6 +599,8 @@ void OPGSL::sdnbvStep(float& best_x, float& best_y) {
     float wx = latest_wind_x_, wy = latest_wind_y_, ws = latest_wind_speed_;
 
     // V5.2: ALWAYS update posterior (even low gas = negative evidence)
+    // Pass wind confidence to posterior for adaptive update strength
+    posterior3d_.wind_confidence_ = wind_confidence_;
     posterior3d_.update(cx, cy, current_altitude_, std::max(latest_gas_, 0.0001f), wx, wy, ws);
 
     // ====== V5: Two-phase search strategy ======
@@ -467,18 +643,44 @@ void OPGSL::sdnbvStep(float& best_x, float& best_y) {
         }
     }
 
+    // -- EARLY MAP SWITCH: if posterior converged, go to MAP directly --
+    {
+        float H = posterior3d_.getEntropy();
+        float H_max = std::log((float)(posterior3d_.nx_ * posterior3d_.ny_ * posterior3d_.nz_));
+        float H_ratio = H / H_max;
+        float eig_x, eig_y, eig_z;
+        posterior3d_.getFIMEigenvalues(eig_x, eig_y, eig_z);
+        float min_eig = std::min({eig_x, eig_y, eig_z});
+        if (H_ratio < 0.80f && min_eig > 0.4f && gas_hit_count_ >= 5 && step_count_ >= 3) {
+            float map_x, map_y, map_z;
+            posterior3d_.getMAP(map_x, map_y, map_z);
+            float dx = map_x - cx, dy = map_y - cy;
+            float d = std::sqrt(dx*dx + dy*dy);
+            if (d > 0.3f) {
+                float nav_step = std::min(1.5f, d * 0.7f);
+                best_x = cx + nav_step * dx / d;
+                best_y = cy + nav_step * dy / d;
+                clipToMapBounds(best_x, best_y);
+                GSL_INFO("SDNBV-EARLY-MAP: ({:.2f},{:.2f}) H_ratio={:.2f} eig={:.3f} d={:.2f} step={}", best_x, best_y, H_ratio, min_eig, d, step_count_);
+                return;
+            }
+        }
+    }
+
     // -- Phase 1: Coarse downwind exploration (steps 1-6) --
     if (step_count_ <= 6) {
         float coarse_step = 1.2f;
-        if (step_count_ == 3 && ws > 0.1f) {
+        if ((step_count_ == 3 || step_count_ == 4) && ws > 0.1f) {
             float wn = std::sqrt(wx*wx + wy*wy);
             if (wn > 0.01f) {
                 float perp_x = -wy / wn;
                 float perp_y =  wx / wn;
+                if (step_count_ == 4) { perp_x = -perp_x; perp_y = -perp_y; }
                 best_x = cx + coarse_step * perp_x;
                 best_y = cy + coarse_step * perp_y;
                 clipToMapBounds(best_x, best_y);
-                GSL_INFO("SDNBV-P1: cross-wind ({:.2f},{:.2f})", best_x, best_y);
+                char tag = (step_count_==3) ? 'A' : 'B';
+                GSL_INFO("SDNBV-P1: cross-wind-{} ({:.2f},{:.2f})", tag, best_x, best_y);
                 return;
             }
         }
@@ -495,7 +697,7 @@ void OPGSL::sdnbvStep(float& best_x, float& best_y) {
         }
         if (ws > 0.05f) {
             float wn = std::sqrt(wx*wx + wy*wy);
-            float down_x = wx / wn, down_y = wy / wn;
+            float down_x = -wx / wn, down_y = -wy / wn; // UPwind toward source
             float perp_x = -down_y, perp_y = down_x;
             float cross_offset = std::uniform_real_distribution<float>(-0.3f, 0.3f)(rng_);
             best_x = cx + coarse_step * down_x + cross_offset * perp_x;
@@ -511,354 +713,193 @@ void OPGSL::sdnbvStep(float& best_x, float& best_y) {
         return;
     }
 
-    // -- Phase 1.5: Upwind plume-tracking (steps 7-16) --
-    // Plume drifts DOWNWIND from source. Going UPWIND traces back to source.
-    // Concentration decreases while moving upwind - this is NORMAL, not overshoot.
-    // After 10 upwind steps (~8m), the UAV is near the source area.
-    // Phase 2 EFE then uses updated posterior observations to converge.
-    if (use_upwind_tracking_ && step_count_ >= 7 && step_count_ <= 16 && ws > 0.05f) {
-        // If concentration is already HIGH near current position, we are near the source.
-        // Skip upwind tracking and go directly to EFE convergence.
-        // This handles cases where source is DOWNWIND from plume detection area.
-        if (false) {  // DISABLED: always go upwind
-            // Check if best hit is within 2m of current position
-            float bh_dx = best_hit_x_ - cx, bh_dy = best_hit_y_ - cy;
-            float bh_dist = std::sqrt(bh_dx*bh_dx + bh_dy*bh_dy);
-            if (bh_dist < 2.0f) {
-                GSL_INFO("SDNBV-P1.5: SKIP (near source, best_c={:.3f} d={:.2f})",
-                         best_hit_conc_, bh_dist);
-                // Fall through to Phase 2 EFE
-            } else {
-                // Best hit is far but high concentration - navigate toward it
-                float nav_step = std::min(0.8f, bh_dist * 0.6f);
-                best_x = cx + nav_step * bh_dx / bh_dist;
-                best_y = cy + nav_step * bh_dy / bh_dist;
-                clipToMapBounds(best_x, best_y);
-                GSL_INFO("SDNBV-P1.5: best-hit ({:.2f},{:.2f}) c={:.3f} d={:.2f}",
-                         best_x, best_y, best_hit_conc_, bh_dist);
-                return;
+    // -- Phase 1.5: Upwind plume-tracking with peak-based overshoot detection (steps 7-16) --
+    // FIX V6.3: Use peak concentration tracking for overshoot detection
+    // Peak-based: if current gas drops below 30% of peak seen during upwind, we passed source
+    if (use_upwind_tracking_ && step_count_ >= 7 && step_count_ <= 16 && ws > 0.05f && gas_hit_count_ > 0) {
+        // Find peak concentration from recent observations (last 8 readings)
+        float peak_c = 0.0f;
+        int peak_idx = -1;
+        int hist_n = obs_history_c_.size();
+        int lookback = std::min(8, hist_n);
+        for (int i = hist_n - lookback; i < hist_n; i++) {
+            if (obs_history_c_[i] > peak_c) {
+                peak_c = obs_history_c_[i];
+                peak_idx = i;
             }
-        } else {
-            // Low concentration - go UPWIND to trace back to source
-            float wn = std::sqrt(wx*wx + wy*wy);
-            float upwind_x = -wx / wn;
-            float upwind_y = -wy / wn;
-            float nav_step = 0.8f;
-            best_x = cx + nav_step * upwind_x;
-            best_y = cy + nav_step * upwind_y;
-            clipToMapBounds(best_x, best_y);
-            GSL_INFO("SDNBV-P1.5: UPWIND ({:.2f},{:.2f}) ws={:.2f} c={:.3f}",
-                     best_x, best_y, ws, latest_gas_);
+        }
+        
+        // Overshoot: current gas dropped below 30% of recent peak, and peak was significant
+        bool overshoot = (peak_c > 0.1f && latest_gas_ < peak_c * 0.3f && peak_idx >= 0);
+        
+        if (overshoot) {
+            // Passed the source! Navigate back toward peak concentration position
+            float px = obs_history_x_[peak_idx], py = obs_history_y_[peak_idx];
+            float dx = px - cx, dy = py - cy;
+            float d = std::sqrt(dx*dx + dy*dy);
+            if (d > 0.3f) {
+                float nav_step = std::min(1.2f, d * 0.5f);
+                best_x = cx + nav_step * dx / d;
+                best_y = cy + nav_step * dy / d;
+                clipToMapBounds(best_x, best_y);
+                GSL_INFO("SDNBV-P1.5: OVERSHOOT! -> peak ({:.2f},{:.2f}) peak_c={:.3f} now={:.3f} d={:.2f}",
+                         best_x, best_y, peak_c, latest_gas_, d);
+            } else {
+                best_x = px;
+                best_y = py;
+                clipToMapBounds(best_x, best_y);
+                GSL_INFO("SDNBV-P1.5: OVERSHOOT near peak ({:.2f},{:.2f}), switch Phase 2", best_x, best_y);
+            }
             return;
         }
-    }
-
-    // ====== SBD: Sequential Bayesian Design (Phase 2 alternative) ======
-    // Replaces EFE with EIG-maximization from clinical trial design
-    // Key insight: each waypoint is a Bayesian experiment maximizing expected information gain
-    if (use_sbd_ && step_count_ > 16) {
-        // Safety: ensure EIG field is initialized
-        if (eig_field_.rows() == 0 || eig_field_.cols() == 0) {
-            eig_field_ = Eigen::MatrixXf::Zero(n_cells_, n_cells_);
-            prev_posterior_ = Eigen::MatrixXf::Constant(n_cells_, n_cells_, -std::log((float)(n_cells_*n_cells_)));
-        }
-        // 1. Compute EIG field from ensemble
-        computeEIGField();
-        // 1b. Compute W-RAIG field (risk-aware version)
-        if (use_wraig_) computeWRAIGField();
-
-        // 2. CUSUM-BCD: posterior change detection
-        auto field = field_estimator_.computeField();
-        float kl_change = computePosteriorKL(prev_posterior_, field.log_field);
-        cusum_stat_ = std::max(0.0f, cusum_stat_ + kl_change - cusum_drift_);
-        prev_posterior_ = field.log_field;
-
-        // 3. Check convergence: posterior STABLE when KL change stays low
-        if (kl_change < 0.01f) {
-            sbd_stable_count_++;
-        } else {
-            sbd_stable_count_ = 0;
-        }
-        if (sbd_stable_count_ >= 5) {
-            GSL_INFO("SBD: Posterior STABLE (kl={:.6f} stable_count={} > 5), moving to MAP",
-                     kl_change, sbd_stable_count_);
-            float map_x, map_y, map_z;
-            posterior3d_.getMAP(map_x, map_y, map_z);
-            best_x = map_x;
-            best_y = map_y;
-            clipToMapBounds(best_x, best_y);
-            return;
-        }
-
-        // 4. Find EIG-max cell
-        int max_i, max_j;
-        float max_eig = (use_wraig_ && wraig_field_.rows() > 0) ? wraig_field_.maxCoeff(&max_i, &max_j) : eig_field_.maxCoeff(&max_i, &max_j);
-
-        // 5. Interim analysis: EIG low -> trigger Levy exploration
-        if (max_eig < eig_threshold_) {
-            GSL_INFO("SBD: EIG low ({:.5f} < {:.4f}), triggering Levy exploration", max_eig, eig_threshold_);
-            levyExploration(best_x, best_y, cx, cy);
-            return;
-        }
-
-        // 6. Navigate to EIG-max cell (adaptive allocation)
-        float target_x = max_i * resolution_ - map_half_size_;
-        float target_y = max_j * resolution_ - map_half_size_;
-        float dx = target_x - cx, dy = target_y - cy;
-        float d = std::sqrt(dx*dx + dy*dy);
-
-        // Adaptive step size based on EIG magnitude
-        float step_size = std::min(1.5f, std::max(0.5f, d * 0.6f));
-        if (d > 0.2f) {
-            best_x = cx + step_size * dx / d;
-            best_y = cy + step_size * dy / d;
-        } else {
-            best_x = target_x;
-            best_y = target_y;
-        }
+        
+        // Normal upwind tracking
+        float wn = std::sqrt(wx*wx + wy*wy);
+        float upwind_x = -wx / wn;
+        float upwind_y = -wy / wn;
+        float nav_step = 0.8f;
+        best_x = cx + nav_step * upwind_x;
+        best_y = cy + nav_step * upwind_y;
         clipToMapBounds(best_x, best_y);
-        GSL_INFO("SBD: EIG-max ({:.2f},{:.2f}) eig={:.5f} cusum={:.3f} step={}",
-                 best_x, best_y, max_eig, cusum_stat_, step_count_);
+        GSL_INFO("SDNBV-P1.5: UPWIND ({:.2f},{:.2f}) ws={:.2f} c={:.3f} peak={:.3f}",
+                 best_x, best_y, ws, latest_gas_, peak_c);
         return;
     }
 
-
-
-    // -- Phase 2: EFE-driven fine convergence (steps 19+) --
-    // Adaptive step: high conc -> small step, low conc -> large step
-    float fine_step;
-    if (latest_gas_ > 0.1f) fine_step = 0.5f;
-    else if (latest_gas_ > 0.01f) fine_step = 1.0f;
-    else fine_step = 1.5f;
-
-    // Cross-wind sweep every 6 steps (less frequent in Phase 2)
-    if (step_count_ % 6 == 0 && ws > 0.1f) {
-        float wn = std::sqrt(wx*wx + wy*wy);
-        if (wn > 0.01f) {
-            float perp_x = -wy / wn;
-            float perp_y =  wx / wn;
-            float sign = (step_count_ % 12 == 0) ? 1.0f : -1.0f;
-            float cross_dist = std::min(fine_step * 1.2f, 1.5f);
-            best_x = cx + sign * cross_dist * perp_x;
-            best_y = cy + sign * cross_dist * perp_y;
-            clipToMapBounds(best_x, best_y);
-            GSL_INFO("SDNBV-P2: cross-wind ({:.2f},{:.2f})", best_x, best_y);
-            return;
-        }
-    }
-
-    // Navigate toward best hit (concentration-guided)
-    if (best_hit_conc_ > 0.005f) {
-        float dx = best_hit_x_ - cx, dy = best_hit_y_ - cy;
-        float d = std::sqrt(dx*dx + dy*dy);
-        if (d > 0.3f) {
-            float nav_step = std::min(fine_step, d * 0.6f);
-            best_x = cx + nav_step * dx / d;
-            best_y = cy + nav_step * dy / d;
-            clipToMapBounds(best_x, best_y);
-            GSL_INFO("SDNBV-P2: best-hit nav ({:.2f},{:.2f}) d={:.2f} best_c={:.3f}",
-                     best_x, best_y, d, best_hit_conc_);
-            return;
-        }
-    }
-
-    // SURGE-CAST: if wind > 0.3 and we have hits, move toward fused target
-    if (ws > 0.3f && gas_hit_count_ > 3) {
-        float wn = std::sqrt(wx*wx + wy*wy);
-        if (wn > 0.01f) {
-            float map_x, map_y, map_z;
-            posterior3d_.getMAP(map_x, map_y, map_z);
-            auto surge_field = field_estimator_.computeField();
-            float fused_x = 0.6f * map_x + 0.4f * surge_field.peak_x;
-            float fused_y = 0.6f * map_y + 0.4f * surge_field.peak_y;
-            float to_map_x = fused_x - cx;
-            float to_map_y = fused_y - cy;
-            float to_map_d = std::sqrt(to_map_x*to_map_x + to_map_y*to_map_y);
-            if (to_map_d > 0.3f) {
-                best_x = cx + fine_step * to_map_x / to_map_d;
-                best_y = cy + fine_step * to_map_y / to_map_d;
-                clipToMapBounds(best_x, best_y);
-                GSL_INFO("SDNBV-P2: surge ({:.2f},{:.2f}) d={:.2f}", best_x, best_y, to_map_d);
-                return;
-            }
-        }
-    }
-
     // ================================================================
-    // ACTIVE INFERENCE: Expected Free Energy (EFE) Minimization
-    //
-    // EFE = Epistemic Value + lambda * Pragmatic Value
-    //   Epistemic  = predicted information gain (explore uncertainty)
-    //   Pragmatic  = proximity to posterior mass (exploit belief)
-    //   lambda     = increases with steps (explore -> exploit shift)
-    //
-    // This naturally balances exploration and exploitation under one
-    // principled objective, replacing ad-hoc NBV heuristics.
+    // Phase 2+ (steps 17+): Adaptive MAP/Gradient Switching
     // ================================================================
-        if (use_sdnbv_ && step_count_ > 18) {
+    // Auxiliary Innovation 1: Adaptive Phase Switching
+    //
+    // When posterior is confident (low entropy): use MAP navigation
+    //   - MAP is theoretically optimal under the binary observation model
+    //   - Posterior has converged, MAP is reliable
+    //
+    // When posterior is uncertain (high entropy): use concentration gradient
+    //   - Gradient ascent is model-free and robust
+    //   - Avoids MAP drift when posterior hasn't converged
+    //
+    // The switching threshold is calibrated from the binary observation model:
+    //   - Entropy < H_threshold: posterior converged, use MAP
+    //   - Entropy >= H_threshold: posterior uncertain, use gradient
+    // ================================================================
+    if (step_count_ >= 17) {
+        // Compute posterior confidence metrics
+        float H_current = posterior3d_.getEntropy();
+        float H_max = std::log((float)(posterior3d_.nx_ * posterior3d_.ny_ * posterior3d_.nz_));
+        float H_ratio = H_current / H_max;  // Normalized entropy in [0, 1]
+        
+        // FIM-based confidence check
         float eig_x, eig_y, eig_z;
         posterior3d_.getFIMEigenvalues(eig_x, eig_y, eig_z);
-        float H_current = posterior3d_.getEntropy();
-
-        float map_x, map_y, map_z;
-        posterior3d_.getMAP(map_x, map_y, map_z);
-        float center_x = 0.5f * cx + 0.5f * map_x;
-        float center_y = 0.5f * cy + 0.5f * map_y;
-        float dist_to_map = std::sqrt((map_x-cx)*(map_x-cx) + (map_y-cy)*(map_y-cy));
-        float search_r = std::max(2.0f, dist_to_map * 0.8f + 1.5f);
-        float efe_step = 1.0f;
-
-        float best_efe = 1e9f;
-        float best_cx = cx, best_cy = cy;
-
-        for (float fdx = -search_r; fdx <= search_r; fdx += efe_step) {
-            for (float fdy = -search_r; fdy <= search_r; fdy += efe_step) {
-                float cand_x = std::clamp(center_x + fdx, posterior3d_.x_min_ + 0.5f, posterior3d_.x_max_ - 0.5f);
-                float cand_y = std::clamp(center_y + fdy, posterior3d_.y_min_ + 0.5f, posterior3d_.y_max_ - 0.5f);
-
-                // Epistemic: predicted concentration variance
-                float mean_c = 0.0f, var_c = 0.0f;
-                for (int ii = 0; ii < posterior3d_.nx_; ii += 2) {
-                    for (int jj = 0; jj < posterior3d_.ny_; jj += 2) {
-                        for (int kk = 0; kk < posterior3d_.nz_; kk += 2) {
-                            float psx = posterior3d_.x_min_ + (ii+0.5f) * posterior3d_.dx_;
-                            float psy = posterior3d_.y_min_ + (jj+0.5f) * posterior3d_.dy_;
-                            float psz = posterior3d_.z_min_ + (kk+0.5f) * posterior3d_.dz_;
-                            float p = std::exp(posterior3d_.grid[ii][jj][kk]);
-                            float ll = posterior3d_.plumeLogLikelihood(psx, psy, psz, cand_x, cand_y,
-                                                          current_altitude_, wx, wy, ws);
-                            float cp = std::exp(ll);
-                            mean_c += p * cp;
-                            var_c += p * cp * cp;
-                        }
+        float min_eig = std::min({eig_x, eig_y, eig_z});
+        
+        // Decision: MAP or Gradient?
+        bool use_map = (H_ratio < 0.85f) && (min_eig > 0.3f);
+        
+        if (use_map) {
+            // ===== MAP Navigation (posterior confident) =====
+            float map_x, map_y, map_z;
+            posterior3d_.getMAP(map_x, map_y, map_z);
+            float dx = map_x - cx, dy = map_y - cy;
+            float d = std::sqrt(dx*dx + dy*dy);
+            if (d > 0.3f) {
+                float nav_step = std::min(1.0f, d * 0.6f);
+                best_x = cx + nav_step * dx / d;
+                best_y = cy + nav_step * dy / d;
+                clipToMapBounds(best_x, best_y);
+                GSL_INFO("SDNBV-ADAPT: MAP ({:.2f},{:.2f}) H_ratio={:.2f} min_eig={:.3f} d={:.2f}",
+                         best_x, best_y, H_ratio, min_eig, d);
+            } else {
+                // Near MAP, stop
+                GSL_INFO("SDNBV-ADAPT: near MAP ({:.2f},{:.2f}) d={:.2f}", map_x, map_y, d);
+            }
+            return;
+        } else {
+            // ===== Concentration Gradient Ascent (posterior uncertain) =====
+            // Compute gradient from recent observations
+            int hist_n = obs_history_c_.size();
+            float grad_x = 0.0f, grad_y = 0.0f;
+            int grad_window = std::min(6, hist_n);
+            if (grad_window >= 2) {
+                for (int i = hist_n - grad_window; i < hist_n - 1; i++) {
+                    float dc = obs_history_c_[i+1] - obs_history_c_[i];
+                    float ddx = obs_history_x_[i+1] - obs_history_x_[i];
+                    float ddy = obs_history_y_[i+1] - obs_history_y_[i];
+                    float dd = std::sqrt(ddx*ddx + ddy*ddy);
+                    if (dd > 0.01f) {
+                        grad_x += dc * ddx / dd;
+                        grad_y += dc * ddy / dd;
                     }
                 }
-                var_c = var_c - mean_c * mean_c;
-                float epistemic = std::sqrt(std::max(var_c, 0.0f));
-
-                // Pragmatic: proximity to posterior mass + best hit
-                float d_map = std::sqrt((cand_x-map_x)*(cand_x-map_x) + (cand_y-map_y)*(cand_y-map_y));
-                float pragmatic = std::exp(-0.5f * d_map);
-                if (best_hit_conc_ > 0.01f) {
-                    float d_hit = std::sqrt((cand_x-best_hit_x_)*(cand_x-best_hit_x_) +
-                                            (cand_y-best_hit_y_)*(cand_y-best_hit_y_));
-                    pragmatic = std::max(pragmatic, std::exp(-0.3f * d_hit));
-                }
-                // Upwind bonus: prefer candidates against the wind (source is upwind)
-                if (ws > 0.1f) {
-                    float wn = std::sqrt(wx*wx + wy*wy);
-                    float upwind_x = -wx / wn;
-                    float upwind_y = -wy / wn;
-                    float dx_c = cand_x - cx;
-                    float dy_c = cand_y - cy;
-                    float d_c = std::sqrt(dx_c*dx_c + dy_c*dy_c) + 0.1f;
-                    float alignment = (dx_c * upwind_x + dy_c * upwind_y) / d_c;
-                    pragmatic += 0.2f * std::max(0.0f, alignment);
-                }
-
-                // EFE: balance explore/exploit
-                float lambda = std::min(2.0f, 0.3f + 0.05f * step_count_);
-                float efe = -epistemic + lambda * (1.0f - pragmatic) + 0.05f * std::sqrt(fdx*fdx + fdy*fdy);
-
-                if (efe < best_efe) {
-                    best_efe = efe;
-                    best_cx = cand_x;
-                    best_cy = cand_y;
+            }
+            float grad_mag = std::sqrt(grad_x*grad_x + grad_y*grad_y);
+            
+            // Overshoot detection for gradient mode
+            float peak_c = 0.0f;
+            int peak_idx = -1;
+            for (int i = 0; i < hist_n; i++) {
+                if (obs_history_c_[i] > peak_c) {
+                    peak_c = obs_history_c_[i];
+                    peak_idx = i;
                 }
             }
-        }
-
-        best_x = best_cx;
-        best_y = best_cy;
-        GSL_INFO("AI-EFE: ({:.2f},{:.2f}) efe={:.3f} H={:.2f} step={}", best_x, best_y, best_efe, H_current, step_count_);
-        return;
-    }
-
-    // Fallback: use field estimator (WR-SFE) + wind-aware info gain
-    auto field = field_estimator_.computeField();
-    // Low-wind mode: concentration gradient climbing
-    // In near-zero wind, WR-SFE fails. Use pure gradient ascent on concentration.
-    if (ws < 0.05f) {
-        // Track last few observations for gradient estimation
-        static float last_cx = 0, last_cy = 0, last_conc = 0;
-        float grad_x = 0, grad_y = 0;
-        if (last_conc > 0.001f && step_count_ > 1) {
-            float dx = cx - last_cx;
-            float dy = cy - last_cy;
-            float d = std::sqrt(dx*dx + dy*dy);
-            if (d > 0.01f) {
-                float conc_gradient = (latest_gas_ - last_conc) / d;
-                // Move in gradient direction (uphill)
-                grad_x = conc_gradient * dx / d;
-                grad_y = conc_gradient * dy / d;
+            bool grad_overshoot = (peak_c > 0.05f && latest_gas_ < peak_c * 0.3f && peak_idx >= 0);
+            
+            if (grad_overshoot && peak_idx >= 0) {
+                // Overshoot! Navigate back toward peak
+                float px = obs_history_x_[peak_idx], py = obs_history_y_[peak_idx];
+                float dx = px - cx, dy = py - cy;
+                float d = std::sqrt(dx*dx + dy*dy);
+                if (d > 0.3f) {
+                    float nav_step = std::min(1.0f, d * 0.5f);
+                    best_x = cx + nav_step * dx / d;
+                    best_y = cy + nav_step * dy / d;
+                    clipToMapBounds(best_x, best_y);
+                    GSL_INFO("SDNBV-ADAPT: GRAD OVERSHOOT -> peak ({:.2f},{:.2f}) peak={:.3f} now={:.3f}",
+                             best_x, best_y, peak_c, latest_gas_);
+                }
+                return;
             }
-        }
-        last_cx = cx; last_cy = cy; last_conc = latest_gas_;
-
-        // If gradient is significant, follow it; otherwise use best hit
-        float grad_mag = std::sqrt(grad_x*grad_x + grad_y*grad_y);
-        if (grad_mag > 0.001f && latest_gas_ > 0.01f) {
-            // Follow gradient with adaptive step
-            float step = std::min(step_size_, 1.0f);
-            best_x = cx + step * grad_x / grad_mag;
-            best_y = cy + step * grad_y / grad_mag;
-            GSL_INFO("SDNBV: gradient climb ({:.2f},{:.2f}) grad={:.4f}", best_x, best_y, grad_mag);
-        } else if (best_hit_conc_ > 0.01f) {
-            // Navigate toward best hit position
-            float dx = best_hit_x_ - cx;
-            float dy = best_hit_y_ - cy;
-            float d = std::sqrt(dx*dx + dy*dy);
-            if (d > 0.1f) {
-                float step = std::min(step_size_, d);
-                best_x = cx + step * dx / d;
-                best_y = cy + step * dy / d;
+            
+            if (latest_gas_ > 0.01f && grad_mag > 0.001f) {
+                // Gas detected: follow gradient
+                float nav_step = std::min(1.0f, std::max(0.3f, 1.0f - latest_gas_));
+                best_x = cx + nav_step * grad_x / grad_mag;
+                best_y = cy + nav_step * grad_y / grad_mag;
+                clipToMapBounds(best_x, best_y);
+                GSL_INFO("SDNBV-ADAPT: GRAD ({:.2f},{:.2f}) c={:.3f} grad_mag={:.4f} H_ratio={:.2f}",
+                         best_x, best_y, latest_gas_, grad_mag, H_ratio);
+                return;
+            } else if (best_hit_conc_ > 0.01f) {
+                // No current gas but have past hit: navigate toward it
+                float dx = best_hit_x_ - cx, dy = best_hit_y_ - cy;
+                float d = std::sqrt(dx*dx + dy*dy);
+                if (d > 0.3f) {
+                    float nav_step = std::min(0.8f, d * 0.5f);
+                    best_x = cx + nav_step * dx / d;
+                    best_y = cy + nav_step * dy / d;
+                    clipToMapBounds(best_x, best_y);
+                    GSL_INFO("SDNBV-ADAPT: best-hit ({:.2f},{:.2f}) c={:.3f} d={:.2f}",
+                             best_x, best_y, best_hit_conc_, d);
+                }
+                return;
             } else {
-                // Near best hit: explore nearby
-                best_x = cx + std::uniform_real_distribution<float>(-0.5f, 0.5f)(rng_);
-                best_y = cy + std::uniform_real_distribution<float>(-0.5f, 0.5f)(rng_);
+                // No gas: go upwind
+                if (ws > 0.05f) {
+                    float wn = std::sqrt(wx*wx + wy*wy);
+                    best_x = cx + 0.8f * (-wx / wn);
+                    best_y = cy + 0.8f * (-wy / wn);
+                    clipToMapBounds(best_x, best_y);
+                    GSL_INFO("SDNBV-ADAPT: UPWIND ({:.2f},{:.2f}) ws={:.2f}",
+                             best_x, best_y, ws);
+                }
+                return;
             }
-            GSL_INFO("SDNBV: best-hit nav ({:.2f},{:.2f}) best_conc={:.3f}", best_x, best_y, best_hit_conc_);
-        } else {
-            // No gas detected yet: spiral exploration
-            float angle = step_count_ * 2.39996323f;  // golden angle
-            float radius = 0.5f + 0.1f * step_count_;
-            radius = std::min(radius, 3.0f);
-            best_x = -0.9f + radius * std::cos(angle);  // start position
-            best_y = 0.15f + radius * std::sin(angle);
-            GSL_INFO("SDNBV: spiral explore ({:.2f},{:.2f})", best_x, best_y);
-        }
-        clipToMapBounds(best_x, best_y);
-        return;
-    }
-
-    // Wind-aware infotaxis: choose cell with highest info gain
-    int best_gx = n_cells_/2, best_gy = n_cells_/2;
-    float best_ig = -1e9f;
-    int robot_gx = std::clamp(int((cx + map_half_size_) / resolution_), 0, n_cells_-1);
-    int robot_gy = std::clamp(int((cy + map_half_size_) / resolution_), 0, n_cells_-1);
-    for (int gx = 0; gx < n_cells_; gx++) {
-        for (int gy = 0; gy < n_cells_; gy++) {
-            float ig = info_gain_.compute(field, gx, gy, n_cells_, cx, cy, wx, wy, resolution_, map_half_size_);
-            if (ig > best_ig) { best_ig = ig; best_gx = gx; best_gy = gy; }
         }
     }
-    best_x = best_gx * resolution_ - map_half_size_;
-    best_y = best_gy * resolution_ - map_half_size_;
-
-    clipToMapBounds(best_x, best_y);
-    // Lévy exploration if stagnating
-    if (use_levy_ && consecutive_misses_ > 8) {
-        levyExploration(best_x, best_y, cx, cy);
-        GSL_INFO("SDNBV: Lévy exploration ({:.2f},{:.2f}) misses={}", best_x, best_y, consecutive_misses_);
-    }
-
-    GSL_INFO("SDNBV: IG target ({:.2f},{:.2f}) ig={:.4f} ws={:.3f}", best_x, best_y, best_ig, ws);
 }
 
-
-// ============================================================
-// SBD: Sequential Bayesian Design - EIG Field Computation
-// ============================================================
 void OPGSL::computeEIGField() {
     auto& ensemble = field_estimator_.ensembleFields();
     int n_e = field_estimator_.ensembleSize();
@@ -960,6 +1001,8 @@ void OPGSL::infotaxisStep(float& best_x, float& best_y) {
 // Gas & Wind Processing
 // ============================================================
 void OPGSL::processGasAndWindMeasurements(double concentration, double windSpeed, double windDirection) {
+    // Guard: stop processing after convergence reported
+    if (convergence_reported_) return;
     total_measurements_++;
     latest_gas_ = static_cast<float>(concentration);
     latest_wind_speed_ = static_cast<float>(windSpeed);
@@ -983,18 +1026,39 @@ void OPGSL::processGasAndWindMeasurements(double concentration, double windSpeed
         cp_prev_mx_ = mx; cp_prev_my_ = my;
     }
 
-    // DDM: accumulate evidence for stopping decision
+    // DDM: accumulate evidence for stopping decision (FIXED: posterior entropy change rate)
+    // Fix: old formula had step-1 false positive (map_move=0, gas high -> huge LLR)
+    // New: posterior-based LLR with warm-up period
     if (use_ddm_) {
         float mx, my, mz;
         posterior3d_.getMAP(mx, my, mz);
         float map_move = std::sqrt((mx - ddm_prev_map_x_) * (mx - ddm_prev_map_x_) +
                                     (my - ddm_prev_map_y_) * (my - ddm_prev_map_y_));
-        // Log-likelihood ratio: evidence FOR source at MAP vs null
-        // Use gas reading + distance to MAP as evidence
-        float dist_to_map = std::sqrt((cx - mx)*(cx - mx) + (cy - my)*(cy - my));
-        float expected_conc = std::exp(-dist_to_map * dist_to_map / 2.0f);
-        float llr = latest_gas_ * expected_conc - 0.1f * map_move;
-        ddm_stopping_.addObservation(llr, elapsed_time_);
+
+        // Warm-up: don't accumulate evidence in first 5 steps
+        // The posterior needs time to burn in before we trust its state
+        if (step_count_ > 5) {
+            // Posterior change rate: negative when converging (good)
+            float posterior_change = map_move;
+
+            // Gas evidence: only matters if posterior is still moving
+            // If posterior is stable AND gas is consistent -> source found
+            float gas_consistency = 0.0f;
+            if (map_move < 0.5f) {  // Posterior is relatively stable
+                // Check if gas readings are consistent with source at MAP
+                float dist_to_map = std::sqrt((cx - mx)*(cx - mx) + (cy - my)*(cy - my));
+                float expected_conc = std::exp(-dist_to_map * dist_to_map / 2.0f);
+                gas_consistency = latest_gas_ * expected_conc;
+            }
+
+            // LLR: evidence FOR convergence
+            // Positive when: posterior stable AND gas consistent
+            // Negative when: posterior still moving
+            float llr = gas_consistency - 0.5f * posterior_change;
+
+            ddm_stopping_.addObservation(llr, elapsed_time_);
+        }
+
         ddm_prev_map_x_ = mx;
         ddm_prev_map_y_ = my;
     }
@@ -1049,6 +1113,16 @@ void OPGSL::processGasAndWindMeasurements(double concentration, double windSpeed
     // Wind history
     wind_dir_history_.push_back(windDirection);
     if (wind_dir_history_.size() > kWindHistorySize) wind_dir_history_.pop_front();
+    
+    // Compute wind direction confidence (circular variance)
+    // R_t = |1/L * sum(exp(i*theta_k))| in [0,1]
+    // R_t ~ 1: stable direction, R_t ~ 0: chaotic
+    {
+        float sx = 0.0f, sy = 0.0f;
+        for (float d : wind_dir_history_) { sx += std::cos(d); sy += std::sin(d); }
+        float L = (float)wind_dir_history_.size();
+        wind_confidence_ = std::sqrt(sx*sx + sy*sy) / std::max(L, 1.0f);
+    }
 
     // Adaptive step (Module 3)
     if (use_adaptive_step_) {
@@ -1119,8 +1193,12 @@ float OPGSL::selectTargetAltitude() {
         }
     }
 
-    // SD-NBV altitude: default to standard height
-    float target_z = 0.3f;
+    // SD-NBV altitude with height exploration for unknown source altitude
+    // During initial steps without gas, sweep through heights to find plume
+    float sweep_heights[] = {0.3f, 0.0f, -0.3f, 0.5f, 1.0f, 0.3f};
+    float target_z = (step_count_ <= 6 && gas_hit_count_ == 0)
+        ? std::clamp(sweep_heights[step_count_ % 6], z_min_, z_max_)
+        : 0.3f;
     float gp_z = use_gp_altitude_ ? gp_.getNextZAnchored(current_altitude_, best_calibrated_z_, 0.3f) : current_altitude_;
     float post_z = getPosteriorBestZ();
     float maxc_z = maxConcAltitude();
@@ -1330,9 +1408,9 @@ void OPGSL::scStep(float& out_x, float& out_y, float cx, float cy) {
 GSLResult OPGSL::checkSourceFound() {
     // V5: Relaxed early constraints for faster convergence
     if (convergence_reported_) return GSLResult::Success;
-    if (elapsed_time_ < 15.0f) return GSLResult::Running;
+    if (elapsed_time_ < 5.0f) return GSLResult::Running;
     if (gas_hit_count_ < 3) return GSLResult::Running;
-    if (step_count_ < 15) return GSLResult::Running;
+    if (step_count_ < 5) return GSLResult::Running;
 
     auto field = field_estimator_.computeField();
     float cx = currentRobotPosition.x, cy = currentRobotPosition.y;
