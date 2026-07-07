@@ -1,0 +1,123 @@
+﻿## ============================================================
+## ISJ审稿人 + 葛泉波教授 双重审核
+## ============================================================
+
+### ISJ审稿人审核
+
+#### R1: 创新性评估
+
+**Event-Driven Detection Model:**
+- Poisson/Bernoulli过程用于气体检测：化学工程领域已有（不是新数学）
+- 但**首次应用于GSL的后验更新**：所有GSL方法用连续浓度模型
+- 创新度：**中等**（新应用，不是新理论）
+
+**DEIG搜索策略:**
+- "IG(a,d=0) > 0"是关键claim
+- 但需要验证：Infotaxis的EIG在无gas时真的≈0吗？
+  - 实际上Infotaxis在无gas时EIG = H(π_t) - E_z[H(π_{t+1})]
+  - 即使z=0，p(z=0|s)仍然提供信息（排除近源位置）
+  - 所以Infotaxis的IG(a,d=0)也>0，只是**很小**
+- 创新度：**弱**（DEIG和Infotaxis的区别可能只是量的差异，不是质的差异）
+
+**PCRC停止准则:**
+- posterior credible region是标准贝叶斯工具
+- 但在GSL中**确实没有用过**
+- 创新度：**中等**（新应用）
+
+**总评：创新性不足以达到8分。需要更深层的insight。**
+
+#### R2: 技术严谨性评估
+
+**问题1: Detection threshold τ怎么选？**
+- τ太低 → 噪声被误判为detection
+- τ太高 → 弱filament被漏检
+- 这是一个关键设计选择，需要理论或实验依据
+
+**问题2: λ(x,s,w)的参数化**
+- 到达率函数需要知道filament物理参数
+- 这些参数通常未知（与PMFS相同的问题）
+- 如果用非参数方法，又失去物理意义
+
+**问题3: 三层模型的耦合**
+- Layer 1(detection)和Layer 2(magnitude)是否独立？
+- 如果不独立，联合似然的计算可能很复杂
+- 需要明确假设
+
+**总评：技术细节需要更严谨。τ选择和λ参数化是主要风险。**
+
+#### R3: 实验可行性评估
+
+**现有数据能否验证ED-Bayes？**
+- VGR数据有连续浓度值 → 可以设定τ提取detection events
+- 但VGR数据的gas readings是什么分布？
+  - 如果大部分是0 → detection events稀疏 → 验证困难
+  - 如果大部分非0 → binary model不适合
+- 需要先分析数据分布
+
+**总评：实验可行性取决于数据分布，需要先验证。**
+
+---
+
+### 葛泉波教授审核
+
+#### G1: 物理insight深度
+
+**"气体到达是Poisson过程"这个insight：**
+- 物理上正确：filament确实是离散到达的
+- 但**这个insight是否足够深刻？**
+- 更深层的问题：filament的到达不是独立的（wind field creates correlations）
+- 相邻位置的detection events高度相关（同一个filament可以被多个传感器检测到）
+- **需要考虑spatial correlation**
+
+**改进建议：不要只建模单点的detection，要建模spatial pattern of detections**
+
+#### G2: 方法创新深度
+
+**三层模型的问题：**
+- Layer 1(detection)：二值 → 信息损失大（从连续到离散）
+- Layer 2(magnitude)：只在d=1时用 → 大部分时间不用
+- Layer 3(wind)：物理约束 → 但已存在于现有likelihood中
+- **三层之间没有"涌现"——各层独立贡献，没有协同效应**
+
+**需要的创新：一个统一的、自洽的模型，三层之间有耦合**
+
+**改进建议：把detection和magnitude统一到一个混合模型中**
+
+#### G3: 方法可行性
+
+**DEIG的计算复杂度：**
+- 需要对每个候选动作a计算P(d=1|a,π_t)和IG(a,d=1), IG(a,d=0)
+- 这需要积分 over all possible source positions
+- 在grid-based posterior上：O(N²) per action × N actions = O(N³)
+- 对于40×40 grid：64000次计算 per step → 可能太慢
+
+**改进建议：用近似方法（粒子滤波、变分推断）或简化DEIG公式**
+
+#### G4: 理论深度
+
+**"事件模型下的posterior收敛速率"：**
+- 需要证明：在Poisson detection model下，posterior converge at rate O(1/t)
+- 这比连续模型的收敛证明更复杂（需要处理binary observations）
+- 可能需要新的理论工具
+
+**改进建议：从简单情况开始证明（已知λ），再推广**
+
+---
+
+### 综合诊断
+
+| 维度 | 评分 | 问题 |
+|------|------|------|
+| 物理insight | 7/10 | Poisson过程正确但不够深 |
+| 创新性 | 6/10 | 与现有方法区别不够大 |
+| 技术严谨性 | 6/10 | τ选择、λ参数化未解决 |
+| 可行性 | 7/10 | 需要验证数据分布 |
+| 理论深度 | 5/10 | 收敛证明可能很难 |
+| **总评** | **6/10** | **未达8分标准** |
+
+### 关键差距
+
+1. **创新性不足**：ED-Bayes与Infotaxis+Bayesian的区别不够大
+2. **三层模型没有耦合**：各层独立，没有"涌现"
+3. **理论证明可能很难**：binary observation下的收敛证明
+4. **DEIG计算复杂**：实际实现可能太慢

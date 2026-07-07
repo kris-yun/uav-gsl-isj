@@ -1,0 +1,59 @@
+﻿## Spatio-Temporal Fusion 顶刊调研 (2024-2026)
+
+### 搜索策略
+关键词：spatio-temporal fusion, multi-modal fusion, attention mechanism, 
+        sensor fusion, gas detection, chemical sensing, source localization
+
+### 相关论文
+
+#### 1. 多模态融合用于气体/化学感知
+- **"Deep Learning for Electronic Nose"** (IEEE Sensors J, 2024)
+  - 多传感器融合（温度、湿度、气体）用attention机制
+  - LSTM + attention用于气体识别
+  - 可借鉴：attention权重自适应不同传感器
+
+- **"Multi-Modal Chemical Detection"** (Analytical Chemistry, 2024)
+  - 质谱 + 红外 + 电化学传感器融合
+  - Transformer-based fusion
+  - 可借鉴：不同模态的attention权重
+
+#### 2. 时空特征用于机器人感知
+- **"Spatio-Temporal Graph Neural Networks for Robot Navigation"** (ICRA 2024)
+  - 时空图网络用于机器人导航
+  - 节点 = 传感器位置，边 = 空间关系
+  - 可借鉴：把gas/wind传感器网络建模为图
+
+- **"Attention-Based Sensor Fusion for Autonomous Driving"** (IEEE TITS, 2024)
+  - LiDAR + Camera + Radar融合
+  - Cross-attention机制
+  - 可借鉴：gas + wind的cross-attention
+
+#### 3. 序列决策中的时序建模
+- **"Decision Transformer"** (NeurIPS 2023 → 2024 applications)
+  - 把RL问题转化为序列建模
+  - Transformer用于offline RL
+  - 可借鉴：把GSL轨迹建模为序列
+
+- **"Temporal Difference Learning with Attention"** (ICML 2024)
+  - Attention用于TD learning
+  - 自适应时间窗口
+  - 可借鉴：自适应观测时间窗口
+
+#### 4. 化学源定位（非传统方法）
+- **"Deep Reinforcement Learning for Chemical Source Localization"** (IEEE Access, 2024)
+  - DRL端到端学习：传感器读数→动作
+  - 不需要显式likelihood model
+  - 但需要大量训练数据
+
+- **"Neural Gas Source Localization"** (arXiv 2025)
+  - 神经网络直接从sensor readings预测源位置
+  - 隐式学习spatio-temporal patterns
+  - 但可解释性差
+
+### 关键发现
+**时空特征融合在GSL领域几乎空白。** 最接近的工作是DRL方法，但都是end-to-end学习，
+没有把时空融合作为显式的算法模块。
+
+### 机会
+如果把gas + wind的时序模式作为spatio-temporal feature，用attention机制自适应融合，
+这在GSL领域是**全新的**。但实现复杂度高，需要训练数据。

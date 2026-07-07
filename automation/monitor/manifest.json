@@ -1,0 +1,66 @@
+{
+  "project": "A-gas",
+  "monitor_root": "automation/monitor",
+  "goal": "Achieve 3 cross-domain innovations with measurable improvement over baselines.",
+  "checks": {
+    "baseline_officials_used": true,
+    "innovations_cross_domain": true,
+    "no_robotics_repackaging": true
+  },
+  "tasks": [
+    {
+      "name": "audit",
+      "output": "results/iter1_baseline_audit.md",
+      "required_patterns": ["SurgeCast", "Infotaxis", "KLD", "MAPIRlab", "Vergassola"],
+      "required_files": []
+    },
+    {
+      "name": "memp_fix",
+      "output": "results/iter3_rerun_summary.md",
+      "required_patterns": ["MEMP", "tests", "comparison"],
+      "required_files": [
+        "results/iter3_rerun_comparison.csv"
+      ]
+    },
+    {
+      "name": "memp",
+      "output": "results/iter2_memp_summary.md",
+      "required_patterns": ["MEMP", "Laplacian", "test"],
+      "required_files": [
+        "workspace/uav_diagsense/src/memp/memp_posterior.py",
+        "workspace/uav_diagsense/src/memp/memp_planner.py"
+      ]
+    },
+    {
+      "name": "bpfm",
+      "output": "results/iter4_bpfm_summary.md",
+      "required_patterns": ["BPFM", "flow", "test"],
+      "required_files": [
+        "workspace/uav_diagsense/src/bpfm/bpfm_estimator.py",
+        "workspace/uav_diagsense/src/bpfm/bpfm_planner.py"
+      ]
+    },
+    {
+      "name": "sdm",
+      "output": "results/iter5_sdm_summary.md",
+      "required_patterns": ["SDM", "deconvolution", "test"],
+      "required_files": [
+        "workspace/uav_diagsense/src/sdm/sdm_estimator.py",
+        "workspace/uav_diagsense/src/sdm/sdm_planner.py"
+      ]
+    },
+    {
+      "name": "experiment",
+      "output": "results/iter6_comparison.csv",
+      "required_patterns": [],
+      "required_files": ["results/iter6_comparison.csv"]
+    }
+  ],
+  "final_gate": {
+    "comparison_csv": "results/iter6_comparison.csv",
+    "improvement_columns": ["mean_error", "success_at_1m"],
+    "improvement_direction": {"mean_error": "lower", "success_at_1m": "higher"},
+    "required_innovations": 3,
+    "summary_output": "results/final_gate.md"
+  }
+}

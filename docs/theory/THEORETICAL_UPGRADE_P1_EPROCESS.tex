@@ -1,0 +1,442 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{remark}[theorem]{Remark}
+
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\Var}{\mathrm{Var}}
+\DeclareMathOperator{\KL}{\mathrm{KL}}
+\DeclareMathOperator{\diam}{\mathrm{diam}}
+\DeclareMathOperator{\clip}{\mathrm{clip}}
+\DeclareMathOperator{\supp}{\mathrm{supp}}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\dt}{\Delta t}
+\newcommand{\law}{\mathsf{P}}
+\newcommand{\Ibin}{\mathcal{I}_{\mathrm{bin}}}
+\newcommand{\Icont}{\mathcal{I}_{\mathrm{cont}}}
+\newcommand{\Ilod}{\mathcal{I}_{\mathrm{cont}}^{\mathrm{LOD}}}
+\newcommand{\wh}{\widehat}
+\newcommand{\ph}{\varphi}
+\newcommand{\Ph}{\Phi}
+
+\begin{document}
+
+\title{Theory Upgrade Notes for UAV Gas Source Localization\\
+\large P1 under Censored Continuous Sensing and Anytime E-Processes under Composite Localization Nulls}
+\author{Prof.\ Boyle mode --- replacement theorem modules}
+\date{2026-07-04}
+\maketitle
+
+\section{P1 upgrade: self-correction under a censored continuous sensor}
+
+\begin{definition}[LOD-censored continuous concentration channel]\label{def:lod-channel}
+Fix a UAV query location $x$ and source hypothesis $s\in\X$.  Let
+\[
+        \lambda_s:=\lambda(x,s),\qquad
+        Y_s=\kappa_c\lambda_s+\varepsilon,\qquad
+        \varepsilon\sim N(0,\sigma_c^2),
+\]
+where $\kappa_c>0$ converts filament arrival rate to analog concentration units.  A continuous sensor with limit of detection $\tau_{\mathrm{LOD}}>0$ reports
+\[
+        Y_s^{\mathrm{LOD}}
+        =
+        \begin{cases}
+        0, & Y_s<\tau_{\mathrm{LOD}},\\
+        Y_s, & Y_s\geq \tau_{\mathrm{LOD}}.
+        \end{cases}
+\]
+Equivalently, the observation law is the mixed measure
+\begin{equation}
+        P_{\mu}^{\mathrm{LOD}}
+        =
+        \Ph\!\left(\frac{\tau_{\mathrm{LOD}}-\mu}{\sigma_c}\right)\delta_0
+        +
+        \mathbf{1}\{y\geq \tau_{\mathrm{LOD}}\}
+        \frac{1}{\sigma_c}\ph\!\left(\frac{y-\mu}{\sigma_c}\right)\,dy,
+        \qquad
+        \mu=\kappa_c\lambda_s .
+        \label{eq:lod-mixed-law}
+\end{equation}
+For a posterior $\pi$ over $S$, define the local Bayesian information of this censored channel as the Jensen gap
+\[
+        \Ilod(\pi,x)
+        :=
+        \E_{S\sim\pi}
+        \KL\!\left(
+        P_{\kappa_c\lambda(x,S)}^{\mathrm{LOD}}
+        \,\middle\|\,
+        \E_{S'\sim\pi}P_{\kappa_c\lambda(x,S')}^{\mathrm{LOD}}
+        \right).
+\]
+The ideal uncensored Gaussian channel has the local quadratic information
+\[
+        \Icont^{\mathrm{full}}(\pi,x)
+        =
+        \frac{\kappa_c^2}{2\sigma_c^2}\Var_{\pi}[\lambda(x,S)].
+\]
+\end{definition}
+
+\begin{proposition}[LOD attenuation and binary low-concentration robustness]\label{prop:p1-lod}
+Let $a:=\tau_{\mathrm{LOD}}/\sigma_c$, let $\lambda_{\max}:=\sup_{s\in\supp(\pi)}\lambda(x,s)$, and assume
+\[
+        \dt\lambda_{\max}=o(1),
+        \qquad
+        \frac{\kappa_c\lambda_{\max}}{\sigma_c}=o(1),
+        \qquad
+        \Var_{\pi}[\lambda(x,S)]>0 .
+\]
+For the LOD-censored continuous channel in Definition~\ref{def:lod-channel},
+\begin{equation}
+        \Ilod(\pi,x)
+        =
+        \frac{\kappa_c^2}{2\sigma_c^2}
+        J(a)\Var_{\pi}[\lambda(x,S)]
+        +
+        O\!\left(
+        \frac{\kappa_c^3}{\sigma_c^3}
+        \E_{\pi}|\lambda(x,S)-\E_{\pi}\lambda(x,S)|^3
+        \right),
+        \label{eq:lod-information-expansion}
+\end{equation}
+where
+\begin{equation}
+        J(a)
+        =
+        a\ph(a)+1-\Ph(a)+\frac{\ph(a)^2}{\Ph(a)} .
+        \label{eq:lod-attenuation-factor}
+\end{equation}
+Moreover, the binary non-detection information
+\[
+        \Ibin(\pi,x)
+        :=
+        \dt\,\E_{\pi}[\lambda(x,S)]
+        +
+        \log\E_{\pi}\exp\{-\dt\lambda(x,S)\}
+\]
+satisfies
+\begin{equation}
+        \Ibin(\pi,x)
+        =
+        \frac{\dt^2}{2}\Var_{\pi}[\lambda(x,S)]
+        +
+        O\!\left(\dt^3\E_{\pi}|\lambda(x,S)|^3\right).
+        \label{eq:binary-ndi-expansion-lod}
+\end{equation}
+Consequently,
+\begin{equation}
+        \frac{\Ibin(\pi,x)}{\Ilod(\pi,x)}
+        =
+        \frac{\sigma_c^2\dt^2}{\kappa_c^2J(a)}
+        \left[
+        1+O(\dt\lambda_{\max})
+          +O\!\left(\frac{\kappa_c\lambda_{\max}}{\sigma_c}\right)
+        \right].
+        \label{eq:lod-ratio}
+\end{equation}
+In the severe-LOD regime $a\to\infty$,
+\begin{equation}
+        J(a)
+        =
+        a\ph(a)\{1+O(a^{-2})\},
+        \qquad
+        \frac{\Ibin(\pi,x)}{\Ilod(\pi,x)}
+        =
+        \frac{\sqrt{2\pi}\,\sigma_c^2\dt^2}{\kappa_c^2a}
+        \exp\!\left(\frac{a^2}{2}\right)
+        \{1+o(1)\}.
+        \label{eq:lod-severe-asymptotic}
+\end{equation}
+Thus the correct P1 claim is not that binary events dominate an uncensored analog measurement.  The claim is that, after LOD censoring, the continuous concentration channel is multiplied by the attenuation factor $J(a)$, whereas the event non-detection channel retains the variance-scale signal in \eqref{eq:binary-ndi-expansion-lod}.  In particular, for any fixed low-concentration posterior satisfying the assumptions above, $\Ibin>\Ilod$ whenever $J(a)<\sigma_c^2\dt^2/\kappa_c^2$ up to the displayed lower-order terms; under hard engineering censoring, $J(a)=0$ and the ratio is infinite.
+\end{proposition}
+
+\begin{proof}
+First compute the Fisher information of the censored law \eqref{eq:lod-mixed-law} at $\mu=0$.  The atom at the censoring symbol has probability
+\[
+        q(\mu)=\Ph\!\left(\frac{\tau_{\mathrm{LOD}}-\mu}{\sigma_c}\right),
+        \qquad
+        q'(0)=-\frac{1}{\sigma_c}\ph(a),
+\]
+so its contribution to Fisher information is
+\[
+        \frac{q'(0)^2}{q(0)}
+        =
+        \frac{1}{\sigma_c^2}\frac{\ph(a)^2}{\Ph(a)} .
+\]
+On the uncensored tail $y\geq\tau_{\mathrm{LOD}}$, the score for the Gaussian mean is $y/\sigma_c^2$ at $\mu=0$.  Therefore the continuous-tail contribution is
+\[
+        \int_{\tau_{\mathrm{LOD}}}^{\infty}
+        \frac{y^2}{\sigma_c^4}
+        \frac{1}{\sigma_c}\ph\!\left(\frac{y}{\sigma_c}\right)\,dy
+        =
+        \frac{1}{\sigma_c^2}\int_a^{\infty}z^2\ph(z)\,dz
+        =
+        \frac{1}{\sigma_c^2}\{a\ph(a)+1-\Ph(a)\}.
+\]
+The last equality follows by integration by parts.  Hence the censored Gaussian Fisher information for the mean parameter at zero is
+\[
+        \mathcal{J}_{\mathrm{LOD}}(0)
+        =
+        \frac{J(a)}{\sigma_c^2},
+\]
+with $J(a)$ as in \eqref{eq:lod-attenuation-factor}.  A second-order local asymptotic expansion of the Jensen gap for the one-dimensional parametric family $P_{\mu}^{\mathrm{LOD}}$ gives
+\[
+        \E_{\pi}
+        \KL\!\left(P_{\mu_S}^{\mathrm{LOD}}
+        \middle\|
+        \E_{\pi}P_{\mu_{S'}}^{\mathrm{LOD}}\right)
+        =
+        \frac{\mathcal{J}_{\mathrm{LOD}}(0)}{2}\Var_{\pi}[\mu_S]
+        +
+        O\!\left(\E_{\pi}|\mu_S-\E_{\pi}\mu_S|^3/\sigma_c^3\right).
+\]
+Substituting $\mu_S=\kappa_c\lambda(x,S)$ proves \eqref{eq:lod-information-expansion}.  For comparison, the same calculation with no censoring has Fisher information $1/\sigma_c^2$, which yields $\Icont^{\mathrm{full}}=\kappa_c^2\Var_{\pi}[\lambda]/(2\sigma_c^2)$.
+
+For the binary non-detection information, write the cumulant expansion
+\[
+        \log\E_{\pi}e^{-\dt\lambda}
+        =
+        -\dt\E_{\pi}\lambda
+        +
+        \frac{\dt^2}{2}\Var_{\pi}[\lambda]
+        +
+        O(\dt^3\E_{\pi}|\lambda|^3).
+\]
+Adding $\dt\E_{\pi}\lambda$ gives \eqref{eq:binary-ndi-expansion-lod}.  Dividing \eqref{eq:binary-ndi-expansion-lod} by \eqref{eq:lod-information-expansion} gives \eqref{eq:lod-ratio}.  Finally, Mills' ratio gives $1-\Ph(a)=\ph(a)a^{-1}\{1+O(a^{-2})\}$, while $\ph(a)^2/\Ph(a)=o(a\ph(a))$ as $a\to\infty$.  Hence $J(a)=a\ph(a)\{1+O(a^{-2})\}$, which proves \eqref{eq:lod-severe-asymptotic}.
+\end{proof}
+
+\begin{remark}[Physical interpretation and ISJ-facing wording]\label{rem:p1-physical-lod}
+This proposition directly addresses the data-processing objection.  If the analog sensor outputs the full Gaussian observation $Y=\kappa_c\lambda+\varepsilon$, binary detection cannot be more informative than the full analog record.  The relevant physical comparison is instead with a MOS/MOX concentration channel after LOD censoring: below the electronics or calibration threshold, many different small concentrations are reported as the same zero-level symbol.  Optimized metal-oxide gas sensors commonly report ppb-level LODs for trace gases; single-digit to tens-of-ppb values are typical in laboratory MOS/MOX demonstrations, while commodity low-cost arrays may have higher effective field LODs.  The manuscript should therefore state the practical range as ``roughly $1$--$10$ ppb for optimized MOS/MOX trace-gas settings, often higher under field drift and humidity.''  The revised P1 message is: event observations are not universally superior to continuous observations; they are more robust in the low-concentration, LOD-censored regime because non-detections remain model-dependent evidence while censored analog readings collapse to the same reported zero.
+\end{remark}
+
+\noindent\textbf{ISJ persuasion score: 9/10.}
+
+\noindent\textbf{Key revision.}
+The previous sparse-posterior divergence is valid only after specifying what information the analog channel loses.  The replacement proof identifies the lost information as the explicit LOD attenuation factor $J(a)$ and shows the exact asymptotic ratio against the binary non-detection information.
+
+\section{E-process upgrade: composite null for anytime localization}
+
+\begin{definition}[Composite localization null and bounded score]\label{def:composite-localization-null}
+Let $\mathcal{F}_t$ be the filtration generated by UAV actions and observations up to time $t$.  Let $\wh{s}_t$ be an $\mathcal{F}_t$-measurable source estimate and let $r_t$ be an $\mathcal{F}_t$-measurable posterior or confidence radius.  For a target localization precision $\varepsilon>0$, the geometric composite null at time $t$ is
+\[
+        H_{0,t}(\varepsilon):
+        \quad
+        s^\star\notin B(\wh{s}_t,\varepsilon).
+\]
+Since $H_{0,t}(\varepsilon)$ is composite and data-dependent, an anytime e-process requires a calibrated nonpositive-drift score under every law in the null class.  Let $D:=\diam(\X)$ and choose $B\geq\max\{\varepsilon,D-\varepsilon\}$.  Define
+\begin{equation}
+        X_t
+        :=
+        \clip(\varepsilon-r_t,\,-B,\,B).
+        \label{eq:bounded-localization-score}
+\end{equation}
+With this sign convention, $X_t>0$ means the radius has fallen below the target precision, while $X_t\leq0$ means the radius remains at or above $\varepsilon$.  The operational composite null class is
+\begin{equation}
+        \mathcal{P}_0(\varepsilon)
+        :=
+        \left\{
+        P:
+        P\{H_{0,t}(\varepsilon)\ \mathrm{holds}\}=1
+        \ \mathrm{and}\
+        \E_P[X_t\mid\mathcal{F}_{t-1}]\leq0
+        \ \mathrm{for\ all}\ t
+        \right\}.
+        \label{eq:operational-null-class}
+\end{equation}
+The conditional mean condition is the necessary calibration check: under the non-localized regime, the clipped score must not have positive drift.
+\end{definition}
+
+\begin{proposition}[Hoeffding e-process for the composite localization null]\label{prop:hoeffding-eprocess-composite}
+Assume the bounded score \eqref{eq:bounded-localization-score} and the composite null class \eqref{eq:operational-null-class}.  For any fixed $\eta\geq0$, define the one-step Hoeffding e-value and its product process by
+\begin{equation}
+        E_t(\eta)
+        :=
+        \exp\!\left\{\eta X_t-\frac{\eta^2B^2}{2}\right\},
+        \qquad
+        M_t(\eta)
+        :=
+        \prod_{k=1}^{t}E_k(\eta),
+        \qquad
+        M_0(\eta)=1 .
+        \label{eq:hoeffding-eprocess}
+\end{equation}
+Then, for every $P\in\mathcal{P}_0(\varepsilon)$, $M_t(\eta)$ is a nonnegative supermartingale with respect to $(\mathcal{F}_t)_{t\geq0}$.  Therefore the stopping rule
+\[
+        \tau_\delta
+        :=
+        \inf\{t\geq1:M_t(\eta)\geq1/\delta\}
+\]
+has anytime-valid type-I error control
+\begin{equation}
+        \sup_{P\in\mathcal{P}_0(\varepsilon)}
+        P\!\left(\exists t\geq1:\ M_t(\eta)\geq\frac{1}{\delta}\right)
+        \leq
+        \delta .
+        \label{eq:anytime-valid-type-i}
+\end{equation}
+Equivalently, rejecting the composite null and declaring $\varepsilon$-localization when $M_t(\eta)\geq1/\delta$ is valid uniformly over all stopping times.
+\end{proposition}
+
+\begin{proof}
+Fix $P\in\mathcal{P}_0(\varepsilon)$.  Since $X_t\in[-B,B]$ and $\E_P[X_t\mid\mathcal{F}_{t-1}]\leq0$, Hoeffding's lemma gives
+\[
+        \E_P\!\left[
+        \exp\!\left\{\eta X_t-\eta\E_P[X_t\mid\mathcal{F}_{t-1}]\right\}
+        \middle| \mathcal{F}_{t-1}
+        \right]
+        \leq
+        \exp\!\left(\frac{\eta^2(2B)^2}{8}\right)
+        =
+        \exp\!\left(\frac{\eta^2B^2}{2}\right).
+\]
+Because $\eta\geq0$ and $\E_P[X_t\mid\mathcal{F}_{t-1}]\leq0$,
+\[
+        \E_P\!\left[
+        \exp\!\left\{\eta X_t-\frac{\eta^2B^2}{2}\right\}
+        \middle| \mathcal{F}_{t-1}
+        \right]
+        \leq
+        1 .
+\]
+Thus
+\[
+        \E_P[M_t(\eta)\mid\mathcal{F}_{t-1}]
+        =
+        M_{t-1}(\eta)
+        \E_P[E_t(\eta)\mid\mathcal{F}_{t-1}]
+        \leq
+        M_{t-1}(\eta),
+\]
+so $M_t(\eta)$ is a nonnegative supermartingale under every null law.  Ville's inequality for nonnegative supermartingales yields
+\[
+        P\!\left(\sup_{t\geq0}M_t(\eta)\geq1/\delta\right)
+        \leq
+        \delta\E_P[M_0(\eta)]
+        =
+        \delta,
+\]
+which proves \eqref{eq:anytime-valid-type-i}.
+\end{proof}
+
+\begin{remark}[Relation to linear wealth and the sign of the score]\label{rem:linear-wealth}
+The informal wealth process $W_t=\prod_{k=1}^{t}(1+\gamma X_k/B)$ is also a valid test martingale under the same null when $\gamma\in[0,1]$, because each factor is nonnegative and has conditional expectation at most one.  The Hoeffding exponential form \eqref{eq:hoeffding-eprocess} is usually preferable because it gives an explicit growth-rate calculation and matches the bounded-score e-process construction used in modern confidence-sequence treatments such as Howard et al.'s time-uniform Chernoff/Hoeffding bounds.  Note also the sign: with $X_t=\varepsilon-r_t$, the score is positive when $r_t<\varepsilon$, not when $r_t>\varepsilon$.
+\end{remark}
+
+\begin{proposition}[Power and stopping-delay bound after capture]\label{prop:eprocess-power-stopping}
+Assume the e-process of Proposition~\ref{prop:hoeffding-eprocess-composite}.  Suppose there exists a possibly random capture time $T_{\varepsilon}$ after which the UAV is genuinely in the localized regime and the score has positive drift
+\begin{equation}
+        \E[X_t\mid\mathcal{F}_{t-1}]
+        \geq
+        \mu
+        >
+        0,
+        \qquad
+        t>T_{\varepsilon}.
+        \label{eq:alternative-positive-drift}
+\end{equation}
+Then the conditional expected log-growth of the e-process after capture is at least
+\begin{equation}
+        \E[\log E_t(\eta)\mid\mathcal{F}_{t-1}]
+        \geq
+        \rho(\eta,\mu,B)
+        :=
+        \eta\mu-\frac{\eta^2B^2}{2}.
+        \label{eq:log-growth-rate}
+\end{equation}
+The optimal fixed learning rate is $\eta^\star=\mu/B^2$, giving
+\[
+        \rho^\star=\frac{\mu^2}{2B^2}.
+\]
+If, in addition, the post-capture radius is stable in the pathwise sense $X_t\geq\mu$ for all $t>T_{\varepsilon}$ and the pre-capture log-wealth is lower bounded by $\log M_{T_{\varepsilon}}(\eta)\geq-A$, then
+\begin{equation}
+        \tau_\delta
+        \leq
+        T_{\varepsilon}
+        +
+        \left\lceil
+        \frac{A+\log(1/\delta)}
+             {\rho(\eta,\mu,B)}
+        \right\rceil .
+        \label{eq:pathwise-stopping-delay}
+\end{equation}
+Consequently, if the ED-EIG policy reaches a stable radius $r_t\leq\varepsilon/2$ after
+\begin{equation}
+        T_{\varepsilon}
+        \leq
+        \frac{C_{\mathrm{alg}}}
+        {\lambda_0\dt(1-\alpha_w^2)\ell^2\varepsilon^2},
+        \label{eq:algorithmic-capture-time}
+\end{equation}
+which matches the P0 minimax scaling up to constants, then with $\mu=\varepsilon/2$ and $\eta^\star=\mu/B^2$,
+\begin{equation}
+        \E[\tau_\delta]
+        \leq
+        \frac{C_{\mathrm{alg}}}
+        {\lambda_0\dt(1-\alpha_w^2)\ell^2\varepsilon^2}
+        +
+        \frac{8B^2}{\varepsilon^2}
+        \{A+\log(1/\delta)\}
+        +
+        1 .
+        \label{eq:expected-stopping-upper-bound}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+The log-growth identity follows directly from \eqref{eq:hoeffding-eprocess}:
+\[
+        \E[\log E_t(\eta)\mid\mathcal{F}_{t-1}]
+        =
+        \eta\E[X_t\mid\mathcal{F}_{t-1}]
+        -
+        \frac{\eta^2B^2}{2}
+        \geq
+        \eta\mu-\frac{\eta^2B^2}{2}.
+\]
+The right-hand side is maximized by $\eta^\star=\mu/B^2$, yielding $\rho^\star=\mu^2/(2B^2)$.
+
+Under the stronger pathwise post-capture condition $X_t\geq\mu$, each subsequent log increment obeys
+\[
+        \log E_t(\eta)
+        =
+        \eta X_t-\frac{\eta^2B^2}{2}
+        \geq
+        \rho(\eta,\mu,B).
+\]
+Starting from $\log M_{T_{\varepsilon}}(\eta)\geq-A$, at most
+\[
+        \left\lceil
+        \frac{A+\log(1/\delta)}
+             {\rho(\eta,\mu,B)}
+        \right\rceil
+\]
+additional post-capture samples are needed to make $\log M_t(\eta)\geq\log(1/\delta)$.  This proves \eqref{eq:pathwise-stopping-delay}.  Taking expectations and substituting the algorithmic capture-time bound \eqref{eq:algorithmic-capture-time} gives the same inequality in expectation.  If $r_t\leq\varepsilon/2$ after capture, then $X_t=\varepsilon-r_t\geq\varepsilon/2$, so $\mu=\varepsilon/2$ is admissible.  With $\eta^\star=\mu/B^2$, $\rho^\star=\varepsilon^2/(8B^2)$, which gives \eqref{eq:expected-stopping-upper-bound}.
+\end{proof}
+
+\begin{remark}[Interpretation for the UAV stopping rule]\label{rem:eprocess-physical}
+The e-process does not certify the simple null ``the source is not localized'' by pretending it is a point hypothesis.  It certifies a composite, geometry-aware null: for every non-localized data-generating law in which the calibrated radius score has nonpositive drift, the probability of ever crossing the threshold $1/\delta$ is at most $\delta$.  Power is governed by the post-capture margin $\mu=\E[\varepsilon-r_t]$: once the UAV repeatedly produces radii below $\varepsilon$, the log e-value grows at rate approximately $\mu^2/(2B^2)$ per sample.  The total stopping time decomposes into an information-limited search time, whose $\varepsilon^{-2}/\{\lambda_0\dt(1-\alpha_w^2)\ell^2\}$ scaling is unavoidable by P0, plus a logarithmic-in-$1/\delta$ certification delay.
+\end{remark}
+
+\noindent\textbf{ISJ persuasion score: 8.5/10.}
+
+\noindent\textbf{Key revision.}
+The revised stopping theorem no longer treats localization as a simple null.  It states the composite null explicitly, clips the score to make Hoeffding e-values valid, proves anytime type-I control by Ville's inequality, and separates search complexity from sequential certification delay.
+
+\section{Reference anchors for manuscript integration}
+
+\begin{itemize}
+\item Xu et al., \href{https://doi.org/10.52202/079017-1920}{``Active, Anytime-Valid Risk Controlling Prediction Sets,'' NeurIPS 2024}, motivates anytime-valid risk control for adaptive prediction-set decisions.
+\item Howard et al., \href{https://doi.org/10.1214/18-PS321}{``Time-uniform Chernoff bounds via nonnegative supermartingales,'' Probability Surveys 2020}, provides the nonnegative-supermartingale and Hoeffding/Chernoff confidence-sequence foundation used in Proposition~\ref{prop:hoeffding-eprocess-composite}.
+\item MOS/MOX LOD values should be cited with gas-specific sensor papers or datasheets in the final manuscript; examples include \href{https://doi.org/10.1016/j.snb.2018.06.097}{ppb-level measurements with a metal-oxide semiconductor gas sensor} and \href{https://doi.org/10.1016/j.snb.2024.135916}{sub-ppb NO$_2$ detection in an optimized NiO--SnO$_2$ metal-oxide sensor}.  The safe wording is ppb-level LOD for optimized trace-gas MOS/MOX sensors, approximately $1$--$10$ ppb in favorable laboratory demonstrations and often higher in deployed low-cost arrays.
+\end{itemize}
+
+\end{document}

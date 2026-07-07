@@ -1,0 +1,745 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{remark}[theorem]{Remark}
+
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\Var}{\mathrm{Var}}
+\DeclareMathOperator{\KL}{\mathrm{KL}}
+\DeclareMathOperator{\TV}{\mathrm{TV}}
+\DeclareMathOperator{\diam}{\mathrm{diam}}
+\DeclareMathOperator{\Cov}{\mathrm{Cov}}
+\DeclareMathOperator{\supp}{\mathrm{supp}}
+
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\wh}{\widehat}
+\newcommand{\dt}{\Delta t}
+\newcommand{\law}{\mathsf{P}}
+\newcommand{\ber}{\mathrm{Ber}}
+\newcommand{\rad}{\mathcal{R}}
+\newcommand{\Ibin}{\mathcal{I}_{\mathrm{bin}}}
+\newcommand{\Icont}{\mathcal{I}_{\mathrm{cont}}}
+\newcommand{\IED}{\mathcal{I}_{\mathrm{ED}}}
+
+\begin{document}
+
+\title{Rigorous Theoretical Proofs for Event-Driven UAV Gas Source Localization\\
+\large P0--P3: Minimax, Self-Correction, Phase Transition, and Upwind ED-EIG}
+\author{Prof.\ Boyle mode --- mathematical derivation notes}
+\date{2026-07-04}
+\maketitle
+
+\section{Model, conventions, and reusable inequalities}
+
+The unknown gas source is $s^\star\in\X\subset\R^2$.  At UAV location $x_t$, the binary detection event is
+\begin{equation}
+        \law_s(d_t=1\mid x_t)=1-\exp\{-\lambda(x_t,s)\dt\},\qquad
+        \law_s(d_t=0\mid x_t)=\exp\{-\lambda(x_t,s)\dt\},
+        \label{eq:binary-model}
+\end{equation}
+with filament arrival rate
+\begin{equation}
+        \lambda(x,s)
+        =
+        \lambda_0
+        \exp\!\left(-\frac{\|x-s\|}{\ell}\right)
+        \left(1+\alpha_w\cos\theta(x,s,w)\right),
+        \qquad |\alpha_w|<1.
+        \label{eq:filament-rate}
+\end{equation}
+The posterior update is $\pi_{t+1}(s)\propto \pi_t(s)\law_s(d_t\mid x_t)$.
+
+\begin{remark}[Dimensional convention for P0]
+The minimax lower bound requested in the form
+\[
+        \frac{C}{T\lambda_0\dt(1-\alpha_w^2)\ell^2}
+\]
+is dimensionally correct when the source coordinate $s$ is the paper's nondimensional inverse-plume coordinate, i.e. the local statistical Lipschitz constant of the Bernoulli experiment is proportional to $\ell$.  If $s$ is measured in physical metres in \eqref{eq:filament-rate}, the same proof gives the physically dimensional replacement
+\[
+        \frac{C\,\ell^2}{T\lambda_0\dt(1-\alpha_w^2)}.
+\]
+The theorem below states the nondimensional paper form and records the precise assumption under which it follows.
+\end{remark}
+
+\begin{assumption}[Adaptive KL-Lipschitz regularity]\label{ass:adaptive-kl-lipschitz}
+There is a numerical constant $K_{\mathrm{KL}}\geq 1$ such that for all UAV query points $x$ and all $s,s'\in\X$,
+\begin{equation}
+        \KL\!\left(
+        \ber(1-e^{-\lambda(x,s)\dt})
+        \,\middle\|\,
+        \ber(1-e^{-\lambda(x,s')\dt})
+        \right)
+        \leq
+        \Gamma \|s-s'\|^2,
+        \label{eq:adaptive-kl-lipschitz}
+\end{equation}
+where
+\begin{equation}
+        \Gamma
+        :=
+        K_{\mathrm{KL}}\lambda_0\dt(1-\alpha_w^2)\ell^2 .
+        \label{eq:gamma-definition}
+\end{equation}
+For physical coordinates under \eqref{eq:filament-rate}, replace $\ell^2$ in \eqref{eq:gamma-definition} by $\ell^{-2}$.
+\end{assumption}
+
+\begin{lemma}[Bernoulli information chain rule under adaptive sampling]\label{lem:adaptive-chain-rule}
+Fix any deterministic or randomized UAV policy $\mathsf{A}$ for choosing $x_t$ from the past history $H_{t-1}=(x_1,d_1,\ldots,x_{t-1},d_{t-1})$.  Let $\law_s^{\mathsf{A},T}$ be the joint law of $H_T$ under source $s$.  Under Assumption~\ref{ass:adaptive-kl-lipschitz},
+\begin{equation}
+        \KL\!\left(\law_s^{\mathsf{A},T}\middle\|\law_{s'}^{\mathsf{A},T}\right)
+        \leq
+        T\Gamma\|s-s'\|^2 .
+        \label{eq:adaptive-kl-bound}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+First condition on the internal random seed $U$ of the policy.  Conditional on $U$, the policy is deterministic, and $x_t$ is a measurable function of $H_{t-1}$.  The KL chain rule for stochastic processes gives
+\begin{align}
+ \KL\!\left(\law_s^{\mathsf{A},T}(\cdot\mid U)\middle\|\law_{s'}^{\mathsf{A},T}(\cdot\mid U)\right)
+ &=
+ \sum_{t=1}^T
+ \E_s
+ \left[
+ \KL\!\left(
+       \law_s(d_t\mid H_{t-1},U)
+       \middle\|
+       \law_{s'}(d_t\mid H_{t-1},U)
+ \right)
+ \right] \notag\\
+ &=
+ \sum_{t=1}^T
+ \E_s
+ \left[
+ \KL\!\left(
+       \ber(1-e^{-\lambda(x_t,s)\dt})
+       \middle\|
+       \ber(1-e^{-\lambda(x_t,s')\dt})
+ \right)
+ \right] .
+ \end{align}
+The transition law of $x_t$ contributes no KL term because the same policy map is used under both hypotheses; only the conditional law of $d_t$ differs.  Applying \eqref{eq:adaptive-kl-lipschitz} inside the expectation yields
+\[
+        \KL\!\left(\law_s^{\mathsf{A},T}(\cdot\mid U)\middle\|\law_{s'}^{\mathsf{A},T}(\cdot\mid U)\right)
+        \leq T\Gamma\|s-s'\|^2 .
+\]
+Finally, averaging over $U$ cannot increase KL by the convexity/data-processing property of relative entropy.  This proves \eqref{eq:adaptive-kl-bound}.
+\end{proof}
+
+\section{P0. Minimax lower bound under adaptive UAV observations}
+
+\begin{theorem}[Adaptive minimax lower bound via Fano]\label{thm:p0-minimax}
+Assume that $\X$ contains a Euclidean square of side length $4\rho_{\X}>0$ and Assumption~\ref{ass:adaptive-kl-lipschitz} holds.  Then for every deterministic or randomized adaptive UAV policy and every estimator $\widehat{s}_T=\widehat{s}_T(H_T)$,
+\begin{equation}
+        \inf_{\widehat{s}_T}\sup_{s^\star\in\X}
+        \E_{s^\star}\|\widehat{s}_T-s^\star\|^2
+        \geq
+        \min\!\left\{
+        \frac{\rho_{\X}^2}{4},
+        \frac{\log 2}{64K_{\mathrm{KL}}}
+        \frac{1}{T\lambda_0\dt(1-\alpha_w^2)\ell^2}
+        \right\}.
+        \label{eq:p0-minimax-bound}
+\end{equation}
+In physical metre coordinates for the rate \eqref{eq:filament-rate}, the second term is replaced by
+\[
+        \frac{\log 2}{64K_{\mathrm{KL}}}
+        \frac{\ell^2}{T\lambda_0\dt(1-\alpha_w^2)} .
+\]
+\end{theorem}
+
+\begin{proof}
+It is enough to lower-bound the risk on a finite subset of $\X$.  Let $z_0$ be the centre of a square of side $4\rho_{\X}$ contained in $\X$.  For a number $\varepsilon\leq \rho_{\X}$ to be chosen later, define the four-point $\varepsilon$-packing
+\[
+        \mathcal{S}_{\varepsilon}
+        =
+        \left\{
+        z_0+(\sigma_1\varepsilon,\sigma_2\varepsilon):
+        \sigma_1,\sigma_2\in\{-1,+1\}
+        \right\}.
+\]
+Any two distinct points in $\mathcal{S}_{\varepsilon}$ have distance at least $2\varepsilon$, and every two points have distance at most $2\sqrt{2}\varepsilon$.
+
+Let $V$ be uniform on $\{1,2,3,4\}$ and let $s_V\in\mathcal{S}_{\varepsilon}$ be the corresponding source.  Given an estimator $\widehat{s}_T$, define the nearest-neighbour decoder
+\[
+        \widehat{V}
+        =
+        \arg\min_{j\in\{1,2,3,4\}}
+        \|\widehat{s}_T-s_j\|.
+\]
+If $\widehat{V}\neq V$, then $\widehat{s}_T$ is outside the open ball of radius $\varepsilon$ around the true packing point; otherwise a point inside that ball would be closer to $s_V$ than to any other packing point.  Hence
+\begin{equation}
+        \E_{s_V}\|\widehat{s}_T-s_V\|^2
+        \geq
+        \varepsilon^2\,\mathbb{P}(\widehat{V}\neq V).
+        \label{eq:risk-to-testing}
+\end{equation}
+
+We now upper-bound the mutual information between $V$ and the adaptive history $H_T$.  By the standard Fano information bound,
+\[
+        I(V;H_T)
+        \leq
+        \frac{1}{4^2}\sum_{i,j=1}^4
+        \KL\!\left(\law_{s_i}^{\mathsf{A},T}\middle\|\law_{s_j}^{\mathsf{A},T}\right).
+\]
+Lemma~\ref{lem:adaptive-chain-rule} and $\|s_i-s_j\|\leq 2\sqrt{2}\varepsilon$ give
+\begin{equation}
+        I(V;H_T)\leq 8T\Gamma\varepsilon^2.
+        \label{eq:mutual-info-upper}
+\end{equation}
+Fano's inequality in the form
+\[
+        \mathbb{P}(\widehat{V}\neq V)
+        \geq
+        1-\frac{I(V;H_T)+\log 2}{\log 4}
+\]
+therefore yields
+\[
+        \mathbb{P}(\widehat{V}\neq V)
+        \geq
+        1-\frac{8T\Gamma\varepsilon^2+\log 2}{2\log 2}.
+\]
+Choose
+\[
+        \varepsilon^2
+        =
+        \min\!\left\{
+        \rho_{\X}^2,\,
+        \frac{\log 2}{16T\Gamma}
+        \right\}.
+\]
+If the second term is active, the preceding display gives
+$\mathbb{P}(\widehat{V}\neq V)\geq 1/4$; if the first term is active, reducing constants only improves the lower bound stated below.  Combining this with \eqref{eq:risk-to-testing} gives
+\[
+        \sup_{s^\star\in\X}\E_{s^\star}\|\widehat{s}_T-s^\star\|^2
+        \geq
+        \frac{1}{4}
+        \min\!\left\{
+        \rho_{\X}^2,\,
+        \frac{\log 2}{16T\Gamma}
+        \right\}.
+\]
+Substituting $\Gamma=K_{\mathrm{KL}}\lambda_0\dt(1-\alpha_w^2)\ell^2$ proves \eqref{eq:p0-minimax-bound}.  Since the argument did not restrict the policy beyond measurability and allowed policy randomization through $U$, the infimum over all estimators and adaptive policies obeys the same lower bound.
+\end{proof}
+
+\begin{remark}[Physical interpretation]
+Even a fully adaptive UAV cannot beat the information budget imposed by rare Bernoulli plume contacts.  Adaptivity changes where information is collected, but the KL chain rule shows that each binary sample contributes at most the same local statistical curvature.  The lower bound therefore scales as ``one over total contact information'', $1/(T\lambda_0\dt)$, with wind anisotropy reducing information through the factor $(1-\alpha_w^2)$.
+\end{remark}
+
+\noindent\textbf{ISJ persuasion score: 8.5/10.}
+
+\noindent\textbf{Key technique and difficulty.}
+The key step is Lemma~\ref{lem:adaptive-chain-rule}: adaptive locations contribute no extra KL because the same policy kernel is used under all hypotheses.  The only substantive modelling assumption is the uniform Bernoulli KL-Lipschitz constant; the theorem states exactly how the requested scaling depends on that constant.
+
+\section{P1. Event-driven self-correction versus continuous concentration information}
+
+\begin{definition}[Sparse lost-plume posterior]\label{def:sparse-posterior}
+Let $\bar{\lambda}=\E_{\pi}[\lambda(x,S)]$.  A family of posteriors $\{\pi_{\bar{\lambda}}\}_{\bar{\lambda}\downarrow 0}$ is called \emph{zero-inflated sparse} at query point $x$ if there exist constants $v_0>0$, $\lambda_c>0$, and $\bar{\lambda}_0>0$ such that for all $\bar{\lambda}\leq\bar{\lambda}_0$,
+\begin{equation}
+        \Var_{\pi_{\bar{\lambda}}}[\lambda(x,S)]
+        \geq
+        v_0\lambda_c\bar{\lambda}.
+        \label{eq:zero-inflated-variance}
+\end{equation}
+This captures the post-contact lost-plume regime: most posterior mass predicts almost clean air, while a small but non-negligible posterior component still predicts a contact-rate plume filament of order $\lambda_c$.
+\end{definition}
+
+\begin{definition}[Continuous clean-air residual information]\label{def:continuous-information}
+The continuous concentration surrogate observes
+\[
+        Y=\kappa_c\bar{\lambda}+\xi,\qquad \xi\sim N(0,\sigma_c^2),
+\]
+and treats the lost-plume correction as testing the predicted mean concentration $\kappa_c\bar{\lambda}$ against clean air.  Its one-step information is the Gaussian KL residual
+\begin{equation}
+        \Icont(\bar{\lambda})
+        :=
+        \KL\!\left(N(\kappa_c\bar{\lambda},\sigma_c^2)\middle\|N(0,\sigma_c^2)\right)
+        =
+        \frac{\kappa_c^2}{2\sigma_c^2}\bar{\lambda}^2.
+        \label{eq:continuous-kl}
+\end{equation}
+The event-driven binary non-detection information is
+\begin{equation}
+        \Ibin(\pi,x)
+        :=
+        \dt\,\E_{\pi}[\lambda]+\log\E_{\pi}\exp\{-\lambda\dt\}.
+        \label{eq:binary-ndi}
+\end{equation}
+\end{definition}
+
+\begin{theorem}[Self-correction divergence]\label{thm:p1-self-correction}
+Assume the sparse lost-plume posterior condition \eqref{eq:zero-inflated-variance}, $\lambda(x,S)\leq \lambda_{\max}$, and $\lambda_{\max}\dt\leq 1$.  Then
+\begin{equation}
+        \Ibin(\pi_{\bar{\lambda}},x)
+        \geq
+        \frac{v_0\lambda_c\dt^2}{4}\bar{\lambda},
+        \qquad
+        \Icont(\bar{\lambda})
+        =
+        \frac{\kappa_c^2}{2\sigma_c^2}\bar{\lambda}^2,
+        \label{eq:p1-rates}
+\end{equation}
+and hence
+\begin{equation}
+        \lim_{\bar{\lambda}\downarrow 0}
+        \frac{\Ibin(\pi_{\bar{\lambda}},x)}{\Icont(\bar{\lambda})}
+        =
+        +\infty .
+        \label{eq:p1-divergence}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+The exact non-detection identity gives
+\[
+        \Ibin(\pi,x)
+        =
+        \dt\,\E_{\pi}[\lambda]
+        +
+        \log\E_{\pi}e^{-\lambda\dt}.
+\]
+The Pinsker-type lower bound already established for the binary channel states that, for bounded $\lambda$,
+\[
+        \Ibin(\pi,x)
+        \geq
+        \frac{\dt^2\Var_{\pi}[\lambda(x,S)]}{2(1+\lambda_{\max}\dt)}.
+\]
+Since $\lambda_{\max}\dt\leq 1$, this implies
+\[
+        \Ibin(\pi,x)
+        \geq
+        \frac{\dt^2}{4}\Var_{\pi}[\lambda(x,S)].
+\]
+Applying the sparse posterior lower bound \eqref{eq:zero-inflated-variance} yields the first inequality in \eqref{eq:p1-rates}.  The expression for $\Icont$ is exactly the KL divergence between two Gaussian laws with common variance $\sigma_c^2$ and mean difference $\kappa_c\bar{\lambda}$:
+\[
+        \KL(N(m,\sigma_c^2)\|N(0,\sigma_c^2))=\frac{m^2}{2\sigma_c^2},
+        \qquad m=\kappa_c\bar{\lambda}.
+\]
+Consequently,
+\[
+        \frac{\Ibin(\pi_{\bar{\lambda}},x)}{\Icont(\bar{\lambda})}
+        \geq
+        \frac{v_0\lambda_c\dt^2\bar{\lambda}/4}
+             {\kappa_c^2\bar{\lambda}^2/(2\sigma_c^2)}
+        =
+        \frac{v_0\lambda_c\sigma_c^2\dt^2}{2\kappa_c^2}
+        \cdot
+        \frac{1}{\bar{\lambda}},
+\]
+which diverges as $\bar{\lambda}\downarrow 0$.
+\end{proof}
+
+\begin{remark}[Physical interpretation]
+Analog concentration correction is power-limited: when the predicted mean concentration is $\bar{\lambda}$, its clean-air residual has Gaussian information of order $\bar{\lambda}^2$.  Binary non-detection is contrast-limited instead.  In a lost-plume posterior, a small posterior component still predicts contact while most hypotheses predict clean air, so $\Var[\lambda]$ is order $\bar{\lambda}$, not order $\bar{\lambda}^2$.  This is the mathematical reason that repeated ``nothing happened'' events are self-correcting.
+\end{remark}
+
+\noindent\textbf{ISJ persuasion score: 8/10.}
+
+\noindent\textbf{Key technique and difficulty.}
+The proof separates two notions often conflated in GSL papers: analog signal residual information scales as squared mean concentration, whereas event-driven non-detection information scales as posterior rate variance.  The necessary condition is the zero-inflated posterior structure; without \eqref{eq:zero-inflated-variance}, the divergence claim is not generally true.
+
+\section{P2. Rigorous local phase transition}
+
+\begin{definition}[Posterior radius and entropy power]\label{def:radius-entropy}
+Let $m_t=\E_{\pi_t}[S]$ and
+\[
+        R_t^2:=\E_{\pi_t}\|S-m_t\|^2=\operatorname{tr}\Cov_{\pi_t}(S).
+\]
+For a density $\pi$ on $\R^2$, define the entropy power
+\[
+        N(\pi):=\frac{1}{2\pi e}\exp\{h(\pi)\},
+        \qquad
+        h(\pi):=-\int \pi(s)\log\pi(s)\,ds.
+\]
+\end{definition}
+
+\begin{assumption}[Local regularity and entropy-radius comparability]\label{ass:phase}
+There are constants $0<n_-\leq n_+<\infty$, $0<a\leq A<\infty$, and $I_0>0$ such that along the considered ED-EIG policy:
+\begin{enumerate}
+\item If $R_t\leq \ell$ and $\supp(\pi_t)\subset B(m_t,2\ell)$, then for every admissible query point $x$,
+\begin{equation}
+        \Var_{\pi_t}[\lambda(x,S)]
+        \leq
+        L_{\mathrm{loc}}^2R_t^2,
+        \qquad
+        L_{\mathrm{loc}}
+        :=
+        C_{\lambda}\frac{\lambda_0(1+|\alpha_w|)}{\ell}.
+        \label{eq:local-var-upper}
+\end{equation}
+\item Entropy power and posterior squared radius are comparable:
+\begin{equation}
+        n_-R_t^2\leq N(\pi_t)\leq n_+R_t^2.
+        \label{eq:entropy-radius-comparable}
+\end{equation}
+\item The realized one-step event-driven information
+$I_t:=I_{\pi_t}(S;d_t\mid x_t)$ satisfies
+\begin{equation}
+        I_t\geq I_0 \quad\text{when } R_t\geq \ell,
+        \qquad
+        aR_t^2\leq I_t\leq AR_t^2
+        \quad\text{when } r^\star\leq R_t\leq \ell .
+        \label{eq:phase-information-rates}
+\end{equation}
+\end{enumerate}
+\end{assumption}
+
+\begin{lemma}[Local posterior rate-variance upper bound]\label{lem:local-var}
+Under the first part of Assumption~\ref{ass:phase}, whenever $R_t<\ell$,
+\begin{equation}
+        \sup_x \Var_{\pi_t}[\lambda(x,S)]
+        \leq
+        C_{\lambda}^2
+        \frac{\lambda_0^2(1+|\alpha_w|)^2}{\ell^2}
+        R_t^2 .
+        \label{eq:local-var-final}
+\end{equation}
+Consequently, for $\lambda_{\max}\dt\leq 1$,
+\begin{equation}
+        \sup_x \mathcal{I}_{\mathrm{nd}}(\pi_t,x)
+        \leq
+        C_{\mathrm{nd}}
+        \frac{\lambda_0^2(1+|\alpha_w|)^2\dt^2}{\ell^2}
+        R_t^2 .
+        \label{eq:local-ndi-upper}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+For fixed $x$, let $g_x(s)=\lambda(x,s)$.  By the mean-value theorem and the local Lipschitz part of Assumption~\ref{ass:phase},
+\[
+        |g_x(s)-g_x(m_t)|
+        \leq
+        L_{\mathrm{loc}}\|s-m_t\|
+        \qquad \text{for }s\in\supp(\pi_t).
+\]
+Since constants do not change variance,
+\[
+        \Var_{\pi_t}[g_x(S)]
+        \leq
+        \E_{\pi_t}\left(g_x(S)-g_x(m_t)\right)^2
+        \leq
+        L_{\mathrm{loc}}^2\E_{\pi_t}\|S-m_t\|^2
+        =
+        L_{\mathrm{loc}}^2R_t^2,
+\]
+which is \eqref{eq:local-var-final}.  The non-detection information satisfies the bounded-cumulant upper bound
+\[
+        \mathcal{I}_{\mathrm{nd}}(\pi_t,x)
+        =
+        \log\E e^{-\dt(\lambda-\E\lambda)}
+        \leq
+        \frac{e^{\lambda_{\max}\dt}\dt^2}{2}\Var_{\pi_t}[\lambda(x,S)]
+        \leq
+        \frac{e\dt^2}{2}\Var_{\pi_t}[\lambda(x,S)],
+\]
+where the first inequality is the standard Bernstein--Hoeffding cumulant bound for bounded random variables and the second uses $\lambda_{\max}\dt\leq1$.  Combining this with \eqref{eq:local-var-final} proves \eqref{eq:local-ndi-upper}.
+\end{proof}
+
+\begin{theorem}[Exponential-to-polynomial phase transition]\label{thm:p2-phase-transition}
+Under Assumption~\ref{ass:phase}, the posterior contraction has two different regimes.
+\begin{enumerate}
+\item \emph{Global/contact-conditioning regime.}  If $R_j\geq\ell$ for $0\leq j<t$, then
+\begin{equation}
+        R_t^2
+        \leq
+        \frac{n_+}{n_-}R_0^2e^{-I_0t}.
+        \label{eq:global-exponential}
+\end{equation}
+\item \emph{Local/refinement regime.}  If $r^\star\leq R_j\leq\ell$ for $0\leq j<t$ and $AR_j^2\leq1$, then there exist constants $c_1,c_2>0$ depending only on
+$(a,A,n_-,n_+)$ such that
+\begin{equation}
+        \frac{c_1}{t+R_0^{-2}}
+        \leq
+        R_t^2
+        \leq
+        \frac{c_2}{t+R_0^{-2}} .
+        \label{eq:local-polynomial}
+\end{equation}
+\end{enumerate}
+Thus the sharp transition from exponential to polynomial contraction occurs at the local plume scale
+\[
+        R_t\simeq \ell .
+\]
+The operational one-step halving threshold is
+\begin{equation}
+        r^\star
+        =
+        \frac{\ell\log 2}{\lambda_0\dt},
+        \label{eq:r-star}
+\end{equation}
+with the replacement $\lambda_0\mapsto \lambda_0(1-\alpha_w^2)$ when the wind attenuation is retained in the local axial derivative.
+\end{theorem}
+
+\begin{proof}
+For any Bayesian experiment, the posterior entropy identity gives
+\begin{equation}
+        h(\pi_{t+1})=h(\pi_t)-I_t,
+        \label{eq:entropy-identity}
+\end{equation}
+where $I_t=I_{\pi_t}(S;d_t\mid x_t)$ is the mutual information between $S$ and the new binary observation.  Exponentiating \eqref{eq:entropy-identity},
+\begin{equation}
+        N(\pi_{t+1})=N(\pi_t)e^{-I_t}.
+        \label{eq:entropy-power-recursion}
+\end{equation}
+
+If $R_j\geq\ell$, Assumption~\ref{ass:phase} gives $I_j\geq I_0$.  Iterating \eqref{eq:entropy-power-recursion} yields
+\[
+        N(\pi_t)\leq N(\pi_0)e^{-I_0t}.
+\]
+Using $R_t^2\leq N(\pi_t)/n_-$ and $N(\pi_0)\leq n_+R_0^2$ proves \eqref{eq:global-exponential}.
+
+Now suppose $r^\star\leq R_j\leq\ell$ and $AR_j^2\leq1$.  From \eqref{eq:phase-information-rates} and \eqref{eq:entropy-radius-comparable},
+\[
+        \frac{a}{n_+}N(\pi_j)\leq I_j\leq \frac{A}{n_-}N(\pi_j).
+\]
+Set $Z_j=N(\pi_j)$, $\beta=a/n_+$, and $B=A/n_-$.  The recursion becomes
+\begin{equation}
+        Z_{j+1}=Z_je^{-I_j},
+        \qquad
+        Z_je^{-BZ_j}\leq Z_{j+1}\leq Z_je^{-\beta Z_j}.
+        \label{eq:z-recursion}
+\end{equation}
+For the upper bound, since $\beta Z_j$ is bounded in the local regime, $e^{-u}\leq(1+u/2)^{-1}$ for $0\leq u\leq1$ gives
+\[
+        Z_{j+1}\leq \frac{Z_j}{1+\beta Z_j/2}.
+\]
+Equivalently,
+\[
+        \frac{1}{Z_{j+1}}\geq \frac{1}{Z_j}+\frac{\beta}{2}.
+\]
+Iteration gives
+\[
+        Z_t\leq \frac{1}{Z_0^{-1}+(\beta/2)t}.
+\]
+Using $R_t^2\leq Z_t/n_-$ and $Z_0\geq n_-R_0^2$ gives the upper half of \eqref{eq:local-polynomial}.
+
+For the lower bound, $e^{-u}\geq1-u$ for $u\geq0$ and \eqref{eq:z-recursion} give
+\[
+        Z_{j+1}\geq Z_j(1-BZ_j).
+\]
+Since $BZ_j\leq c<1$ in the stated local small-information regime,
+\[
+        \frac{1}{Z_{j+1}}
+        \leq
+        \frac{1}{Z_j(1-BZ_j)}
+        \leq
+        \frac{1}{Z_j}+2B .
+\]
+Therefore $Z_t\geq (Z_0^{-1}+2Bt)^{-1}$.  Using $R_t^2\geq Z_t/n_+$ and $Z_0\leq n_+R_0^2$ gives the lower half of \eqref{eq:local-polynomial}.
+
+It remains to justify \eqref{eq:r-star}.  In the local axial post-contact geometry, moving a distance $\delta$ along the upwind axis changes the log no-detection likelihood by at most
+\[
+        |\Delta\log \law(d=0)|
+        =
+        \dt\,|\Delta\lambda|
+        \leq
+        \dt\left(\frac{\lambda_0}{\ell}\right)\delta .
+\]
+The smallest displacement whose single-step likelihood ratio can halve posterior odds solves
+\[
+        \dt(\lambda_0/\ell)\delta=\log 2.
+\]
+Thus $\delta=r^\star=\ell\log2/(\lambda_0\dt)$.  If the axial derivative is attenuated by wind anisotropy, replace $\lambda_0$ by $\lambda_0(1-\alpha_w^2)$.
+\end{proof}
+
+\begin{remark}[Physical interpretation]
+When the posterior cloud is wider than the plume correlation length $\ell$, different source hypotheses predict qualitatively different contact/no-contact patterns, so each observation removes a fixed amount of entropy and the radius contracts exponentially.  Once $R_t<\ell$, all plausible sources produce nearly the same local rate; Lemma~\ref{lem:local-var} shows that binary contrast is only $O(R_t^2)$.  Entropy removal then shrinks with the remaining uncertainty, forcing the $R_t^2\asymp 1/t$ polynomial law.
+\end{remark}
+
+\noindent\textbf{ISJ persuasion score: 8/10.}
+
+\noindent\textbf{Key technique and difficulty.}
+The rigorous step is to convert the local Taylor bound on $\lambda$ into an information upper bound, then use entropy-power recursion.  The theorem is intentionally conditional on entropy-radius comparability; without such regularity, arbitrary multimodal posteriors can violate any clean radius recursion.
+
+\section{P3. Upwind direction maximizes event-driven EIG after plume contact}
+
+\begin{definition}[Binary ED-EIG]\label{def:ed-eig}
+For posterior $\pi$ and query point $x$, define the event-driven expected information gain
+\begin{equation}
+        \IED(\pi,x)
+        :=
+        I_{\pi}(S;D_x)
+        =
+        H_b(\bar{p}(x))-\E_{\pi}H_b(p_S(x)),
+        \label{eq:ed-eig}
+\end{equation}
+where
+\[
+        p_s(x):=1-e^{-\lambda(x,s)\dt},
+        \qquad
+        \bar{p}(x):=\E_{\pi}p_S(x),
+\]
+and $H_b(p)=-p\log p-(1-p)\log(1-p)$.
+\end{definition}
+
+\begin{lemma}[Two-Bernoulli EIG monotonicity]\label{lem:two-bernoulli-monotonicity}
+Let $\pi=\frac12\delta_{s_1}+\frac12\delta_{s_2}$ and write
+\[
+        I(p_1,p_2)
+        =
+        H_b\!\left(\frac{p_1+p_2}{2}\right)
+        -
+        \frac12H_b(p_1)-\frac12H_b(p_2).
+\]
+If $p_1>p_2$, then $I(p_1,p_2)$ is strictly increasing in $p_1$ and strictly decreasing in $p_2$.
+\end{lemma}
+
+\begin{proof}
+Let $\bar{p}=(p_1+p_2)/2$.  Since $H_b'(p)=\log((1-p)/p)$,
+\begin{align}
+        \frac{\partial I}{\partial p_1}
+        &=
+        \frac12H_b'(\bar{p})-\frac12H_b'(p_1)
+        =
+        \frac12
+        \log\frac{p_1(1-\bar{p})}{\bar{p}(1-p_1)},\\
+        \frac{\partial I}{\partial p_2}
+        &=
+        \frac12H_b'(\bar{p})-\frac12H_b'(p_2)
+        =
+        \frac12
+        \log\frac{p_2(1-\bar{p})}{\bar{p}(1-p_2)} .
+\end{align}
+The map $p\mapsto p/(1-p)$ is strictly increasing on $(0,1)$.  Thus $p_1>\bar{p}>p_2$ implies
+\[
+        \frac{p_1}{1-p_1}>\frac{\bar{p}}{1-\bar{p}}
+        \quad\text{and}\quad
+        \frac{p_2}{1-p_2}<\frac{\bar{p}}{1-\bar{p}},
+\]
+so $\partial I/\partial p_1>0$ and $\partial I/\partial p_2<0$.
+\end{proof}
+
+\begin{theorem}[Two-point upwind optimality after contact]\label{thm:p3-two-point}
+Let $\widehat{w}=w/\|w\|$ and suppose the UAV has just contacted the plume at $x_c$.  Consider the two-point posterior
+\[
+        \pi=\frac12\delta_{s_1}+\frac12\delta_{s_2},
+        \qquad
+        s_1=x_c-a\widehat{w},\quad
+        s_2=x_c+b\widehat{w},
+        \qquad a,b>0,
+\]
+where $s_1$ is the true upwind source and $s_2$ is a downwind decoy.  Among all next moves of fixed length $\rho\leq a$,
+\[
+        x(u)=x_c+\rho u,\qquad \|u\|=1,
+\]
+the upwind action $u^\star=-\widehat{w}$ maximizes $\IED(\pi,x(u))$.
+\end{theorem}
+
+\begin{proof}
+For the true source $s_1=x_c-a\widehat{w}$, the point $x_c-\rho\widehat{w}$ is the unique point on the circle $\{x_c+\rho u:\|u\|=1\}$ closest to $s_1$.  It also keeps the vector $x-s_1$ aligned with $\widehat{w}$, so the wind factor $1+\alpha_w\cos\theta$ is maximized in the downwind plume axis.  Hence
+\begin{equation}
+        \lambda(x_c-\rho\widehat{w},s_1)
+        \geq
+        \lambda(x_c+\rho u,s_1)
+        \quad\text{for all }\|u\|=1.
+        \label{eq:true-source-max}
+\end{equation}
+For the decoy $s_2=x_c+b\widehat{w}$, the same point $x_c-\rho\widehat{w}$ is the unique point on the circle farthest from $s_2$, and the vector $x-s_2$ is anti-aligned with $\widehat{w}$, giving the smallest wind factor.  Therefore
+\begin{equation}
+        \lambda(x_c-\rho\widehat{w},s_2)
+        \leq
+        \lambda(x_c+\rho u,s_2)
+        \quad\text{for all }\|u\|=1.
+        \label{eq:decoy-min}
+\end{equation}
+The Bernoulli contact probability $p_s(x)=1-e^{-\lambda(x,s)\dt}$ is strictly increasing in $\lambda(x,s)$.  Equations \eqref{eq:true-source-max}--\eqref{eq:decoy-min} imply
+\[
+        p_{s_1}(x_c-\rho\widehat{w})
+        \geq
+        p_{s_1}(x_c+\rho u),
+        \qquad
+        p_{s_2}(x_c-\rho\widehat{w})
+        \leq
+        p_{s_2}(x_c+\rho u).
+\]
+After contact, the upwind source hypothesis has the larger contact probability than the downwind decoy at the informative next query, so $p_{s_1}>p_{s_2}$.  Lemma~\ref{lem:two-bernoulli-monotonicity} says that increasing the larger Bernoulli probability and decreasing the smaller one strictly increases the two-point ED-EIG.  Hence $\IED(\pi,x_c-\rho\widehat{w})\geq \IED(\pi,x_c+\rho u)$ for every unit $u$.
+\end{proof}
+
+\begin{proposition}[General posterior extension by convex order]\label{prop:p3-general}
+Let $\pi$ be any posterior after plume contact.  For each candidate direction $u$, define the random Bernoulli probability
+\[
+        P_u(S):=1-\exp\{-\lambda(x_c+\rho u,S)\dt\},
+        \qquad S\sim\pi .
+\]
+Assume the upwind probability $P_{-\widehat{w}}(S)$ dominates every $P_u(S)$ in mean-preserving spread order, i.e.
+\[
+        \E P_{-\widehat{w}}(S)=\E P_u(S)
+        \quad\text{and}\quad
+        \E\phi(P_{-\widehat{w}}(S))\geq \E\phi(P_u(S))
+        \quad
+        \text{for every convex }\phi .
+        \label{eq:mps-order}
+\]
+Then
+\begin{equation}
+        \IED(\pi,x_c-\rho\widehat{w})
+        \geq
+        \IED(\pi,x_c+\rho u)
+        \qquad\text{for all }\|u\|=1.
+        \label{eq:general-upwind}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+By \eqref{eq:ed-eig},
+\[
+        \IED(\pi,x_c+\rho u)
+        =
+        H_b(\E P_u)-\E H_b(P_u).
+\]
+The binary entropy $H_b$ is concave, so $-H_b$ is convex.  Apply the mean-preserving spread condition \eqref{eq:mps-order} with $\phi=-H_b$:
+\[
+        \E[-H_b(P_{-\widehat{w}})]
+        \geq
+        \E[-H_b(P_u)],
+\]
+or equivalently
+\[
+        -\E H_b(P_{-\widehat{w}})
+        \geq
+        -\E H_b(P_u).
+\]
+The first term $H_b(\E P_u)$ is the same for $u$ and $-\widehat{w}$ by the equal-mean part of \eqref{eq:mps-order}.  Therefore
+\[
+        H_b(\E P_{-\widehat{w}})-\E H_b(P_{-\widehat{w}})
+        \geq
+        H_b(\E P_u)-\E H_b(P_u),
+\]
+which is \eqref{eq:general-upwind}.
+\end{proof}
+
+\begin{remark}[Physical interpretation]
+After first plume contact, the posterior is naturally ordered along the wind axis: plausible sources are upwind, while false positives and decoys are downwind or crosswind.  Moving upwind simultaneously increases the contact probability under the source hypothesis and decreases it under downwind decoys.  ED-EIG is exactly the Jensen gap of binary entropy, so it is maximized by the action that makes the posterior predictive Bernoulli probabilities most spread out.
+\end{remark}
+
+\noindent\textbf{ISJ persuasion score: 8.5/10.}
+
+\noindent\textbf{Key technique and difficulty.}
+The two-point result uses a monotone likelihood separation argument plus an exact derivative calculation for Bernoulli mutual information.  The general-posterior result is cleanest through convex order.  A global unconditional ``upwind is always optimal'' theorem is false without a post-contact wind-axis ordering assumption, because arbitrary multimodal posteriors can place high-rate hypotheses in non-upwind directions.
+
+\section{Summary table}
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Result & Main claim & Rigor condition & ISJ score \\
+\midrule
+P0 & Adaptive minimax lower bound & Uniform adaptive KL-Lipschitz & 8.5/10 \\
+P1 & $\Ibin/\Icont\to\infty$ & Zero-inflated lost-plume posterior & 8/10 \\
+P2 & Exponential $\to$ polynomial contraction & Entropy-radius comparability & 8/10 \\
+P3 & Upwind maximizes ED-EIG & Post-contact wind-axis ordering & 8.5/10 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}

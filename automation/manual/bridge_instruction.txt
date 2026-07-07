@@ -1,0 +1,23 @@
+﻿官方MAPIRlab GSL包已在VM上编译成功（ROS2 Humble）。
+
+你的任务：写一个Python bridge适配器，连接我们的GADEN实验和VM上的官方GSL算法。
+
+要求：
+1. 文件：workspace/uav_diagsense/src/official_baselines/gsl_bridge.py
+2. 通过SSH+ROS2 action接口调用VM上的gsl_actionserver_node
+3. 或者：直接在VM上运行ROS2实验，通过paramiko SSH传输结果
+4. 支持的算法：PMFS, GrGSL, surge_cast, surge_spiral, spiral, particle_filter
+5. 只做I/O适配，不修改算法内部逻辑
+6. 输入：当前机器人位置、gas浓度、wind方向
+7. 输出：下一步目标位置、是否声明source
+
+VM信息：
+- IP: 192.168.111.128, user: zyc, password: 123456
+- ROS2 workspace: ~/ros2_ws
+- Binary: ~/ros2_ws/install/gsl_server/lib/gsl_server/gsl_actionserver_node
+- Action interface: gsl_actions/action/DoGSL.action
+
+先查看DoGSL.action的格式，然后写bridge。
+也可以考虑方案B：在VM上直接跑实验脚本，用paramiko SSH传输数据和收集结果。
+
+选择更快的方案。开始吧。

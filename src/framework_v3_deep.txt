@@ -1,0 +1,129 @@
+﻿## ============================================================
+## 深度对抗审查：从物理到算法
+## ============================================================
+
+### 第一层：物理机制深度分析
+
+#### 气体传播到底是什么？
+不是"浓度从源向外衰减"这么简单。
+
+真实物理过程（filament-based）：
+1. 源持续发射filament（气体团块）
+2. 每个filament随风漂移（平均风 + 湍流扩散）
+3. filament在传播过程中膨胀（σ_f随时间增大）
+4. 传感器在某位置可能"碰到"filament（检测到gas）或"没碰到"（检测不到）
+5. 碰到时浓度取决于filament中心距传感器的距离
+
+关键insight：**这是一个随机点过程（Poisson process），不是连续场**
+
+传感器位置x处的气体到达是一个Poisson过程：
+- 到达率 λ(x, s*) 取决于x到源s*的距离和风向
+- 每次到达产生一个浓度值 c ~ f(c | distance)
+- 两次到达之间有等待时间
+
+#### 这意味着什么？
+1. **浓度是随机的**：同一位置不同时刻浓度差异巨大（intermittency）
+2. **检测是二值的**：要么"检测到filament"（z > threshold），要么"没检测到"（z ≈ 0）
+3. **浓度值的信息量有限**：因为单次filament浓度取决于filament内部结构，不是简单距离函数
+4. **到达率是有信息的**：到达率 λ(x, s*) 随距离单调递减，是有用的距离信号
+
+#### 现有方法的根本问题
+- **SurgeCast**：把浓度当连续信号处理 → 间歇性导致频繁丢失
+- **Infotaxis**：假设似然 p(z|s) 是连续分布 → 与实际的二值+连续混合不符
+- **PMFS**：用稳态扩散方程 → 与实际的瞬态filament过程不符
+- **所有方法**：没有把"检测事件"（detection event）作为独立信息源
+
+### 第二层：科学问题重新定义
+
+**不是"风向不足"，是"信号模型与物理不符"**
+
+真正的科学问题是：
+> 现有GSL方法假设气体浓度是连续、平稳的随机过程，
+> 但实际的filament-based扩散产生的是**间歇性、事件性的**信号。
+> 这导致似然模型不准确 → 后验收敛慢 → 搜索效率低 → 停止准则失效。
+
+**我们解决的问题：**
+设计一个与filament物理一致的信号模型，基于此构建后验更新、搜索策略和停止准则。
+
+### 第三层：方法框架设计
+
+#### 核心创新：Event-Driven Bayesian GSL (ED-Bayes)
+
+**Layer 1: 事件检测模型（Binary Detection）**
+定义detection event: d_t = 1{z_t > τ_detect}
+
+d_t ~ Bernoulli(p_detect(x_t, s*, w_t))
+
+其中 p_detect(x, s*, w) = 1 - exp(-λ(x, s*, w) × Δt)
+
+λ(x, s*, w) = 到达率，取决于：
+- ||x - s*||：距离越远，到达率越低
+- wind alignment：upwind位置到达率更高（filament从源沿风向传播）
+
+**Layer 2: 浓度幅度模型（Conditional Magnitude）**
+当d_t = 1时：
+log(z_t) ~ N(μ(x, s*), σ²)
+
+μ(x, s*) = log(Q) - α||x - s*|| + β·(wind alignment)
+
+**Layer 3: 风场结构模型（Wind Constraint）**
+w_t的期望方向与源位置的关系：
+如果s*在upwind方向：E[w_t方向] ≈ 从s*指向x的方向
+如果s*在downwind方向：E[w_t方向] ≈ 从x指向s*的方向
+
+#### 后验更新：三层联合
+
+π_{t+1}(s) ∝ π_t(s) × p(d_t | x_t, s, w_t) × p(z_t | d_t=1, x_t, s, w_t)
+
+关键：**即使d_t = 0（无检测），p(d_t=0 | x_t, s, w_t)也提供信息**
+- 如果s很近：p(d_t=0)很小 → 排除s
+- 如果s在downwind远处：p(d_t=0)大 → 不排除
+- 这就是"无gas也有信息"的物理基础
+
+#### 搜索策略：Detection-Expected Information Gain (DEIG)
+
+DEIG(a | π_t) = E_{d}[IG(a, d | π_t)]
+               = P(d=1|a,π_t) × IG(a, d=1 | π_t) + P(d=0|a,π_t) × IG(a, d=0 | π_t)
+
+其中：
+- IG(a, d=1) = 检测到gas时的信息增益（大：确认了plume路径）
+- IG(a, d=0) = 未检测到gas时的信息增益（小但非零：排除了某些源位置）
+
+**关键区别：IG(a, d=0) > 0 — 即使无gas也有信息增益**
+
+物理直觉：
+- 选择能最大化"期望信息增益"的动作
+- 即使预测无gas检测，去那个位置也能排除一些源候选
+- 这比Infotaxis（无gas时IG ≈ 0）更主动
+
+#### 停止准则：Posterior Credible Region Convergence (PCRC)
+
+R_t = min{r : P(s* ∈ B_r(ŝ_t) | z_{1:t}) ≥ 1-α}
+
+e-process: E_t = exp(η(ε - R_t))
+
+当R_t < ε（后验已收敛到精度ε内）且稳定 → 停止
+
+### 第四层：对抗审查
+
+**攻击1："Detection event model就是Bernoulli过程，有什么新的？"**
+回应：在GSL中，**没有**论文把filament到达建模为Poisson process并用Bernoulli detection model做后验更新。所有现有方法假设连续浓度模型。这是物理模型的改进，不是数学技巧。
+
+**攻击2："DEIG就是把Infotaxis扩展到detection event，有多大区别？"**
+回应：关键区别是IG(a, d=0) > 0。Infotaxis在无gas时IG ≈ 0（退化为随机），DEIG在无gas时仍有正的信息增益（排除源候选）。这解决了"无gas时搜索退化"的根本问题。
+
+**攻击3："PCRC停止准则看起来简单，有什么理论支撑？"**
+回应：R_t是posterior的(1-α)可信区域半径，有完整的贝叶斯理论支撑。e-process提供anytime-valid停止保证。这是**首个基于posterior不确定性的GSL停止准则**，替代了所有ad-hoc heuristic。
+
+**攻击4："三层模型的参数怎么确定？"**
+回应：Layer 1的λ(x,s,w)可以用物理模型或从数据估计。Layer 2的μ和σ可以用少量标定数据。Layer 3是物理约束，不需要参数。比PMFS的参数少得多。
+
+**攻击5："spatio-temporal fusion怎么融入？"**
+回应：时序方面，detection events的时序模式（到达间隔、burst模式）包含距离信息。空间方面，不同位置的detection patterns形成spatial signature。如果用attention机制自适应加权不同时刻和位置的观测，可以进一步提升性能。但这是optional enhancement，不是core contribution。
+
+### 第五层：验证计划
+
+1. **二值检测模型验证**：从现有log中提取detection events，验证Poisson到达假设
+2. **DEIG vs Infotaxis对比**：在相同posterior上比较两种搜索策略
+3. **PCRC vs FAST EXIT对比**：比较两种停止准则的准确性
+4. **完整方法消融**：ED-Bayes vs Infotaxis+FAST_EXIT vs 原始方法

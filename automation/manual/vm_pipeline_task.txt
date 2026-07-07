@@ -1,0 +1,22 @@
+﻿任务更新：VM上GSL已编译成功。现在需要设置完整的ROS2实验pipeline。
+
+已有资源：
+1. VM (192.168.111.128): ROS2 Humble, gsl_actionserver_node已编译
+2. gsl_benchmark_runner.py 在 workspace/rearch/gsl_budgeted_declaration/scripts/vgr_bridge/vgr_bridge/
+3. VGR GADEN数据在 workspace/data/VGR/GADEN_files/
+
+请执行（分步骤，每步确认后再下一步）：
+
+Step 1: 把gsl_benchmark_runner.py和VGR launch文件传到VM
+- 用paramiko SSH传输
+- 文件：gsl_benchmark_runner.py, DoGSL.action, launch文件
+
+Step 2: 检查VM上GADEN是否可用（用于replay气体数据）
+- 如果没有GADEN，需要安装或用其他方式发布气体数据
+
+Step 3: 在VM上跑一次smoke test
+- 启动gsl_actionserver_node
+- 用PMFS算法跑一个简单测试
+- 确认能收到结果
+
+每步完成后报告进度。不要一次性做所有事。

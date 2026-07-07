@@ -1,0 +1,38 @@
+﻿=== TASK: Run DQA-AS V2 Ablation Study on All 3 Houses ===
+
+GOAL: Determine which innovation modules (MEMP, BPFM, FDPOE) actually help, across ALL 3 houses.
+
+STEP 1: Modify scripts/run_ablation.py to run on ALL 3 houses (not just House02).
+- House01: config_id=2,4-1_fast, source=-0.4,-2.9,-0.3
+- House02: config_id=3,5-1_fast, source=0.0,-1.0,0.2
+- House03: config_id=1-2,5_fast, source=-0.45,1.9,-0.1
+- Use verified_starts.json for starts (8 seeds per house)
+
+STEP 2: Run the ablation script. It tests 8 configurations:
+- DQA_AS (baseline, no modules)
+- DQA_AS+MEMP only
+- DQA_AS+BPFM only
+- DQA_AS+FDPOE only
+- DQA_AS+MEMP+BPFM
+- DQA_AS+MEMP+FDPOE
+- DQA_AS+BPFM+FDPOE
+- DQA_AS_V2 (all three)
+
+STEP 3: After ablation, run alpha sensitivity on House01 and House02:
+- alpha in {0, 0.25, 0.5, 0.75, 1.0}
+- This tests MEMP vs BPFM blend ratio
+
+STEP 4: Write analysis report to experiments/official_baselines/ablation/ablation_analysis.md
+- Which modules help on which houses?
+- Is alpha=0.5 optimal?
+- Why does V2 lose on House01?
+- Recommendations for module optimization
+
+CONSTRAINTS:
+- Use verified_starts.json (not hardcoded starts)
+- max_steps=100, sensor=ideal
+- Save all CSV results to experiments/official_baselines/ablation/
+- Report failures honestly
+- Do NOT tune parameters for specific houses
+
+Start with STEP 1. Report progress after each step.

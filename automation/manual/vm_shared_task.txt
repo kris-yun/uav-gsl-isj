@@ -1,0 +1,23 @@
+﻿关键更新：VGR GADEN数据通过VMware共享文件夹直接可访问，无需传输！
+
+VM共享路径：/mnt/hgfs/workspace/data/VGR/GADEN_files/GADEN_files/scenarios/
+对应宿主机：D:\ZYC\A-gas\workspace\data\VGR\GADEN_files\GADEN_files\scenarios\
+
+现在请执行：
+
+Step 1: 在VM上设置ROS2实验pipeline
+- GADEN数据路径: /mnt/hgfs/workspace/data/VGR/GADEN_files/GADEN_files/scenarios/House01/gas_simulations/2,4-1_fast/
+- 占用网格: /mnt/hgfs/workspace/data/VGR/GADEN_files/GADEN_files/scenarios/House01/OccupancyGrid3D.csv
+- 风场: /mnt/hgfs/workspace/data/VGR/GADEN_files/GADEN_files/scenarios/House01/wind_simulations/2,4-1_fast/
+
+Step 2: 检查GSL算法如何读取数据
+- 看gsl_server.cpp和各算法如何获取gas/wind数据
+- 可能需要一个数据发布节点(replay GADEN数据到ROS2 topics)
+
+Step 3: 写一个ROS2数据发布节点(或找已有的launch文件)
+- 在workspace/rearch/gsl_budgeted_declaration/scripts/vgr_bridge/中可能有现成的launch文件
+- 用它来replay VGR数据
+
+Step 4: Smoke test - 在VM上跑一次PMFS
+
+先做Step 1和Step 2。

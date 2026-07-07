@@ -1,0 +1,43 @@
+﻿## Cross-domain literature search for GSL stopping mechanisms
+
+### Candidates not yet used in GSL:
+
+1. **Testing by Betting** (Ramdas et al. 2023, Statistical Science)
+   - E-processes via wealth processes in sequential betting
+   - More general than simple exponential e-values
+   - Could construct optimal e-values for GSL posterior dynamics
+
+2. **Bayesian Optimal Stopping** (Chernoff 1961, Berry & Fristedt 1985)
+   - Classical theory: minimize expected cost = search cost + error cost
+   - MAP residual threshold as stopping rule is a special case
+   - Could derive optimal threshold θ from cost structure
+
+3. **Sequential Change Detection** (Tartakovsky et al. 2014)
+   - CUSUM / Shiryaev-Roberts for detecting posterior convergence
+   - CUSUM on MAP residuals could detect when convergence happens
+   - More sensitive than simple threshold
+
+4. **Information-Geometric Stopping** (Amari 2016)
+   - Natural gradient descent on statistical manifold
+   - Posterior convergence measured by Fisher information metric
+   - Geodesic distance between consecutive posteriors
+
+5. **Safe Testing** (Grünwald 2024)
+   - Safe e-values: E[E_t | H0] = 1 exactly (not just <= 1)
+   - More powerful than conservative e-values
+   - Could improve detection speed
+
+6. **Posterior Predictive Checking** (Box 1980, Rubin 1984)
+   - Use predictive distribution p(z_{t+1} | z_{1:t}) for stopping
+   - When posterior is well-calibrated, predictive density is high
+   - Natural connection to Bayesian framework
+
+7. **Bayesian Adaptive Design** (Chaloner & Verdinelli 1995)
+   - Choose measurements to maximize information gain
+   - Connection between design efficiency and stopping time
+   - Could derive optimal stopping from design perspective
+
+8. **Universal Inference** ( Wasserman et al. 2020)
+   - Split data into training and testing
+   - No exchangeability assumption needed
+   - But loses statistical power compared to e-processes

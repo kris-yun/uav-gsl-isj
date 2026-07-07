@@ -1,0 +1,15 @@
+﻿紧急问题：GADEN实验中DQA_AS和DQA_AS_V2全部crash（ACCESS_VIOLATION），但基础方法(Random/GreedyMAP/Infotaxis/KLD)正常运行。
+
+请诊断并修复：
+
+步骤1：单独测试DQA_AS是否能跑GADEN。写一个test_dqa_gaden.py脚本来测试。
+
+步骤2：检查是否是GADEN多次reload导致crash。代码中已注释说"Reload GADEN sim per episode to avoid C++ access violation"。但可能reload本身导致问题。
+
+步骤3：尝试改为每个house只创建一次GadenSim实例（不per-episode reload）。
+
+步骤4：如果DQA_AS的PosteriorEstimator有内存问题（比如大矩阵），修复它。
+
+步骤5：修复后重新运行完整实验。
+
+关键：先诊断出crash的具体原因，再修复。不要猜测。

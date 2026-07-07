@@ -1,0 +1,124 @@
+﻿## ============================================================
+## 葛泉波教授视角：完整方法框架设计 v2
+## ============================================================
+
+### 核心诊断：为什么所有方法都失败
+
+#### 问题1：搜索策略是拼凑的Phase切换，不是统一决策
+- Phase 1: 硬编码探索（spiral/cross-wind）
+- Phase 1.5: 开环10步upwind（不看posterior）
+- Phase 2: EIG-based（无gas时退化为随机）
+- 三个Phase之间没有统一的决策框架
+
+#### 问题2：停止准则是多个启发式的叠加
+- FAST EXIT: best_hit + near_best + map_dist（与源位置无关）
+- CP_STOP: CP宽度阈值（从未在VGR上触发）
+- DDM_STOP: LLR证据积累（有bug）
+- e-process: MAP residual（从未触发）
+- 没有一个是基于posterior不确定性的
+
+#### 问题3：posterior没有真正驱动决策
+- 搜索用Phase切换（不是posterior-optimal）
+- 停止用heuristic（不是posterior-based）
+- posterior只是"旁边看着"，没有真正参与决策
+
+### 解决方案：Unified Posterior-Driven Framework
+
+**核心思想：让posterior驱动一切——搜索、停止、风向利用**
+
+#### 模块1：Wind-Guided Posterior Search (WG-PS)
+
+**不是Infotaxis，不是Phase切换，是posterior直接驱动的搜索。**
+
+动作选择：
+a* = argmax_a [ IG(a | π_t) + λ(w_t) × WB(a, w_t) ]
+
+其中：
+- IG(a | π_t) = H(π_t) - E_z[H(π_{t+1})]：标准信息增益
+- WB(a, w_t)：Wind Bonus，基于a相对于风向的位置
+  - 如果a在upwind方向：WB = +1（物理偏好：upwind更informative）
+  - 如果a在downwind方向：WB = -0.5（物理惩罚：downwind可能错过源）
+  - 如果无风：WB = 0
+- λ(w_t)：自适应权重
+  - 检测到gas时：λ小（信任IG，gas提供距离信息）
+  - 未检测到gas时：λ大（信任wind，wind是唯一信息源）
+
+**关键创新：在无gas检测时，搜索策略退化为wind-guided exploration，不是随机**
+
+物理直觉：
+- 有gas → IG主导 → 探索高不确定性区域（标准Infotaxis）
+- 无gas + 有wind → WB主导 → 沿upwind方向搜索（定向探索）
+- 无gas + 无wind → 各向同性探索（退化情况）
+
+#### 模块2：Posterior Credible Region Convergence (PCRC) 停止准则
+
+**不是MAP residual，是posterior不确定性的直接度量。**
+
+定义：
+R_t = min{r : P(s* ∈ B_r(ŝ_t) | z_{1:t}) ≥ 1-α}
+
+即：以MAP为中心，包含(1-α)后验概率的最小球半径
+
+停止规则：
+当R_t < ε（目标精度）且R_t连续N步稳定 → 停止
+
+e-process版本：
+- 统计量：R_t（连续、单调递减、物理有意义）
+- e-value：E_t = exp(η(ε - R_t))
+  - R_t < ε → E_t > 1（证据支持收敛）
+  - R_t > ε → E_t < 1（证据不支持）
+- 当R_t稳定低于ε时，e-process增长直到阈值
+
+**为什么比MAP residual好：**
+1. R_t是连续的（MAP在离散grid上跳动，R_t平滑变化）
+2. R_t直接衡量不确定性（MAP residual只看位置变化）
+3. R_t自然递减（posterior收敛时R_t必然减小）
+4. R_t有物理意义（就是定位精度）
+
+#### 模块3：理论框架
+
+**Proposition 1 (双通道信息增益下界)：**
+WG-PS的信息增益 ≥ 标准Infotaxis的信息增益
+因为wind bonus是非负的（upwind方向总是更informative）
+
+**Theorem 1 (Posterior收敛速率)：**
+在WG-PS下，后验收敛速率 = O(1/(κ_gas + κ_wind)t)
+其中κ_wind是wind通道的信息率
+当κ_wind > 0时（有风），收敛比纯gas快
+
+**Theorem 2 (停止时间bound)：**
+E[τ] ≤ N_w + (C'/ε)²/(κ_gas + κ_wind) + log(1/δ)/(ηε/2)
+
+### 创新点清单
+
+1. **Wind-Guided Posterior Search** — 统一的posterior驱动搜索
+   - 不是Phase切换，是一个公式
+   - 无gas时退化为wind-guided探索（不是随机）
+   - 有gas时联合优化IG + wind bonus
+
+2. **Posterior Credible Region Convergence** — 基于不确定性的停止
+   - R_t是连续、单调、物理有意义的统计量
+   - e-process监控R_t的稳定性
+   - 直接衡量"定位精度"
+
+3. **GSL-Specific理论：**
+   - 双通道信息增益下界
+   - Posterior收敛速率（wind加速收敛）
+   - 停止时间bound
+
+4. **Simplicity Principle：**
+   - 一个搜索公式（不是3个Phase）
+   - 一个停止准则（不是4个heuristic叠加）
+   - 一个posterior驱动一切
+
+### 与现有代码的关系
+
+现有代码已有的（保留）：
+- Wind-adaptive likelihood ✓
+- Grid-based posterior update ✓
+- Posterior entropy calculation ✓
+
+需要新增/修改的：
+- 搜索策略：替换Phase切换为WG-PS公式
+- 停止准则：替换heuristic为PCRC
+- 去掉：CP、DDM、W-RAIG、SBD、FAST EXIT

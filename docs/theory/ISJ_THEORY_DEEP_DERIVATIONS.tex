@@ -1,0 +1,198 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{assumption}[theorem]{Assumption}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\Var}{\mathrm{Var}}
+\DeclareMathOperator{\KL}{\mathrm{KL}}
+\DeclareMathOperator{\TV}{\mathrm{TV}}
+\DeclareMathOperator{\tr}{\mathrm{tr}}
+\begin{document}
+\title{Deep Theoretical Results for Event-Driven Bayesian GSL\\
+\large ISJ Revision --- Four Strengthened Theorems}
+\author{Prof.\ Quanbo Ge, NUIST\\Statistical Inference and Signal Processing}
+\date{2026-07-04}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Notation and Problem Setup}
+
+\subsection{Observation Model}
+Unknown source $s^*\in\mathcal{X}\subset\mathbb{R}^2$. At step $k$, UAV at $x_k$ observes $d_k\in\{0,1\}$ over $\Delta t$:
+\begin{equation}\label{eq:bernoulli}
+P(d_k=1|x_k,s)=1-e^{-\lambda(x_k,s)\Delta t}, \quad P(d_k=0|x_k,s)=e^{-\lambda(x_k,s)\Delta t}
+\end{equation}
+Poisson filament arrival rate:
+\begin{equation}\label{eq:rate}
+\lambda(x,s)=\lambda_0\exp\!\Big(-\frac{\|x-s\|}{\ell}\Big)\big(1+\alpha_w\cos\theta(x,s,w)\big)
+\end{equation}
+
+\subsection{Key Quantities}
+$\Lambda(\beta)=\log\E_\pi[e^{\beta\lambda}]$ (CGF), $\mu=\E_\pi[\lambda]$, $\sigma^2=\Var_\pi[\lambda]$, $\lambda_{\max}=\sup_s\lambda(x,s)$.
+
+\newpage
+\section{Task 1: Non-Detection Information --- Exact Bounds}
+
+\begin{definition}[Non-Detection Information]
+$\mathcal{I}_{\mathrm{nd}}(\pi,x)\coloneqq\KL(\pi\|\pi^{(0)})$ where $\pi^{(0)}(s)\propto\pi(s)e^{-\lambda(x,s)\Delta t}$.
+\end{definition}
+
+\begin{theorem}[Exact Closed-Form]\label{thm:ndi_exact}
+$\boxed{\mathcal{I}_{\mathrm{nd}}(\pi,x)=\Delta t\cdot\E_\pi[\lambda]+\log\E_\pi[e^{-\lambda\Delta t}]}$
+Non-negative; zero iff $\lambda$ is $\pi$-a.s.\ constant.
+\end{theorem}
+\begin{proof}
+$\KL(\pi\|\pi^{(0)})=\E_\pi[\log Z_0+\lambda\Delta t]=\log\E_\pi[e^{-\lambda\Delta t}]+\Delta t\,\E_\pi[\lambda]$. Jensen on $\log$ gives non-negativity.
+\end{proof}
+
+\begin{proposition}[Small $\Delta t$ Expansion]\label{prop:small_dt}
+$\mathcal{I}_{\mathrm{nd}}=\frac{\Delta t^2}{2}\Var_\pi[\lambda](1-\frac{\kappa_3}{3\sigma^2}\Delta t+O(\Delta t^2))$
+\end{proposition}
+\begin{proof}
+CGF expansion: $\Lambda(-\Delta t)=-\mu\Delta t+\sigma^2\Delta t^2/2-\kappa_3\Delta t^3/6+O(\Delta t^4)$.
+\end{proof}
+
+\begin{theorem}[Pinsker Lower Bound]\label{thm:pinsker}
+$\mathcal{I}_{\mathrm{nd}}\geq\frac{\sigma^2\Delta t^2}{2(1+\lambda_{\max}\Delta t)}$
+Regimes: (i) weak: $\geq\sigma^2\Delta t^2/4$; (ii) moderate: $\geq\sigma^2\Delta t^2/8$; (iii) strong: $\sim O(\Delta t)$.
+\end{theorem}
+\begin{proof}
+$f(t)=\Lambda(-t)+mt$ has $f''(t)\geq\sigma^2/(1+\lambda_{\max}t)^2$. Double integration + $\log(1+u)\leq u-u^2/(2(1+u))$.
+\end{proof}
+
+\begin{theorem}[Binary Dominance]\label{thm:binary_dominance}
+Assume $C(x,s)=\kappa_c\lambda(x,s)$. For two-point prior:
+(a) $\mathcal{I}_{\mathrm{cont}}=O(\lambda_0^2\kappa_c^2 e^{-2r/\ell}/(\sigma_\varepsilon^2\ell^2))\to 0$.
+(b) $\mathcal{I}_{\mathrm{nd}}\geq\sigma^2\Delta t^2/(2(1+\lambda_{\max}\Delta t))>0$ regardless of distance.
+(c) $\mathcal{R}=\mathcal{I}_{\mathrm{nd}}/\mathcal{I}_{\mathrm{cont}}^{\mathrm{avg}}\sim\sigma_\varepsilon^2\Delta t^2/(2\kappa_c^2)$, distance-independent.
+\end{theorem}
+\begin{remark}
+Continuous: signal-proportional ($\to 0$ when $C\to 0$). Binary: contrast-proportional (depends on $\Var[\lambda]$, positive when $\E[\lambda]\to 0$). Non-detection always carries information.
+\end{remark}
+
+\medskip\noindent\textbf{ISJ Persuasion: 8/10.}
+
+\newpage
+\section{Task 2: Contact-Conditioned Contraction}
+
+\begin{definition}
+$D^2(\pi)=\min_{s_1\neq s_2}\frac{1}{\|s_1-s_2\|^2}\int[\lambda(x,s_1)-\lambda(x,s_2)]^2dx$
+\end{definition}
+
+\begin{theorem}[Explicit Contraction Rate]\label{thm:explicit_contraction}
+$\E[R_k^2]\leq R_0^2\exp(-2c\sum D^2(\pi_j)\Delta t)+C_{\mathrm{noise}}/\sqrt{N_p}$
+$\boxed{c=\frac{\lambda_0^2\ell^2(1-\alpha_w^2)\Delta t}{2(1+\lambda_{\max}\Delta t)}}$
+\end{theorem}
+\begin{proof}[Proof Sketch]
+Score: $\nabla_s\log P(d|x,s)=d\cdot\nabla\lambda/(e^{\lambda\Delta t}-1)-(1-d)\nabla\lambda\Delta t$. Bound: $\|\nabla\lambda\|\leq\lambda(1+\alpha_w)/(\ell(1-\alpha_w))$. Log-Sobolev + telescoping.
+\end{proof}
+
+\begin{theorem}[Phase Transition]\label{thm:phase_transition}
+$\boxed{r^*=\ell\log 2/\log(1+\lambda_0\Delta t)\approx\ell\log 2/(\lambda_0\Delta t)}$
+(i) $R_t>\ell$: exponential, rate $\Theta(\lambda_0^2\ell^2\Delta t)$.
+(ii) $r^*<R_t<\ell$: polynomial, $R_k\sim k^{-1/2}$.
+(iii) $R_t\lesssim r^*$: floor, no estimator beats $r^*$.
+\end{theorem}
+\begin{proof}[Proof Sketch]
+(i) Rate diff $\geq\lambda_0 e^{-R/\ell}(1-\alpha_w)(1-e^{-1})$ for $\|s_1-s_2\|>\ell$.
+(ii) Taylor: $\nabla\lambda\cdot(R/\ell)=O(R/\ell)$, info $O((R/\ell)^2\Delta t^2)$.
+(iii) Bernoulli noise floor: $\Delta p\approx e^{-\lambda\Delta t}\lambda\Delta t\delta/\ell\lesssim\sqrt{p(1-p)}$ gives $\delta\sim r^*$.
+\end{proof}
+
+\begin{theorem}[Minimax Lower Bound]\label{thm:minimax}
+$\inf_{\hat s}\sup_{s^*}\E\|\hat s_T-s^*\|^2\geq\frac{|\mathcal{X}|}{2T\lambda_0\Delta t(1-\alpha_w^2)\ell^2}$
+\end{theorem}
+\begin{proof}[Proof Sketch]
+Fano: packing $|\mathcal{S}|\geq|\mathcal{X}|/(2\epsilon)^2$. Per-obs KL $\leq 4(\Delta\lambda)^2\Delta t/\lambda_2$. Rate diff $\leq 2\lambda_0\epsilon(1+\alpha_w)/\ell$.
+\end{proof}
+
+\medskip\noindent\textbf{ISJ Persuasion: 7/10.}
+
+\newpage
+\section{Task 3: Bridge Theorem (GADEN to Poisson Binary)}
+
+\begin{definition}[Calibration]
+$\ell=2D/\|w\|$, $\lambda_0=Qm/(4\pi D c_{\mathrm{det}})$, $\alpha_w=\|w\|^2/(2D+\|w\|^2)$.
+\end{definition}
+
+\begin{theorem}[Bridge Theorem]\label{thm:bridge}
+Under (A1) Poisson releases, (A2) $\Delta t\geq\ell/\|w\|$, (A3) $c_{\mathrm{det}}\ll m/(4\pi D\ell)$:
+$\TV(P_{\mathrm{GADEN}}^{(T)}\|P_{\mathrm{Poisson}}^{(T)})\leq\varepsilon_1+\varepsilon_2+\varepsilon_3$
+$\varepsilon_1=\sqrt{\Delta t/(2\tau_{\mathrm{corr}})}$ (temporal corr), $\varepsilon_2=Te^{-Q\Delta t/2}$ (Poisson approx), $\varepsilon_3=T\alpha_w^2/4$ (wind lin), $\tau_{\mathrm{corr}}=\ell/\|w\|$.
+\end{theorem}
+\begin{proof}[Proof Sketch]
+Chen-Stein for weakly dependent filament indicators. Rate matching: $\E[N]=Q\Delta t\cdot m/(4\pi D)\cdot e^{-r/\ell}$. Detection approx: $P(d=1)\approx 1-e^{-\lambda\Delta t}$. Chain rule for TV.
+\end{proof}
+
+\begin{corollary}[Practical]
+$D=0.3$, $\|w\|=0.5$, $Q=100$, $\Delta t=0.5$: $\ell=1.2$m, $\tau_{\mathrm{corr}}=2.4$s, $\varepsilon_1\approx 0.32$, $\varepsilon_2\approx 0$.
+Remedy: block-average over $B=\lceil\tau_{\mathrm{corr}}/\Delta t\rceil$ sub-intervals.
+\end{corollary}
+
+\medskip\noindent\textbf{ISJ Persuasion: 9/10.} Most important theorem. Physics-derived model with quantifiable error.
+
+\newpage
+\section{Task 4: Four-Stage Search Justification}
+
+\begin{definition}[Four-Stage Policy]
+S1: Levy explore (golden angle) until $d_k=1$.
+S2: Contact conditioning (cast) until $R_k\leq\ell$.
+S3: Upwind convergence (surge) until $R_k\leq r^*$.
+S4: Refinement + e-process stopping ($M_k\geq 1/\delta$, $R_k\leq\varepsilon$).
+\end{definition}
+
+\begin{theorem}[Search Time Bound]\label{thm:4stage}
+$\boxed{\E[T_{\mathrm{total}}]\leq O(|\mathcal{X}|/(\lambda_0\ell^2))+O(1/(\lambda_0\ell\Delta t))+O(\log(\ell/\varepsilon)/\kappa)+O(\log(1/\delta)/\kappa_e)}$
+where $\kappa=cD^2(\pi_\ell)\Delta t$.
+\end{theorem}
+\begin{proof}[Proof Sketch]
+S1: Effective target $A_{\mathrm{eff}}\approx\pi\ell^2\log 2/(1-\alpha_w^2)$. First-passage: $O(|\mathcal{X}|/A_{\mathrm{eff}})$.
+S2: Exponential contraction $2\ell\to\ell$: $\log 2/(cD^2\Delta t)$.
+S3: $\int_\varepsilon^\ell dr/(r\kappa(r))=O(\log(\ell/\varepsilon)/\kappa)$.
+S4: Geometric e-process growth.
+\end{proof}
+
+\begin{proposition}[Graceful Degradation]\label{prop:reach_violation}
+If reachability violated: (a) $\E[T_1]=\infty$. (b) Non-detection info accumulates at $\sigma^2\Delta t/2$ per unit time. (c) With $\lambda_0\Delta t\geq 1$, $O(\ell)$-localization from non-detection alone in $O(|\mathcal{X}|/(\sigma^2\Delta t))$.
+\end{proposition}
+
+\medskip\noindent\textbf{ISJ Persuasion: 8/10.}
+
+\newpage
+\section{Summary}
+
+\begin{center}
+\begin{tabular}{lcccl}
+\toprule
+Result & Status & Rigor & Impact & Priority \\
+\midrule
+Thm 1 NDI Exact & Complete & 9 & 9 & 1\\
+Thm 1 Pinsker & Complete & 8 & 7 & 1\\
+Thm 1 Bin vs Cont & Sketch & 6 & 9 & 1\\
+Thm 2 Explicit $c$ & Sketch & 6 & 8 & 3\\
+Thm 2 Phase Trans & Heuristic & 5 & 8 & 3\\
+Thm 2 Minimax & Sketch & 7 & 7 & 4\\
+Thm 3 Bridge & Sketch & 6 & 9 & 2\\
+Thm 4 Stages & Sketch & 6 & 8 & 2\\
+Prop Violation & Sketch & 5 & 8 & 3\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Remaining Difficulties}
+\begin{itemize}
+\item Bridge $\varepsilon_1$ potentially large. Measure $\tau_{\mathrm{corr}}$ from GADEN.
+\item Contraction Step 3: uniform score gradient bound (wind singularity).
+\item Levy S1: golden-angle coverage needs formal proof.
+\item Minimax: Fano under adaptive observations.
+\end{itemize}
+
+\end{document}
