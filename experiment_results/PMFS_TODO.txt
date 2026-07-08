@@ -1,0 +1,21 @@
+PMFS Seeds to Re-run (after investigation)
+==========================================
+Need to investigate PMFS configuration before re-running.
+
+Current issue: PMFS uses wind field simulation for gas dispersion modeling.
+GMRF wind estimation was added but PMFS still performs poorly.
+
+Seeds to run (all 4 scenarios x 10 seeds = 40 runs):
+- H01_gnd: seeds 0-9
+- H01_air: seeds 0-9
+- H02_air: seeds 0-9
+- H03_gnd: seeds 0-9
+
+PMFS paper: https://ieeexplore.ieee.org/document/10592836
+PMFS is from MAPIRlab (University of Malaga)
+Original code: https://github.com/MAPIRlab/Gas-Source-Localization
+
+Things to check:
+1. PMFS needs GMRF wind estimation - verify GMRF is working
+2. PMFS parameters may need tuning for GADEN indoor scenarios
+3. Check if PMFS was tested on GADEN in original paper
