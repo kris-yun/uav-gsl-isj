@@ -114,3 +114,23 @@ Parsing logs: Logs contain ANSI color codes. Strip before parsing:
     +-- wind_value_server.py          (wind field service node)
     +-- gsl_benchmark_runner.py       (result extraction)
     +-- setup_vgr_bridge.py           (entry points)
+## Recent Updates (2026-07-10)
+
+### Regret-Based Adaptive Eta
+The adaptive learning rate ¦Ç now uses Gr¨¹nwald's Safe Bayesian framework:
+- Formula: ¦Ç_t = 1/(1 + ¦Ã?_t), where ¦Ã?_t is EMA of mixability gap
+- Replaces hand-crafted coefficients {0.6, 0.3, 0.15, 0.35}
+- Reference: Gr¨¹nwald (2012), Gr¨¹nwald & van Ommen (2017)
+
+### Experiment Data
+- Main benchmark: 160 runs (4 methods ¡Á 4 scenarios ¡Á 10 seeds)
+- Ablation H01_gnd: 70 runs (7 configs ¡Á 10 seeds) - COMPLETE
+- Ablation H01_air: 70 runs (7 configs ¡Á 10 seeds) - RUNNING
+
+### Key Results
+| Method | Overall Error | Success Rate |
+|--------|--------------|-------------|
+| GBI-GSL | 1.62¡À0.72m | 92.5% |
+| SurgeCast | 2.74¡À1.77m | 30% |
+| GrGSL | 4.86¡À3.22m | 12.5% |
+| PMFS | 3.43¡À2.05m | 50% |
