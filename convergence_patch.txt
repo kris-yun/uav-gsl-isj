@@ -1,0 +1,25 @@
+GSLResult OPGSL::checkSourceFound() {
+    // Simplified convergence: e-process + timeout only
+    // Removed: heuristic paths, FAST EXIT, DDM (previously caused premature stopping)
+    if (convergence_reported_) return GSLResult::Success;
+    if (elapsed_time_ < 10.0f) return GSLResult::Running;
+    if (gas_hit_count_ < 3) return GSLResult::Running;
+    if (step_count_ < 8) return GSLResult::Running;
+
+    // Path 1: E-process stopping (theoretical guarantee: false positive rate <= delta)
+    if (use_cp_ && cp_stopping_.shouldStop()) {
+        float mx, my, mz; posterior3d_.getMAP(mx, my, mz);
+        GSL_INFO("EP-STOP: converged at step={} MAP=({:.2f},{:.2f},{:.2f}) width={:.3f}",
+                 step_count_, mx, my, mz, cp_stopping_.getWidth());
+        convergence_reported_ = true; return GSLResult::Success;
+    }
+
+    // Path 2: Hard timeout (safety net)
+    if (elapsed_time_ > 235.0f) {
+        float mx, my, mz; posterior3d_.getMAP(mx, my, mz);
+        GSL_INFO("TIMEOUT: MAP=({:.2f},{:.2f},{:.2f}) step={}", mx, my, mz, step_count_);
+        convergence_reported_ = true; return GSLResult::Success;
+    }
+    if (step_count_ >= 300) return GSLResult::Failure;
+    return GSLResult::Running;
+}

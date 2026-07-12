@@ -1,0 +1,89 @@
+﻿// ============================================================
+// PATCH: Dual-Path Convergence (E-process + SPRT)
+//
+// Apply to: checkSourceFound() in OPGSL.cpp (replaces convergence_patch.txt)
+// Also requires: #include "SPRT_Stopping.hpp" at top of OPGSL.hpp
+// Also requires: SPRTStopping member in OPGSL class
+// ============================================================
+
+// --- In OPGSL.hpp, add member: ---
+// CP::SPRTStopping sprt_stopping_;
+
+// --- In Initialize(), add: ---
+// CP::SPRTConfig sprt_cfg;
+// sprt_cfg.r0_mean = 2.0f;     // H0: unconverged MAP residual
+// sprt_cfg.r1_mean = 0.3f;     // H1: converged MAP residual
+// sprt_cfg.alpha = 0.05f;      // 5% false convergence
+// sprt_cfg.beta = 0.10f;       // 10% missed convergence
+// sprt_cfg.warmup_steps = 10;
+// sprt_cfg.min_steps = 8;
+// sprt_stopping_ = CP::SPRTStopping(sprt_cfg);
+
+// --- In the observation loop (near line 1020), add: ---
+// if (use_cp_) {
+//     float mx, my, mz;
+//     posterior3d_.getMAP(mx, my, mz);
+//     float residual = std::sqrt((mx - cp_prev_mx_) * (mx - cp_prev_mx_) +
+//                                (my - cp_prev_my_) * (my - cp_prev_my_));
+//     cp_stopping_.addObs(residual);
+//     sprt_stopping_.addObs(residual);     // <-- ADD THIS LINE
+//     cp_prev_mx_ = mx; cp_prev_my_ = my;
+// }
+
+GSLResult OPGSL::checkSourceFound() {
+    // Simplified convergence: E-process (anytime-valid) + SPRT (optimal sequential) + timeout
+    // Reference: Ramdas et al. (2023), Wald (1945)
+    if (convergence_reported_) return GSLResult::Success;
+    if (elapsed_time_ < 10.0f) return GSLResult::Running;
+    if (gas_hit_count_ < 3) return GSLResult::Running;
+    if (step_count_ < 8) return GSLResult::Running;
+
+    // ---- Path 1: E-process (anytime-valid, delta=0.10) ----
+    // Provides Type I error control at level delta for ANY stopping time.
+    // Triggers when cumulative e-value M_t >= 1/delta = 10.
+    // Primary theoretical contribution of this work.
+    if (use_cp_ && cp_stopping_.shouldStop()) {
+        float mx, my, mz; posterior3d_.getMAP(mx, my, mz);
+        GSL_INFO("EP-STOP: converged at step={} MAP=({:.2f},{:.2f},{:.2f}) "
+                 "e_process={:.3f} log_M={:.3f}",
+                 step_count_, mx, my, mz,
+                 cp_stopping_.getEProcess(), std::log(cp_stopping_.getEProcess()));
+        convergence_reported_ = true; return GSLResult::Success;
+    }
+
+    // ---- Path 2: SPRT (Wald 1945, optimal sequential test) ----
+    // Wald-Wolfowitz theorem: minimizes expected sample size for given (alpha, beta).
+    // Models MAP inter-step residuals as Exponential under H0/H1.
+    // Complements e-process with a classical Neyman-Pearson framework.
+    int sprt = sprt_stopping_.checkStopping();
+    if (sprt == 1) {
+        float mx, my, mz; posterior3d_.getMAP(mx, my, mz);
+        GSL_INFO("SPRT-STOP: converged at step={} MAP=({:.2f},{:.2f},{:.2f}) "
+                 "LLR={:.3f}/{:.3f} recent_mean_r={:.3f}",
+                 step_count_, mx, my, mz,
+                 sprt_stopping_.getCumulativeLLR(),
+                 sprt_stopping_.getUpperBoundary(),
+                 sprt_stopping_.getRecentMean());
+        convergence_reported_ = true; return GSLResult::Success;
+    }
+    if (sprt == -1) {
+        // SPRT declares NOT converged. Log but do not stop; let e-process
+        // and timeout handle the eventual decision. This preserves the
+        // anytime-valid guarantee of the e-process as the safety net.
+        if (step_count_ % 20 == 0) {
+            GSL_INFO("SPRT-REJECT: LLR={:.3f}/{:.3f} recent_mean_r={:.3f}",
+                     sprt_stopping_.getCumulativeLLR(),
+                     sprt_stopping_.getLowerBoundary(),
+                     sprt_stopping_.getRecentMean());
+        }
+    }
+
+    // ---- Path 3: Hard timeout (safety net) ----
+    if (elapsed_time_ > 235.0f) {
+        float mx, my, mz; posterior3d_.getMAP(mx, my, mz);
+        GSL_INFO("TIMEOUT: MAP=({:.2f},{:.2f},{:.2f}) step={}", mx, my, mz, step_count_);
+        convergence_reported_ = true; return GSLResult::Success;
+    }
+    if (step_count_ >= 300) return GSLResult::Failure;
+    return GSLResult::Running;
+}

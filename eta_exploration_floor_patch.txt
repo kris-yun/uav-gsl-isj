@@ -1,0 +1,61 @@
+﻿// ============================================================
+// PATCH: Kappa-driven Eta with Exploration Floor
+//
+// Problem: kappa-driven eta goes too low during early exploration,
+//   causing posterior to barely update, MAP stays unstable.
+//
+// Fix: Add a time-varying floor that decays from exploration_eta
+//   (early) to 0.05 (late). This ensures sufficient posterior
+//   updating during exploration while preserving the kappa-driven
+//   adaptation in the convergence phase.
+//
+// Theory: Bissiri et al. (2016) General Bayesian Inference allows
+//   any loss function with any eta. The convergence guarantee holds
+//   as long as eta is bounded and predictable (filtration-adapted).
+//   A deterministic decay schedule satisfies this requirement.
+//
+// Reference: Bissiri, P.G., Holmes, C.C., Walker, S.G. (2016).
+//   A general framework for updating belief distributions.
+//   JRSS-B, 78(5), 1103-1130.
+// ============================================================
+
+float eta;
+if (!use_adaptive_eta_) {
+    eta = 0.5f;
+} else {
+    // Step 1: Compute phi at MAP location
+    float map_x, map_y, map_z;
+    getMAP(map_x, map_y, map_z);
+    float phi_map = poissonRate(map_x, map_y, cx, cy, wind_x, wind_y, wind_speed);
+    phi_map = std::clamp(phi_map, 0.01f, 0.99f);
+
+    // Step 2: Compute kappa (log-odds informativeness)
+    float kappa_t = std::abs(std::log(phi_map / (1.0f - phi_map)));
+
+    // Step 3: Update running statistics (EMA)
+    kappa_step_count_++;
+    float alpha = kappa_ema_alpha_;
+    if (kappa_step_count_ <= 10) {
+        alpha = 1.0f / kappa_step_count_;
+    }
+    float diff = kappa_t - kappa_ema_mean_;
+    kappa_ema_mean_ += alpha * diff;
+    kappa_ema_var_ = (1.0f - alpha) * (kappa_ema_var_ + alpha * diff * diff);
+    float kappa_std = std::sqrt(std::max(kappa_ema_var_, 0.01f));
+
+    // Step 4: Compute kappa-driven eta via sigmoid
+    float z = (kappa_t - kappa_ema_mean_) / kappa_std;
+    float kappa_eta = 1.0f / (1.0f + std::exp(-z));
+    kappa_eta = std::clamp(kappa_eta, 0.05f, 0.95f);
+
+    // Step 5: Exploration floor (KEY FIX)
+    // During early exploration (first N steps), eta must stay above
+    // a floor to ensure the posterior actually updates enough for
+    // MAP to converge. The floor decays exponentially.
+    float exploration_floor = 0.4f * std::exp(-step_count_ / 40.0f);
+    exploration_floor = std::max(exploration_floor, 0.05f);
+
+    // Step 6: Final eta = max(kappa-driven, floor)
+    eta = std::max(kappa_eta, exploration_floor);
+    eta = std::clamp(eta, 0.05f, 0.95f);
+}
