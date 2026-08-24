@@ -1,6 +1,8 @@
-ME-ACI V10
-freeze-date: 2026-08-24
-run-contract: MEACI_SEQUENTIAL_SPATIAL_REPLICATION_V4
-formula-marker: inverse_transport_sequential_replication_v3
-binary-sha256: 14133117b9d24502acc8e45ad7c72fbd668fbe867fd73aeee17b70e52cfbe938
-
+ME-ACI V11 EXPERIMENTAL
+base-commit: c7f665fce061e1ea766fe08c5c8cf36e6919a13d
+base-binary-sha256: 14133117b9d24502acc8e45ad7c72fbd668fbe867fd73aeee17b70e52cfbe938
+run-contract-candidate: MEACI_REVERSIBLE_CUMULATIVE_V1
+formula-marker-candidate: inverse_transport_cumulative_reversible_v1
+status: EXPERIMENTAL_NOT_QUALIFIED
+apply-patch: python3 tools/apply_meaci_v11_reversible_patch.py
+method-note: docs/MEACI_V11_REVERSIBLE_CUMULATIVE.md
