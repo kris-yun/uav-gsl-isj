@@ -1,0 +1,52 @@
+{
+  "status": "OFFLINE_EXPLORATORY_NOT_NEW_HELDOUT_EVIDENCE",
+  "frozen_v11_runtime_modified": false,
+  "contribution_2_spatiotemporal_identifiability": {
+    "case": "House02_seed825201_on_me_aci",
+    "ablation": "remove_spatial_replication_release_rule_offline_only",
+    "candidate_coordinates": "frozen 201 persistent carriers from accepted update 3",
+    "update_1": {
+      "event_count": 32,
+      "even_hits_over_events": "2/16",
+      "odd_hits_over_events": "2/16",
+      "hit_site_count": 1,
+      "online_v11_action": "ABSTAIN_single_hit_site_no_spatial_replication",
+      "forced_top_distance_to_truth_m": 4.789050671539034,
+      "nearest_truth_candidate_distance_m": 0.29273141501181943,
+      "nearest_truth_candidate_rank": "61/201",
+      "forced_candidate_mean_center_error_m": 1.1738702009733548
+    },
+    "update_2": {
+      "event_count": 56,
+      "even_hits_over_events": "2/28",
+      "odd_hits_over_events": "2/28",
+      "hit_site_count": 1,
+      "online_v11_action": "ABSTAIN_single_hit_site_no_spatial_replication",
+      "forced_top_distance_to_truth_m": 4.789050671539034,
+      "nearest_truth_candidate_distance_m": 0.29273141501181943,
+      "nearest_truth_candidate_rank": "61/201",
+      "forced_candidate_mean_center_error_m": 1.1738702009733548
+    },
+    "interpretation": "The spatial replication rule prevented an early single-site plume encounter from releasing a sharply wrong top source hypothesis. Truth was used only by this offline evaluator."
+  },
+  "contribution_3_reversible_cumulative_inference": {
+    "case": "House02_seed824201_on_me_aci",
+    "v10_final_top5_error_m": 3.6017415668376644,
+    "v11_final_top5_error_m": 2.540706157376379,
+    "v10_nearest_truth_candidate_rank": "76/201",
+    "v11_nearest_truth_candidate_rank": "68/201",
+    "v10_update3_to_update4_max_abs_probability_change": 0.0,
+    "v11_update3_to_update4_max_abs_probability_change": 0.0173931801673936,
+    "v11_update3_to_update4_l1_probability_change": 0.4672965989219649,
+    "new_update4_event_count": 24,
+    "v10_v11_new_update4_event_max_abs_difference": {
+      "x": 0.0,
+      "y": 0.0,
+      "hit": 0.0,
+      "concentration": 0.0,
+      "wind_direction": 0.0
+    },
+    "interpretation": "On the same later 24-event block, V10 mechanically preserved the accepted distribution while V11 rescored cumulative evidence and materially changed the released distribution. V11 still regressed versus native PMFS on this already-inspected development seed, so this is a mechanism ablation, not held-out accuracy evidence."
+  },
+  "sha256_of_local_audit_json": "c243ce86c51ef0b1dcc03864bb7c5d6a7fc073ee46a600f218a69fcc42f0d4e3"
+}
