@@ -1,55 +1,142 @@
-# UAV Gas Source Localization — ME-ACI V10
+# UAV Gas Source Localization — ME-ACI V11 paper/analysis branch
 
-This repository contains the frozen **ME-ACI V10** main-innovation implementation for PMFS-based single-UAV gas-source localization. It replaces the previous DQA-AS/SDR/TDC/MHC development version; that version remains recoverable from Git history at commit `647b0bb94a23cbd75dd4cca6377bd8be5c85a887`.
+> **This is the paper-positioning and offline-analysis branch.**  
+> Repository: `kris-yun/uav-gsl-isj`  
+> Branch: `meaci-v11-paper-three-contributions`  
+> Qualified runtime branch: `meaci-v11-reversible-cumulative`  
+> **Do not change the frozen V11 runtime equations or planner from this branch.**
 
 ## Current scientific status
 
-The frozen online implementation passed the requested development boundary on three real VGR/GADEN House datasets and two seeds per House. The primary endpoint is the original PMFS top-5% probability-weighted source-location error, `ExpectedValue(sourceProbability, 0.05)`.
+ME-ACI V11 has passed the current preregistered three-House unseen-seed qualification using the official PMFS final top-5% probability-weighted source-location error:
 
-| House | Seed | Native PMFS (m) | ME-ACI V10 (m) | Reduction |
-|---|---:|---:|---:|---:|
-| H01 | 0 | 5.152589 | 2.501097 | 51.459% |
-| H01 | 1 | 6.928495 | 5.006343 | 27.743% |
-| H02 | 0 | 2.926781 | 2.271832 | 22.378% |
-| H02 | 1 | 1.813416 | 1.307146 | 27.918% |
-| H03 | 0 | 6.652648 | 2.863832 | 56.952% |
-| H03 | 1 | 5.219942 | 2.982003 | 42.873% |
+| House / seed | PMFS OFF | V11 ON | Improvement |
+|---|---:|---:|---:|
+| H01 / 825101 | 7.3619 m | 5.7601 m | +21.76% |
+| H02 / 825201 | 2.4220 m | 1.4232 m | +41.24% |
+| H03 / 825301 | 7.5100 m | 6.8596 m | +8.66% |
+| pooled | 17.2938 m | 14.0429 m | **+18.80%** |
 
-- Pass rate: **6/6** at the frozen `>=10%` individual-improvement threshold.
-- Pooled error: **4.782312 m -> 2.822042 m** (**40.990% reduction**).
-- Worst individual reduction: **22.378%**.
-- First accepted update: **72.851–217.811 simulation seconds**, within the 300 s budget.
+All three Houses improved.  The frozen catastrophic-regression criterion was not triggered and no new false-confident collapse was observed.
 
-These are real online closed-loop, first-identifiable-intervention comparisons on an identical trajectory up to posterior release. They are strong mechanism/development evidence, not yet an unseen-seed population-level paper claim. The next confirmatory experiment must keep the formula, source, binary, cadence, metric and stopping rule frozen.
+**Interpretation:** V11 is a frozen positive **online source-inference** candidate.  The present evidence does not yet justify population-level statistical generalization from only three held-out pairs, and it does not prove universal planner-mediated improvement.
 
-## Method
+## Final method structure: one framework, three technical modules
 
-ME-ACI treats gas-source localization as conditional inverse transport. It stores completed hit/miss events in a sequential reservoir, splits them into two disjoint temporal folds, and releases source evidence only when both folds contain hit/miss contrast and hits replicate at at least two occupied locations. Conditioning on the observed hit count removes an unknown release/sensor intercept. A fixed 54-member transport-discrepancy family is marginalized, the two temporal rank channels are combined, and the resulting likelihood updates an independent causal source posterior. Rejected windows are retained and do not alter that posterior.
+The authoritative contribution contract is:
 
-The validated role of SD-TFEI is therefore a **sequential temporal-replication inference channel**, rather than the earlier stand-alone generalized-eigenvector feature.
+**[`docs/V11_THREE_MODULES_REFRAMED.md`](docs/V11_THREE_MODULES_REFRAMED.md)**
 
-## Frozen identifiers
+The final paper architecture is:
 
-- Run contract: `MEACI_SEQUENTIAL_SPATIAL_REPLICATION_V4`
-- Formula marker: `inverse_transport_sequential_replication_v3`
-- Source-update cadence: `stepsSourceUpdate=3`
-- Runtime budget: `300 simulation seconds`
-- Online binary SHA-256: `14133117b9d24502acc8e45ad7c72fbd668fbe867fd73aeee17b70e52cfbe938`
-- `Simulations.cpp` SHA-256: `6f3955eef884f804df725eb0b39d39c3abe1c436b9f9cbb6419e6df881ef5198`
-- `Simulations.hpp` SHA-256: `ea358f1f23cefb807d7daf0f4efc31dd91e29c45717277f976955aa7109a8e00`
+```text
+completed gas / wind / pose events
+        |
+        v
+ACIT  — Amplitude-Conditioned Inverse Transport
+        |   constructs source-abduction evidence
+        v
+STRI  — Spatiotemporal Replication Identifiability
+        |   decides whether evidence is identifiable enough to release
+        v
+R-GAF — Reversible Generalized Assimilation Filter
+        |   assimilates new evidence and allows later falsification
+        v
+PMFS source state / source estimate
+```
 
-## Repository layout
+### Module 1 — ACIT
 
-- `ros2_package/` — captured ROS 2 `gsl_server` package; the frozen implementation is in `src/gsl_server/algorithms/PMFS/internal/Simulations.{cpp,hpp}`.
-- `reference/` — frozen runner, evaluator and PMFS metric reference files.
-- `docs/METHOD_AND_RESULTS.md` — mathematical contract, results and scientific limits.
-- `docs/THEORY_LINEAGE.md` — PMFS, inverse-causal and robust-inference lineage.
-- `evidence/RESULT_MATRIX.csv` — compact six-case result matrix.
-- `evidence/cases/` — per-case manifests, evaluations and update summaries.
-- `evidence/MEACI_V10_MAIN_INNOVATION_HOUSE123_SEED01_6OF6_20260824.zip` — complete frozen evidence package with raw traces and original verifier.
-- `artifacts/gsl_actionserver_node` — exact qualified Linux binary.
+**Amplitude-Conditioned Inverse Transport（幅值条件化逆输运）**
 
-See [REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md) before rebuilding or running. Do not silently replace the frozen binary with a new build when reproducing the reported 6/6 result.
+Treat candidate source locations as physical causes and plume hit/miss events as downstream effects.  Condition on observed hit count to suppress unknown release/sensor amplitude in the binary event-ordering comparison, and marginalize the frozen 54-member transport nuisance family.
 
-Run `python3 verify_repository.py` for a repository-level integrity check.
+Main role: **how source evidence is constructed under plume/model mismatch.**
 
+### Module 2 — STRI
+
+**Spatiotemporal Replication Identifiability（时空复现可辨识）**
+
+Release source evidence only when both disjoint temporal folds contain hit/miss contrast and hits occur at at least two distinct occupied sensing cells.
+
+Main role: **when source evidence is reproducible/identifiable enough to trust.**
+
+Existing H02/825201 offline counterfactual shows that removing only the multi-site spatial replication condition can force an early top candidate about 4.79 m from truth even though the nearest physical candidate is about 0.293 m away.
+
+### Module 3 — R-GAF
+
+**Reversible Generalized Assimilation Filter（可逆广义同化滤波器）**
+
+Let `g_t(s)` be the cumulative V11 generalized source score.  Define the generalized evidence innovation
+
+```text
+Delta g_t(s) = g_t(s) - g_{t-1}(s).
+```
+
+R-GAF performs the recursive update
+
+```text
+q_t(s) proportional to q_{t-1}(s) * exp(Delta g_t(s)).
+```
+
+Because the increments telescope, this is exactly equivalent to V11's full-history fixed-prior reconstruction:
+
+```text
+q_t(s) proportional to q_0(s) * exp(g_t(s)).
+```
+
+This gives three explicit properties:
+
+1. sequential/batch equivalence;
+2. no double counting of retained history;
+3. later evidence can demote an earlier preferred source basin.
+
+The verifier is:
+
+```text
+analysis/verify_rgaf_telescoping.py
+```
+
+On archived H01/H02/H03 V11 score pairs, the recursive reconstruction agrees with stored V11 posterior masses to approximately `1e-15` maximum absolute error.
+
+## Theory lineage
+
+The paper-positioning branch records the following 2025–2026 far-domain theoretical lineage without claiming theorem transfer:
+
+- Andreou, Chen & Bollt, **Assimilative causal inference**, *Nature Communications* (2026): cause-from-effect inverse/assimilation framing.
+- Park, Balakrishnan & Wasserman, **Robust universal inference for misspecified models**, *Biometrika* (2026): separated-data relative-fit reasoning under misspecification.
+- Fong & Yiu, **Asymptotics for a class of parametric martingale posteriors**, *Biometrika* (2026): modern sequential/predictive posterior theory.
+- Wu et al., **Adaptive Nonparametric Perturbations of Parametric Models with Generalized Bayes**, *JMLR* (2026): generalized updating for misspecified scientific models.
+- **Deep Bayesian Filter**, ICML 2025: explicit recursive assimilation/filter-module design precedent.
+- **Replicable Distribution Testing**, NeurIPS 2025: replicability as a statistical design principle.
+
+Exact claim boundaries and module-specific use of these works are documented in `docs/V11_THREE_MODULES_REFRAMED.md`.
+
+## Important terminology boundary
+
+The final V11 released score uses candidate-relative normal-rank aggregation.  Therefore use:
+
+- `conditional inverse-transport score`;
+- `generalized/decision posterior`;
+- `generalized evidence innovation`;
+- `reversible generalized assimilation`.
+
+Do **not** call the final rank aggregate:
+
+- exact Bayesian likelihood;
+- Bayes factor;
+- calibrated posterior probability.
+
+## Branch files relevant to the paper
+
+- `docs/V11_THREE_MODULES_REFRAMED.md` — **authoritative three-module contribution contract**.
+- `docs/V11_THREE_CONTRIBUTION_POSITIONING.md` — earlier contribution decomposition and offline mechanism evidence.
+- `docs/AUXILIARY_2025_2026_SCREEN.md` — screen of additional conformal/planner modules and why they are not inserted into frozen V11 now.
+- `analysis/verify_rgaf_telescoping.py` — verifies the R-GAF recursive/telescoping identity from archived candidate-score CSVs.
+- `analysis/v11_offline_contribution_audit.py` — offline contribution/ablation analysis.
+
+## Next experiment
+
+Do not modify ACIT, STRI, R-GAF, the 54-member family, PMFS planner, cadence, evaluator or 300-s budget.
+
+The next stage is **independent multi-seed validation** of the frozen V11 method, followed by paired uncertainty/statistical analysis.  Any conformal calibration or new active-planning module must be treated as a separate future study rather than silently added to the already-qualified V11 treatment.
