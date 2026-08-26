@@ -386,12 +386,19 @@ def main():
         and dual["accepted"]["margin_mean"] > dual["overall"]["margin_mean"]
     )
     alpha_adds_value = False
-    if dual_go and gamma.get("valid") and gamma["accepted"]["correct_fraction"] is not None:
-        alpha_adds_value = (
-            dual["accepted"]["correct_fraction"]
-            >= gamma["accepted"]["correct_fraction"] + ALPHA_EXTRA_GAIN_TARGET
-            or dual["accepted"]["margin_mean"] > gamma["accepted"]["margin_mean"]
-        )
+    if dual_go:
+        # If gamma-only cannot even produce a valid development-calibrated gate
+        # while the dual gate can, alpha has already supplied non-redundant
+        # selection information. Otherwise require a final-test gain in either
+        # accepted correctness or mean source-ordering margin.
+        if not gamma.get("valid"):
+            alpha_adds_value = True
+        elif gamma["accepted"]["correct_fraction"] is not None:
+            alpha_adds_value = (
+                dual["accepted"]["correct_fraction"]
+                >= gamma["accepted"]["correct_fraction"] + ALPHA_EXTRA_GAIN_TARGET
+                or dual["accepted"]["margin_mean"] > gamma["accepted"]["margin_mean"]
+            )
 
     control = source_identity_control(args.bank_root)
     result = {
