@@ -62,23 +62,39 @@ namespace GSL::PMFS_internal::rcec_v13
         for (double value : values)
             if (!std::isfinite(value))
                 throw std::invalid_argument("RCEC normalRanks non-finite input");
+
         std::vector<std::size_t> order(values.size());
-        for (std::size_t i = 0; i < order.size(); ++i) order[i] = i;
+        for (std::size_t i = 0; i < order.size(); ++i)
+            order[i] = i;
         std::sort(order.begin(), order.end(), [&](std::size_t a, std::size_t b)
         {
-            if (values[a] != values[b]) return values[a] < values[b];
+            if (values[a] != values[b])
+                return values[a] < values[b];
             return stableIds[a] < stableIds[b];
         });
+
         std::vector<double> result(values.size(), 0.0);
         std::size_t begin = 0;
         while (begin < order.size())
         {
             std::size_t end = begin + 1;
-            while (end < order.size() && std::abs(values[order[end]] - values[order[begin]]) <= 1e-12)
+            // RCEC_V13_EXACT_TIE_RANK_V21_20260826.
+            // Candidate masses are probabilities and can legitimately differ
+            // by far less than 1e-12.  An absolute tolerance at that scale
+            // collapses a large low-mass tail into a false tie and changes the
+            // order statistic.  Average only genuine floating-point equality,
+            // matching the offline average-rank contract.  Stable IDs provide
+            // deterministic ordering of exact ties before they receive their
+            // common average rank.
+            while (end < order.size() &&
+                   values[order[end]] == values[order[begin]])
                 ++end;
-            const double averageRank = 0.5 * (static_cast<double>(begin + 1) + static_cast<double>(end));
-            const double z = normalQuantile((averageRank - 0.5) / static_cast<double>(order.size()));
-            for (std::size_t i = begin; i < end; ++i) result[order[i]] = z;
+            const double averageRank = 0.5 *
+                (static_cast<double>(begin + 1) + static_cast<double>(end));
+            const double z = normalQuantile(
+                (averageRank - 0.5) / static_cast<double>(order.size()));
+            for (std::size_t i = begin; i < end; ++i)
+                result[order[i]] = z;
             begin = end;
         }
         return result;
@@ -123,7 +139,8 @@ namespace GSL::PMFS_internal::rcec_v13
         for (std::size_t s = 0; s < candidates; ++s)
         {
             scratch.clear();
-            for (const auto& snapshot : history) scratch.push_back(snapshot[s]);
+            for (const auto& snapshot : history)
+                scratch.push_back(snapshot[s]);
             result[s] = median(scratch);
         }
         return result;
