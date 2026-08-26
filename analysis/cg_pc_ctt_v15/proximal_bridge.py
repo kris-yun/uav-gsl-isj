@@ -123,6 +123,14 @@ class Bridge:
 
         a = (g.T @ h) / n
         b = (g.T @ y) / n
+        singular = np.linalg.svd(a, compute_uv=False)
+        self.operator_singular_values = singular
+        if singular.size and singular[0] > 0.0:
+            self.operator_condition_ratio = float(singular[-1] / singular[0])
+            self.operator_numerical_rank = int(np.sum(singular > singular[0] * 1e-8))
+        else:
+            self.operator_condition_ratio = 0.0
+            self.operator_numerical_rank = 0
         lhs = a.T @ a + self.ridge * np.eye(a.shape[1])
         rhs = a.T @ b
         self.beta = np.linalg.solve(lhs, rhs)
@@ -149,6 +157,17 @@ class Bridge:
     def mse(self, d):
         residual = as2(d["y"]) - self.predict(d["r"], d["s"])
         return float(np.mean(residual * residual))
+
+    def operator_diagnostics(self):
+        singular = np.asarray(self.operator_singular_values)
+        return {
+            "singular_values": [float(x) for x in singular],
+            "largest": float(singular[0]) if singular.size else 0.0,
+            "smallest": float(singular[-1]) if singular.size else 0.0,
+            "smallest_over_largest": self.operator_condition_ratio,
+            "numerical_rank": self.operator_numerical_rank,
+            "count": int(singular.size),
+        }
 
 
 class DirectRidge:
@@ -335,6 +354,7 @@ def main():
         "direct_ridge_selected_on_dev_only": direct_ridge,
         "bridge_grid": bridge_grid,
         "direct_grid": direct_grid,
+        "bridge_operator": bridge.operator_diagnostics(),
         "dev": {"bridge": dev_bridge, "direct": dev_direct, "margin_gain": dev_gain},
         "final_test": {
             "bridge": test_bridge,
@@ -346,6 +366,18 @@ def main():
         },
     }
     (args.output_root / "proximal_bridge_result.json").write_text(json.dumps(result, indent=2))
+    np.savez_compressed(
+        args.output_root / "proximal_bridge_model.npz",
+        beta=bridge.beta,
+        rs_mean=bridge.rs_scaler.mean,
+        rs_std=bridge.rs_scaler.std,
+        zs_mean=bridge.zs_scaler.mean,
+        zs_std=bridge.zs_scaler.std,
+        h_basis_scale=bridge.h_basis_scale,
+        g_basis_scale=bridge.g_basis_scale,
+        ridge=np.asarray([bridge.ridge], dtype=np.float64),
+        operator_singular_values=bridge.operator_singular_values,
+    )
     contract = {
         "script_sha256": hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
         "ridge_grid": RIDGE_GRID.tolist(),
