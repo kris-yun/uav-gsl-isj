@@ -5,6 +5,7 @@ import hashlib
 ROOT = Path(__file__).resolve().parents[1]
 CPP = ROOT / 'ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp'
 PMFS = ROOT / 'ros2_package/src/gsl_server/algorithms/PMFS/PMFS.cpp'
+CMAKE = ROOT / 'ros2_package/CMakeLists.txt'
 
 
 def sha256(path: Path) -> str:
@@ -18,6 +19,7 @@ def sha256(path: Path) -> str:
 def main() -> None:
     cpp = CPP.read_text(encoding='utf-8')
     pmfs = PMFS.read_text(encoding='utf-8')
+    cmake = CMAKE.read_text(encoding='utf-8')
 
     forbidden_cpp = [
         'RCSDTFEIV12.hpp',
@@ -36,6 +38,9 @@ def main() -> None:
     assert 'rc_sd_tfei_v12' not in pmfs, 'PMFS still exposes unavailable V12 mode'
     assert 'RCEC_V13_BUILD_CLOSURE_20260826' in cpp
     assert 'RCEC_V13_BUILD_CLOSURE_20260826' in pmfs
+    assert 'RCEC_V13_BUILD_CLOSURE_20260826' in cmake
+    assert 'ctt_trace_bank_builder' not in cmake, \
+        'dormant CTT target still compiles unavailable V12 source'
     assert 'RC-SD-TFEI V12 is unavailable in the RCEC V13 frozen source boundary' in cpp
 
     for token in ('RCEC_V13_ARM', 'v11_stouffer', 'crei_latest', 'rcec_full'):
@@ -44,8 +49,10 @@ def main() -> None:
     print('RCEC_V13_BUILD_CLOSURE_CONTRACT=PASS')
     print('legacy_v12_runtime=FAIL_CLOSED')
     print('legacy_v12_mode_literal_present=false')
+    print('dormant_ctt_v12_target_reachable=false')
     print(f'Simulations.cpp_sha256={sha256(CPP)}')
     print(f'PMFS.cpp_sha256={sha256(PMFS)}')
+    print(f'CMakeLists.txt_sha256={sha256(CMAKE)}')
 
 
 if __name__ == '__main__':

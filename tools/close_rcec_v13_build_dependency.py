@@ -25,8 +25,10 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 CPP = ROOT / "ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp"
 PMFS = ROOT / "ros2_package/src/gsl_server/algorithms/PMFS/PMFS.cpp"
+CMAKE = ROOT / "ros2_package/CMakeLists.txt"
 MARKER = "RCEC_V13_BUILD_CLOSURE_20260826"
 DISABLED_MODE_LITERAL = '"__rcec_disabled_legacy_v12__"'
+CTT_TARGET = "ctt_trace_bank_builder"
 
 MISSING_INCLUDES = (
     '#include <gsl_server/algorithms/PMFS/internal/RCSDTFEIV12.hpp>\n',
@@ -137,6 +139,37 @@ def self_test_rewriter() -> None:
             )
 
 
+def remove_legacy_ctt_target(cmake: str) -> tuple[str, int]:
+    """Remove the dormant CTT target that still compiles unavailable V12 code."""
+    pattern = re.compile(
+        r"(?ms)^# Truth-free physical trace-bank builder for the CTT premise gates\. It is not\n"
+        r"# installed or launched by ROS and cannot access planner or final-source truth\.\n"
+        r"add_executable\(ctt_trace_bank_builder\s+tools/ctt_trace_bank_builder\.cpp\)\n"
+        r"ament_target_dependencies\(ctt_trace_bank_builder\n"
+        r".*?^\)\n"
+        r"target_link_libraries\(ctt_trace_bank_builder\s+PMFS\)\n"
+    )
+    replacement = (
+        "# RCEC_V13_BUILD_CLOSURE_20260826: dormant CTT/V12-only helper target excluded.\n"
+    )
+    return pattern.subn(replacement, cmake)
+
+
+def self_test_cmake_closure() -> None:
+    fixture = '''before\n# Truth-free physical trace-bank builder for the CTT premise gates. It is not
+# installed or launched by ROS and cannot access planner or final-source truth.
+add_executable(ctt_trace_bank_builder tools/ctt_trace_bank_builder.cpp)
+ament_target_dependencies(ctt_trace_bank_builder
+    dep_a
+    dep_b
+)
+target_link_libraries(ctt_trace_bank_builder PMFS)
+after\n'''
+    rewritten, count = remove_legacy_ctt_target(fixture)
+    if count != 1 or CTT_TARGET in rewritten or not rewritten.startswith("before\n") or not rewritten.endswith("after\n"):
+        raise SystemExit("internal dormant CTT target closure self-test failed")
+
+
 def context(text: str, token: str, radius: int = 120) -> str:
     idx = text.find(token)
     if idx < 0:
@@ -146,7 +179,7 @@ def context(text: str, token: str, radius: int = 120) -> str:
     return text[lo:hi].replace("\n", "\\n")
 
 
-def assert_closed(cpp: str, pmfs: str) -> None:
+def assert_closed(cpp: str, pmfs: str, cmake: str) -> None:
     forbidden_cpp = (
         "RCSDTFEIV12.hpp",
         "V12ResponseBank.hpp",
@@ -171,6 +204,10 @@ def assert_closed(cpp: str, pmfs: str) -> None:
         )
     if MARKER not in cpp or MARKER not in pmfs:
         raise SystemExit("build closure marker missing")
+    if CTT_TARGET in cmake:
+        raise SystemExit("build closure failed; dormant CTT/V12 target remains reachable")
+    if MARKER not in cmake:
+        raise SystemExit("CMake build closure marker missing")
     for token in ("RCEC_V13_ARM", "v11_stouffer", "crei_latest", "rcec_full"):
         if token not in cpp:
             raise SystemExit(f"RCEC runtime marker disappeared: {token}")
@@ -180,20 +217,24 @@ def assert_closed(cpp: str, pmfs: str) -> None:
 
 def main() -> None:
     self_test_rewriter()
+    self_test_cmake_closure()
     cpp = CPP.read_text(encoding="utf-8")
     pmfs = PMFS.read_text(encoding="utf-8")
+    cmake = CMAKE.read_text(encoding="utf-8")
     cpp_before = sha256(CPP)
     pmfs_before = sha256(PMFS)
+    cmake_before = sha256(CMAKE)
 
     cpp_marked = MARKER in cpp
     pmfs_marked = MARKER in pmfs
     if cpp_marked or pmfs_marked:
         if not (cpp_marked and pmfs_marked):
             raise SystemExit("partial build-closure marker state; refuse to continue")
-        assert_closed(cpp, pmfs)
+        assert_closed(cpp, pmfs, cmake)
         print("RCEC_V13_BUILD_CLOSURE=ALREADY_APPLIED_AND_VERIFIED")
         print(f"Simulations.cpp_sha256={cpp_before}")
         print(f"PMFS.cpp_sha256={pmfs_before}")
+        print(f"CMakeLists.txt_sha256={cmake_before}")
         return
 
     # 1. Remove missing legacy-only includes.
@@ -258,11 +299,21 @@ def main() -> None:
         1,
     )
 
-    # 6. Transactional postconditions before the only writes.
-    assert_closed(cpp, pmfs)
+    # 6. Exclude the dormant CTT helper from the default build. Its source is
+    # retained as historical evidence, but it depends on the deliberately
+    # unavailable V12 headers and is not part of the frozen RCEC runtime.
+    cmake, ctt_targets_removed = remove_legacy_ctt_target(cmake)
+    if ctt_targets_removed != 1:
+        raise SystemExit(
+            f"expected exactly one dormant CTT target, removed {ctt_targets_removed}"
+        )
+
+    # 7. Transactional postconditions before the only writes.
+    assert_closed(cpp, pmfs, cmake)
 
     CPP.write_text(cpp, encoding="utf-8")
     PMFS.write_text(pmfs, encoding="utf-8")
+    CMAKE.write_text(cmake, encoding="utf-8")
 
     print("RCEC_V13_BUILD_CLOSURE=PASS")
     print(f"v12_comparisons_rewritten_cpp={cpp_comparisons}")
@@ -271,6 +322,9 @@ def main() -> None:
     print(f"Simulations.cpp_after_sha256={sha256(CPP)}")
     print(f"PMFS.cpp_before_sha256={pmfs_before}")
     print(f"PMFS.cpp_after_sha256={sha256(PMFS)}")
+    print(f"CMakeLists.txt_before_sha256={cmake_before}")
+    print(f"CMakeLists.txt_after_sha256={sha256(CMAKE)}")
+    print(f"dormant_ctt_targets_removed={ctt_targets_removed}")
     print("legacy_v12_runtime=FAIL_CLOSED")
     print("rcec_method_equations_changed=false")
 
