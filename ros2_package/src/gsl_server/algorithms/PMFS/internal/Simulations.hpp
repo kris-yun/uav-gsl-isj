@@ -12,6 +12,7 @@
 #include <cstdint>
 #include "gsl_server/algorithms/PMFS/internal/EventKeyedRng.hpp"
 #include "gsl_server/algorithms/PMFS/internal/CTTTransportTrace.hpp"
+#include "gsl_server/algorithms/PMFS/internal/RCECV13.hpp"
 
 namespace GSL
 {
@@ -262,6 +263,11 @@ namespace GSL::PMFS_internal
         // abstained window remain here until temporal and spatial
         // identifiability are jointly satisfied.
         std::vector<PCAciEvent> meAciEvidenceReservoir;
+        // RCEC_V13_FROZEN_CANDIDATE_20260826: candidate-aligned history of
+        // truth-blind cross-view consensus scores.  History is appended only
+        // on the same V11 spatiotemporally identifiable updates.
+        std::vector<std::string> rcecV13CandidateIds;
+        std::vector<std::vector<double>> rcecV13ConsensusHistory;
         struct MEAciRouteState
         {
             std::array<double, 64> memory{};

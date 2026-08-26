@@ -2349,6 +2349,19 @@ namespace GSL::PMFS_internal
     bool Simulations::applyMEAci()
     {
         const bool inject = pfdiMode == "me_aci";
+        // RCEC_V13_FROZEN_CANDIDATE_20260826.  The environment selects a
+        // preregistered ablation arm without changing the binary.  Absence of
+        // the variable is exact frozen-V11 behavior.
+        const char* rcecArmEnvironment = std::getenv("RCEC_V13_ARM");
+        const std::string rcecArm = rcecArmEnvironment == nullptr
+            ? "v11_stouffer" : std::string(rcecArmEnvironment);
+        const bool rcecCreiArm = rcecArm == "crei_latest";
+        const bool rcecFullArm = rcecArm == "rcec_full";
+        if (rcecArm != "v11_stouffer" && !rcecCreiArm && !rcecFullArm)
+        {
+            GSL_ERROR("RCEC V13 unknown RCEC_V13_ARM={}", rcecArm);
+            return false;
+        }
         constexpr int transportMembers = 0;
         constexpr int modelErrorMembers = 54;
         constexpr int robustBlocks = 5;
@@ -2626,12 +2639,99 @@ namespace GSL::PMFS_internal
         };
         const std::vector<double> evenRanks = normalRanks(evenLogEvidence);
         const std::vector<double> oddRanks = normalRanks(oddLogEvidence);
+        std::vector<double> v11Scores(candidateCount, 0.0);
         for (size_t s = 0; s < candidateCount; ++s)
         {
-            logEvidence[s] = (evenRanks[s] + oddRanks[s]) / std::sqrt(2.0);
+            v11Scores[s] = (evenRanks[s] + oddRanks[s]) / std::sqrt(2.0);
             crossFitBlockScores[s] = {evenLogEvidence[s], oddLogEvidence[s],
-                                      evenRanks[s], oddRanks[s], logEvidence[s]};
+                                      evenRanks[s], oddRanks[s], v11Scores[s]};
         }
+
+        // RCEC M2 uses the current native PMFS *increment* rather than the
+        // absolute PMFS posterior.  beginTADMUpdate() froze the normalized
+        // pre-native source state; sourceProbInternal is the post-native state
+        // at this point, before ME-ACI/RCEC injection.  The same observations
+        // therefore are not multiplied as an independent likelihood: only a
+        // rank-consensus constraint is formed.
+        std::vector<std::string> rcecCandidateIds(candidateCount);
+        std::vector<double> rcecNativeBeforeMass(candidateCount, 0.0);
+        std::vector<double> rcecNativeAfterMass(candidateCount, 0.0);
+        std::vector<double> rcecNativeIncrement(candidateCount, 0.0);
+        std::vector<double> rcecNativeRanks(candidateCount, 0.0);
+        std::vector<double> rcecCreiScores(candidateCount, 0.0);
+        std::vector<double> rcecTemporalScores(candidateCount, 0.0);
+        std::vector<double> activeScores = v11Scores;
+        std::size_t rcecHistoryCount = 0;
+
+        if (rcecCreiArm || rcecFullArm)
+        {
+            if (pcAciIncomingNativePriorSnapshot.size() != sourceProbInternal.size())
+            {
+                GSL_ERROR("RCEC V13 pre-native snapshot shape mismatch");
+                return false;
+            }
+            long double nativeAfterTotal = 0.0L;
+            for (size_t cellIndex = 0; cellIndex < sourceProbInternal.size(); ++cellIndex)
+                if (measuredHitProb.occupancy[cellIndex] == Occupancy::Free &&
+                    std::isfinite(sourceProbInternal[cellIndex]) && sourceProbInternal[cellIndex] > 0.0)
+                    nativeAfterTotal += static_cast<long double>(sourceProbInternal[cellIndex]);
+            if (!(nativeAfterTotal > 0.0L) || !std::isfinite(static_cast<double>(nativeAfterTotal)))
+            {
+                GSL_ERROR("RCEC V13 native post-update source mass is invalid");
+                return false;
+            }
+
+            for (size_t s = 0; s < candidateCount; ++s)
+            {
+                rcecCandidateIds[s] = p2LastEvaluatedCandidates[s].stableID;
+                const auto& rect = p2LastEvaluatedCandidates[s].rect;
+                long double before = 0.0L;
+                long double after = 0.0L;
+                for (int x = rect[0]; x < rect[0] + rect[2]; ++x)
+                    for (int y = rect[1]; y < rect[1] + rect[3]; ++y)
+                    {
+                        if (x < 0 || y < 0 || x >= measuredHitProb.metadata.dimensions.x ||
+                            y >= measuredHitProb.metadata.dimensions.y)
+                            continue;
+                        const size_t cellIndex = measuredHitProb.metadata.indexOf({x, y});
+                        if (measuredHitProb.occupancy[cellIndex] != Occupancy::Free)
+                            continue;
+                        before += std::max(pcAciIncomingNativePriorSnapshot[cellIndex], 0.0L);
+                        after += std::max(static_cast<long double>(sourceProbInternal[cellIndex]), 0.0L) / nativeAfterTotal;
+                    }
+                constexpr long double rcecMassFloor = 1e-300L;
+                rcecNativeBeforeMass[s] = static_cast<double>(before);
+                rcecNativeAfterMass[s] = static_cast<double>(after);
+                rcecNativeIncrement[s] =
+                    std::log(static_cast<double>(std::max(after, rcecMassFloor))) -
+                    std::log(static_cast<double>(std::max(before, rcecMassFloor)));
+            }
+            rcecNativeRanks = rcec_v13::normalRanks(rcecNativeIncrement, rcecCandidateIds);
+            rcecCreiScores = rcec_v13::conjunctiveConsensus(rcecNativeRanks, evenRanks, oddRanks);
+            activeScores = rcecCreiScores;
+
+            if (rcecFullArm)
+            {
+                if (rcecV13CandidateIds.empty())
+                    rcecV13CandidateIds = rcecCandidateIds;
+                else if (rcecV13CandidateIds != rcecCandidateIds)
+                {
+                    GSL_ERROR("RCEC V13 candidate identity/order drift; temporal consensus is undefined");
+                    return false;
+                }
+                rcecV13ConsensusHistory.push_back(rcecCreiScores);
+                rcecTemporalScores = rcec_v13::temporalMedian(rcecV13ConsensusHistory);
+                activeScores = rcecTemporalScores;
+                rcecHistoryCount = rcecV13ConsensusHistory.size();
+            }
+            else
+            {
+                rcecTemporalScores = rcecCreiScores;
+                rcecHistoryCount = 1;
+            }
+        }
+
+        logEvidence = activeScores;
         const double simulationWallSeconds = std::chrono::duration<double>(
             std::chrono::steady_clock::now() - simulationStart).count();
 
@@ -2778,6 +2878,27 @@ namespace GSL::PMFS_internal
                         nativeCandidateMass[s] += std::max(nativeShadow[cell], 0.0L);
                 }
         }
+        if (rcecCreiArm || rcecFullArm)
+        {
+            std::ofstream rcecFile(tadmDirectory + "/rcec_v13_scores_update_" + tag + ".csv");
+            rcecFile << "source_update_id,candidate_id,native_before_mass,native_after_mass,native_log_increment,native_normal_rank,even_normal_rank,odd_normal_rank,v11_stouffer_score,crei_score,temporal_median_score,active_score,history_count,arm\n";
+            for (size_t s = 0; s < candidateCount; ++s)
+                rcecFile << tadmSourceUpdateId << ',' << p2LastEvaluatedCandidates[s].stableID << ','
+                         << std::setprecision(17) << rcecNativeBeforeMass[s] << ',' << rcecNativeAfterMass[s] << ','
+                         << rcecNativeIncrement[s] << ',' << rcecNativeRanks[s] << ',' << evenRanks[s] << ','
+                         << oddRanks[s] << ',' << v11Scores[s] << ',' << rcecCreiScores[s] << ','
+                         << rcecTemporalScores[s] << ',' << activeScores[s] << ',' << rcecHistoryCount << ','
+                         << rcecArm << '\n';
+            rcecFile.flush();
+            std::ofstream rcecSummary(tadmDirectory + "/rcec_v13_update_summary.csv", std::ios::out | std::ios::app);
+            if (rcecSummary.tellp() == 0)
+                rcecSummary << "run_uuid,source_update_id,arm,event_count,candidate_count,history_count,inject,formula_marker\n";
+            rcecSummary << tadmRunUUID << ',' << tadmSourceUpdateId << ',' << rcecArm << ','
+                        << pcAciActiveEvents.size() << ',' << candidateCount << ',' << rcecHistoryCount << ','
+                        << (inject ? 1 : 0) << ",rcec_v13_acit_crei_tmem_v1\n";
+            rcecSummary.flush();
+        }
+
         std::ofstream scoreFile(tadmDirectory + "/meaci_candidate_scores_update_" + tag + ".csv");
         scoreFile << "source_update_id,candidate_id,x,y,geometry_prior_mass,native_shadow_mass,full_conditional_log_score,temporal_rank_channel,even_conditional_log_score,odd_conditional_log_score,even_normal_rank,odd_normal_rank,repeated_temporal_channel,posterior_mass\n";
         for (size_t s = 0; s < candidateCount; ++s)
