@@ -3,7 +3,7 @@
 
 Each accepted event supplies one score per candidate (higher is better). To
 avoid tuning a score temperature or mixing coefficient:
-  1) convert candidate scores within each event to normal ranks z_e(s);
+  1) convert candidate scores within each event to tie-safe normal mid-ranks z_e(s);
   2) split accepted events by accepted-event parity;
   3) aggregate z_e within each fold and divide by sqrt(n_fold);
   4) rank-normalize each fold aggregate again;
@@ -25,10 +25,20 @@ ND=NormalDist()
 
 
 def normal_ranks(scores):
+    """Descending mid-ranks -> normal scores; exact ties receive equal z."""
     x=np.asarray(scores,float); n=len(x)
+    if n<2 or not np.all(np.isfinite(x)): raise ValueError("scores must be finite with n>=2")
     order=np.argsort(-x,kind="mergesort")
-    rank=np.empty(n,int); rank[order]=np.arange(1,n+1)
-    # best score -> large positive z
+    rank=np.empty(n,float)
+    i=0
+    while i<n:
+        j=i+1
+        ref=x[order[i]]
+        while j<n and np.isclose(x[order[j]],ref,rtol=1e-12,atol=1e-12): j+=1
+        # 1-indexed positions i+1 ... j have average rank (i+1+j)/2.
+        mid=(i+1+j)/2.0
+        rank[order[i:j]]=mid
+        i=j
     p=1.0-(rank-.5)/n
     return np.asarray([ND.inv_cdf(float(v)) for v in p])
 
