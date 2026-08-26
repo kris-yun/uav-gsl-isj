@@ -1,0 +1,69 @@
+{
+  "gate": "CTT_M1_WIND_CONDITIONED_FIRST_PASSAGE_V1",
+  "truth_used": false,
+  "train_contexts": [
+    0,
+    3,
+    5,
+    6,
+    8,
+    9
+  ],
+  "val_contexts": [
+    4,
+    7
+  ],
+  "test_contexts": [
+    1,
+    2
+  ],
+  "train_members": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "heldout_members": [
+    6,
+    7
+  ],
+  "native_classes": 201,
+  "conditional_best_epoch": 4,
+  "static_best_epoch": 2,
+  "conditional_val_nll": 0.7774558516219316,
+  "static_val_nll": 0.779279848900588,
+  "conditional_test_nll": 0.7762477993965149,
+  "static_test_nll": 0.7790703177452087,
+  "nll_improvement": 0.0028223355766385794,
+  "nll_improvement_95ci": [
+    0.0009082963690161705,
+    0.004758930765092372
+  ],
+  "conditional_test_brier": 0.01318313553929329,
+  "static_test_brier": 0.014655542559921741,
+  "brier_improvement": 0.001472404575906694,
+  "brier_improvement_95ci": [
+    0.0012999181286431848,
+    0.0016527249477803706
+  ],
+  "per_test_context": {
+    "1": {
+      "conditional_nll": 0.7762404680252075,
+      "static_nll": 0.7790252566337585,
+      "conditional_brier": 0.013184838928282261,
+      "static_brier": 0.014687969349324703
+    },
+    "2": {
+      "conditional_nll": 0.776255190372467,
+      "static_nll": 0.7791152000427246,
+      "conditional_brier": 0.013181432150304317,
+      "static_brier": 0.014623112976551056
+    }
+  },
+  "normalization_max_abs": 3.5762786865234375e-07,
+  "conditional_inference_seconds": 0.22135033299855422,
+  "conditional_microseconds_per_source_query": 0.8582397600675976,
+  "verdict": "M1_DIRECT_GO"
+}

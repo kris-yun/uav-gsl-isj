@@ -6,6 +6,8 @@
 #include <gsl_server/algorithms/PMFS/PMFSLib.hpp>
 #include <gsl_server/algorithms/PMFS/internal/Simulations.hpp>
 #include <gsl_server/algorithms/PMFS/internal/MEACIParams.hpp>
+#include <gsl_server/algorithms/PMFS/internal/RCSDTFEIV12.hpp>
+#include <gsl_server/algorithms/PMFS/internal/V12ResponseBank.hpp>
 #include <gsl_server/core/Logging.hpp>
 
 #include <opencv2/core/hal/interface.h>
@@ -29,6 +31,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <cstdlib>
+#include <atomic>
 
 #include <DDA/DDA.h>
 #include <gsl_server/core/Profiling.hpp>
@@ -541,7 +544,7 @@ namespace GSL::PMFS_internal
         // reading truth or copying the native posterior ordering.
         persistentCarrierMode = false;
         if (tadmEnabled && (pfdiMode == "sd" || pfdiMode == "al" || pfdiMode == "pc_aci" || pfdiMode == "me_aci" || pfdiMode == "me_aci_shadow" ||
-                            pfdiMode == "ec_edcl" || pfdiMode == "ec_edcl_shadow"))
+                            pfdiMode == "ec_edcl" || pfdiMode == "ec_edcl_shadow" || pfdiMode == "rc_sd_tfei_v12"))
         {
             constexpr int carrierStride = 2;
             std::vector<P2ShadowCandidate> carriers;
@@ -914,7 +917,8 @@ namespace GSL::PMFS_internal
         tadmEnabled = enabled && !directory.empty() && replicas > 0 && (priorSet == 0 || priorSet == 1);
         pfdiMode = tadmEnabled ? mode : "off";
         if (pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" && pfdiMode != "al" &&
-            pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" && pfdiMode != "ec_edcl" && pfdiMode != "ec_edcl_shadow")
+            pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" && pfdiMode != "ec_edcl" && pfdiMode != "ec_edcl_shadow" &&
+            pfdiMode != "rc_sd_tfei_v12")
             pfdiMode = "joint";
         tadmDirectory = directory;
         tadmRunUUID = runUUID;
@@ -949,6 +953,30 @@ namespace GSL::PMFS_internal
             return;
         std::filesystem::create_directories(tadmDirectory);
         std::ofstream contract(tadmDirectory + "/tadm_contract.json", std::ios::out | std::ios::trunc);
+        if (pfdiMode == "rc_sd_tfei_v12")
+        {
+            contract << "{\n"
+                     << "  \"method\": \"V12-M-RC-SD-TFEI\",\n"
+                     << "  \"deployment_contract\": \"8_transport_x_1_nominal\",\n"
+                     << "  \"transport_members\": "
+                     << rc_sd_tfei_v12::kTransportMembers << ",\n"
+                     << "  \"model_error_members\": "
+                     << rc_sd_tfei_v12::kMainModelErrorMembers << ",\n"
+                     << "  \"method_seed\": " << tadmGlobalSeed << ",\n"
+                     << "  \"transport_substream\": " << tadmTransportSubstream << ",\n"
+                     << "  \"response_bank_path_env\": \"PFDI_V12_RESPONSE_BANK_PATH\",\n"
+                     << "  \"response_bank_builder_env\": \"PFDI_V12_BUILD_RESPONSE_BANK\",\n"
+                     << "  \"response_bank_runtime_header_validation\": true,\n"
+                     << "  \"response_bank_launcher_sha256_required\": true,\n"
+                     << "  \"rate_group\": \"one_per_immutable_likelihood_increment\",\n"
+                     << "  \"transition\": \"identity_within_StopAndMeasure_uniform_between_blocks\",\n"
+                     << "  \"candidate_rank_transform\": false,\n"
+                     << "  \"native_posterior_in_prior\": false,\n"
+                     << "  \"truth_at_inference\": false,\n"
+                     << "  \"tadm_active\": false\n"
+                     << "}\n";
+            return;
+        }
         if (pfdiMode == "me_aci" || pfdiMode == "me_aci_shadow")
         {
             contract << "{\n"
@@ -1034,7 +1062,7 @@ namespace GSL::PMFS_internal
                                        double windSpeed, double windDirection,
                                        uint64_t blockId, double simTime)
     {
-        if (!tadmEnabled || (pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" && pfdiMode != "ec_edcl" && pfdiMode != "ec_edcl_shadow"))
+        if (!tadmEnabled || (pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" && pfdiMode != "ec_edcl" && pfdiMode != "ec_edcl_shadow" && pfdiMode != "rc_sd_tfei_v12"))
             return;
         pcAciPendingEvents.push_back(PCAciEvent{
             position, hit ? 1.0 : 0.0, concentration, threshold, windSpeed, windDirection,
@@ -1048,7 +1076,7 @@ namespace GSL::PMFS_internal
         tadmSourceUpdateId = sourceUpdateId;
         tadmSimTime = simTime;
         std::filesystem::create_directories(tadmDirectory);
-        if (pfdiMode == "pc_aci" || pfdiMode == "me_aci" || pfdiMode == "me_aci_shadow" || pfdiMode == "ec_edcl" || pfdiMode == "ec_edcl_shadow")
+        if (pfdiMode == "pc_aci" || pfdiMode == "me_aci" || pfdiMode == "me_aci_shadow" || pfdiMode == "ec_edcl" || pfdiMode == "ec_edcl_shadow" || pfdiMode == "rc_sd_tfei_v12")
         {
             // Freeze exactly the raw events acquired since the previous
             // source update.  Subsequent measurements accumulate in a new
@@ -2624,9 +2652,15 @@ namespace GSL::PMFS_internal
                     const size_t cell = measuredHitProb.metadata.indexOf({x, y});
                     if (measuredHitProb.occupancy[cell] != Occupancy::Free)
                         continue;
-                    const auto& causalPrior = pcAciLastAcceptedUpdateId > 0
-                        ? pcAciCausalPosteriorGrid : pcAciDesignPriorGrid;
-                    candidatePrior[s] += std::max(causalPrior[cell], 0.0L);
+                    // V11 reversible cumulative contract: pcAciActiveEvents contains the
+                    // complete evidence history retained since acquisition began.  The
+                    // conditional inverse-transport likelihood below is therefore a
+                    // cumulative likelihood, not a new-window likelihood.  Reusing the
+                    // previous causal posterior here would count every previously retained
+                    // event twice and make an early wrong basin effectively irreversible.
+                    // Recompute q_t(s) from the same geometry-only design prior and the
+                    // complete conditional likelihood at every identifiable update.
+                    candidatePrior[s] += std::max(pcAciDesignPriorGrid[cell], 0.0L);
                     ++candidateFreeCount[s];
                 }
             if (!(candidatePrior[s] > 0.0L) || candidateFreeCount[s] <= 0 || !std::isfinite(logEvidence[s]))
@@ -2718,7 +2752,14 @@ namespace GSL::PMFS_internal
         for (size_t s = 0; s < candidateCount; ++s)
             meAciRouteStates[p2LastEvaluatedCandidates[s].stableID] = nextStates[s];
         pcAciAcceptedThisUpdate = inject;
-        meAciEvidenceReservoir.clear();
+        // V11 reversible cumulative contract: keep the accepted evidence history.
+        // beginTADMUpdate() prepends this reservoir to the next completed block,
+        // so later observations -- including an all-miss block -- are rescored
+        // jointly with the identifying anchor.  This allows future evidence to
+        // falsify an earlier basin without introducing a new gate or amplitude
+        // parameter.  The next posterior is recomputed from the fixed design
+        // prior above, so retained observations are not double counted.
+        meAciEvidenceReservoir = pcAciActiveEvents;
 
         std::filesystem::create_directories(tadmDirectory);
         const std::string tag = fmt::format("{:04d}", tadmSourceUpdateId);
@@ -2785,10 +2826,759 @@ namespace GSL::PMFS_internal
         return true;
     }
 
+    bool Simulations::applyRCSDTFEIV12Main()
+    {
+        namespace v12 = rc_sd_tfei_v12;
+        const std::size_t candidateCount = p2LastEvaluatedCandidates.size();
+        const std::size_t eventCount = pcAciActiveEvents.size();
+        if (candidateCount == 0 || eventCount == 0 || tadmReplicas != 8)
+        {
+            GSL_ERROR("V12-M precondition failed: candidates={}, events={}, replicas={} (required 8)",
+                      candidateCount, eventCount, tadmReplicas);
+            return false;
+        }
+
+        // Freeze and validate a geometry-only carrier partition. Native PMFS
+        // posterior values are intentionally not read here.
+        std::vector<int> coverage(measuredHitProb.data.size(), 0);
+        std::vector<int> freeCellsPerCarrier(candidateCount, 0);
+        int totalFreeCells = 0;
+        for (std::size_t cell = 0; cell < measuredHitProb.data.size(); ++cell)
+            totalFreeCells += measuredHitProb.occupancy[cell] == Occupancy::Free ? 1 : 0;
+        std::vector<std::string> carrierIds;
+        carrierIds.reserve(candidateCount);
+        for (std::size_t source = 0; source < candidateCount; ++source)
+        {
+            const P2ShadowCandidate& candidate = p2LastEvaluatedCandidates[source];
+            carrierIds.push_back(candidate.stableID);
+            const auto& rect = candidate.rect;
+            for (int x = rect[0]; x < rect[0] + rect[2]; ++x)
+                for (int y = rect[1]; y < rect[1] + rect[3]; ++y)
+                {
+                    const Vector2Int index{x, y};
+                    if (!measuredHitProb.metadata.indicesInBounds(index))
+                        continue;
+                    const std::size_t cell = measuredHitProb.metadata.indexOf(index);
+                    if (measuredHitProb.occupancy[cell] != Occupancy::Free)
+                        continue;
+                    ++coverage[cell];
+                    ++freeCellsPerCarrier[source];
+                }
+        }
+        if (totalFreeCells <= 0)
+        {
+            GSL_ERROR("V12-M has no free geometry");
+            return false;
+        }
+        for (std::size_t cell = 0; cell < coverage.size(); ++cell)
+            if (measuredHitProb.occupancy[cell] == Occupancy::Free && coverage[cell] != 1)
+            {
+                GSL_ERROR("V12-M carrier coverage invalid at cell {}: multiplicity={}",
+                          cell, coverage[cell]);
+                return false;
+            }
+        for (std::size_t source = 0; source < candidateCount; ++source)
+            if (freeCellsPerCarrier[source] <= 0)
+            {
+                GSL_ERROR("V12-M carrier {} has no free cells", carrierIds[source]);
+                return false;
+            }
+
+        if (!v12MainInitialized)
+        {
+            // Geometry-only deterministic carrier subset, J=min(64,Ncarrier).
+            // Operator calibration and candidate scoring share the exact same
+            // physical response bank; this subset introduces no second model.
+            Vector2 centroid{0.0, 0.0};
+            for (std::size_t cell = 0; cell < measuredHitProb.data.size(); ++cell)
+                if (measuredHitProb.occupancy[cell] == Occupancy::Free)
+                {
+                    const Vector2 point = measuredHitProb.metadata.indexToCoordinates(cell);
+                    centroid.x += point.x / static_cast<double>(totalFreeCells);
+                    centroid.y += point.y / static_cast<double>(totalFreeCells);
+                }
+            const std::size_t librarySize = std::min<std::size_t>(64, candidateCount);
+            std::vector<unsigned char> selected(candidateCount, 0);
+            std::vector<std::size_t> chosen;
+            chosen.reserve(librarySize);
+            auto squaredDistance = [](const Vector2& left, const Vector2& right)
+            {
+                const double dx = left.x - right.x;
+                const double dy = left.y - right.y;
+                return dx * dx + dy * dy;
+            };
+            std::size_t first = 0;
+            double firstDistance = std::numeric_limits<double>::infinity();
+            for (std::size_t index = 0; index < candidateCount; ++index)
+            {
+                const Vector2 point = p2LastEvaluatedCandidates[index].point;
+                const double distance = squaredDistance(point, centroid);
+                if (distance < firstDistance ||
+                    (distance == firstDistance && carrierIds[index] < carrierIds[first]))
+                {
+                    first = index;
+                    firstDistance = distance;
+                }
+            }
+            selected[first] = 1;
+            chosen.push_back(first);
+            while (chosen.size() < librarySize)
+            {
+                std::size_t best = candidateCount;
+                double bestMinimumDistance = -1.0;
+                for (std::size_t index = 0; index < candidateCount; ++index)
+                {
+                    if (selected[index])
+                        continue;
+                    const Vector2 point = p2LastEvaluatedCandidates[index].point;
+                    double minimumDistance = std::numeric_limits<double>::infinity();
+                    for (std::size_t existing : chosen)
+                    {
+                        const Vector2 selectedPoint = p2LastEvaluatedCandidates[existing].point;
+                        minimumDistance = std::min(minimumDistance,
+                                                   squaredDistance(point, selectedPoint));
+                    }
+                    if (minimumDistance > bestMinimumDistance ||
+                        (minimumDistance == bestMinimumDistance &&
+                         (best == candidateCount || carrierIds[index] < carrierIds[best])))
+                    {
+                        best = index;
+                        bestMinimumDistance = minimumDistance;
+                    }
+                }
+                if (best == candidateCount)
+                {
+                    GSL_ERROR("V12-M farthest-point library construction failed");
+                    return false;
+                }
+                selected[best] = 1;
+                chosen.push_back(best);
+            }
+            v12MainOperatorLibrary.clear();
+            v12MainOperatorCarrierIndices = chosen;
+            for (std::size_t index : chosen)
+                v12MainOperatorLibrary.push_back(p2LastEvaluatedCandidates[index].point);
+            v12MainCarrierIds = carrierIds;
+            v12MainFreeCellsPerCarrier = freeCellsPerCarrier;
+            v12MainCumulativeFoldA.assign(candidateCount, 0.0);
+            v12MainCumulativeFoldB.assign(candidateCount, 0.0);
+            v12MainIncrementFoldAHistory.clear();
+            v12MainIncrementFoldBHistory.clear();
+            v12MainInitialized = true;
+
+            std::filesystem::create_directories(tadmDirectory);
+            std::ofstream library(tadmDirectory + "/v12_operator_library.csv", std::ios::out | std::ios::trunc);
+            library << "library_index,carrier_index,carrier_id,x,y\n";
+            for (std::size_t index = 0; index < v12MainOperatorLibrary.size(); ++index)
+                library << index << ',' << v12MainOperatorCarrierIndices[index] << ','
+                        << carrierIds[v12MainOperatorCarrierIndices[index]] << ','
+                        << std::setprecision(17)
+                        << v12MainOperatorLibrary[index].x << ','
+                        << v12MainOperatorLibrary[index].y << '\n';
+            std::ofstream manifest(tadmDirectory + "/v12_carrier_manifest.csv", std::ios::out | std::ios::trunc);
+            manifest << "carrier_index,carrier_id,x,y,free_cells\n";
+            for (std::size_t source = 0; source < candidateCount; ++source)
+                manifest << source << ',' << carrierIds[source] << ',' << std::setprecision(17)
+                         << p2LastEvaluatedCandidates[source].point.x << ','
+                         << p2LastEvaluatedCandidates[source].point.y << ','
+                         << freeCellsPerCarrier[source] << '\n';
+        }
+        else if (carrierIds != v12MainCarrierIds ||
+                 freeCellsPerCarrier != v12MainFreeCellsPerCarrier ||
+                 v12MainCumulativeFoldA.size() != candidateCount ||
+                 v12MainCumulativeFoldB.size() != candidateCount ||
+                 v12MainOperatorLibrary.size() < 2 ||
+                 v12MainOperatorCarrierIndices.size() != v12MainOperatorLibrary.size())
+        {
+            GSL_ERROR("V12-M frozen geometry/carrier manifest changed; refinement replay is not available in this carrier mode");
+            return false;
+        }
+
+        const auto start = std::chrono::steady_clock::now();
+        double responseBankBuildSeconds = 0.0;
+        double responseBankLoadSeconds = 0.0;
+        const std::vector<std::uint64_t> rateGroups(eventCount, tadmSourceUpdateId);
+        std::vector<std::uint64_t> blockIds(eventCount);
+        std::vector<unsigned char> hits(eventCount);
+        for (std::size_t event = 0; event < eventCount; ++event)
+        {
+            blockIds[event] = pcAciActiveEvents[event].blockId;
+            hits[event] = pcAciActiveEvents[event].hit > 0.5 ? 1 : 0;
+        }
+        std::filesystem::create_directories(tadmDirectory);
+        const std::string eventTag = fmt::format("{:04d}", tadmSourceUpdateId);
+        std::ofstream eventLedger(tadmDirectory + "/v12_events_update_" +
+                                  eventTag + ".csv", std::ios::out | std::ios::trunc);
+        eventLedger << "source_update_id,event_index,block_id,sim_time,x,y,hit,concentration,threshold,wind_speed,wind_direction\n";
+        for (std::size_t event = 0; event < eventCount; ++event)
+        {
+            const PCAciEvent& row = pcAciActiveEvents[event];
+            eventLedger << tadmSourceUpdateId << ',' << event << ',' << row.blockId << ','
+                        << std::setprecision(17) << row.simTime << ',' << row.position.x << ','
+                        << row.position.y << ',' << static_cast<int>(hits[event]) << ','
+                        << row.concentration << ',' << row.threshold << ',' << row.windSpeed
+                        << ',' << row.windDirection << '\n';
+        }
+        eventLedger.flush();
+        if (!eventLedger)
+        {
+            GSL_ERROR("V12-M immutable event-ledger write failed");
+            return false;
+        }
+
+        std::atomic<bool> simulationFailed{false};
+        const std::size_t expectedResponseMaps =
+            candidateCount * v12::kTransportMembers;
+        v12::ResponseBankMetadata responseBankMetadata;
+        responseBankMetadata.dimensionsX = static_cast<std::uint64_t>(
+            measuredHitProb.metadata.dimensions.x);
+        responseBankMetadata.dimensionsY = static_cast<std::uint64_t>(
+            measuredHitProb.metadata.dimensions.y);
+        responseBankMetadata.cellCount = static_cast<std::uint64_t>(
+            measuredHitProb.data.size());
+        responseBankMetadata.carrierCount = static_cast<std::uint64_t>(candidateCount);
+        responseBankMetadata.transportMembers = v12::kTransportMembers;
+        responseBankMetadata.recordedTimesteps = static_cast<std::uint64_t>(
+            settings.iterationsToRecord);
+        responseBankMetadata.methodSeed = tadmGlobalSeed;
+        responseBankMetadata.transportSubstream = tadmTransportSubstream;
+        responseBankMetadata.cellSize = static_cast<double>(measuredHitProb.metadata.cellSize);
+        responseBankMetadata.originX = static_cast<double>(measuredHitProb.metadata.origin.x);
+        responseBankMetadata.originY = static_cast<double>(measuredHitProb.metadata.origin.y);
+        responseBankMetadata.deltaTime = static_cast<double>(settings.deltaTime);
+        responseBankMetadata.noiseStandardDeviation = static_cast<double>(settings.noiseSTDev);
+        responseBankMetadata.blurSigmaX = static_cast<double>(settings.blurSigmaX);
+        responseBankMetadata.blurSigmaY = static_cast<double>(settings.blurSigmaY);
+        responseBankMetadata.occupancy.reserve(measuredHitProb.occupancy.size());
+        for (const Occupancy value : measuredHitProb.occupancy)
+            responseBankMetadata.occupancy.push_back(static_cast<std::uint8_t>(value));
+        responseBankMetadata.carrierIds = carrierIds;
+        responseBankMetadata.carrierX.reserve(candidateCount);
+        responseBankMetadata.carrierY.reserve(candidateCount);
+        responseBankMetadata.carrierFreeCells.reserve(candidateCount);
+        for (std::size_t source = 0; source < candidateCount; ++source)
+        {
+            responseBankMetadata.carrierX.push_back(
+                static_cast<double>(p2LastEvaluatedCandidates[source].point.x));
+            responseBankMetadata.carrierY.push_back(
+                static_cast<double>(p2LastEvaluatedCandidates[source].point.y));
+            responseBankMetadata.carrierFreeCells.push_back(
+                static_cast<std::uint64_t>(freeCellsPerCarrier[source]));
+        }
+        const char* responseBankPathEnvironment =
+            std::getenv("PFDI_V12_RESPONSE_BANK_PATH");
+        if (responseBankPathEnvironment == nullptr ||
+            std::string(responseBankPathEnvironment).empty())
+        {
+            GSL_ERROR("V12-M requires absolute PFDI_V12_RESPONSE_BANK_PATH");
+            return false;
+        }
+        const std::filesystem::path responseBankPath(responseBankPathEnvironment);
+        if (!responseBankPath.is_absolute())
+        {
+            GSL_ERROR("V12-M response-bank path is not absolute: {}",
+                      responseBankPath.string());
+            return false;
+        }
+        if (v12MainResponseBankPath.empty())
+            v12MainResponseBankPath = responseBankPath.string();
+        else if (v12MainResponseBankPath != responseBankPath.string())
+        {
+            GSL_ERROR("V12-M response-bank path changed during the run");
+            return false;
+        }
+        const char* buildBankEnvironment =
+            std::getenv("PFDI_V12_BUILD_RESPONSE_BANK");
+        const bool buildResponseBank = buildBankEnvironment != nullptr &&
+            std::string(buildBankEnvironment) == "1";
+        bool responseBankLoaded = false;
+        bool responseBankBuilt = false;
+        if (v12MainResponseMaps.empty() && std::filesystem::exists(responseBankPath))
+        {
+            if (buildResponseBank)
+            {
+                GSL_ERROR("V12-M bank-builder refuses existing response bank: {}",
+                          responseBankPath.string());
+                return false;
+            }
+            try
+            {
+                const auto loadStart = std::chrono::steady_clock::now();
+                v12MainResponseMaps = v12::readResponseBankValidated(
+                    responseBankPath, responseBankMetadata);
+                responseBankLoadSeconds = std::chrono::duration<double>(
+                    std::chrono::steady_clock::now() - loadStart).count();
+                responseBankLoaded = true;
+            }
+            catch (const std::exception& error)
+            {
+                GSL_ERROR("V12-M response-bank validation failed: {}", error.what());
+                return false;
+            }
+        }
+        if (v12MainResponseMaps.empty())
+        {
+            if (!buildResponseBank)
+            {
+                GSL_ERROR("V12-M response bank is missing and builder mode is disabled: {}",
+                          responseBankPath.string());
+                return false;
+            }
+            const auto bankStart = std::chrono::steady_clock::now();
+            std::vector<std::vector<float>> nextResponseMaps(expectedResponseMaps);
+#pragma omp parallel for schedule(dynamic)
+            for (int sourceIndex = 0;
+                 sourceIndex < static_cast<int>(candidateCount); ++sourceIndex)
+            {
+                try
+                {
+                    for (std::size_t transport = 0;
+                         transport < v12::kTransportMembers; ++transport)
+                    {
+                        const EventKey key = v12::transportEventKey(
+                            tadmGlobalSeed, transport, tadmTransportSubstream);
+                        EventKeyedTransportRng transportRng(key);
+                        std::vector<float> hitMap(measuredHitProb.data.size(), 0.0f);
+                        simulateSourceInPosition(
+                            SimulationSource(
+                                p2LastEvaluatedCandidates[
+                                    static_cast<std::size_t>(sourceIndex)].point,
+                                measuredHitProb.metadata),
+                            hitMap, true, settings.iterationsToRecord,
+                            settings.deltaTime, settings.noiseSTDev,
+                            nullptr, &transportRng);
+                        if (settings.blurSigmaX > 0 || settings.blurSigmaY > 0)
+                        {
+                            cv::Mat image(hitMap);
+                            image = image.reshape(1, measuredHitProb.metadata.dimensions.y);
+                            blurHitMap(image);
+                        }
+                        nextResponseMaps[
+                            static_cast<std::size_t>(sourceIndex) *
+                                v12::kTransportMembers + transport] = std::move(hitMap);
+                    }
+                }
+                catch (...)
+                {
+                    simulationFailed.store(true, std::memory_order_relaxed);
+                }
+            }
+            if (simulationFailed.load(std::memory_order_relaxed) ||
+                !std::all_of(nextResponseMaps.begin(), nextResponseMaps.end(),
+                    [&](const std::vector<float>& map)
+                    {
+                        return map.size() == measuredHitProb.data.size();
+                    }))
+            {
+                GSL_ERROR("V12-M physical response-bank generation failed");
+                return false;
+            }
+            responseBankBuildSeconds = std::chrono::duration<double>(
+                std::chrono::steady_clock::now() - bankStart).count();
+            v12MainResponseMaps = std::move(nextResponseMaps);
+            try
+            {
+                v12::writeResponseBankAtomic(responseBankPath,
+                                             responseBankMetadata,
+                                             v12MainResponseMaps);
+                responseBankBuilt = true;
+            }
+            catch (const std::exception& error)
+            {
+                v12MainResponseMaps.clear();
+                GSL_ERROR("V12-M response-bank atomic write failed: {}", error.what());
+                return false;
+            }
+        }
+        else if (v12MainResponseMaps.size() != expectedResponseMaps ||
+                 !std::all_of(v12MainResponseMaps.begin(), v12MainResponseMaps.end(),
+                    [&](const std::vector<float>& map)
+                    {
+                        return map.size() == measuredHitProb.data.size();
+                    }))
+        {
+            GSL_ERROR("V12-M cached response-bank dimensions changed");
+            return false;
+        }
+
+        // CTT G0 is an explicitly requested, read-only physical-recorder
+        // parity gate. It neither changes the cached V12 bank nor contributes
+        // evidence to the posterior. The same keyed transport realization is
+        // replayed twice and checked against both the trace reconstruction and
+        // the frozen cumulative response map.
+        const char* cttParityEnvironment = std::getenv("CTT_V13_TRACE_PARITY");
+        const bool runCttTraceParity = cttParityEnvironment != nullptr &&
+            std::string(cttParityEnvironment) == "1";
+        if (runCttTraceParity)
+        {
+            constexpr std::size_t paritySource = 0;
+            constexpr std::size_t parityTransport = 0;
+            std::ofstream parityWind(
+                tadmDirectory + "/ctt_v13_current_estimated_wind.csv",
+                std::ios::out | std::ios::trunc);
+            parityWind << "cell_index,x,y,occupancy,wind_x,wind_y\n";
+            for (std::size_t cell = 0; cell < wind.data.size(); ++cell)
+            {
+                const Vector2 xy = wind.metadata.indexToCoordinates(cell);
+                parityWind << cell << ',' << std::setprecision(17)
+                           << xy.x << ',' << xy.y << ','
+                           << (wind.occupancy[cell] == Occupancy::Free ? 1 : 0) << ','
+                           << wind.data[cell].x << ',' << wind.data[cell].y << '\n';
+            }
+            parityWind.flush();
+            if (!parityWind)
+            {
+                GSL_ERROR("CTT V13 current-wind snapshot write failed");
+                return false;
+            }
+            const EventKey parityKey = v12::transportEventKey(
+                tadmGlobalSeed, parityTransport, tadmTransportSubstream);
+            EventKeyedTransportRng parityRngA(parityKey);
+            EventKeyedTransportRng parityRngB(parityKey);
+            std::vector<float> parityMapA(measuredHitProb.data.size(), 0.0F);
+            std::vector<float> parityMapB(measuredHitProb.data.size(), 0.0F);
+            ctt_v13::TransportTrace parityTraceA;
+            ctt_v13::TransportTrace parityTraceB;
+            runPointForwardTraceReplay(
+                p2LastEvaluatedCandidates[paritySource].point,
+                parityMapA, parityTraceA, settings.iterationsToRecord,
+                settings.deltaTime, settings.noiseSTDev, &parityRngA);
+            runPointForwardTraceReplay(
+                p2LastEvaluatedCandidates[paritySource].point,
+                parityMapB, parityTraceB, settings.iterationsToRecord,
+                settings.deltaTime, settings.noiseSTDev, &parityRngB);
+
+            const std::vector<float> reconstructed =
+                parityTraceA.reconstructFrequencies();
+            double replayMaxAbs = 0.0;
+            for (std::size_t cell = 0; cell < parityMapA.size(); ++cell)
+                if (measuredHitProb.occupancy[cell] == Occupancy::Free)
+                    replayMaxAbs = std::max(
+                        replayMaxAbs,
+                        std::abs(static_cast<double>(parityMapA[cell]) -
+                                 static_cast<double>(reconstructed[cell])));
+
+            std::vector<float> comparableMap = parityMapA;
+            if (settings.blurSigmaX > 0 || settings.blurSigmaY > 0)
+            {
+                cv::Mat image(comparableMap);
+                image = image.reshape(1, measuredHitProb.metadata.dimensions.y);
+                blurHitMap(image);
+            }
+            const std::vector<float>& frozenMap = v12MainResponseMaps[
+                paritySource * v12::kTransportMembers + parityTransport];
+            double bankMaxAbs = 0.0;
+            for (std::size_t cell = 0; cell < comparableMap.size(); ++cell)
+                if (measuredHitProb.occupancy[cell] == Occupancy::Free)
+                    bankMaxAbs = std::max(
+                        bankMaxAbs,
+                        std::abs(static_cast<double>(comparableMap[cell]) -
+                                 static_cast<double>(frozenMap[cell])));
+
+            const bool deterministic = parityMapA == parityMapB &&
+                parityTraceA.occupancyWords == parityTraceB.occupancyWords &&
+                parityTraceA.activeFilamentCounts == parityTraceB.activeFilamentCounts &&
+                parityTraceA.firstHitBins == parityTraceB.firstHitBins;
+            // Trace integrity is the hard gate.  Whether a frozen response bank
+            // matches the current physical context is a measured scientific
+            // outcome, not a reason to abort the diagnostic run.
+            const bool traceIntegrityPass = deterministic && replayMaxAbs == 0.0;
+            const char* bankStatus = bankMaxAbs == 0.0
+                ? "BANK_MATCH"
+                : "BANK_CONTEXT_MISMATCH";
+            std::ofstream parityAudit(
+                tadmDirectory + "/ctt_v13_trace_parity.csv",
+                std::ios::out | std::ios::trunc);
+            parityAudit << "source_index,transport_index,deterministic,"
+                           "trace_reconstruction_max_abs,frozen_bank_max_abs,status\n";
+            parityAudit << paritySource << ',' << parityTransport << ','
+                        << (deterministic ? 1 : 0) << ','
+                        << std::setprecision(17) << replayMaxAbs << ','
+                        << bankMaxAbs << ','
+                        << (traceIntegrityPass ? bankStatus : "TRACE_INTEGRITY_FAIL")
+                        << '\n';
+            parityAudit.flush();
+            if (!parityAudit || !traceIntegrityPass)
+            {
+                GSL_ERROR("CTT V13 trace parity failed: deterministic={}, replay={:.17g}, bank={:.17g}",
+                          deterministic, replayMaxAbs, bankMaxAbs);
+                return false;
+            }
+        }
+        if (responseBankLoaded || responseBankBuilt)
+        {
+            std::filesystem::create_directories(tadmDirectory);
+            std::ofstream bankAudit(tadmDirectory + "/v12_response_bank_runtime.csv",
+                                    std::ios::out | std::ios::app);
+            if (bankAudit.tellp() == 0)
+                bankAudit << "source_update_id,path,loaded,built,bytes,load_seconds,build_seconds,method_seed,transport_substream\n";
+            bankAudit << tadmSourceUpdateId << ',' << responseBankPath.string() << ','
+                      << (responseBankLoaded ? 1 : 0) << ','
+                      << (responseBankBuilt ? 1 : 0) << ','
+                      << std::filesystem::file_size(responseBankPath) << ','
+                      << std::setprecision(17) << responseBankLoadSeconds << ','
+                      << responseBankBuildSeconds << ',' << tadmGlobalSeed << ','
+                      << tadmTransportSubstream << '\n';
+        }
+
+        auto sampleLogitTrajectory = [&](std::size_t sourceIndex,
+                                         std::size_t transport)
+        {
+            if (sourceIndex >= candidateCount || transport >= v12::kTransportMembers)
+                throw std::out_of_range("V12-M response-bank index");
+            const std::vector<float>& hitMap = v12MainResponseMaps[
+                sourceIndex * v12::kTransportMembers + transport];
+            Eigen::VectorXd logits(static_cast<Eigen::Index>(eventCount));
+            for (std::size_t event = 0; event < eventCount; ++event)
+            {
+                const Vector2Int index = measuredHitProb.metadata.coordinatesToIndices(
+                    pcAciActiveEvents[event].position.x,
+                    pcAciActiveEvents[event].position.y);
+                double frequency = 0.0;
+                if (measuredHitProb.metadata.indicesInBounds(index))
+                {
+                    const std::size_t cell = measuredHitProb.metadata.indexOf(index);
+                    if (measuredHitProb.occupancy[cell] == Occupancy::Free)
+                        frequency = std::clamp(static_cast<double>(hitMap[cell]), 0.0, 1.0);
+                }
+                logits(static_cast<Eigen::Index>(event)) =
+                    v12::simulatedFrequencyLogit(
+                        frequency, static_cast<std::size_t>(settings.iterationsToRecord));
+            }
+            return logits;
+        };
+
+        v12::TransportLogitBank operatorBank(v12MainOperatorLibrary.size(), eventCount);
+        simulationFailed.store(false, std::memory_order_relaxed);
+#pragma omp parallel for schedule(dynamic)
+        for (int libraryIndex = 0;
+             libraryIndex < static_cast<int>(v12MainOperatorLibrary.size()); ++libraryIndex)
+        {
+            try
+            {
+                for (std::size_t transport = 0; transport < v12::kTransportMembers; ++transport)
+                {
+                    const Eigen::VectorXd logits = sampleLogitTrajectory(
+                        v12MainOperatorCarrierIndices[
+                            static_cast<std::size_t>(libraryIndex)], transport);
+                    for (std::size_t event = 0; event < eventCount; ++event)
+                        operatorBank.at(static_cast<std::size_t>(libraryIndex), transport, 0, event) =
+                            logits(static_cast<Eigen::Index>(event));
+                }
+            }
+            catch (...)
+            {
+                simulationFailed.store(true, std::memory_order_relaxed);
+            }
+        }
+        if (simulationFailed.load(std::memory_order_relaxed))
+        {
+            GSL_ERROR("V12-M operator-library physical simulation failed");
+            return false;
+        }
+
+        v12::StableOperator operatorA;
+        v12::StableOperator operatorB;
+        try
+        {
+            operatorA = v12::fitStableOperatorMain(operatorBank,
+                                                   v12::kFoldACalibration,
+                                                   rateGroups);
+            operatorB = v12::fitStableOperatorMain(operatorBank,
+                                                   v12::kFoldBCalibration,
+                                                   rateGroups);
+        }
+        catch (const std::exception& error)
+        {
+            GSL_ERROR("V12-M eigen-operator failure: {}", error.what());
+            return false;
+        }
+
+        std::vector<double> incrementFoldA(candidateCount,
+                                           -std::numeric_limits<double>::infinity());
+        std::vector<double> incrementFoldB(candidateCount,
+                                           -std::numeric_limits<double>::infinity());
+        simulationFailed.store(false, std::memory_order_relaxed);
+#pragma omp parallel for schedule(dynamic)
+        for (int sourceIndex = 0; sourceIndex < static_cast<int>(candidateCount); ++sourceIndex)
+        {
+            try
+            {
+                std::array<Eigen::VectorXd, v12::kTransportMembers> raw;
+                for (std::size_t transport = 0; transport < v12::kTransportMembers; ++transport)
+                    raw[transport] = sampleLogitTrajectory(
+                        static_cast<std::size_t>(sourceIndex), transport);
+
+                Eigen::MatrixXd scoringA(v12::kFoldAScoring.size(),
+                                         static_cast<Eigen::Index>(eventCount));
+                Eigen::MatrixXd scoringB(v12::kFoldBScoring.size(),
+                                         static_cast<Eigen::Index>(eventCount));
+                for (std::size_t row = 0; row < v12::kFoldAScoring.size(); ++row)
+                    scoringA.row(static_cast<Eigen::Index>(row)) =
+                        v12::filterAndMatchRates(raw[v12::kFoldAScoring[row]],
+                                                operatorA, rateGroups).transpose();
+                for (std::size_t row = 0; row < v12::kFoldBScoring.size(); ++row)
+                    scoringB.row(static_cast<Eigen::Index>(row)) =
+                        v12::filterAndMatchRates(raw[v12::kFoldBScoring[row]],
+                                                operatorB, rateGroups).transpose();
+                const double scoreA = v12::hmmLogEvidence(hits, scoringA, blockIds).logEvidence;
+                const double scoreB = v12::hmmLogEvidence(hits, scoringB, blockIds).logEvidence;
+                incrementFoldA[static_cast<std::size_t>(sourceIndex)] = scoreA;
+                incrementFoldB[static_cast<std::size_t>(sourceIndex)] = scoreB;
+            }
+            catch (...)
+            {
+                simulationFailed.store(true, std::memory_order_relaxed);
+            }
+        }
+        if (simulationFailed.load(std::memory_order_relaxed) ||
+            !std::all_of(incrementFoldA.begin(), incrementFoldA.end(),
+                         [](double value){ return std::isfinite(value); }) ||
+            !std::all_of(incrementFoldB.begin(), incrementFoldB.end(),
+                         [](double value){ return std::isfinite(value); }))
+        {
+            GSL_ERROR("V12-M candidate likelihood evaluation failed");
+            return false;
+        }
+
+        std::vector<double> nextCumulativeFoldA = v12MainCumulativeFoldA;
+        std::vector<double> nextCumulativeFoldB = v12MainCumulativeFoldB;
+        for (std::size_t source = 0; source < candidateCount; ++source)
+        {
+            nextCumulativeFoldA[source] += incrementFoldA[source];
+            nextCumulativeFoldB[source] += incrementFoldB[source];
+        }
+        std::vector<std::vector<double>> nextHistoryFoldA =
+            v12MainIncrementFoldAHistory;
+        std::vector<std::vector<double>> nextHistoryFoldB =
+            v12MainIncrementFoldBHistory;
+        nextHistoryFoldA.push_back(incrementFoldA);
+        nextHistoryFoldB.push_back(incrementFoldB);
+        double replayMaxAbs = 0.0;
+        for (std::size_t source = 0; source < candidateCount; ++source)
+        {
+            double replayFoldA = 0.0;
+            double replayFoldB = 0.0;
+            for (const auto& row : nextHistoryFoldA)
+                replayFoldA += row[source];
+            for (const auto& row : nextHistoryFoldB)
+                replayFoldB += row[source];
+            replayMaxAbs = std::max(replayMaxAbs,
+                                    std::abs(replayFoldA - nextCumulativeFoldA[source]));
+            replayMaxAbs = std::max(replayMaxAbs,
+                                    std::abs(replayFoldB - nextCumulativeFoldB[source]));
+        }
+        if (replayMaxAbs > 1e-10)
+        {
+            GSL_ERROR("V12-M online/replay mismatch: {:.17g}", replayMaxAbs);
+            return false;
+        }
+
+        std::vector<double> logPosterior(candidateCount);
+        for (std::size_t source = 0; source < candidateCount; ++source)
+            logPosterior[source] = std::log(
+                static_cast<double>(freeCellsPerCarrier[source]) /
+                static_cast<double>(totalFreeCells)) +
+                v12::combineTrajectoryCrossFitEvidence(
+                    nextCumulativeFoldA[source], nextCumulativeFoldB[source]);
+        const double logNormalizer = v12::logSumExp(logPosterior);
+        std::vector<double> posterior(candidateCount);
+        for (std::size_t source = 0; source < candidateCount; ++source)
+            posterior[source] = std::exp(logPosterior[source] - logNormalizer);
+
+        std::vector<long double> nextGrid(sourceProbInternal.size(), 0.0L);
+        for (std::size_t source = 0; source < candidateCount; ++source)
+        {
+            const auto& rect = p2LastEvaluatedCandidates[source].rect;
+            const long double perCell = static_cast<long double>(posterior[source]) /
+                static_cast<long double>(freeCellsPerCarrier[source]);
+            for (int x = rect[0]; x < rect[0] + rect[2]; ++x)
+                for (int y = rect[1]; y < rect[1] + rect[3]; ++y)
+                {
+                    const Vector2Int index{x, y};
+                    if (!measuredHitProb.metadata.indicesInBounds(index))
+                        continue;
+                    const std::size_t cell = measuredHitProb.metadata.indexOf(index);
+                    if (measuredHitProb.occupancy[cell] == Occupancy::Free)
+                        nextGrid[cell] = perCell;
+                }
+        }
+        const long double gridMass = std::accumulate(nextGrid.begin(), nextGrid.end(), 0.0L);
+        if (!(gridMass > 0.0L) ||
+            std::abs(static_cast<double>(gridMass - 1.0L)) > 1e-10)
+        {
+            GSL_ERROR("V12-M posterior grid mass invalid: {:.17g}",
+                      static_cast<double>(gridMass));
+            return false;
+        }
+
+        // Atomic scientific commit: no posterior or cumulative state changes
+        // occur before every formula and replay audit above has passed.
+        v12MainCumulativeFoldA = std::move(nextCumulativeFoldA);
+        v12MainCumulativeFoldB = std::move(nextCumulativeFoldB);
+        v12MainIncrementFoldAHistory = std::move(nextHistoryFoldA);
+        v12MainIncrementFoldBHistory = std::move(nextHistoryFoldB);
+        sourceProbInternal = std::move(nextGrid);
+        pcAciCausalPosteriorGrid = sourceProbInternal;
+        pcAciCausalStateAvailable = true;
+
+        std::filesystem::create_directories(tadmDirectory);
+        std::ofstream scores(tadmDirectory + "/v12_candidate_scores.csv",
+                             std::ios::out | std::ios::app);
+        if (scores.tellp() == 0)
+            scores << "source_update_id,carrier_index,carrier_id,x,y,free_cells,increment_fold_a,increment_fold_b,cumulative_fold_a,cumulative_fold_b,cumulative_mixture_log_evidence,posterior\n";
+        for (std::size_t source = 0; source < candidateCount; ++source)
+            scores << tadmSourceUpdateId << ',' << source << ',' << carrierIds[source] << ','
+                   << std::setprecision(17) << p2LastEvaluatedCandidates[source].point.x << ','
+                   << p2LastEvaluatedCandidates[source].point.y << ','
+                   << freeCellsPerCarrier[source] << ',' << incrementFoldA[source] << ','
+                   << incrementFoldB[source] << ',' << v12MainCumulativeFoldA[source] << ','
+                   << v12MainCumulativeFoldB[source] << ','
+                   << v12::combineTrajectoryCrossFitEvidence(
+                          v12MainCumulativeFoldA[source], v12MainCumulativeFoldB[source])
+                   << ',' << posterior[source] << '\n';
+        std::ofstream spectrum(tadmDirectory + "/v12_eigen_spectrum.csv",
+                               std::ios::out | std::ios::app);
+        if (spectrum.tellp() == 0)
+            spectrum << "source_update_id,fold,channel,lambda,weight,ridge\n";
+        for (Eigen::Index channel = 0; channel < operatorA.eigenvalues.size(); ++channel)
+            spectrum << tadmSourceUpdateId << ",A," << channel << ',' << std::setprecision(17)
+                     << operatorA.eigenvalues(channel) << ',' << operatorA.weights(channel)
+                     << ',' << operatorA.ridge << '\n';
+        for (Eigen::Index channel = 0; channel < operatorB.eigenvalues.size(); ++channel)
+            spectrum << tadmSourceUpdateId << ",B," << channel << ',' << std::setprecision(17)
+                     << operatorB.eigenvalues(channel) << ',' << operatorB.weights(channel)
+                     << ',' << operatorB.ridge << '\n';
+        const double wallSeconds = std::chrono::duration<double>(
+            std::chrono::steady_clock::now() - start).count();
+        std::ofstream summary(tadmDirectory + "/v12_update_summary.csv",
+                              std::ios::out | std::ios::app);
+        if (summary.tellp() == 0)
+            summary << "source_update_id,event_count,block_count,candidate_count,library_count,transport_members,model_error_members,response_bank_load_seconds,response_bank_build_seconds,replay_max_abs,posterior_mass,wall_seconds,status\n";
+        std::vector<std::uint64_t> uniqueBlocks = blockIds;
+        std::sort(uniqueBlocks.begin(), uniqueBlocks.end());
+        uniqueBlocks.erase(std::unique(uniqueBlocks.begin(), uniqueBlocks.end()),
+                           uniqueBlocks.end());
+        summary << tadmSourceUpdateId << ',' << eventCount << ',' << uniqueBlocks.size()
+                << ',' << candidateCount << ',' << v12MainOperatorLibrary.size()
+                << ",8,1," << std::setprecision(17) << responseBankLoadSeconds << ','
+                << responseBankBuildSeconds << ','
+                << replayMaxAbs << ','
+                << static_cast<double>(gridMass) << ',' << wallSeconds << ",PASS\n";
+        GSL_INFO("V12-M valid update {}: events={}, blocks={}, candidates={}, library={}, bank_load_s={:.3f}, bank_build_s={:.3f}, replay={:.3g}, wall_s={:.3f}",
+                 tadmSourceUpdateId, eventCount, uniqueBlocks.size(), candidateCount,
+                 v12MainOperatorLibrary.size(), responseBankLoadSeconds,
+                 responseBankBuildSeconds,
+                 replayMaxAbs, wallSeconds);
+        return true;
+    }
+
     bool Simulations::applyTADMPosterior()
     {
         if (!tadmEnabled)
             return true;
+        if (pfdiMode == "rc_sd_tfei_v12")
+            return applyRCSDTFEIV12Main();
         // A9 is a completed-block analytic carrier.  It intentionally runs
         // before the legacy candidate x replica forward-simulation path so
         // PC-ACI cannot silently fall back to the old Hough/rank/event-Gaussian
@@ -6371,7 +7161,8 @@ namespace GSL::PMFS_internal
     void Simulations::simulateSourceInPosition(const SimulationSource& source, std::vector<float>& hitMap, bool warmup,
                                                int timesteps, float deltaTime, float noiseSTDev,
                                                std::vector<float>* exposureMapBeforeNormalization,
-                                               EventKeyedTransportRng* transportRng) const
+                                               EventKeyedTransportRng* transportRng,
+                                               ctt_v13::TransportTrace* transportTrace) const
     {
         constexpr int numFilamentsIteration = 5;
         size_t max_filaments = settings.maxWarmupIterations * numFilamentsIteration + timesteps * numFilamentsIteration;
@@ -6389,6 +7180,8 @@ namespace GSL::PMFS_internal
 
         std::vector<uint16_t> updated(hitMap.size(), 0); // index of the last iteration in which this cell was updated, to avoid double-counting
         uint64_t drawIndex = 0;
+        if (transportTrace != nullptr)
+            transportTrace->reset(static_cast<std::size_t>(timesteps), hitMap.size());
 
         // warm-up: we don't want to start recording frequency of hits until the shape of the plume has stabilized. Wait until a filament exits the
         // environment through an outlet, or a maximum number of steps
@@ -6436,6 +7229,10 @@ namespace GSL::PMFS_internal
                 activeFilamentVec->back().position = source.getPoint();
             }
 
+            if (transportTrace != nullptr)
+                transportTrace->setActiveFilamentCount(
+                    static_cast<std::size_t>(t - 1), activeFilamentVec->size());
+
             for (Filament& filament : *activeFilamentVec)
             {
                 // update map
@@ -6448,6 +7245,9 @@ namespace GSL::PMFS_internal
                     hitMap[index]++;
                     updated[index] = t;
                 }
+                if (transportTrace != nullptr &&
+                    measuredHitProb.occupancy[index] == Occupancy::Free)
+                    transportTrace->markOccupied(static_cast<std::size_t>(t - 1), index);
 
                 // move active filaments
                 moveFilament(filament, indices, deltaTime, noiseSTDev, transportRng, drawIndex);
@@ -6468,6 +7268,8 @@ namespace GSL::PMFS_internal
             if (measuredHitProb.occupancy[i] == Occupancy::Free)
                 hitMap[i] = hitMap[i] / timesteps;
         }
+        if (transportTrace != nullptr)
+            transportTrace->validate();
     }
 
     Vector2 SimulationSource::getPoint() const
@@ -6578,6 +7380,17 @@ namespace GSL::PMFS_internal
     {
         simulateSourceInPosition(SimulationSource(point, measuredHitProb.metadata), hitMap, true,
                                  timesteps, deltaTime, noiseSTDev, nullptr, transportRng);
+    }
+
+    void Simulations::runPointForwardTraceReplay(
+        const Vector2& point, std::vector<float>& hitMap,
+        ctt_v13::TransportTrace& trace,
+        int timesteps, float deltaTime, float noiseSTDev,
+        EventKeyedTransportRng* transportRng) const
+    {
+        simulateSourceInPosition(SimulationSource(point, measuredHitProb.metadata), hitMap, true,
+                                 timesteps, deltaTime, noiseSTDev, nullptr,
+                                 transportRng, &trace);
     }
 
     static void show(const cv::Mat& mat, std::string name)

@@ -120,6 +120,16 @@ ament_target_dependencies(meaci_replay_true
     ${CONDITIONAL_GADEN_MSGS}
 )
 target_link_libraries(meaci_replay_true PMFS)
+
+# Truth-free physical trace-bank builder for the CTT premise gates. It is not
+# installed or launched by ROS and cannot access planner or final-source truth.
+add_executable(ctt_trace_bank_builder tools/ctt_trace_bank_builder.cpp)
+ament_target_dependencies(ctt_trace_bank_builder
+    ${COMMON_AMENT_DEPENDENCIES}
+    gmrf_msgs
+    ${CONDITIONAL_GADEN_MSGS}
+)
+target_link_libraries(ctt_trace_bank_builder PMFS)
 #include(src/gsl_server/algorithms/Semantics/CMakeLists.txt) # There is further modularity inside of this file!
 
 
@@ -162,6 +172,20 @@ if(BUILD_TESTING)
   add_test(
     NAME opgsl_scientific_v31_vertical_gate
     COMMAND test_opgsl_scientific_v31_vertical_gate
+  )
+
+  add_executable(
+    test_ctt_transport_trace
+    test/test_ctt_transport_trace.cpp
+  )
+  target_compile_features(test_ctt_transport_trace PRIVATE cxx_std_20)
+  target_compile_options(
+    test_ctt_transport_trace PRIVATE
+    -Wall -Wextra -Wpedantic -Werror -UNDEBUG
+  )
+  add_test(
+    NAME ctt_transport_trace
+    COMMAND test_ctt_transport_trace
   )
 endif()
 

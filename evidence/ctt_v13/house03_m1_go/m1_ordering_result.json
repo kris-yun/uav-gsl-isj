@@ -1,0 +1,79 @@
+{
+  "gate": "CTT_M1_PRE_BAYES_MATCHED_ORDERING_V1",
+  "real_source_truth_used": false,
+  "synthetic_source_index_used_for_evaluation_only": true,
+  "matched_neighbors": 8,
+  "test_contexts": [
+    1,
+    2
+  ],
+  "heldout_members": [
+    6,
+    7
+  ],
+  "controls": {
+    "original": {
+      "conditional_margin_mean": 0.10176357355655975,
+      "static_margin_mean": 0.09586538540796169,
+      "increment_mean": 0.005898188148598069,
+      "increment_95ci": [
+        0.003799151847120917,
+        0.00809267747930242
+      ],
+      "conditional_positive_fraction": 0.9526699029126213,
+      "static_negative_to_conditional_positive_count": 26,
+      "per_context_increment": {
+        "1": 0.006205095719654583,
+        "2": 0.005591280577541555
+      }
+    },
+    "time_shuffle": {
+      "conditional_margin_mean": -0.3120081703929068,
+      "static_margin_mean": -0.24780042093355678,
+      "increment_mean": -0.06420774945935,
+      "increment_95ci": [
+        -0.07153125769883684,
+        -0.05723037190952348
+      ],
+      "conditional_positive_fraction": 0.0691747572815534,
+      "static_negative_to_conditional_positive_count": 11,
+      "per_context_increment": {
+        "1": -0.06422215960558178,
+        "2": -0.0641933393131182
+      }
+    },
+    "reverse_causal_time": {
+      "conditional_margin_mean": -0.256728863470184,
+      "static_margin_mean": -0.22412405069013244,
+      "increment_mean": -0.032604812780051555,
+      "increment_95ci": [
+        -0.037094282776623674,
+        -0.028119454914432705
+      ],
+      "conditional_positive_fraction": 0.10679611650485436,
+      "static_negative_to_conditional_positive_count": 9,
+      "per_context_increment": {
+        "1": -0.03332261509686998,
+        "2": -0.03188701046323313
+      }
+    },
+    "delay_permutation": {
+      "conditional_margin_mean": -0.1334148364014996,
+      "static_margin_mean": -0.12353581841130859,
+      "increment_mean": -0.009879017990191006,
+      "increment_95ci": [
+        -0.012851016230664206,
+        -0.006926980909430286
+      ],
+      "conditional_positive_fraction": 0.18932038834951456,
+      "static_negative_to_conditional_positive_count": 17,
+      "per_context_increment": {
+        "1": -0.010132843718945402,
+        "2": -0.009625192261436611
+      }
+    }
+  },
+  "verdict": "M1_ORDERING_GO",
+  "original_gate_pass": true,
+  "causal_controls_pass": true
+}

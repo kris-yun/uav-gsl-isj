@@ -11,6 +11,7 @@
 #include <memory>
 #include <cstdint>
 #include "gsl_server/algorithms/PMFS/internal/EventKeyedRng.hpp"
+#include "gsl_server/algorithms/PMFS/internal/CTTTransportTrace.hpp"
 
 namespace GSL
 {
@@ -117,6 +118,14 @@ namespace GSL::PMFS_internal
         void runPointForwardReplay(const Vector2& point, std::vector<float>& hitMap,
                                    int timesteps, float deltaTime, float noiseSTDev,
                                    EventKeyedTransportRng* transportRng = nullptr) const;
+        // Isolated CTT bank-builder entrypoint. The optional trace is a
+        // read-only recorder of the same native simulation and must reconstruct
+        // the returned cumulative frequency map exactly.
+        void runPointForwardTraceReplay(
+            const Vector2& point, std::vector<float>& hitMap,
+            ctt_v13::TransportTrace& trace,
+            int timesteps, float deltaTime, float noiseSTDev,
+            EventKeyedTransportRng* transportRng = nullptr) const;
 
         std::vector<std::vector<Utils::NQA::Node*>> mapSegmentation;
         std::unique_ptr<Utils::NQA::Quadtree> quadtree;
@@ -278,6 +287,26 @@ namespace GSL::PMFS_internal
         std::vector<double> ecEdclCumulativeMemberScores;
         std::vector<double> ecEdclPreviousCovariance;
         int ecEdclPreviousCovarianceDim = 0;
+        // V12-M owns a fixed geometry-only carrier manifest and cumulative
+        // immutable likelihood increments. It never initializes from native
+        // PMFS posterior mass and never re-fits a growing raw-event reservoir.
+        bool v12MainInitialized = false;
+        std::vector<std::string> v12MainCarrierIds;
+        std::vector<int> v12MainFreeCellsPerCarrier;
+        // Cross-fit choice is global across the trajectory: products are
+        // accumulated inside fold A and fold B before the final 1/2 mixture.
+        // Mixing each update separately would create an unintended 2^U model.
+        std::vector<double> v12MainCumulativeFoldA;
+        std::vector<double> v12MainCumulativeFoldB;
+        std::vector<std::vector<double>> v12MainIncrementFoldAHistory;
+        std::vector<std::vector<double>> v12MainIncrementFoldBHistory;
+        std::vector<Vector2> v12MainOperatorLibrary;
+        std::vector<std::size_t> v12MainOperatorCarrierIndices;
+        // Exact physical hit-frequency maps indexed by carrier then transport.
+        // They are independent of observations and are generated at most once
+        // per process; the frozen disk-bank adapter will populate this cache.
+        std::vector<std::vector<float>> v12MainResponseMaps;
+        std::string v12MainResponseBankPath;
         // Physical-latent forecast--analysis history for the persistent
         // carrier.  The raw field and projected replica features are kept
         // separately from the native-logit history so the next update can
@@ -296,6 +325,7 @@ namespace GSL::PMFS_internal
         bool applyA9TvSdTfei();
         bool applyMEAci();
         bool applyEnsembleEcEdcl();
+        bool applyRCSDTFEIV12Main();
         bool applyTADMPosterior();
 
         SimulationResult runSimulation(std::vector<LeafScore>& nodes, size_t index);
@@ -304,7 +334,8 @@ namespace GSL::PMFS_internal
         void simulateSourceInPosition(const SimulationSource& source, std::vector<float>& hitMap, bool warmup,
                                       int timesteps, float deltaTime, float noiseSTDev,
                                       std::vector<float>* exposureMapBeforeNormalization = nullptr,
-                                      EventKeyedTransportRng* transportRng = nullptr) const;
+                                      EventKeyedTransportRng* transportRng = nullptr,
+                                      ctt_v13::TransportTrace* transportTrace = nullptr) const;
         bool filamentIsOutside(const Filament& filament) const;
         bool moveAlongPath(Vector2& beginning, const Vector2& end) const;
 
