@@ -131,7 +131,7 @@ def main() -> None:
     end = cpp.find('    bool Simulations::applyTADMPosterior()\n    {', start)
     if start < 0 or end < 0 or end <= start:
         raise SystemExit('could not locate applyRCSDTFEIV12Main function boundary')
-    stub = '''    bool Simulations::applyRCSDTFEIV12Main()\n    {\n        // RCEC_V13_BUILD_CLOSURE_20260826: the historical V12-M source body\n        // referenced RCSDTFEIV12.hpp/V12ResponseBank.hpp, but those files were\n        // never committed to this repository. RCEC V13 does not use V12-M.\n        // Keep an explicit fail-closed stub rather than silently fabricating\n        // legacy behavior or copying untracked workstation files.\n        GSL_ERROR("RC-SD-TFEI V12 is unavailable in the RCEC V13 frozen source boundary");\n        return false;\n    }\n\n'''
+    stub = '''    bool Simulations::applyRCSDTFEIV12Main()\n    {\n        // RCEC_V13_BUILD_CLOSURE_20260826: the historical V12-M source body\n        // referenced two unavailable legacy dependency headers that were never\n        // committed to this repository. RCEC V13 does not use V12-M.\n        // Keep an explicit fail-closed stub rather than silently fabricating\n        // legacy behavior or copying untracked workstation files.\n        GSL_ERROR("RC-SD-TFEI V12 is unavailable in the RCEC V13 frozen source boundary");\n        return false;\n    }\n\n'''
     cpp = cpp[:start] + stub + cpp[end:]
 
     # Remove the standalone V12-only contract writer. The frozen source uses a
@@ -186,7 +186,8 @@ def main() -> None:
     )
 
     # Hard postconditions before writing either file: failure cannot leave a
-    # half-materialized source tree.
+    # half-materialized source tree. These tokens are checked in the generated
+    # C++ text itself, so generated comments must not contain them either.
     forbidden_cpp = (
         'RCSDTFEIV12.hpp',
         'V12ResponseBank.hpp',
