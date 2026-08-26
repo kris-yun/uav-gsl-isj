@@ -121,15 +121,7 @@ ament_target_dependencies(meaci_replay_true
 )
 target_link_libraries(meaci_replay_true PMFS)
 
-# Truth-free physical trace-bank builder for the CTT premise gates. It is not
-# installed or launched by ROS and cannot access planner or final-source truth.
-add_executable(ctt_trace_bank_builder tools/ctt_trace_bank_builder.cpp)
-ament_target_dependencies(ctt_trace_bank_builder
-    ${COMMON_AMENT_DEPENDENCIES}
-    gmrf_msgs
-    ${CONDITIONAL_GADEN_MSGS}
-)
-target_link_libraries(ctt_trace_bank_builder PMFS)
+# RCEC_V13_BUILD_CLOSURE_20260826: dormant CTT/V12-only helper target excluded.
 #include(src/gsl_server/algorithms/Semantics/CMakeLists.txt) # There is further modularity inside of this file!
 
 

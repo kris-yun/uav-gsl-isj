@@ -3,6 +3,7 @@
 #include <gsl_server/algorithms/Common/Utils/Math.hpp>
 #include <gsl_server/algorithms/Common/Utils/Pointers.hpp>
 #include <gsl_server/algorithms/PMFS/PMFS.hpp>
+// RCEC_V13_BUILD_CLOSURE_20260826: incomplete legacy V12-M mode excluded.
 #include <fstream>
 #include <filesystem>
 #include <iomanip>
