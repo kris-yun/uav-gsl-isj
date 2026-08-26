@@ -1,123 +1,161 @@
-# RCEC V13 — Frozen candidate method and scientific boundary
+# RCEC V13 v2 — Replicated Causal Evidence Consensus
 
-Date: 2026-08-26  
-Status: **FROZEN CANDIDATE FOR NEW-SEED QUALIFICATION**. Not yet a confirmatory success.
+Status: **FROZEN CANDIDATE FOR IMPLEMENTATION/PARITY, NOT YET CLOSED-LOOP QUALIFIED**
 
-## 1. Why this version exists
+Formula marker after materialization:
 
-The revealed V11 multiseed experiment did not show that inverse-causal and spatiotemporal evidence vanished. V11 improved 11/15 pairs and pooled error by about 9.08%, but failed the preregistered >=10% qualification threshold and contained one catastrophic regression. The failure mode is therefore a tail risk: one misspecified causal ranking can overwrite the native PMFS source state.
+`rcec_v13_acit_crei_native_absolute_tmem_v2`
 
-RCEC V13 keeps the validated V11 causal evidence and changes only how evidence from different views and different source-update times is admitted to the source state.
+This document supersedes the earlier RCEC draft that used a native log-increment against the pre-native source state. That increment definition is rejected because the pre-native state can contain the previous V11/RCEC injection, creating feedback coupling and making archived V11 shadow replay different from a true RCEC recursion.
 
-It deliberately does **not** use the rejected CTT HMM/count-survival path. The CTT trace recorder remains diagnostic infrastructure only and is not part of this frozen candidate.
+## Scientific premise retained from V11
 
-## 2. M1 — ACIT: amplitude-conditioned inverse-transport causal views
+The V11 multiseed failure did not show that causal/spatiotemporal information disappeared. V11 improved 11/15 revealed pairs and pooled about 9.08%, but missed the preregistered >=10% threshold and had one catastrophic regression. The failure mode is therefore treated as a robustness/tail problem: one misspecified causal ranking can sometimes dominate the source state.
 
-M1 is the frozen V11 causal module. It consumes completed StopAndMeasure position/wind/hit events and candidate source coordinates. The 54 frozen nuisance members are unchanged:
+RCEC does not replace the V11 scientific premise. It adds two orthogonal robustness layers around it.
 
-- spread: {0.25, 0.5, 1.0};
-- decay: {4, 8, 16};
-- upstream penalty: {1, 2};
-- slope: {0.5, 1, 2}.
+## M1 — ACIT + existing spatiotemporal identifiability
 
-The score conditions on the observed hit count, then forms disjoint even/odd normal-rank views `z_even,t(s)` and `z_odd,t(s)`.
+M1 is the frozen V11 source-abduction channel.
 
-The existing truth-blind identifiability rule is unchanged: both temporal folds must contain hit/miss contrast and hits must occur at at least two spatial grid locations. The cumulative V11 event reservoir is also unchanged.
+For candidate source `s`, completed hit/miss events are scored under the frozen 54-member inverse-transport nuisance family. Even and odd event-index folds produce candidate-relative normal ranks
 
-M1 answers: **what source-relative causal evidence is supported by gas/wind observations under amplitude uncertainty?**
+`z_even,t(s)` and `z_odd,t(s)`.
 
-## 3. M2 — CREI: cross-view replicated evidence intersection
+The existing truth-blind release condition is unchanged:
 
-V11 allowed the causal channel to replace the source state even when it conflicted with the physical/native PMFS update. RCEC adds a separate robust cross-model view.
+- both temporal folds must contain at least one hit and at least one miss;
+- hits must occupy at least two distinct spatial cells.
 
-At source update t, `beginTADMUpdate()` freezes the normalized PMFS source state before the native source update. After native PMFS updates, for each candidate rectangle s compute
+No truth coordinate, final localization error, posterior distance threshold, House-specific rule, temperature or learned calibration enters M1.
 
-`d_native,t(s) = log M_after,t(s) - log M_before,t(s)`.
+## M2 — CREI: Cross-view Replicated Evidence Intersection
 
-Only this **current native increment** is used; the absolute native posterior is not treated as fresh evidence. Convert it to candidate normal ranks `z_native,t(s)`.
+### Rejected first draft
 
-Define the conjunctive consensus
+Do **not** use
+
+`log M_native,after - log M_native,before`
+
+where `M_native,before` is the pre-native source state. In the online stack that state may be the source distribution injected by the previous V11/RCEC update. Subtracting it feeds the method's previous output back into its supposedly native view and makes the old fixed-trajectory replay recursion-inconsistent.
+
+### Frozen v2 definition
+
+Let `M_native,t(s)` be the candidate-region mass of the **current native PMFS source update after the native PMFS update and before ME-ACI/RCEC injection**. Normalize/rank this current state only:
+
+`z_native,t(s) = NormalRank_s[M_native,t(s)]`.
+
+Then define the cross-view lower envelope
 
 `c_t(s) = min(z_native,t(s), z_even,t(s), z_odd,t(s))`.
 
-This is intentionally **not** a Bayesian product and makes no independence claim among the three views. It is a lower-envelope generalized evidence operator: a candidate cannot receive a high consensus score if any one of the native/even/odd views strongly opposes it.
+Interpretation: a source candidate receives high consensus support only when the current native PMFS ordering and both replicated causal temporal views do not strongly veto it.
 
-No fusion weight, temperature, learned reliability scalar, source truth, localization error, House label, or seed-specific parameter exists.
+This is **not** a product of independent likelihoods and is not called a Bayes factor. PMFS and ACIT may consume overlapping gas observations. CREI is an order/rank consensus operator, so the scientific claim is robust cross-model agreement, not probabilistic independence.
 
-M2 answers: **is the candidate supported simultaneously by native PMFS change and both replicated causal views?**
+There is no fusion weight, alpha or temperature.
 
-## 4. M3 — TMEM: temporal median evidence memory
+## M3 — TMEM: Temporal Median Evidence Memory
 
-A turbulent realization may still corrupt one source update. RCEC stores the candidate-aligned CREI score from every identifiable update and uses
+For each identifiable source update, append its CREI vector to candidate-aligned history. The active robust score is the candidate-wise median
 
-`m_t(s) = median{c_u(s): u <= t, u identifiable}`.
+`m_t(s) = median_{u <= t, identifiable} c_u(s)`.
 
-The median is defined for every available history size. There is **no extra three-update gate**:
-
-- one snapshot -> that score;
-- two snapshots -> midpoint of the two scores;
-- three or more -> ordinary sample median.
-
-From three snapshots onward the median can reject one arbitrary temporal score outlier; this is a property, not a tuned threshold.
-
-The final generalized source state is rebuilt from the same fixed geometry-only prior used by frozen V11:
+The final generalized source state is rebuilt from the frozen geometry-only design prior:
 
 `q_t(s) proportional to q0(s) exp(m_t(s))`.
 
-Historical generalized scores are summarized by an order statistic, not multiplied as repeated likelihoods; therefore TMEM does not recursively count the same cumulative observation history multiple times.
+The median is defined for every history length; there is **no additional minimum-three-update gate**. At one snapshot it equals that snapshot; at two snapshots it is the two-value median; from three snapshots onward it obtains the usual single-outlier resistance property.
 
-M3 answers: **has the cross-view source evidence remained stable across source updates rather than appearing in only one transient plume realization?**
+TMEM is an order-statistic robust memory, not a multiplication of independent temporal likelihoods. ACIT snapshots are cumulative and therefore statistically dependent. Do not claim independent replicates, exact Bayesian posterior coverage, or an anytime-valid theorem.
 
-## 5. Orthogonality of the modules
+## Candidate identity / state boundary
 
-| Module | Layer | Failure addressed |
-|---|---|---|
-| ACIT | source/transport causal evidence | amplitude and inverse-transport ambiguity |
-| CREI | cross-model evidence consensus | one misspecified causal view overriding PMFS |
-| TMEM | temporal robustness | one transient source-update realization dominating the run |
+RCEC history is keyed by stable candidate IDs. If the candidate ID vector changes, runtime must fail/abstain rather than silently align mismatched candidates.
 
-CREI does not learn ACIT parameters. TMEM does not change CREI or ACIT parameters. Neither module changes the planner.
+`initializeMap()` must clear:
 
-## 6. Runtime ablation contract
+- `rcecV13CandidateIds`
+- `rcecV13ConsensusHistory`
 
-The same materialized binary supports all scientific arms through one environment variable while `pfdi_mode=me_aci` remains unchanged:
+so no temporal memory can leak across map/run initialization.
 
-- `RCEC_V13_ARM=v11_stouffer`: A1, exact frozen V11 score path;
-- `RCEC_V13_ARM=crei_latest`: A2, ACIT + CREI;
-- `RCEC_V13_ARM=rcec_full`: A3, ACIT + CREI + TMEM.
+## Same-binary ablations
 
-If `RCEC_V13_ARM` is absent, behavior defaults to `v11_stouffer` for backward parity. Any unknown value is a hard failure.
+Keep `pfdi_mode=me_aci` and select one arm at process launch:
 
-Candidate IDs and order must remain identical across TMEM updates. Drift is a hard contract failure; history is never silently remapped.
+- `RCEC_V13_ARM=v11_stouffer`: frozen V11 A1 parity arm;
+- `RCEC_V13_ARM=crei_latest`: M1 + M2, latest CREI only;
+- `RCEC_V13_ARM=rcec_full`: M1 + M2 + M3.
 
-## 7. Offline development evidence
+No `RCEC_V13_ARM` is equivalent to `v11_stouffer`.
 
-The deterministic replay uses archived V11 candidate scores and exact PMFS candidate geometry. It first reconstructs the archived V11 posterior with maximum absolute error `8.257283745649602e-16`, establishing replay parity.
+The purpose is to run ablations without recompiling different formulas.
 
-On all 15 currently revealed V11 pairs, the development-only final-state shadow results are:
+## Corrected revealed-data fixed-trajectory shadow audit
 
-| Arm | pooled improvement vs frozen OFF | improved pairs | catastrophes | worst pair |
-|---|---:|---:|---:|---:|
-| A1 V11 Stouffer | 9.08% | 11/15 | 1 | -38.09% |
-| A2 ACIT + CREI | 13.35% | 13/15 | 0 | -11.36% |
-| A3 ACIT + CREI + TMEM | **16.39%** | **15/15** | **0** | **+1.35%** |
+Authoritative development contract:
 
-A3 pooled improvement by House on this revealed development set:
+`RCEC_V13_NATIVE_ABSOLUTE_FIXED_TRAJECTORY_AUDIT_V3`
 
-- House01: 22.56%, 5/5 improved;
-- House02: 10.16%, 5/5 improved;
-- House03: 14.56%, 5/5 improved.
+Fifteen already revealed V11 pairs were replayed from archived candidate score/native-shadow files. The score reconstruction never read source truth; truth was used only by the external final-error evaluator.
 
-The previously catastrophic House01 seed653959 changes from approximately `4.608 m OFF -> 6.363 m V11` to `4.322 m` under the offline A3 reconstruction.
+V11 posterior replay integrity:
 
-These results are **not confirmatory evidence**. Every one of these seeds is now development-visible. The replay is also off-policy with respect to a true RCEC closed loop: native increments were recorded on V11 trajectories/source states. The only legitimate next test is a new-seed runtime experiment after source and binary hashes are frozen.
+`max_abs = 8.257283745649602e-16`.
 
-## 8. Prohibited changes after freeze
+Results on the **archived V11 trajectories**:
 
-Do not add or tune adaptive fusion weights, posterior temperatures, House/seed-specific rules, truth-distance gates, final-error gates, new ACIT nuisance members, planner parameters, minimum-history thresholds, or CTT HMM/count-survival terms.
+| Arm | Pooled improvement vs frozen OFF | Improved pairs | Catastrophic regressions |
+|---|---:|---:|---:|
+| A1 V11 Stouffer | 9.077% | 11/15 | 1 |
+| A2 ACIT + native-absolute CREI | 13.178% | 13/15 | 0 |
+| A3 A2 + TMEM | 16.354% | 15/15 | 0 |
 
-If new-seed qualification fails, archive the failure. Do not rescue the seed.
+A3 per-House pooled improvements:
 
-## 9. Claim boundary
+- House01: 23.041%
+- House02: 9.775%
+- House03: 14.300%
 
-RCEC is a **generalized evidence-consensus source inference method**, not an exact Bayesian fusion rule. `min()` and the temporal median are robust decision operators. The scientific novelty claim is their source-localization use to prevent a replicated but misspecified inverse-causal channel from creating a catastrophic wrong basin while retaining V11's causal/spatiotemporal signal.
+A3 worst revealed pair improvement: +1.821%.
+
+Revealed catastrophic stress case H01/seed653959:
+
+- frozen OFF: 4.607520 m
+- V11 A1: 6.362662 m
+- corrected A2: 5.216955 m
+- corrected A3: 4.318013 m
+
+These values are **development evidence only**. They are not a dynamic RCEC closed-loop replay because robot trajectories were produced by archived V11 runs. They justify proceeding to implementation/parity/new-seed testing; they do not confirm closed-loop generalization.
+
+Also do not claim every module improves every individual pair. A3 improves the aggregate/tail profile and all final pair signs in this revealed set, but some individual A3 errors are worse than A2.
+
+## Prohibited changes before qualification
+
+Do not add or tune:
+
+- adaptive weights;
+- temperatures;
+- House/seed-specific rules;
+- truth/error gates;
+- planner parameters;
+- ACIT 54-member ranges;
+- temporal/spatial identifiability thresholds;
+- a rolling-memory window selected from revealed outcomes.
+
+Do not resume the rejected CTT HMM/count-survival path in this RCEC branch.
+
+## Required qualification sequence
+
+1. Materialize native-absolute v2 correction.
+2. Close the incomplete dormant V12-M build dependency.
+3. Pass build-closure verifier, source verifier and RCEC core test.
+4. Pass isolated ROS build.
+5. PMFS OFF parity.
+6. A1 `v11_stouffer` parity against frozen V11.
+7. Revealed H01/seed653959 A1/A2/A3 mechanism regression only.
+8. Freeze materialized source commit and binary SHA before viewing any new-seed truth.
+9. Run genuinely unseen H01/H02/H03 full-300 s OFF vs `rcec_full` pairs.
+
+Any new compiler/runtime contract failure must stop the sequence. Do not repair it by copying untracked workstation code or by tuning scientific parameters.
