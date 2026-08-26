@@ -28,21 +28,41 @@ def main() -> None:
 
     required = [
         "RCEC_V13_FROZEN_CANDIDATE_20260826",
+        "RCEC_V13_NATIVE_ABSOLUTE_V2_20260826",
         'std::getenv("RCEC_V13_ARM")',
         '"v11_stouffer"',
         '"crei_latest"',
         '"rcec_full"',
         "rcec_v13::normalRanks",
+        "rcec_v13::normalRanks(rcecNativeMass, rcecCandidateIds)",
         "rcec_v13::conjunctiveConsensus",
         "rcec_v13::temporalMedian",
-        "pcAciIncomingNativePriorSnapshot",
+        "rcecV13CandidateIds.clear();",
+        "rcecV13ConsensusHistory.clear();",
         "rcec_v13_scores_update_",
-        "rcec_v13_acit_crei_tmem_v1",
+        "native_absolute_mass,native_normal_rank",
+        "rcec_v13_acit_crei_native_absolute_tmem_v2",
         "meAciEvidenceReservoir = pcAciActiveEvents;",
         "candidatePrior[s] += std::max(pcAciDesignPriorGrid[cell], 0.0L);",
     ]
     for item in required:
         assert item in text + htext, f"missing required source contract: {item}"
+
+    # The V11 pre-native snapshot may remain as legacy infrastructure, but the
+    # corrected RCEC M2 block must not use it. Its native view is the current
+    # post-native/pre-RCEC PMFS candidate ordering only.
+    apply_start = text.index("bool Simulations::applyMEAci")
+    rcec_start = text.index("RCEC_V13_NATIVE_ABSOLUTE_V2_20260826", apply_start)
+    rcec_end = text.index("const double simulationWallSeconds", rcec_start)
+    rcec_block = text[rcec_start:rcec_end]
+    for item in [
+        "pcAciIncomingNativePriorSnapshot",
+        "rcecNativeBeforeMass",
+        "rcecNativeAfterMass",
+        "rcecNativeIncrement",
+        "native_log_increment",
+    ]:
+        assert item not in rcec_block, f"feedback-coupled native view remains in RCEC block: {item}"
 
     forbidden = [
         "rcec_alpha",
@@ -72,6 +92,8 @@ def main() -> None:
         subprocess.run([str(exe)], check=True)
 
     print("RCEC_V13_SOURCE_CONTRACT=PASS")
+    print("RCEC_V13_NATIVE_VIEW=ABSOLUTE_CURRENT_NATIVE_RANK")
+    print("RCEC_V13_PREVIOUS_INJECTED_STATE_IN_CREI=false")
     print(f"Simulations.cpp_sha256={sha(cpp)}")
     print(f"Simulations.hpp_sha256={sha(hpp)}")
     print(f"RCECV13.hpp_sha256={sha(core)}")
