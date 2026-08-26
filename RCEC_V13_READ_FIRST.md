@@ -1,37 +1,40 @@
-# READ FIRST — RCEC V13 frozen candidate
+# READ FIRST — RCEC V13
 
 **Repository:** `kris-yun/uav-gsl-isj`  
-**Branch:** `rcec-v13-frozen-candidate-20260826`  
-**Base checkpoint:** `3f95e646dcfa2182fde60dcad11c8b0d8a7945d2`
+**Branch:** `codex/rcec-v13-materialized-20260826`
 
-This branch is the single handoff point for the next Codex experiment.
+The authoritative current entrypoint is:
 
-## Method
+`RCEC_V13_AUDIT_READ_FIRST.md`
 
-RCEC V13 = three orthogonal layers:
+Read that file before this historical overview.
 
-1. **ACIT** — frozen V11 amplitude-conditioned inverse-transport even/odd causal views and existing spatiotemporal identifiability;
-2. **CREI** — lower-envelope consensus of native PMFS current increment rank, even causal rank and odd causal rank;
+## Active method after audit
+
+RCEC V13 v2 has three layers:
+
+1. **ACIT** — frozen V11 amplitude-conditioned inverse-transport even/odd causal views plus existing spatiotemporal identifiability;
+2. **CREI** — lower-envelope consensus of the **current post-native/pre-RCEC PMFS absolute candidate rank**, even causal rank and odd causal rank;
 3. **TMEM** — candidate-wise temporal median of CREI scores across identifiable source updates.
 
 Final generalized source state is rebuilt from the frozen geometry-only prior. There are no adaptive weights, temperatures, truth/error gates, House-specific settings, or new inverse-transport parameters.
 
-## Important implementation note
+The earlier native log-increment definition is rejected because it could subtract a previous source state already containing V11/RCEC injection. Do not use the old native-increment evidence files as the active method.
 
-The branch was forked from the earlier CTT checkpoint so CTT diagnostic files remain in the tree. **CTT HMM/count-survival is not part of RCEC V13 and must not be activated.**
-
-GitHub cannot execute the source materializer itself. After checkout, Codex must run:
+## Required materialization order
 
 ```bash
-python3 tools/apply_rcec_v13_patch.py
+python3 tools/fix_rcec_v13_native_absolute.py
+python3 tools/close_rcec_v13_build_dependency.py
+python3 reference/verify_rcec_v13_build_closure.py
 python3 reference/verify_rcec_v13_source.py
 ```
 
-Then commit the resulting materialized `Simulations.cpp/.hpp` on a child branch and freeze that commit before new-seed truth is viewed.
+Only after all contracts and the isolated ROS build pass may Codex continue to parity/regression/new-seed qualification.
 
 ## Same-binary ablation
 
-Keep `pfdi_mode=me_aci` and use exactly one:
+Keep `pfdi_mode=me_aci` and select exactly one:
 
 ```bash
 RCEC_V13_ARM=v11_stouffer
@@ -39,25 +42,22 @@ RCEC_V13_ARM=crei_latest
 RCEC_V13_ARM=rcec_full
 ```
 
-No environment variable is equivalent to `v11_stouffer` and is used for parity.
+No variable is A1 V11 parity.
 
-## Offline development result
+## Corrected development shadow evidence
 
-On all 15 revealed V11 pairs:
+Authoritative files:
 
-- A1 V11: +9.08%, 11/15, 1 catastrophe;
-- A2 ACIT+CREI: +13.35%, 13/15, 0 catastrophe;
-- A3 ACIT+CREI+TMEM: +16.39%, 15/15, 0 catastrophe.
+- `evidence/rcec_v13/rcec_v13_native_absolute_pairs_v3.csv`
+- `evidence/rcec_v13/rcec_v13_native_absolute_summary_v3.json`
+- `analysis/rcec_v13_native_absolute_offline_replay.py`
 
-V11 posterior replay parity max absolute error: `8.257283745649602e-16`.
+On 15 already revealed archived V11 trajectories:
 
-These are development-visible shadow results, not confirmatory evidence and not a substitute for a new closed-loop run.
+- A1: +9.077%, 11/15, 1 catastrophe;
+- A2: +13.178%, 13/15, 0 catastrophes;
+- A3: +16.354%, 15/15, 0 catastrophes.
 
-## Required reading order
+These are fixed-trajectory development shadow results, **not** new closed-loop confirmation.
 
-1. `RCEC_V13_READ_FIRST.md`
-2. `docs/RCEC_V13_FROZEN_METHOD_20260826.md`
-3. `CODEX_RCEC_V13_EXPERIMENT.md`
-4. `evidence/rcec_v13/rcec_v13_offline_15pairs_summary.json`
-5. `tools/apply_rcec_v13_patch.py`
-6. `reference/verify_rcec_v13_source.py`
+CTT/HMM/count-survival files may remain in repository history but are not part of RCEC and must not be activated in this branch.
