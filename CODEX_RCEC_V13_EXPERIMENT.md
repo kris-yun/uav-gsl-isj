@@ -1,108 +1,237 @@
-# Codex direct execution — RCEC V13 frozen candidate
+# Codex direct instructions — RCEC V13 v2 audited candidate
 
-Repository: `kris-yun/uav-gsl-isj`  
-Branch: `rcec-v13-frozen-candidate-20260826`  
-Base checkpoint: `3f95e646dcfa2182fde60dcad11c8b0d8a7945d2`
+Repository: `kris-yun/uav-gsl-isj`
+Branch: `codex/rcec-v13-materialized-20260826`
 
-## 0. Scientific boundary
+## STOP / READ FIRST
 
-Do not continue the rejected CTT M2/M3 HMM/count-survival route for this experiment. CTT files in the base checkpoint are diagnostic only.
+The earlier RCEC draft used a feedback-coupled native log increment. It is rejected. Do not run parity, regression or new seeds until the **native-absolute v2 correction** and the build-closure patch have both been materialized and verified.
 
-RCEC V13 is an upgrade of frozen V11. Do not change the V11 54-member ACIT inverse-transport family, even/odd temporal folds, >=2 spatial hit-site identifiability rule, cumulative raw-event reservoir, PMFS planner, 300 s budget, frozen evaluation metric, or source-truth isolation. No adaptive weights, temperatures, House-specific parameters or truth gates.
+Read in this order:
 
-## 1. Pull and materialize the frozen source patch
+1. `RCEC_V13_AUDIT_READ_FIRST.md`
+2. `docs/RCEC_V13_FROZEN_METHOD_20260826.md`
+3. `RCEC_V13_BUILD_CLOSURE_READ_FIRST.md`
+4. this file
+
+## 1. Reset to the latest remote branch
 
 ```bash
 git fetch origin
-git checkout rcec-v13-frozen-candidate-20260826
-git reset --hard origin/rcec-v13-frozen-candidate-20260826
-
-python3 tools/apply_rcec_v13_patch.py
-python3 reference/verify_rcec_v13_source.py
-git diff -- \
-  ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp \
-  ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.hpp
+git checkout codex/rcec-v13-materialized-20260826
+git reset --hard origin/codex/rcec-v13-materialized-20260826
+git status --short
 ```
 
-The patch must report `RCEC_V13_SOURCE_PATCH=PASS`; the verifier must report `RCEC_V13_SOURCE_CONTRACT=PASS` and `RCEC_V13_CORE=PASS`.
+The worktree must be clean before materialization.
 
-Record SHA-256 for the materialized source files. Commit the materialized patch on a child branch before any new-seed truth is viewed, e.g.
+## 2. Materialize the audited scientific correction first
 
 ```bash
-git checkout -b codex/rcec-v13-materialized-20260826
-git add ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp \
-        ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.hpp
-git commit -m "feat: materialize frozen RCEC V13 source fusion"
-git push -u origin codex/rcec-v13-materialized-20260826
+python3 tools/fix_rcec_v13_native_absolute.py
 ```
 
-## 2. Same-binary ablation modes
+Expected:
 
-Keep `pfdi_mode=me_aci`. Select only the fusion arm with:
+```text
+RCEC_V13_NATIVE_ABSOLUTE_PATCH=PASS
+native_view=current_post_native_absolute_rank
+previous_injected_state_used_by_CREI=false
+```
+
+Scientific contract after this step:
+
+```text
+z_native,t(s) = NormalRank(M_native,t(s))
+c_t(s) = min(z_native,t(s), z_even,t(s), z_odd,t(s))
+m_t(s) = candidate-wise median of identifiable c_u(s)
+q_t(s) proportional q0(s) exp(m_t(s))
+```
+
+`M_native,t` is the current PMFS candidate mass after the native source update and before RCEC injection. Do not subtract the previous source state.
+
+## 3. Close the incomplete dormant V12-M build path
+
+```bash
+python3 tools/close_rcec_v13_build_dependency.py
+```
+
+Do not copy `RCSDTFEIV12.hpp` or `V12ResponseBank.hpp` from any workstation. RCEC does not use that legacy method.
+
+Expected:
+
+```text
+RCEC_V13_BUILD_CLOSURE=PASS
+legacy_v12_runtime=FAIL_CLOSED
+rcec_method_equations_changed=false
+```
+
+## 4. Run hard source contracts
+
+```bash
+python3 reference/verify_rcec_v13_build_closure.py
+python3 reference/verify_rcec_v13_source.py
+```
+
+Required:
+
+```text
+RCEC_V13_BUILD_CLOSURE_CONTRACT=PASS
+RCEC_V13_SOURCE_CONTRACT=PASS
+RCEC_V13_NATIVE_VIEW=ABSOLUTE_CURRENT_NATIVE_RANK
+RCEC_V13_PREVIOUS_INJECTED_STATE_IN_CREI=false
+RCEC_V13_CORE=PASS
+```
+
+If any command fails, STOP. Return the exact first failure. Do not hand-edit the algorithm to make a verifier pass.
+
+## 5. Inspect diff before build
+
+```bash
+git diff -- \
+  ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp \
+  ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.hpp \
+  ros2_package/src/gsl_server/algorithms/PMFS/PMFS.cpp
+```
+
+Allowed semantic changes relative to the current checkpoint are only:
+
+- RCEC A1/A2/A3 arm plumbing;
+- native-absolute CREI rather than rejected native increment;
+- TMEM candidate history and explicit map-init reset;
+- audit logging;
+- fail-closed compile isolation of the incomplete dormant V12-M path.
+
+Frozen/no-change areas:
+
+- ACIT 54-member family;
+- V11 even/odd temporal scoring;
+- >=2 spatial-hit-site identifiability gate;
+- PMFS OFF algorithm;
+- planner parameters;
+- runtime seed selection;
+- no truth/error use.
+
+## 6. Isolated ROS build
+
+Build using the same ROS2 Humble/GADEN overlay provenance as the frozen V11 experiments. Do not overwrite the frozen V10/V11 binary artifact.
+
+If build fails, STOP on the **first compiler/linker error** and report it exactly. Do not copy missing untracked files or change scientific code.
+
+After successful build record:
+
+- materialized Git commit SHA;
+- `Simulations.cpp` SHA-256;
+- `Simulations.hpp` SHA-256;
+- `PMFS.cpp` SHA-256;
+- final executable SHA-256;
+- linked GADEN/ROS provenance.
+
+Commit the materialized source before examining any new-seed truth.
+
+## 7. Same-binary arm contract
+
+Keep:
+
+```text
+pfdi_mode=me_aci
+```
+
+Choose at process launch:
 
 ```bash
 RCEC_V13_ARM=v11_stouffer   # A1 frozen V11 parity
-RCEC_V13_ARM=crei_latest    # A2 ACIT + CREI
+RCEC_V13_ARM=crei_latest    # A2 ACIT + native-absolute CREI
 RCEC_V13_ARM=rcec_full      # A3 ACIT + CREI + TMEM
 ```
 
-Absence of `RCEC_V13_ARM` must be parity-equivalent to `v11_stouffer`. Do not implement additional modes or weights.
+No variable is equivalent to A1.
 
-## 3. Build and parity gates before any performance run
+Never switch arms inside a run.
 
-Build an isolated binary using the same ROS2/GADEN overlays as frozen V11. Record source SHA, binary SHA and linked `libgaden.so` provenance.
+## 8. OFF parity
 
-Required gates:
+Before any performance test, run a matched PMFS OFF parity case against the frozen baseline environment.
 
-1. OFF parity: RCEC environment must not alter an OFF run.
-2. A1 parity: `RCEC_V13_ARM=v11_stouffer` must reproduce frozen V11 on a revealed replay/mechanism case within numerical tolerance.
-3. Missing environment variable must match A1.
-4. Invalid `RCEC_V13_ARM` must fail hard.
-5. No truth coordinate or final error may occur in `rcec_v13_scores_*` inputs.
-6. Candidate ID/order drift must fail rather than silently remap TMEM history.
+RCEC must not affect OFF behavior. Compare at least:
 
-## 4. Revealed-seed mechanism regression only
+- final PMFS metric;
+- source update count/times;
+- robot trajectory;
+- native source posterior hashes where available.
 
-Use revealed seeds only to verify mechanics; they are not qualification data. Preferred stress case: House01 seed653959 because V11 had the catastrophic regression there.
+Any unexplained OFF difference is `RCEC_OFF_PARITY_FAIL` and stops the protocol.
 
-For A1/A2/A3 export at every identifiable update: candidate ID; native-before/after candidate mass; native log increment and normal rank; even/odd normal ranks; V11 Stouffer score; CREI score; TMEM score; history count; active score/posterior; trajectory and final external PMFS metric.
+## 9. A1 V11 parity
 
-Structural expectations, not performance tuning:
+Use a previously revealed V11 case. Run `RCEC_V13_ARM=v11_stouffer` and verify the source state/logs against frozen V11 within the established numeric tolerance.
 
-- A1 reproduces V11;
-- A2 can veto a candidate that is high in only one view;
-- A3 median equals the median of archived CREI snapshots candidate-by-candidate;
-- each new identifiable update appends exactly one TMEM snapshot;
-- an abstained update appends none;
-- no historical score is multiplied as a fresh likelihood.
+The native-absolute correction is inside A2/A3 only; A1 must remain frozen V11 behavior.
 
-If any invariant fails, stop. Fix implementation only; do not inspect new-seed performance.
+Any mismatch is `RCEC_A1_PARITY_FAIL` and stops the protocol.
 
-## 5. Freeze before new seed
+## 10. Revealed mechanism regression — H01 seed653959
 
-After parity/mechanism gates pass, freeze source commit SHA, binary SHA-256, `RCECV13.hpp` SHA-256, `RCEC_V13_ARM=rcec_full`, PMFS config/planner parameters, map/House configs, GADEN build/library provenance, 300 s timeout, evaluator SHA, and formula marker `rcec_v13_acit_crei_tmem_v1`.
+This seed is development-visible and must never be counted as confirmation.
 
-No change after new-seed truth is read.
+Run A1/A2/A3 using the same build/runtime contract. The purpose is not to tune by final error but to verify mechanism/log identities:
 
-## 6. New-seed confirmatory qualification
+A2/A3 must export per identifiable update:
 
-Choose genuinely new seeds not present in any V10/V11/V12/V13 development archive. Do not pre-screen seeds by result.
+- `native_absolute_mass`;
+- `native_normal_rank`;
+- `even_normal_rank`;
+- `odd_normal_rank`;
+- `crei_score`;
+- `temporal_median_score`;
+- `history_count`;
+- active arm;
+- injected posterior hash.
 
-First economical gate:
+Hard checks:
 
-- one new House01 OFF/A3 pair;
-- one new House02 OFF/A3 pair;
-- one new House03 OFF/A3 pair;
-- full 300 s, no early stopping.
+- `native_normal_rank` is recomputable from current `native_absolute_mass` alone;
+- no previous injected posterior enters CREI;
+- candidate IDs/order remain identical across TMEM history, otherwise fail closed;
+- new map initialization starts with empty RCEC history;
+- A2 equals current CREI; A3 equals candidate-wise median of recorded CREI history;
+- no truth/final-error field exists in online decision logs.
 
-If the three-pair gate has a catastrophic regression or pooled improvement <=0, stop and archive NO-GO. If direction is positive without catastrophe, extend to at least 3 new seeds per House (9 paired cases total).
+Do not tune if the revealed final error is disappointing. A mismatch between runtime and audit formula is an implementation fail; a formula-consistent poor result is scientific evidence.
 
-Primary final metric remains frozen PMFS `ExpectedValue(sourceProbability, 0.05)` localization error.
+## 11. Freeze before unseen truth
 
-Report pair table, pooled and House-wise improvement, positive-pair fraction, catastrophe count, paired bootstrap CI clustered by seed/pair, sign/permutation test as appropriate, posterior variance as secondary only, and trajectory divergence separately from inference improvement.
+Only after Sections 1–10 pass, freeze source and binary hashes. Do not change formulas, gates, weights, temperature, planner or memory rule after this point.
 
-Do not require every seed to improve; do require no recurrence of the V11 catastrophic wrong-basin tail in the qualification set.
+Formula marker must be:
 
-## 7. Offline evidence is development-only
+`rcec_v13_acit_crei_native_absolute_tmem_v2`
 
-`evidence/rcec_v13/rcec_v13_offline_15pairs_summary.json` documents the revealed 15-pair shadow audit. It is useful for mechanism and ablation justification, not for the confirmatory p-value or final generalization claim.
+## 12. Genuinely unseen 300 s qualification
+
+Select seeds that have never appeared in V10/V11/V12/V13 method development or evidence inspection.
+
+Initial minimum:
+
+- H01 OFF vs A3 `rcec_full`, full 300 s;
+- H02 OFF vs A3, full 300 s;
+- H03 OFF vs A3, full 300 s.
+
+Do not inspect ON truth before both arms for that pair are complete. No early stop at first accepted update.
+
+Primary metric remains frozen PMFS `ExpectedValue(sourceProbability, 0.05)` final localization error.
+
+Use the existing preregistered spirit for initial qualification:
+
+- at least 2/3 Houses improve;
+- pooled improvement >=10%;
+- zero catastrophic regressions (>=1 m absolute regression and <=-25% relative improvement);
+- no new false-confident wrong collapse.
+
+If the 3-pair qualification passes, expand independent seeds for paired confidence intervals/statistical robustness. If it fails, archive it; do not tune the revealed seeds.
+
+## Development evidence boundary
+
+The corrected 15-pair native-absolute offline audit is **fixed-trajectory shadow evidence only**. It uses archived V11 trajectories and therefore cannot predict planner/trajectory feedback under RCEC. It exists to justify implementation and stress-test the formula, not to replace the unseen closed-loop qualification.
+
+Do not cite the older native-increment audit as the active method; it is superseded/rejected.
