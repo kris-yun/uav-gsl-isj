@@ -1,0 +1,73 @@
+{
+  "contract": "RCEC_V13_NATIVE_ABSOLUTE_FIXED_TRAJECTORY_AUDIT_V3",
+  "status": "DEVELOPMENT_VISIBLE_OFFLINE_ONLY_NOT_CONFIRMATORY",
+  "truth_used_in_scoring": false,
+  "truth_used_in_external_evaluation_only": true,
+  "raw_pairs_available": 15,
+  "candidate_id_drift_count": 0,
+  "v11_reconstruction_max_abs": 8.257283745649602e-16,
+  "temporal_memory_gate": "none; median is defined for every identifiable snapshot count",
+  "native_view": "normal rank of current post-native/pre-RCEC PMFS candidate mass",
+  "trajectory_contract": "archived V11 fixed trajectory; not a dynamic RCEC closed-loop replay",
+  "arms": {
+    "A0_NATIVE_SHADOW": {
+      "error_sum_m": 80.10587397279208,
+      "pooled_improvement_vs_frozen_off": 0.011769092779730258,
+      "improved_pairs": 10,
+      "pair_count": 15,
+      "catastrophic_regressions": 0,
+      "worst_pair_improvement_fraction": -0.12062352863573435,
+      "median_pair_improvement_fraction": 0.001052403758676107
+    },
+    "A1_V11_STOUFFER": {
+      "error_sum_m": 73.70183501132752,
+      "pooled_improvement_vs_frozen_off": 0.09077290259911516,
+      "improved_pairs": 11,
+      "pair_count": 15,
+      "catastrophic_regressions": 1,
+      "worst_pair_improvement_fraction": -0.3809298165391742,
+      "median_pair_improvement_fraction": 0.08659645170945804,
+      "per_house": {
+        "House01": {"pooled_improvement": 0.12738397429996892, "improved_pairs": 4},
+        "House02": {"pooled_improvement": 0.1003430484656537, "improved_pairs": 2},
+        "House03": {"pooled_improvement": 0.06238097415536967, "improved_pairs": 5}
+      }
+    },
+    "A2_CREI_NATIVE_ABSOLUTE": {
+      "error_sum_m": 70.37816493942728,
+      "pooled_improvement_vs_frozen_off": 0.1317755573054408,
+      "improved_pairs": 13,
+      "pair_count": 15,
+      "catastrophic_regressions": 0,
+      "worst_pair_improvement_fraction": -0.132269701146555,
+      "median_pair_improvement_fraction": 0.09760065446941192,
+      "per_house": {
+        "House01": {"pooled_improvement": 0.1883644151396324, "improved_pairs": 4},
+        "House02": {"pooled_improvement": 0.10734666927657885, "improved_pairs": 4},
+        "House03": {"pooled_improvement": 0.10263881847810742, "improved_pairs": 5}
+      }
+    },
+    "A3_RCEC_TEMPORAL_MEDIAN": {
+      "error_sum_m": 67.80299627257563,
+      "pooled_improvement_vs_frozen_off": 0.16354427964348536,
+      "improved_pairs": 15,
+      "pair_count": 15,
+      "catastrophic_regressions": 0,
+      "worst_pair_improvement_fraction": 0.018213379562577455,
+      "median_pair_improvement_fraction": 0.13134827897028675,
+      "per_house": {
+        "House01": {"pooled_improvement": 0.2304126751263994, "improved_pairs": 5},
+        "House02": {"pooled_improvement": 0.09775399951546866, "improved_pairs": 5},
+        "House03": {"pooled_improvement": 0.14299887164756395, "improved_pairs": 5}
+      }
+    }
+  },
+  "revealed_catastrophic_stress_case": {
+    "house": "House01",
+    "seed": 653959,
+    "off_error_m": 4.607520062499939,
+    "v11_error_m": 6.362661834608605,
+    "crei_error_m": 5.216955364193562,
+    "rcec_error_m": 4.318012579766857
+  }
+}
