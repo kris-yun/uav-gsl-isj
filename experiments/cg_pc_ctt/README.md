@@ -13,6 +13,7 @@ This directory contains several historical protocol layers. Do not treat every f
 - Gate V2 repaired the finite-member self-noise bug in V1 and passed the real House03 bank `phi[10,206,8,626]` in all 10 contexts.
 - Gate V2 is currently interpreted as a **model-side replicated-completeness premise**, not yet as a runtime reliability selector.
 - Sparse observation support causes real local source-information loss in both the H03 CTT first-passage representation and the recovered House02 201-candidate PMFS hit-probability response representation.
+- The recovered V12 House02 response bank has been replayed with the canonical V3 full-covariance nuisance metric; the sparse 2-D rank-loss phenomenon persists.
 - Existing PMFS `applyEnsembleEcEdcl()` already materializes candidate × replica responses at actual measurement-event positions before its historical Hellinger normalization. This is the preferred runtime source for `H_t phi`.
 
 ### INVALID / LEGACY
@@ -21,12 +22,13 @@ This directory contains several historical protocol layers. Do not treat every f
 - Historical H02 hard-28 primary provenance: `LEGACY_HARD28_PROVENANCE_LOST`.
   Its summary numbers are development history only. Do not reconstruct cases to reproduce those numbers.
 - `h02_hard28_fast_eval.py` and `bridge_fasttrack_verdict.py` are retained only for legacy artifact compatibility. They are **not** the current V3 H02 entrypoint.
+- `local_pair_audit.py` is the earlier diagonal-whitening diagnostic. Use `local_pair_audit_v3.py` for current V3 full-covariance diagnostics.
 
 ### CURRENTLY TESTING
 
 V3 asks a different question from global Gate V2:
 
-> Given only the observations actually collected so far, what physical source resolution is currently supported?
+> Given only the observations actually collected so far, what physical source resolution is currently supported, and are those observations compatible with the predictive family at all?
 
 The central runtime object is
 
@@ -36,7 +38,7 @@ where `H_e` restricts each candidate/member predictive response to causally avai
 
 ## 2. Shared V3 mathematics
 
-All new V3 scripts should import:
+All new V3 source-resolution scripts should import:
 
 `v3_math.py`
 
@@ -53,18 +55,24 @@ It owns the canonical implementations of:
 6. replicated hard-negative pair separation;
 7. ACI/data-assimilation-inspired local uncertainty-reduction diagnostics.
 
-The full-covariance pseudoinverse replaces the earlier V3 diagnostic use of diagonal V2 whitening because it is invariant to exact feature duplication and orthogonal feature re-expression.
+The full-covariance pseudoinverse replaces the earlier V3 diagnostic use of diagonal V2 whitening because exact duplicated feature embeddings do not create extra Mahalanobis information.
+
+Observation/model compatibility is deliberately separate:
+
+`v3_adequacy.py`
+
+It reports scale-free candidate-family support diagnostics, including residual distance relative to member spread and the fraction of observation residual lying in the empirical member-variation span. No adequacy threshold is currently frozen.
 
 Run before any V3 experiment:
 
 ```bash
 cd experiments/cg_pc_ctt
-python3 selftest_v3_math.py
+bash run_v3_selftests.sh
 ```
 
 Expected:
 
-`CG_PC_CTT_V3_MATH_SELFTEST PASS`
+`CG_PC_CTT_V3_STATIC_AND_MATH_SELFTEST PASS`
 
 ## 3. H02 replacement challenge — current path
 
@@ -105,10 +113,19 @@ The replacement challenge does **not** require exactly 28 cases. Frozen minima a
 
 ### Physical/observation resolution
 
-- `observation_quotient_gate.py` — observational equivalence classes / local pair resolution prototype.
-- `local_tangent_information.py` — 2-D physical source tangent-information diagnostic.
-- `local_pair_audit.py` — candidate aliases and hard-negative pair audit.
+- `observation_quotient_gate.py` — observational equivalence classes / local pair resolution prototype using shared full-covariance mathematics.
+- `local_tangent_information.py` — 2-D physical source tangent-information diagnostic using shared full-covariance mathematics.
+- `local_pair_audit_v3.py` — current full-covariance hard-negative pair audit.
 - `qualify_observation_support_contract.py` — verifies feature-space geometry needed to materialize `H_e`.
+- `v12_response_bank_tangent_audit.py` — cross-representation replay on the frozen V12 PMFS hit-probability bank; never CTT hard-28 evidence.
+
+### Observation adequacy
+
+- `v3_adequacy.py` — candidate-family predictive support diagnostics.
+- `observation_adequacy.py` — CLI for `prediction[S,M,E] + observed[E]` or batched equivalents.
+- `selftest_v3_adequacy.py` — synthetic shared-systematic-bias regression.
+
+Replicated source structure and observation adequacy are separate premises: a family may be highly reproducible and still be jointly wrong.
 
 ### Sparse sensor outcome
 
@@ -126,7 +143,13 @@ Primary causal roles:
 
 No script may claim a general proximal-identification theorem from this finite-dimensional operational bridge alone.
 
-## 5. Closed-loop handoff
+## 5. Sequential evidence boundary
+
+Ordinary member sign-flip `p` values are frozen **offline diagnostics**. Recomputing an unadjusted `p<=0.01` at every online source update and releasing on the first crossing is not authorized because repeated peeking creates optional-stopping risk.
+
+Current low-risk runtime direction is deterministic physical resolution + observation adequacy + fold-consistent ordering, while inferential p-values remain in frozen offline qualification unless an anytime-valid evidence process is explicitly derived and self-tested.
+
+## 6. Closed-loop handoff
 
 The already prepared confirmatory matrix remains unchanged:
 
@@ -140,7 +163,7 @@ Do not change House/seed-specific parameters after H02 manifest freeze. If `H02_
 
 Primary final endpoint remains PMFS `ExpectedValue(sourceProbability,0.05)` localization error with the previously frozen 30-pair aggregate criteria.
 
-## 6. Theory map
+## 7. Theory map
 
 Primary V3 derivation:
 
@@ -148,10 +171,12 @@ Primary V3 derivation:
 
 Supporting diagnostics and design notes:
 
+- `docs/CG_PC_CTT_V3_ASSIMILATIVE_RESOLUTION_AND_SEQUENTIAL_VALIDITY_20260827.md`
+- `docs/CG_PC_CTT_V3_FULL_COVARIANCE_REPLAY_20260827.md`
 - `docs/CG_PC_CTT_V3_SPARSE_TANGENT_DIAGNOSTIC_20260827.md`
 - `docs/CG_PC_CTT_V3_CROSS_REPRESENTATION_AND_RUNTIME_REUSE_20260827.md`
 - `docs/CG_PC_CTT_V3_GEOMETRY_INFORMATION_ADDENDUM_20260827.md`
 - `docs/CG_PC_CTT_V3_FAILURE_PREMORTEM_20260827.md`
 - `docs/H02_LEGACY_HARD28_PROVENANCE_LOSS_AND_REPLACEMENT_20260827.md`
 
-Binding rule: **no outcome-fitted threshold, no House-specific tuning, no source truth in runtime objects, and no unvisited forward-field support counted as current localization evidence.**
+Binding rule: **no outcome-fitted threshold, no House-specific tuning, no source truth in runtime objects, no unvisited forward-field support counted as current localization evidence, and no repeated unadjusted online p-value release.**
