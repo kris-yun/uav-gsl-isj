@@ -8,6 +8,11 @@ python3 -m py_compile \
   v3_math.py \
   v3_adequacy.py \
   v3_bernoulli_adequacy.py \
+  ctt_bank_io.py \
+  materialize_h02_reconstructed_ctt_tensor.py \
+  qualify_h02_reconstructed_analysis_contract.py \
+  discover_h02_observation_event_support.py \
+  verify_h02_reconstructed_bank_v1.py \
   selftest_v3_math.py \
   selftest_v3_adequacy.py \
   selftest_v3_bernoulli_adequacy.py \
