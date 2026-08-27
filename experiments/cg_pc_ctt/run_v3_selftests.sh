@@ -9,10 +9,13 @@ python3 -m py_compile \
   v3_adequacy.py \
   v3_bernoulli_adequacy.py \
   ctt_bank_io.py \
+  selftest_ctt_bank_io.py \
   materialize_h02_reconstructed_ctt_tensor.py \
   qualify_h02_reconstructed_analysis_contract.py \
   discover_h02_observation_event_support.py \
+  freeze_h02_event_support_schema.py \
   verify_h02_reconstructed_bank_v1.py \
+  audit_h02_reconstructed_transport_resolution.py \
   selftest_v3_math.py \
   selftest_v3_adequacy.py \
   selftest_v3_bernoulli_adequacy.py \
@@ -29,6 +32,7 @@ python3 -m py_compile \
   "$ROOT/closed_loop/cg_pc_ctt/v3_quotient_rank_posterior.py" \
   "$ROOT/closed_loop/cg_pc_ctt/selftest_v3_quotient_posterior.py"
 
+python3 selftest_ctt_bank_io.py
 python3 selftest_v3_math.py
 python3 selftest_v3_adequacy.py
 python3 selftest_v3_bernoulli_adequacy.py
