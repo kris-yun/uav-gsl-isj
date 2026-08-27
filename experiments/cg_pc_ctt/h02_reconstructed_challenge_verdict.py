@@ -9,6 +9,9 @@ Required CSV columns:
   source_shuffle_margin,observation_shuffle_margin,
   member_identity_destruction_margin,false_confident_collapse
 
+If audit JSON declares `temporal_marker_claimed=true`, CSV must also contain:
+  time_reverse_margin
+
 Required audit JSON booleans:
   provenance_pass
   selection_outcome_blind
@@ -29,7 +32,7 @@ Frozen advancement criteria from
   * all provenance/data-contract audits pass.
 """
 from __future__ import annotations
-import argparse,csv,json,math
+import argparse,csv,json
 from pathlib import Path
 import numpy as np
 
@@ -50,13 +53,16 @@ def main():
     ap.add_argument("--out",type=Path,required=True)
     a=ap.parse_args()
 
+    audit=json.loads(a.audit_json.read_text(encoding="utf-8"))
     with a.csv.open(newline="",encoding="utf-8-sig") as f:
         rows=list(csv.DictReader(f))
-    required=("case_id","cluster_id","base_margin","method_margin",
+    required=["case_id","cluster_id","base_margin","method_margin",
               "source_shuffle_margin","observation_shuffle_margin",
-              "member_identity_destruction_margin","false_confident_collapse")
+              "member_identity_destruction_margin","false_confident_collapse"]
+    if audit.get("temporal_marker_claimed") is True:
+        required.append("time_reverse_margin")
     if not rows or any(k not in rows[0] for k in required):
-        raise ValueError(f"CSV requires columns {required}")
+        raise ValueError(f"CSV requires columns {tuple(required)}")
 
     def col(name):
         x=np.asarray([float(r[name]) for r in rows],dtype=float)
@@ -71,6 +77,8 @@ def main():
         "observation_shuffle":col("observation_shuffle_margin")-base,
         "member_identity_destruction":col("member_identity_destruction_margin")-base,
     }
+    if audit.get("temporal_marker_claimed") is True:
+        controls["time_reverse"]=col("time_reverse_margin")-base
 
     clusters={}
     for i,r in enumerate(rows): clusters.setdefault(str(r["cluster_id"]),[]).append(i)
@@ -83,7 +91,6 @@ def main():
     control_ok=all(v <= MAX_CONTROL_GAIN_FRACTION*max(real_mean,0.0) for v in control_means.values())
     collapse_count=sum(as_bool(r["false_confident_collapse"]) for r in rows)
 
-    audit=json.loads(a.audit_json.read_text(encoding="utf-8"))
     mandatory=("provenance_pass","selection_outcome_blind","forbidden_feature_audit_pass",
                "test_not_used_for_tuning","negative_controls_frozen_before_outcomes")
     audit_ok=all(audit.get(k) is True for k in mandatory)
@@ -97,6 +104,7 @@ def main():
         "median_margin_delta_gt_0":real_median>0,
         "positive_cluster_fraction_ge_0p70":positive_cluster_fraction>=MIN_POSITIVE_CLUSTER_FRACTION,
         "destruction_controls_retain_at_most_half_gain":control_ok,
+        "temporal_control_present_if_claimed":not audit.get("temporal_marker_claimed",False) or "time_reverse" in controls,
         "zero_false_confident_collapse":collapse_count==0,
         "audit_pass":audit_ok,
     }
@@ -104,6 +112,7 @@ def main():
     out={
         "contract":"H02_RECONSTRUCTED_CHALLENGE_V1_VERDICT",
         "legacy_hard28_recreated":False,
+        "temporal_marker_claimed":bool(audit.get("temporal_marker_claimed",False)),
         "atoms":len(rows),
         "clusters":len(cluster_delta),
         "real_mean_margin_delta":real_mean,
