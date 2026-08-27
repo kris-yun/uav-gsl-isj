@@ -1,51 +1,157 @@
-# CG-PC-CTT Gate V2 — protocol repair branch
+# CG-PC-CTT research entrypoint — V3 observation-conditioned resolution
 
-Candidate method: **Completeness-Gated Proximal-Causal Transport Tomography（完备性门控近端因果输运层析）**.
+Current branch: `research/cg-pc-ctt-v3-observation-quotient-theory`  
+Status: **RESEARCH / H02 replacement challenge pending / no paper-level GO yet**.
 
-Status: **PROTOCOL REPAIR / NOT YET OFFLINE-QUALIFIED**.
+This directory contains several historical protocol layers. Do not treat every file as a current entrypoint.
 
-V1 is `INVALID_PROTOCOL`: finite M=8 candidate-mean noise could create false rank-3 and false absolute strength under a true null. V2 does not tune that failure away. It changes the statistic.
+## 1. Frozen scientific status
 
-## V2 gate
-Input per context: `phi[S,M,D]`.
+### CONFIRMED
 
-V2 estimates feature-wise member-noise scale from pairwise member differences, centers sources separately inside each member, then forms only **cross-member** products. The resulting replicated source operator has no same-member mean-noise square:
+- CTT M1 wind-conditioned first-passage transport model is the frozen positive transport premise.
+- Gate V2 repaired the finite-member self-noise bug in V1 and passed the real House03 bank `phi[10,206,8,626]` in all 10 contexts.
+- Gate V2 is currently interpreted as a **model-side replicated-completeness premise**, not yet as a runtime reliability selector.
+- Sparse observation support causes real local source-information loss in both the H03 CTT first-passage representation and the recovered House02 201-candidate PMFS hit-probability response representation.
+- Existing PMFS `applyEnsembleEcEdcl()` already materializes candidate × replica responses at actual measurement-event positions before its historical Hellinger normalization. This is the preferred runtime source for `H_t phi`.
 
-`K = sum_{m!=n} C_m^T C_n / (M(M-1)S)`.
+### INVALID / LEGACY
 
-For the pre-registered third source-contrast direction:
+- Gate V1: `INVALID_PROTOCOL` because finite `M=8` member-mean noise could create false source rank.
+- Historical H02 hard-28 primary provenance: `LEGACY_HARD28_PROVENANCE_LOST`.
+  Its summary numbers are development history only. Do not reconstruct cases to reproduce those numbers.
+- `h02_hard28_fast_eval.py` and `bridge_fasttrack_verdict.py` are retained only for legacy artifact compatibility. They are **not** the current V3 H02 entrypoint.
 
-- `alpha_cf = sqrt(max(lambda_3,0))` — replicated absolute contrast amplitude after nuisance scaling;
-- `gamma_cf = sqrt(max(lambda_3,0)/max(lambda_1,eps))` — relative conditioning;
-- `p_signflip` — exact member-level sign-flip null. With M=8 there are 128 unique patterns and the smallest possible p-value is 1/128 = 0.0078125.
+### CURRENTLY TESTING
 
-Primary V2 screen is frozen at `rank_k=3`, `gamma_min=0.05`, `p_max=0.01`. There is **no alpha threshold calibration** in V2.
+V3 asks a different question from global Gate V2:
 
-## Member semantics are binding
+> Given only the observations actually collected so far, what physical source resolution is currently supported?
 
-Before real data evaluation, declare exactly one:
+The central runtime object is
 
-- `exchangeable_realizations`: independently sampled/exchangeable transport realizations around one nuisance-generating process. Only this permits inferential PASS.
-- `fixed_nuisance_design`: deterministic support points / parameter grid / hand-selected transport variants. V2 will return `inferential_valid=False` and refuse source release. A separate robust-set protocol is required.
+`z[s,m,e] = H_e phi[s,m]`,
 
-Do not guess this field from filenames.
+where `H_e` restricts each candidate/member predictive response to causally available measurement support.
 
-## Commands
+## 2. Shared V3 mathematics
+
+All new V3 scripts should import:
+
+`v3_math.py`
+
+It owns the canonical implementations of:
+
+1. exact physical-coordinate quotient of candidate IDs;
+2. full pair-difference transport-member covariance `Sigma_tr`;
+3. Moore-Penrose nuisance precision `Sigma_tr^+`;
+4. Delaunay physical-source neighbourhoods;
+5. cross-member 2-D local tangent information
+
+   `F_s = sum_{m!=n} B_{s,m} Sigma_tr^+ B_{s,n}^T / [M(M-1)]`;
+
+6. replicated hard-negative pair separation;
+7. ACI/data-assimilation-inspired local uncertainty-reduction diagnostics.
+
+The full-covariance pseudoinverse replaces the earlier V3 diagnostic use of diagonal V2 whitening because it is invariant to exact feature duplication and orthogonal feature re-expression.
+
+Run before any V3 experiment:
 
 ```bash
-git checkout research/cg-pc-ctt-gate-v2
 cd experiments/cg_pc_ctt
-python3 selftest.py
-
-# Then locate and qualify the actual M1 bank; do not use ME-ACI V10 evidence as a substitute.
-python3 find_m1_bank.py /path/to/search/root --out /tmp/m1_bank_candidates.json
-python3 qualify_m1_bank.py /path/to/m1_context_ensemble.npz
-
-# Only after SELFTEST V2 PASS + bank qualification + exchangeable member semantics:
-python3 run_gate_eval.py \
-  --npz /path/to/m1_context_ensemble.npz \
-  --out /tmp/cg_pc_ctt_gate_v2.csv \
-  --member-semantics exchangeable_realizations
+python3 selftest_v3_math.py
 ```
 
-Read `docs/CODEX_CG_PC_CTT_PROTOCOL_V2_20260827.md` before any H03/H02 evaluation. No 300 s closed-loop run is authorized by this branch until the V2 offline protocol reaches GO.
+Expected:
+
+`CG_PC_CTT_V3_MATH_SELFTEST PASS`
+
+## 3. H02 replacement challenge — current path
+
+The lost historical hard-28 is not a blocker anymore.
+
+Current challenge:
+
+`H02_RECONSTRUCTED_CHALLENGE_V1`
+
+Read first:
+
+`docs/H02_LEGACY_HARD28_PROVENANCE_LOSS_AND_REPLACEMENT_20260827.md`
+
+Before generating any new truth/margin/bridge outcome, freeze all structurally eligible House02 contexts:
+
+```bash
+python3 freeze_h02_reconstructed_context_manifest.py \
+  /path/to/H02/search/root1 /path/to/H02/search/root2 \
+  --carrier-manifest /path/to/v12_carrier_manifest.csv \
+  --out-csv /tmp/H02_RECONSTRUCTED_CONTEXTS.csv \
+  --out-json /tmp/H02_RECONSTRUCTED_CONTEXTS.json
+```
+
+Then rebuild all frozen contexts on the frozen 201-coordinate geometry grid under the declared CTT V13 truth-free member contract.
+
+Final H02 replacement verdict uses:
+
+```bash
+python3 h02_reconstructed_challenge_verdict.py \
+  H02_RECONSTRUCTED_CASE_RESULTS.csv \
+  --audit-json H02_RECONSTRUCTED_AUDIT.json \
+  --out H02_RECONSTRUCTED_VERDICT.json
+```
+
+The replacement challenge does **not** require exactly 28 cases. Frozen minima are at least 18 eligible atoms and at least 3 independent run/seed clusters.
+
+## 4. Observation-conditioned V3 components
+
+### Physical/observation resolution
+
+- `observation_quotient_gate.py` — observational equivalence classes / local pair resolution prototype.
+- `local_tangent_information.py` — 2-D physical source tangent-information diagnostic.
+- `local_pair_audit.py` — candidate aliases and hard-negative pair audit.
+- `qualify_observation_support_contract.py` — verifies feature-space geometry needed to materialize `H_e`.
+
+### Sparse sensor outcome
+
+- `block_dynamic_marker.py` — fixed within-stop dynamic outcome marker from repeated StopAndMeasure concentration samples.
+
+### Bridge/data contract
+
+- `qualify_bridge_causal_contract.py` — rejects primary causal `R` features that contain source-downstream gas/hit/concentration/sensor-state information.
+
+Primary causal roles:
+
+- `R`: source-independent wind / pose / action / map context;
+- `Z(S)`: candidate-dependent transport/predictive physics proxy;
+- `Y`: observed gas/sensor block outcome.
+
+No script may claim a general proximal-identification theorem from this finite-dimensional operational bridge alone.
+
+## 5. Closed-loop handoff
+
+The already prepared confirmatory matrix remains unchanged:
+
+`3 Houses x 10 seeds x OFF/ON = 60 runs`.
+
+V3/H02 offline qualification is only a falsification gate before spending that experiment budget.
+
+Do not change House/seed-specific parameters after H02 manifest freeze. If `H02_RECONSTRUCTED_CHALLENGE_V1` passes the frozen criteria, hand off to the existing multi-seed runner in:
+
+`closed_loop/cg_pc_ctt/`.
+
+Primary final endpoint remains PMFS `ExpectedValue(sourceProbability,0.05)` localization error with the previously frozen 30-pair aggregate criteria.
+
+## 6. Theory map
+
+Primary V3 derivation:
+
+`docs/CG_PC_CTT_V3_OBSERVATION_QUOTIENT_DERIVATION_20260827.md`
+
+Supporting diagnostics and design notes:
+
+- `docs/CG_PC_CTT_V3_SPARSE_TANGENT_DIAGNOSTIC_20260827.md`
+- `docs/CG_PC_CTT_V3_CROSS_REPRESENTATION_AND_RUNTIME_REUSE_20260827.md`
+- `docs/CG_PC_CTT_V3_GEOMETRY_INFORMATION_ADDENDUM_20260827.md`
+- `docs/CG_PC_CTT_V3_FAILURE_PREMORTEM_20260827.md`
+- `docs/H02_LEGACY_HARD28_PROVENANCE_LOSS_AND_REPLACEMENT_20260827.md`
+
+Binding rule: **no outcome-fitted threshold, no House-specific tuning, no source truth in runtime objects, and no unvisited forward-field support counted as current localization evidence.**
