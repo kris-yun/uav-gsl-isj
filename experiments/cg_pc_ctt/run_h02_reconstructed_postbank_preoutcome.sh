@@ -22,6 +22,10 @@ python3 "$HERE/materialize_h02_reconstructed_ctt_tensor.py" \
   "$BANK_ROOT" "$OUT/H02_RECONSTRUCTED_ANALYSIS_MANIFEST.csv" \
   --out-dir "$OUT/tensors"
 
+python3 "$HERE/audit_h02_reconstructed_transport_resolution.py" \
+  "$OUT/tensors" \
+  --out "$OUT/H02_TRANSPORT_RESOLUTION_AUDIT.json"
+
 python3 "$HERE/discover_h02_observation_event_support.py" \
   "$OUT/H02_RECONSTRUCTED_ANALYSIS_MANIFEST.csv" \
   --out "$OUT/H02_EVENT_SUPPORT_DISCOVERY.json"
@@ -30,6 +34,7 @@ sha256sum \
   "$OUT/H02_RECONSTRUCTED_ANALYSIS_MANIFEST.csv" \
   "$OUT/H02_RECONSTRUCTED_ANALYSIS_CONTRACT.json" \
   "$OUT/tensors/MANIFEST.json" \
+  "$OUT/H02_TRANSPORT_RESOLUTION_AUDIT.json" \
   "$OUT/H02_EVENT_SUPPORT_DISCOVERY.json" \
   > "$OUT/SHA256SUMS.txt"
 
