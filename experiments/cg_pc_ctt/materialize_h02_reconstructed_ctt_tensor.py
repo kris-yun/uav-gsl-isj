@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse,csv,hashlib,json
 from pathlib import Path
 import numpy as np
-from ctt_bank_io import load_bank_first_hits
+from ctt_bank_io import load_bank_trace_fields
 
 def sha256(path:Path):
     h=hashlib.sha256()
@@ -22,13 +22,19 @@ def main():
     for r in rr:
         case=r['case_id']; matches=sorted((a.bank_root/'banks').glob(f'{case}_*'))
         if len(matches)!=1: raise SystemExit(f'{case}: bank dir count {len(matches)}')
-        phi,cxy,qxy,free_idx,contract=load_bank_first_hits(matches[0])
+        first,freq,cxy,qxy,free_idx,contract=load_bank_trace_fields(matches[0])
         out=a.out_dir/f'{case}.npz'
-        np.savez_compressed(out, first_hit=phi, candidate_xy=cxy, query_xy=qxy, query_cell_index=free_idx,
+        np.savez_compressed(out, first_hit=first, hit_frequency=freq,
+            candidate_xy=cxy, query_xy=qxy, query_cell_index=free_idx,
             case_id=np.asarray(case), cluster_id=np.asarray(r['cluster_id']), seed=np.asarray(r['seed']),
             run_uuid=np.asarray(r['run_uuid']), source_update_id=np.asarray(int(r['source_update_id'])))
-        summary.append({'case_id':case,'cluster_id':r['cluster_id'],'shape':list(phi.shape),'npz':str(out),'sha256':sha256(out)})
-    payload={'contract':'H02_RECONSTRUCTED_CTT_TENSOR_V1','truth_used':False,'cases':len(summary),'items':summary}
+        summary.append({'case_id':case,'cluster_id':r['cluster_id'],'shape':list(first.shape),
+            'contains':['first_hit','hit_frequency','candidate_xy','query_xy','query_cell_index'],
+            'npz':str(out),'sha256':sha256(out)})
+    payload={'contract':'H02_RECONSTRUCTED_CTT_TENSOR_V2','truth_used':False,'cases':len(summary),
+      'first_hit_semantics':'native first occupied recording bin; never=200',
+      'hit_frequency_semantics':'exact native PMFS cumulative hitMap reconstructed from CTT occupancyWords; mean occupied over 200 record steps',
+      'items':summary}
     (a.out_dir/'MANIFEST.json').write_text(json.dumps(payload,indent=2),encoding='utf-8')
     print(json.dumps({'contract':payload['contract'],'cases':len(summary),'shapes':sorted({tuple(x['shape']) for x in summary})},indent=2))
 if __name__=='__main__': main()
