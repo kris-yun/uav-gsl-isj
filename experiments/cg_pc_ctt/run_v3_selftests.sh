@@ -8,6 +8,7 @@ python3 -m py_compile \
   v3_math.py \
   v3_adequacy.py \
   v3_bernoulli_adequacy.py \
+  v3_direct_runtime_reference.py \
   ctt_bank_io.py \
   selftest_ctt_bank_io.py \
   materialize_h02_reconstructed_ctt_tensor.py \
@@ -19,6 +20,7 @@ python3 -m py_compile \
   selftest_v3_math.py \
   selftest_v3_adequacy.py \
   selftest_v3_bernoulli_adequacy.py \
+  selftest_v3_direct_runtime.py \
   observation_quotient_gate.py \
   local_tangent_information.py \
   local_pair_audit_v3.py \
@@ -36,6 +38,7 @@ python3 selftest_ctt_bank_io.py
 python3 selftest_v3_math.py
 python3 selftest_v3_adequacy.py
 python3 selftest_v3_bernoulli_adequacy.py
+python3 selftest_v3_direct_runtime.py
 python3 "$ROOT/closed_loop/cg_pc_ctt/selftest_v3_quotient_posterior.py"
 
 echo "CG_PC_CTT_V3_STATIC_AND_MATH_SELFTEST PASS"
