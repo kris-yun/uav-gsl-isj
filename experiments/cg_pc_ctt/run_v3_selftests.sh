@@ -10,6 +10,7 @@ python3 -m py_compile \
   observation_quotient_gate.py \
   local_tangent_information.py \
   local_pair_audit_v3.py \
+  observation_adequacy.py \
   block_dynamic_marker.py \
   qualify_bridge_causal_contract.py \
   qualify_observation_support_contract.py \
