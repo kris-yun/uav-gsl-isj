@@ -55,6 +55,30 @@ The qualitative conclusion therefore survives the stronger nuisance metric:
 
 At full support every one of the 201 physical source positions has positive replicated second-direction information.
 
+## Real-data representation invariance stress
+
+A fixed 32-cell slice of the real V12 bank was used to test whether the new metric counts encoding redundancy as physical information.
+
+### Exact feature duplication
+
+Eight of the 32 response features were duplicated five times each. The transformed representation therefore contained many exact copies of already-existing information.
+
+Across six spread-out physical source candidates, the maximum absolute change in the 2x2 local tangent matrix was approximately
+
+`1.14e-13`.
+
+Thus duplicated feature columns do not create extra V3 local source information beyond numerical roundoff.
+
+### Orthogonal feature re-expression
+
+The same 32-dimensional response slice was multiplied by a fixed random orthogonal matrix. Across the same candidate set, the maximum absolute change in the local tangent matrix was approximately
+
+`1.42e-13`.
+
+Thus the metric is effectively invariant to an orthogonal change of response basis.
+
+These tests address a known weakness of diagonal whitening: V3 information should describe the physical inverse problem, not how many times a response coordinate is copied or which orthogonal basis is used to express it.
+
 ## Evidence-version consequence
 
 The earlier diagonal-whitening H03/V12 sparse-support numbers remain useful as historical diagnostics but are not the final V3 metric values.
