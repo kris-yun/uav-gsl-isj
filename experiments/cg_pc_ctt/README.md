@@ -1,69 +1,133 @@
-# CG-PC-CTT research entrypoint — V3 observation-conditioned resolution
+# CG-PC-CTT V3 research entrypoint — direct closed-loop path
 
 Current branch: `research/cg-pc-ctt-v3-observation-quotient-theory`  
-Status: **RESEARCH / H02 replacement challenge pending / no paper-level GO yet**.
+Status: **RESEARCH / V3-ORR direct closed-loop integration authorized / no paper-level GO yet**.
 
-This directory contains several historical protocol layers. Do not treat every file as a current entrypoint.
+## 0. Current execution path — read this first
+
+The verified House02 reconstructed bank is now a completed development/diagnostic asset. Do **not** wait for more H02 data before the next performance experiment.
+
+Frozen state:
+
+- `H02_RECONSTRUCTED_CHALLENGE_V1_BANK_VERIFY_PASS`;
+- 51 outcome-blind House02 contexts;
+- 201 unique physical source carriers;
+- 8 keyed transport members;
+- 82,008 verified CTT V13 traces;
+- historical hard-28 remains `LEGACY_HARD28_PROVENANCE_LOST` and is not reconstructed.
+
+The current ON-arm engineering contract is **V3 Observation-Resolved Reversible Update (V3-ORR)**.
+
+Read and execute:
+
+`docs/CODEX_V3_ORR_INTEGRATE_AND_RUN_20260827.md`
+
+Binding next steps:
+
+1. run `bash experiments/cg_pc_ctt/run_v3_selftests.sh`;
+2. integrate `ObservationResolvedV3.hpp` into `Simulations.cpp` at the existing `rawProbabilities[source][member][completed_event]` branch point, before historical EC-ECDL Hellinger/eigenchannel processing;
+3. add explicit `pfdiMode=v3_orr`;
+4. build an isolated binary;
+5. run infrastructure smoke only on House02 seed `314159`; do not tune using localization outcome;
+6. freeze git SHA, binary SHA and launch SHA;
+7. launch `House01/House02/House03 x seeds 0..9 x OFF/ON = 60 arms`, `TIMEOUT_SEC=300`, `STEPS_SOURCE_UPDATE=3`;
+8. aggregate with `closed_loop/cg_pc_ctt/aggregate_multiseed.py`.
+
+Do **not** insert another hard-28 recovery, bridge panel, post-bank pre-outcome sweep, or small-seed method-selection stage before this matrix.
+
+`run_h02_reconstructed_postbank_preoutcome.sh` is retained only as an optional archival diagnostic and now refuses to run unless `ALLOW_LEGACY_PREOUTCOME_DIAGNOSTIC=1` is explicitly set.
 
 ## 1. Frozen scientific status
 
 ### CONFIRMED
 
-- CTT M1 wind-conditioned first-passage transport model is the frozen positive transport premise.
-- Gate V2 repaired the finite-member self-noise bug in V1 and passed the real House03 bank `phi[10,206,8,626]` in all 10 contexts.
-- Gate V2 is currently interpreted as a **model-side replicated-completeness premise**, not yet as a runtime reliability selector.
-- Sparse observation support causes real local source-information loss in both the H03 CTT first-passage representation and the recovered House02 201-candidate PMFS hit-probability response representation.
-- The recovered V12 House02 response bank has been replayed with the canonical V3 full-covariance nuisance metric; the sparse 2-D rank-loss phenomenon persists.
-- Existing PMFS `applyEnsembleEcEdcl()` already materializes candidate × replica responses at actual measurement-event positions before its historical Hellinger normalization. This is the preferred runtime source for `H_t phi`.
+- CTT M1 wind-conditioned first-passage transport is the positive transport premise.
+- Gate V2 repaired V1 finite-member self-noise and passed the real H03 bank `phi[10,206,8,626]` in all 10 contexts.
+- Gate V2 is interpreted as a **model-side replicated-identifiability/completeness premise**, not a runtime reliability selector.
+- Sparse actual observation support causes local source-information rank loss in both H03 CTT first-passage responses and the recovered H02 PMFS hit-probability response family.
+- Full-covariance V3 mathematics removes the earlier feature-duplication sensitivity of diagonal whitening and aligns local information with the 2-D physical source parameter `(x,y)`.
+- Existing PMFS `applyEnsembleEcEdcl()` already materializes candidate × keyed-member predictive probabilities at the actual completed-event positions before historical Hellinger normalization. V3-ORR reuses this runtime object rather than introducing a second simulator.
 
-### INVALID / LEGACY
+### LEGACY / NOT A CURRENT BLOCKER
 
-- Gate V1: `INVALID_PROTOCOL` because finite `M=8` member-mean noise could create false source rank.
+- Gate V1: `INVALID_PROTOCOL`.
 - Historical H02 hard-28 primary provenance: `LEGACY_HARD28_PROVENANCE_LOST`.
-  Its summary numbers are development history only. Do not reconstruct cases to reproduce those numbers.
-- `h02_hard28_fast_eval.py` and `bridge_fasttrack_verdict.py` are retained only for legacy artifact compatibility. They are **not** the current V3 H02 entrypoint.
-- `local_pair_audit.py` is the earlier diagonal-whitening diagnostic. Use `local_pair_audit_v3.py` for current V3 full-covariance diagnostics.
+- `h02_hard28_fast_eval.py`, `bridge_fasttrack_verdict.py`, and `run_h02_reconstructed_postbank_preoutcome.sh` are not current closed-loop prerequisites.
+- The proximal/host-aware bridge remains a mechanistic analysis and possible later extension; it is **not** a prerequisite for the direct V3-ORR closed-loop matrix.
 
-### CURRENTLY TESTING
+## 2. V3-ORR runtime contract
 
-V3 asks a different question from global Gate V2:
+Use only causally available quantities:
 
-> Given only the observations actually collected so far, what physical source resolution is currently supported, and are those observations compatible with the predictive family at all?
+- `rawProbabilities[source][keyed_member][completed_event]`;
+- completed-event hit/miss;
+- stable `block_id`;
+- geometry-only persistent-carrier rectangles;
+- fixed geometry/design prior.
 
-The central runtime object is
+Forbidden online inputs include source truth, future observations, same-window native PMFS posterior/rank as V3 evidence, legacy `native_score`, oracle wind/plume/config IDs, and House/seed-specific fitted parameters.
 
-`z[s,m,e] = H_e phi[s,m]`,
+### Member split
 
-where `H_e` restricts each candidate/member predictive response to causally available measurement support.
+Eight keyed members are fixed as:
 
-## 2. Shared V3 mathematics
+- members `0..3`: observation-resolution calibration only;
+- members `4..7`: outcome likelihood scoring only.
 
-All new V3 source-resolution scripts should import:
+### Observation resolution
 
-`v3_math.py`
+On actual completed-event support, calibration members define the full pair-difference nuisance covariance `Sigma_tr` and numerical Moore-Penrose inverse `Sigma_tr^+`.
 
-It owns the canonical implementations of:
+For each adjacent physical source pair, replicated cross-member source separation and leave-one-member-out stability decide whether that local boundary is resolved. Ordinary repeated online sign-flip p-values are not used.
 
-1. exact physical-coordinate quotient of candidate IDs;
-2. full pair-difference transport-member covariance `Sigma_tr`;
-3. Moore-Penrose nuisance precision `Sigma_tr^+`;
-4. Delaunay physical-source neighbourhoods;
-5. cross-member 2-D local tangent information
+Unresolved local edges form connected components called **resolution cells**. This is a geometric resolution statement, not a claim that every candidate inside the component has an identical statistical distribution.
 
-   `F_s = sum_{m!=n} B_{s,m} Sigma_tr^+ B_{s,n}^T / [M(M-1)]`;
+### Outcome evidence
 
-6. replicated hard-negative pair separation;
-7. ACI/data-assimilation-inspired local uncertainty-reduction diagnostics.
+Scoring members use the proper Bernoulli trajectory likelihood. Events split by stable `block_id % 2` into even/odd reproducibility folds. Each fold needs at least two events and at least one hit and one miss; otherwise V3-ORR abstains.
 
-The full-covariance pseudoinverse replaces the earlier V3 diagnostic use of diagonal V2 whitening because exact duplicated feature embeddings do not create extra Mahalanobis information.
+Candidate evidence is projected to resolution cells before tie-safe normal ranking.
 
-Observation/model compatibility is deliberately separate:
+### Reversible posterior
 
-`v3_adequacy.py`
+Fold scores combine as
 
-It reports scale-free candidate-family support diagnostics, including residual distance relative to member spread and the fraction of observation residual lying in the empirical member-variation span. No adequacy threshold is currently frozen.
+`g(s) = [z_even(s) + z_odd(s)] / sqrt(2)`.
 
-Run before any V3 experiment:
+Project `g` again to the current resolution cells, then compute
+
+`q(s) proportional q0(s) exp(g(s))`,
+
+where `q0` is the fixed geometry/design prior.
+
+The posterior is recomputed from the current completed-event set and fixed prior. It is not recursively multiplied by the previous V3 posterior, preventing stale-evidence double counting.
+
+On ABSTAIN, do not inject the same-window Classic PMFS posterior as V3 evidence.
+
+## 3. Authoritative code
+
+Shared research mathematics:
+
+- `v3_math.py`
+- `v3_adequacy.py`
+- `v3_bernoulli_adequacy.py`
+
+Direct runtime reference/parity:
+
+- `v3_direct_runtime_reference.py`
+- `selftest_v3_direct_runtime.py`
+- `ros2_package/src/gsl_server/algorithms/PMFS/internal/ObservationResolvedV3.hpp`
+
+Posterior reference:
+
+- `closed_loop/cg_pc_ctt/v3_quotient_rank_posterior.py`
+- `closed_loop/cg_pc_ctt/selftest_v3_quotient_posterior.py`
+
+CTT archive/diagnostic tools remain available, including the exact CTT bitset decoder and compact tensor materializer, but they are not gating the next closed-loop run.
+
+## 4. Selftests
+
+Run before integration/build:
 
 ```bash
 cd experiments/cg_pc_ctt
@@ -74,109 +138,33 @@ Expected:
 
 `CG_PC_CTT_V3_STATIC_AND_MATH_SELFTEST PASS`
 
-## 3. H02 replacement challenge — current path
+## 5. Confirmatory closed-loop matrix
 
-The lost historical hard-28 is not a blocker anymore.
+OFF: unmodified Classic PMFS.  
+ON: V3-ORR.
 
-Current challenge:
+Frozen matrix:
 
-`H02_RECONSTRUCTED_CHALLENGE_V1`
+`3 Houses x 10 seeds x OFF/ON = 30 matched pairs / 60 arms`.
 
-Read first:
+Frozen endpoint and success criteria remain:
 
-`docs/H02_LEGACY_HARD28_PROVENANCE_LOSS_AND_REPLACEMENT_20260827.md`
+1. 30/30 matched pairs valid;
+2. pooled PMFS `ExpectedValue(sourceProbability,0.05)` error reduction >=10%;
+3. one-sided paired sign test `p<=0.05`;
+4. no House pooled mean degrades by >5%;
+5. zero false-confident-collapse flags.
 
-Before generating any new truth/margin/bridge outcome, freeze all structurally eligible House02 contexts:
+No House-specific, seed-specific, threshold, temperature, blend-weight or bridge-weight tuning after the matrix begins.
 
-```bash
-python3 freeze_h02_reconstructed_context_manifest.py \
-  /path/to/H02/search/root1 /path/to/H02/search/root2 \
-  --carrier-manifest /path/to/v12_carrier_manifest.csv \
-  --out-csv /tmp/H02_RECONSTRUCTED_CONTEXTS.csv \
-  --out-json /tmp/H02_RECONSTRUCTED_CONTEXTS.json
-```
+## 6. Theory / protocol documents
 
-Then rebuild all frozen contexts on the frozen 201-coordinate geometry grid under the declared CTT V13 truth-free member contract.
+Primary current documents:
 
-Final H02 replacement verdict uses:
-
-```bash
-python3 h02_reconstructed_challenge_verdict.py \
-  H02_RECONSTRUCTED_CASE_RESULTS.csv \
-  --audit-json H02_RECONSTRUCTED_AUDIT.json \
-  --out H02_RECONSTRUCTED_VERDICT.json
-```
-
-The replacement challenge does **not** require exactly 28 cases. Frozen minima are at least 18 eligible atoms and at least 3 independent run/seed clusters.
-
-## 4. Observation-conditioned V3 components
-
-### Physical/observation resolution
-
-- `observation_quotient_gate.py` — observational equivalence classes / local pair resolution prototype using shared full-covariance mathematics.
-- `local_tangent_information.py` — 2-D physical source tangent-information diagnostic using shared full-covariance mathematics.
-- `local_pair_audit_v3.py` — current full-covariance hard-negative pair audit.
-- `qualify_observation_support_contract.py` — verifies feature-space geometry needed to materialize `H_e`.
-- `v12_response_bank_tangent_audit.py` — cross-representation replay on the frozen V12 PMFS hit-probability bank; never CTT hard-28 evidence.
-
-### Observation adequacy
-
-- `v3_adequacy.py` — candidate-family predictive support diagnostics.
-- `observation_adequacy.py` — CLI for `prediction[S,M,E] + observed[E]` or batched equivalents.
-- `selftest_v3_adequacy.py` — synthetic shared-systematic-bias regression.
-
-Replicated source structure and observation adequacy are separate premises: a family may be highly reproducible and still be jointly wrong.
-
-### Sparse sensor outcome
-
-- `block_dynamic_marker.py` — fixed within-stop dynamic outcome marker from repeated StopAndMeasure concentration samples.
-
-### Bridge/data contract
-
-- `qualify_bridge_causal_contract.py` — rejects primary causal `R` features that contain source-downstream gas/hit/concentration/sensor-state information.
-
-Primary causal roles:
-
-- `R`: source-independent wind / pose / action / map context;
-- `Z(S)`: candidate-dependent transport/predictive physics proxy;
-- `Y`: observed gas/sensor block outcome.
-
-No script may claim a general proximal-identification theorem from this finite-dimensional operational bridge alone.
-
-## 5. Sequential evidence boundary
-
-Ordinary member sign-flip `p` values are frozen **offline diagnostics**. Recomputing an unadjusted `p<=0.01` at every online source update and releasing on the first crossing is not authorized because repeated peeking creates optional-stopping risk.
-
-Current low-risk runtime direction is deterministic physical resolution + observation adequacy + fold-consistent ordering, while inferential p-values remain in frozen offline qualification unless an anytime-valid evidence process is explicitly derived and self-tested.
-
-## 6. Closed-loop handoff
-
-The already prepared confirmatory matrix remains unchanged:
-
-`3 Houses x 10 seeds x OFF/ON = 60 runs`.
-
-V3/H02 offline qualification is only a falsification gate before spending that experiment budget.
-
-Do not change House/seed-specific parameters after H02 manifest freeze. If `H02_RECONSTRUCTED_CHALLENGE_V1` passes the frozen criteria, hand off to the existing multi-seed runner in:
-
-`closed_loop/cg_pc_ctt/`.
-
-Primary final endpoint remains PMFS `ExpectedValue(sourceProbability,0.05)` localization error with the previously frozen 30-pair aggregate criteria.
-
-## 7. Theory map
-
-Primary V3 derivation:
-
-`docs/CG_PC_CTT_V3_OBSERVATION_QUOTIENT_DERIVATION_20260827.md`
-
-Supporting diagnostics and design notes:
-
+- `docs/CG_PC_CTT_V3_DIRECT_CLOSED_LOOP_FREEZE_20260827.md`
+- `docs/CODEX_V3_ORR_INTEGRATE_AND_RUN_20260827.md`
+- `docs/CG_PC_CTT_V3_OBSERVATION_QUOTIENT_DERIVATION_20260827.md`
 - `docs/CG_PC_CTT_V3_ASSIMILATIVE_RESOLUTION_AND_SEQUENTIAL_VALIDITY_20260827.md`
-- `docs/CG_PC_CTT_V3_FULL_COVARIANCE_REPLAY_20260827.md`
-- `docs/CG_PC_CTT_V3_SPARSE_TANGENT_DIAGNOSTIC_20260827.md`
-- `docs/CG_PC_CTT_V3_CROSS_REPRESENTATION_AND_RUNTIME_REUSE_20260827.md`
-- `docs/CG_PC_CTT_V3_GEOMETRY_INFORMATION_ADDENDUM_20260827.md`
 - `docs/CG_PC_CTT_V3_FAILURE_PREMORTEM_20260827.md`
-- `docs/H02_LEGACY_HARD28_PROVENANCE_LOSS_AND_REPLACEMENT_20260827.md`
 
-Binding rule: **no outcome-fitted threshold, no House-specific tuning, no source truth in runtime objects, no unvisited forward-field support counted as current localization evidence, and no repeated unadjusted online p-value release.**
+Binding rule: **resolution must be earned by causally available observations; no truth leakage, no unvisited forward-field support counted as current evidence, no outcome-fitted online threshold, and no repeated unadjusted online p-value release.**
