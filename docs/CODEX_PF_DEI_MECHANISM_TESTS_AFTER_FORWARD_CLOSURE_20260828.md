@@ -2,72 +2,21 @@
 
 Date: 2026-08-28
 
-Precondition: `PF_DEI_FORWARD_OPERATOR_CLOSED` must already hold.
+Status: **SUPERSEDED — DO NOT EXECUTE**
 
-This task does **not** authorize H01/H02/H03 source-truth inspection, C++, Active Probe or the 60-arm matrix.
+The sensor-history locality falsification in this task has already been independently reproduced on the 30-run audit:
 
-Read:
+- 484 inter-stop transitions;
+- 102/484 history-only lower-bound qualifying transitions;
+- H01/H02/H03 = 0/37/65;
+- median inter-stop gap = sensor tau = 1.2 s.
 
-- `docs/PF_DEI_FAILURE_MECHANISM_DERIVATION_20260828.md`
-- `docs/CG_PC_CTT_PF_DEI_SENSOR_GENERATIVE_CHAIN_FREEZE_20260828.md`
+More importantly, the closed frozen sensor is deterministic, zero-noise, symmetric (`tau_rise=tau_recovery=1.2 s`) and has an exact two-sample dead time at the 0.2-s cadence.  Therefore its measured sequence is algebraically deconvolvable to the corresponding physical concentration sequence on the recoverable sample grid.
 
-## M1 — sensor-history counterfactual
+The old interpretation `A ideal adequate, B native inadequate -> SENSOR_MEMORY_DOMINANT` is therefore too coarse.  A deterministic invertible sensor does not intrinsically destroy source information in a correct full-sequence model; the established failure is local/context-wise **sensor-state misattribution / trajectory-dependent observation aliasing**.  Any A1/A2 difference must be tested with a truly matched ideal observation sequence, obtained from the source-proven inverse, and a correctly persistent native forward path.
 
-Generate at least one controlled synthetic scenario with two history arms:
+The sole current task is:
 
-- identical chosen source;
-- identical transport seed/realization;
-- identical robot pose and physical concentration sequence during the evaluation window;
-- different pre-evaluation exposure histories;
-- native run-persistent sensor state, no manual reset at the evaluation boundary.
+`docs/CODEX_PF_DEI_EXACT_DECONVOLUTION_MATCHED_REPLAY_20260828.md`
 
-Export CSV columns required by:
-
-`experiments/cg_pc_ctt/pf_dei_sensor_history_counterfactual.py`
-
-Run its selftest first, then the synthetic result.
-
-If measured ppm or the final block event changes despite an identical evaluation concentration suffix, record:
-
-`SENSOR_HISTORY_LOCALITY_FALSIFIED = YES`.
-
-This is a mechanism result, not a performance result.
-
-## M2 — ideal versus native sensor matched ablation
-
-Using exactly the same candidate-source physical concentration traces and nuisance draws, compute truth-blind source evidence under two observation operators:
-
-A. ideal sensor: direct physical concentration sampled/averaged according to the PMFS block schedule, with no dynamic memory;
-B. native sensor: exact persistent sensor dynamics and native measured ppm.
-
-Do not tune thresholds from H01/H02/H03 localization outcomes.
-
-Report the same cross-context transfer and absolute-adequacy diagnostics for A and B.
-
-Interpretation is frozen:
-
-- A substantially recovers while B fails -> sensor dynamics/history are a dominant blocker;
-- both fail -> transport/source forward family remains inadequate;
-- B recovers while the historical occupancy proxy fails -> observation proxy was dominant.
-
-## M3 — transport-family sufficiency test
-
-Only if the native sensor path B remains inadequate, compare the frozen finite transport family with a broader, source-independent physics-randomized GADEN nuisance distribution while keeping source candidates, poses, timestamps and sensor model fixed.
-
-Do not use localization error to choose randomization ranges. Ranges must come from simulator/config physical provenance or pre-frozen uncertainty.
-
-If only the broader physics-randomized family restores predictive adequacy, record:
-
-`FINITE_TRANSPORT_FAMILY_INSUFFICIENT = YES`.
-
-## Required verdict
-
-Return exactly one provisional mechanism label:
-
-- `OBSERVATION_PROXY_DOMINANT`
-- `SENSOR_MEMORY_DOMINANT`
-- `TRANSPORT_FAMILY_DOMINANT`
-- `MIXED_OBSERVATION_SENSOR_TRANSPORT`
-- `FORWARD_OPERATOR_STILL_UNRESOLVED`
-
-Do not choose the label from localization error. The label must follow the matched mechanism tests above.
+Do not execute the old M2/M3 interpretation from this file.
