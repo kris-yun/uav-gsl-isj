@@ -22,7 +22,7 @@ The old V2 representative-centroid invalid counts are retained only as a diagnos
 
 The V3 math/static selftests passed on the VM, including bank I/O, quotient posterior, adequacy, Bernoulli adequacy, and direct-runtime contracts (`CG_PC_CTT_V3_STATIC_AND_MATH_SELFTEST PASS`).
 
-A native trace/sensor smoke also passed on the preserved native query path: two legal placements in one H01 carrier produced distinct placement-conditioned traces, repeated seeded execution was exactly reproducible, and the existing 50-point native-query plus run-persistent sensor parity contract returned `PF_DEI_SYNTHETIC_END_TO_END_PARITY_PASS` (physical/query/sensor/block differences all zero; persistence delta 10.0682 ppm). Contract-valid `[source=2, member=2, T=30]` and `[source=2, member=2, T=30]` batch banks were materialized and validated (`bank_sha256=14967d...` and `8917dcea89222ef9830810a5118bfdfa200e2102ca610ac1ec74dac51794826d`). This is smoke-level closure only; the full V3 carrier×member bank has not yet been generated.
+A native trace/sensor smoke also passed on the preserved native query path: two legal placements in one H01 carrier produced distinct placement-conditioned traces, repeated seeded execution was exactly reproducible, and the existing 50-point native-query plus run-persistent sensor parity contract returned `PF_DEI_SYNTHETIC_END_TO_END_PARITY_PASS` (physical/query/sensor/block differences all zero; persistence delta 10.0682 ppm). Two contract-valid `[source=2, member=2, T=30]` smoke banks were materialized and validated (`bank_sha256=14967a8bbaa109c7a98ab5354e3a370df3df86b6445e92ee6befe4814d08bbb6` and `8917dcea89222ef9830810a5118bfdfa200e2102ca610ac1ec74dac51794826d`). This is smoke-level closure only; the full V3 carrier×member bank has not yet been generated.
 
 ## RNG hook gate
 
@@ -31,13 +31,13 @@ An isolated GADEN build was compared with an unmodified reference build. The hoo
 | House | default reference vs patched max abs diff | seed 101 vs 211 max abs diff | seed 101 vs 211 differing queries |
 |---|---:|---:|---:|
 | H01 | 0.0 | 7.3534469 | 290/3000 |
-| H02 | 0.0 | 0.0* | 0/3000* |
+| H02 | 0.0 | 3.9132061 | 58/3000 |
 | H03 | 0.0 | 8.6618691 | 290/3000 |
 
-`*` H02's selected fast wind input is numerically invalid at the tested cell (a non-finite advection value), so the simulator truncates the filament path before stochastic transport can affect concentration. This is a test-input failure, not evidence of seed ineffectiveness; H02 must be rerun with a supported native wind field before declaring the RNG gate. The H01/H03 runs use supported native wind fields and pass seed-effect.
+The first H02 probe exposed an invalid legacy fast-wind fixture and was excluded. Re-running the frozen comparison on the parity-proven converted House02 native wind field produced a nonzero seed effect while retaining exact default compatibility. Therefore all three Houses pass the RNG control gate.
 
 ## Current stage and stop condition
 
 The current active work has moved past RNG-contract closure. The next contractual stage is the reusable V3 carrier×member native trace generator and its complete smoke evidence. No V3 training, closed-loop smoke, 60-arm, or confirmatory run has started yet.
 
-If supported H02 seed-effect passes, proceed automatically to the V3 native trace generator and subsequent contractual gates. If it fails, terminal state is `PF_DEI_GADEN_RNG_CONTROL_NO_GO`; downstream stages must not be run.
+RNG control is closed. Proceed to the V3 native trace generator and subsequent contractual gates. The next scientific decision is not a localization result: it is whether the fixed candidate-conditioned sequential ratio estimator passes reserved synthetic identification and truth-blind future-predictive qualification.
