@@ -1,0 +1,32 @@
+{
+  "context_state_reset": false,
+  "launch_override_observed": "sensor_model_mode=dynamic; remaining sensor fields use VGR declared defaults",
+  "sampling_cadence_s": 0.2,
+  "sensor_manifest": {
+    "config": {
+      "baseline": 0.0,
+      "dead_time_s": 0.4,
+      "drift_rate_ppm_s": 0.0,
+      "gain": 1.0,
+      "initial_input_ppm": 0.0,
+      "initial_state_ppm": 0.0,
+      "mode": "asymmetric",
+      "noise_std_ppm": 0.0,
+      "saturation_max_ppm": 1000000.0,
+      "saturation_min_ppm": 0.0,
+      "tau_recovery_s": 1.2,
+      "tau_rise_s": 1.2
+    },
+    "delay_interpolation": "causal piecewise-linear sampled-input history",
+    "model_version": "mcos-sensor-v1",
+    "noise_location": "additive after dynamic state, before saturation",
+    "seed": 20260828,
+    "state_transition": "z[k]=exp(-dt/tau_branch)*z[k-1]+(1-exp(-dt/tau_branch))*u_delayed[k]"
+  },
+  "sensor_model_sha256": "423042f94315a35ca83aa929d42a32633d94ea819b8e15639e26039073c549bc",
+  "sensor_model_source": "/home/zyc/ros2_ws/src/vgr_bridge/vgr_bridge/sensor_model.py",
+  "sensor_parameter_sha256": "c0d6ce446ee3172b203147f8f7884b05d55f7f03dcd86d78a83b732dc119aa76",
+  "sensor_state_scope": "run_persistent",
+  "vgr_node_sha256": "4056ff603e6defffc087430acecafe85ebbdeef8e2f70bbc6d828ac800bf3222",
+  "vgr_node_source": "/home/zyc/ros2_ws/src/vgr_bridge/vgr_bridge/vgr_sim_node.py"
+}
