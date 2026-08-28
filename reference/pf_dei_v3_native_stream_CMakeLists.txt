@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.13)
+project(pf_dei_v3_native_stream LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 20)
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(gaden_common REQUIRED)
+
+foreach(target IN ITEMS pf_dei_v3_native_stream pf_dei_v3_native_multistream pf_dei_v3_native_wind_multistream)
+  add_executable(${target} ${target}.cpp)
+  ament_target_dependencies(${target} rclcpp gaden_common)
+  target_link_directories(${target} PRIVATE $ENV{GADEN_BSC_LIB})
+  target_link_options(${target} PRIVATE "-Wl,-rpath-link,$ENV{GADEN_BSC_LIB}")
+endforeach()
+
+install(
+  TARGETS pf_dei_v3_native_stream pf_dei_v3_native_multistream pf_dei_v3_native_wind_multistream
+  DESTINATION bin
+)
