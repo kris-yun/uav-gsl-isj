@@ -22,6 +22,8 @@ The old V2 representative-centroid invalid counts are retained only as a diagnos
 
 The V3 math/static selftests passed on the VM, including bank I/O, quotient posterior, adequacy, Bernoulli adequacy, and direct-runtime contracts (`CG_PC_CTT_V3_STATIC_AND_MATH_SELFTEST PASS`).
 
+A native trace/sensor smoke also passed on the preserved native query path: two legal placements in one H01 carrier produced distinct placement-conditioned traces, repeated seeded execution was exactly reproducible, and the existing 50-point native-query plus run-persistent sensor parity contract returned `PF_DEI_SYNTHETIC_END_TO_END_PARITY_PASS` (physical/query/sensor/block differences all zero; persistence delta 10.0682 ppm). This is a smoke-level closure only; the full V3 carrier×member bank has not yet been generated.
+
 ## RNG hook gate
 
 An isolated GADEN build was compared with an unmodified reference build. The hook is opt-in; with no `GADEN_RNG_SEED`, all 100×30 concentration queries per controlled run were bitwise identical. With the same non-RNG configuration and two frozen non-default seeds (101 and 211), seeded realizations differed in every House tested.
@@ -36,6 +38,6 @@ An isolated GADEN build was compared with an unmodified reference build. The hoo
 
 ## Current stage and stop condition
 
-The current active work is therefore **RNG-contract closure**, not model training or localization. The first probe used an invalid H01 fast-wind fixture; after switching to supported native wind fields, default parity passed exactly and seed effects were observed. The remaining action is one supported H02 seed-effect probe, then freeze the hook/source/binary hashes. No V3 training, closed-loop smoke, 60-arm, or confirmatory run has started yet.
+The current active work has moved past RNG-contract closure. The next contractual stage is the reusable V3 carrier×member native trace generator and its complete smoke evidence. No V3 training, closed-loop smoke, 60-arm, or confirmatory run has started yet.
 
 If supported H02 seed-effect passes, proceed automatically to the V3 native trace generator and subsequent contractual gates. If it fails, terminal state is `PF_DEI_GADEN_RNG_CONTROL_NO_GO`; downstream stages must not be run.
