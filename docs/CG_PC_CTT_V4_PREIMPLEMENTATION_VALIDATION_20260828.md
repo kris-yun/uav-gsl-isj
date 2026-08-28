@@ -1,131 +1,110 @@
-# CG-PC-CTT V4 pre-implementation validation freeze
+# CG-PC-CTT V4 pre-implementation validation — revised science contract
 
 Date: 2026-08-28
-Status: PRE-IMPLEMENTATION VALIDATION COMPLETE; development evidence only
+Status: **REFERENCE REVISED; C++ TEMPORARILY HELD FOR THREE-HOUSE TRUTH-BLIND COVERAGE**
 
-## Decision
+## What remains valid from the earlier validation
 
-The paper-level method remains a three-module causal-spatiotemporal framework:
+The paper-level method remains:
 
-1. **M1 Spatiotemporal Transport Representation**
-2. **M2 Cross-Context Invariant Causal Source Residual**
-3. **M3 Observation-Resolved Minimum Causal Assimilation**
+1. M1 Spatiotemporal Transport Representation;
+2. M2 Cross-Context Invariant Causal Source Residual;
+3. M3 Observation-Resolved Minimum Causal Assimilation.
 
-V3-ORR remains NOT-GO and is not reused as a posterior replacement architecture.
+The archived cross-context response-field analysis still supports the existence of source-stable structure as **offline qualification evidence only**. The global eigenspace is never an online unobserved-field classifier.
 
-## A. Real multi-context invariance evidence
+The physical-stop conclusion also remains binding: eight completed blocks at one physical stop are repeated measurements of one spatial context, not eight independent spatial dimensions.
 
-Using only archived OFF context-bank forward exports from the completed 60-arm package, the intersection across all 50 OFF source-update contexts in each House is:
+M3 stress tests remain valid: the KL/I-projection preserves native conditional shape and returns native PMFS exactly when `beta >= alpha`.
 
-| House | contexts | common sources | common cells | stable modes lambda>1 | source / interaction energy | raw unseen-seed Top1 | stable-space unseen-seed Top1 | raw Top5 | stable Top5 |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| House01 | 50 | 74 | 126 | 20 | 109.55 | 33.65% | 34.19% | 43.51% | 43.78% |
-| House02 | 50 | 64 | 140 | 32 | 94.30 | 58.13% | 61.41% | 69.06% | 71.72% |
-| House03 | 50 | 85 | 136 | 25 | 122.16 | 39.88% | 41.06% | 47.41% | 48.00% |
+## Why the previous C++ authorization is superseded
 
-Split is fixed by seed: train 0..5, validation 6..7, test 8..9. No localization error is used in fitting.
+A pre-translation scientific audit found three blocking defects in the then-final Python reference:
 
-Independent candidate-identity shuffle destruction on the training contexts collapses unseen-seed Top1 to approximately 1.3--1.5%, near chance. Hence the stable source effect is not a candidate-index artifact.
+1. `component_labels` were consumed but never constructed, so calibration members `0..3` were absent from the final executable contract;
+2. held-out scoring restarted the scoring-member mixture, violating coherent transport identity;
+3. the geometry-prior mixture of the same candidate family was not an absolute adequacy screen and accepted a gross shared-misspecification counterexample.
 
-### Interpretation boundary
+During executable repair a fourth implementation defect was found: NumPy advanced indexing in `coherent_source_score()` changed axis order, so the code did not reliably implement "sum stops within member, then marginalize members."
 
-The global generalized eigenspace is **offline qualification evidence**, not an online sparse-observation classifier. Random sparse-support tests show no consistent stable-space advantage for 1--32 cells. V4 therefore must not project an unobserved full field and pretend it was observed. Online source evidence is evaluated only at actual physical stops.
+These are upstream reference defects, not C++ issues. Therefore the older `CODEX_IMPLEMENTATION_AUTHORIZED = YES` is revoked.
 
-## B. Physical-stop unit validated from the 60-arm archive
+## Revised M1 closure
 
-The archived simulator traces and launch parameters show:
+The final reference now contains canonical `build_components(...)`:
 
-- `measurement_block_samples=10`
-- `measurement_settle_samples=0`
-- `maxUpdatesPerStop=8`
+- actual physical stops only;
+- calibration members `0..3` only;
+- persistent source-carrier rectangle adjacency;
+- finite `C_eff = C_tr + (1/4 + eps_T^2)I`;
+- leave-one-calibration-member-out boundary reproducibility;
+- exact geometric aliases forced unresolved;
+- connected components returned as the observation-resolved source quotient.
 
-A physical stop therefore yields eight completed block measurements, each block being an average of ten sensor samples. The eight blocks share the same source/member forward prediction at that position and are not eight independent spatial dimensions.
+No hit outcome enters component construction.
 
-V4 uses one physical stop as one spatial inferential unit. The stop outcome is the eight-block hit fraction `r_j`; the eight blocks have total source-likelihood weight one.
+## Revised M2 closure
 
-## C. H02 response-bank replay qualification
+Training and held-out prediction preserve the joint latent `(source, scoring transport member)`.
 
-The recovered House02 V12 bank has 201 geometry-only source carriers x 8 keyed transport members x 1053 cells, T=200, method seed 20260818 and transport substream 6077111455669390931.
+For held-out stop `h`, component predictive score is the log ratio of joint component evidence with and without `h`, conditioned on the other physical stops. A new uniform scoring-member mixture is forbidden.
 
-Before using it for V4 development replay, it was checked against the archived H02 V3-ORR audits. Across all 37 H02 ON source updates:
+The absolute source-null is now frozen as Jeffreys-Beta prequential Bernoulli prediction:
 
-- event count matched 37/37;
-- RELEASE/ABSTAIN matched 37/37;
-- nuisance rank matched 37/37;
-- resolution-cell count matched about 81.1% exactly;
-- resolved-edge count differed by only about 1.38 edges on average out of 657 local edges.
+`theta ~ Beta(1/2,1/2)`,
 
-It is therefore a high-fidelity **development replay surrogate**, but is not claimed to be the original V3 `rawProbabilities` tensor.
+fit only to training-stop hit fractions in each LOSO fold. The selected source component must beat this source-independent null on every held-out stop as well as not lose to a rival component.
 
-## D. H02 truth-blind M2 safety replay on pure Classic paths
+This deterministic counterexample must now ABSTAIN:
 
-The strict physical-stop LOSO rule is:
+- observed stop outcome `r=1`;
+- selected candidate family predicts `p=0.01`;
+- rival predicts `p=0.005`.
 
-1. calibration members 0..3 define observation-resolved physical source components;
-2. scoring members 4..7 retain member identity across all training stops;
-3. leaving out each physical stop, all training subsets must select one common macro component B;
-4. on a held-out stop, B may not lose to a rival component;
-5. B must beat the source-independent context mixture on that held-out stop;
-6. at least two held-out physical stops must be source-informative;
-7. deleting any one scoring member may not reverse the accepted component.
+## Revised selftest status
 
-On the 50 H02 OFF source-update windows (10 seeds x 5 updates):
+The revised local reference/selftest passes:
 
-- 48 ABSTAIN;
-- 2 ACCEPT;
-- the two ACCEPTs are seed0/update2 and seed9/update4;
-- both accepted components contain the truth-near carrier (truth used only after replay for evaluation);
-- previously dangerous seed1/2/3/7 windows abstain.
+`V4_FINAL_REFERENCE_SCIENCE_CONTRACT PASS`
 
-This is development/post-hoc evidence only. It is a safety/falsification result, not a confirmatory performance claim.
+The regression suite includes both earlier blocking counterexamples, component construction, finite stable-complement precision, candidate/member permutations, replay protection, and 10,000 KL/I-projection randomized states.
 
-### Important limitation from off-policy V3 trajectories
+No localization outcome was used to select a scientific threshold.
 
-The same rule can still find stable-but-wrong components on some trajectories already deformed by V3. Therefore **cross-stop stability is not equal to universal model correctness**. This limitation is explicit. V4 prevents the V3 deconfidence trajectory through M3 minimum-change assimilation; it does not claim that one forward family can detect every shared systematic model error.
+## H02 old replay result is diagnostic, not revised coverage
 
-## E. Temporal-view result
+The earlier H02 report of 48 ABSTAIN / 2 ACCEPT among 50 OFF windows was produced under the superseded M2 implementation. It remains useful historical diagnostic evidence but **must not be quoted as activation coverage for the revised reference**.
 
-CTT traces preserve both first-arrival/incidence and 200-step occupancy/hit-frequency structure. These views are not identical, but first-arrival and other simple temporal summaries do not reliably resolve source pairs that hit frequency already ties. Consequently:
+H01/H02/H03 revised truth-blind coverage must be recomputed from archived OFF development paths.
 
-- temporal transport structure stays in M1 and in ablations;
-- first-arrival is **not** a hard M2 release vote in V4.
+## Required next step before C++
 
-This avoids adding a decorative 'temporal' module unsupported by the data.
+Codex must materialize each available development OFF source-update context to:
 
-## F. M3 state mathematics stress test
+- `stop_probability [S,M,J]`;
+- `stop_r [J]`;
+- `rectangles [S,4]`;
+- `geometry_prior [S]`;
+- metadata only: House, seed, update id, `T`.
 
-M3 is a minimum-change reconciliation, not posterior replacement.
+Truth/source location, final localization error, ON result, route id, and plume seed must not enter the audit.
 
-Given a native PMFS posterior `q_N`, a validated macro region B, and stable branch mass `alpha` on B:
+Then run:
 
-- if `beta = q_N(B) >= alpha`, output is exactly `q_N`;
-- if `beta < alpha`, use the KL/I-projection that raises only B's mass to alpha and preserves native conditional proportions inside B and its complement.
+`python3 experiments/cg_pc_ctt/v4_truthblind_coverage.py <context dirs/files> --out-csv <...> --out-json <...>`
 
-10,000 randomized probability-state tests gave:
+Publish House-wise counts and ABSTAIN reasons.
 
-- maximum mass-constraint error: `4.44e-16`;
-- maximum conditional-ratio error: `2.22e-16`;
-- exact-native error when the constraint is inactive: `0`;
-- candidate permutation error: numerical roundoff only (~1e-16).
+If all three Houses yield zero ACCEPT, stop. If ACCEPT exists in only one House, stop. Otherwise the result is an actionability report—not performance evidence—and direct C++ translation may proceed.
 
-Sequential synthetic tests also verify that a later genuinely opposite stable likelihood can reverse an earlier macro correction; history is therefore not frozen incorrectly.
+## Development/confirmation boundary
 
-## G. Final design corrections before C++
+If C++ parity and smoke pass, freeze source/binary/launch hashes and run exactly one development matrix:
 
-1. The global cross-context stable eigenspace is **offline evidence/diagnostic only**; it must not be applied to unobserved feature cells online.
-2. Online M2 uses source-vs-context residual likelihood at actual physical stops and observation-resolved source components.
-3. Scoring transport-member identity is coherent across stops: marginalize members only after accumulating the stop-set likelihood within each member.
-4. `eps_T = 0.5/(T+1)`; with T=200 the numerical value happens to be 0.5/201. Candidate count is unrelated.
-5. V4 never treats eight repeated blocks at one stop as eight spatial observations.
-6. V4 never normal-rank transforms absolute source evidence.
-7. ABSTAIN returns native PMFS exactly.
-8. ACCEPT is a minimum macro-region correction; it never clears and replaces the full native posterior from a geometry prior.
-9. Seeds 0..9 are permanently development-only. Fresh confirmation must use unseen seeds.
+`H01/H02/H03 × seeds 0..9 × OFF/ON`.
 
-## Authorization
+Do not tune after inspecting individual arms.
 
-The mathematical design is sufficiently constrained for a C++ implementation + infrastructure smoke + **one fixed development closed-loop batch** on the already-revealed seeds 0..9.
+Only a frozen development GO can authorize fresh confirmatory seeds 10..19.
 
-This is not yet authorization to call seeds 0..9 confirmatory. If the fixed V4 development batch meets the frozen endpoint, freeze binary/source/launch hashes and then run fresh confirmatory seeds 10..19.
-
-`CODEX_IMPLEMENTATION_AUTHORIZED = YES`
+`CODEX_CPP_AUTHORIZATION = PENDING_TRUTHBLIND_COVERAGE`
