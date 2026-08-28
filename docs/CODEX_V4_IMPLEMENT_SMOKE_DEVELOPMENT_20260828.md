@@ -1,124 +1,161 @@
-# Codex execution contract — V4 implementation -> smoke -> fixed development closed loop
+# Codex execution contract — V4 science closure -> C++ parity -> smoke -> fixed development
 
 ## Mandatory branch
 
 `research/cg-pc-ctt-v4-residual-assimilation`
 
-Do not use the old V4 draft as the normative source. The normative files are:
+Do not begin by editing C++. The revised Python scientific contract is upstream and must be verified first.
+
+Normative files:
 
 - `docs/CG_PC_CTT_V4_FINAL_THREE_MODULE_FREEZE_20260828.md`
 - `docs/CG_PC_CTT_V4_PREIMPLEMENTATION_VALIDATION_20260828.md`
+- `docs/CODEX_V4_SCIENCE_CONTRACT_CLOSURE_20260828.md`
 - `experiments/cg_pc_ctt/v4_final_reference.py`
 - `experiments/cg_pc_ctt/selftest_v4_final_reference.py`
+- `experiments/cg_pc_ctt/v4_truthblind_coverage.py`
 
-## Task
+## Stage 0 — do not translate the superseded reference
 
-Implement `pfdi_mode=v4_ocsla` as a direct C++ translation of the frozen reference. Do not redesign the method.
+The previous HEAD contract that said "direct C++ translation now" is superseded.
 
-### Runtime data contract
-
-1. Keep the existing 8 keyed transport members. Members 0..3 are calibration/resolution; 4..7 are source-outcome scoring.
-2. A scoring member keeps the same identity across all physical stops before member marginalization.
-3. Record an explicit monotonically increasing `physical_stop_id` from PMFS movement/iteration state. All 8 completed measurement blocks collected before a move share that id. Do not infer stop identity from float position equality.
-4. Collapse block predictions/outcomes to physical stops before M2. Prediction drift within one stop is a hard contract failure.
-5. Use `eps_T=0.5/(iterationsToRecord+1)`.
-
-### M2
-
-Use actual physical stops only. Never use unobserved full-field stable modes online.
-
-Implement strict LOSO exactly as the Python reference:
-
-- >=3 distinct physical stops;
-- all training folds agree on one observation-resolved component B;
-- B cannot lose to a rival on any held-out stop;
-- B must beat the geometry-prior source-independent context mixture on every held-out stop;
-- >=2 held-out stops must be strictly source-informative;
-- scoring-member leave-one-out may not reverse B.
-
-Any failure -> ABSTAIN.
-
-### M3
-
-ABSTAIN -> output current native PMFS posterior exactly.
-
-ACCEPT -> update independent causal region-vs-complement state, then apply KL/I-projection mass floor to current native PMFS posterior.
-
-If native mass beta on B is already >= causal mass alpha, output native PMFS exactly. Never flatten a better native state.
-
-Do not clear accepted stable state. Do not replay consumed raw windows.
-
-## Logging required for every source update
-
-- run uuid / house / seed / source-update id;
-- explicit physical stop ids and block counts;
-- within-stop prediction drift;
-- candidate/member/stop dimensions and hash;
-- observation-resolved component labels;
-- all LOSO training best sets;
-- selected component B;
-- held-out context-null gains;
-- held-out rival margins;
-- informative-heldout count;
-- scoring-member LOO result;
-- ACCEPT/ABSTAIN reason;
-- pre/post causal state hash;
-- alpha, native beta, I-projection active flag;
-- exact-native equality residual on ABSTAIN or inactive projection;
-- output probability mass / NaN audit;
-- wall time.
-
-## Required tests before ROS smoke
-
-Run:
+First run:
 
 `python3 experiments/cg_pc_ctt/selftest_v4_final_reference.py`
 
-Then add C++ parity tests for the same cases. Python and C++ must agree on ACCEPT/ABSTAIN, selected mask, alpha/beta and output posterior within numerical tolerance.
+Required stdout:
 
-## Infrastructure smoke
+`V4_FINAL_REFERENCE_SCIENCE_CONTRACT PASS`
 
-Use one non-development smoke seed not in 0..19 (recommended 314159) on House02.
+If it fails: stop and repair Python/reference parity only. Do not change scientific thresholds and do not inspect localization error.
 
-Smoke is not a performance experiment. It checks only:
+## Stage 1 — archived three-House truth-blind coverage
 
-- correct mode dispatch;
-- physical-stop grouping;
-- no old V3/EC-ECDL fallthrough;
-- no truth leakage;
-- exact native on ABSTAIN;
-- finite/mass-conserving posterior;
-- accepted state persists;
-- 300 s stop works;
-- audit files complete.
+Using already-revealed development OFF trajectories, materialize every usable source-update window from H01/H02/H03 seeds 0..9 into NPZ contexts accepted by `v4_truthblind_coverage.py`.
+
+Required arrays:
+
+- `stop_probability [S,M,J]`, keeping the same keyed member identity across physical stops;
+- `stop_r [J]`, one hit fraction per physical stop;
+- `rectangles [S,4]`;
+- `geometry_prior [S]`;
+- optional metadata `house`, `seed`, `update_id`, `context_id`, `timesteps`.
+
+Do not put truth coordinates, final localization error, ON performance, route id, plume seed, or any post-hoc success label into the materializer or audit.
+
+Run the coverage audit and produce:
+
+- `artifacts/v4_truthblind_coverage/v4_truthblind_coverage.csv`
+- `artifacts/v4_truthblind_coverage/v4_truthblind_coverage.json`
+- `docs/V4_TRUTHBLIND_COVERAGE_REPORT_20260828.md`
+- the archive-to-NPZ materialization script(s), committed.
+
+The report must include per House: context count, ACCEPT count/fraction, each ABSTAIN reason, component-count distribution, min absolute-null gain distribution where defined, min rival-margin distribution where defined, and data-contract failures.
+
+Do not use truth to characterize an ACCEPT as right/wrong in this stage.
+
+Mechanical stop conditions:
+
+- `STOP_ZERO_ACTIONABILITY`: total ACCEPT = 0 across H01/H02/H03;
+- `STOP_SINGLE_HOUSE_ACTIONABILITY`: only one of the three Houses has any ACCEPT.
+
+If either occurs: stop before C++; commit the evidence package and report the failure mechanism. Do not weaken the frozen rule.
+
+Otherwise continue. Coverage is feasibility evidence only, not a performance claim.
+
+## Stage 2 — direct C++ translation after coverage
+
+Implement `pfdi_mode=v4_ocsla` as a direct translation of the now-frozen reference. Do not redesign the method.
+
+### M1 binding details
+
+- explicit monotone `physical_stop_id`;
+- repeated completed blocks at one stop collapse to one stop outcome;
+- within-stop forward-prediction drift is a hard failure;
+- calibration members 0..3 build observation-resolved components;
+- scoring members 4..7 never enter component construction;
+- `C_y=(1/4+eps_T^2)I`, `eps_T=0.5/(iterationsToRecord+1)`;
+- exact geometric aliases are unresolved;
+- stable complement gets finite precision; no Moore-Penrose deletion.
+
+### M2 binding details
+
+- training evidence: sum physical stops inside each scoring member, then marginalize members;
+- held-out score: conditional posterior prediction under the training-updated joint `(source, member)` distribution;
+- no stopwise re-uniformization of members;
+- absolute null: Jeffreys-Beta `Beta(1/2,1/2)` trained on the other physical stops only;
+- selected component must beat the absolute null and not lose a rival on every held-out stop;
+- at least two strictly rival-informative heldouts;
+- scoring-member LOO cannot reverse the selected component;
+- any failure => ABSTAIN.
+
+### M3 binding details
+
+ABSTAIN returns current native PMFS posterior exactly.
+
+ACCEPT updates the independent causal region-vs-complement state and applies only the KL/I-projection mass floor. If native mass `beta >= alpha`, return native PMFS exactly. No blend, temperature, posterior reset, or House/seed threshold.
+
+Each raw window is consumed exactly once.
+
+## Stage 3 — Python/C++ parity
+
+Create deterministic C++ parity fixtures for every Python selftest family, including:
+
+- common-bias absolute-null counterexample;
+- fixed member-identity-switch counterexample;
+- component construction and exact alias;
+- calibration/scoring member permutations;
+- candidate permutation;
+- inactive and active I-projection;
+- duplicate-window rejection.
+
+Python and C++ must agree on: component labels, ACCEPT/ABSTAIN reason, selected mask, held-out absolute gains, rival margins, alpha/beta, projection-active flag, and final posterior within numerical tolerance.
+
+Do not proceed to ROS smoke on a parity mismatch.
+
+## Stage 4 — infrastructure smoke
+
+Use one non-development seed not in 0..19, recommended `314159`, on House02.
+
+Smoke checks infrastructure only:
+
+- correct `v4_ocsla` dispatch;
+- no V3/EC-ECDL fallthrough;
+- physical-stop grouping and drift audit;
+- no forbidden truth field in runtime decision;
+- exact native on ABSTAIN/inactive projection;
+- finite mass-conserving posterior;
+- accepted state persistence and consumed-window ledger;
+- 300 s stop;
+- complete audit output.
 
 Do not tune from smoke localization error.
 
-## Fixed development closed loop
+## Stage 5 — fixed development closed loop
 
 After smoke PASS, freeze git SHA / binary SHA / launch SHA and run exactly:
 
-`H01,H02,H03 × seeds 0..9 × OFF/ON`, 60 arms total.
+`H01,H02,H03 × seeds 0..9 × OFF/ON = 60 arms`.
 
 - OFF = frozen Classic PMFS;
-- ON = V4 OC-SLA;
+- ON = revised V4;
 - `TIMEOUT_SEC=300`;
 - `STEPS_SOURCE_UPDATE=3`;
-- same native deterministic contract and paired environment;
+- same deterministic paired environment;
+- no House/seed-specific edits;
 - no mid-matrix changes;
-- no House/seed-specific parameter edits;
 - no 2/3/5-seed pilot.
 
 Aggregate only after all 60 arms finish.
 
-### Development GO
+Development GO remains:
 
 - 30/30 valid pairs;
 - pooled top-5 expected-location error reduction >=10%;
 - >=20/30 pairs improve;
 - no House pooled degradation >5%;
 - ON introduces 0 new false-confident collapses;
-- all runtime contract checks pass.
+- all runtime contracts pass.
 
-If development GO: freeze and then run fresh confirmatory seeds 10..19.
-If development NOT-GO: stop; return full evidence package and failure audit. Do not tune seeds 0..9 again.
+If GO: freeze again and run fresh confirmatory seeds 10..19.
+If NOT-GO: stop and return the full evidence/failure package. Do not retune seeds 0..9.
