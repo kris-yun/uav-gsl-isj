@@ -22,7 +22,7 @@ The old V2 representative-centroid invalid counts are retained only as a diagnos
 
 The V3 math/static selftests passed on the VM, including bank I/O, quotient posterior, adequacy, Bernoulli adequacy, and direct-runtime contracts (`CG_PC_CTT_V3_STATIC_AND_MATH_SELFTEST PASS`).
 
-A native trace/sensor smoke also passed on the preserved native query path: two legal placements in one H01 carrier produced distinct placement-conditioned traces, repeated seeded execution was exactly reproducible, and the existing 50-point native-query plus run-persistent sensor parity contract returned `PF_DEI_SYNTHETIC_END_TO_END_PARITY_PASS` (physical/query/sensor/block differences all zero; persistence delta 10.0682 ppm). This is a smoke-level closure only; the full V3 carrier×member bank has not yet been generated.
+A native trace/sensor smoke also passed on the preserved native query path: two legal placements in one H01 carrier produced distinct placement-conditioned traces, repeated seeded execution was exactly reproducible, and the existing 50-point native-query plus run-persistent sensor parity contract returned `PF_DEI_SYNTHETIC_END_TO_END_PARITY_PASS` (physical/query/sensor/block differences all zero; persistence delta 10.0682 ppm). A contract-valid `[source=2, member=2, T=30]` smoke bank was materialized and validated (`bank_sha256=14967a8bbaa109c7a98ab5354e3a370df3df86b6445e92ee6befe4814d08bbb6`). This is smoke-level closure only; the full V3 carrier×member bank has not yet been generated.
 
 ## RNG hook gate
 
