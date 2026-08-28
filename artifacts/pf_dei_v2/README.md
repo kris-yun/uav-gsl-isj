@@ -1,0 +1,5 @@
+# PF-DEI-SR V2 frozen support artifacts
+
+This directory contains the truth-blind V2 planar support, geometry-only legal-height support, fixed source-strength audit, and the single joint nuisance schedule. Heights were enumerated from native 3-D occupancy free voxels inside each exact quadtree carrier footprint (0.3 m coarse-cell geometry), never from historical source coordinates or gas observations. The planar support and geometry prior were checked against all 50 context NPZ files per House: H01 210 rows, H02 201 rows, H03 206 rows; all 150 priors matched the persistent carrier weights to numerical equality.
+
+The V2 target is the carrier planar representative `(x,y)`. Height is a nuisance marginalized by the native forward simulator. `source_height_support_manifest.csv` records the legal z support and the occupancy/config hashes used for the geometry-only enumeration. All 617 nonzero-prior carriers have at least one legal height (19–29 distinct native z levels under the frozen footprint rule).
