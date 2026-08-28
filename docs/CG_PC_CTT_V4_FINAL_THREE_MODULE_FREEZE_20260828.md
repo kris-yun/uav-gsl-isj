@@ -1,82 +1,126 @@
-# CG-PC-CTT V4 final three-module freeze
+# CG-PC-CTT V4 final three-module freeze — science-contract revision
 
 Date: 2026-08-28
-Status: **IMPLEMENTATION AUTHORIZED / PERFORMANCE NOT YET CLAIMED**
+Status: **REFERENCE SCIENCE CONTRACT FROZEN / C++ HOLD UNTIL THREE-HOUSE TRUTH-BLIND COVERAGE AUDIT**
 
 ## Paper-level innovation
 
 **Causal Spatiotemporal Representation and Assimilation for Robotic Gas-Source Localization**
 
-The method is frozen as exactly three modules. V2/V3 gates, LOSO, quotienting and KL projection are internal mechanisms, not separate paper-level innovations.
+The method remains exactly three paper-level modules:
 
-## M1 — Spatiotemporal Transport Representation
+1. **M1 — Spatiotemporal Transport Representation**
+2. **M2 — Cross-Context Invariant Causal Source Residual**
+3. **M3 — Observation-Resolved Minimum Causal Assimilation**
 
-For source carrier `s`, keyed transport realization `m` and physical stop `j`, PMFS provides the source-conditioned predictive response
+LOSO, component construction, coherent transport marginalization, the absolute null, and KL projection are internal mechanisms, not separate headline innovations.
 
-`p[s,m,j] = P(hit at physical stop j | source s, transport member m, context R_j)`.
+## M1 — physical-stop representation and observation-resolved source components
 
-A transport member is one coherent realization across all physical stops. Member identity may not be re-selected per stop.
+For source carrier `s`, keyed transport realization `m`, and physical stop `j`,
 
-The inferential unit is **one physical stop**, not one completed block. If stop `j` contains `B_j` completed measurement blocks, the primary stop outcome is
+`p[s,m,j] = P(hit at stop j | source s, transport member m, observed context R_j)`.
+
+One transport member is one coherent realization across every stop. Member identity cannot be re-selected per stop.
+
+The inferential unit is one **physical stop**, not one completed measurement block. For `B_j` repeated blocks,
 
 `r_j = (1/B_j) sum_b y_jb`.
 
-All blocks at the same stop have total source-likelihood weight one. Repeated blocks refine the stop response but cannot create new spatial dimensions.
+All repeated blocks at one stop have total source-likelihood weight one. An explicit monotone `physical_stop_id` defines stop identity; floating-point position equality does not.
 
-Temporal first-arrival/occupancy information remains part of M1 physics and ablation evidence, but is not a hard online M2 vote because real CTT tests did not show reliable tie-breaking beyond hit frequency.
+Probability continuity floor:
 
-Probability continuity floor is
+`eps_T = 0.5/(T+1)`, where `T=settings.iterationsToRecord`.
 
-`eps_T = 0.5/(T+1)`,
+### Calibration-member component construction
 
-where `T=settings.iterationsToRecord` (currently 200). Candidate count is unrelated.
+Calibration members `m=0..3` define only the observation-resolved spatial quotient. Scoring outcomes are not consulted.
 
-## M2 — Cross-Context Invariant Causal Source Residual
+Using the actual stops in the current window, construct transport covariance `C_tr` from pairwise calibration-member response differences and add the frozen conservative one-stop observation covariance
 
-The causal object is source-specific predictive information that remains stable across physical observation contexts.
+`C_y = (1/4 + eps_T^2) I`.
 
-Offline qualification decomposes multi-context response fields as
+Then
 
-`X[c,s] = mu + A_s + B_c + I[c,s]`,
+`C_eff = C_tr + C_y`
 
-where `A_s` is source-stable variation, `B_c` is context variation and `I[c,s]` is source×context interaction. The generalized source-stable eigenspace satisfies
+is strictly positive definite. Its inverse gives finite precision in low-transport-variance/stable-complement directions rather than deleting them with a Moore-Penrose cutoff.
 
-`C_S v = lambda C_N v`,
+For every adjacent persistent carrier pair `(i,j)`, calibration-member stop-response differences `d_m` define
 
-with modes `lambda>1` interpreted as source variation exceeding context/nuisance variation. This is **offline qualification only**; it must never project unobserved full-field cells into an online decision.
+`eta_ij = ( ||sum_m d_m||^2_{C_eff^-1} - sum_m ||d_m||^2_{C_eff^-1} ) / (M(M-1))`.
 
-Online M2 uses only actual physical stops. Scoring members 4..7 are accumulated coherently across a stop set before member marginalization:
+The boundary is resolved only if `eta_ij > numerical_zero` and every leave-one-calibration-member-out value is also `> numerical_zero`. Otherwise the carriers are united. Exact geometric aliases are always united. Connected components are the only macro-regions M2/M3 may act on.
 
-`L_J(s) = log mean_m exp[ sum_{j in J} log P(r_j | s,m,R_j) ]`.
+The canonical executable definition is `build_components(...)` in `experiments/cg_pc_ctt/v4_final_reference.py`.
 
-A source-independent context null integrates source identity under frozen geometry prior `q0`:
+## M2 — coherent cross-context source residual with absolute adequacy
 
-`L_ctx(j) = log sum_s q0(s) exp[L_j(s)]`.
+For scoring members `m=4..7`, use the unit-weight fractional-Bernoulli proper score
 
-### Strict leave-one-physical-stop-out qualification
+`ell_j(s,m) = r_j log p[s,m,j] + (1-r_j) log(1-p[s,m,j])`.
 
-Require at least three distinct physical stops in the current source-update window.
+For a LOSO fold holding out stop `h`, preserve one source/member identity across training stops:
 
-For each held-out stop `h`:
+`L_-h(s,m) = sum_{j != h} ell_j(s,m)`.
 
-1. use only `J\{h}` to select the best observation-resolved source component;
-2. all held-out folds must identify one common component `B`;
-3. at held-out stop `h`, `B` may not lose to any rival component;
-4. `B` must beat the source-independent context mixture;
-5. at least two held-out stops must provide strict source-discriminating support rather than numerical ties;
-6. deleting any one scoring transport member may not reverse the accepted component.
+Training source evidence is
 
-If any condition fails: **ABSTAIN**.
+`L_-h(s) = logmeanexp_m L_-h(s,m)`.
 
-ABSTAIN is not failure; it means current observations have not earned source-specific causal authority.
+With frozen geometry-prior conditional weights `q0(s|C)`, training component evidence is
 
-## M3 — Observation-Resolved Minimum Causal Assimilation
+`A_-h(C) = logsumexp_{s in C, q0(.|C)} L_-h(s)`.
 
-M3 never replaces the complete PMFS posterior from a geometry prior.
+All LOSO folds must have exactly one common numerically best component `B`.
 
-Accepted stable evidence updates an independent causal macro-state `q_C`, only for the validated region `B` versus its complement. Conditional fine structure inside unresolved regions is preserved.
+### Held-out conditional prediction
 
-Let stable state assign mass
+The held-out score must not restart a uniform member mixture. It is the exact conditional posterior-predictive score under the joint latent `(source, transport member)` within component `C`:
+
+`A_h(C) = log [ sum_{s in C} q0(s|C) mean_m exp(L_-h(s,m)+ell_h(s,m)) ]`
+`         - log [ sum_{s in C} q0(s|C) mean_m exp(L_-h(s,m)) ]`.
+
+This is the binding correction for the prior member-identity-switch counterexample.
+
+### Frozen source-independent absolute null
+
+The candidate family cannot validate itself. Each fold therefore also uses a source-independent Jeffreys-Beta prequential null, fixed before localization outcomes:
+
+`theta ~ Beta(1/2, 1/2)`.
+
+Using training physical stops only,
+
+`a_h = 1/2 + sum_{j != h} r_j`,
+`b_h = 1/2 + sum_{j != h} (1-r_j)`,
+`rho_h = a_h/(a_h+b_h)`.
+
+Held-out null score:
+
+`N_h = r_h log rho_h + (1-r_h) log(1-rho_h)`.
+
+This null contains no source identity, candidate prediction, House id, seed, truth, route, or localization error. It is allowed to condition on training outcomes but never on the held-out outcome when forming `rho_h`.
+
+### ACCEPT contract
+
+Require at least three physical stops and at least two observation-resolved components. ACCEPT only if:
+
+1. every LOSO training fold shares one common component `B`;
+2. on every held-out stop, `A_h(B)` does not lose to any rival component;
+3. on every held-out stop, `A_h(B) - N_h > numerical_zero`;
+4. at least two held-out stops have a strictly positive rival margin;
+5. deleting any one scoring transport member cannot reverse the accepted component.
+
+Any failure => **ABSTAIN**.
+
+The old geometry-prior mixture of the candidate family is no longer an adequacy null.
+
+## M3 — minimum causal assimilation
+
+Maintain an independent causal carrier distribution `q_C`, initialized once from geometry prior `q0`. Each accepted raw window updates only the validated binary contrast `B` versus its complement. Raw windows are consumed exactly once. A later ABSTAIN does not replay them.
+
+Let the accepted causal state assign
 
 `alpha = Q_C(B)`
 
@@ -84,49 +128,53 @@ and current native PMFS posterior assign
 
 `beta = Q_N(B)`.
 
-The final posterior is the KL-nearest distribution to native PMFS subject only to the validated mass floor:
+Final posterior is the KL-nearest distribution to native PMFS subject only to the validated floor:
 
-`q* = argmin_q D_KL(q || q_N)` subject to `Q(B)>=alpha`.
+`q* = argmin_q D_KL(q || q_N)` subject to `Q(B) >= alpha`.
 
 Closed form:
 
-- if `beta >= alpha`: `q* = q_N` **exactly**;
+- if `beta >= alpha`: return native PMFS **exactly**;
 - if `beta < alpha`: raise only `B` to mass `alpha`, preserving native conditional proportions inside `B` and outside `B`.
 
-Therefore the method can rescue a native posterior that underweights a cross-predictively validated region, but it cannot deconcentrate a native posterior already stronger on that region.
+ABSTAIN returns native PMFS exactly. No posterior reset, temperature, arbitrary blend, or House/seed-specific confidence threshold exists.
 
-Each raw source-update window is consumed once. ABSTAIN returns native PMFS exactly and does not replay old raw observations. Accepted stable evidence is cumulative and is never cleared by a later update.
+## Scientific regression tests now binding
 
-## Forbidden behavior
+`selftest_v4_final_reference.py` must pass before any C++ translation. It includes:
 
-- no block-level pseudo-replication;
-- no full-field online stable-eigenspace projection;
-- no normal-rank evidence transform;
-- no posterior temperature;
-- no PMFS/V4 blend weight;
-- no House/seed-specific thresholds;
-- no truth, final error, route id, wind id or plume seed in runtime decisions;
-- no reusing ABSTAIN raw windows later;
-- no per-stop re-selection of the best transport member;
-- no full posterior reset from a geometry prior.
+- physical-stop collapse and prediction-drift contract;
+- `eps_T` semantics;
+- finite stable-complement precision;
+- exact-coordinate alias behavior;
+- calibration/scoring-member and candidate permutation invariance;
+- the shared-common-bias counterexample (`0.01` versus `0.005` under observed hits) => ABSTAIN;
+- the fixed member-identity-switch counterexample => no incoherent ACCEPT;
+- 10,000 randomized KL/I-projection checks;
+- consumed-window replay rejection;
+- exact native output when the mass-floor constraint is inactive.
 
-## Development and confirmation
+The NumPy axis semantics in `coherent_source_score()` are part of the contract: stops are summed **inside each member** before `logmeanexp_m`.
 
-Seeds 0..9 have been revealed and are **development-only** forever.
+## Pre-C++ actionability gate
 
-After implementation and infrastructure smoke, run one fixed development matrix:
+Before C++ work, materialize the archived H01/H02/H03 development OFF source-update contexts into the truth-free NPZ schema consumed by
+
+`experiments/cg_pc_ctt/v4_truthblind_coverage.py`.
+
+Run the frozen M1/M2 rule without truth or localization error and publish House-wise ACCEPT/ABSTAIN counts and reasons.
+
+Mechanical stop conditions:
+
+- zero ACCEPT across all three Houses => `STOP_ZERO_ACTIONABILITY`;
+- ACCEPT occurs in only one of H01/H02/H03 => `STOP_SINGLE_HOUSE_ACTIONABILITY`.
+
+These are feasibility checks only; they cannot be used to tune M1/M2 thresholds.
+
+If coverage is actionable, C++ translation/parity/smoke may proceed. Only after those pass may the fixed development matrix run:
 
 `H01/H02/H03 × seeds 0..9 × OFF/ON = 60 arms`.
 
-Frozen development endpoint:
+Seeds 0..9 remain development-only. Fresh seeds 10..19 are confirmatory only after a frozen development GO.
 
-- all 30 matched pairs valid;
-- pooled PMFS top-5 expected-location error reduction >=10%;
-- at least 20/30 pairs improve (paired one-sided sign p<=0.05);
-- no House pooled mean degrades by >5%;
-- ON introduces zero new false-confident collapses;
-- all runtime invariants/audits pass.
-
-If and only if development passes, freeze source/binary/launch hashes and run fresh confirmatory seeds 10..19.
-
-`CODEX_IMPLEMENTATION_AUTHORIZED = YES`
+`CODEX_CPP_AUTHORIZATION = CONDITIONAL_ON_TRUTHBLIND_COVERAGE`
