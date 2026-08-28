@@ -21,9 +21,6 @@ def fixture():
                 if s < 2 else
                 np.asarray([.10, .90, .10, .90, .10, .90]))
         for m in range(M):
-            # Same member perturbation on both source groups: within-group
-            # aliases remain unresolved, while the group boundary is robustly
-            # resolved by every calibration-member leave-one-out.
             p[s, m] = np.clip(base + (m - 3.5) * .002, .01, .99)
     return p, r, ctx, rect, q0
 
@@ -68,6 +65,14 @@ def main():
     assert a2.tolist() == [False, True]
     assert st.stop_key == ["cell10", "cell11", "cell12"]
 
+    # A duplicate cell inside one incoming context is ignored rather than counted twice.
+    st2 = v5.initialize_state(q0)
+    st2, a_same = v5.append_context(
+        st2, p[:, :, :2], r[:2], ["cell10", "cell10"], "same_context"
+    )
+    assert a_same.tolist() == [True, False]
+    assert st2.stop_key == ["cell10"]
+
     # Candidate/source permutation cannot change the scientific decision.
     rng = np.random.default_rng(20260828)
     perm = rng.permutation(len(q0)); inv = np.argsort(perm)
@@ -99,9 +104,10 @@ def main():
         for m in range(8):
             cand[s, m] = ([.5, .9, .8] if s < 2 else [.5, .1, .2])
     cell = np.asarray([10, 11, 12], dtype=np.int64)
+    feasible = np.ones(X, dtype=bool)
+    unvisited = np.zeros(X, dtype=bool)
     probe = v5.robust_probe_utility(
-        cand, np.asarray([0,0,1,1]), q0, cell,
-        feasible=np.ones(X, dtype=bool), visited=np.zeros(X, dtype=bool)
+        cand, np.asarray([0,0,1,1]), q0, cell, feasible, unvisited
     )
     assert probe.available and probe.chosen_cell_id == 11
     assert probe.robust_information_gain > 0
@@ -115,10 +121,22 @@ def main():
     assert probe_perm.chosen_cell_id == 11
     visited = cell == 11
     probe2 = v5.robust_probe_utility(
-        cand, np.asarray([0,0,1,1]), q0, cell,
-        feasible=np.ones(X, dtype=bool), visited=visited
+        cand, np.asarray([0,0,1,1]), q0, cell, feasible, visited
     )
     assert probe2.available and probe2.chosen_cell_id == 12
+
+    # Planner override is allowed only for strict robust-information dominance.
+    override = v5.robust_probe_override(
+        cand, np.asarray([0,0,1,1]), q0, cell, feasible, unvisited,
+        native_chosen_index=0
+    )
+    assert override.available and override.chosen_cell_id == 11
+    no_override = v5.robust_probe_override(
+        cand, np.asarray([0,0,1,1]), q0, cell, feasible, unvisited,
+        native_chosen_index=1
+    )
+    assert not no_override.available
+    assert no_override.reason == "NO_STRICT_INFORMATION_GAIN_OVER_NATIVE"
 
     print("V5_ACTIVE_SEQUENTIAL_REFERENCE_SCIENCE_CONTRACT PASS")
 
