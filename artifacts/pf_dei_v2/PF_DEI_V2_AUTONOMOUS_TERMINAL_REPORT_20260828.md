@@ -1,7 +1,7 @@
 # PF-DEI-SR V2 autonomous closed-loop report
 
 Date: 2026-08-28
-Terminal status: `PF_DEI_PHYSICAL_BANK_ENGINEERING_NO_GO`
+Terminal status: `PF_DEI_2D3D_GEOMETRY_SUPPORT_NO_GO`
 
 ## Frozen history
 
@@ -12,11 +12,11 @@ Terminal status: `PF_DEI_PHYSICAL_BANK_ENGINEERING_NO_GO`
 - V1 terminal evidence remains reachable at `2fc133f`.
 - Preserved commits `a504e0e`, `6fbf08c`, `33f9a80`, and `55dd893` remain reachable; no reset or overwrite was used.
 
-## V2 contracts that passed
+## V2 contracts checked
 
 1. Persistent carrier support was checked against all 50 geometry-only context NPZ files per House. H01/H02/H03 contain 210/201/206 carriers, respectively; all 150 geometry priors match the carrier free-cell weights.
 2. The planar target is the native PMFS `S_xy`; no historical source z was copied.
-3. Geometry-only vertical support was enumerated from native `OccupancyGrid3D.csv` free voxels inside each exact quadtree carrier footprint. All 617 nonzero-prior carriers have legal height support (19–29 distinct native z levels).
+3. The strict V2 height contract was checked by mapping each carrier representative `(x,y)` to its exact native 0.1 m occupancy column. It fails: H01/H02/H03 have 49/41/51 carriers with no free z layer at that exact planar point. A separate quadtree-footprint enumeration produced nonempty diagnostic sets, but that changes the horizontal source point and is not admissible under the frozen V2 contract; it was not used for any bank or score.
 4. Source strength is fixed at `Q=10.0 ppm` from source-independent House launch parameters. The filtered configuration hashes are recorded in `source_strength_manifest.csv`.
 
 Artifacts and hashes:
@@ -30,16 +30,16 @@ Artifacts and hashes:
 
 ## First failed downstream contract
 
-V2 requires eight auditable native transport members with seeds `101,211,307,401,503,601,701,809`, plus reserved seeds `907,1009,1103,1201`. The preserved GADEN source currently uses static default-constructed `std::mt19937` engines in `MathUtils.hpp` and exposes no seed/substream parameter. The relevant VM source hashes are:
+Because exact planar-to-3D geometry support already fails, the V2 protocol terminates here with `PF_DEI_2D3D_GEOMETRY_SUPPORT_NO_GO`; no downstream engineering gate is opened. For completeness, a later bank would also require eight auditable native transport members with seeds `101,211,307,401,503,601,701,809`, but the preserved GADEN source currently uses static default-constructed `std::mt19937` engines in `MathUtils.hpp` and exposes no seed/substream parameter. This later issue was not used to change the terminal verdict. The relevant VM source hashes are:
 
 - `MathUtils.hpp`: `86727e26c7f799d213250a77a29fc4fb98c7262066a57614dd58990667fa2265`
 - `filament_simulator.cpp`: `6d2bf5cd234205c6981846aca18a190f47a5ce2143d6204da5d09901f61643a8`
 - preserved native query binary: `f6070d681b7e738bf8713a5462e0bbb7aaf1c1f30ea62bd4b7bbc83a9b1f50fc`
 
-The query binary only samples an already materialized field. The active repository contains no V2 arbitrary-candidate native-field materializer. Therefore the required `(House, planar source, height, Q, transport seed)` bank cannot be generated with the frozen nuisance contract. Reusing one default RNG stream, substituting occupancy/hit maps, or adding an unplanned transport variation would violate V2.
+The query binary only samples an already materialized field. The active repository contains no V2 arbitrary-candidate native-field materializer. Reusing a footprint-derived horizontal coordinate, assigning a default height, or copying historical source z would violate V2.
 
 ## Stages intentionally not run
 
 No new GADEN field, training/reserved bank, source-independent trajectory dataset, causal-TCN training, synthetic qualification, truth-blind historical qualification, offline safety, runtime integration, smoke, 60-arm matrix, or confirmatory seeds were started. No true source, historical `true_gas_ppm`, future observation, occupancy-to-ppm conversion, Active Probe, architecture sweep, Gate/temperature/blend, or result-driven nuisance expansion was used.
 
-This is an engineering/materialization NO-GO under the frozen V2 contract, not evidence that PF-DEI-SR scientific inference or the planar formulation fails. The next permissible action is to provide a reproducible native GADEN seed/substream interface and a source-independent candidate-field materializer, then rerun V2 from the frozen support/manifests without changing the method.
+This is a geometry-support NO-GO under the frozen V2 contract, not evidence that PF-DEI-SR inference fails in general. The next permissible action is to obtain a source-independent, contract-approved definition of the planar carrier support (or revise the scientific method in a separately authorized future version); silently using a larger footprint or historical height is not allowed.
