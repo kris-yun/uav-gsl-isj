@@ -8,7 +8,7 @@ Terminal status: `STOP_PF_DEI_SOURCE_SUPPORT_IDENTITY_UNRESOLVED`
 - Requested remote: `research/cg-pc-ctt-v6-dynamic-transport-sbi`
 - Requested remote HEAD: `04339884b54694481d01c077595406a4ae899dc6`
 - Active local branch: `codex/pf-dei-final-autonomous-closed-loop-20260828`
-- Active local HEAD: `119ff43`
+- Active local HEAD before evidence commit: `119ff43`; evidence/report is committed on the active branch immediately after that merge.
 - Preserved history objects verified present: `a504e0e`, `6fbf08c`, `33f9a80`, `55dd893`
 - No reset or overwrite was used. The four preserved commits remain reachable through the merge history.
 
