@@ -127,8 +127,6 @@ def append_context(state: LedgerState, stop_probability, stop_r, stop_keys,
         raise ValueError("need at least 8 keyed members")
     if np.any((r < 0) | (r > 1)) or not np.all(np.isfinite(p)):
         raise ValueError("invalid context observation")
-    if len(set(map(str, keys.tolist()))) != len(keys):
-        raise ValueError("duplicate physical stop inside one context")
 
     st = state.clone()
     st.consumed_contexts.add(context_id)
@@ -437,3 +435,33 @@ def robust_probe_utility(candidate_probability, component_labels, source_weight,
     return ProbeDecision(
         True, "PROBE", chosen, int(cell[chosen]), float(utility[chosen]), utility
     )
+
+
+def robust_probe_override(candidate_probability, component_labels, source_weight,
+                          candidate_cell_ids, feasible, visited,
+                          native_chosen_index):
+    """Override native next-stop choice only for strict robust-information gain.
+
+    This keeps ABSTAIN posterior-exact while allowing the sensing policy to
+    collect more independent evidence. The feasible set is supplied by the
+    native planner; V5 cannot enlarge the native motion horizon.
+    """
+    p = np.asarray(candidate_probability, dtype=float)
+    feasible = np.asarray(feasible, dtype=bool)
+    visited = np.asarray(visited, dtype=bool)
+    native = int(native_chosen_index)
+    if native < 0 or native >= p.shape[2] or not feasible[native]:
+        raise ValueError("native chosen index must be planner-feasible")
+    proposal = robust_probe_utility(
+        p, component_labels, source_weight, candidate_cell_ids, feasible, visited
+    )
+    if not proposal.available:
+        return proposal
+    native_u = float(proposal.utility[native])
+    tol = _numzero(proposal.utility, proposal.robust_information_gain, native_u)
+    if proposal.robust_information_gain <= native_u + tol:
+        return ProbeDecision(
+            False, "NO_STRICT_INFORMATION_GAIN_OVER_NATIVE", None, None,
+            proposal.robust_information_gain, proposal.utility
+        )
+    return proposal
