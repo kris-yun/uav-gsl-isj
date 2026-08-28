@@ -53,7 +53,11 @@ def read_trace_fields(path: Path, selected_cells=None, expected_carrier=None, ex
     occ=np.frombuffer(raw_occ,dtype='<u8').reshape(T,W)
     idx=np.arange(C,dtype=np.int64) if selected_cells is None else np.asarray(selected_cells,dtype=np.int64).reshape(-1)
     if len(idx)<1 or np.any(idx<0) or np.any(idx>=C): raise ValueError('selected cell out of range')
-    words=idx//64; bits=idx%64
+    words=idx//64
+    # NumPy 2.x no longer permits the uint64 occupancy words to be shifted by
+    # an int64 advanced-index array under the safe-casting rule.  The binary
+    # format is explicitly uint64, so keep both operands in that exact dtype.
+    bits=(idx%64).astype(np.uint64,copy=False)
     # Advanced indexing gives [T,D]. Each bit is native occupancy at one record step.
     occupied=((occ[:,words] >> bits[None,:]) & np.uint64(1)).astype(np.float32)
     freq=occupied.mean(axis=0,dtype=np.float64).astype(np.float32)
