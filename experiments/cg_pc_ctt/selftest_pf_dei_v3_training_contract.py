@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import tempfile
 from pathlib import Path
 
@@ -11,7 +12,7 @@ import torch
 from torch.nn import functional as F
 
 from pf_dei_v3_causal_tcn import initialize_frozen_model
-from train_pf_dei_v3_nre import TrainingData
+from train_pf_dei_v3_nre import TrainingData, configure_determinism
 
 
 def main() -> int:
@@ -44,6 +45,8 @@ def main() -> int:
 
         data = TrainingData(root, house, 1701)
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        configure_determinism(1701)
+        assert os.environ.get("CUBLAS_WORKSPACE_CONFIG") == ":4096:8"
         features, mask, labels = data.make_examples(np.array([1, 241, 481], dtype=np.int64), device)
         assert features.shape == (6, length, 16)
         assert mask.all() and torch.equal(labels, torch.tensor([1, 1, 1, 0, 0, 0], device=device, dtype=torch.float32))

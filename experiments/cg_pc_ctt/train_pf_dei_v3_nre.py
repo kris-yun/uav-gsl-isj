@@ -6,11 +6,19 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import random
 import time
 from pathlib import Path
 
 import numpy as np
+
+# PyTorch deterministic algorithms intentionally fail closed unless cuBLAS is
+# given a reproducible workspace policy.  This is an execution prerequisite,
+# not a training hyperparameter.  It must be set before the first CUDA BLAS
+# operation in this process.
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+
 import torch
 from torch.nn import functional as F
 
@@ -205,6 +213,7 @@ def main() -> int:
         "optimizer": "AdamW", "learning_rate": LR, "weight_decay": WEIGHT_DECAY,
         "batch_size": EXAMPLE_BATCH_SIZE, "max_epochs": MAX_EPOCHS,
         "patience": PATIENCE, "gradient_clip": GRAD_CLIP,
+        "cublas_workspace_config": os.environ["CUBLAS_WORKSPACE_CONFIG"],
         "best_validation_bce": best_loss, "epochs_run": len(log),
         "weights_sha256": sha256_file(weights), "epochs": log,
     }
