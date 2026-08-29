@@ -2,6 +2,10 @@
 file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_LIST_DIR}/*.cpp") 
 
 find_package(gmrf_msgs REQUIRED)
+# PF-SNRE's trajectory-independent online provider uses the exact GADEN Humble
+# core already exported by gaden_common (PlaybackSimulation/SampleConcentration).
+# This is not a second simulator implementation.
+find_package(gaden_common REQUIRED)
 
 # Create the library
 add_library(PMFS ${SOURCES})
@@ -10,6 +14,7 @@ add_library(PMFS ${SOURCES})
 ament_target_dependencies(PMFS
     ${COMMON_AMENT_DEPENDENCIES}
     gmrf_msgs
+    gaden_common
     ${CONDITIONAL_GADEN_MSGS}
 )
 
