@@ -202,19 +202,26 @@ Call this a `source belief/mass` in logs and manuscripts; the Gaussian-rank adap
 
 ## 7. Freeze module boundaries for later ablation
 
+Use the same names everywhere in code, experiment logs and manuscript:
+
+- `B0`: physically closed region-valued source / native 3-D predictive generator. Common base; not removed in primary ablation.
+- `M1`: exact persistent-sensor canonicalization `M -> C`.
+- `M2`: physical nuisance-distribution marginalization over the predictive member ensemble.
+- `M3`: preservation of cross-time nuisance-member trajectory coherence.
+- `M4`: ordered adjacent temporal-increment evidence.
+- `A0`: reversible source-mass / PMFS-grid adapter. Integration operator; not claimed as an independent innovation module and not removed in primary ablation.
+
 No ablation is implemented by editing formulas after FULL results. The runtime switch must select one of the already-frozen code paths:
 
-| Arm | Only changed mechanism |
+| Arm | Only changed scientific module |
 |---|---|
-| `pfdei_full` | M1 sensor canonicalization + M2 nuisance marginalization + M3 coherent member trajectories + M4 ordered increment path |
-| `pfdei_ablate_sensor` | bypass exact M->C inverse only |
-| `pfdei_ablate_temporal` | remove adjacent `diff(log1p(C/threshold))` channel only |
-| `pfdei_ablate_coherence` | deterministic per-time member permutation, preserving every source/time ensemble multiset but destroying cross-time member identity |
-| `pfdei_ablate_nuisance` | replace member distribution with its arithmetic-mean trajectory only |
+| `pfdei_full` | B0 + M1 + M2 + M3 + M4 + A0 |
+| `pfdei_ablate_sensor` | remove M1 only |
+| `pfdei_ablate_nuisance` | remove M2 only: replace the member distribution by its arithmetic-mean trajectory |
+| `pfdei_ablate_coherence` | remove M3 only: preserve every source/time member multiset but destroy cross-time member identity |
+| `pfdei_ablate_temporal` | remove M4 only: remove adjacent `diff(log1p(C/threshold))` channel |
 
-The geometry/source-region base, provider, raw observations, prior, planner, source-update cadence and stopping rule are identical across these arms.
-
-Do not create an ablation for the reversible source-mass adapter in the primary paper; it is the PMFS integration map, not an independent physical hypothesis.
+The B0 geometry/source-region base, provider, raw observations, prior, planner, source-update cadence, stopping rule and A0 adapter are identical across these arms.
 
 ## 8. Shadow side-effect smoke
 
@@ -239,7 +246,7 @@ Any side effect in shadow => STOP and fix integration.
 Do this before viewing FULL localization outcomes.
 
 - If held-out physical source separability is near null: `PFDEI_PHYSICAL_INFORMATION_NO_GO`; do not run ON and do not rescue with a new network.
-- If source separability is strong but chronological/coherence controls show no added information: freeze a level-only direct backend **before** FULL outcomes and remove temporal/coherence novelty claims. Do not keep unsupported modules for storytelling.
+- If source separability is strong but chronological/coherence controls show no added information: freeze a level-only direct backend **before** FULL outcomes and remove unsupported M3/M4 claims. Do not keep unsupported modules for storytelling.
 - If source separability, ordered increments and coherent-member controls all show positive held-out value: freeze `pfdei_full` exactly as specified in `PFDEIModularRuntime.hpp`.
 
 Write `PFDEI_FULL_FREEZE.json` with git SHA, binary SHA, provider/field hashes, source/member manifests, module modes and exact decision branch. After this file is written, no formula/threshold/member change is allowed during the development matrix.
@@ -286,7 +293,7 @@ If NO-GO, STOP. Do not tune using the matrix.
 
 ## 11. Module-removal ablation matrix
 
-Only if development FULL is GO, run ablations on the same development seed set. Do **not** rerun the 30 expensive FULL arms. Reuse their frozen `case_result.json` metadata via `FULL_RESULT_ROOT`:
+Only if development FULL is GO, run M1/M2/M3/M4 ablations on the same development seed set. Do **not** rerun the 30 expensive FULL arms. Reuse their frozen `case_result.json` metadata via `FULL_RESULT_ROOT`:
 
 ```bash
 FULL_RESULT_ROOT=/absolute/path/to/development_full_root \
