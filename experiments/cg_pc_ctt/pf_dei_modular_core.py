@@ -21,6 +21,8 @@ class SensorInverseConfig:
     dt: float = 0.2
     tau: float = 1.2
     delay_samples: int = 2
+    # Runtime raw-double default. Historical six-decimal CSV replay must pass
+    # its analytically derived serialization tolerance explicitly.
     serialization_bound_ppm: float = 1e-10
 
 
@@ -93,19 +95,32 @@ def log_level(x, reference_ppm: float) -> np.ndarray:
 
 
 def path_vector(x, reference_ppm: float, temporal: bool) -> np.ndarray:
-    """Map a chronology to a fixed Euclidean path representation.
+    """Map one chronology to the frozen Euclidean path representation.
 
-    Level alone is intentionally order-insensitive under common permutation.
-    FULL adds adjacent increments, making the representation depend on path order
-    without a learned lag or tuned temporal bandwidth.
+    The level channel always has exactly the same normalization.  M4 adds only
+    the adjacent increment channel, so `pfdei_ablate_temporal` is a literal
+    one-module removal rather than a simultaneous rescaling.
     """
     a = log_level(x, reference_ppm)
+    level = a / math.sqrt(a.size)
     if not temporal:
-        return a
+        return level
     if a.size < 2:
         raise ValueError("need >=2 samples for temporal representation")
-    d = np.diff(a)
-    return np.concatenate([a / math.sqrt(a.size), d / math.sqrt(d.size)])
+    d = np.diff(a) / math.sqrt(a.size - 1)
+    return np.concatenate([level, d])
+
+
+def _path_tensor(x, reference_ppm: float, temporal: bool) -> np.ndarray:
+    """Vectorized path features for arrays whose last dimension is time."""
+    a = log_level(x, reference_ppm)
+    level = a / math.sqrt(a.shape[-1])
+    if not temporal:
+        return level
+    if a.shape[-1] < 2:
+        raise ValueError("need >=2 samples for temporal representation")
+    d = np.diff(a, axis=-1) / math.sqrt(a.shape[-1] - 1)
+    return np.concatenate([level, d], axis=-1)
 
 
 def path_distance(a, b, reference_ppm: float, temporal: bool) -> float:
@@ -119,39 +134,49 @@ def path_distance(a, b, reference_ppm: float, temporal: bool) -> float:
 def coherent_scramble(x: np.ndarray) -> np.ndarray:
     """Destroy cross-time member identity while preserving each time slice exactly.
 
-    x'[s,m,t] = x[s,(m+t) mod M,t].  At each t the multiset over m is identical,
+    x'[s,m,t] = x[s,(m+t) mod M,t]. At every t the multiset over m is identical,
     but no output member follows one original nuisance trajectory through time.
     """
     p = np.asarray(x, dtype=np.float64)
     if p.ndim != 3:
         raise ValueError("expected [S,M,T]")
-    S, M, T = p.shape
-    out = np.empty_like(p)
-    for t in range(T):
-        for m in range(M):
-            out[:, m, t] = p[:, (m + t) % M, t]
-    return out
+    _, M, T = p.shape
+    member = (np.arange(M, dtype=np.int64)[:, None] + np.arange(T, dtype=np.int64)[None, :]) % M
+    return np.take_along_axis(p, member[None, :, :], axis=1)
 
 
 def energy_scores(observed, predicted, reference_ppm: float, temporal: bool = True) -> np.ndarray:
+    """Finite-ensemble energy score, vectorized over source/member dimensions.
+
+    This is mathematically identical to
+      mean_m ||y-x_m|| - (1/(2M^2)) sum_mn ||x_m-x_n||
+    in the frozen path representation, but computes pairwise distances from a
+    per-source Gram matrix.  It avoids an [S,M,M,D] broadcast tensor and avoids
+    Python loops over S*M^2, which matters for 210 sources x 8 members x ~1680
+    time samples x many replay prefixes.
+    """
     p, y = _check_tensor(predicted, observed)
-    S, M, _ = p.shape
-    out = np.empty(S, dtype=np.float64)
-    for s in range(S):
-        first = sum(path_distance(y, p[s, m], reference_ppm, temporal) for m in range(M)) / M
-        second = 0.0
-        for m in range(M):
-            for n in range(M):
-                second += path_distance(p[s, m], p[s, n], reference_ppm, temporal)
-        second /= (2.0 * M * M)
-        out[s] = first - second
-    return out
+    pv = _path_tensor(p, reference_ppm, temporal)
+    yv = _path_tensor(y, reference_ppm, temporal)
+
+    p2 = np.einsum("smd,smd->sm", pv, pv, optimize=True)
+    y2 = float(np.dot(yv, yv))
+    py = np.einsum("smd,d->sm", pv, yv, optimize=True)
+    d2 = np.maximum(p2 + y2 - 2.0 * py, 0.0)
+    first = np.mean(np.sqrt(d2), axis=1)
+
+    gram = np.einsum("smd,snd->smn", pv, pv, optimize=True)
+    pair2 = np.maximum(p2[:, :, None] + p2[:, None, :] - 2.0 * gram, 0.0)
+    second = np.sum(np.sqrt(pair2), axis=(1, 2)) / (2.0 * p.shape[1] * p.shape[1])
+    return np.asarray(first - second, dtype=np.float64)
 
 
 def mean_field_scores(observed, predicted, reference_ppm: float, temporal: bool = True) -> np.ndarray:
     p, y = _check_tensor(predicted, observed)
     mu = p.mean(axis=1)
-    return np.asarray([path_distance(y, mu[s], reference_ppm, temporal) for s in range(mu.shape[0])])
+    mv = _path_tensor(mu, reference_ppm, temporal)
+    yv = _path_tensor(y, reference_ppm, temporal)
+    return np.linalg.norm(mv - yv[None, :], axis=1)
 
 
 def normal_midrank_evidence_lower_is_better(scores) -> np.ndarray:
