@@ -84,8 +84,6 @@ def hpd_cell_mask(cell_mass, level=0.9):
     cum = np.cumsum(p[order])
     k = int(np.searchsorted(cum, level, side="left"))
     boundary = p[order[k]]
-    # Include every cell tied at the boundary density. This avoids arbitrary
-    # coverage failures when one carrier spreads equal density over several cells.
     return p >= boundary - 1e-15
 
 
@@ -123,6 +121,21 @@ def deterministic_kcenter(centroids, ids, k=32):
         min_d = np.minimum(min_d, np.linalg.norm(xy - xy[pick], axis=1))
         min_d[selected] = -np.inf
     return np.asarray(selected, dtype=np.int64)
+
+
+def systematic_q0_sources(prior, ids, n=64):
+    """Deterministic equal-weight systematic sample approximating q0 over carriers."""
+    q = np.asarray(prior, dtype=np.float64)
+    ids = np.asarray(ids).astype(str)
+    if q.shape != ids.shape or np.any(q <= 0) or not np.isclose(q.sum(), 1.0, atol=1e-10) or n < 1:
+        raise ValueError("invalid q0 systematic panel input")
+    order = np.argsort(ids, kind="stable")
+    cum = np.cumsum(q[order])
+    u = (np.arange(n) + 0.5) / n
+    picks = order[np.searchsorted(cum, u, side="left")]
+    if len(np.unique(picks)) != len(picks):
+        raise ValueError("q0 systematic panel contains duplicate carriers; reduce n")
+    return picks.astype(np.int64)
 
 
 def precompute_distance_matrix(cells):
