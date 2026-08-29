@@ -82,10 +82,11 @@ def hpd_cell_mask(cell_mass, level=0.9):
         raise ValueError("invalid HPD input")
     order = np.argsort(-p, kind="stable")
     cum = np.cumsum(p[order])
-    k = int(np.searchsorted(cum, level, side="left")) + 1
-    mask = np.zeros(len(p), dtype=bool)
-    mask[order[:k]] = True
-    return mask
+    k = int(np.searchsorted(cum, level, side="left"))
+    boundary = p[order[k]]
+    # Include every cell tied at the boundary density. This avoids arbitrary
+    # coverage failures when one carrier spreads equal density over several cells.
+    return p >= boundary - 1e-15
 
 
 def mass_within_radius(cell_mass, cells, true_xy, radius_m):
