@@ -2,6 +2,7 @@
 #include "gsl_server/algorithms/PMFS/internal/PFDEIModularRuntime.hpp"
 #include <cstddef>
 #include <cmath>
+#include <cstdint>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -16,6 +17,10 @@ namespace GSL::PMFS_internal::pfdei
         double z = 0.0;
         double windX = 0.0;
         double windY = 0.0;
+        // Exact read-only GADEN playback state when available. Formal PF-SNRE
+        // closed-loop uses this value and never infers field state from callback
+        // wall time. -1 is permitted only for offline/unit-test providers.
+        std::int64_t playbackIteration = -1;
     };
 
     // A runtime provider must be trajectory-independent: it must answer a
