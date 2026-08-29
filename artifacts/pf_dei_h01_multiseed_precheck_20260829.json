@@ -1,0 +1,47 @@
+{
+  "contract": "PF_DEI_H01_MULTI_SEED_PRECHECK_20260829",
+  "source_archive": "CG_PC_CTT_V3_ORR_FULL60_PACKAGE_20260827.tar.gz",
+  "source_archive_sha256": "46fac2f4afe1c4a563dc5eccd889b27834a4903fdfcb2881f87bf1337a28d109",
+  "house": "H01",
+  "seeds": [0,1,2,3,4,5,6,7,8,9],
+  "new_gaden_runs": 0,
+  "neural_training": false,
+  "inference_truth_used": false,
+  "m1_sensor_inverse": {
+    "formula": "C[k-2]=(M[k]-alpha*M[k-1])/(1-alpha), alpha=exp(-0.2/1.2)",
+    "csv_serialization_quantum_ppm": 1e-6,
+    "derived_inverse_negative_tolerance_ppm": 6.013882463097455e-6,
+    "total_valid_inverse_samples": 16795,
+    "overall_max_abs_recovery_error_ppm_eval_only": 6.269326943468545e-6,
+    "mean_seed_rmse_ppm_eval_only": 2.3029818585757116e-6,
+    "per_seed": [
+      {"seed":0,"samples":1676,"valid_inverse_samples":1674,"max_abs_error_ppm":6.065479731073853e-6,"rmse_ppm":2.303700105897943e-6},
+      {"seed":1,"samples":1685,"valid_inverse_samples":1683,"max_abs_error_ppm":6.216551004301074e-6,"rmse_ppm":2.2694005194844526e-6},
+      {"seed":2,"samples":1684,"valid_inverse_samples":1682,"max_abs_error_ppm":6.269326943468545e-6,"rmse_ppm":2.3853022833019513e-6},
+      {"seed":3,"samples":1683,"valid_inverse_samples":1681,"max_abs_error_ppm":6.1034286181552155e-6,"rmse_ppm":2.366825074962174e-6},
+      {"seed":4,"samples":1685,"valid_inverse_samples":1683,"max_abs_error_ppm":6.026845119466717e-6,"rmse_ppm":2.3626068311983475e-6},
+      {"seed":5,"samples":1674,"valid_inverse_samples":1672,"max_abs_error_ppm":5.87043952310351e-6,"rmse_ppm":2.2124904069856407e-6},
+      {"seed":6,"samples":1681,"valid_inverse_samples":1679,"max_abs_error_ppm":6.138127891900345e-6,"rmse_ppm":2.3247683547515964e-6},
+      {"seed":7,"samples":1682,"valid_inverse_samples":1680,"max_abs_error_ppm":6.105045163989908e-6,"rmse_ppm":2.250244114271253e-6},
+      {"seed":8,"samples":1683,"valid_inverse_samples":1681,"max_abs_error_ppm":6.140212601840611e-6,"rmse_ppm":2.1879143977086094e-6},
+      {"seed":9,"samples":1682,"valid_inverse_samples":1680,"max_abs_error_ppm":6.165201586277869e-6,"rmse_ppm":2.36656649719515e-6}
+    ],
+    "verdict": "H01_M1_MULTI_SEED_CONFIRMED"
+  },
+  "archive_admissibility": {
+    "raw_measured_sensor_trace_seed0_9": true,
+    "pose_trace_seed0_9": true,
+    "wind_and_context_seed0_9": true,
+    "adaptive_candidate_manifests": true,
+    "legacy_candidate_hit_maps_or_alignment": true,
+    "current_native_candidate_physical_ppm_train8": false,
+    "note": "Legacy candidate_maps/candidate_support_alignment encode PMFS hit-map semantics and are not admissible substitutes for the current native physical concentration ensemble. M2/M3/M4 scientific replay therefore waits only for the already-generated/current V3 physical bank to be aligned to these frozen trajectories; do not rerun trajectories."
+  },
+  "historical_v3_orr_h01_reference_only": {
+    "off_mean_error_m": 5.001302732443689,
+    "on_mean_error_m": 5.3432516601880105,
+    "improved_pairs": 5,
+    "pairs": 10,
+    "interpretation": "Historical V3-ORR reference only; not evidence for or against the reconstructed PF-DEI backend."
+  }
+}
