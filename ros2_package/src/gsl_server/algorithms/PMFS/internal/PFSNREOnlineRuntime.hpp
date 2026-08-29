@@ -13,6 +13,7 @@
 #include <iomanip>
 #include <limits>
 #include <numeric>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -132,6 +133,8 @@ namespace GSL::PMFS_internal::pfsnre
                 for (std::size_t m=0;m<M;++m)
                 {
                     const auto physical=provider_.physicalSeries(s,m,contexts);
+                    if (physical.size()!=contexts.size())
+                        throw std::runtime_error("PF-SNRE predictive physical-series length mismatch");
                     const auto measured=forwardFrozenSensor(physical);
                     for (std::size_t b=0;b<B;++b)
                         for (std::size_t k=0;k<kSamplesPerBlock;++k)
