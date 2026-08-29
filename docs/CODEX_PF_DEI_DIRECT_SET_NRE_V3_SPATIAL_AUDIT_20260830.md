@@ -2,62 +2,43 @@
 
 Date: 2026-08-30
 Branch: `research/pf-dei-direct-set-nre-v3-spatial-audit-20260830`
-Parent branch: `research/pf-dei-direct-set-nre-v2-20260829`
-Execution class: EXISTING FROZEN OUTPUTS / NO TRAINING / NO GADEN / NO CLOSED LOOP
+Parent: `research/pf-dei-direct-set-nre-v2-20260829`
+Execution: EXISTING FROZEN OUTPUTS / NO TRAINING / NO GADEN / NO CLOSED LOOP
 
 ## Objective
 
-The frozen Direct Set-NRE V2 result is still `PF_DEI_DIRECT_SET_NRE_V2_NO_GO`. Do not change that verdict.
+Keep the frozen V2 verdict `PF_DEI_DIRECT_SET_NRE_V2_NO_GO` unchanged. This stage asks only whether V2's learned ranking signal is **spatially coherent and physically localizable** even though its exact-carrier Top-10 gate failed.
 
-This task answers one new question only:
-
-> The V2 network improved all 50 true-carrier ranks and strongly improved centroid expected error, but exact Top-10 remained weak. Is the learned information spatially coherent around the physical source, or is it merely a non-actionable carrier-rank reshuffle?
-
-The answer determines the next scientific design. It must not be used to post-hoc retune V2.
+Do not use this audit to post-hoc retune V2.
 
 ## Hard prohibitions
 
-Do NOT:
+Do not retrain any network, alter the V2 checkpoint, change architecture/loss/prior/temperature/blend, generate GADEN data, run H02/H03, run ROS closed loop, or feed the regional summary into PMFS/planner. If a frozen input is missing, stop with `PF_DEI_V3_SPATIAL_AUDIT_INPUT_MISSING`.
 
-- retrain any network;
-- change the frozen V2 checkpoint;
-- change NRE architecture, optimizer, source proposal, loss, temperature, blend, or prior;
-- run GADEN;
-- generate a new physical bank;
-- run H02/H03;
-- run ROS closed loop;
-- feed the new regional summary into PMFS or planner;
-- tune any distance radius from H01 outcomes;
-- reinterpret this audit as V2 passing its old gate.
+## Expected V3 diff
 
-If any required frozen artifact is missing, stop with `PF_DEI_V3_SPATIAL_AUDIT_INPUT_MISSING` rather than regenerating/retraining.
+Exactly these **four** files may differ from the V2 parent:
 
-## Files added by this branch
+1. `docs/CODEX_PF_DEI_DIRECT_SET_NRE_V3_SPATIAL_AUDIT_20260830.md`
+2. `docs/PF_DEI_DIRECT_SET_NRE_V3_SPATIAL_DERIVATION_20260830.md`
+3. `experiments/cg_pc_ctt/evaluate_pf_dei_direct_set_nre_v3_spatial_structure.py`
+4. `experiments/cg_pc_ctt/selftest_pf_dei_direct_set_nre_v3_spatial_structure.py`
 
-- `docs/PF_DEI_DIRECT_SET_NRE_V3_SPATIAL_DERIVATION_20260830.md`
-- `experiments/cg_pc_ctt/evaluate_pf_dei_direct_set_nre_v3_spatial_structure.py`
-- `experiments/cg_pc_ctt/selftest_pf_dei_direct_set_nre_v3_spatial_structure.py`
+All V2 implementation/training/evaluation files must remain byte-identical.
 
-The parent V2 files are frozen and must remain byte-identical.
-
-## Step 0 — identity and diff
-
-Run:
+## 0. Pull and verify identity
 
 ```bash
 git fetch origin
 git checkout research/pf-dei-direct-set-nre-v3-spatial-audit-20260830
 git status --short
 git rev-parse HEAD
-git diff --stat research/pf-dei-direct-set-nre-v2-20260829...HEAD
 git diff --name-only research/pf-dei-direct-set-nre-v2-20260829...HEAD
 ```
 
-Expected: only the three V3 files above differ from the frozen V2 parent.
+Record the frozen V2 checkpoint SHA-256 and reject any newly trained checkpoint.
 
-Also record SHA-256 for the frozen V2 checkpoint and confirm it is the previously frozen checkpoint. Do not accept a newly trained checkpoint.
-
-## Step 1 — static checks and deterministic self-test
+## 1. Static checks and self-test
 
 From `experiments/cg_pc_ctt`:
 
@@ -66,7 +47,6 @@ python3 -m py_compile \
   pf_dei_direct_set_nre_v2.py \
   evaluate_pf_dei_direct_set_nre_v3_spatial_structure.py \
   selftest_pf_dei_direct_set_nre_v3_spatial_structure.py
-
 python3 selftest_pf_dei_direct_set_nre_v3_spatial_structure.py
 ```
 
@@ -76,36 +56,27 @@ Required terminal line:
 PF_DEI_DIRECT_SET_NRE_V3_SPATIAL_STRUCTURE_SELFTEST_PASS
 ```
 
-The self-test proves:
+The self-test checks geometry-only regional aggregation, carrier-permutation invariance, neutral prior/posterior Bayes factor, and symmetric self-inclusive adjacency.
 
-1. a coherent local cluster can beat an isolated point MAP in regional mass without truth;
-2. carrier permutation leaves the physical regional solution unchanged;
-3. prior==posterior gives zero local log Bayes factor;
-4. geometry graph is symmetric and self-inclusive.
+## 2. Reuse frozen V2 artifacts only
 
-## Step 2 — locate frozen V2 artifacts only
+Locate, do not regenerate:
 
-Locate the existing V2 evidence directory. Required inputs are:
+- dataset root containing `H01_carriers.json`;
+- the PMFS posterior NPZ used by frozen V2 historical evaluation;
+- frozen `historical_evaluation.json`;
+- frozen `historical_direct_logits.npy`.
 
-- frozen dataset root containing `H01_carriers.json`;
-- frozen PMFS posterior NPZ used by the V2 historical evaluator;
-- frozen V2 `historical_evaluation.json`;
-- frozen V2 `historical_direct_logits.npy`.
-
-Use `find`/manifest inspection only. Do not regenerate them.
-
-The historical evaluation must declare:
+`historical_evaluation.json` must contain:
 
 ```text
 contract = PF_DEI_DIRECT_SET_NRE_V2_H01_HISTORICAL_HOLDOUT_EVAL
 cases = 50
 ```
 
-The V3 script reconstructs each frozen direct posterior and requires the exact true-carrier rank to match the V2 JSON case-by-case. Any mismatch is a provenance failure.
+The V3 evaluator reconstructs each V2 posterior and requires every exact true-carrier rank to match the frozen V2 result. A mismatch is a provenance failure.
 
-## Step 3 — execute one frozen spatial audit
-
-Run exactly once after the paths are identified:
+## 3. Run exactly one spatial audit
 
 ```bash
 python3 experiments/cg_pc_ctt/evaluate_pf_dei_direct_set_nre_v3_spatial_structure.py \
@@ -116,111 +87,78 @@ python3 experiments/cg_pc_ctt/evaluate_pf_dei_direct_set_nre_v3_spatial_structur
   --out <NEW_ISOLATED_V3_AUDIT_DIR>
 ```
 
-Do not rerun with altered settings based on the result.
+Do not rerun with changed settings based on the answer.
 
 Expected outputs:
 
 - `spatial_structure_cases.csv`
 - `spatial_structure_audit.json`
 
-## Step 4 — report the mechanism, not just one scalar
+## 4. Required metrics
 
-Report all of the following for overall 50 cases and updates 1..5 separately:
+Report overall and separately for source updates 1..5:
 
-### A. Exact discrete identification
-
-- Direct exact true-carrier rank distribution;
-- frozen V2 Top-1/5/10 for reference only.
-
-### B. Spatial localization risk
-
+- exact true-carrier rank and frozen Top-1/5/10 reference;
 - PMFS vs Direct posterior-mean error;
 - PMFS vs Direct posterior expected radial error;
-- PMFS vs Direct MAP error.
+- PMFS vs Direct MAP error;
+- PMFS vs Direct minimum truth distance among Top-1/5/10;
+- PMFS vs Direct posterior mass within fixed descriptive radii 0.5/1.0/2.0 m;
+- geometry-adaptive true-neighborhood posterior mass, geometry-prior mass, and local log Bayes factor;
+- count of cases with true-neighborhood `log B > 0` and median `log B`;
+- truth-blind regional mass-mode centroid error and regional-Bayes-factor-mode centroid error.
 
-### C. Distance-aware Top-K
+The fixed radii are descriptive only and may not be selected/tuned.
 
-- mean minimum truth distance among Top-1;
-- Top-5;
-- Top-10.
+## 5. Frozen geometry-only regional rule
 
-This reveals whether Top-10 candidates are physically near the source even when the exact carrier ID is absent.
+For carrier centroid `x_i`, width `w_i`, height `h_i`:
 
-### D. Fixed descriptive neighborhood mass
+`a_i = 0.5*sqrt(w_i^2 + h_i^2)`
 
-For 0.5 m, 1.0 m, and 2.0 m, report PMFS vs Direct posterior mass around truth.
+`A_ij = 1[||x_i-x_j|| <= a_i+a_j]`
 
-These radii are descriptive only. Do not select a winner radius or build a new inference rule from them.
+For frozen posterior `p` and geometry prior `q0`:
 
-### E. Geometry-adaptive local evidence
+`M_i = sum_j A_ij p_j`
 
-Using only carrier geometry:
+`M_i^0 = sum_j A_ij q0_j`
 
-`a_i = 0.5*sqrt(width_i^2 + height_i^2)`
+`log B_i = log(M_i+eps) - log(M_i^0+eps)`
 
-`A_ij = 1[distance(x_i,x_j) <= a_i+a_j]`
+Truth-blind summaries:
 
-report:
+- mass region mode `i_M = argmax M_i`;
+- evidence region mode `i_B = argmax log B_i`;
+- each reported location is the posterior-weighted centroid inside that selected neighborhood.
 
-- true-neighborhood Direct posterior mass;
-- true-neighborhood geometry-prior mass;
-- true-neighborhood `log B = log M - log M0`;
-- number of 50 cases with `log B > 0`;
-- median `log B`.
+These are diagnostic decision summaries, not a new posterior and not a planner input.
 
-### F. Truth-blind regional decision summaries
+## 6. Mechanistic classification only
 
-Report localization error of:
+Do **not** invent a new numerical GO threshold from H01.
 
-- raw Direct point MAP;
-- posterior-mass regional mode centroid `mu_M`;
-- local-Bayes-factor regional mode centroid `mu_B`.
+Use one of:
 
-The regional modes must be computed before truth is read.
+- `PF_DEI_V3_SPATIALLY_COHERENT_SIGNAL`: several independent spatial diagnostics improve consistently; this authorizes only derivation of a new preregistered region/continuous-source method.
+- `PF_DEI_V3_RANK_SIGNAL_NOT_SPATIALLY_ACTIONABLE`: exact rank improves but radial error/local mass/Top-K distance/regional mode do not; stop the NRE-sharpening route rather than increasing training capacity.
+- `PF_DEI_V3_MIXED_SPATIAL_SIGNAL`: gains are update- or seed-specific; report exactly when the signal becomes available and require the next model to explain that condition.
 
-## Step 5 — classification
+None of these classifications authorizes closed loop.
 
-Do not create a numerical GO threshold after seeing H01. Classify mechanistically:
+## 7. Evidence package
 
-### `PF_DEI_V3_SPATIALLY_COHERENT_SIGNAL`
+Create an isolated directory containing:
 
-Use only if the result is directionally consistent across several independent spatial diagnostics, especially:
-
-- Direct expected radial error improves over PMFS;
-- Top-K minimum distance improves;
-- local posterior mass around truth improves over PMFS/prior;
-- true local log-BF is positive in a clear majority rather than a few outliers;
-- the truth-blind regional mode improves over raw point MAP in a reproducible way across updates/seeds.
-
-This classification authorizes **derivation of a new preregistered region/continuous-source method only**. It does not authorize closed loop.
-
-### `PF_DEI_V3_RANK_SIGNAL_NOT_SPATIALLY_ACTIONABLE`
-
-Use if exact rank improves but the spatial diagnostics above do not show coherent improvement.
-
-Then stop the NRE sharpening route. Do not respond by increasing network capacity or training steps.
-
-### `PF_DEI_V3_MIXED_SPATIAL_SIGNAL`
-
-Use if gains appear only at particular update indices or a minority of seeds. Report exactly where the signal becomes available. The next method must explain that condition rather than hiding it in a learned gate.
-
-## Step 6 — evidence package
-
-Create an isolated evidence directory containing:
-
-- `REPORT.md` with the complete tables and classification;
+- `REPORT.md` with complete tables and interpretation;
 - `VERDICT.txt` with exactly one classification string;
 - `spatial_structure_cases.csv`;
 - `spatial_structure_audit.json`;
-- `GIT_IDENTITY.txt` with repo/branch/HEAD;
-- SHA-256 manifest of every file in the package.
+- `GIT_IDENTITY.txt`;
+- SHA-256 manifest of all evidence files.
 
-Do not commit generated H01 outcome files back into the source branch unless explicitly instructed later.
+Do not commit H01 outcome files back to the source branch.
 
-## Stop condition
+## STOP
 
-After the one audit and evidence package, STOP.
-
-Do not train V3. Do not implement posterior smoothing. Do not run a closed loop.
-
-The next design decision must be made from the spatial mechanism result, not by iterative H01 optimization.
+After this one audit, stop. Do not train V3, smooth the PMFS posterior, or start closed loop. The next design decision must be made from the spatial mechanism result.
