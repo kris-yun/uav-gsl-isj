@@ -1,6 +1,7 @@
 #pragma once
 #include "gsl_server/algorithms/PMFS/internal/PFDEIModularRuntime.hpp"
 #include <cstddef>
+#include <cmath>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -18,7 +19,7 @@ namespace GSL::PMFS_internal::pfdei
     };
 
     // A runtime provider must be trajectory-independent: it must answer a
-    // candidate/member query at arbitrary causally visited poses/times.  A tensor
+    // candidate/member query at arbitrary causally visited poses/times. A tensor
     // pre-sampled only on historical OFF trajectories is valid for offline audit
     // but does NOT satisfy this interface for adaptive closed-loop ON runs.
     class PredictiveProvider
@@ -32,6 +33,21 @@ namespace GSL::PMFS_internal::pfdei
         virtual long double geometryPriorMass(std::size_t source) const = 0;
         virtual double physicalPpm(std::size_t source, std::size_t member,
                                    const SampleContext& context) const = 0;
+
+        // Providers backed by chronological field playback should override this
+        // method so a complete source/member trajectory is streamed once rather
+        // than repeatedly reopening the field. The default remains correct for
+        // simple providers and unit tests.
+        virtual std::vector<double> physicalSeries(std::size_t source, std::size_t member,
+                                                   const std::vector<SampleContext>& contexts) const
+        {
+            std::vector<double> out;
+            out.reserve(contexts.size());
+            for (const auto& context : contexts)
+                out.push_back(physicalPpm(source, member, context));
+            return out;
+        }
+
         virtual std::string provenanceHash() const = 0;
     };
 
@@ -41,16 +57,17 @@ namespace GSL::PMFS_internal::pfdei
         if (contexts.size() < 3) throw std::invalid_argument("PF-DEI prefix has <3 samples");
         const std::size_t S = provider.sourceCount(), M = provider.memberCount();
         if (S < 2 || M < 2) throw std::invalid_argument("PF-DEI provider has insufficient support");
-        Tensor out(S, std::vector<std::vector<double>>(M, std::vector<double>(contexts.size(), 0.0)));
+        Tensor out(S, std::vector<std::vector<double>>(M));
         for (std::size_t s = 0; s < S; ++s)
             for (std::size_t m = 0; m < M; ++m)
-                for (std::size_t t = 0; t < contexts.size(); ++t)
-                {
-                    const double c = provider.physicalPpm(s, m, contexts[t]);
+            {
+                out[s][m] = provider.physicalSeries(s, m, contexts);
+                if (out[s][m].size() != contexts.size())
+                    throw std::runtime_error("PF-DEI provider returned wrong series length");
+                for (double c : out[s][m])
                     if (!(c >= 0.0) || !std::isfinite(c))
                         throw std::runtime_error("PF-DEI provider returned invalid physical ppm");
-                    out[s][m][t] = c;
-                }
+            }
         return out;
     }
 
