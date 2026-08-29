@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import math
 import numpy as np
 from pf_dei_modular_core import *
 
@@ -13,6 +14,19 @@ for k in range(1,len(m)):
     m[k]=alpha*m[k-1]+(1-alpha)*inp
 rec=StreamingSensorInverse(cfg).deconvolve(m)
 assert np.max(np.abs(rec[:len(c)]-c)) < 1e-10, (rec,c)
+
+# 1b) historical sensor_trace.csv stores ppm to six decimal places.  Rounding
+# each M sample by at most 0.5e-6 propagates through the exact inverse by at
+# most 0.5e-6*(1+alpha)/(1-alpha).  This tolerance is replay-only; production
+# raw-double inference keeps the strict default tolerance above.
+quantum=1e-6
+serialized_bound=0.5*quantum*(1.0+alpha)/(1.0-alpha)
+mr=np.round(m,6)
+replay_cfg=SensorInverseConfig(serialization_bound_ppm=float(serialized_bound)+1e-12)
+recr=StreamingSensorInverse(replay_cfg).deconvolve(mr)
+assert np.min((mr[1:]-alpha*mr[:-1])/(1-alpha)) >= -serialized_bound-1e-12
+# Recovered C is allowed inverse-rounding error plus truth-serialization-free C.
+assert np.max(np.abs(recr[:len(c)]-c)) <= serialized_bound+1e-12
 
 # 2) synthetic source ranking. true source 1, observation is held-out-like.
 T=50; S=4; M=4
@@ -39,7 +53,8 @@ r2=infer(y,x,q0,0.1,Mode.FULL)
 assert np.allclose(r.posterior,r2.posterior)
 assert abs(r.posterior.sum()-1)<1e-12
 
-# 5) each ablation switch is isolated and numerically valid.
+# 5) each inference-side ablation switch is isolated and numerically valid.
+# Sensor ablation is applied at the observation adapter, not inside infer().
 for mode in [Mode.FULL,Mode.ABLATE_TEMPORAL,Mode.ABLATE_COHERENCE,Mode.ABLATE_NUISANCE]:
     rr=infer(y,x,q0,0.1,mode)
     assert np.all(np.isfinite(rr.scores)) and np.all(np.isfinite(rr.posterior))
