@@ -25,16 +25,18 @@ namespace GSL::PMFS_internal::pfdei
     // Format (tab-separated, paths must not contain tabs):
     // PFSNRE_PLAYBACK_V1
     // CONFIG <dir>
-    // ITERATION_DT_S <seconds>
-    // TIME_ORIGIN_S <seconds>
+    // ITERATION_DT_S <seconds>       # GADEN Player update period, normally 1/player_freq
+    // TIME_ORIGIN_S <seconds>        # offline fallback only; formal closed loop supplies playbackIteration
     // START_ITERATION <integer>
     // PROVENANCE <64-char-sha256>
     // SOURCE <s> <id> <prior> <cx> <cy> <width> <height> <free_count>
     // CELL   <s> <x> <y>
     // FIELD  <s> <m> <member_id> <results_dir>
     //
-    // No source truth, localization result, ON/OFF result or performance field
-    // is permitted in this file.
+    // GADEN Player is sample-and-hold: sensors may query several times while one
+    // iteration_N remains current. Formal PF-SNRE therefore consumes the exact
+    // read-only playbackIteration carried in each SampleContext instead of
+    // reverse-engineering it from callback wall time.
     class GadenPlaybackPredictiveProvider final : public PredictiveProvider
     {
     public:
@@ -95,7 +97,9 @@ namespace GSL::PMFS_internal::pfdei
                 if (!std::isfinite(context.timeS) || !std::isfinite(context.x) ||
                     !std::isfinite(context.y) || !std::isfinite(context.z))
                     throw std::runtime_error("PF-SNRE nonfinite query context");
-                const std::size_t iteration = iterationForTime(context.timeS);
+                const std::size_t iteration = context.playbackIteration >= 0
+                                                  ? static_cast<std::size_t>(context.playbackIteration)
+                                                  : iterationForOfflineTime(context.timeS);
                 if (!first && iteration < previous)
                     throw std::runtime_error("PF-SNRE playback query must be chronological");
                 previous = iteration;
@@ -141,9 +145,6 @@ namespace GSL::PMFS_internal::pfdei
             return result;
         }
 
-        // Cheap asset gate. This validates the complete source/member support and
-        // boundary iterations without reading every payload byte. The formal
-        // preflight additionally executes spot playback and a full-prefix timing benchmark.
         void validateFieldBoundaries(std::size_t minIteration, std::size_t maxIteration) const
         {
             if (maxIteration < minIteration) throw std::invalid_argument("invalid iteration boundary");
@@ -253,8 +254,6 @@ namespace GSL::PMFS_internal::pfdei
 
         void validateManifest()
         {
-            const std::string lower = manifestPath_.filename().string();
-            (void)lower;
             if (configDirectory_.empty() || !std::filesystem::is_directory(configDirectory_))
                 throw std::runtime_error("PF-SNRE CONFIG directory missing");
             if (!(iterationDtS_ > 0.0) || !std::isfinite(iterationDtS_) || !std::isfinite(timeOriginS_))
@@ -281,13 +280,14 @@ namespace GSL::PMFS_internal::pfdei
                 throw std::runtime_error("PF-SNRE geometry prior is not normalized");
         }
 
-        std::size_t iterationForTime(double timeS) const
+        // Offline compatibility only. This mirrors gaden_player's zero-order
+        // hold: iteration N remains active for the whole 1/player_freq interval.
+        std::size_t iterationForOfflineTime(double timeS) const
         {
             const double q = (timeS - timeOriginS_) / iterationDtS_;
-            const double rounded = std::round(q);
-            if (q < -1e-9 || std::abs(q - rounded) > 1e-6)
-                throw std::runtime_error("PF-SNRE sample time is not aligned to frozen GADEN iteration cadence");
-            return startIteration_ + static_cast<std::size_t>(std::llround(rounded));
+            if (q < -1e-9) throw std::runtime_error("PF-SNRE offline time precedes playback origin");
+            const auto step = static_cast<std::size_t>(std::floor(std::max(0.0, q + 1e-9)));
+            return startIteration_ + step;
         }
 
         static void requireIterationFile(const std::filesystem::path& field, std::size_t iteration)
