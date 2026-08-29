@@ -145,8 +145,8 @@ def time_permutation(T,block=10,seed=20260829):
 def evaluate(pred,obs,truth,mode,threshold,lags,batch):
     px=ppm_transform(pred,mode,threshold); oy=ppm_transform(obs,mode,threshold)
     level=Energy(px).score(oy,batch); pe,sc=causal_embed(px,lags); oe,_=causal_embed(oy,lags,sc); causal=Energy(pe).score(oe,batch)
-    sx=scramble_members(pred); se,_=causal_embed(ppm_transform(sx,mode,threshold),lags); scrambled=Energy(se).score(oe,batch)
-    perm=time_permutation(pred.shape[-1]); tx=pred[:,:,perm]; te,_=causal_embed(ppm_transform(tx,mode,threshold),lags); tshuf=Energy(te).score(oe,batch)
+    sx=scramble_members(pred); se,_=causal_embed(ppm_transform(sx,mode,threshold),lags,sc); scrambled=Energy(se).score(oe,batch)
+    perm=time_permutation(pred.shape[-1]); tx=pred[:,:,perm]; te,_=causal_embed(ppm_transform(tx,mode,threshold),lags,sc); tshuf=Energy(te).score(oe,batch)
     return {'level':metrics(level,truth),'level_perm':permutation_test(level,truth),
             'causal':metrics(causal,truth),'causal_perm':permutation_test(causal,truth),
             'coherence_scramble':metrics(scrambled,truth),'coherence_test':sign_test(causal,scrambled,truth),
