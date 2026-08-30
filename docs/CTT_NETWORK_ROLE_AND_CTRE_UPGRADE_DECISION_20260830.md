@@ -1,7 +1,7 @@
 # CTT network role and CTRE upgrade decision
 
 Date: 2026-08-30  
-Status: **METHOD DECISION / DEVELOPMENT AUTHORIZATION ONLY / CLOSED LOOP NOT YET AUTHORIZED**
+Status: **H01 FIXED-TRAJECTORY DEVELOPMENT GO / H01 CLOSED-LOOP PILOT AUTHORIZED / CROSS-HOUSE CLAIM NOT AUTHORIZED**
 
 ## 1. Decision in plain language
 
@@ -10,6 +10,16 @@ The current neural module is not useful as a source-likelihood model. It saw a s
 The native physical bank does contain strong source information. On 1,680 fresh-context cases, an oracle same-context physical ensemble achieved mean normalized true-source rank 0.13825 (random expectation approximately 0.5), median rank 20/210, Top-10 26.67%, and Top-5 15.42%. The information is therefore present in the source-by-transport physical response family.
 
 However, precise first-passage timing is not the robust source mechanism. FULL first-passage was slightly worse than SURVIVAL_ONLY on mean normalized rank (0.13841 versus 0.13825; one-sided sign p=0.15385), and the time-permutation comparison missed the preregistered p<=0.01 threshold and reversed in context 11. The stable signal is reachability/detection, not arrival phase.
+
+Two later frozen tests materially strengthen this decision. First, keeping one
+transport member coherent across all stops improved mean normalized true-source
+rank from 0.14841 to 0.13288 on 1,680 fresh physical cases (574 wins, 430
+losses, 676 ties, exact one-sided p=3.09e-6), with no reversal in contexts
+10--13. Second, the preregistered H01 historical source-update shadow produced
+10/10 lower formal localization errors: mean error 5.0013 m became 2.8206 m,
+pooled improvement was 43.60%, and there were no preregistered catastrophic
+regressions.  No network, GADEN rerun, threshold fitting, temperature, blend or
+PMFS posterior input was used in that shadow replay.
 
 ## 2. Why the current network failed
 
@@ -139,6 +149,11 @@ Use the already-open H01/H02/H03 seeds 0..9 and their fixed trajectories. Compar
 
 Development GO requires pooled endpoint improvement >=10%, at least 20/30 improved, no House pooled degradation >5%, and zero new false-confident collapses. This stage may reject CTRE but cannot confirm it.
 
+The first, House-specific portion of Gate B is now complete. H01 seeds 0..9
+passed 10/10 with 43.60% pooled improvement. This does not satisfy the stated
+30-run cross-House Gate B and is not a generalization claim. It authorizes only
+the H01 revealed closed-loop pilot needed to test feedback through the planner.
+
 ### Gate C — one revealed closed-loop smoke
 
 Only after Gate B GO: one already-revealed seed, 300 s, confirms runtime consumption, trajectory divergence, finite posterior and stop timing. Error is diagnostic only.
@@ -155,5 +170,24 @@ Freeze source, binary, launch, physical bank construction and all metrics; run p
 
 - Direct hazard network: **terminal NO-GO**.
 - Native source information: **present, primarily reachability/detection**.
-- CTRE formulation: **authorized for reference implementation and frozen historical shadow Gate only**.
-- Runtime takeover / 300 s closed loop: **not yet authorized**.
+- Coherent transport identity: **fresh-context diagnostic PASS**.
+- H01 fixed-trajectory shadow: **10/10 improvement; 43.60% pooled development GO**.
+- Exact arbitrary-position lookup: **engineering smoke PASS**; one native
+  source/member queried all 626 H01 free cells for 1,500 samples per cell in
+  2.76 s using the frozen RNG-enabled binary.
+- H01 runtime takeover: **authorized only for one already-revealed 300 s pilot
+  after lookup hash/parity and exact single-window replacement parity pass**.
+- H02/H03 runtime and any cross-House or confirmatory >=10% claim: **not yet
+  authorized**.
+
+## 9. Interpretation of historical true-carrier rank
+
+The formal metric improved for all ten H01 trajectories, but exact true-carrier
+rank improved over native PMFS on only four final updates. In particular, some
+fixed trajectories yield a spatially better top-5% expectation while assigning
+low probability to the exact persistent carrier. Therefore the 43.60% result
+must not be described as universal source identification. The closed-loop pilot
+must preserve and report both the formal error and the exact-carrier rank/mass,
+posterior variance, false-confident-collapse status and trajectory divergence.
+This discrepancy is a falsification target, not a reason to tune CTRE after the
+result.
