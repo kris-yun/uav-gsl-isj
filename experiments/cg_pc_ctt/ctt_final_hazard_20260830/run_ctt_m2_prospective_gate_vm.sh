@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eo pipefail
 
 source /opt/ros/humble/setup.bash
 source /home/zyc/PF_DEI_V3_GADEN_BUILD/install/setup.bash
@@ -10,6 +10,7 @@ export OPENBLAS_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
 export PYTHONHASHSEED=0
+set -u
 
 code=/home/zyc/CTT_M2_PROSPECTIVE_GATE_CODE_20260831
 formal=/home/zyc/CTT_H01_WIND_BANK_FULL_20260830_R2_FORMAL_PERSISTED
