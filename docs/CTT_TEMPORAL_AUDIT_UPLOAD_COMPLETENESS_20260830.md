@@ -11,8 +11,8 @@ Purpose: provide Codex1 an explicit inventory of the V1--V7 causal-temporal fals
 | File | Original frozen SHA-256 | Bytes | Upload/recovery status |
 |---|---|---:|---|
 | `train_eval_ctt_temporal_nre.py` | `4bb98dc592ddaafabc50bc45b01d8a583aca97252c5b96e6c2b95a041e94444e` | 13480 | `SOURCE_RECOVERY_HASH_MATCH`; original V1 source recovered byte-for-byte, `py_compile` PASS, uploaded |
-| `v2_energy_temporal_nre.py` | `ab3f9bfac72c91f8ec39a4e77b21fe61fc97467b15c2836c6b75c41138dbd6e9` | 8158 | original audit source uploaded |
-| `v3_physics_order_temporal_nre.py` | `889c417cd0fc5b3aca3a8b983fde8e42d03600d42a73a62701c817e44707f0e7` | 12590 | original audit source uploaded |
+| `v2_energy_temporal_nre.py` | `ab3f9bfac72c91f8ec39a4e77b21fe61fc97467b15c2836c6b75c41138dbd6e9` | 8158 | `SOURCE_RECOVERY_HASH_MATCH`; original V2 source recovered byte-for-byte, `py_compile` PASS, uploaded |
+| `v3_physics_order_temporal_nre.py` | `889c417cd0fc5b3aca3a8b983fde8e42d03600d42a73a62701c817e44707f0e7` | 12590 | `SOURCE_RECOVERY_HASH_MATCH`; original V3 source recovered byte-for-byte, `py_compile` PASS, uploaded |
 | `v3_parallel_median_eval.py` | `a60e58e39dbf10d7cade20ddaf9c2a9ecf707ed37a9b696000cf228bc4d853d8` | 2920 | original evaluator uploaded |
 | `v4_physics_certified_interval_temporal_nre.py` | `a82035cbd01b4e5ace11cff0012073dcb5116f0f9247569ca5f0213ca92ef2da` | 22744 | `SOURCE_RECOVERY_HASH_MATCH`; recovered byte-for-byte, `py_compile` PASS, uploaded |
 | `v4_parallel_median_eval.py` | `c1e85d267938a47e7c29ca9fe8d865b71b3d520ac45ee03c42729ae7a96b200b` | 539 | original evaluator uploaded |
