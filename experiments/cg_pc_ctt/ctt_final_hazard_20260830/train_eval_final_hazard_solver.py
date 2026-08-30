@@ -345,12 +345,14 @@ def summarize(ranks):
 # --------------------------------------------------------------------------
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--bank", type=Path, required=True)
+    parser.add_argument("--bank", type=Path, required=True, help="development bank (contexts 0..9)")
+    parser.add_argument("--test-bank", type=Path, default=None, help="fresh bank (contexts 10..13); defaults to --bank")
     parser.add_argument("--support", type=Path, required=True)
     parser.add_argument("--schedule-root", type=Path, required=True)
     parser.add_argument("--map", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    test_bank = args.test_bank or args.bank
     if args.output.exists():
         raise SystemExit(f"REFUSE_OVERWRITE:{args.output}")
     args.output.mkdir(parents=True)
@@ -361,13 +363,13 @@ def main() -> int:
     schedules = [load_schedule(args.schedule_root / "H01" / "reserved" / f"trajectory_seed_{s}.csv") for s in ROUTE_SEEDS]
 
     # precompute per-context route wind
-    def build(contexts, members, routes, capture=False):
+    def build(bank, contexts, members, routes, capture=False):
         xs, xg, ys, clusters, binary = [], [], [], [], {}
         for context in contexts:
-            winds = read_wind(args.bank / f"context_{context:02d}" / "exact_wind_routes.bin")
+            winds = read_wind(bank / f"context_{context:02d}" / "exact_wind_routes.bin")
             for carrier in carriers:
                 for member in members:
-                    streams = read_physical(args.bank / f"context_{context:02d}" / f"member_{member:02d}" / f"{carrier['id']}.bin")
+                    streams = read_physical(bank / f"context_{context:02d}" / f"member_{member:02d}" / f"{carrier['id']}.bin")
                     for route in routes:
                         sched = schedules[route]
                         wind = winds[route]
@@ -403,9 +405,9 @@ def main() -> int:
                 np.asarray(ys, dtype=np.int64), clusters, binary)
 
     print("CTT_H01_HAZARD_BUILD_TRAIN", flush=True)
-    xts, xtg, yt, _, _ = build(TRAIN_CONTEXTS, TRAIN_MEMBERS, TRAIN_ROUTES)
+    xts, xtg, yt, _, _ = build(args.bank, TRAIN_CONTEXTS, TRAIN_MEMBERS, TRAIN_ROUTES)
     print("CTT_H01_HAZARD_BUILD_VAL", flush=True)
-    xvs, xvg, yv, _, _ = build(VAL_CONTEXTS, TRAIN_MEMBERS, VAL_ROUTES)
+    xvs, xvg, yv, _, _ = build(args.bank, VAL_CONTEXTS, TRAIN_MEMBERS, VAL_ROUTES)
 
     geo_mean = xtg.mean(axis=0); geo_std = xtg.std(axis=0); geo_std[geo_std < 1e-6] = 1.0
     # STATIC comparator: zero out spatial wind channels (channels 1,2), keep occupancy
@@ -429,7 +431,7 @@ def main() -> int:
     # TEST (fresh contexts 10..13)
     print("CTT_H01_HAZARD_BUILD_TEST", flush=True)
     test_contexts = (10, 11, 12, 13)
-    xts_test, xtg_test, y_test, test_clusters, test_binary = build(test_contexts, TEST_MEMBERS, TEST_ROUTES, capture=True)
+    xts_test, xtg_test, y_test, test_clusters, test_binary = build(test_bank, test_contexts, TEST_MEMBERS, TEST_ROUTES, capture=True)
     xts_test_static = xts_test.copy(); xts_test_static[:, :, :, 1:] = 0.0
     p_cond = predict(conditional, ckpt_c, xts_test, xtg_test)
     p_static = predict(static, ckpt_s, xts_test_static, xtg_test)

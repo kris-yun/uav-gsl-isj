@@ -88,7 +88,10 @@ def main() -> int:
     context_payload = json.loads(args.context_manifest.read_text(encoding="utf-8"))
     if context_payload.get("contract") != FRESH_CONTEXT_CONTRACT:
         raise SystemExit("CTT_H01_FRESH_WIND_CONTEXT_CONTRACT_FAIL")
-    contexts = sorted(context_payload["contexts"], key=lambda item: int(item["context"]))
+    all_contexts = sorted(context_payload["contexts"], key=lambda item: int(item["context"]))
+    # PHASE 3 uses only the four confirmatory contexts (10..13); 14,15 are
+    # reserved for the later closed-loop development and are not materialized here.
+    contexts = [item for item in all_contexts if int(item["context"]) in FRESH_CONTEXTS]
     if [int(item["context"]) for item in contexts] != list(FRESH_CONTEXTS):
         raise SystemExit("CTT_H01_FRESH_WIND_CONTEXT_INDEX_FAIL")
     for item in contexts:
