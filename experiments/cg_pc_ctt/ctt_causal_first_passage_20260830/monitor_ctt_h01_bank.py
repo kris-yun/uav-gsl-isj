@@ -91,7 +91,17 @@ def main() -> int:
             pids = native_processes(bank)
             process_ok, process_rows = check_process_contract(pids)
             temporary = list(bank.glob("context_*/member_*/*.tmp.*"))
-            stale = [str(path) for path in temporary if time.time() - path.stat().st_mtime > STALL_S]
+            stale = []
+            for path in temporary:
+                try:
+                    age = time.time() - path.stat().st_mtime
+                except FileNotFoundError:
+                    # The materializer commits a completed world by atomically
+                    # renaming its temporary file; disappearance between glob
+                    # and stat is therefore expected, not a stale-file error.
+                    continue
+                if age > STALL_S:
+                    stale.append(str(path))
             usage = shutil.disk_usage("/dev/shm")
             payload = {
                 "iteration": iteration, "time": time.time(), "physical_files": count,
