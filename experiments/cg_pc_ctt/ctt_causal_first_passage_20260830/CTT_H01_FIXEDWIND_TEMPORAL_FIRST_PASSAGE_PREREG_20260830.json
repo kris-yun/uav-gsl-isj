@@ -1,0 +1,12 @@
+{
+  "contract":"CTT_H01_FIXEDWIND_TEMPORAL_FIRST_PASSAGE_GATE_V1",
+  "status":"FROZEN_BEFORE_TEST",
+  "code_sha256":"a1f74b05fdb126069ff67a173bed9c2c321df99d96e50bbb9af2500d01030377",
+  "provenance_correction":"predictive8 generator accepts one fixed native --wind input for all reserved trajectories; H01_wind35 local estimates are not valid predictive-bank conditioning variables",
+  "trajectory_split":{"train":[4001,4002,4003],"validation":[4004],"test":[4005]},
+  "transport_split":{"train":[0,1,2,3,4,5],"validation":[6],"test":[7]},
+  "source_grid":"all 210 known physical query carriers",
+  "arms":{"temporal":"source/query geometry + causal absolute time/route history","geometry":"same dimension/capacity with route/time replaced by training mean"},
+  "gates":["lower95(GEOMETRY-TEMPORAL NLL)>0","lower95(GEOMETRY-TEMPORAL Brier)>0","lower95(route-time-shuffle-TEMPORAL NLL)>0","normalization<1e-6"],
+  "checkpoint_selection":"validation first-passage NLL only"
+}
