@@ -1,0 +1,49 @@
+{
+  "contract": "CTRE_H01_HISTORICAL_SOURCE_UPDATE_SHADOW_V1",
+  "status": "PREREGISTERED_BEFORE_OUTCOME",
+  "purpose": "Development-only fixed-trajectory test of the frozen coherent reachability observation operator at the five actual PMFS source-update times for H01 seeds 0..9.",
+  "scientific_freeze": {
+    "source_support": "210 persistent H01 carriers",
+    "nuisance_members": 8,
+    "observation_unit": "first 80 samples of each completed stationary physical stop",
+    "detection_threshold_ppm": 0.1,
+    "candidate_detection_probability": "Jeffreys one-realization posterior predictive: miss=0.25, hit=0.75",
+    "transport_marginalization": "one coherent run-persistent member across all visible physical stops, uniform member prior",
+    "prior": "frozen geometry_prior from each existing bank view",
+    "posterior": "geometry_prior times coherent CTRE likelihood; no blend, temperature, reset, learned weight, truth gate, or PMFS posterior input",
+    "formal_metric": "PMFS ExpectedValue(sourceProbability, 0.05), reproduced on the native 626 free cells"
+  },
+  "inputs": {
+    "archive_sha256": "46fac2f4afe1c4a563dc5eccd889b27834a4903fdfcb2881f87bf1337a28d109",
+    "support_sha256": "9822fabce119920c9a073c2ff0cf292e1e051ea05d67ef446e1840bda6103df4",
+    "mapping_sha256": "e01147d6cae17080c4143f29f6ea51daead21718b633d3776c38cf956cdd210f",
+    "bank_view_sha256": {
+      "0": "a947237d37fd1e76fa4274d95d808136f36f42c681be217f4ac5d33769f03178",
+      "1": "21e2b1acfc1ba590815d5890cff2bf707156295e66450da6a7ae030228751845",
+      "2": "86147b68d9ad65abc208122d392fe0b91689bef2521d5c68c06caf29444a0e82",
+      "3": "b2923da12b758574987a769da7a8a20a704550af96c1bf309311fc2de21deadc",
+      "4": "9aca5f8eee467b11cba5d1d308a347636cc7f84db7a5c9dedb83d1efbe11204b",
+      "5": "ba37fbff4fc68b24a9d4a88db71e928f1d467873f64b0455bb4adb757f66333d",
+      "6": "f5f16ea52275f5ebae80d51cf1748bcc4e4b0af6526c7a4ed2f7bb57c04eb52e",
+      "7": "1f4f1c258ea64499ac75a3e51ca65fc6ea920ddc82b431932309e750040204c0",
+      "8": "362061d8694b3c820d97a386ed46b9216bca23f3d5bb8dd4295674c6c13ed29a",
+      "9": "2931ad14086e8379044255e163792b47563badf9ec31b575eb89918d507e7ad7"
+    }
+  },
+  "primary_endpoint": "final update formal localization error, paired against contemporaneous archived PMFS OFF",
+  "go_rule": {
+    "valid_pairs": 10,
+    "minimum_pooled_relative_improvement": 0.1,
+    "minimum_improved_pairs": 7,
+    "maximum_catastrophic_regressions": 0,
+    "catastrophe_definition": "CTRE error exceeds PMFS error by more than 1.0 m and is greater than 1.5 times PMFS error"
+  },
+  "scope": {
+    "development_only": true,
+    "fixed_trajectory": true,
+    "closed_loop_authorized_by_this_test": false,
+    "gaden_runs": 0,
+    "neural_training": false,
+    "result_driven_tuning_forbidden": true
+  }
+}
