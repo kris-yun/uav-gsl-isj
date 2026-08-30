@@ -12,7 +12,7 @@ export NUMEXPR_NUM_THREADS=1
 export PYTHONHASHSEED=0
 set -u
 
-code=/home/zyc/CTT_M2_PROSPECTIVE_GATE_CODE_20260831
+code=/home/zyc/CTT_M2_PROSPECTIVE_GATE_CODE_20260831_R2
 formal=/home/zyc/CTT_H01_WIND_BANK_FULL_20260830_R2_FORMAL_PERSISTED
 placement=/home/zyc/PF_DEI_V3_STREAM_BUILD/src/frozen_region_placement_manifest.json
 contexts=/home/zyc/CTT_H01_NATIVE_WIND_CONTEXTS_20260830/context_manifest.json
