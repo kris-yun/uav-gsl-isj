@@ -112,7 +112,7 @@ prospective repair is one fixed-placement crossing for every H01 carrier:
 U0 = exact member-0 placement coordinate
 predictive realizations P0..P5 = seeds 101,211,307,401,503,601
 prospective observation realizations O0..O6 = seven SHA-256-derived seeds
-all 13 realizations regenerated at U0 in one locked single-thread environment
+all 13 realizations regenerated at U0 in the byte-parity-closed OMP=4 environment
 all 210 regenerated P0 worlds byte-identical to old context-0/member-0 worlds
 ```
 

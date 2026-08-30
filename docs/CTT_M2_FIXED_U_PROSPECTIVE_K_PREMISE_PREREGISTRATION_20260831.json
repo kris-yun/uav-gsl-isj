@@ -58,14 +58,20 @@
     "all_13_realizations_are_regenerated_in_one_frozen_environment": true,
     "K0_sentinel": "all 210 regenerated P0 worlds must be byte-identical to the frozen formal context-0/member-0 worlds before any score is computed",
     "generation_environment": {
-      "OMP_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "4",
       "OMP_DYNAMIC": "FALSE",
       "OPENBLAS_NUM_THREADS": "1",
       "MKL_NUM_THREADS": "1",
       "NUMEXPR_NUM_THREADS": "1",
       "PYTHONHASHSEED": "0"
     },
-    "rng_scope": "the frozen native generator passes only the declared seed to gaden_initialize_random_engines before constructing RunningSimulation; the seed controls GADEN Gaussian and uniform stochastic forward draws. The claim is native stochastic forward realization K, not an isolated meteorological transport parameter."
+    "rng_scope": "the frozen native generator passes only the declared seed to gaden_initialize_random_engines before constructing RunningSimulation; the seed controls GADEN Gaussian and uniform stochastic forward draws. The claim is native stochastic forward realization K, not an isolated meteorological transport parameter.",
+    "runtime_parity_closure": {
+      "historical_formal_bank_match": "OMP_NUM_THREADS=4 and GADEN_RNG_SEED unset reproduced the frozen P0 shard byte-for-byte",
+      "nonmatching_thread_counts": [1, 2, 3, 6, 8, 12],
+      "GADEN_RNG_SEED_explicit_101_match": false,
+      "interpretation": "OpenMP thread count is part of the frozen native stochastic forward generator and is held at 4; this is infrastructure closure, not result-driven method tuning"
+    },
   },
   "frozen_score_equations": {
     "detection": "d[s,k,b] in {0,1} is the frozen M1/M3 detection state for candidate s, predictive realization k, and completed physical stop b",

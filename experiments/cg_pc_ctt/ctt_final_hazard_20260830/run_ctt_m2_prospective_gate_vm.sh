@@ -4,7 +4,7 @@ set -eo pipefail
 source /opt/ros/humble/setup.bash
 source /home/zyc/PF_DEI_V3_GADEN_BUILD/install/setup.bash
 export LD_LIBRARY_PATH="/home/zyc/PF_DEI_V3_GADEN_BUILD/build/gaden_common/third_party/gaden_core/third_party/libbsc:${LD_LIBRARY_PATH:-}"
-export OMP_NUM_THREADS=1
+export OMP_NUM_THREADS=4
 export OMP_DYNAMIC=FALSE
 export OPENBLAS_NUM_THREADS=1
 export MKL_NUM_THREADS=1
@@ -12,7 +12,7 @@ export NUMEXPR_NUM_THREADS=1
 export PYTHONHASHSEED=0
 set -u
 
-code=/home/zyc/CTT_M2_PROSPECTIVE_GATE_CODE_20260831_R2
+code=/home/zyc/CTT_M2_PROSPECTIVE_GATE_CODE_20260831_R3
 formal=/home/zyc/CTT_H01_WIND_BANK_FULL_20260830_R2_FORMAL_PERSISTED
 placement=/home/zyc/PF_DEI_V3_STREAM_BUILD/src/frozen_region_placement_manifest.json
 contexts=/home/zyc/CTT_H01_NATIVE_WIND_CONTEXTS_20260830/context_manifest.json
@@ -23,8 +23,8 @@ rng_math=/home/zyc/PF_DEI_V3_GADEN_BUILD/src/GADEN/gaden_common/third_party/gade
 running_sim=/home/zyc/PF_DEI_V3_GADEN_BUILD/src/GADEN/gaden_common/third_party/gaden_core/src/RunningSimulation.cpp
 environment=/home/zyc/rmfe_cl_env/H01/OccupancyGrid3D.csv
 schedules=/home/zyc/PF_DEI_V3_TRAJECTORIES_20260828_R1
-bank=${CTT_M2_BANK_OUT:-/home/zyc/CTT_M2_FIXED_U_PROSPECTIVE_K_BANK_20260831_R1}
-evidence=${CTT_M2_EVIDENCE_OUT:-/home/zyc/CTT_M2_FIXED_U_PROSPECTIVE_K_EVIDENCE_20260831_R1}
+bank=${CTT_M2_BANK_OUT:-/home/zyc/CTT_M2_FIXED_U_PROSPECTIVE_K_BANK_20260831_R2}
+evidence=${CTT_M2_EVIDENCE_OUT:-/home/zyc/CTT_M2_FIXED_U_PROSPECTIVE_K_EVIDENCE_20260831_R2}
 
 cd "$code"
 sha256sum -c CTT_M2_PROSPECTIVE_GATE_CODE_SHA256SUMS.txt
@@ -59,7 +59,7 @@ python3 materialize_ctt_h01_fixed_u_transport_gate.py \
   --environment "$environment" \
   --schedule-root "$schedules" \
   --output-root "$bank" \
-  --workers "${CTT_M2_WORKERS:-10}"
+  --workers "${CTT_M2_WORKERS:-3}"
 
 python3 evaluate_ctt_h01_fixed_u_transport_gate.py \
   --formal-bank "$formal" \

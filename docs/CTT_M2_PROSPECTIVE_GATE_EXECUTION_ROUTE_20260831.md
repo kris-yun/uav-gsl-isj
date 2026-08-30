@@ -37,7 +37,7 @@ marginalization, planner behavior or cross-House generalization.
    source, manifests, schedules, environment and null-map hashes. Any mismatch
    is `INVALID`; do not regenerate with a substitute asset.
 2. **P0 sentinel.** Regenerate all 210 predictive-seed-101 worlds with the
-   locked single-thread environment. Every shard must be byte-identical to the
+  locked `OMP_NUM_THREADS=4` environment. Every shard must be byte-identical to the
    frozen context-0/member-0 bank. One mismatch stops the run before other
    seeds are generated.
 3. **Factorial materialization.** Generate the remaining 2520 worlds at the
