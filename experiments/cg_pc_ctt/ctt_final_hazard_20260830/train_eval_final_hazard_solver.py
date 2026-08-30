@@ -88,7 +88,7 @@ class Map2D:
                 cells[x, j, z] = float(v)
             x += 1
         self.occ = (cells > 0).astype(np.float32)   # 0 free, 1 occupied
-        self.slice = self.occ[:, :, Z_SLICE]        # (nx, ny) occupancy at flight height
+        self.slice = self.occ[:, :, Z_SLICE].T      # (ny, nx) occupancy at flight height
 
     def idx(self, px: float, py: float) -> tuple[int, int]:
         ix = int((px - self.min_x) / self.cell)
@@ -100,11 +100,10 @@ class Map2D:
         ix, iy = self.idx(qx, qy)
         x0, y0 = ix - half, iy - half
         out = np.zeros((PATCH, PATCH), dtype=np.float32)
-        for a in range(PATCH):
-            for b in range(PATCH):
-                cx, cy = x0 + a, y0 + b
-                if 0 <= cx < self.nx and 0 <= cy < self.ny:
-                    out[b, a] = self.occ[cx, cy, Z_SLICE]
+        xa, xb = max(x0, 0), min(x0 + PATCH, self.nx)
+        ya, yb = max(y0, 0), min(y0 + PATCH, self.ny)
+        if xa < xb and ya < yb:
+            out[ya - y0:yb - y0, xa - x0:xb - x0] = self.slice[ya:yb, xa:xb]
         return out
 
 
@@ -165,22 +164,51 @@ def wind_patch(map2d: Map2D, samples_xy: np.ndarray, samples_uv: np.ndarray,
     return acc
 
 
-def stop_features(carrier: dict, stop: dict, map2d: Map2D) -> dict:
+def compute_stops(sched: list[dict], wind: np.ndarray) -> list[dict]:
+    """Return per-stop records for one route (query poses + causal wind prefix)."""
+    xy = np.asarray([[r["x"], r["y"]] for r in sched], dtype=np.float64)
+    uv = wind[:, :2]
+    cum = np.concatenate([[0.0], np.cumsum(np.linalg.norm(np.diff(xy, axis=0), axis=1))])
+    stops = []
+    previous = None
+    for stop_id in sorted({r["stop"] for r in sched}):
+        idxs = [i for i, r in enumerate(sched) if r["stop"] == stop_id and r["moving"] == 0]
+        if len(idxs) < STOP_SAMPLES:
+            continue
+        idxs = idxs[:STOP_SAMPLES]
+        start, end = int(idxs[0]), int(idxs[-1]) + 1
+        cur = xy[start]
+        delta = np.zeros(2) if previous is None else cur - previous
+        route_vec = np.asarray([sched[start]["t"], cum[start], delta[0], delta[1],
+                                math.sin(sched[start]["yaw"]), math.cos(sched[start]["yaw"])], dtype=np.float32)
+        stops.append({"indices": idxs, "xy": cur, "route": route_vec,
+                      "wind_xy": xy[:end], "wind_uv": uv[:end]})
+        previous = cur
+    return stops
+
+
+def spatial_patch(stop: dict, map2d: Map2D) -> np.ndarray:
     qx, qy = stop["xy"][0], stop["xy"][1]
     occ = map2d.patch(qx, qy)
     wind = wind_patch(map2d, stop["wind_xy"], stop["wind_uv"], qx, qy)
-    spatial = np.concatenate([occ[:, :, None], wind], axis=2).astype(np.float32)  # (PATCH,PATCH,3)
+    # NCHW layout: (3, PATCH, PATCH) = [occupancy, wind_u, wind_v]
+    return np.stack([occ, wind[:, :, 0], wind[:, :, 1]], axis=0).astype(np.float32)
+
+
+def geo_feature(carrier: dict, stop: dict) -> np.ndarray:
     source = np.asarray([carrier["x"], carrier["y"]], dtype=np.float64)
-    query = np.asarray([qx, qy], dtype=np.float64)
+    query = stop["xy"]
     delta = query - source
     distance = max(float(np.linalg.norm(delta)), 1e-6)
     unit = delta / distance
     half_diagonal = 0.5 * 0.3 * math.hypot(carrier["size_i"], carrier["size_j"])
     geo = np.asarray([
-        carrier["x"], carrier["y"], qx, qy, delta[0], delta[1], distance,
+        carrier["x"], carrier["y"], query[0], query[1], delta[0], delta[1], distance,
         unit[0], unit[1], half_diagonal, *stop["route"],
     ], dtype=np.float32)
-    return {"spatial": spatial, "geo": geo}
+    if geo.shape != (GEO_DIM,) or not np.isfinite(geo).all():
+        raise ValueError(f"CTT_H01_GEO_CONTRACT_FAIL:{geo.shape}")
+    return geo
 
 
 # --------------------------------------------------------------------------
@@ -241,19 +269,22 @@ def hazard_loss(model: SpatialWindMapHazard, spatial: torch.Tensor, geo: torch.T
 # --------------------------------------------------------------------------
 # training
 # --------------------------------------------------------------------------
-def fit(name: str, x_spatial, x_geo, y, xv_spatial, xv_geo, yv,
+def fit(name: str, spatial_array, skey, x_geo, y, spatial_v, skey_v, xv_geo, yv,
         geo_mean, geo_std, output: Path):
-    xs = torch.from_numpy(x_spatial)
-    xg = torch.from_numpy((x_geo - geo_mean) / geo_std)
-    xvs = torch.from_numpy(xv_spatial)
-    xvg = torch.from_numpy((xv_geo - geo_mean) / geo_std)
-    yt = torch.from_numpy(y)
-    yvt = torch.from_numpy(yv)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    xs = torch.from_numpy(spatial_array).to(device)
+    sk = torch.from_numpy(skey).to(device)
+    xg = torch.from_numpy((x_geo - geo_mean) / geo_std).to(device)
+    xvs = torch.from_numpy(spatial_v).to(device)
+    skv = torch.from_numpy(skey_v).to(device)
+    xvg = torch.from_numpy((xv_geo - geo_mean) / geo_std).to(device)
+    yt = torch.from_numpy(y).to(device)
+    yvt = torch.from_numpy(yv).to(device)
     torch.manual_seed(SEED)
-    model = SpatialWindMapHazard()
+    model = SpatialWindMapHazard().to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=2e-3, weight_decay=1e-5)
     gen = torch.Generator().manual_seed(SEED)
-    dataset = torch.utils.data.TensorDataset(xs, xg, yt)
+    dataset = torch.utils.data.TensorDataset(sk, xg, yt)
     loader = torch.utils.data.DataLoader(dataset, batch_size=BATCH, shuffle=True, generator=gen)
     best = math.inf
     stale = 0
@@ -261,16 +292,16 @@ def fit(name: str, x_spatial, x_geo, y, xv_spatial, xv_geo, yv,
     for epoch in range(MAX_EPOCHS):
         model.train()
         total = count = 0
-        for xb, gb, yb in loader:
-            loss = hazard_loss(model, xb, gb, yb)
+        for xb_idx, gb, yb in loader:
+            loss = hazard_loss(model, xs[xb_idx], gb, yb)
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
             optimizer.step()
-            total += float(loss.detach()) * len(xb)
-            count += len(xb)
+            total += float(loss.detach()) * len(xb_idx)
+            count += len(xb_idx)
         model.eval()
         with torch.no_grad():
-            val = float(hazard_loss(model, xvs, xvg, yvt))
+            val = float(hazard_loss(model, xvs[skv], xvg, yvt))
         history.append({"epoch": epoch, "train": total / count, "validation": val})
         print(f"CTT_H01_HAZARD_TRAIN arm={name} epoch={epoch} train={total/count:.8f} val={val:.8f}", flush=True)
         if val < best - TOLERANCE:
@@ -288,15 +319,18 @@ def fit(name: str, x_spatial, x_geo, y, xv_spatial, xv_geo, yv,
     return model, ckpt
 
 
-def predict(model, ckpt, x_spatial, x_geo):
-    xs = torch.from_numpy(x_spatial)
-    xg = torch.from_numpy((x_geo - ckpt["geo_mean"]) / ckpt["geo_std"])
+def predict(model, ckpt, spatial_array, skey, x_geo):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = model.to(device)
+    xs = torch.from_numpy(spatial_array).to(device)
+    sk = torch.from_numpy(skey).to(device)
+    xg = torch.from_numpy((x_geo - ckpt["geo_mean"]) / ckpt["geo_std"]).to(device)
     chunks = []
     model.eval()
     with torch.no_grad():
-        for start in range(0, len(xs), BATCH):
-            h = model.hazards(xs[start:start + BATCH], xg[start:start + BATCH])
-            chunks.append(model.distribution(h).exp().numpy())
+        for start in range(0, len(sk), BATCH):
+            h = model.hazards(xs[sk[start:start + BATCH]], xg[start:start + BATCH])
+            chunks.append(model.distribution(h).exp().cpu().numpy())
     return np.concatenate(chunks)
 
 
@@ -364,55 +398,52 @@ def main() -> int:
 
     # precompute per-context route wind
     def build(bank, contexts, members, routes, capture=False):
-        xs, xg, ys, clusters, binary = [], [], [], [], {}
+        # pass 1: unique spatial patches per (context, route, stop) -- tiny
+        spatial_list = []
+        lookup = {}
         for context in contexts:
             winds = read_wind(bank / f"context_{context:02d}" / "exact_wind_routes.bin")
+            for route in routes:
+                stops = compute_stops(schedules[route], winds[route])
+                for stop_idx, stop in enumerate(stops):
+                    key = (context, route, stop_idx)
+                    lookup[key] = len(spatial_list)
+                    spatial_list.append(spatial_patch(stop, map2d))
+        spatial_array = np.asarray(spatial_list, dtype=np.float32)
+
+        # pass 2: per-example geo + label + spatial index (no spatial duplication)
+        xg, ys, skey, clusters, binary = [], [], [], [], {}
+        for context in contexts:
+            winds = read_wind(bank / f"context_{context:02d}" / "exact_wind_routes.bin")
+            stops_by_route = {route: compute_stops(schedules[route], winds[route]) for route in routes}
             for carrier in carriers:
                 for member in members:
                     streams = read_physical(bank / f"context_{context:02d}" / f"member_{member:02d}" / f"{carrier['id']}.bin")
                     for route in routes:
-                        sched = schedules[route]
-                        wind = winds[route]
+                        stops = stops_by_route[route]
                         measured = sensor_forward(streams[route])
-                        # causal prefix wind samples
-                        xy = np.asarray([[r["x"], r["y"]] for r in sched], dtype=np.float64)
-                        uv = wind[:, :2]
-                        xy_cum = np.concatenate([[0.0], np.cumsum(np.linalg.norm(np.diff(xy, axis=0), axis=1))])
-                        prev = None
                         tape = []
-                        for stop_index in sorted({r["stop"] for r in sched}):
-                            idxs = [i for i, r in enumerate(sched) if r["stop"] == stop_index and r["moving"] == 0]
-                            if len(idxs) < STOP_SAMPLES:
-                                continue
-                            idxs = idxs[:STOP_SAMPLES]
-                            start, end = idxs[0], idxs[-1] + 1
-                            cur = xy[start]
-                            delta = np.zeros(2) if prev is None else cur - prev
-                            route_vec = np.asarray([sched[start]["t"], xy_cum[start], delta[0], delta[1],
-                                                    math.sin(sched[start]["yaw"]), math.cos(sched[start]["yaw"])], dtype=np.float32)
-                            stop = {"xy": cur, "route": route_vec,
-                                    "wind_xy": xy[:end], "wind_uv": uv[:end]}
-                            f = stop_features(carrier, stop, map2d)
-                            stop_meas = measured[idxs]
-                            label = first_passage(stop_meas)
-                            xs.append(f["spatial"]); xg.append(f["geo"]); ys.append(label)
-                            clusters.append((context, carrier["index"], member, route, stop_index))
-                            tape.append(stop_meas > FIRST_PASSAGE_THRESHOLD_PPM)
-                            prev = cur
+                        for stop_idx, stop in enumerate(stops):
+                            label = first_passage(measured[stop["indices"]])
+                            xg.append(geo_feature(carrier, stop))
+                            ys.append(label)
+                            skey.append(lookup[(context, route, stop_idx)])
+                            clusters.append((context, carrier["index"], member, route, stop_idx))
+                            tape.append(measured[stop["indices"]] > FIRST_PASSAGE_THRESHOLD_PPM)
                         if capture:
                             binary[(context, carrier["index"], member, route)] = np.asarray(tape, dtype=bool)
-        return (np.asarray(xs, dtype=np.float32), np.asarray(xg, dtype=np.float32),
-                np.asarray(ys, dtype=np.int64), clusters, binary)
+        return (spatial_array, np.asarray(skey, dtype=np.int64), np.asarray(xg, dtype=np.float32),
+                np.asarray(ys, dtype=np.int64), clusters, binary, lookup)
 
     print("CTT_H01_HAZARD_BUILD_TRAIN", flush=True)
-    xts, xtg, yt, _, _ = build(args.bank, TRAIN_CONTEXTS, TRAIN_MEMBERS, TRAIN_ROUTES)
+    xt_spatial, xt_skey, xt_geo, yt, _, _, _ = build(args.bank, TRAIN_CONTEXTS, TRAIN_MEMBERS, TRAIN_ROUTES)
     print("CTT_H01_HAZARD_BUILD_VAL", flush=True)
-    xvs, xvg, yv, _, _ = build(args.bank, VAL_CONTEXTS, TRAIN_MEMBERS, VAL_ROUTES)
+    xv_spatial, xv_skey, xv_geo, yv, _, _, _ = build(args.bank, VAL_CONTEXTS, TRAIN_MEMBERS, VAL_ROUTES)
 
-    geo_mean = xtg.mean(axis=0); geo_std = xtg.std(axis=0); geo_std[geo_std < 1e-6] = 1.0
+    geo_mean = xt_geo.mean(axis=0); geo_std = xt_geo.std(axis=0); geo_std[geo_std < 1e-6] = 1.0
     # STATIC comparator: zero out spatial wind channels (channels 1,2), keep occupancy
-    xts_static = xts.copy(); xts_static[:, :, :, 1:] = 0.0
-    xvs_static = xvs.copy(); xvs_static[:, :, :, 1:] = 0.0
+    xt_spatial_static = xt_spatial.copy(); xt_spatial_static[:, 1:, :, :] = 0.0
+    xv_spatial_static = xv_spatial.copy(); xv_spatial_static[:, 1:, :, :] = 0.0
 
     contract = {
         "contract": "CTT_H01_FINAL_HAZARD_SOLVER_FREEZE_V1",
@@ -421,8 +452,8 @@ def main() -> int:
         "test_opened": False,
     }
     (args.output / "06_TRAINING_CONTRACT.json").write_text(json.dumps(contract, indent=2) + "\n")
-    conditional, ckpt_c = fit("conditional", xts, xtg, yt, xvs, xvg, yv, geo_mean, geo_std, args.output)
-    static, ckpt_s = fit("static", xts_static, xtg, yt, xvs_static, xvg, yv, geo_mean, geo_std, args.output)
+    conditional, ckpt_c = fit("conditional", xt_spatial, xt_skey, xt_geo, yt, xv_spatial, xv_skey, xv_geo, yv, geo_mean, geo_std, args.output)
+    static, ckpt_s = fit("static", xt_spatial_static, xt_skey, xt_geo, yt, xv_spatial_static, xv_skey, xv_geo, yv, geo_mean, geo_std, args.output)
     contract["test_opened"] = True
     contract["checkpoints"] = {"conditional": sha256_file(args.output / "conditional_best.pt"),
                                "static": sha256_file(args.output / "static_best.pt")}
@@ -431,11 +462,12 @@ def main() -> int:
     # TEST (fresh contexts 10..13)
     print("CTT_H01_HAZARD_BUILD_TEST", flush=True)
     test_contexts = (10, 11, 12, 13)
-    xts_test, xtg_test, y_test, test_clusters, test_binary = build(test_bank, test_contexts, TEST_MEMBERS, TEST_ROUTES, capture=True)
-    xts_test_static = xts_test.copy(); xts_test_static[:, :, :, 1:] = 0.0
-    p_cond = predict(conditional, ckpt_c, xts_test, xtg_test)
-    p_static = predict(static, ckpt_s, xts_test_static, xtg_test)
-    repeat_err = float(np.max(np.abs(p_cond - predict(conditional, ckpt_c, xts_test, xtg_test))))
+    xt_spatial_test, xt_skey_test, xt_geo_test, y_test, test_clusters, test_binary, test_lookup = \
+        build(test_bank, test_contexts, TEST_MEMBERS, TEST_ROUTES, capture=True)
+    xt_spatial_test_static = xt_spatial_test.copy(); xt_spatial_test_static[:, 1:, :, :] = 0.0
+    p_cond = predict(conditional, ckpt_c, xt_spatial_test, xt_skey_test, xt_geo_test)
+    p_static = predict(static, ckpt_s, xt_spatial_test_static, xt_skey_test, xt_geo_test)
+    repeat_err = float(np.max(np.abs(p_cond - predict(conditional, ckpt_c, xt_spatial_test, xt_skey_test, xt_geo_test))))
     norm_err = float(np.max(np.abs(p_cond.sum(axis=1) - 1.0)))
     cond_nll, cond_brier = proper_scores(p_cond, y_test)
     static_nll, static_brier = proper_scores(p_static, y_test)
@@ -446,13 +478,13 @@ def main() -> int:
     d_brier = {k: s_brier[k] - c_brier[k] for k in c_brier}
     mn_nll, ci_nll = bootstrap(d_nll, rng); mn_brier, ci_brier = bootstrap(d_brier, rng)
 
-    # wind-shuffle (swap spatial wind channels among matched examples across contexts)
-    lookup = {c: i for i, c in enumerate(test_clusters)}
-    x_shuf = xts_test.copy()
-    for i, c in enumerate(test_clusters):
-        other = ((c[0] - 10 + 1) % 4 + 10, *c[1:])  # rotate among 4 fresh contexts
-        x_shuf[i, :, :, 1:] = xts_test[lookup[other], :, :, 1:]
-    p_shuf = predict(conditional, ckpt_c, x_shuf, xtg_test)
+    # wind-shuffle (swap spatial wind channels across matched examples/contexts)
+    shuf_array = xt_spatial_test.copy()
+    for (ctx, route, stop_idx), pidx in test_lookup.items():
+        other_ctx = (ctx - 10 + 1) % 4 + 10
+        opidx = test_lookup[(other_ctx, route, stop_idx)]
+        shuf_array[pidx, 1:, :, :] = xt_spatial_test[opidx, 1:, :, :]
+    p_shuf = predict(conditional, ckpt_c, shuf_array, xt_skey_test, xt_geo_test)
     shuf_nll, _ = proper_scores(p_shuf, y_test)
     shuf_cluster = cluster_mean(shuf_nll, test_clusters)
     d_shuf = {k: shuf_cluster[k] - c_nll[k] for k in c_nll}
@@ -485,16 +517,17 @@ def main() -> int:
         print(json.dumps(physical_report, indent=2)); return 2
 
     # source-evidence gate
+    example_idx = {c: i for i, c in enumerate(test_clusters)}
     rows = []
     for ctx in test_contexts:
         candidate_prob = np.zeros((210, 10, 81), dtype=np.float32)
         for s in range(210):
             for st in range(10):
-                candidate_prob[s, st] = p_cond[lookup[(ctx, s, TEST_MEMBERS[0], TEST_ROUTES[0], st)]]
+                candidate_prob[s, st] = p_cond[example_idx[(ctx, s, TEST_MEMBERS[0], TEST_ROUTES[0], st)]]
         static_prob = np.zeros_like(candidate_prob)
         for s in range(210):
             for st in range(10):
-                static_prob[s, st] = p_static[lookup[(ctx, s, TEST_MEMBERS[0], TEST_ROUTES[0], st)]]
+                static_prob[s, st] = p_static[example_idx[(ctx, s, TEST_MEMBERS[0], TEST_ROUTES[0], st)]]
         for member in TEST_MEMBERS:
             perm_seed = int.from_bytes(digest(f"CTT-H01-HAZARD-CANDIDATE|{ctx}|{member}")[:8], "big")
             phase_perm = np.random.default_rng(perm_seed).permutation(210)
