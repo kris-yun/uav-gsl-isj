@@ -1,0 +1,11 @@
+{
+  "contract":"CTT_H01_NEURAL_M1_ORIGINAL_IDENTIFICATION_GATE_V1",
+  "status":"FROZEN_BEFORE_TEST",
+  "code_sha256":"8dbd91e99fa5d58eb7919e6d2a95ff4fb7aeec5890b762029a0f0100d1a789e0",
+  "fixed_source_query_grid":210,
+  "trajectory_split":{"train":[4001,4002,4003],"validation":[4004],"test":[4005]},
+  "transport_split":{"train":[0,1,2,3,4,5],"validation":[6],"test":[7]},
+  "checkpoint_selection":"validation categorical first-passage NLL only",
+  "gates":["lower95(STATIC-CONDITIONAL NLL)>0","lower95(STATIC-CONDITIONAL Brier)>0","lower95(context-shuffle-CONDITIONAL NLL)>0","normalization<1e-6"],
+  "note":"restores the pre-existing CTT-V13 M1 identification contract: held-out wind context and complete transport keys; unseen-source extrapolation is a separate diagnostic, not a deployment prerequisite"
+}

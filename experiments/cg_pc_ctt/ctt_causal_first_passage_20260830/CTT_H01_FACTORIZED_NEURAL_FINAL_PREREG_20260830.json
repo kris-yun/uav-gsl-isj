@@ -1,0 +1,26 @@
+{
+  "contract": "CTT_H01_FACTORIZED_NEURAL_FIRST_PASSAGE_FINAL_GATE_V1",
+  "status": "FROZEN_BEFORE_TRAJECTORY4005_MEMBER6_SOURCE_RANKS",
+  "architecture": "shared nonlinear physical field + Bernoulli ever/survival head + 80-class conditional phase head",
+  "loss": "BCE(ever) + CE(F|ever), fixed unit terms; no tunable blend",
+  "forward_context": "fixed native H01 wind; geometry + causal absolute time/route only; local wind35 forbidden",
+  "split": {
+    "train_trajectories": [4001,4002,4003],
+    "train_members": [0,1,2,3,4],
+    "validation_trajectory": 4004,
+    "validation_member": 5,
+    "test_trajectory": 4005,
+    "test_member": 6
+  },
+  "checkpoint_selection": "validation factorized proper loss only",
+  "source_rank_gates": [
+    "full beats survival with sign p<=0.01",
+    "Top10 full >= survival",
+    "TIME-PERMUTE worsens with p<=0.01",
+    "candidate phase-label shuffle worsens with p<=0.01",
+    "normalization<1e-6"
+  ],
+  "failure_policy": "NO-GO ends the H01 neural temporal line; no further head/blend/threshold rescue",
+  "code_sha256": "3abb3929cfe526b334c564eed15cd9f7cc2dd9f61cf7671947fcddea714873dc",
+  "implementation_fix_before_test": "stops outer trajectory list corrected to stops[4]; no member6 source rank had been computed before this fix"
+}
