@@ -1,0 +1,36 @@
+{
+  "contract": "CTRE_COHERENT_REACHABILITY_DIAGNOSTIC_V1",
+  "date": "2026-08-30",
+  "status": "POST_HOC_DEVELOPMENT_DIAGNOSTIC_ONLY",
+  "closed_loop_authorized": false,
+  "bank": "CTT_H01_FRESH_BANK_MATERIALIZATION_PASS contexts 10..13",
+  "source_count": 210,
+  "stops": 10,
+  "predictive_transport_members": [0, 1, 2, 3, 4, 5],
+  "observation_transport_members": [6, 7],
+  "observation_route_stream": 4,
+  "observation": "persistent-sensor ever-detected within each 80-sample physical stop",
+  "finite_member_probability": {
+    "formula": "(0.5 + E) / 2",
+    "values": [0.25, 0.75]
+  },
+  "primary": "coherent transport member: sum log likelihood over stops, then log-mean-exp over member",
+  "comparator": "stopwise member marginal: average probability over members independently at each stop",
+  "metrics": [
+    "true-source rank",
+    "normalized rank",
+    "Top-5",
+    "Top-10",
+    "coherent-vs-stopwise exact sign test",
+    "per-context non-reversal"
+  ],
+  "diagnostic_pass": "coherent mean normalized rank < stopwise, one-sided exact sign p <= 0.01, and no context reverses",
+  "forbidden": [
+    "training",
+    "temperature",
+    "blend weight",
+    "threshold tuning",
+    "PMFS prior",
+    "closed-loop authorization"
+  ]
+}
