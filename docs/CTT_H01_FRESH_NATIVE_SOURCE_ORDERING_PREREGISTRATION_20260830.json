@@ -1,0 +1,32 @@
+{
+  "contract": "CTT_H01_FRESH_NATIVE_SOURCE_ORDERING_DIAGNOSTIC_V1",
+  "status": "POST_NO_GO_MECHANISM_DIAGNOSTIC_ONLY",
+  "frozen_neural_verdict": "CTT_FINAL_HAZARD_NEURAL_M1_NO_GO",
+  "closed_loop_authorized": false,
+  "contexts": [10, 11, 12, 13],
+  "predictive_members": [0, 1, 2, 3, 4, 5],
+  "observation_members": [6, 7],
+  "route_seed": 4005,
+  "route_stream_index": 4,
+  "source_count": 210,
+  "stop_count": 10,
+  "stop_samples": 80,
+  "threshold": "strict measured_ppm > 0.1",
+  "primary": "empirical first-passage CDF integrated Brier ordering",
+  "comparators": ["SURVIVAL_ONLY", "TIME_PERMUTE"],
+  "forbidden": [
+    "training",
+    "GADEN generation",
+    "PMFS prior or posterior",
+    "localization error",
+    "learned or fitted weights",
+    "bandwidth",
+    "temperature",
+    "threshold tuning"
+  ],
+  "pass_rule": {
+    "full_beats_survival": "lower overall mean normalized true-source rank and exact one-sided sign p <= 0.01",
+    "full_beats_time_permute": "lower overall mean normalized true-source rank and exact one-sided sign p <= 0.01",
+    "context_direction": "neither comparison reverses in any of contexts 10..13"
+  }
+}
