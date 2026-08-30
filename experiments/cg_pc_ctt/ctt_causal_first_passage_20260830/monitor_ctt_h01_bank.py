@@ -90,7 +90,7 @@ def main() -> int:
                 last_change = time.monotonic()
             pids = native_processes(bank)
             process_ok, process_rows = check_process_contract(pids)
-            temporary = list(BANK.glob("context_*/member_*/*.tmp.*"))
+            temporary = list(bank.glob("context_*/member_*/*.tmp.*"))
             stale = [str(path) for path in temporary if time.time() - path.stat().st_mtime > STALL_S]
             usage = shutil.disk_usage("/dev/shm")
             payload = {
