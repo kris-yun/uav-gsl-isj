@@ -12,7 +12,7 @@ export NUMEXPR_NUM_THREADS=1
 export PYTHONHASHSEED=0
 set -u
 
-code=/home/zyc/CTT_M2_PROSPECTIVE_GATE_CODE_20260831_R3
+code=/home/zyc/CTT_M2_PROSPECTIVE_GATE_CODE_20260831_R4
 formal=/home/zyc/CTT_H01_WIND_BANK_FULL_20260830_R2_FORMAL_PERSISTED
 placement=/home/zyc/PF_DEI_V3_STREAM_BUILD/src/frozen_region_placement_manifest.json
 contexts=/home/zyc/CTT_H01_NATIVE_WIND_CONTEXTS_20260830/context_manifest.json
@@ -23,12 +23,25 @@ rng_math=/home/zyc/PF_DEI_V3_GADEN_BUILD/src/GADEN/gaden_common/third_party/gade
 running_sim=/home/zyc/PF_DEI_V3_GADEN_BUILD/src/GADEN/gaden_common/third_party/gaden_core/src/RunningSimulation.cpp
 environment=/home/zyc/rmfe_cl_env/H01/OccupancyGrid3D.csv
 schedules=/home/zyc/PF_DEI_V3_TRAJECTORIES_20260828_R1
-bank=${CTT_M2_BANK_OUT:-/home/zyc/CTT_M2_FIXED_U_PROSPECTIVE_K_BANK_20260831_R2}
-evidence=${CTT_M2_EVIDENCE_OUT:-/home/zyc/CTT_M2_FIXED_U_PROSPECTIVE_K_EVIDENCE_20260831_R2}
+bank=${CTT_M2_BANK_OUT:-/home/zyc/CTT_M2_FIXED_U_PROSPECTIVE_K_BANK_20260831_R3}
+evidence=${CTT_M2_EVIDENCE_OUT:-/home/zyc/CTT_M2_FIXED_U_PROSPECTIVE_K_EVIDENCE_20260831_R3}
 
 cd "$code"
 sha256sum -c CTT_M2_PROSPECTIVE_GATE_CODE_SHA256SUMS.txt
 python3 -m py_compile ./*.py
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+for name in (
+    "CTT_M2_FIXED_U_PROSPECTIVE_K_NULL_MAPS_V2.json",
+    "CTT_M2_FIXED_U_PROSPECTIVE_K_PREMISE_PREREGISTRATION_20260831.json",
+    "CTT_M2_PROSPECTIVE_SEED_PROVENANCE_20260831.json",
+):
+    with Path(name).open("r", encoding="utf-8") as handle:
+        json.load(handle)
+print("CTT_M2_FROZEN_JSON_PARSE_CONTRACT=PASS")
+PY
 python3 freeze_ctt_m2_fixed_u_transport_null_maps.py --selftest
 python3 materialize_ctt_h01_fixed_u_transport_gate.py --selftest
 python3 evaluate_ctt_h01_fixed_u_transport_gate.py --selftest
