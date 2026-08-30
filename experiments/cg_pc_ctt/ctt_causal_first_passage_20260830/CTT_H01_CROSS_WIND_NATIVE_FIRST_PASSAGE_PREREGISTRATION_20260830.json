@@ -1,0 +1,27 @@
+{
+  "contract": "CTT_H01_CROSS_WIND_NATIVE_FIRST_PASSAGE_DIAGNOSIS_V1",
+  "status": "PREREGISTERED_AFTER_TEST_OPENING_MECHANISM_DIAGNOSTIC",
+  "bank": "CTT_H01_WIND_BANK_FULL_20260830_R2_FORMAL_PERSISTED",
+  "contexts": [1, 2],
+  "route_seed": 4005,
+  "route_stream_index": 4,
+  "observation_transport_keys": [6, 7],
+  "predictive_transport_keys": [0, 1, 2, 3, 4, 5],
+  "source_count": 210,
+  "case_count": 840,
+  "first_passage": {"threshold_ppm_strict_greater_than": 0.1, "samples": 80, "never": 80},
+  "full_score": "sum_stop,sum_t=0..79 (empirical_predictive_cdf-observed_cdf)^2",
+  "survival_score": "sum_stop (empirical_predictive_event_probability-observed_event)^2",
+  "time_permute": "lexicographic_sha256_order_CTT-H01-CROSS-WIND-TIME-PERMUTE-V1_context_key_truth_stop_index",
+  "rank": "exact_equality_midrank_lower_distance_better",
+  "normalized_rank": "(rank-1)/209",
+  "sign_test": "one_sided_exact_binomial_ties_removed_null_0.5",
+  "alpha": 0.01,
+  "verdict": {
+    "pass": "both comparisons have lower overall mean normalized rank, p<=0.01, and neither context reverses",
+    "partial": "exactly one comparison passes its complete condition",
+    "no_go": "neither comparison passes its complete condition"
+  },
+  "forbidden": ["training", "fitting", "new_GADEN", "temperature", "bandwidth", "learned_weight", "Top-K", "posterior", "PMFS_prior", "closed_loop"],
+  "frozen_neural_verdict_unchanged": "CTT_H01_WIND_CONDITIONED_NEURAL_M1_PHYSICAL_NO_GO"
+}
