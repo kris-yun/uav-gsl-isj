@@ -18,6 +18,7 @@ SEEDS=(1701,1702,1703); STEPS=300
 class EnergyTemporalNRE(nn.Module):
     def __init__(self,w=32):
         super().__init__();self.enc=nn.Sequential(nn.Linear(INPUT,w),nn.GELU());self.blocks=nn.ModuleList([v1.CausalBlock(w,d) for d in (1,2,4,8,16,32)]);self.temporal=nn.Sequential(nn.Linear(2*w,32),nn.GELU(),nn.Linear(32,1))
+        # softplus^{-1}(1), positive physics coefficient learned on simulation train/val only.
         self.raw_alpha=nn.Parameter(torch.tensor(math.log(math.e-1.0),dtype=torch.float32))
     def forward(self,x,mask,energy_z):
         h=self.enc(x)
