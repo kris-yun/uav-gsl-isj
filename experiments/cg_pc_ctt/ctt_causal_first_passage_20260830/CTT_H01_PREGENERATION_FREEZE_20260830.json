@@ -1,0 +1,33 @@
+{
+  "contract": "CTT_H01_WIND_CONDITIONED_PREGENERATION_FREEZE_V1",
+  "status": "FROZEN_BEFORE_BANK_GENERATION",
+  "parent": "CODEX_CTT_H01_WIND_CONDITIONED_M1_BANK_AND_GATE_20260830",
+  "split": {
+    "source_carriers": "all_210",
+    "source_query_geometry_manifest_sha256": "94525a3c3abc6b309a5a64dcee9bd57d34613f2fca3ce960df7dc1d57fbbf8ed",
+    "source_query_geometry_role": "PMFS_quotient_region_centroids_not_nuisance_placements",
+    "wind": {"train": [0, 3, 5, 6, 8, 9], "validation": [4, 7], "test": [1, 2]},
+    "transport": {"train": [0, 1, 2, 3, 4, 5], "validation": [0, 1, 2, 3, 4, 5], "test": [6, 7]},
+    "route": {"train": [4001, 4002, 4003], "validation": [4004], "test": [4005]}
+  },
+  "observation": {"dt_s": 0.2, "stop_samples": 80, "threshold_ppm": 0.1, "never_class": 80},
+  "wind_context_construction": {"kind": "native_static_spatial_snapshot", "context_to_original_iteration": "context_c_uses_original_wind_iteration_c_plus_1_for_native_slots_0_through_10", "source_payload_immutable": true},
+  "wind_feature_contract": {
+    "generator_parent": "W_gen_full_native_spatial_field_never_neural_input",
+    "online_input": "W_online_local_causal_samples_at_visited_pose_and_time_only",
+    "forbidden": ["wind_file_id", "hidden_full_CFD_field", "future_wind", "future_pose", "simulator_only_context_label"],
+    "simulation_runtime_source": "same_native_wind_field_sampled_only_at_observed_poses_and_times",
+    "real_runtime_source": "source_independent_calibrated_local_anemometer_history",
+    "contains_future_information": false
+  },
+  "physical_bank_contract": {"world_count": 16800, "one_world_per": ["source_carrier", "wind_context", "transport_key"], "routes_sample_same_world": [4001, 4002, 4003, 4004, 4005], "route_changes_plume_rng": false},
+  "physical_manifest": {"file": "CTT_H01_PHYSICAL_MANIFEST_FREEZE_20260830.json", "sha256": "6530cd93d315d0db93a9bbfb241718fefc693e52f3f7dac2a51777fb50e66a7f"},
+  "execution_invariance": {"omp_num_threads": 4, "omp_dynamic": false, "parallel_native_jobs": 3, "pre_post_vcpu_bitwise_parity_required": true},
+  "input": {"dimension": 33, "normalization": "train_population_mean_std_floor_1e-6", "static_wind_columns_one_based": [17, 33]},
+  "model": {"hidden": [128, 128, 128], "activation": "SiLU", "heads": {"survival": 1, "conditional_phase": 80}},
+  "training": {"seed": 20260835, "optimizer": "AdamW", "learning_rate": 0.002, "weight_decay": 0.00001, "batch_size": 2048, "max_epochs": 50, "patience": 7, "improvement_tolerance": 0.00001, "loss": "BCE_ever_plus_CE_phase_given_ever_unit_weights"},
+  "statistics": {"seed": 20260835, "bootstrap_replicates": 5000, "physical_cluster": ["source_carrier", "wind_context"], "rank_ties": "exact_equality_midrank"},
+  "runtime": {"mode": "replace_native_pmfs_gas_likelihood", "same_observation_consumed_once": true, "blend": false, "temperature": false, "learned_gate": false},
+  "preregistration": {"formal_bank_requires_freeze_commit_and_push": true, "r1_role": "infrastructure_pilot_not_formal_scientific_bank"},
+  "closed_loop_authorized": false
+}

@@ -1,0 +1,73 @@
+{
+  "contract": "CTT_H01_PHYSICAL_MANIFEST_FREEZE_V1",
+  "status": "FROZEN_BEFORE_FORMAL_R2_BANK",
+  "scene": {
+    "house": "H01",
+    "environment_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+    "carrier_manifest_sha256": "94525a3c3abc6b309a5a64dcee9bd57d34613f2fca3ce960df7dc1d57fbbf8ed",
+    "placement_manifest_sha256": "2dfe8bf70cc5dd191db8659cfc66ed9934927b69d0b6798b9a6b5062e1dd959f",
+    "wind_context_manifest_sha256": "ba81ca9c500783b41e857e6e008874536016cdfa370c18b50758a1b4e98f279f"
+  },
+  "native_generator": {
+    "source_sha256": "7a1570637eac1ca97758baddd05e7762b47fcd2e12afd77239698bd1132b01b4",
+    "wind_query_source_sha256": "af83f65c724aa574c8eb7bd6fc6c9dd01afbc2c1005496c9e655b97cfc76e1a2",
+    "binary_sha256": "ad0772d994875d009a1e8720928a9f40db56c20f6bf83a03b309049696a7ead4",
+    "wind_binary_sha256": "1969325e33d67fb4e41722db250d5ee94e7bc57332f737f27243f8d8f9df87cd",
+    "libgaden_sha256": "0b6a2160917a1e8791c1980635b0969c40794b96d591abba31d743758fc5f048",
+    "dt_s": 0.2,
+    "time_origin_s": 0.0,
+    "wind_iteration_delta_s": 1.0,
+    "wind_loop": {"from": 1, "to": 10, "loop": true},
+    "temperature_k": 298.0,
+    "pressure_atm": 1.0,
+    "gas": "methane",
+    "filament_ppm_center_initial": 10.0,
+    "filament_initial_sigma": 10.0,
+    "filament_growth_gamma": 15.0,
+    "filament_noise_std": 0.01,
+    "filaments_per_s": 7.0,
+    "precalculate_concentrations": false,
+    "rng_hook": "gaden_initialize_random_engines(transport_seed)",
+    "omp_num_threads": 4,
+    "omp_dynamic": false,
+    "parallel_world_jobs": 3
+  },
+  "source_support": {
+    "target": "210 persistent PMFS carrier regions",
+    "placement_rule": "8 frozen legal 3-D placements per carrier from placement manifest",
+    "strength_rule": "native PointSource with frozen filament parameters; no historical truth source or source z"
+  },
+  "sensor": {
+    "authoritative_source_sha256": "423042f94315a35ca83aa929d42a32633d94ea819b8e15639e26039073c549bc",
+    "mode": "run_persistent_per_route",
+    "initial_state_ppm": 0.0,
+    "initial_input_ppm": 0.0,
+    "gain": 1.0,
+    "baseline": 0.0,
+    "tau_rise_s": 1.2,
+    "tau_recovery_s": 1.2,
+    "dead_time_s": 0.4,
+    "noise_std_ppm": 0.0,
+    "drift_rate_ppm_s": 0.0,
+    "threshold_ppm_strict_greater_than": 0.1,
+    "samples_per_stop": 80,
+    "blocks_per_stop": 8,
+    "samples_per_block": 10
+  },
+  "route_schedule_sha256": {
+    "4001": "b709c6c564032e7be34f606df7dd02f734079826b64e4be84c407ec3d3385ea4",
+    "4002": "85d1bc6576fb71fc51fd407e1ab736fa3fdbd81f6c04bcc8b4e0628ba4d79f4",
+    "4003": "a4f49aec8aa3cd681e11054fb2fd634c74ba704e07c0776a167f7f9aab413242",
+    "4004": "fa5f3ad0fad14def30076e43046a09dfa90bbbdf765aa7c5fff28394b2fcdb1d",
+    "4005": "a00745f02c6d73bb8ebde0c1cb735dade1867527678da6b6b0f80d5f949b78a3"
+  },
+  "route_world_contract": "one coherent world per source x wind x transport; all routes sampled from that world; independent persistent sensor state per route",
+  "forbidden": [
+    "occupancy_to_ppm",
+    "wind_context_id_as_neural_input",
+    "hidden_cfd_phase_as_neural_input",
+    "future_wind_or_route",
+    "true_source_or_localization_error",
+    "double_consumption_by_CTT_and_native_PMFS"
+  ]
+}
