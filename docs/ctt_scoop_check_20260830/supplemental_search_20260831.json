@@ -1,0 +1,1430 @@
+{
+  "queries": [
+    "persistent latent state repeated observations source transport inversion",
+    "dynamic tomography latent motion consistency sparse observations",
+    "robotic gas source localization multiple dispersion models persistent model identity sequential observations"
+  ],
+  "start_year": 2022,
+  "end_year": 2026,
+  "results": {
+    "semantic_scholar": [],
+    "open_alex": [
+      {
+        "title": "Deep Learning for Simultaneous Inference of Hydraulic and Transport Properties",
+        "authors": [
+          "Zitong Zhou",
+          "Nicholas Zabaras",
+          "Daniel M. Tartakovsky"
+        ],
+        "year": 2022,
+        "abstract": "Abstract Identification of a heterogeneous conductivity field and reconstruction of a contaminant release history are key aspects of subsurface remediation. These two goals are achieved by combining model predictions with sparse and noisy hydraulic head and concentration measurements. Solution of this inverse problem is notoriously difficult due to, in part, high dimensionality of the parameter space and high computational cost of repeated forward solves. We use a convolutional adversarial autoencoder (CAAE) to parameterize a heterogeneous non‐Gaussian conductivity field via a low‐dimensional latent representation. A three‐dimensional dense convolutional encoder‐decoder (DenseED) network serves as a forward surrogate of the flow and transport model. The CAAE‐DenseED surrogate is fed into the ensemble smoother with multiple data assimilation (ESMDA) algorithm to sample from the Bayesian posterior distribution of the unknown parameters, forming a CAAE‐DenseED‐ESMDA inversion framework. The resulting CAAE‐DenseED‐ESMDA inversion strategy is used to identify a three‐dimensional contaminant source and conductivity field. A comparison of the inversion results from CAAE‐ESMDA with physical flow and transport simulator and from CAAE‐DenseED‐ESMDA shows that the latter yields accurate reconstruction results at the fraction of the computational cost of the former.",
+        "url": "https://doi.org/10.1029/2021wr031438",
+        "venue": "Water Resources Research",
+        "citation_count": 37,
+        "publication_date": "2022-09-19",
+        "source": "open_alex",
+        "doi": "10.1029/2021wr031438",
+        "arxiv_id": null
+      },
+      {
+        "title": "Geophysical inversion and optimal transport",
+        "authors": [
+          "Malcolm Sambridge",
+          "Andrew Jackson",
+          "A. P. Valentine"
+        ],
+        "year": 2022,
+        "abstract": "SUMMARY We propose a new approach to measuring the agreement between two oscillatory time-series, such as seismic waveforms, and demonstrate that it can be used effectively in inverse problems. Our approach is based on Optimal Transport theory and the Wasserstein distance, with a novel transformation of the time-series to ensure that necessary normalization and positivity conditions are met. Our measure is differentiable, and can readily be used within an optimization framework. We demonstrate performance with a variety of synthetic examples, including seismic source inversion, and observe substantially better convergence properties than achieved with conventional L2 misfits. We also briefly discuss the relationship between Optimal Transport and Bayesian inference.",
+        "url": "https://doi.org/10.1093/gji/ggac151",
+        "venue": "Geophysical Journal International",
+        "citation_count": 31,
+        "publication_date": "2022-04-20",
+        "source": "open_alex",
+        "doi": "10.1093/gji/ggac151",
+        "arxiv_id": null
+      },
+      {
+        "title": "Integration of DDPM and ILUES for Simultaneous Identification of Contaminant Source Parameters and Non‐Gaussian Channelized Hydraulic Conductivity Field",
+        "authors": [
+          "Xun Zhang",
+          "Simin Jiang",
+          "Na Zheng",
+          "Xuemin Xia",
+          "Li Zhi",
+          "Ruicheng Zhang",
+          "Jiangjiang Zhang",
+          "Xinshu Wang"
+        ],
+        "year": 2024,
+        "abstract": "Abstract Identifying highly channelized hydraulic conductivity fields and contaminant source parameters remains a challenging task, primarily due to the non‐Gaussian nature and high dimensionality of the parameter space, as well as the computational burden caused by repeatedly running forward numerical models. This study proposes a novel deep learning parameterization method called AEdiffusion, which combines Diffusion Denoising Probabilistic Model (DDPM) with Variational Autoencoder (VAE) for dimensionality reduction. The method employs a generator‐refiner strategy to generate high‐dimensional aquifer properties from low‐dimensional latent representations. The inversion modeling was performed on a synthetic non‐Gaussian hydraulic conductivity field with line‐source contamination using the Iterative Local Updating Ensemble Smoother (ILUES) algorithm. The results demonstrate that the AEdiffusion‐ILUES framework can accurately identify model parameters. To reduce the computational burden, an AR‐Net‐WL (ARNW) surrogate model was introduced, resulting in an efficient inversion framework (AEdiffusion‐ILUES‐ARNW) with similar prediction accuracy and predictive uncertainty estimation as the AEdiffusion‐ILUES but at a lower computational cost.",
+        "url": "https://doi.org/10.1029/2023wr036893",
+        "venue": "Water Resources Research",
+        "citation_count": 21,
+        "publication_date": "2024-08-29",
+        "source": "open_alex",
+        "doi": "10.1029/2023wr036893",
+        "arxiv_id": null
+      },
+      {
+        "title": "Low-rank tensor reconstruction of concentrated densities with application to Bayesian inversion",
+        "authors": [
+          "Martin Eigel",
+          "Robert Gruhlke",
+          "Manuel Marschall"
+        ],
+        "year": 2022,
+        "abstract": "Abstract This paper presents a novel method for the accurate functional approximation of possibly highly concentrated probability densities. It is based on the combination of several modern techniques such as transport maps and low-rank approximations via a nonintrusive tensor train reconstruction. The central idea is to carry out computations for statistical quantities of interest such as moments based on a convenient representation of a reference density for which accurate numerical methods can be employed. Since the transport from target to reference can usually not be determined exactly, one has to cope with a perturbed reference density due to a numerically approximated transport map. By the introduction of a layered approximation and appropriate coordinate transformations, the problem is split into a set of independent approximations in seperately chosen orthonormal basis functions, combining the notions h- and p-refinement (i.e. “mesh size” and polynomial degree). An efficient low-rank representation of the perturbed reference density is achieved via the Variational Monte Carlo method. This nonintrusive regression technique reconstructs the map in the tensor train format. An a priori convergence analysis with respect to the error terms introduced by the different (deterministic and statistical) approximations in the Hellinger distance and the Kullback–Leibler divergence is derived. Important applications are presented and in particular the context of Bayesian inverse problems is illuminated which is a main motivation for the developed approach. Several numerical examples illustrate the efficacy with densities of different complexity and degrees of perturbation of the transport to the reference density. The (superior) convergence is demonstrated in comparison to Monte Carlo and Markov Chain Monte Carlo methods.",
+        "url": "https://doi.org/10.1007/s11222-022-10087-1",
+        "venue": "Statistics and Computing",
+        "citation_count": 11,
+        "publication_date": "2022-03-12",
+        "source": "open_alex",
+        "doi": "10.1007/s11222-022-10087-1",
+        "arxiv_id": null
+      },
+      {
+        "title": "Bayesian Inference of an Uncertain Generalized Diffusion Operator",
+        "authors": [
+          "Teresa Portone",
+          "Robert Moser"
+        ],
+        "year": 2022,
+        "abstract": "This paper defines a novel Bayesian inverse problem to infer an infinite-dimensional uncertain operator appearing in a differential equation, whose action on an observable state variable affects its dynamics. Inference is made tractable by parametrizing the operator using its eigendecomposition. The plausibility of operator inference in the sparse data regime is explored in terms of an uncertain, generalized diffusion operator appearing in an evolution equation for a contaminant's transport through a heterogeneous porous medium. Sparse data are augmented with prior information through the imposition of deterministic constraints on the eigendecomposition and the use of qualitative information about the system in the definition of the prior distribution. Limited observations of the state variable's evolution are used as data for inference, and the dependence on the solution of the inverse problem is studied as a function of the frequency of observations, as well as on whether or not the data is collected as a spatial or time series.",
+        "url": "https://doi.org/10.1137/21m141659x",
+        "venue": "SIAM/ASA Journal on Uncertainty Quantification",
+        "citation_count": 7,
+        "publication_date": "2022-01-13",
+        "source": "open_alex",
+        "doi": "10.1137/21m141659x",
+        "arxiv_id": null
+      },
+      {
+        "title": "Joint identification of contaminant source and dispersion coefficients based on multi-observed reconstruction and ensemble Kalman filtering",
+        "authors": [
+          "Jing Li",
+          "Jun Kong",
+          "Mingjie Pan",
+          "Tong Zhou",
+          "Teng Xu"
+        ],
+        "year": 2024,
+        "abstract": "",
+        "url": "https://doi.org/10.1007/s00477-024-02767-3",
+        "venue": "Stochastic Environmental Research and Risk Assessment",
+        "citation_count": 1,
+        "publication_date": "2024-07-08",
+        "source": "open_alex",
+        "doi": "10.1007/s00477-024-02767-3",
+        "arxiv_id": null
+      },
+      {
+        "title": "Ensemble flow reconstruction in the atmospheric boundary layer from spatially limited measurements through latent diffusion models",
+        "authors": [
+          "Alex Rybchuk",
+          "Malik Hassanaly",
+          "Nicholas Hamilton",
+          "Paula Doubrawa",
+          "Mitchell J. Fulton",
+          "Luis A. Martínez‐Tossas"
+        ],
+        "year": 2023,
+        "abstract": "Due to costs and practical constraints, field campaigns in the atmospheric boundary layer typically only measure a fraction of the atmospheric volume of interest. Machine learning techniques have previously successfully reconstructed unobserved regions of flow in canonical fluid mechanics problems and two-dimensional geophysical flows, but these techniques have not yet been demonstrated in the three-dimensional atmospheric boundary layer. Here, we conduct a numerical analogue of a field campaign with spatially limited measurements using large-eddy simulation. We pose flow reconstruction as an inpainting problem, and reconstruct realistic samples of turbulent, three-dimensional flow with the use of a latent diffusion model. The diffusion model generates physically plausible turbulent structures on larger spatial scales, even when input observations cover less than 1% of the volume. Through a combination of qualitative visualization and quantitative assessment, we demonstrate that the diffusion model generates meaningfully diverse samples when conditioned on just one observation. These samples successfully serve as initial conditions for a large-eddy simulation code. We find that diffusion models show promise and potential for other applications for other turbulent flow reconstruction problems.",
+        "url": "https://doi.org/10.48550/arxiv.2303.00836",
+        "venue": "arXiv (Cornell University)",
+        "citation_count": 6,
+        "publication_date": "2023-03-01",
+        "source": "open_alex",
+        "doi": "10.48550/arxiv.2303.00836",
+        "arxiv_id": null
+      },
+      {
+        "title": "Estimating Space-Dependent Coefficients for 1D Transport Using Gaussian Processes as State Estimator in the Frequency Domain",
+        "authors": [
+          "Ricky van Kampen",
+          "M. van Berkel",
+          "Hans Zwart"
+        ],
+        "year": 2022,
+        "abstract": "This letter presents a method to estimate the space-dependent transport coefficients (diffusion, convection, reaction, and source/sink) for a generic scalar transport model, e.g., heat or mass. As the problem is solved in the frequency domain, the complex valued state as a function of the spatial variable is estimated using Gaussian process regression. The resulting probability density function of the state, together with a semi-discretization of the model, and a linear parameterization of the coefficients are used to determine the maximum likelihood solution for these space-dependent coefficients. The proposed method is illustrated by simulations.",
+        "url": "https://doi.org/10.1109/lcsys.2022.3186626",
+        "venue": "IEEE Control Systems Letters",
+        "citation_count": 5,
+        "publication_date": "2022-06-27",
+        "source": "open_alex",
+        "doi": "10.1109/lcsys.2022.3186626",
+        "arxiv_id": null
+      },
+      {
+        "title": "FACTORIZED PROJECTION-DOMAIN SPATIO-TEMPORAL REGULARIZATION FOR DYNAMIC TOMOGRAPHY",
+        "authors": [
+          "Berk Iskender (University of Illinois at Urbana-Champaign); Marc L Klasky (Los Alamos National Laboratory); Brian M Patterson (Los Alamos National Laboratory); Yoram Bresler (UIUC)"
+        ],
+        "year": 2024,
+        "abstract": "",
+        "url": "https://doi.org/10.17023/xtrq-5k38",
+        "venue": "IEEE RESOURCE CENTERS",
+        "citation_count": 0,
+        "publication_date": "2024-10-02",
+        "source": "open_alex",
+        "doi": "10.17023/xtrq-5k38",
+        "arxiv_id": null
+      },
+      {
+        "title": "Generalizable MRI Motion Correction via Compressed Sensing Equivariant Imaging Prior",
+        "authors": [
+          "Zhiwen Wang",
+          "Maosong Ran",
+          "Ziyuan Yang",
+          "Hui Yu",
+          "Jie Jing",
+          "Tao Wang",
+          "Jingfeng Lu",
+          "Yi Zhang"
+        ],
+        "year": 2024,
+        "abstract": "Existing deep learning (DL)-based magnetic resonance imaging (MRI) retrospective motion correction (MoCo) models are typically task-specific, which makes them challenging to generalize to different scenarios w.r.t motions, modalities, planes, and scanner centers. This limitation occurs since the motions of each patient vary, and collecting diverse paired/unpaired motion data is generally costly and infeasible. To deal with this problem, we propose the Equivariant Imaging Prior (EIP) framework to generalize the MoCo tasks toward various scenarios.In this paper, the traditional MRI MoCo tasks, specifically for the multi-scenarios, can be treated as a mask-varying compressed sensing self-supervised problem for MRI reconstruction with corrupted k-space data.To the best of our knowledge, this framework is the first attempt to handle multiple MRI MoCo scenarios with one single DL model. Specifically, stochastic subsampling and modality augmentation are employed for data preparation. Then, a domain generalization-friendly net is carefully designed and an equivariant imaging task is leveraged to learn the mapping from corrupted data to clean images. The experimental results show that the proposed EIP framework achieves impressive adaptability across generalizable MoCo tasks, including but not limited to multi-motion, multi-modality, multi-center, and multi-plane. Furthermore, our EIP demonstrates similar or superior performance to several state-of-the-art models trained in a supervised manner, extending to even motion estimation on the multi-coil raw data. The code is available:https://github.com/wangzhiwen-scu/EIP4MoCo.",
+        "url": "https://doi.org/10.1109/tcsvt.2024.3432751",
+        "venue": "IEEE Transactions on Circuits and Systems for Video Technology",
+        "citation_count": 15,
+        "publication_date": "2024-07-23",
+        "source": "open_alex",
+        "doi": "10.1109/tcsvt.2024.3432751",
+        "arxiv_id": null
+      },
+      {
+        "title": "Dynamic Tomography Reconstruction by Projection-Domain Separable Modeling",
+        "authors": [
+          "Berk Iskender",
+          "Yoram Bresler",
+          "Marc Klasky"
+        ],
+        "year": 2022,
+        "abstract": "In dynamic tomography the object undergoes changes while projections are being acquired sequentially in time. The resulting inconsistent set of projections cannot be used directly to reconstruct an object corresponding to a time instant. Instead, the objective is to reconstruct a spatio-temporal representation of the object, which can be displayed as a movie. We analyze conditions for unique and stable solution of this ill-posed inverse problem, and present a recovery algorithm, validating it experimentally. We compare our approach to one based on the recently proposed GMLR variation on deep prior for video, demonstrating the advantages of the proposed approach.",
+        "url": "https://doi.org/10.1109/ivmsp54334.2022.9816298",
+        "venue": "",
+        "citation_count": 6,
+        "publication_date": "2022-06-26",
+        "source": "open_alex",
+        "doi": "10.1109/ivmsp54334.2022.9816298",
+        "arxiv_id": null
+      },
+      {
+        "title": "Dynamic Tomography Reconstruction by Projection-Domain Separable Modeling",
+        "authors": [
+          "Berk Iskender"
+        ],
+        "year": 2024,
+        "abstract": "",
+        "url": "https://doi.org/10.17023/wwps-zy42",
+        "venue": "IEEE RESOURCE CENTERS",
+        "citation_count": 0,
+        "publication_date": "2024-10-02",
+        "source": "open_alex",
+        "doi": "10.17023/wwps-zy42",
+        "arxiv_id": null
+      },
+      {
+        "title": "Latent Space Consistency for Sparse-View CT Reconstruction",
+        "authors": [
+          "D J Chen",
+          "Yunqing Chen",
+          "Can Zhang",
+          "Zhou Wang",
+          "Cheng Chen",
+          "Ruoxiu Xiao"
+        ],
+        "year": 2025,
+        "abstract": "Computed Tomography (CT) is a widely utilized imaging modality in clinical settings. Using densely acquired rotational X-ray arrays, CT can capture 3D spatial features. However, it is confronted with challenged such as significant time consumption and high radiation exposure. CT reconstruction methods based on sparse-view X-ray images have garnered substantial attention from researchers as they present a means to mitigate costs and risks. In recent years, diffusion models, particularly the Latent Diffusion Model (LDM), have demonstrated promising potential in the domain of 3D CT reconstruction. Nonetheless, due to the substantial differences between the 2D latent representation of X-ray modalities and the 3D latent representation of CT modalities, the vanilla LDM is incapable of achieving effective alignment within the latent space. To address this issue, we propose the Consistent Latent Space Diffusion Model (CLS-DM), which incorporates cross-modal feature contrastive learning to efficiently extract latent 3D information from 2D X-ray images and achieve latent space alignment between modalities. Experimental results indicate that CLS-DM outperforms classical and state-of-the-art generative models in terms of standard voxel-level metrics (PSNR, SSIM) on the LIDC-IDRI and CTSpine1K datasets. This methodology not only aids in enhancing the effectiveness and economic viability of sparse X-ray reconstructed CT but can also be generalized to other cross-modal transformation tasks, such as text-to-image synthesis. We have made our code publicly available at https://anonymous.4open.science/r/CLS-DM-50D6/ to facilitate further research and applications in other domains.",
+        "url": "https://doi.org/10.1145/3746027.3755572",
+        "venue": "",
+        "citation_count": 1,
+        "publication_date": "2025-10-25",
+        "source": "open_alex",
+        "doi": "10.1145/3746027.3755572",
+        "arxiv_id": null
+      },
+      {
+        "title": "Dynamic Tomography Reconstruction via Low-Rank Modeling with a RED Spatial Prior",
+        "authors": [
+          "Berk Iskender",
+          "Marc Klasky",
+          "Yoram Bresler"
+        ],
+        "year": 2023,
+        "abstract": "Indynamic imaging, a spatiotemporal object is reconstructed from its inconsistent and undersampled measurements obtained over time. Specifically in dynamic tomography, these measurements correspond to the projections of the time-varying object. In this study, we use the dynamic imaging algorithm RED-PSM, which combines the low-rank partially separable modeling (PSM) with the popular Regularization by Denoising (RED) framework and achieves impressive results in different dynamic scenarios, on the tomographic imaging of materials under dynamic mechanical stresses. We compare RED-PSM with a recent deep prior-based technique and with a PSM method with a simple total variation regularization, and demonstrate the advantages of RED-PSM.",
+        "url": "https://doi.org/10.1109/camsap58249.2023.10403435",
+        "venue": "",
+        "citation_count": 4,
+        "publication_date": "2023-12-10",
+        "source": "open_alex",
+        "doi": "10.1109/camsap58249.2023.10403435",
+        "arxiv_id": null
+      },
+      {
+        "title": "Regularization with Optimal Space-Time Priors",
+        "authors": [
+          "Tatiana A. Bubba",
+          "Tommi Heikkilä",
+          "Demetrio Labate",
+          "Luca Ratti"
+        ],
+        "year": 2025,
+        "abstract": "Abstract. We propose a variational regularization approach based on a multiscale representation called cylindrical shearlets aimed at dynamic imaging problems, especially dynamic tomography. The intuitive idea of our approach is to integrate a sequence of separable static problems in the mismatch term of the cost function, while the regularization term handles the nonstationary target as a spatio-temporal object. This approach is motivated by the fact that cylindrical shearlets provide (nearly) optimally sparse approximations on an idealized class of functions modeling spatio-temportal data and the numerical observation that they provide highly sparse approximations even for more general spatio-temporal image sequences found in dynamic tomography applications. To formulate our regularization model, we introduce cylindrical shearlet smoothness spaces, which are instrumental for defining suitable embeddings in functional spaces. We prove that the proposed regularization strategy is well-defined, and the minimization problem has a unique solution (for [Formula: see text]). Furthermore, we provide convergence rates (in terms of the symmetric Bregman distance) under deterministic and random noise conditions, within the context of statistical inverse learning. We numerically validate our theoretical results using both simulated and measured dynamic tomography data, showing that our approach leads to an efficient and robust reconstruction strategy.",
+        "url": "https://doi.org/10.1137/24m1661923",
+        "venue": "SIAM Journal on Imaging Sciences",
+        "citation_count": 1,
+        "publication_date": "2025-07-03",
+        "source": "open_alex",
+        "doi": "10.1137/24m1661923",
+        "arxiv_id": null
+      },
+      {
+        "title": "Image Reconstruction in Dynamic Inverse Problems with Temporal Models",
+        "authors": [
+          "Andreas Hauptmann",
+          "Ozan Öktem",
+          "Carola‐Bibiane Schönlieb"
+        ],
+        "year": 2023,
+        "abstract": "",
+        "url": "https://doi.org/10.1007/978-3-030-98661-2_83",
+        "venue": "",
+        "citation_count": 2,
+        "publication_date": "2023-01-01",
+        "source": "open_alex",
+        "doi": "10.1007/978-3-030-98661-2_83",
+        "arxiv_id": null
+      },
+      {
+        "title": "Robotic Gas Source Localization With Probabilistic Mapping and Online Dispersion Simulation",
+        "authors": [
+          "Pepe Ojeda",
+          "Javier Monroy",
+          "Javier González-Jiménez"
+        ],
+        "year": 2024,
+        "abstract": "Gas source localization (GSL) with an autonomous robot is a problem with many prospective applications, from finding pipe leaks to emergency-response scenarios. In this work, we present a new method to perform GSL in realistic indoor environments, featuring obstacles, and turbulent flow. Given the highly complex relationship between the source position and the measurements available to the robot (the single-point gas concentration, and the wind vector) we propose an observation model that derives from contrasting the online, real-time simulation of the gas dispersion from any candidate source localization against a gas concentration map built from sensor readings. To account for a convenient and grounded integration of both into a probabilistic estimation framework, we introduce the concept of probabilisticgas-hitmaps, which provide a higher level of abstraction to model the time-dependent nature of gas dispersion. Results from both simulated and real experiments show the capabilities of our current proposal to deal with source localization in complex indoor environments.",
+        "url": "https://doi.org/10.1109/tro.2024.3426368",
+        "venue": "IEEE Transactions on Robotics",
+        "citation_count": 25,
+        "publication_date": "2024-01-01",
+        "source": "open_alex",
+        "doi": "10.1109/tro.2024.3426368",
+        "arxiv_id": null
+      },
+      {
+        "title": "Gas Distribution Mapping and Source Localization: A Mini-Review",
+        "authors": [
+          "Taehwan Kim",
+          "Inkyu Park"
+        ],
+        "year": 2023,
+        "abstract": "",
+        "url": "https://doi.org/10.46670/jsst.2023.32.2.75",
+        "venue": "Journal of Sensor Science and Technology",
+        "citation_count": 4,
+        "publication_date": "2023-03-31",
+        "source": "open_alex",
+        "doi": "10.46670/jsst.2023.32.2.75",
+        "arxiv_id": null
+      },
+      {
+        "title": "Deep-Learning-Based Gas Leak Source Localization From Sparse Sensor Data",
+        "authors": [
+          "Diaa Badawi",
+          "Ishaan Bassi",
+          "Sule Ozev",
+          "Ahmet Enis Çetin"
+        ],
+        "year": 2022,
+        "abstract": "In this article, we address the problem of estimating the location of gas leak sources using sparse unreliable spatio-temporal chemical sensor data. We pose the task of estimating the underlying gas signal and predicting the source location as an inverse problem. For this purpose, we develop a novel deep-learning projection-based framework. We incorporate traditional projection-onto-convex-sets (POCS) iteration in the structure of the deep model to obtain a regularized solution that conforms to our prior knowledge of the spatio-temporal structure of the gas concentration distribution. We use discrete cosine transform (DCT) layers to model the smooth nature of the gas plume signal. In the DCT domain, we project the feature maps onto a low-pass region, whose boundary is determined during training using the backpropagation algorithm. This operation is equivalent to projecting onto a convex set. Furthermore, these projection operations are embedded in the nonlinear structure of a convolutional neural network. We address two different types of data: methane–propane leak from industrial plants and isopropyl alcohol (isopropanol) vapor leak in an indoor environment. Experimental results are presented. Our results show that we can obtain a smooth estimate of the underlying gas signal while obtaining a good source location prediction with high accuracy.",
+        "url": "https://doi.org/10.1109/jsen.2022.3202134",
+        "venue": "IEEE Sensors Journal",
+        "citation_count": 17,
+        "publication_date": "2022-09-02",
+        "source": "open_alex",
+        "doi": "10.1109/jsen.2022.3202134",
+        "arxiv_id": null
+      },
+      {
+        "title": "GaSLAM: An Algorithm for Simultaneous Gas Source Localization and Gas Distribution Mapping in 3D",
+        "authors": [
+          "Chiara Ercolani",
+          "Lixuan Tang",
+          "Alcherio Martinoli"
+        ],
+        "year": 2022,
+        "abstract": "Chemical gas dispersion poses considerable threat to humans, animals and the environment. The research areas of gas source localization and gas distribution mapping aim to localize the source of gas leaks and map the gas plume respectively, in order to help the coordination of swift rescue missions. Although very similar, these two areas are often treated separately in literature. In some cases, inferences on the gas distribution are made a posteriori from the source location, or vice-versa. In this paper, we introduce GaSLAM, a methodology that couples the estimation of the gas map and the source location using two state of the art algorithms with a novel navigation strategy based on informative quantities. The synergistic approach allows our algorithm to achieve a good estimation of both objectives and push the navigation strategies towards informative areas of the experimental volume. We validate the algorithm in simulation and with physical experiments in varying environmental conditions. We show that the algorithm improves on the source location estimate compared to a similar approach found in literature, and is able to deliver good quality maps of the gas distribution.",
+        "url": "https://doi.org/10.1109/iros47612.2022.9981976",
+        "venue": "2022 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)",
+        "citation_count": 13,
+        "publication_date": "2022-10-23",
+        "source": "open_alex",
+        "doi": "10.1109/iros47612.2022.9981976",
+        "arxiv_id": null
+      },
+      {
+        "title": "Detection and Estimation of Gas Sources With Arbitrary Locations Based on Poisson's Equation",
+        "authors": [
+          "Dmitriy Shutin",
+          "Thomas Wiedemann",
+          "Patrick Hinsen"
+        ],
+        "year": 2023,
+        "abstract": "Accurate estimation of the number and locations of dispersed material sources is critical for optimal disaster response in Chemical, Biological, Radiological, or Nuclear accidents. This paper introduces a novel approach to Gas Source Localization that uses sparse Bayesian learning adapted to models based on Partial Differential Equations for modeling gas dynamics. Using the method of Green's functions and the adjoint state method, a gradient-based optimization with respect to source locations is derived, allowing superresolving (arbitrary) source locations. By combing the latter with sparse Bayesian learning, a sparse source support can be identified, thus indirectly assessing the number of sources. Simulation results and comparisons with classical sparse estimators for linear models demonstrate the effectiveness of the proposed approach. The proposed sparsity-constrained gas source localization method offers thus a flexible solution for disaster response and robotic exploration in hazardous environments.",
+        "url": "https://doi.org/10.1109/ojsp.2023.3344076",
+        "venue": "IEEE Open Journal of Signal Processing",
+        "citation_count": 2,
+        "publication_date": "2023-12-21",
+        "source": "open_alex",
+        "doi": "10.1109/ojsp.2023.3344076",
+        "arxiv_id": null
+      },
+      {
+        "title": "Gas Source Localization Based on Binary Sensing with a UAV",
+        "authors": [
+          "Thomas Wiedemann",
+          "Marius Schaab",
+          "Juan Marchal Gómez",
+          "Dmitriy Shutin",
+          "Monika Scheibe",
+          "Achim J. Lilienthal"
+        ],
+        "year": 2022,
+        "abstract": "Precise gas concentration measurements are often difficult, especially by in-situ sensors mounted on an Unmanned Aerial Vehicle (UAV). Simple gas detection, on the other hand, is more robust and reliable, yet brings significantly less information for gas source localization. In this paper, we compensate for the lack of information by a physical model of gas propagation based on the advection-diffusion Partial Differential Equation (PDE). By linking binary gas detection measurements to computed gas concentration using the physical model and an appropriately designed likelihood function, it becomes possible to identify the most likely gas source distribution. The approach was validated in two experiments with ethanol and smoke as “toy” gasses. It is shown that the method is able to successfully localize the source locations in experiments based on gas detection measurements taken by a UAV.",
+        "url": "https://doi.org/10.1109/isoen54820.2022.9789553",
+        "venue": "",
+        "citation_count": 5,
+        "publication_date": "2022-05-29",
+        "source": "open_alex",
+        "doi": "10.1109/isoen54820.2022.9789553",
+        "arxiv_id": null
+      },
+      {
+        "title": "Integration of Bayesian Inference and Anemotaxis for Robotics Gas Source Localization in a Large Cluttered Outdoor Environment",
+        "authors": [
+          "Yaqub Aris Prabowo",
+          "Bambang Riyanto Trilaksono",
+          "Egi Hidayat",
+          "Brian Yuliarto"
+        ],
+        "year": 2023,
+        "abstract": "Finding a gas source in a cluttered outdoor environment using autonomous robot is a complex challenge. The gas movement is difficult to predict as it is significantly affected by the wind and the shape of objects in the environment. In this paper, we propose a new probabilistic model and an integration of Bayesian inference and anemotaxis methods used for a robot to find a gas source in a large cluttered outdoor environment. An autonomous robot installed with a gas sensor is expected to find the location of the gas source after the gas leak occurs for a particular time. The advantage of the Bayesian inference technique has been presented previously so that a robot can find the gas source in an isolated indoor building without any significant wind flow. The large environment is divided into some particular regions. A set of probability density function was collected previously from a large amount of gas dispersion simulation to estimate the maximum likelihood of where the gas source is. The challenge gets more extensive if the Bayesian inference method is applied in an outdoor and cluttered environment. Instead of only measuring the gas concentration, the wind angle is also used as the wind profile significantly affects the gas dispersion. Therefore, the probability model is modified to allow the wind direction as a new variable. Moreover, an anemotaxis method is incorporated as the decision-making support as it may be more efficient to direct the robot explicitly to the upwind direction. Evaluations of the proposed method were carried out and its advantage was shown through simulation in a number of different scenarios.",
+        "url": "https://doi.org/10.1109/access.2023.3238470",
+        "venue": "IEEE Access",
+        "citation_count": 15,
+        "publication_date": "2023-01-01",
+        "source": "open_alex",
+        "doi": "10.1109/access.2023.3238470",
+        "arxiv_id": null
+      },
+      {
+        "title": "Combining SLAM, GDM, and Anemotaxis for Gas Source Localization in Unknown and GPS-denied Environments",
+        "authors": [
+          "Duddy Soegiarto",
+          "Bambang Riyanto Trilaksono",
+          "Widyawardana Adiprawita",
+          "Egi Hidayat",
+          "Yaqub Aris Prabowo"
+        ],
+        "year": 2022,
+        "abstract": "",
+        "url": "https://doi.org/10.15676/ijeei.2022.14.3.3",
+        "venue": "International Journal on Electrical Engineering and Informatics",
+        "citation_count": 1,
+        "publication_date": "2022-09-30",
+        "source": "open_alex",
+        "doi": "10.15676/ijeei.2022.14.3.3",
+        "arxiv_id": null
+      }
+    ],
+    "arxiv": [
+      {
+        "title": "Latent-Y: A Lab-Validated Autonomous Agent for De Novo Drug Design",
+        "authors": [
+          "Latent Labs Team",
+          "Sebastian M. Schmon",
+          "Daniella Pretorius",
+          "Simon Mathis",
+          "Rebecca Bartke-Croughan",
+          "Aishaini Puvanendran",
+          "James Vuckovic",
+          "Henry Kenlay",
+          "Mária Vlachynská",
+          "Alex Bridgland",
+          "Ivan Grishin",
+          "Sven Over",
+          "David Li",
+          "Bridget Li",
+          "Jonathan Crabbé",
+          "Agrin Hilmkil",
+          "Alexander W. R. Nelson",
+          "David Yuan",
+          "Annette Obika",
+          "Simon A. A. Kohl"
+        ],
+        "year": 2026,
+        "abstract": "Drug discovery relies on iterative expert workflows that are slow to parallelize and difficult to scale. Here we introduce Latent-Y, an AI agent that autonomously executes complete antibody design campaigns from text prompts, covering literature review, target analysis, epitope identification, candidate design, computational validation, and selection of lab-ready sequences. Latent-Y is integrated into the Latent Labs Platform, where it operates in the same environment as drug-discovery experts with access to bioinformatics tools, biological databases, and scientific literature. The agent can run fully autonomously end-to-end, or collaboratively, where researchers review progress, provide feedback, and direct subsequent steps. Candidate antibodies are generated using Latent-X2, our frontier generative model for drug-like antibody design. We demonstrate the agent's capability across three distinct campaign types: epitope discovery guided by therapeutic specifications, cross-species binder design, and autonomous design from a scientific publication targeting human transferrin receptor for blood-brain barrier crossing. Across nine targets, Latent-Y produced lab-confirmed nanobody binders against six, achieving a 67% target-level success rate with binding affinities reaching the single-digit nanomolar range, without human filtering or intervention. In user studies, experts working with Latent-Y completed design campaigns 56 times faster than independent expert time estimates, compressing weeks of work into hours. Because Latent-X2 is a general-purpose atomic-level model for biologics design, the same agent architecture naturally extends to macrocyclic peptide and mini-binder design campaigns, broadening autonomous discovery across therapeutic modalities. Latent-Y is available to selected partners at https://platform.latentlabs.com.",
+        "url": "http://arxiv.org/abs/2603.29727v2",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2026-03-31",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2603.29727"
+      },
+      {
+        "title": "Latent-X: An Atom-level Frontier Model for De Novo Protein Binder Design",
+        "authors": [
+          "Latent Labs Team",
+          "Alex Bridgland",
+          "Jonathan Crabbé",
+          "Henry Kenlay",
+          "Daniella Pretorius",
+          "Sebastian M. Schmon",
+          "Agrin Hilmkil",
+          "Rebecca Bartke-Croughan",
+          "Robin Rombach",
+          "Michael Flashman",
+          "Tomas Matteson",
+          "Simon Mathis",
+          "Alexander W. R. Nelson",
+          "David Yuan",
+          "Annette Obika",
+          "Simon A. A. Kohl"
+        ],
+        "year": 2025,
+        "abstract": "Traditional drug discovery relies on rounds of screening millions of candidate molecules with low success rates, making drug discovery time and resource intensive. To overcome this screening bottleneck, we introduce Latent-X, an all-atom protein design model that enables a new paradigm of precision AI design. Given a target protein epitope, Latent-X jointly generates the all atom structure and sequence of the protein binder and target, directly modelling the non-covalent interactions essential for specific binding. We demonstrate its efficacy across two therapeutically relevant modalities through extensive wet lab experiments, testing as few as 30-100 designs per target. For macrocyclic peptides, Latent-X achieves experimental hit rates exceeding 90% on all evaluated benchmark targets. For mini-binders, it consistently produces potent candidates against all evaluated benchmark targets, with binding affinities reaching the low nanomolar and picomolar range - comparable to those of approved therapeutics - whilst also being highly specific in mammalian display. In direct comparisons with the state-of-the-art models AlphaProteo, RFdiffusion and RFpeptides under identical conditions demonstrates, Latent-X generates binders with higher hit rates and better binding affinities, and uniquely creates structurally diverse binders, including complex beta-sheet folds. Its end-to-end process is an order of magnitude faster than existing multi-step computational pipelines. By drastically improving the efficiency and success rate of de novo design, Latent-X represents a significant advance towards push-button biologics discovery and a valuable tool for protein engineers. Latent-X is available at https://platform.latentlabs.com, enabling users to reliably generate de novo binders without AI infrastructure or coding.",
+        "url": "http://arxiv.org/abs/2507.19375v1",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2025-07-25",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2507.19375"
+      },
+      {
+        "title": "Drug-like antibodies with low immunogenicity in human panels designed with Latent-X2",
+        "authors": [
+          "Latent Labs Team",
+          "Henry Kenlay",
+          "Daniella Pretorius",
+          "Jonathan Crabbé",
+          "Alex Bridgland",
+          "Sebastian M. Schmon",
+          "Agrin Hilmkil",
+          "James Vuckovic",
+          "Simon Mathis",
+          "Tomas Matteson",
+          "Rebecca Bartke-Croughan",
+          "Amir Motmaen",
+          "Robin Rombach",
+          "Mária Vlachynská",
+          "Alexander W. R. Nelson",
+          "David Yuan",
+          "Annette Obika",
+          "Simon A. A. Kohl"
+        ],
+        "year": 2025,
+        "abstract": "Drug discovery has long sought computational systems capable of designing drug-like molecules directly: developable and non-immunogenic from the start. Here we introduce Latent-X2, a frontier generative model that achieves this goal through zero-shot design of antibodies with strong binding affinities, drug-like properties, and, for the first time for any de novo generated antibody, confirmed low immunogenicity in human donor panels. Latent-X2 is an all-atom model conditioned on target structure, epitope specification, and optional antibody framework, jointly generating sequences and structures while modelling the bound complex. Testing only 4 to 24 designs per target in each modality, we successfully generated VHH and scFv antibodies against 9 of 18 evaluated targets, achieving a 50% target-level success rate with picomolar to nanomolar binding affinities. Designed molecules exhibit developability profiles that match or exceed those of approved antibody therapeutics, including expression yield, aggregation propensity, polyreactivity, hydrophobicity, and thermal stability, without optimization, filtering, or selection. In the first immunogenicity assessment of any AI-generated antibody, representative de novo VHH binders targeting TNFL9 exhibit both potent target engagement and low immunogenicity across T-cell proliferation and cytokine release assays. The model generalizes beyond antibodies: against K-Ras, long considered undruggable, we generated macrocyclic peptide binders competitive with trillion-scale mRNA display screens. These properties emerge directly from the model, demonstrating the therapeutic viability of zero-shot molecular design, now available without AI infrastructure or coding expertise at https://platform.latentlabs.com.",
+        "url": "http://arxiv.org/abs/2512.20263v1",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2025-12-23",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2512.20263"
+      },
+      {
+        "title": "Simultaneous Latent Budget Trees for Stratified Classification",
+        "authors": [
+          "Simultaneous Latent Budget Trees for Stratified Classification Cristian Buoncompagni",
+          "Stefano Pellegrino",
+          "Giulia Vannucci",
+          "Raffaele Dubbioso",
+          "Roberta Siciliano"
+        ],
+        "year": 2026,
+        "abstract": "In the era of Explainable Artificial Intelligence, there is a renewed focus on single trees for their ease of interpretation. This paper introduces Simultaneous Latent Budget Trees, a probabilistic machine learning framework for classification trees in the presence of a stratification factor such as a temporal, spatial, or demographic variable, acting as a control variable or potential confounder. Standard tree growth procedures are not designed to optimize a conditional split rule. A model-based split rule is proposed in which child nodes are interpreted as latent components of a simultaneous mixture model, such as the Simultaneous Latent Budget Model and its constrained versions, fitted to the parent node. Mixing parameters drive the observations, differently for each group, to the child nodes whereas latent budgets parameters update the response classes profile of each level of the control variable. Parameters are estimated by least squares considering a neural network perspective of the model. An informative tree structure can be interactively visualized with interpretation aids on the node and the paths, including visual pruning and decision tree selection procedure. Suitable measures are proposed to handle an unbalanced response class distribution. The proposed methodology is applied to investigate gender-related differences in disease progression of Amyotrophic Lateral Sclerosis. The SLBT library with the various tree-based algorithms is available in the linked GitHub repository.",
+        "url": "http://arxiv.org/abs/2606.13295v2",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2026-06-11",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2606.13295"
+      },
+      {
+        "title": "Guaranteed Discovery of Control-Endogenous Latent States with Multi-Step Inverse Models",
+        "authors": [
+          "Alex Lamb",
+          "Riashat Islam",
+          "Yonathan Efroni",
+          "Aniket Didolkar",
+          "Dipendra Misra",
+          "Dylan Foster",
+          "Lekan Molu",
+          "Rajan Chari",
+          "Akshay Krishnamurthy",
+          "John Langford"
+        ],
+        "year": 2022,
+        "abstract": "In many sequential decision-making tasks, the agent is not able to model the full complexity of the world, which consists of multitudes of relevant and irrelevant information. For example, a person walking along a city street who tries to model all aspects of the world would quickly be overwhelmed by a multitude of shops, cars, and people moving in and out of view, each following their own complex and inscrutable dynamics. Is it possible to turn the agent's firehose of sensory information into a minimal latent state that is both necessary and sufficient for an agent to successfully act in the world? We formulate this question concretely, and propose the Agent Control-Endogenous State Discovery algorithm (AC-State), which has theoretical guarantees and is practically demonstrated to discover the minimal control-endogenous latent state which contains all of the information necessary for controlling the agent, while fully discarding all irrelevant information. This algorithm consists of a multi-step inverse model (predicting actions from distant observations) with an information bottleneck. AC-State enables localization, exploration, and navigation without reward or demonstrations. We demonstrate the discovery of the control-endogenous latent state in three domains: localizing a robot arm with distractions (e.g., changing lighting conditions and background), exploring a maze alongside other agents, and navigating in the Matterport house simulator.",
+        "url": "http://arxiv.org/abs/2207.08229v2",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2022-07-17",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2207.08229"
+      },
+      {
+        "title": "Modeling Dynamic Neural Activity by combining Naturalistic Video Stimuli and Stimulus-independent Latent Factors",
+        "authors": [
+          "Finn Schmidt",
+          "Polina Turishcheva",
+          "Suhas Shrinivasan",
+          "Fabian H. Sinz"
+        ],
+        "year": 2024,
+        "abstract": "The neural activity in the visual processing is influenced by both external stimuli and internal brain states. Ideally, a neural predictive model should account for both of them. Currently, there are no dynamic encoding models that explicitly model a latent state and the entire neuronal response distribution. We address this gap by proposing a probabilistic model that predicts the joint distribution of the neuronal responses from video stimuli and stimulus-independent latent factors. After training and testing our model on mouse V1 neuronal responses, we find that it outperforms video-only models in terms of log-likelihood and achieves improvements in likelihood and correlation when conditioned on responses from other neurons. Furthermore, we find that the learned latent factors strongly correlate with mouse behavior and that they exhibit patterns related to the neurons' position on the visual cortex, although the model was trained without behavior and cortical coordinates. Our findings demonstrate that unsupervised learning of latent factors from population responses can reveal biologically meaningful structure that bridges sensory processing and behavior, without requiring explicit behavioral annotations during training.",
+        "url": "http://arxiv.org/abs/2410.16136v3",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2024-10-21",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2410.16136"
+      },
+      {
+        "title": "Latent Spatial Memory for Video World Models",
+        "authors": [
+          "Weijie Wang",
+          "Haoyu Zhao",
+          "Yifan Yang",
+          "Feng Chen",
+          "Zeyu Zhang",
+          "Yefei He",
+          "Zicheng Duan",
+          "Donny Y. Chen",
+          "Yuqing Yang",
+          "Bohan Zhuang"
+        ],
+        "year": 2026,
+        "abstract": "Video world models that maintain 3D spatial consistency across generated frames typically rely on explicit point cloud memory constructed in RGB space. This design is both computationally expensive, requiring repeated rendering and VAE encoding, and inherently lossy, as the round trip through pixel space discards rich features of the learned latent representation. In this paper, we introduce \\emph{latent spatial memory} for video world models, a persistent 3D cache that stores scene information directly in the diffusion latent space, avoiding pixel-space reconstruction. Building on this, we propose Mirage, a latent-space spatial memory framework that constructs the memory by lifting latent tokens into 3D via depth-guided back-projection and queries it by synthesizing novel views through direct latent-space warping. This unified formulation eliminates both the information loss of pixel-space reconstruction and the computational burden of repeated encoding and rendering. Experiments show that latent spatial memory achieves up to \\textbf{10.57}$\\times$ faster end-to-end video generation and \\textbf{55}$\\times$ reduction in memory footprint relative to explicit 3D baselines. Leveraging the geometric prior of the diffusion model, Mirage attains state-of-the-art performance on WorldScore and strong reconstruction quality on RealEstate10K.",
+        "url": "http://arxiv.org/abs/2606.09828v2",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2026-06-08",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2606.09828"
+      },
+      {
+        "title": "Forgetting is Not Erasure: Recovering Latent Knowledge via Transport Keys",
+        "authors": [
+          "Archie Chaudhury"
+        ],
+        "year": 2026,
+        "abstract": "Catastrophic forgetting is often framed as a representational problem: after sequential training, a model appears to lose the features that supported performance on earlier tasks. We challenge the stronger form of this view. Across controlled continual-learning settings, we find that a significant portion of apparent forgetting can be attributed to interface drift between internal stages rather than permanent erasure of task-relevant computation. We study this phenomenon through a stitched evaluation protocol that combines early computation from a post-update network with late computation from its predecessor, optionally mediated by a compact, task-specific transport key. We describe transport keys at a systems level as compact interface-alignment operators estimated from a small set of paired anchor activations and evaluated through model stitching. On split CIFAR-100 with a ResNet-style network, transport keys recover most of the original Task A performance after sequential training on Task B. On a compact vision transformer, we observe a similar recovery pattern. These results suggest that continual learning may require better mechanisms for indexing and re-accessing latent computations, not only methods that prevent weight change.",
+        "url": "http://arxiv.org/abs/2606.02860v1",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2026-06-01",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2606.02860"
+      },
+      {
+        "title": "Latent-Y: A Lab-Validated Autonomous Agent for De Novo Drug Design",
+        "authors": [
+          "Latent Labs Team",
+          "Sebastian M. Schmon",
+          "Daniella Pretorius",
+          "Simon Mathis",
+          "Rebecca Bartke-Croughan",
+          "Aishaini Puvanendran",
+          "James Vuckovic",
+          "Henry Kenlay",
+          "Mária Vlachynská",
+          "Alex Bridgland",
+          "Ivan Grishin",
+          "Sven Over",
+          "David Li",
+          "Bridget Li",
+          "Jonathan Crabbé",
+          "Agrin Hilmkil",
+          "Alexander W. R. Nelson",
+          "David Yuan",
+          "Annette Obika",
+          "Simon A. A. Kohl"
+        ],
+        "year": 2026,
+        "abstract": "Drug discovery relies on iterative expert workflows that are slow to parallelize and difficult to scale. Here we introduce Latent-Y, an AI agent that autonomously executes complete antibody design campaigns from text prompts, covering literature review, target analysis, epitope identification, candidate design, computational validation, and selection of lab-ready sequences. Latent-Y is integrated into the Latent Labs Platform, where it operates in the same environment as drug-discovery experts with access to bioinformatics tools, biological databases, and scientific literature. The agent can run fully autonomously end-to-end, or collaboratively, where researchers review progress, provide feedback, and direct subsequent steps. Candidate antibodies are generated using Latent-X2, our frontier generative model for drug-like antibody design. We demonstrate the agent's capability across three distinct campaign types: epitope discovery guided by therapeutic specifications, cross-species binder design, and autonomous design from a scientific publication targeting human transferrin receptor for blood-brain barrier crossing. Across nine targets, Latent-Y produced lab-confirmed nanobody binders against six, achieving a 67% target-level success rate with binding affinities reaching the single-digit nanomolar range, without human filtering or intervention. In user studies, experts working with Latent-Y completed design campaigns 56 times faster than independent expert time estimates, compressing weeks of work into hours. Because Latent-X2 is a general-purpose atomic-level model for biologics design, the same agent architecture naturally extends to macrocyclic peptide and mini-binder design campaigns, broadening autonomous discovery across therapeutic modalities. Latent-Y is available to selected partners at https://platform.latentlabs.com.",
+        "url": "http://arxiv.org/abs/2603.29727v2",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2026-03-31",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2603.29727"
+      },
+      {
+        "title": "Latent-X: An Atom-level Frontier Model for De Novo Protein Binder Design",
+        "authors": [
+          "Latent Labs Team",
+          "Alex Bridgland",
+          "Jonathan Crabbé",
+          "Henry Kenlay",
+          "Daniella Pretorius",
+          "Sebastian M. Schmon",
+          "Agrin Hilmkil",
+          "Rebecca Bartke-Croughan",
+          "Robin Rombach",
+          "Michael Flashman",
+          "Tomas Matteson",
+          "Simon Mathis",
+          "Alexander W. R. Nelson",
+          "David Yuan",
+          "Annette Obika",
+          "Simon A. A. Kohl"
+        ],
+        "year": 2025,
+        "abstract": "Traditional drug discovery relies on rounds of screening millions of candidate molecules with low success rates, making drug discovery time and resource intensive. To overcome this screening bottleneck, we introduce Latent-X, an all-atom protein design model that enables a new paradigm of precision AI design. Given a target protein epitope, Latent-X jointly generates the all atom structure and sequence of the protein binder and target, directly modelling the non-covalent interactions essential for specific binding. We demonstrate its efficacy across two therapeutically relevant modalities through extensive wet lab experiments, testing as few as 30-100 designs per target. For macrocyclic peptides, Latent-X achieves experimental hit rates exceeding 90% on all evaluated benchmark targets. For mini-binders, it consistently produces potent candidates against all evaluated benchmark targets, with binding affinities reaching the low nanomolar and picomolar range - comparable to those of approved therapeutics - whilst also being highly specific in mammalian display. In direct comparisons with the state-of-the-art models AlphaProteo, RFdiffusion and RFpeptides under identical conditions demonstrates, Latent-X generates binders with higher hit rates and better binding affinities, and uniquely creates structurally diverse binders, including complex beta-sheet folds. Its end-to-end process is an order of magnitude faster than existing multi-step computational pipelines. By drastically improving the efficiency and success rate of de novo design, Latent-X represents a significant advance towards push-button biologics discovery and a valuable tool for protein engineers. Latent-X is available at https://platform.latentlabs.com, enabling users to reliably generate de novo binders without AI infrastructure or coding.",
+        "url": "http://arxiv.org/abs/2507.19375v1",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2025-07-25",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2507.19375"
+      },
+      {
+        "title": "Drug-like antibodies with low immunogenicity in human panels designed with Latent-X2",
+        "authors": [
+          "Latent Labs Team",
+          "Henry Kenlay",
+          "Daniella Pretorius",
+          "Jonathan Crabbé",
+          "Alex Bridgland",
+          "Sebastian M. Schmon",
+          "Agrin Hilmkil",
+          "James Vuckovic",
+          "Simon Mathis",
+          "Tomas Matteson",
+          "Rebecca Bartke-Croughan",
+          "Amir Motmaen",
+          "Robin Rombach",
+          "Mária Vlachynská",
+          "Alexander W. R. Nelson",
+          "David Yuan",
+          "Annette Obika",
+          "Simon A. A. Kohl"
+        ],
+        "year": 2025,
+        "abstract": "Drug discovery has long sought computational systems capable of designing drug-like molecules directly: developable and non-immunogenic from the start. Here we introduce Latent-X2, a frontier generative model that achieves this goal through zero-shot design of antibodies with strong binding affinities, drug-like properties, and, for the first time for any de novo generated antibody, confirmed low immunogenicity in human donor panels. Latent-X2 is an all-atom model conditioned on target structure, epitope specification, and optional antibody framework, jointly generating sequences and structures while modelling the bound complex. Testing only 4 to 24 designs per target in each modality, we successfully generated VHH and scFv antibodies against 9 of 18 evaluated targets, achieving a 50% target-level success rate with picomolar to nanomolar binding affinities. Designed molecules exhibit developability profiles that match or exceed those of approved antibody therapeutics, including expression yield, aggregation propensity, polyreactivity, hydrophobicity, and thermal stability, without optimization, filtering, or selection. In the first immunogenicity assessment of any AI-generated antibody, representative de novo VHH binders targeting TNFL9 exhibit both potent target engagement and low immunogenicity across T-cell proliferation and cytokine release assays. The model generalizes beyond antibodies: against K-Ras, long considered undruggable, we generated macrocyclic peptide binders competitive with trillion-scale mRNA display screens. These properties emerge directly from the model, demonstrating the therapeutic viability of zero-shot molecular design, now available without AI infrastructure or coding expertise at https://platform.latentlabs.com.",
+        "url": "http://arxiv.org/abs/2512.20263v1",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2025-12-23",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2512.20263"
+      },
+      {
+        "title": "Modeling Dynamic Neural Activity by combining Naturalistic Video Stimuli and Stimulus-independent Latent Factors",
+        "authors": [
+          "Finn Schmidt",
+          "Polina Turishcheva",
+          "Suhas Shrinivasan",
+          "Fabian H. Sinz"
+        ],
+        "year": 2024,
+        "abstract": "The neural activity in the visual processing is influenced by both external stimuli and internal brain states. Ideally, a neural predictive model should account for both of them. Currently, there are no dynamic encoding models that explicitly model a latent state and the entire neuronal response distribution. We address this gap by proposing a probabilistic model that predicts the joint distribution of the neuronal responses from video stimuli and stimulus-independent latent factors. After training and testing our model on mouse V1 neuronal responses, we find that it outperforms video-only models in terms of log-likelihood and achieves improvements in likelihood and correlation when conditioned on responses from other neurons. Furthermore, we find that the learned latent factors strongly correlate with mouse behavior and that they exhibit patterns related to the neurons' position on the visual cortex, although the model was trained without behavior and cortical coordinates. Our findings demonstrate that unsupervised learning of latent factors from population responses can reveal biologically meaningful structure that bridges sensory processing and behavior, without requiring explicit behavioral annotations during training.",
+        "url": "http://arxiv.org/abs/2410.16136v3",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2024-10-21",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2410.16136"
+      },
+      {
+        "title": "Simultaneous Latent Budget Trees for Stratified Classification",
+        "authors": [
+          "Simultaneous Latent Budget Trees for Stratified Classification Cristian Buoncompagni",
+          "Stefano Pellegrino",
+          "Giulia Vannucci",
+          "Raffaele Dubbioso",
+          "Roberta Siciliano"
+        ],
+        "year": 2026,
+        "abstract": "In the era of Explainable Artificial Intelligence, there is a renewed focus on single trees for their ease of interpretation. This paper introduces Simultaneous Latent Budget Trees, a probabilistic machine learning framework for classification trees in the presence of a stratification factor such as a temporal, spatial, or demographic variable, acting as a control variable or potential confounder. Standard tree growth procedures are not designed to optimize a conditional split rule. A model-based split rule is proposed in which child nodes are interpreted as latent components of a simultaneous mixture model, such as the Simultaneous Latent Budget Model and its constrained versions, fitted to the parent node. Mixing parameters drive the observations, differently for each group, to the child nodes whereas latent budgets parameters update the response classes profile of each level of the control variable. Parameters are estimated by least squares considering a neural network perspective of the model. An informative tree structure can be interactively visualized with interpretation aids on the node and the paths, including visual pruning and decision tree selection procedure. Suitable measures are proposed to handle an unbalanced response class distribution. The proposed methodology is applied to investigate gender-related differences in disease progression of Amyotrophic Lateral Sclerosis. The SLBT library with the various tree-based algorithms is available in the linked GitHub repository.",
+        "url": "http://arxiv.org/abs/2606.13295v2",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2026-06-11",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2606.13295"
+      },
+      {
+        "title": "Multi-Horizon Consistency as Geometry: When Latent Dynamics Contract, and When They Do Not",
+        "authors": [
+          "Kavya Bhand",
+          "Aadi Joshi"
+        ],
+        "year": 2026,
+        "abstract": "Multi-horizon latent consistency is a common training knob in video predictors and world models, but practitioners rarely know what it does to transition geometry. We treat lambda, the weight on multi-step latent agreement, as a diagnostic control and measure an empirical expansion proxy L20,q95 together with horizon-20 prediction error E20. On Moving-MNIST (n=6 seeds at the critical pair), raising lambda from 0 to 0.8 cuts L20 from 4.96 +/- 2.01 to 1.01 +/- 0.06 (paired t p=0.005, Wilcoxon p=0.031) and halves E20 (0.365 to 0.177, paired t p=1.1e-13). Four of six seeds cross L<1 at lambda=0.8. The same loss does not produce population L<1 on action-conditioned Pendulum-v1 or CartPole-v1, nor on KTH Actions video, even when E20 improves. An associational mediation analysis on MMNIST gives r-hat=0.94 (95% CI [0.88, 1.00], n=27, B=2000); lambda was not randomized. Defensive checks (architectural baselines, exogenous stress, WorldTest, MPC, scaling) mostly support a narrow claim: soft consistency can push passive video toward a near-contractive band, and that band is domain-limited. A stochastic-forcing law L20 ~ 1.23 + 1.82 eta at lambda=0.8 (bootstrap slope CI [1.73, 1.92], R^2=0.96) unifies control domains on the same curve via calibrated eta_eff. Complete joint slices at lambda in {0.4, 1.2} (30/30 cells, 5 eta x 3 seeds) show comparable linear L20(eta) slopes (~1.69 and ~2.00); we do not fit a continuous (lambda, eta) surface. We do not report DreamerV3 or TD-MPC2 returns.",
+        "url": "http://arxiv.org/abs/2607.21645v1",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2026-07-21",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2607.21645"
+      },
+      {
+        "title": "Motion-I2V: Consistent and Controllable Image-to-Video Generation with Explicit Motion Modeling",
+        "authors": [
+          "Xiaoyu Shi",
+          "Zhaoyang Huang",
+          "Fu-Yun Wang",
+          "Weikang Bian",
+          "Dasong Li",
+          "Yi Zhang",
+          "Manyuan Zhang",
+          "Ka Chun Cheung",
+          "Simon See",
+          "Hongwei Qin",
+          "Jifeng Dai",
+          "Hongsheng Li"
+        ],
+        "year": 2024,
+        "abstract": "We introduce Motion-I2V, a novel framework for consistent and controllable image-to-video generation (I2V). In contrast to previous methods that directly learn the complicated image-to-video mapping, Motion-I2V factorizes I2V into two stages with explicit motion modeling. For the first stage, we propose a diffusion-based motion field predictor, which focuses on deducing the trajectories of the reference image's pixels. For the second stage, we propose motion-augmented temporal attention to enhance the limited 1-D temporal attention in video latent diffusion models. This module can effectively propagate reference image's feature to synthesized frames with the guidance of predicted trajectories from the first stage. Compared with existing methods, Motion-I2V can generate more consistent videos even at the presence of large motion and viewpoint variation. By training a sparse trajectory ControlNet for the first stage, Motion-I2V can support users to precisely control motion trajectories and motion regions with sparse trajectory and region annotations. This offers more controllability of the I2V process than solely relying on textual instructions. Additionally, Motion-I2V's second stage naturally supports zero-shot video-to-video translation. Both qualitative and quantitative comparisons demonstrate the advantages of Motion-I2V over prior approaches in consistent and controllable image-to-video generation. Please see our project page at https://xiaoyushi97.github.io/Motion-I2V/.",
+        "url": "http://arxiv.org/abs/2401.15977v2",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2024-01-29",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2401.15977"
+      },
+      {
+        "title": "Motion Forcing: A Decoupled Framework for Robust Video Generation in Motion Dynamics",
+        "authors": [
+          "Tianshuo Xu",
+          "Zhifei Chen",
+          "Leyi Wu",
+          "Hao Lu",
+          "Ying-cong Chen"
+        ],
+        "year": 2026,
+        "abstract": "The ultimate goal of video generation is to satisfy a fundamental trilemma: achieving high visual quality, maintaining rigorous physical consistency, and enabling precise controllability. While recent models can maintain this balance in simple, isolated scenarios, we observe that this equilibrium is fragile and often breaks down as scene complexity increases (e.g., involving collisions or dense traffic). To address this, we introduce \\textbf{Motion Forcing}, a framework designed to stabilize this trilemma even in complex generative tasks. Our key insight is to explicitly decouple physical reasoning from visual synthesis via a hierarchical \\textbf{``Point-Shape-Appearance''} paradigm. This approach decomposes generation into verifiable stages: modeling complex dynamics as sparse geometric anchors (\\textbf{Point}), expanding them into dynamic depth maps that explicitly resolve 3D geometry (\\textbf{Shape}), and finally rendering high-fidelity textures (\\textbf{Appearance}). Furthermore, to foster robust physical understanding, we employ a \\textbf{Masked Point Recovery} strategy. By randomly masking input anchors during training and enforcing the reconstruction of complete dynamic depth, the model is compelled to move beyond passive pattern matching and learn latent physical laws (e.g., inertia) to infer missing trajectories. Extensive experiments on autonomous driving benchmarks show that Motion Forcing significantly outperforms state-of-the-art baselines, maintaining trilemma stability across complex scenes. Evaluations on physics and robotics further confirm our framework's generality.",
+        "url": "http://arxiv.org/abs/2603.10408v1",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2026-03-11",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2603.10408"
+      },
+      {
+        "title": "Robotic Gas Source Localization with Probabilistic Mapping and Online Dispersion Simulation",
+        "authors": [
+          "Pepe Ojeda",
+          "Javier Monroy",
+          "Javier Gonzalez-Jimenez"
+        ],
+        "year": 2023,
+        "abstract": "Gas source localization (GSL) with an autonomous robot is a problem with many prospective applications, from finding pipe leaks to emergency-response scenarios. In this work, we present a new method to perform GSL in realistic indoor environments, featuring obstacles and turbulent flow. Given the highly complex relationship between the source position and the measurements available to the robot (the single-point gas concentration, and the wind vector) we propose an observation model that derives from contrasting the online, real-time simulation of the gas dispersion from any candidate source localization against a gas concentration map built from sensor readings. To account for a convenient and grounded integration of both into a probabilistic estimation framework, we introduce the concept of probabilistic gas-hit maps, which provide a higher level of abstraction to model the time-dependent nature of gas dispersion. Results from both simulated and real experiments show the capabilities of our current proposal to deal with source localization in complex indoor environments.",
+        "url": "http://arxiv.org/abs/2304.08879v3",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2023-04-18",
+        "source": "arxiv",
+        "doi": "10.1109/TRO.2024.3426368",
+        "arxiv_id": "2304.08879"
+      },
+      {
+        "title": "A Survey of Robotic Harvesting Systems and Enabling Technologies",
+        "authors": [
+          "Leonidas Droukas",
+          "Zoe Doulgeri",
+          "Nikolaos L. Tsakiridis",
+          "Dimitra Triantafyllou",
+          "Ioannis Kleitsiotis",
+          "Ioannis Mariolis",
+          "Dimitrios Giakoumis",
+          "Dimitrios Tzovaras",
+          "Dimitrios Kateris",
+          "Dionysis Bochtis"
+        ],
+        "year": 2022,
+        "abstract": "This paper presents a comprehensive review of ground agricultural robotic systems and applications with special focus on harvesting that span research and commercial products and results, as well as their enabling technologies. The majority of literature concerns the development of crop detection, field navigation via vision and their related challenges. Health monitoring, yield estimation, water status inspection, seed planting and weed removal are frequently encountered tasks. Regarding robotic harvesting, apples, strawberries, tomatoes and sweet peppers are mainly the crops considered in publications, research projects and commercial products. The reported harvesting agricultural robotic solutions, typically consist of a mobile platform, a single robotic arm/manipulator and various navigation/vision systems. This paper reviews reported development of specific functionalities and hardware, typically required by an operating agricultural robot harvester; they include (a) vision systems, (b) motion planning/navigation methodologies (for the robotic platform and/or arm), (c) Human-Robot-Interaction (HRI) strategies with 3D visualization, (d) system operation planning & grasping strategies and (e) robotic end-effector/gripper design. Clearly, automated agriculture and specifically autonomous harvesting via robotic systems is a research area that remains wide open, offering several challenges where new contributions can be made.",
+        "url": "http://arxiv.org/abs/2207.10457v3",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2022-07-21",
+        "source": "arxiv",
+        "doi": "10.1007/s10846-022-01793-z",
+        "arxiv_id": "2207.10457"
+      },
+      {
+        "title": "GEM-4D: Geometry-Enhanced Video World Models for Robot Manipulation",
+        "authors": [
+          "Kaichen Zhou",
+          "Yuzhen Chen",
+          "Fangneng Zhan",
+          "Hang Hua",
+          "Grace Chen",
+          "Xinhai Chang",
+          "Ao Qu",
+          "Yilun Du",
+          "Zhuang Liu",
+          "Paul Pu Liang",
+          "Mengyu Wang"
+        ],
+        "year": 2026,
+        "abstract": "Video world models can generate realistic futures from a single instruction, but they often fail to track the same physical points consistently across time. As a result, the generated videos appear plausible, yet lack the physical grounding required for reliable action execution, such as robot manipulation. We present GEM-4D, a geometry-grounded video world model that resolves this limitation by injecting dense 4D correspondence supervision distilled from a pretrained geometry foundation model into the video generative backbone during training. This supervision enables the model to jointly capture appearance and geometric structure while retaining a single-stream architecture with no additional inference cost. We further introduce an inverse dynamics module that converts correspondence-consistent video rollouts into executable robot trajectories, enabling direct deployment in both real-world and simulated manipulation. GEM-4D achieves state-of-the-art performance on both video prediction and geometric consistency across both simulation and realistic scenarios and improves real-world manipulation success from 61% to 81%. Additional results are available at https://gem-4d.github.io/.",
+        "url": "http://arxiv.org/abs/2605.22882v4",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2026-05-20",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2605.22882"
+      },
+      {
+        "title": "An Adaptive Indoor Localization Approach Using WiFi RSSI Fingerprinting with SLAM-Enabled Robotic Platform and Deep Neural Networks",
+        "authors": [
+          "Seyed Alireza Rahimi Azghadi",
+          "Atah Nuh Mih",
+          "Asfia Kawnine",
+          "Monica Wachowicz",
+          "Francis Palma",
+          "Hung Cao"
+        ],
+        "year": 2024,
+        "abstract": "Indoor localization plays a vital role in the era of the IoT and robotics, with WiFi technology being a prominent choice due to its ubiquity. We present a method for creating WiFi fingerprinting datasets to enhance indoor localization systems and address the gap in WiFi fingerprinting dataset creation. We used the Simultaneous Localization And Mapping (SLAM) algorithm and employed a robotic platform to construct precise maps and localize robots in indoor environments. We developed software applications to facilitate data acquisition, fingerprinting dataset collection, and accurate ground truth map building. Subsequently, we aligned the spatial information generated via the SLAM with the WiFi scans to create a comprehensive WiFi fingerprinting dataset. The created dataset was used to train a deep neural network (DNN) for indoor localization, which can prove the usefulness of grid density. We conducted experimental validation within our office environment to demonstrate the proposed method's effectiveness, including a heatmap from the dataset showcasing the spatial distribution of WiFi signal strengths for the testing access points placed within the environment. Notably, our method offers distinct advantages over existing approaches as it eliminates the need for a predefined map of the environment, requires no preparatory steps, lessens human intervention, creates a denser fingerprinting dataset, and reduces the WiFi fingerprinting dataset creation time. Our method achieves 26% more accurate localization than the other methods and can create a six times denser fingerprinting dataset in one-third of the time compared to the traditional method. In summary, using WiFi RSSI Fingerprinting data surveyed by the SLAM-Enabled Robotic Platform, we can adapt our trained DNN model to indoor localization in any dynamic environment and enhance its scalability and applicability in real-world scenarios.",
+        "url": "http://arxiv.org/abs/2407.09242v2",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2024-07-12",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2407.09242"
+      },
+      {
+        "title": "Spin Hall magnetoresistance in Pt/(Ga,Mn)N devices",
+        "authors": [
+          "J. Aaron Mendoza-Rodarte",
+          "Katarzyna Gas",
+          "Manuel Herrera-Zaldívar",
+          "Detlef Hommel",
+          "Maciej Sawicki",
+          "Marcos H. D. Guimarães"
+        ],
+        "year": 2024,
+        "abstract": "Diluted magnetic semiconductors (DMS) have attracted significant attention for their potential in spintronic applications. Particularly, magnetically-doped GaN is highly attractive due to its high relevance for the CMOS industry and the possibility of developing advanced spintronic devices which are fully compatible with the current industrial procedures. Despite this interest, there remains a need to investigate the spintronic parameters that characterize interfaces within these systems. Here, we perform spin Hall magnetoresistance (SMR) measurements to evaluate the spin transfer at a Pt/(Ga,Mn)N interface. We determine the transparency of the interface through the estimation of the real part of the spin mixing conductance finding $G_r = 2.6\\times 10^{14} \\, Ω^{-1} m^{-2}$, comparable to state-of-the-art yttrium iron garnet (YIG)/Pt interfaces. Moreover, the magnetic ordering probed by SMR above the (Ga,Mn)N Curie temperature TC provides a broader temperature range for the efficient generation and detection of spin currents, relaxing the conditions for this material to be applied in new spintronic devices.",
+        "url": "http://arxiv.org/abs/2405.08519v2",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2024-05-14",
+        "source": "arxiv",
+        "doi": "10.1063/5.0218364",
+        "arxiv_id": "2405.08519"
+      },
+      {
+        "title": "Deep Probabilistic Indoor Gas Source Localization via Physical Dependency-Guided Sequential Inference",
+        "authors": [
+          "Seunghwan Kim",
+          "Hyungjin Kim",
+          "Junhee Lee",
+          "Hyondong Oh"
+        ],
+        "year": 2026,
+        "abstract": "Reliable gas source localization (GSL) is critical to safety in industrial and urban environments, yet remains challenging indoors because walls and obstacles interact with airflow to create complex gas dispersion. High-fidelity models such as computational fluid dynamics and filament models can capture these effects, but their computational cost limits online use. We propose a deep probabilistic framework that infers the source posterior from sparse and noisy measurements collected by a mobile robot. Unlike end-to-end models that directly infer source estimates from measurements, the proposed method incorporates physical dependencies of indoor gas transport, where wind and source location govern the concentration field. These dependencies are embedded through sequential conditional inference, in which inferred wind and concentration fields guide source posterior estimation. This structure improves localization under sparse and noisy observations. Evaluations show that the proposed method outperforms representative GSL baselines and enables accurate and efficient active GSL in simulations. Real-robot experiments demonstrate the feasibility of online operation on an embedded GPU.",
+        "url": "http://arxiv.org/abs/2608.16221v1",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2026-08-17",
+        "source": "arxiv",
+        "doi": null,
+        "arxiv_id": "2608.16221"
+      },
+      {
+        "title": "Fault-Tolerant Multi-Robot Coordination with Limited Sensing within Confined Environments",
+        "authors": [
+          "Kehinde O. Aina",
+          "Hosain Bagheri",
+          "Daniel I. Goldman"
+        ],
+        "year": 2025,
+        "abstract": "As robots are increasingly deployed to collaborate on tasks within shared workspaces and resources, the failure of an individual robot can critically affect the group's performance. This issue is particularly challenging when robots lack global information or direct communication, relying instead on social interaction for coordination and to complete their tasks. In this study, we propose a novel fault-tolerance technique leveraging physical contact interactions in multi-robot systems, specifically under conditions of limited sensing and spatial confinement. We introduce the \"Active Contact Response\" (ACR) method, where each robot modulates its behavior based on the likelihood of encountering an inoperative (faulty) robot. Active robots are capable of collectively repositioning stationary and faulty peers to reduce obstructions and maintain optimal group functionality. We implement our algorithm in a team of autonomous robots, equipped with contact-sensing and collision-tolerance capabilities, tasked with collectively excavating cohesive model pellets. Experimental results indicate that the ACR method significantly improves the system's recovery time from robot failures, enabling continued collective excavation with minimal performance degradation. Thus, this work demonstrates the potential of leveraging local, social, and physical interactions to enhance fault tolerance and coordination in multi-robot systems operating in constrained and extreme environments.",
+        "url": "http://arxiv.org/abs/2505.15036v1",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2025-05-21",
+        "source": "arxiv",
+        "doi": "10.1007/978-3-032-04584-3_22",
+        "arxiv_id": "2505.15036"
+      },
+      {
+        "title": "MRS Drone: A Modular Platform for Real-World Deployment of Aerial Multi-Robot Systems",
+        "authors": [
+          "Daniel Hert",
+          "Tomas Baca",
+          "Pavel Petracek",
+          "Vit Kratky",
+          "Robert Penicka",
+          "Vojtech Spurny",
+          "Matej Petrlik",
+          "Matous Vrba",
+          "David Zaitlik",
+          "Pavel Stoudek",
+          "Viktor Walter",
+          "Petr Stepan",
+          "Jiri Horyna",
+          "Vaclav Pritzl",
+          "Martin Sramek",
+          "Afzal Ahmad",
+          "Giuseppe Silano",
+          "Daniel Bonilla Licea",
+          "Petr Stibinger",
+          "Tiago Nascimento",
+          "Martin Saska"
+        ],
+        "year": 2023,
+        "abstract": "This paper presents a modular autonomous Unmanned Aerial Vehicle (UAV) platform called the Multi-robot Systems (MRS) Drone that can be used in a large range of indoor and outdoor applications. The MRS Drone features unique modularity with respect to changes in actuators, frames, and sensory configuration. As the name suggests, the platform is specially tailored for deployment within a MRS group. The MRS Drone contributes to the state-of-the-art of UAV platforms by allowing smooth real-world deployment of multiple aerial robots, as well as by outperforming other platforms with its modularity. For real-world multi-robot deployment in various applications, the platform is easy to both assemble and modify. Moreover, it is accompanied by a realistic simulator to enable safe pre-flight testing and a smooth transition to complex real-world experiments. In this manuscript, we present mechanical and electrical designs, software architecture, and technical specifications to build a fully autonomous multi UAV system. Finally, we demonstrate the full capabilities and the unique modularity of the MRS Drone in various real-world applications that required a diverse range of platform configurations.",
+        "url": "http://arxiv.org/abs/2306.07229v1",
+        "venue": "arXiv",
+        "citation_count": 0,
+        "publication_date": "2023-06-12",
+        "source": "arxiv",
+        "doi": "10.1007/s10846-023-01879-2",
+        "arxiv_id": "2306.07229"
+      }
+    ],
+    "openreview": [],
+    "crossref": [
+      {
+        "title": "Subgroups of Persistent Juvenile Offenders: Latent Class Analysis of Repeated Juvenile Assessment Center Entries",
+        "authors": [
+          "Richard Dembo",
+          "Jennifer Wareham",
+          "James Schmeidler"
+        ],
+        "year": 2024,
+        "abstract": "",
+        "url": "https://doi.org/10.1080/01639625.2023.2252556",
+        "venue": "Deviant Behavior",
+        "citation_count": 0,
+        "publication_date": "2024-04-02",
+        "source": "crossref",
+        "doi": "10.1080/01639625.2023.2252556",
+        "arxiv_id": null
+      },
+      {
+        "title": "Enhancing Methane Source Attribution through Co-Assimilation of Ethane Observations in Atmospheric Inversion Methods",
+        "authors": [
+          "Adrien Martinez",
+          "Marielle Saunois",
+          "Antoine Berchet",
+          "Isabelle Pison",
+          "Philippe Bousquet"
+        ],
+        "year": null,
+        "abstract": "<jats:p>Estimating methane emissions using atmospheric inversion methods that assimilate only methane observations presents challenges in accurately attributing methane sources and sinks to specific emission sectors.We explore the potential of co-assimilating observations of co-emitted species alongside methane observations to address this challenge and provide improved sectoral distribution of methane emissions.Ethane is a promising candidate for this purpose. It is primarily co-emitted with methane in the fossil fuel emission sector, particularly through fugitive emissions from natural gas extraction, and is also co-emitted in the biomass and biofuel burning emission sectors, with negligible emissions in other sectors.To assess the potential of co-assimilating ethane observations with methane observations, we use a global chemistry-transport model, LMDZ-SACS, with the Community Inversion Framework (CIF) to perform response functions analysis on methane and ethane emissions over a multi-year period.We utilize the response functions results to meaningfully construct full source-receptor relationship matrices at available observation site, as well as, error covariance matrices for a control vector that includes both species emissions and initial conditions, and perform a large set of analytical inversions that assimilate in-situ and flask observations of both methane and ethane, as well as methane-only observations.This methodology can not only provide improved estimates of the sectoral distribution of methane sources and sinks, but also extends the scope of the analysis to include ethane emissions.</jats:p>",
+        "url": "https://doi.org/10.5194/egusphere-egu24-6317",
+        "venue": "",
+        "citation_count": 0,
+        "publication_date": null,
+        "source": "crossref",
+        "doi": "10.5194/egusphere-egu24-6317",
+        "arxiv_id": null
+      },
+      {
+        "title": "Probabilistic optimal transport-driven inversion of the 2012 Palisades rockfall seismic source",
+        "authors": [
+          "Rebeca Ursu",
+          "Mark Naylor",
+          "Hui Tang",
+          "Jens M. Turowski"
+        ],
+        "year": null,
+        "abstract": "<jats:p>During rockfall events, the seismic waves are generated in response to the time-varying normal and tangential forces between the Earth and colliding and sliding mass. These forces carry information about the nature of the generative seismic source; hence, the source dynamics can be estimated. Several studies have used forward modeling to determine the amplitude and duration of these forces and, implicitly, the source process that could generate the observed seismic waves. Through running multiple forward models, the force history inversion involves adjusting the force amplitude and duration to minimize the misfit between the proposed source model, convoluted with the force-impulse Green&amp;#8217;s functions, and the observations. In the Bayesian framework, the normal likelihood function is traditionally used to measure the misfit between the observed and predicted waveforms with respect to amplitude. However, the normal likelihood function is insensitive to the potential misalignment of the waveforms in time. Moreover, the relevant parameter space often exhibits multiple local minima, which may lead to a convergence to a minimum that does not present the global optimum. Optimal transport distances-driven exponential likelihoods were recently proposed as alternatives thanks to their ability to capture the time structure of the signals. We employed a Metropolis-Hastings sampling strategy in the probabilistic framework to reconstruct the 2012 Palisades rockfall seismic source using two implementations of the Wasserstein distance-based exponential likelihood function. The first implementation transforms between density functions, which are always positive and integrate to one. Therefore, it requires the transformation of the signals into probability density functions, which is done here via a modified graph-space transform scheme. The second method is applied directly to the signals. We evaluated the robustness of the two implementations of the Wasserstein distance-based exponential likelihood function in simulating the source characteristics with respect to the normal likelihood. Preliminary results show that contrary to the expectations, using optimal transport distances-driven exponential likelihoods leads to negligible improvement in the fit to the observed waveform.</jats:p>",
+        "url": "https://doi.org/10.5194/egusphere-egu24-480",
+        "venue": "",
+        "citation_count": 0,
+        "publication_date": null,
+        "source": "crossref",
+        "doi": "10.5194/egusphere-egu24-480",
+        "arxiv_id": null
+      },
+      {
+        "title": "Dynamic Latent Scale for GAN Inversion",
+        "authors": [
+          "Jeongik Cho",
+          "Adam Krzyzak"
+        ],
+        "year": 2022,
+        "abstract": "",
+        "url": "https://doi.org/10.5220/0010816800003122",
+        "venue": "Proceedings of the 11th International Conference on Pattern Recognition Applications and Methods",
+        "citation_count": 2,
+        "publication_date": "2022",
+        "source": "crossref",
+        "doi": "10.5220/0010816800003122",
+        "arxiv_id": null
+      },
+      {
+        "title": "Optimal transport for elastic source inversion",
+        "authors": [
+          "Tyler Masthay",
+          "Björn Engquist"
+        ],
+        "year": 2023,
+        "abstract": "",
+        "url": "https://doi.org/10.1190/image2023-3916500.1",
+        "venue": "Third International Meeting for Applied Geoscience &amp; Energy Expanded Abstracts",
+        "citation_count": 0,
+        "publication_date": "2023-12-14",
+        "source": "crossref",
+        "doi": "10.1190/image2023-3916500.1",
+        "arxiv_id": null
+      },
+      {
+        "title": "Geospatial Anomaly Detection Via Kalman-Inspired Latent-State Estimation V-Jepa V2 As A Learned Process Model For Persistent Satellite Area-Of-Interest Monitoring",
+        "authors": [
+          "Imad Victor Lahoud"
+        ],
+        "year": null,
+        "abstract": "<jats:p>Persistent monitoring of satellite areas of interest (AOI) is fundamentally a sequential state estimation problem: given a time series of multi-spectral observations over a fixed geographic region, detect deviations from expected scene dynamics. Classical change detection methods operate in pixel space, making them fragile to photometric variation, seasonal appearance shifts, and cloud contamination. We propose a theoretical and practical framework that formulates satellite AOI monitoring as Kalmaninspired recursive estimation in representation space, in which V-JEPA v2 (Assran et al., 2025) serves as the learned nonlinear process model. The encoder maps each multi-spectral acquisition into a latent state vector; the V-JEPA predictor propagates this state forward in time; and the innovation-the discrepancy between the predicted and observed latent representations-constitutes the anomaly score. We extend the framework to provide calibrated uncertainty estimates via conformal prediction in representation space, yielding an adaptive alert threshold that is inherently robust to seasonal variation without hand-coded priors. We further derive a seasonal conditioning mechanism that augments the latent state with a Fourier-encoded temporal context, enabling the predictor to model location-specific phenological cycles. Applied to the Onera Satellite Change Detection (OSCD) benchmark, our approach achieves an AUC of 0.758 (compared to 0.479 for pixel-space CVA and 0.723 for IterMAD), with a 45% reduction in false positive rate at 80% recall relative to CVA and a 26% reduction in FPR at 90% recall relative to IterMAD. We further compare V-JEPA v2 and the recently released V-JEPA v2.1 (Mur-Labadia et al., 2026), finding that V-JEPA v2's global scene-level representations outperform V-JEPA v2.1's dense spatial features for tile-level anomaly detection. The Kalman framing yields a principled decomposition of the anomaly score into predicted uncertainty and actual innovation, providing interpretable diagnostics that are critical for operational deployment in defense and commodity intelligence contexts.</jats:p>",
+        "url": "https://doi.org/10.2139/ssrn.6521219",
+        "venue": "",
+        "citation_count": 0,
+        "publication_date": null,
+        "source": "crossref",
+        "doi": "10.2139/ssrn.6521219",
+        "arxiv_id": null
+      },
+      {
+        "title": "Supplementary material to \"NeuPlume: Probabilistic inversion of atmospheric point-source emissions from sparse observations\"",
+        "authors": [
+          "Lei Wang",
+          "Xin Ma"
+        ],
+        "year": null,
+        "abstract": "",
+        "url": "https://doi.org/10.5194/egusphere-2026-2769-supplement",
+        "venue": "",
+        "citation_count": 0,
+        "publication_date": null,
+        "source": "crossref",
+        "doi": "10.5194/egusphere-2026-2769-supplement",
+        "arxiv_id": null
+      },
+      {
+        "title": "Rapid inversion of source parameters for the 2021 Chignik, Alaska earthquake using high-rate GNSS observations",
+        "authors": [
+          "Yunfei Xiang",
+          "Lei Hong",
+          "Ming Qin",
+          "Yankai Bian"
+        ],
+        "year": 2025,
+        "abstract": "",
+        "url": "https://doi.org/10.13168/agg.2025.0034",
+        "venue": "Acta Geodynamica et Geomaterialia",
+        "citation_count": 0,
+        "publication_date": "2025-11-04",
+        "source": "crossref",
+        "doi": "10.13168/agg.2025.0034",
+        "arxiv_id": null
+      },
+      {
+        "title": "Co-evolutionary Latent World Representations with Temporal Consistency for Motion Prediction and Planning",
+        "authors": [
+          "Siyu Song",
+          "Xiang Feng",
+          "Huiqun Yu"
+        ],
+        "year": null,
+        "abstract": "<jats:p>Predicting motion trajectories and interaction patterns of surrounding agents is crucial for autonomous vehicles (AVs), facilitating informed decision-making in complex scenarios. A fundamental challenge lies in learning latent representations that maintain semantic consistency across extended prediction horizons while explicitly modeling multi-agent interaction structures. However, existing approaches suffer from semantic drift in latent state evolution, where representation quality degrades with prediction length, leading to exponential error accumulation in long-horizon forecasting. Therefore, this paper presents a hierarchical representation learning framework to overcome these issues, in which Co-evolutionary Latent World Representations (CoRe) establish reciprocal refinement between multi-agent representations and decision-making processes through temporally consistent latent states. CoRe achieves genuine interactive reasoning by learning behavior-aware representations that decouple kinematic constraints from behavioral intentions through multi-scale latent fusion mechanisms, enabling interpretable strategy-level coordination without model ensembles. Specifically, a temporal consistency regularization through differentiable state reconstruction is employed to enforce semantic coherence across latent trajectories, providing theoretical guarantees in long-horizon prediction. Additionally, complex interactions and strategic coordination throughout the decision process are enhanced through the co-evolutionary mechanism. Extensive experiments on the Waymo Open Dataset demonstrate substantial improvements over state-of-the-art baselines. Our method achieves 10.91% higher trajectory prediction accuracy in open-loop testing and 20.09  %  lower position error in closed-loop testing, validating its effectiveness in dynamic scenarios.</jats:p>",
+        "url": "https://doi.org/10.2139/ssrn.6344125",
+        "venue": "",
+        "citation_count": 0,
+        "publication_date": null,
+        "source": "crossref",
+        "doi": "10.2139/ssrn.6344125",
+        "arxiv_id": null
+      },
+      {
+        "title": "Diffusion-Based 3d Motion Estimation from Sparse 2d Observations",
+        "authors": [
+          "Niklas Gunnarsson",
+          "Thomas  B. Schön",
+          "Jens Sjölund",
+          "Peter Kimstrand"
+        ],
+        "year": null,
+        "abstract": "",
+        "url": "https://doi.org/10.2139/ssrn.4673120",
+        "venue": "",
+        "citation_count": 0,
+        "publication_date": null,
+        "source": "crossref",
+        "doi": "10.2139/ssrn.4673120",
+        "arxiv_id": null
+      },
+      {
+        "title": "Latent low-rank representation with sparse consistency constraint for infrared and visible image fusion",
+        "authors": [
+          "Tiwei Tao",
+          "Ming-Xia Liu",
+          "Yingkun Hou",
+          "Pengfei Wang",
+          "Deyun Yang",
+          "Qiang Zhang"
+        ],
+        "year": 2022,
+        "abstract": "",
+        "url": "https://doi.org/10.1016/j.ijleo.2022.169102",
+        "venue": "Optik",
+        "citation_count": 8,
+        "publication_date": "2022-07",
+        "source": "crossref",
+        "doi": "10.1016/j.ijleo.2022.169102",
+        "arxiv_id": null
+      },
+      {
+        "title": "Blind Reconstruction of Low Dose Computed Tomography with Latent Space Non-Local Filtering and Structural Consistency Constraints",
+        "authors": [
+          "Angkon Deb",
+          "Celia Shahnaz"
+        ],
+        "year": 2026,
+        "abstract": "",
+        "url": "https://doi.org/10.1109/icip61757.2026.11629920",
+        "venue": "2026 IEEE International Conference on Image Processing (ICIP)",
+        "citation_count": 0,
+        "publication_date": "2026-09",
+        "source": "crossref",
+        "doi": "10.1109/icip61757.2026.11629920",
+        "arxiv_id": null
+      },
+      {
+        "title": "Dynamic light scattering optical coherence tomography to probe motion of subcellular scatterers",
+        "authors": [
+          "Nico Arezza",
+          "Marjan Razani",
+          "Michael Kolios"
+        ],
+        "year": null,
+        "abstract": "<jats:p>&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;p&gt;Dynamic light scattering OCT was performed on intact, control MCF-7 breast cancer cells and cells either treated with pacli- taxel to induce apoptosis or deprived of nutrients to induce oncosis. Autocorrelations (ACs) of the temporal fluctuations of OCT intensity signals demonstrate a significant decrease in decorrelation time after 24 h in both the paclitaxel-treated and nutrient-deprived cell groups but no significant differences between the two groups. The acquired ACs were then used as input for the CONTIN deconvolution algorithm, and all produced CONTIN outputs with three distinct peaks for all experimental conditions.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</jats:p>",
+        "url": "https://doi.org/10.32920/19400735",
+        "venue": "",
+        "citation_count": 0,
+        "publication_date": null,
+        "source": "crossref",
+        "doi": "10.32920/19400735",
+        "arxiv_id": null
+      },
+      {
+        "title": "Dynamic light scattering optical coherence tomography to probe motion of subcellular scatterers",
+        "authors": [
+          "Nico Arezza",
+          "Marjan Razani",
+          "Michael Kolios"
+        ],
+        "year": null,
+        "abstract": "<jats:p>&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;p&gt;Dynamic light scattering OCT was performed on intact, control MCF-7 breast cancer cells and cells either treated with pacli- taxel to induce apoptosis or deprived of nutrients to induce oncosis. Autocorrelations (ACs) of the temporal fluctuations of OCT intensity signals demonstrate a significant decrease in decorrelation time after 24 h in both the paclitaxel-treated and nutrient-deprived cell groups but no significant differences between the two groups. The acquired ACs were then used as input for the CONTIN deconvolution algorithm, and all produced CONTIN outputs with three distinct peaks for all experimental conditions.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</jats:p>",
+        "url": "https://doi.org/10.32920/19400735.v1",
+        "venue": "",
+        "citation_count": 0,
+        "publication_date": null,
+        "source": "crossref",
+        "doi": "10.32920/19400735.v1",
+        "arxiv_id": null
+      },
+      {
+        "title": "B-scan-sectioned dynamic micro-optical coherence tomography for bulk-motion suppression",
+        "authors": [
+          "Chaoliang Chen",
+          "Weisong Shi",
+          "Zhiyuan Qiu",
+          "Victor X. D. Yang",
+          "Wanrong Gao"
+        ],
+        "year": 2022,
+        "abstract": "",
+        "url": "https://doi.org/10.3788/col202220.021102",
+        "venue": "Chinese Optics Letters",
+        "citation_count": 6,
+        "publication_date": "2022",
+        "source": "crossref",
+        "doi": "10.3788/col202220.021102",
+        "arxiv_id": null
+      },
+      {
+        "title": "HMD-NeMo: Online 3D Avatar Motion Generation From Sparse Observations",
+        "authors": [
+          "Sadegh Aliakbarian",
+          "Fatemeh Saleh",
+          "David Collier",
+          "Pashmina Cameron",
+          "Darren Cosker"
+        ],
+        "year": 2023,
+        "abstract": "",
+        "url": "https://doi.org/10.1109/iccv51070.2023.00882",
+        "venue": "2023 IEEE/CVF International Conference on Computer Vision (ICCV)",
+        "citation_count": 21,
+        "publication_date": "2023-10-01",
+        "source": "crossref",
+        "doi": "10.1109/iccv51070.2023.00882",
+        "arxiv_id": null
+      },
+      {
+        "title": "Robotic Gas Source Localization With Probabilistic Mapping and Online Dispersion Simulation",
+        "authors": [
+          "Pepe Ojeda",
+          "Javier Monroy",
+          "Javier Gonzalez-Jimenez"
+        ],
+        "year": 2024,
+        "abstract": "",
+        "url": "https://doi.org/10.1109/tro.2024.3426368",
+        "venue": "IEEE Transactions on Robotics",
+        "citation_count": 24,
+        "publication_date": "2024",
+        "source": "crossref",
+        "doi": "10.1109/tro.2024.3426368",
+        "arxiv_id": null
+      },
+      {
+        "title": "Gas Dispersion Simulator with Strong Fluctuations for Developing Gas Source Localization Systems",
+        "authors": [
+          "Motoki Sakaue",
+          "Yusuke Takahashi",
+          "Haruka Matsukura",
+          "Hiroshi Ishida"
+        ],
+        "year": 2022,
+        "abstract": "",
+        "url": "https://doi.org/10.1109/isoen54820.2022.9789554",
+        "venue": "2022 IEEE International Symposium on Olfaction and Electronic Nose (ISOEN)",
+        "citation_count": 3,
+        "publication_date": "2022-05-29",
+        "source": "crossref",
+        "doi": "10.1109/isoen54820.2022.9789554",
+        "arxiv_id": null
+      },
+      {
+        "title": "A Novel Robotic Gas Leak Source Localization Method in Lunar Base Using Deep Reinforcement Learning Algorithm",
+        "authors": [
+          "Qin Lin",
+          "Jiaqi Min",
+          "Jinxiu Zhang"
+        ],
+        "year": 2025,
+        "abstract": "",
+        "url": "https://doi.org/10.52202/083083-0035",
+        "venue": "IAF Human Spaceflight Symposium",
+        "citation_count": 0,
+        "publication_date": "2025",
+        "source": "crossref",
+        "doi": "10.52202/083083-0035",
+        "arxiv_id": null
+      },
+      {
+        "title": "Trace-gas plume reconstruction and source localization using drone-assisted remote molecular dispersion spectroscopy",
+        "authors": [
+          "Gerard Wysocki"
+        ],
+        "year": 2022,
+        "abstract": "",
+        "url": "https://doi.org/10.1117/12.2617232",
+        "venue": "Optical and Quantum Sensing and Precision Metrology II",
+        "citation_count": 0,
+        "publication_date": "2022-03-09",
+        "source": "crossref",
+        "doi": "10.1117/12.2617232",
+        "arxiv_id": null
+      },
+      {
+        "title": "Gas Source Localization in Outdoor Environment Using Deep Learning: Data Augmentation by Gas Dispersion Simulator",
+        "authors": [
+          "Gao-Ju Zhao",
+          "Haruka Matsukura",
+          "Motoki Sakaue",
+          "Takumi Haratsu",
+          "Hiroshi Ishida"
+        ],
+        "year": 2024,
+        "abstract": "",
+        "url": "https://doi.org/10.1109/isoen61239.2024.10556037",
+        "venue": "2024 IEEE International Symposium on Olfaction and Electronic Nose (ISOEN)",
+        "citation_count": 0,
+        "publication_date": "2024-05-12",
+        "source": "crossref",
+        "doi": "10.1109/isoen61239.2024.10556037",
+        "arxiv_id": null
+      },
+      {
+        "title": "Adaptive Exploration-Exploitation Balancing for Robotic Gas Source Seeking via Time Progress and Spatial Dispersion",
+        "authors": [
+          "Miao Wang",
+          "Bin Xin",
+          "Yun Qu"
+        ],
+        "year": 2026,
+        "abstract": "",
+        "url": "https://doi.org/10.1109/icca69928.2026.11618018",
+        "venue": "2026 IEEE 20th International Conference on Control and Automation (ICCA)",
+        "citation_count": 0,
+        "publication_date": "2026-06",
+        "source": "crossref",
+        "doi": "10.1109/icca69928.2026.11618018",
+        "arxiv_id": null
+      },
+      {
+        "title": "Exploration and Gas Source Localization in Advection–Diffusion Processes with Potential-Field-Controlled Robotic Swarms",
+        "authors": [
+          "Patrick Hinsen",
+          "Thomas Wiedemann",
+          "Dmitriy Shutin",
+          "Achim J. Lilienthal"
+        ],
+        "year": 2023,
+        "abstract": "<jats:p>Mobile multi-robot systems are well suited for gas leak localization in challenging environments. They offer inherent advantages such as redundancy, scalability, and resilience to hazardous environments, all while enabling autonomous operation, which is key to efficient swarm exploration. To efficiently localize gas sources using concentration measurements, robots need to seek out informative sampling locations. For this, domain knowledge needs to be incorporated into their exploration strategy. We achieve this by means of partial differential equations incorporated into a probabilistic gas dispersion model that is used to generate a spatial uncertainty map of process parameters. Previously, we presented a potential-field-control approach for navigation based on this map. We build upon this work by considering a more realistic gas dispersion model, now taking into account the mechanism of advection, and dynamics of the gas concentration field. The proposed extension is evaluated through extensive simulations. We find that introducing fluctuations in the wind direction makes source localization a fundamentally harder problem to solve. Nevertheless, the proposed approach can recover the gas source distribution and compete with a systematic sampling strategy. The estimator we present in this work is able to robustly recover source candidates within only a few seconds. Larger swarms are able to reduce total uncertainty faster. Our findings emphasize the applicability and robustness of robotic swarm exploration in dynamic and challenging environments for tasks such as gas source localization.</jats:p>",
+        "url": "https://doi.org/10.3390/s23229232",
+        "venue": "Sensors",
+        "citation_count": 12,
+        "publication_date": "2023-11-16",
+        "source": "crossref",
+        "doi": "10.3390/s23229232",
+        "arxiv_id": null
+      },
+      {
+        "title": "Experimental Analysis of the Impact of Sensor Response Time on Robotic Gas Source Localization",
+        "authors": [
+          "Pepe Ojeda",
+          "Javier Monroy",
+          "Javier Gonzalez-Jimenez"
+        ],
+        "year": 2022,
+        "abstract": "",
+        "url": "https://doi.org/10.1109/isoen54820.2022.9789652",
+        "venue": "2022 IEEE International Symposium on Olfaction and Electronic Nose (ISOEN)",
+        "citation_count": 1,
+        "publication_date": "2022-05-29",
+        "source": "crossref",
+        "doi": "10.1109/isoen54820.2022.9789652",
+        "arxiv_id": null
+      }
+    ],
+    "dblp": []
+  }
+}

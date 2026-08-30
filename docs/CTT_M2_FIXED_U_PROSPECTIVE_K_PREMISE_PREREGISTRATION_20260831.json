@@ -1,0 +1,165 @@
+{
+  "contract": "CTT_M2_FIXED_U_PROSPECTIVE_K_PREMISE_V2",
+  "date": "2026-08-31",
+  "status": "PREREGISTERED_NOT_RUN",
+  "supersedes": "CTT_M2_FIXED_U_EIGHT_K_PREMISE_V1, superseded before execution and before any outcome was read",
+  "purpose": "Test whether retaining one native stochastic forward realization across completed stops improves source ordering when placement U is exactly fixed, using prospectively generated transport realizations as the independent inference units.",
+  "scope": {
+    "house": "H01",
+    "wind_context_id": 0,
+    "route_seeds": [4004, 4005],
+    "route_role": "fixed development measurement designs; routes are not independent inference units and are not claimed held out",
+    "candidate_carriers": 210,
+    "candidate_set": "all 210 frozen H01 persistent carriers",
+    "predictive_transport_labels": ["P0", "P1", "P2", "P3", "P4", "P5"],
+    "prospective_observation_transport_labels": ["O0", "O1", "O2", "O3", "O4", "O5", "O6"],
+    "observation_case_count": 2940,
+    "observation_case_count_formula": "210 carriers * 2 fixed routes * 7 prospective observation transport realizations",
+    "independent_inference_units": 7,
+    "inference_unit": "prospectively generated observation transport realization O0..O6; source ranks and the two routes are aggregated within each realization",
+    "gaden_worlds_to_generate": 2730,
+    "gaden_worlds_to_generate_formula": "210 carriers * (6 predictive + 7 prospective observation transport seeds)",
+    "neural_training": false,
+    "runtime_or_ros_runs": 0,
+    "closed_loop_authorized": false
+  },
+  "fixed_factorization": {
+    "placement": {
+      "id": "U0",
+      "definition": "for each carrier, use the exact serialized x/y/z coordinate of frozen placement member 0 for every predictive and observation world",
+      "placement_member_id": 0,
+      "must_be_bitwise_identical_across_all_13_transport_realizations": true
+    },
+    "predictive_transport_seed_map": {
+      "P0": 101,
+      "P1": 211,
+      "P2": 307,
+      "P3": 401,
+      "P4": 503,
+      "P5": 601
+    },
+    "prospective_observation_transport_seed_map": {
+      "O0": 1413899429,
+      "O1": 1029973170,
+      "O2": 108828787,
+      "O3": 380465369,
+      "O4": 2079440584,
+      "O5": 361662980,
+      "O6": 1554221114
+    },
+    "prospective_seed_derivation": {
+      "algorithm": "uint31_be(SHA256(UTF8('CTT-M2-FIXED-U-FORMAL-OBS-V1|K' + decimal_index))[0:4]) for index 8..14",
+      "workspace_text_search_before_run": "no occurrence of any derived seed",
+      "vm_text_manifest_search_before_run": "no occurrence of any derived seed under /home/zyc JSON/CSV/TSV/MD/TXT assets",
+      "selection_used_no_physical_sequence_or_localization_outcome": true
+    },
+    "prospective_seed_provenance_sha256": "53766539d76bc0943cc1b1dd163b7249039aee29008a41c5ecabe4ad8b11f556",
+    "predictive_observation_overlap": false,
+    "all_13_realizations_are_regenerated_in_one_frozen_environment": true,
+    "K0_sentinel": "all 210 regenerated P0 worlds must be byte-identical to the frozen formal context-0/member-0 worlds before any score is computed",
+    "generation_environment": {
+      "OMP_NUM_THREADS": "1",
+      "OMP_DYNAMIC": "FALSE",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "PYTHONHASHSEED": "0"
+    },
+    "rng_scope": "the frozen native generator passes only the declared seed to gaden_initialize_random_engines before constructing RunningSimulation; the seed controls GADEN Gaussian and uniform stochastic forward draws. The claim is native stochastic forward realization K, not an isolated meteorological transport parameter."
+  },
+  "frozen_score_equations": {
+    "detection": "d[s,k,b] in {0,1} is the frozen M1/M3 detection state for candidate s, predictive realization k, and completed physical stop b",
+    "event_probability": "p[s,k,b] = (0.5 + d[s,k,b]) / 2, hence p is exactly 0.25 or 0.75",
+    "bernoulli_logscore": "ell(y,p) = y*log(p) + (1-y)*log(1-p)",
+    "coherent_candidate_score": "L_coherent(s) = logmeanexp over predictive k of sum over completed stops b of ell(y[b],p[s,k,b])",
+    "redraw_candidate_score": "L_redraw(s) = sum over completed stops b of ell(y[b],mean over predictive k of p[s,k,b])",
+    "candidate_order": "descending score with exact-equality midranks",
+    "normalized_rank": "(midrank-1)/(210-1)",
+    "no_fitted_parameters": true
+  },
+  "primary_estimand": {
+    "case_delta": "normalized_rank_redraw - normalized_rank_coherent",
+    "transport_unit_delta": "for each prospective observation realization O, arithmetic mean of case_delta across all 210 true carriers and both fixed routes",
+    "primary_effect": "arithmetic mean of the seven transport_unit_delta values",
+    "primary_test": "one-sided exact sign test over the seven prospective observation transport-unit deltas, with zero deltas excluded",
+    "alternative": "transport_unit_delta > 0",
+    "alpha": 0.01,
+    "minimum_possible_p_when_all_seven_are_positive": 0.0078125,
+    "candidate_and_route_values_are_not_treated_as_independent_probability_units": true
+  },
+  "destruction_controls": {
+    "null_map_file": "experiments/cg_pc_ctt/ctt_final_hazard_20260830/CTT_M2_FIXED_U_PROSPECTIVE_K_NULL_MAPS_V2.json",
+    "null_map_sha256": "0a284c0fbd71e1d46615e04b3a05e74b450978a509dc60f5ab3fbe0af92ce5af",
+    "numpy_bit_generator": "PCG64",
+    "deterministic_null_replicates": 256,
+    "seeds": {
+      "observation_source_association": 2026083001,
+      "candidate_stop_association": 2026083002,
+      "predictive_K_identity": 2026083003,
+      "candidate_permutation_invariance": 2026083004
+    },
+    "families": {
+      "observation_source_association": "one shared permutation of the 210 observation-source identities per replicate; candidate labels themselves remain a pure invariance",
+      "candidate_stop_association": "for each replicate and route, one shared non-identity stop permutation is applied to candidate predictions for every source and observation realization; observed tapes retain their true order and hit count",
+      "predictive_K_identity": "for each replicate, route and stop, one shared permutation of the six predictive K identities is applied to every source and observation realization, preserving all one-stop K marginals"
+    },
+    "observed_and_null_statistic": "mean of seven transport-unit deltas; sources and routes are first aggregated within each observation transport realization",
+    "empirical_p": "(1 + count(null_statistic >= observed_statistic))/(256+1)"
+  },
+  "pass_rules": {
+    "all_rules_required": true,
+    "transport_units": {
+      "all_seven_unit_deltas_strictly_positive": true,
+      "one_sided_exact_sign_p_value_max": 0.01
+    },
+    "overall_direction": "mean normalized coherent rank < mean normalized redraw rank",
+    "route_nonreversal": "for each fixed route, mean delta across 210 carriers and seven prospective observation realizations must be >= 0",
+    "destruction_controls_empirical_p_max": 0.01,
+    "absolute_ordering": {
+      "mean_normalized_true_carrier_midrank_coherent_max_exclusive": 0.35
+    },
+    "invariances": {
+      "candidate_permutation_max_abs": 1e-12,
+      "predictive_K_permutation_max_abs": 1e-12,
+      "online_batch_max_abs": 1e-12
+    }
+  },
+  "frozen_inputs_sha256": {
+    "native_gaden_binary": "ad0772d994875d009a1e8720928a9f40db56c20f6bf83a03b309049696a7ead4",
+    "native_generator_source": "7a1570637eac1ca97758baddd05e7762b47fcd2e12afd77239698bd1132b01b4",
+    "rng_hook_source": "826fbe242e152a09d03bc50849f6b882b58b0b3fc41a6b3e595c3811b20a9131",
+    "rng_math_source": "374ec0ed56cbd38ff5bc017ad668a831c8da5c19e34b5b81186e4e8a5eee4c05",
+    "running_simulation_source": "b699492b816980b583301e025cdbd04d5b9adedff90b9419593b2160a091ae2a",
+    "placement_manifest": "2dfe8bf70cc5dd191db8659cfc66ed9934927b69d0b6798b9a6b5062e1dd959f",
+    "wind_context_manifest": "ba81ca9c500783b41e857e6e008874536016cdfa370c18b50758a1b4e98f279f",
+    "existing_bank_summary": "e5b166aa2178e3a370d9a12a79a507355547608a256041e3531781e2ddc3081e",
+    "existing_bank_file_sha_manifest": "26b99eec3e44f55f6a5c4ce59a7015c849df9804ee5a646554b8b8d4f94dc520",
+    "environment": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+    "route_4004": "fa5f3ad0fad14def30076e43046a09dfa90bbbdf765aa7c5fff28394b2fcdb1d",
+    "route_4005": "a00745f02c6d73bb8ebde0c1cb735dade1867527678da6b6b0f80d5f949b78a3"
+  },
+  "forbidden": [
+    "using source ranks, localization error or physical sequences to choose transport seeds, routes, score, threshold or null maps",
+    "changing U0, source strength, wind context, routes, sensor, native physics or RNG hook",
+    "treating 210 carriers or 2940 cases as independent inferential replicates",
+    "calling routes 4004/4005 held out",
+    "temperature, blend, Top-K, truth/error gate, neural training, planner or closed-loop execution"
+  ],
+  "interpretation_boundary": {
+    "pass_supports": "prospective H01 simulator-internal fixed-U native-stochastic-realization coherence premise for M2",
+    "pass_does_not_support": [
+      "real-plume calibration",
+      "marginalization over placement U",
+      "calibrated M3 likelihood",
+      "cross-House generalization",
+      "PMFS or planner improvement",
+      "closed-loop improvement"
+    ]
+  },
+  "terminal_states": {
+    "pass": "CTT_M2_FIXED_U_PROSPECTIVE_K_PREMISE_PASS",
+    "fail": "CTT_M2_FIXED_U_PROSPECTIVE_K_PREMISE_NO_GO",
+    "invalid": "CTT_M2_FIXED_U_PROSPECTIVE_K_PREMISE_INVALID"
+  },
+  "closed_loop_authorized": false
+}

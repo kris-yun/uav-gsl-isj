@@ -1,0 +1,208 @@
+{
+  "contract": "CTT_M2_FIXED_U_EIGHT_K_PREMISE_V1",
+  "date": "2026-08-31",
+  "status": "SUPERSEDED_BEFORE_RUN_NO_OUTCOME_READ",
+  "superseded_by": "CTT_M2_FIXED_U_PROSPECTIVE_K_PREMISE_V2",
+  "supersession_reason": [
+    "K6/K7 and routes 4004/4005 were previously used during H01 development, so disjoint predictive membership did not make them prospectively held transport realizations",
+    "the proposed carrier-cluster sign test treated candidate ranks sharing the same transport worlds as independent probability units",
+    "two observation transport realizations cannot attain a one-sided exact sign-test alpha of 0.01",
+    "the observation-pairing null and generation environment were not fully frozen"
+  ],
+  "supersedes": "the unexecuted two-K draft; no outcome was read under that draft",
+  "purpose": "Isolate transport-realization persistence K from placement nuisance U with a disjoint predictive/observation transport split before any M2 or closed-loop claim.",
+  "scope": {
+    "house": "H01",
+    "wind_context_id": 0,
+    "route_seeds": [4004, 4005],
+    "candidate_carriers": 210,
+    "candidate_set": "all 210 frozen H01 persistent carriers",
+    "predictive_transport_keys": ["K0", "K1", "K2", "K3", "K4", "K5"],
+    "observation_transport_keys": ["K6", "K7"],
+    "observation_members": [6, 7],
+    "observation_use": "held-out observations only, regenerated at U0 rather than reused from diagonal U6/U7 worlds",
+    "case_count": 840,
+    "case_count_formula": "210 carriers * 2 routes * 2 held observation transport keys",
+    "case_slices": [
+      "route4004_observation_K6",
+      "route4004_observation_K7",
+      "route4005_observation_K6",
+      "route4005_observation_K7"
+    ],
+    "gaden_worlds_reused": 210,
+    "gaden_worlds_to_add": 1470,
+    "gaden_worlds_to_add_formula": "210 carriers * 7 transport keys K1..K7",
+    "neural_training": false,
+    "runtime_or_ros_runs": 0,
+    "closed_loop_authorized": false
+  },
+  "fixed_factorization": {
+    "placement": {
+      "id": "U0",
+      "definition": "for each carrier, use the exact serialized x/y/z coordinate of frozen placement member 0 for every predictive and observation world",
+      "member_id": 0,
+      "must_be_bitwise_identical_for_K0_through_K7": true
+    },
+    "transport_seed_map": {
+      "K0": 101,
+      "K1": 211,
+      "K2": 307,
+      "K3": 401,
+      "K4": 503,
+      "K5": 601,
+      "K6": 701,
+      "K7": 809
+    },
+    "reuse": {
+      "transport_keys": ["K0"],
+      "provenance": "existing frozen member-0 world at U0"
+    },
+    "generate": {
+      "transport_keys": ["K1", "K2", "K3", "K4", "K5", "K6", "K7"],
+      "placement": "U0",
+      "world_count": 1470
+    },
+    "predictive_ensemble": {
+      "transport_keys": ["K0", "K1", "K2", "K3", "K4", "K5"],
+      "count": 6
+    },
+    "held_observations": {
+      "transport_keys": ["K6", "K7"],
+      "count": 2,
+      "placement": "U0",
+      "predictive_overlap": false
+    },
+    "existing_diagonal_members_K1_through_K7_are_reusable": false,
+    "existing_diagonal_exclusion_reason": "their placements are U1..U7 rather than U0, so reusing any of them would preserve U/K confounding",
+    "held_fixed": [
+      "native GADEN binary and physical equations",
+      "H01 geometry",
+      "wind context 0",
+      "source strength and all source parameters",
+      "route schedules 4004 and 4005",
+      "persistent sensor model and initial state",
+      "candidate carrier set",
+      "M1 and M3 scoring equations"
+    ]
+  },
+  "primary_estimand": {
+    "name": "fixed-U transport-coherence source-ordering increment",
+    "coherent": "for each candidate and each predictive K in K0..K5, retain that K identity across all visible physical stops, accumulate the whole sequence, then marginalize over the six predictive K",
+    "redraw": "at each physical stop independently marginalize or redraw among K0..K5 before sequence accumulation",
+    "observation_generation": "each held case is generated coherently from K6 or K7 at the same U0 across all stops",
+    "direction": "coherent mean normalized true-carrier midrank must be lower than redraw",
+    "rank_definition": "tie-safe exact-equality midrank: 1 + count(score > true_score) + 0.5 * count(false score == true_score)",
+    "normalized_rank_definition": "(midrank - 1) / (210 - 1)",
+    "case_level_delta": "normalized_rank_redraw - normalized_rank_coherent",
+    "carrier_cluster_delta": "for each of the 210 carriers, arithmetic mean of its four case-level deltas across route4004/4005 and observation K6/K7",
+    "primary_test": "one-sided exact sign test over the 210 carrier-cluster deltas; zero deltas are excluded from the binomial trial count",
+    "alternative": "carrier_cluster_delta > 0",
+    "case_table_role": "all 840 case rows are retained for audit and slice non-reversal only, not treated as independent trials",
+    "alpha": 0.01
+  },
+  "frozen_score_equations": {
+    "detection": "d[s,K,b] in {0,1} is the frozen M1/M3 detection state for candidate s, predictive transport K, and completed physical stop b",
+    "event_probability": "p[s,K,b] = (0.5 + d[s,K,b]) / 2, hence p is exactly 0.25 or 0.75",
+    "bernoulli_logscore": "ell(y,p) = y*log(p) + (1-y)*log(1-p)",
+    "coherent_candidate_score": "L_coherent(s) = logmeanexp over K in K0..K5 of [sum over visible completed stops b of ell(y[b], p[s,K,b])]",
+    "redraw_candidate_score": "L_redraw(s) = sum over visible completed stops b of ell(y[b], mean over K in K0..K5 of p[s,K,b])",
+    "candidate_order": "descending score; exact-equality ties receive the frozen midrank",
+    "no_fitted_parameters": true
+  },
+  "destruction_controls": {
+    "deterministic_null_replicates": 256,
+    "replicates_apply_to_each_family": true,
+    "families": {
+      "source_label": "permute candidate source labels while keeping candidate coordinates, observations, and all non-label inputs fixed",
+      "observation_pairing": "permute observation-to-stop assignment while preserving each observation tape and its hit count",
+      "K_identity": "destroy persistence of predictive K across stops while preserving K0..K5 and all one-stop marginal information"
+    },
+    "null_generation": "deterministic permutations frozen by this contract; no outcome-dependent selection",
+    "observed_statistic": "mean of the 210 carrier-cluster deltas after first averaging the four route-by-observation case deltas within each carrier",
+    "null_statistic": "for each deterministic null replicate, recompute case ranks, average the same four deltas within each carrier, then take the mean across 210 carriers",
+    "p_value_definition": "(1 + count(null carrier-clustered statistic >= observed carrier-clustered statistic)) / (256 + 1)",
+    "required_direction": "the coherent, correctly labelled, correctly paired statistic must outperform every corresponding destruction family in the preregistered one-sided test"
+  },
+  "pass_rules": {
+    "all_rules_required": true,
+    "coherent_vs_redraw": {
+      "direction": "mean_normalized_rank_coherent < mean_normalized_rank_redraw",
+      "inference_unit": "210 carrier clusters, not 840 case rows",
+      "cluster_definition": "average four frozen route-by-observation normalized-rank deltas per carrier",
+      "tie_handling": "exclude zero carrier-cluster deltas from the exact binomial sign test",
+      "one_sided_exact_p_value_max": 0.01
+    },
+    "slice_nonreversal": {
+      "slices": [
+        "route4004_observation_K6",
+        "route4004_observation_K7",
+        "route4005_observation_K6",
+        "route4005_observation_K7"
+      ],
+      "rule": "mean normalized rank for coherent must be no greater than redraw in every route-by-observation-K slice"
+    },
+    "source_label_destruction": {
+      "one_sided_empirical_p_value_max": 0.01
+    },
+    "observation_pairing_destruction": {
+      "one_sided_empirical_p_value_max": 0.01
+    },
+    "K_identity_destruction": {
+      "one_sided_empirical_p_value_max": 0.01
+    },
+    "absolute_ordering": {
+      "mean_normalized_true_carrier_midrank_coherent_max_exclusive": 0.35
+    },
+    "invariances": {
+      "candidate_permutation_max_abs": 1e-12,
+      "predictive_K_permutation_max_abs": 1e-12,
+      "online_batch_max_abs": 1e-12
+    }
+  },
+  "frozen_inputs_sha256": {
+    "native_gaden_binary": "ad0772d994875d009a1e8720928a9f40db56c20f6bf83a03b309049696a7ead4",
+    "placement_manifest": "2dfe8bf70cc5dd191db8659cfc66ed9934927b69d0b6798b9a6b5062e1dd959f",
+    "wind_context_manifest": "ba81ca9c500783b41e857e6e008874536016cdfa370c18b50758a1b4e98f279f",
+    "existing_bank_summary": "e5b166aa2178e3a370d9a12a79a507355547608a256041e3531781e2ddc3081e",
+    "existing_bank_file_sha_manifest": "26b99eec3e44f55f6a5c4ce59a7015c849df9804ee5a646554b8b8d4f94dc520",
+    "environment": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+    "route_4004": "fa5f3ad0fad14def30076e43046a09dfa90bbbdf765aa7c5fff28394b2fcdb1d",
+    "route_4005": "a00745f02c6d73bb8ebde0c1cb735dade1867527678da6b6b0f80d5f949b78a3"
+  },
+  "new_assets_sha256": {
+    "status": "TO_BE_RECORDED_BEFORE_SCORING",
+    "required": [
+      "fixed-U world manifest",
+      "all 1470 new world files",
+      "merged K0..K7 bank manifest",
+      "evaluation source and executable"
+    ]
+  },
+  "forbidden": [
+    "changing U0 between any K0..K7 world",
+    "reusing any existing diagonal K1..K7 world at U1..U7",
+    "using K6 or K7 in the predictive ensemble",
+    "changing GADEN physics, source strength, wind context, routes, sensor, M1, or M3",
+    "candidate subset or Top-K screening",
+    "temperature, blend weight, adaptive threshold, truth gate, or error gate",
+    "source-label or localization-error access before the frozen scoring output exists",
+    "neural training",
+    "closed-loop or planner experiment"
+  ],
+  "interpretation_boundary": {
+    "pass_supports": "H01 fixed-U transport-coherence premise for M2",
+    "pass_does_not_support": [
+      "calibrated Bayesian likelihood",
+      "independent validation of M1 or M3",
+      "cross-House generalization",
+      "runtime or planner correctness",
+      "closed-loop improvement"
+    ]
+  },
+  "terminal_states": {
+    "pass": "CTT_M2_FIXED_U_EIGHT_K_PREMISE_PASS",
+    "fail": "CTT_M2_FIXED_U_EIGHT_K_PREMISE_NO_GO",
+    "invalid": "CTT_M2_FIXED_U_EIGHT_K_PREMISE_INVALID"
+  },
+  "closed_loop_authorized": false
+}

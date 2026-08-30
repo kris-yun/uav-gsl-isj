@@ -1,0 +1,37 @@
+{
+  "contract": "CTT_M2_PROSPECTIVE_SEED_PROVENANCE_V1",
+  "status": "FROZEN_BEFORE_MATERIALIZATION_NO_OUTCOME_READ",
+  "domain": "CTT-M2-FIXED-U-FORMAL-OBS-V1|K",
+  "indices": [8, 9, 10, 11, 12, 13, 14],
+  "algorithm": "uint31_be(SHA256(UTF8(domain + decimal_index))[0:4])",
+  "derived_seeds": [
+    1413899429,
+    1029973170,
+    108828787,
+    380465369,
+    2079440584,
+    361662980,
+    1554221114
+  ],
+  "selection_inputs": ["fixed ASCII domain", "integer indices 8..14"],
+  "selection_forbidden_inputs_absent": [
+    "physical concentration sequences",
+    "source ranks",
+    "PMFS posterior",
+    "localization errors",
+    "closed-loop outcomes"
+  ],
+  "searches_before_run": {
+    "workspace": {
+      "root": "current repository worktree",
+      "file_scope": "all files reachable by ripgrep",
+      "matches": 0
+    },
+    "vm": {
+      "root": "/home/zyc",
+      "file_globs": ["*.json", "*.csv", "*.tsv", "*.md", "*.txt"],
+      "matches": 0
+    }
+  },
+  "interpretation": "prospectively selected native RNG seeds under the frozen generator; not previously used H01 transport keys"
+}
