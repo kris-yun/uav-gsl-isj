@@ -117,16 +117,21 @@ def rank_desc(values: np.ndarray, truth: int) -> int:
     return 1 + int(np.count_nonzero(values > target + tolerance))
 
 
-def carrier_id_for_cell(cell_index: int, width: int) -> str:
+def carrier_id_for_cell(cell_index: int, width: int, height: int) -> str:
     x_index = cell_index % width
     y_index = cell_index // width
-    return f"quadtree_{2 * (x_index // 2)}_{2 * (y_index // 2)}_2_2"
+    x_origin = 2 * (x_index // 2)
+    y_origin = 2 * (y_index // 2)
+    x_size = min(2, width - x_origin)
+    y_size = min(2, height - y_origin)
+    return f"quadtree_{x_origin}_{y_origin}_{x_size}_{y_size}"
 
 
-def carrier_mass_from_cells(rows: list[dict], source_index: dict[str, int], width: int) -> np.ndarray:
+def carrier_mass_from_cells(rows: list[dict], source_index: dict[str, int],
+                            width: int, height: int) -> np.ndarray:
     mass = np.zeros(len(source_index), dtype=np.float64)
     for row in rows:
-        carrier_id = carrier_id_for_cell(int(row["cell_index"]), width)
+        carrier_id = carrier_id_for_cell(int(row["cell_index"]), width, height)
         if carrier_id not in source_index:
             raise ValueError(f"CTRE_CELL_OUTSIDE_SUPPORT:{carrier_id}")
         mass[source_index[carrier_id]] += float(row["source_probability"])
@@ -137,11 +142,11 @@ def carrier_mass_from_cells(rows: list[dict], source_index: dict[str, int], widt
 
 
 def carrier_to_cells(carrier_mass: np.ndarray, rows: list[dict], source_index: dict[str, int],
-                     free_cells: np.ndarray, width: int) -> np.ndarray:
+                     free_cells: np.ndarray, width: int, height: int) -> np.ndarray:
     cell_mass = np.empty(len(rows), dtype=np.float64)
     seen = np.zeros(len(source_index), dtype=np.int64)
     for index, row in enumerate(rows):
-        source = source_index[carrier_id_for_cell(int(row["cell_index"]), width)]
+        source = source_index[carrier_id_for_cell(int(row["cell_index"]), width, height)]
         cell_mass[index] = carrier_mass[source] / free_cells[source]
         seen[source] += 1
     if not np.array_equal(seen, free_cells):
@@ -255,13 +260,14 @@ def main() -> int:
                 native_member = unique_member(tf, prefix, update_suffix)
                 native_cells = read_csv_member(tf, native_member)
                 width = int(update["grid_width"])
+                height = int(update["grid_height"])
                 native_cell_mass = np.asarray([float(row["source_probability"]) for row in native_cells])
                 native_cell_mass /= np.sum(native_cell_mass)
-                native_carrier = carrier_mass_from_cells(native_cells, source_index, width)
+                native_carrier = carrier_mass_from_cells(native_cells, source_index, width, height)
                 coherent_cells = carrier_to_cells(
-                    coherent_posterior, native_cells, source_index, free_cells, width)
+                    coherent_posterior, native_cells, source_index, free_cells, width, height)
                 stopwise_cells = carrier_to_cells(
-                    stopwise_posterior, native_cells, source_index, free_cells, width)
+                    stopwise_posterior, native_cells, source_index, free_cells, width, height)
                 row = {
                     "seed": seed,
                     "source_update_id": update_id,
