@@ -30,6 +30,7 @@ class PhysicsOrderTemporalNRE(nn.Module):
         ww=mask[...,None].to(h.dtype); L=mask.sum(1)
         mean=(h*ww).sum(1)/L[:,None]
         final=h[torch.arange(len(h)),L-1]
+        # Physics coefficient is exactly one and is not trainable.
         return energy_z + self.temporal(torch.cat([mean,final],1)).squeeze(1)
 
 def energy_all(data,tr,true,om,cut):
@@ -79,6 +80,9 @@ def loss_fn(model,b):
     bce=.5*(F.binary_cross_entropy_with_logits(la,torch.ones_like(la))+
             F.binary_cross_entropy_with_logits(lb,torch.zeros_like(lb)))
     order=F.softplus(-((la-lb)-(lap-lbp))).mean()
+    # No tuned threshold: every pair contributes in proportion to the magnitude
+    # of its standardized frozen physics gap. Near-ties are free to reorder;
+    # strong physics orderings are expensive to reverse.
     de=torch.from_numpy(EA-EB).to(la.dtype)
     w=torch.abs(de)
     signed=torch.sign(de)*(la-lb)
@@ -202,6 +206,7 @@ def selftest(data,ms):
     cut=data.med[3]; n=data.nblocks(TEST_TRAJ,cut); obs=data.bm[TEST_TRAJ,0,TEST_OBS,:n]; p=data.bm[TEST_TRAJ,0,list(PRED_MEMBERS),:n]
     a=v1.primitives(obs,p); b=v1.primitives(obs,p[[2,0,1]])
     err=float(np.max(np.abs(a-b))); assert err<1e-7
+    # Fixed energy coefficient check: zero temporal head implies exact energy_z.
     q=PhysicsOrderTemporalNRE()
     for par in q.temporal.parameters(): par.data.zero_()
     seq=[v1.sequence_features(a)]; x,m=pad(seq); ez=torch.tensor([0.731],dtype=torch.float32)
