@@ -1,0 +1,59 @@
+{
+  "contract": "CTT_SHADOW_METRIC_PRIOR_TIE_RECURRENCE_G0_V1",
+  "status": "PREREGISTERED_BEFORE_G0_OUTCOME",
+  "date": "2026-08-30",
+  "scope": {
+    "house": "H01",
+    "seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "source_updates": [1, 2, 3, 4, 5],
+    "gaden_runs": 0,
+    "neural_training": false,
+    "ros_runs": 0,
+    "closed_loop_authorized": false,
+    "method_formula_changes": false
+  },
+  "frozen_controls": {
+    "source_label_permutation_seed": 2026083001,
+    "observation_pairing_permutation_seed": 2026083002,
+    "cell_row_permutation_seeds": [2026083011, 2026083012, 2026083013, 2026083014, 2026083015, 2026083016, 2026083017, 2026083018],
+    "source_label_permutation": "one deterministic permutation of 210 likelihood rows, while carrier coordinates and q0 remain fixed",
+    "observation_pairing_permutation": "one deterministic permutation per seed and update of observed stop events relative to fixed candidate stop predictions; hit count preserved",
+    "tie_aware_metric": "include all cells above the top-5-percent boundary and a uniform fractional share of exact boundary ties so that effective selected-cell count equals ceil(0.05*N)",
+    "authoritative_metric": "unchanged stable-row-order PMFS ExpectedValue(sourceProbability,0.05)",
+    "rank_ties": "exact equality; rank is 1 plus count strictly greater"
+  },
+  "input_sha256": {
+    "archive": "46fac2f4afe1c4a563dc5eccd889b27834a4903fdfcb2881f87bf1337a28d109",
+    "support": "9822fabce119920c9a073c2ff0cf292e1e051ea05d67ef446e1840bda6103df4",
+    "mapping": "e01147d6cae17080c4143f29f6ea51daead21718b633d3776c38cf956cdd210f",
+    "bank_views": {
+      "0": "a947237d37fd1e76fa4274d95d808136f36f42c681be217f4ac5d33769f03178",
+      "1": "21e2b1acfc1ba590815d5890cff2bf707156295e66450da6a7ae030228751845",
+      "2": "86147b68d9ad65abc208122d392fe0b91689bef2521d5c68c06caf29444a0e82",
+      "3": "b2923da12b758574987a769da7a8a20a704550af96c1bf309311fc2de21deadc",
+      "4": "9aca5f8eee467b11cba5d1d308a347636cc7f84db7a5c9dedb83d1efbe11204b",
+      "5": "ba37fbff4fc68b24a9d4a88db71e928f1d467873f64b0455bb4adb757f66333d",
+      "6": "f5f16ea52275f5ebae80d51cf1748bcc4e4b0af6526c7a4ed2f7bb57c04eb52e",
+      "7": "1f4f1c258ea64499ac75a3e51ca65fc6ea920ddc82b431932309e750040204c0",
+      "8": "362061d8694b3c820d97a386ed46b9216bca23f3d5bb8dd4295674c6c13ed29a",
+      "9": "2931ad14086e8379044255e163792b47563badf9ec31b575eb89918d507e7ad7"
+    }
+  },
+  "pass_rule": {
+    "online_batch_max_abs_tolerance": 1e-12,
+    "cell_row_formal_error_range_tolerance_m": 1e-10,
+    "tie_aware_formal_error_difference_tolerance_m": 1e-10,
+    "maximum_q0_vs_pmfs_pooled_improvement": 0.099999999999,
+    "maximum_source_permuted_vs_pmfs_pooled_improvement": 0.099999999999,
+    "minimum_ctt_better_than_q0_pairs": 7,
+    "minimum_ctt_better_than_source_permuted_pairs": 7,
+    "minimum_ctt_better_than_pairing_permuted_pairs": 7,
+    "minimum_ctt_vs_q0_pooled_improvement": 0.0,
+    "minimum_ctt_vs_source_permuted_pooled_improvement": 0.0,
+    "minimum_ctt_vs_pairing_permuted_pooled_improvement": 0.0
+  },
+  "terminal_states": {
+    "pass": "CTT_SHADOW_G0_PASS_TO_PHYSICAL_PREMISE_GATES",
+    "fail": "CTT_SHADOW_METRIC_OR_RECURRENCE_NO_GO"
+  }
+}

@@ -1,7 +1,13 @@
 # CTT network role and CTRE upgrade decision
 
+> **SUPERSEDED ON 2026-08-30.** This development note authorized an H01 pilot
+> before the later metric/prior/tie, calibrated-emission, exact-replacement and
+> planner-consumer audits were formalized. Its evidence remains preserved, but
+> its runtime authorization is withdrawn. The controlling contract is now
+> docs/CTT_FINAL_THREE_MODULE_METHOD_REDERIVATION_20260830.md.
+
 Date: 2026-08-30  
-Status: **H01 FIXED-TRAJECTORY DEVELOPMENT GO / H01 CLOSED-LOOP PILOT AUTHORIZED / CROSS-HOUSE CLAIM NOT AUTHORIZED**
+Status: **HISTORICAL DEVELOPMENT NOTE / PILOT AUTHORIZATION SUPERSEDED**
 
 ## 1. Decision in plain language
 
