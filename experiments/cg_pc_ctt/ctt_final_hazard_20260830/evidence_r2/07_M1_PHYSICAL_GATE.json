@@ -1,0 +1,57 @@
+{
+  "contract": "CTT_H01_FINAL_HAZARD_SOLVER_FREEZE_V1",
+  "examples": 16800,
+  "per_context": {
+    "10": {
+      "conditional_nll": 1.5844957828521729,
+      "static_nll": 1.5615884065628052,
+      "conditional_brier": 0.23815186321735382,
+      "static_brier": 0.24680913984775543
+    },
+    "11": {
+      "conditional_nll": 1.4196268320083618,
+      "static_nll": 1.3866827487945557,
+      "conditional_brier": 0.2806689143180847,
+      "static_brier": 0.2850607931613922
+    },
+    "12": {
+      "conditional_nll": 0.3601427674293518,
+      "static_nll": 0.38333895802497864,
+      "conditional_brier": 0.08651971817016602,
+      "static_brier": 0.09111696481704712
+    },
+    "13": {
+      "conditional_nll": 2.5877482891082764,
+      "static_nll": 2.4777820110321045,
+      "conditional_brier": 0.4003049433231354,
+      "static_brier": 0.39689964056015015
+    }
+  },
+  "static_minus_conditional_nll": -0.035655316290146705,
+  "nll_95ci": [
+    -0.044907703847834185,
+    -0.02665264520792199
+  ],
+  "static_minus_conditional_brier": 0.0035602826828439625,
+  "brier_95ci": [
+    0.002308549739157991,
+    0.00483500021684915
+  ],
+  "wind_shuffle_minus_conditional_nll": -0.006160653199610378,
+  "shuffle_95ci": [
+    -0.00742854347228593,
+    -0.004892163781349929
+  ],
+  "normalization_error": 1.6093254089355469e-06,
+  "repeat_max_abs": 0.0,
+  "gate": {
+    "static_minus_conditional_nll_ci_lower_positive": false,
+    "static_minus_conditional_brier_ci_lower_positive": true,
+    "all_fresh_contexts_nonreversing": false,
+    "wind_shuffle_worsens_nll": false,
+    "normalization": false,
+    "repeat_determinism": true,
+    "all_queries_in_support": true
+  },
+  "verdict": "CTT_FINAL_HAZARD_NEURAL_M1_NO_GO"
+}

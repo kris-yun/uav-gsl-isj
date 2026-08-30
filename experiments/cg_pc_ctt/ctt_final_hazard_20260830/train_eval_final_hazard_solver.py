@@ -314,7 +314,7 @@ def fit(name: str, spatial_array, skey, x_geo, y, spatial_v, skey_v, xv_geo, yv,
             if stale >= PATIENCE:
                 break
     (output / f"{name}_history.json").write_text(json.dumps(history, indent=2) + "\n")
-    ckpt = torch.load(output / f"{name}_best.pt", weights_only=True)
+    ckpt = torch.load(output / f"{name}_best.pt", weights_only=False)
     model.load_state_dict(ckpt["state"])
     return model, ckpt
 
