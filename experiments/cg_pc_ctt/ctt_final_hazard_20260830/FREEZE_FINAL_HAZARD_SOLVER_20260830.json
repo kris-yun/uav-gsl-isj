@@ -1,0 +1,156 @@
+{
+  "contract": "CTT_H01_FINAL_HAZARD_SOLVER_FREEZE_V1",
+  "date": "2026-08-30",
+  "status": "FROZEN_BEFORE_FRESH_TEST_DATA",
+  "parent_contract": "docs/CTT_AGENT_NEXT_EXECUTION_CONTRACT_20260830.md",
+  "scientific_role": "physics-conditioned spatial first-passage hazard solver; NOT a source classifier, posterior corrector, reliability gate, or end-to-end localizer",
+  "replaces": {
+    "old_33_feature_mlp": "REJECTED (CTT_H01_WIND_CONDITIONED_NEURAL_M1_PHYSICAL_NO_GO)",
+    "old_factorized_survival_phase": "REJECTED"
+  },
+  "model": {
+    "family": "spatial wind/map encoder + source/query geometric conditioning + discrete hazard decoder",
+    "hazard_definition": "h_j(s,X) = P(F=j | F>=j, s, X) for j in 0..79",
+    "induced_distribution": {
+      "P(F=j)": "h_j * prod_{r<j}(1 - h_r)",
+      "P(F=never)": "prod_{r=0..79}(1 - h_r)",
+      "never_label": 80
+    },
+    "loss": {
+      "kind": "discrete event-time hazard log-likelihood (proper scoring on the induced distribution)",
+      "if_F_eq_j": "-log(h_j) - sum_{r<j} log(1 - h_r)",
+      "if_never": "-sum_{r=0..79} log(1 - h_r)",
+      "numerical_guard": "h clipped to [1e-7, 1-1e-7] before log; NaN/Inf is terminal",
+      "no_trainable_survival_phase_weight": true,
+      "no_temperature_blend_alpha": true
+    }
+  },
+  "input_schema": {
+    "spatial_patch": {
+      "size_cells": 32,
+      "physical_extent_m": 3.2,
+      "cell_size_m": 0.1,
+      "orientation": "world-aligned, query-centered (source-independent; no rotation to source direction)",
+      "channels": [
+        {"name": "occupancy", "source": "OccupancyGrid3D.csv flight-height z-slice", "dtype": "float32 in {0,1}", "deployable": true, "future": false},
+        {"name": "wind_u", "source": "causal local wind samples binned onto the patch grid", "dtype": "float32", "deployable": true, "future": false},
+        {"name": "wind_v", "source": "causal local wind samples binned onto the patch grid", "dtype": "float32", "deployable": true, "future": false}
+      ],
+      "wind_binning": {
+        "method": "nearest-cell assignment of causal route wind samples (pose-matched (x,y)->cell); cells with no sample take the mean of the patch wind; empty patch takes 0",
+        "causality": "only samples with timestamp <= current stop end (no future samples)",
+        "frame": "H01 world frame"
+      }
+    },
+    "geometric_vector": {
+      "order": [
+        "source_x", "source_y", "query_x", "query_y",
+        "dx=query_x-source_x", "dy=query_y-source_y", "distance",
+        "unit_dx", "unit_dy", "carrier_half_diagonal",
+        "stop_start_time", "causal_path_length", "delta_previous_stop_x",
+        "delta_previous_stop_y", "sin_yaw", "cos_yaw"
+      ],
+      "dim": 16,
+      "carrier_half_diagonal": "0.5 * 0.3 * hypot(size_i, size_j) from PMFS quotient carrier"
+    }
+  },
+  "architecture": {
+    "spatial_encoder": {
+      "type": "CNN",
+      "layers": [
+        {"conv": {"in": 3, "out": 32, "k": 3, "s": 1, "p": 1}, "act": "SiLU"},
+        {"conv": {"in": 32, "out": 64, "k": 3, "s": 2, "p": 1}, "act": "SiLU"},
+        {"conv": {"in": 64, "out": 128, "k": 3, "s": 2, "p": 1}, "act": "SiLU"},
+        {"conv": {"in": 128, "out": 128, "k": 3, "s": 2, "p": 1}, "act": "SiLU"},
+        {"adaptive_avg_pool": "1x1"}
+      ],
+      "output_dim": 128
+    },
+    "geometric_encoder": {
+      "type": "MLP",
+      "layers": [
+        {"linear": {"in": 16, "out": 64}, "act": "SiLU"},
+        {"linear": {"in": 64, "out": 64}, "act": "SiLU"}
+      ],
+      "output_dim": 64
+    },
+    "hazard_decoder": {
+      "type": "MLP",
+      "layers": [
+        {"linear": {"in": 192, "out": 128}, "act": "SiLU"},
+        {"linear": {"in": 128, "out": 80}}
+      ],
+      "output": "80 raw logits -> sigmoid -> hazards h_0..h_79",
+      "no_obstacle_mask_override": "the inherited PMFS mask contract is applied only at the source-evidence scoring stage, not inside the network"
+    }
+  },
+  "normalization": {
+    "spatial_patch": "occupancy is already in {0,1}; wind_u/wind_v are divided by a frozen scale of 1.0 m/s (no data-dependent statistics on spatial channels)",
+    "geometric_vector": "TRAIN-only columnwise mean and population std; std < 1e-6 replaced by 1.0; NaN/Inf terminal"
+  },
+  "training": {
+    "optimizer": "AdamW",
+    "learning_rate": 2e-3,
+    "weight_decay": 1e-5,
+    "batch_size": 512,
+    "max_epochs": 60,
+    "patience": 7,
+    "improvement_tolerance": 1e-5,
+    "seed": 20260835,
+    "checkpoint_tie_break": "earliest epoch attaining the minimum accepted validation hazard loss",
+    "checkpoint_selection": "validation proper hazard loss only (no rank/localization/planner signal)",
+    "threads": 4
+  },
+  "comparators": {
+    "static_wind": {
+      "construction": "identical architecture/data/seed/order; wind_u and wind_v channels replaced by a constant 0.0 (capacity-matched, no extra parameters)",
+      "purpose": "test whether spatial wind conditioning is physically load-bearing"
+    }
+  },
+  "controls": {
+    "bootstrap_seed": 20260835,
+    "bootstrap_replicates": 5000,
+    "cluster_unit": "(source carrier, wind context)",
+    "time_permute": "SHA-256-derived permutation from CTT-H01-HAZARD-TIME|wind|transport|source|stop; preserve hit multiset",
+    "candidate_temporal_shuffle": "SHA-256-derived candidate permutation from CTT-H01-HAZARD-CANDIDATE|wind|transport",
+    "mid_ranks": "exact floating-point equality"
+  },
+  "wind_deployability": {
+    "W_gen": "full CFD field used only by GADEN to generate the plume; never a network input",
+    "W_online": "local wind samples at visited poses, binned onto the patch grid; runtime source is a calibrated onboard anemometer",
+    "scope": "SIMULATION_KNOWN_WIND (exact simulator wind provenance); no real-flight claim",
+    "no_future_samples": true,
+    "no_context_id_or_phase_id": true
+  },
+  "split": {
+    "train_wind_contexts": [0, 3, 5, 6, 8, 9],
+    "val_wind_contexts": [4, 7],
+    "test_wind_contexts": [10, 11, 12, 13],
+    "closed_loop_wind_contexts": [14, 15],
+    "train_transport_keys": [0, 1, 2, 3, 4, 5],
+    "test_transport_keys": [6, 7],
+    "train_routes": [4001, 4002, 4003],
+    "val_route": [4004],
+    "test_route": [4005],
+    "diagnostic_only_forever": [1, 2]
+  },
+  "fresh_wind_mapping": {
+    "10": {"config": "1,3-2,4_fast", "frame": 1},
+    "11": {"config": "1,3-2,4_slow", "frame": 1},
+    "12": {"config": "2,4-1_slow", "frame": 1},
+    "13": {"config": "1,3-2,4_fast", "frame": 10},
+    "14": {"config": "1,3-2,4_slow", "frame": 10},
+    "15": {"config": "2,4-1_slow", "frame": 10}
+  },
+  "threshold": {
+    "first_passage": "strict measured_ppm > 0.1 (NOT >= 0.1)",
+    "stop_samples": 80,
+    "sample_dt_s": 0.2
+  },
+  "forbidden": [
+    "residual TCN", "33-summary MLP", "factorized survival+phase", "carrier ID embedding",
+    "true source identity input", "PMFS posterior/rank", "localization error", "future route/gas/wind",
+    "route semantic ID", "wind context semantic ID", "planner action or closed-loop reward",
+    "learned reliability/acceptance gate", "Top-K rescue", "posterior projection", "blend/temperature/alpha"
+  ]
+}
