@@ -1,6 +1,7 @@
 {
-  "contract": "CTT_SHADOW_METRIC_PRIOR_TIE_RECURRENCE_G0_V1",
+  "contract": "CTT_SHADOW_METRIC_PRIOR_TIE_RECURRENCE_G0_V2",
   "status": "PREREGISTERED_BEFORE_G0_OUTCOME",
+  "revision_reason": "V2 was frozen before outcome to replace one weak deterministic destruction with 64-replicate empirical permutation nulls and multiplicity control.",
   "date": "2026-08-30",
   "scope": {
     "house": "H01",
@@ -13,11 +14,12 @@
     "method_formula_changes": false
   },
   "frozen_controls": {
-    "source_label_permutation_seed": 2026083001,
-    "observation_pairing_permutation_seed": 2026083002,
+    "source_label_permutation_seed_base": 2026083001,
+    "observation_pairing_permutation_seed_base": 2026083002,
+    "permutation_replicates": 64,
     "cell_row_permutation_seeds": [2026083011, 2026083012, 2026083013, 2026083014, 2026083015, 2026083016, 2026083017, 2026083018],
-    "source_label_permutation": "one deterministic permutation of 210 likelihood rows, while carrier coordinates and q0 remain fixed",
-    "observation_pairing_permutation": "one deterministic permutation per seed and update of observed stop events relative to fixed candidate stop predictions; hit count preserved",
+    "source_label_permutation": "64 deterministic permutations of 210 likelihood rows, while carrier coordinates and q0 remain fixed",
+    "observation_pairing_permutation": "64 deterministic permutations per seed and update of observed stop events relative to fixed candidate stop predictions; hit count preserved",
     "tie_aware_metric": "include all cells above the top-5-percent boundary and a uniform fractional share of exact boundary ties so that effective selected-cell count equals ceil(0.05*N)",
     "authoritative_metric": "unchanged stable-row-order PMFS ExpectedValue(sourceProbability,0.05)",
     "rank_ties": "exact equality; rank is 1 plus count strictly greater"
@@ -40,17 +42,16 @@
     }
   },
   "pass_rule": {
+    "primary_statistic": "pooled incremental improvement of CTT over q0: 1-sum(error_ctt)/sum(error_q0)",
+    "permutation_p_value": "(1 + count(null_increment >= observed_increment)) / (64 + 1)",
+    "familywise_alpha": 0.05,
+    "permutation_family_alpha": 0.025,
     "online_batch_max_abs_tolerance": 1e-12,
     "cell_row_formal_error_range_tolerance_m": 1e-10,
     "tie_aware_formal_error_difference_tolerance_m": 1e-10,
     "maximum_q0_vs_pmfs_pooled_improvement": 0.099999999999,
-    "maximum_source_permuted_vs_pmfs_pooled_improvement": 0.099999999999,
     "minimum_ctt_better_than_q0_pairs": 7,
-    "minimum_ctt_better_than_source_permuted_pairs": 7,
-    "minimum_ctt_better_than_pairing_permuted_pairs": 7,
-    "minimum_ctt_vs_q0_pooled_improvement": 0.0,
-    "minimum_ctt_vs_source_permuted_pooled_improvement": 0.0,
-    "minimum_ctt_vs_pairing_permuted_pooled_improvement": 0.0
+    "minimum_ctt_vs_q0_pooled_improvement": 0.0
   },
   "terminal_states": {
     "pass": "CTT_SHADOW_G0_PASS_TO_PHYSICAL_PREMISE_GATES",

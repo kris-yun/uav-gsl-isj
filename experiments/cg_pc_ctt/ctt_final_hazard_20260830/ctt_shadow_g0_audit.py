@@ -180,7 +180,7 @@ def run(args: argparse.Namespace) -> int:
     if args.output.exists():
         raise SystemExit(f"CTT_G0_REFUSE_OVERWRITE:{args.output}")
     prereg = json.loads(args.preregistration.read_text(encoding="utf-8"))
-    if prereg.get("contract") != "CTT_SHADOW_METRIC_PRIOR_TIE_RECURRENCE_G0_V1":
+    if prereg.get("contract") != "CTT_SHADOW_METRIC_PRIOR_TIE_RECURRENCE_G0_V2":
         raise SystemExit("CTT_G0_PREREG_CONTRACT")
     expected = prereg["input_sha256"]
     for label, path in (
@@ -193,13 +193,23 @@ def run(args: argparse.Namespace) -> int:
             raise SystemExit(f"CTT_G0_HASH:{label}:{actual}")
 
     support_ids, free_cells = load_support(args.support)
-    source_label_permutation = np.random.default_rng(
-        int(prereg["frozen_controls"]["source_label_permutation_seed"])
-    ).permutation(len(support_ids))
+    permutation_replicates = int(
+        prereg["frozen_controls"]["permutation_replicates"])
+    label_seed_base = int(
+        prereg["frozen_controls"]["source_label_permutation_seed_base"])
+    pairing_seed_base = int(
+        prereg["frozen_controls"]["observation_pairing_permutation_seed_base"])
+    source_label_permutations = [
+        np.random.default_rng(label_seed_base + replicate).permutation(
+            len(support_ids))
+        for replicate in range(permutation_replicates)
+    ]
     row_seeds = [int(value) for value in
                  prereg["frozen_controls"]["cell_row_permutation_seeds"]]
     output_rows: list[dict] = []
     final_rows: list[dict] = []
+    final_label_errors: list[list[float]] = []
+    final_pairing_errors: list[list[float]] = []
     max_online_batch = 0.0
     max_joint_online_batch = 0.0
 
@@ -303,17 +313,6 @@ def run(args: argparse.Namespace) -> int:
                 max_online_batch = max(max_online_batch, online_batch, posterior_identity)
                 max_joint_online_batch = max(max_joint_online_batch, joint_online_batch)
 
-                label_score = coherent[source_label_permutation]
-                label_carrier = posterior(prior, label_score)
-                pairing_rng = np.random.default_rng(
-                    int(prereg["frozen_controls"]["observation_pairing_permutation_seed"])
-                    + 101 * int(seed) + 1009 * update_id)
-                pairing_permutation = pairing_rng.permutation(len(visible))
-                pairing_score, _ = ctre_scores(
-                    candidate_detection[:, :, visible],
-                    observed_detection[np.asarray(visible)[pairing_permutation]])
-                pairing_carrier = posterior(prior, pairing_score)
-
                 update_suffix = (
                     f"/context_bank/source_update_{update_id:04d}/source_posterior.csv")
                 native_cells = read_csv_member(
@@ -328,10 +327,34 @@ def run(args: argparse.Namespace) -> int:
                     prior, native_cells, source_index, free_cells, width, height)
                 ctt_cells = carrier_to_cells_frozen(
                     ctt_carrier, native_cells, source_index, free_cells, width, height)
-                label_cells = carrier_to_cells_frozen(
-                    label_carrier, native_cells, source_index, free_cells, width, height)
-                pairing_cells = carrier_to_cells_frozen(
-                    pairing_carrier, native_cells, source_index, free_cells, width, height)
+                label_errors: list[float] = []
+                pairing_errors: list[float] = []
+                visible_array = np.asarray(visible)
+                for replicate in range(permutation_replicates):
+                    label_score = coherent[source_label_permutations[replicate]]
+                    label_carrier = posterior(prior, label_score)
+                    label_cells = carrier_to_cells_frozen(
+                        label_carrier, native_cells, source_index, free_cells,
+                        width, height)
+                    label_errors.append(formal_location_error(
+                        native_cells, label_cells, truth_xy))
+
+                    pairing_rng = np.random.default_rng(
+                        pairing_seed_base
+                        + 1000003 * replicate
+                        + 101 * int(seed)
+                        + 1009 * update_id)
+                    pairing_permutation = pairing_rng.permutation(len(visible))
+                    pairing_score, _ = ctre_scores(
+                        candidate_detection[:, :, visible],
+                        observed_detection[
+                            visible_array[pairing_permutation]])
+                    pairing_carrier = posterior(prior, pairing_score)
+                    pairing_cells = carrier_to_cells_frozen(
+                        pairing_carrier, native_cells, source_index, free_cells,
+                        width, height)
+                    pairing_errors.append(formal_location_error(
+                        native_cells, pairing_cells, truth_xy))
 
                 stable_error = formal_location_error(native_cells, ctt_cells, truth_xy)
                 tie_error = tie_aware_formal_error(native_cells, ctt_cells, truth_xy)
@@ -352,10 +375,10 @@ def run(args: argparse.Namespace) -> int:
                     "q0_formal_error_m": formal_location_error(
                         native_cells, q0_cells, truth_xy),
                     "ctt_formal_error_m": stable_error,
-                    "source_permuted_formal_error_m": formal_location_error(
-                        native_cells, label_cells, truth_xy),
-                    "pairing_permuted_formal_error_m": formal_location_error(
-                        native_cells, pairing_cells, truth_xy),
+                    "source_permuted_median_formal_error_m": float(
+                        np.median(label_errors)),
+                    "pairing_permuted_median_formal_error_m": float(
+                        np.median(pairing_errors)),
                     "ctt_tie_aware_formal_error_m": tie_error,
                     "ctt_tie_aware_abs_difference_m": abs(tie_error - stable_error),
                     "ctt_row_order_min_error_m": row_min,
@@ -391,32 +414,46 @@ def run(args: argparse.Namespace) -> int:
                     if abs(row["native_formal_error_m"] - archive_error) > 1e-10:
                         raise ValueError(f"CTT_G0_NATIVE_PARITY:{seed}")
                     final_rows.append(row)
+                    final_label_errors.append(label_errors)
+                    final_pairing_errors.append(pairing_errors)
 
     pmfs = np.asarray([row["native_formal_error_m"] for row in final_rows])
     q0 = np.asarray([row["q0_formal_error_m"] for row in final_rows])
     ctt = np.asarray([row["ctt_formal_error_m"] for row in final_rows])
-    label = np.asarray([
-        row["source_permuted_formal_error_m"] for row in final_rows])
-    pairing = np.asarray([
-        row["pairing_permuted_formal_error_m"] for row in final_rows])
+    label_matrix = np.asarray(final_label_errors, dtype=np.float64)
+    pairing_matrix = np.asarray(final_pairing_errors, dtype=np.float64)
+    if label_matrix.shape != (10, permutation_replicates):
+        raise ValueError(f"CTT_G0_LABEL_NULL_SHAPE:{label_matrix.shape}")
+    if pairing_matrix.shape != (10, permutation_replicates):
+        raise ValueError(f"CTT_G0_PAIRING_NULL_SHAPE:{pairing_matrix.shape}")
+    observed_increment = pooled_improvement(q0, ctt)
+    label_null_increment = 1.0 - np.sum(label_matrix, axis=0) / np.sum(q0)
+    pairing_null_increment = 1.0 - np.sum(pairing_matrix, axis=0) / np.sum(q0)
+    label_p = float(
+        (1 + np.count_nonzero(label_null_increment >= observed_increment))
+        / (permutation_replicates + 1))
+    pairing_p = float(
+        (1 + np.count_nonzero(pairing_null_increment >= observed_increment))
+        / (permutation_replicates + 1))
     rules = prereg["pass_rule"]
     summary = {
         "valid_final_pairs": len(final_rows),
         "pmfs_mean_error_m": float(np.mean(pmfs)),
         "q0_mean_error_m": float(np.mean(q0)),
         "ctt_mean_error_m": float(np.mean(ctt)),
-        "source_permuted_mean_error_m": float(np.mean(label)),
-        "pairing_permuted_mean_error_m": float(np.mean(pairing)),
+        "permutation_replicates": permutation_replicates,
         "ctt_vs_pmfs_pooled_improvement": pooled_improvement(pmfs, ctt),
         "q0_vs_pmfs_pooled_improvement": pooled_improvement(pmfs, q0),
-        "source_permuted_vs_pmfs_pooled_improvement": pooled_improvement(pmfs, label),
-        "pairing_permuted_vs_pmfs_pooled_improvement": pooled_improvement(pmfs, pairing),
-        "ctt_vs_q0_pooled_improvement": pooled_improvement(q0, ctt),
-        "ctt_vs_source_permuted_pooled_improvement": pooled_improvement(label, ctt),
-        "ctt_vs_pairing_permuted_pooled_improvement": pooled_improvement(pairing, ctt),
+        "ctt_vs_q0_pooled_improvement": observed_increment,
+        "source_label_permutation_p_value": label_p,
+        "observation_pairing_permutation_p_value": pairing_p,
+        "source_label_null_increment_min": float(np.min(label_null_increment)),
+        "source_label_null_increment_median": float(np.median(label_null_increment)),
+        "source_label_null_increment_max": float(np.max(label_null_increment)),
+        "pairing_null_increment_min": float(np.min(pairing_null_increment)),
+        "pairing_null_increment_median": float(np.median(pairing_null_increment)),
+        "pairing_null_increment_max": float(np.max(pairing_null_increment)),
         "ctt_better_than_q0_pairs": int(np.sum(ctt < q0 - 1e-12)),
-        "ctt_better_than_source_permuted_pairs": int(np.sum(ctt < label - 1e-12)),
-        "ctt_better_than_pairing_permuted_pairs": int(np.sum(ctt < pairing - 1e-12)),
         "maximum_row_order_error_range_m": float(max(
             row["ctt_row_order_range_m"] for row in output_rows)),
         "maximum_tie_aware_error_difference_m": float(max(
@@ -427,31 +464,24 @@ def run(args: argparse.Namespace) -> int:
     checks = {
         "online_batch": summary["maximum_online_batch_abs"]
         <= float(rules["online_batch_max_abs_tolerance"]),
+        "joint_online_batch": summary["maximum_joint_online_batch_abs"]
+        <= float(rules["online_batch_max_abs_tolerance"]),
         "row_order_invariance": summary["maximum_row_order_error_range_m"]
         <= float(rules["cell_row_formal_error_range_tolerance_m"]),
         "tie_aware_invariance": summary["maximum_tie_aware_error_difference_m"]
         <= float(rules["tie_aware_formal_error_difference_tolerance_m"]),
         "q0_does_not_meet_target": summary["q0_vs_pmfs_pooled_improvement"]
         <= float(rules["maximum_q0_vs_pmfs_pooled_improvement"]),
-        "source_permuted_does_not_meet_target":
-        summary["source_permuted_vs_pmfs_pooled_improvement"]
-        <= float(rules["maximum_source_permuted_vs_pmfs_pooled_improvement"]),
         "ctt_beats_q0_pairs": summary["ctt_better_than_q0_pairs"]
         >= int(rules["minimum_ctt_better_than_q0_pairs"]),
-        "ctt_beats_source_permuted_pairs":
-        summary["ctt_better_than_source_permuted_pairs"]
-        >= int(rules["minimum_ctt_better_than_source_permuted_pairs"]),
-        "ctt_beats_pairing_permuted_pairs":
-        summary["ctt_better_than_pairing_permuted_pairs"]
-        >= int(rules["minimum_ctt_better_than_pairing_permuted_pairs"]),
         "ctt_beats_q0_pooled": summary["ctt_vs_q0_pooled_improvement"]
         > float(rules["minimum_ctt_vs_q0_pooled_improvement"]),
-        "ctt_beats_source_permuted_pooled":
-        summary["ctt_vs_source_permuted_pooled_improvement"]
-        > float(rules["minimum_ctt_vs_source_permuted_pooled_improvement"]),
-        "ctt_beats_pairing_permuted_pooled":
-        summary["ctt_vs_pairing_permuted_pooled_improvement"]
-        > float(rules["minimum_ctt_vs_pairing_permuted_pooled_improvement"]),
+        "source_label_permutation":
+        summary["source_label_permutation_p_value"]
+        <= float(rules["permutation_family_alpha"]),
+        "observation_pairing_permutation":
+        summary["observation_pairing_permutation_p_value"]
+        <= float(rules["permutation_family_alpha"]),
     }
     passed = len(final_rows) == 10 and all(checks.values())
     verdict = prereg["terminal_states"]["pass" if passed else "fail"]

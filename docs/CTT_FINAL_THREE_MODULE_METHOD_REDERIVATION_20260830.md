@@ -1,6 +1,6 @@
 # CTT final three-module method rederivation
 
-Date: 2026-08-30  
+Date: 2026-08-30
 Status: **METHOD FROZEN FOR PREMISE TESTING / LARGE MATERIALIZATION PAUSED / CLOSED LOOP NOT AUTHORIZED**
 
 ## 0. Decision
@@ -110,15 +110,20 @@ Reliable positive evidence is limited to:
 
 Let:
 
-- \(E=(G,B,W)\) denote source-independent environment information: geometry,
-  boundaries/ventilation and global airflow;
+- \(E_{obs}=(G,B,W_{measured})\) denote deployable source-independent
+  environment information: geometry, boundaries/ventilation and actually
+  measured airflow;
+- \(H\) denote the latent whole-environment airflow/transport field when it is
+  not directly available at runtime;
 - \(X_b\) denote poses and sample times at completed physical stop \(b\);
 - \(S\) denote the persistent source carrier;
 - \(U\) denote a legal 3-D placement within that carrier;
 - \(Q\) denote source strength;
 - \(K\) denote a stochastic native transport realization;
+- \(\tau_0\) denote release onset/global simulator-phase offset;
 - \(\Psi\) denote source-independent persistent sensor/noise parameters;
-- \(J=(U,Q,K,\Psi)\) denote a whole-run nuisance atom;
+- \(A=(H,U,Q,\tau_0,\Psi)\) denote all non-\(K\) whole-run nuisance variables;
+- \(J=(A,K)\) denote the complete whole-run nuisance atom;
 - \(C_n\), \(R_n\), and \(Y_n\) denote native concentration, persistent sensor
   state and measured gas at causal sample \(n\);
 - \(D_b\) denote the stop observation used for inference, primarily
@@ -127,7 +132,7 @@ Let:
 The controlled chain is:
 
 $$
-E,do(S=s),J,X_{1:n}
+E_{obs},do(S=s),J,X_{1:n}
 \rightarrow C_{1:n}
 \rightarrow R_{1:n}
 \rightarrow Y_{1:n}
@@ -140,7 +145,7 @@ $$
 The native response and sensor process are:
 
 $$
-C_{1:n}=F_E(do(S=s),U,Q,K,X_{1:n}),\qquad
+C_{1:n}=F_{G,B,H}(do(S=s),U,Q,K,X_{1:n}+\tau_0),\qquad
 R_n=f_\Psi(R_{n-1},C_n),\qquad
 Y_n\sim p_\Psi(\cdot\mid R_n).
 $$
@@ -159,10 +164,13 @@ Because legal placement \(U\) depends on candidate carrier \(i\), the nuisance
 prior is not a candidate-independent \(\pi(j)\). It is:
 
 $$
-\pi_i(j\mid E)=
+\pi_i(a,k\mid E_{obs})=
+p(H\mid E_{obs})\,
 p(U_j\mid S=i,G)\,
 p(Q_j)\,
-p(K_j\mid E)\,
+p(\tau_{0,j})\,
+p(\Psi_j)\,
+p(K_j\mid H,E_{obs}).
 p(\Psi_j).
 $$
 
@@ -172,10 +180,13 @@ sensor node index is used for every carrier; only the legal coordinate obtained
 from the carrier support changes. No true source, observed error or posterior
 may influence this mapping or its weights.
 
-The environment context \(W\) must either be genuinely available at runtime
-from source-independent metadata/measurement, or be marginalized under a
-source-independent prior. Reading the simulator's hidden true airflow identity
-is an oracle and fails the method.
+If a complete global airflow field is genuinely available at runtime, \(H\)
+may collapse to that observed field. Otherwise it is a latent whole-run
+nuisance and must be marginalized through \(p(H\mid E_{obs})\). Reading the
+observation simulator's hidden airflow ID is an oracle and fails the method.
+Likewise, if release onset is unknown, \(\tau_0\) is marginalized rather than
+synchronizing candidate and observation worlds to the same hidden simulation
+clock.
 
 ### 3.3 Sensor-aware stop emission
 
@@ -186,21 +197,22 @@ g_b(i,j)=
 p(D_b\mid D_{<b},do(S=i),J=j,X_{\le b},E).
 $$
 
-M3 separates physical reachability \(Z_b\) from measured detection \(D_b\):
+The formal observation is the measured tape on the stop interval \(I_b\),
+conditioned on the pre-stop sensor state:
 
 $$
-p(D_b\mid i,j)
-=
-\sum_{z\in\{0,1\}}
-p_\Psi(D_b\mid Z_b=z)\,
-p(Z_b=z\mid C_{i,j,1:b},X_{\le b}).
+g_b(i,j)=
+p_\Psi\!\left(
+Y^{obs}_{I_b}\mid
+R_{I_b^-},C_{i,j,I_b},Y^{obs}_{<I_b}
+\right).
 $$
 
-For a binary detection with predicted probability \(r_{b,i,j}\):
-
-$$
-g_b(i,j)=r_{b,i,j}^{D_b}(1-r_{b,i,j})^{1-D_b}.
-$$
+The primary robust reduction may be the censored event
+\(D_b=(E_b,T_b)\), where \(E_b\) is ever/never detection and \(T_b\) is
+first detection or right-censoring. Its calibrated likelihood must be derived
+from the complete persistent-sensor process. A binary reachability variable is
+not assumed to be sufficient for concentration amplitude or sensor memory.
 
 The current deterministic-bit Jeffreys score 0.25/0.75 is only a frozen
 surrogate proper score. It is not a calibrated physical likelihood. M3 must be
@@ -209,58 +221,69 @@ replicates or be reported honestly as a predictive score.
 
 ### 3.4 Coherent sequential update
 
-Map the authoritative PMFS cell prior to carriers:
+Freeze \(q_0^{cell}\) at the instant immediately before the first source-channel
+gas observation is consumed. It must contain geometry/support information but
+none of the gas samples later entering \(D_{1:b}\). Map this snapshot to
+carriers:
 
 $$
 q_0^C(i)=\sum_{c\in i}q_0^{cell}(c),\qquad
 \rho_0(c\mid i)=\frac{q_0^{cell}(c)}{q_0^C(i)}.
 $$
 
-The within-carrier distribution \(\rho_0\) is frozen once. After carrier
-inference:
+The exact cell posterior, when placement support is represented, is:
 
 $$
-q_t^{cell}(c)=q_t^C(i(c))\,\rho_0(c\mid i(c)).
+q_t^{cell}(c)=
+\sum_{i,j:\,i(c)=i,\,U_{xy,j}=c}w_t(i,j).
 $$
 
-This projection conserves mass. Any zero-support carrier remains unreachable
-unless the preregistered baseline itself supplies positive support; inventing
-support after seeing truth is forbidden and is audited before testing.
+The nuisance quadrature must satisfy
+\(\sum_{j:U_{xy,j}=c}\pi_i(j\mid E_{obs})=\rho_0(c\mid i)\), so the initial
+marginal recovers the PMFS cell prior. If the bank contains only a carrier-level
+placement, the fallback
+\(q_t^{lift}(c)=q_t^C(i(c))\rho_0(c\mid i(c))\) is a mass-conserving
+PMFS-interface lifting, **not** an exact cell posterior. Official localization
+error from this lifting is reported as a basin-level metric and cannot by
+itself prove source identification.
 
 Initialize and globally normalize over all \((i,j)\):
 
 $$
-w_0(i,j)=q_0^C(i)\pi_i(j\mid E).
+w_0(i,a,k)=q_0^C(i)\pi_i(a,k\mid E_{obs}).
 $$
 
 Let \(\Delta_t\) contain only newly completed, unconsumed physical stops at
 source update \(t\). Then:
 
 $$
-w_t(i,j)\propto
-w_{t-1}(i,j)
-\prod_{b\in\Delta_t}g_b(i,j),\qquad
-q_t^C(i)=\sum_jw_t(i,j).
+w_t(i,a,k)\propto
+w_{t-1}(i,a,k)
+\prod_{b\in\Delta_t}g_b(i,a,k),\qquad
+q_t^C(i)=\sum_{a,k}w_t(i,a,k).
 $$
 
 The batch identity is:
 
 $$
-w_t(i,j)\propto
-q_0^C(i)\pi_i(j\mid E)
-\prod_{b\in\cup_{r\le t}\Delta_r}g_b(i,j).
+w_t(i,a,k)\propto
+q_0^C(i)\pi_i(a,k\mid E_{obs})
+\prod_{b\in\cup_{r\le t}\Delta_r}g_b(i,a,k).
 $$
 
-Online and batch results must match numerically at every update. The valid
-coherence-ablated comparator is:
+Online and batch results must match numerically at every update. The primary
+transport-only coherence ablation keeps \(A=(H,U,Q,\tau_0,\Psi)\) persistent
+and redraws only \(K\) at each stop:
 
 $$
-q_{\mathrm{ind}}(i)\propto
+q_{\mathrm{redrawK}}(i)\propto
 q_0^C(i)
-\prod_b\sum_j\pi_i(j\mid E)g_b(i,j),
+\sum_a\pi_i(a\mid E_{obs})
+\prod_b\sum_k\pi(k\mid a,E_{obs})g_b(i,a,k).
 $$
 
-which intentionally permits a different nuisance explanation at each stop.
+Redrawing the entire \(J\) is retained only as a secondary stress control,
+because it cannot attribute an increment specifically to transport coherence.
 
 ## 4. PMFS integration, single consumption and planner closure
 
@@ -323,18 +346,20 @@ strength, placement and sensor effects.
 
 $$
 \mathcal O_E:
-(do(S=i),U,Q,K,X_{1:n})
-\mapsto C_{i,U,Q,K}(X_{1:n}).
+(G,B,H,do(S=i),U,Q,K,\tau_0,X_{1:n})
+\mapsto C_{i,H,U,Q,K}(X_{1:n}+\tau_0).
 $$
 
 M1 uses legal 3-D placement, frozen source strength, native transport and
 truth-blind environment support. Sensor parameters are not part of the
 concentration operator; they enter M3.
 
-**Required provenance:** \(G,B,W\) must come from deployable,
-source-independent information or be marginalized. Observation nuisance keys
-are disjoint from predictive keys, but the true source must remain in candidate
-support.
+**Required provenance:** \(G,B,W_{measured}\) are deployable and
+source-independent. Unobserved \(H\) and \(\tau_0\) are marginalized rather
+than copied from the observation simulator. Observation nuisance keys are
+disjoint from predictive keys, but the true source remains in candidate
+support. A deterministic global-time-shift control tests simulator-clock
+shortcuts.
 
 **Status:** **KEEP_AS_SUPPORTING_COMPONENT.** Candidate-source simulation is
 already used by PMFS and related GSL work. M1 is necessary physical support,
@@ -345,19 +370,22 @@ not the novelty.
 **Failure addressed:** independently marginalizing nuisance at each stop allows
 mutually incompatible plume realizations to explain one robot run.
 
-**Definition:** retain \(w_t(S,J)\) by the recursion in Section 3.4. The same
-transport, placement, strength and sensor state explains every completed stop
-and source update. The contribution is latent physical persistence, not a
-generic sequence encoder.
+**Definition:** retain \(w_t(S,A,K)\) by the recursion in Section 3.4. The same
+global field, placement, strength, release phase, sensor state and native
+transport realization explain every completed stop and source update. The
+primary claimed increment is isolated by keeping \(A\) fixed in both arms and
+redrawing only \(K\) in the comparator.
 
 The present H01 result proves only:
 
 > **coherence premise PASS under a frozen surrogate score.**
 
-It does not yet prove a calibrated Bayesian posterior. The product likelihood
-is exchangeable over correctly paired stops; therefore current evidence proves
-cross-stop coherent latent structure, not an independent benefit from
-chronological order. A future-predictive and raw-tape order Gate is required.
+It does not yet prove a calibrated Bayesian posterior. The current
+independent-bit surrogate product is exchangeable over correctly paired stops;
+the final persistent-sensor likelihood need not be exchangeable because
+\(R_n\) depends on causal tape order. Current evidence proves cross-stop
+coherent latent structure, not an independent chronological-order benefit. A
+future-predictive, raw-tape order and global-time-shift Gate is required.
 
 **Status:** **KEEP_AS_MAIN_INNOVATION**, collision risk **MEDIUM**. Atmospheric
 source inversion already retains global source/meteorological parameters. The
@@ -372,9 +400,11 @@ contexts, while ever/never reachability remains stable; deterministic simulator
 hits are not measured sensor probabilities.
 
 **Definition:** pass each M1 concentration tape through the same persistent
-sensor/noise family as the robot and form the calibrated emission in Section
-3.3. Physical reachability, false negative, false positive and sensor memory
-are separated. Exact arrival time is retained as an ablation.
+sensor/noise family as the robot and score the observed tape or a preregistered
+censored event-history reduction, conditional on the pre-stop sensor state.
+Physical reachability, concentration amplitude, false negative, false positive
+and sensor memory are not silently collapsed into one deterministic bit. Exact
+arrival phase remains an ablation.
 
 **Independent role:** M3 changes the mapping from physical concentration to
 evidence. It does not reconstruct transport, choose a source or provide
@@ -390,7 +420,7 @@ The current 0.25/0.75 surrogate means this module is not yet validated.
 An admissible future accelerator is:
 
 $$
-N_\theta(G,B,W,do(S=i),U,Q,K,x,t)
+N_\theta(G,B,H,do(S=i),U,Q,K,\tau_0,x,t)
 \rightarrow \log(1+C_{i,U,Q,K}(x,t)).
 $$
 
@@ -399,7 +429,8 @@ choice. The exact M3 sensor model remains downstream.
 
 It may be reconsidered only if:
 
-1. the runtime global physical inputs are actually available and pass an
+1. the runtime global physical inputs are actually available or a frozen
+   source-independent \(H\) marginalization is represented and passes an
    input-identifiability Gate;
 2. exact M1+M2+M3 is already scientifically positive;
 3. held-out carriers, free cells, airflow contexts and members pass pointwise
@@ -422,7 +453,7 @@ $$
 
 | Observed failure | Remote field and exact source | Original principle | Gas-specific adaptation | Decision |
 |---|---|---|---|---|
-| candidate physics must encode a controlled source cause | causal physical intervention: *Causal chambers as a real-world physical testbed for AI methodology*, Nature Machine Intelligence (2025); interventional representation identification, NeurIPS (2024) | interventions define mechanisms and identifiability conditions | native \(do(S=i)\) response under legal aligned nuisance support and reserved observation worlds | M1 support; not novel by itself |
+| candidate physics must encode a controlled source cause | validation philosophy: *Causal chambers as a real-world physical testbed for AI methodology*, Nature Machine Intelligence (2025); formal intervention-identifiability work in NeurIPS (2024) | test causal assumptions in controlled physical systems and state identifiability conditions | an SCM-consistent controlled forward intervention under legal aligned nuisance support and reserved observation worlds; this is not observational causal-effect estimation | M1 support; not novel by itself |
 | per-stop redraw destroys one-run plume consistency | atmospheric transport inversion: Lucas et al., *Bayesian inverse modeling of the atmospheric transport and emissions of a controlled tracer release from a nuclear power plant*, *Atmospheric Chemistry and Physics* (2017), DOI 10.5194/acp-17-13521-2017; coherent latent-field reconstruction: McAlpine et al., *The Manticore Project I: a digital twin of our cosmic neighbourhood from Bayesian field-level analysis*, MNRAS (2025), DOI 10.1093/mnras/staf767 | repeated observations share one latent physical realization and its uncertainty is marginalized jointly | persistent native GADEN member, placement, strength and sensor state in \(w_t(S,J)\) | M2 main candidate |
 | exact phase is unstable but reachability survives | imperfect-detection/occupancy models: Priyadarshani et al., *A unified framework for time-to-detection occupancy and abundance models*, *Methods in Ecology and Evolution* (2024), DOI 10.1111/2041-210X.14296; Goldstein et al., *Guidelines for estimating occupancy from autocorrelated camera trap detections*, *Methods in Ecology and Evolution* (2024), DOI 10.1111/2041-210X.14359 | separate latent presence/reachability from imperfect observation and avoid autocorrelated pseudo-replication | M1 plume reachability plus persistent gas-sensor false-positive/false-negative emission | M3 support |
 | sparse online wind does not identify global corridor topology | sparse-field reconstruction and physics-consistent projection, *Communications Physics* (2025), article s42005-025-02329-1 | learned reconstruction requires identifiable inputs and explicit physical constraints | first test conditional information in deployable inputs; reject learning if many-to-one | rejected under current input |
@@ -432,6 +463,24 @@ What is deliberately not transferred: gene/cell identity, ecological species
 semantics, astronomical image priors, a learned inverse source label, or an
 oracle global airflow identity. The secondary innovation is the rederived
 source–transport–sensor chain, not the imported name.
+
+Recent operator-learning references are retained only for the optional
+acceleration contract, with exact identities:
+
+- *Learning Data-Efficient and Generalizable Neural Operators via Fundamental
+  Physics Knowledge*, ICLR 2026;
+- *Learning missing physics from legacy simulators with alternating neural
+  integrators*, Nature Communications 2026, article s41467-026-74002-2;
+- *Learning turbulent flows with generative models for super resolution and
+  sparse flow reconstruction*, Nature Communications 2026, article
+  s41467-026-70145-4;
+- *One-shot learning for solution operators of partial differential
+  equations*, Nature Communications 2025, article s41467-025-63076-z;
+- *Physics-consistent machine learning with output projection onto physical
+  manifolds*, Communications Physics 2025, article s42005-025-02329-1.
+
+These papers motivate falsifiable forward-operator parity; they do not supply
+source-identification evidence for CTT.
 
 ## 7. GSL Collision Audit
 
@@ -458,19 +507,26 @@ cannot be claimed independently new.
 | sparse-wind hidden-field neural reconstruction | local wind many-to-one with global topology | sparse flow reconstruction | recent CFD/physics-consistent reconstruction work, 2024–2026 | infer hidden field only when inputs contain it | transfer identifiability test; not assumption that a deeper net creates information | no model admitted under present \(W_{online}\) | GSL wind mapping and PMFS | current input fails premise | N/A | **REJECT_NO_EVIDENCE** |
 | neural native-response surrogate | physical bank cost | neural operators | ICLR 2026; Nature Communications 2025–2026 | approximate forward PDE operator | transfer operator parity; not inverse source classifier | candidate-conditioned M1 compression, exact M3 downstream | Jin et al., ICRA 2023, DOI 10.1109/ICRA48891.2023.10160816; Prieto Ruiz et al., ISOEN 2024, DOI 10.1109/ISOEN61239.2024.10556061; Kim et al., arXiv:2608.16221 | implementation restrictions differ, but the neural plume-surrogate object already exists | COLLISION as science module | **REJECT_COLLISION**; possible engineering accelerator |
 
-The strongest defensible novelty verdict is **Level 3 — Medium Overlap**.
-M1 and M3 overlap strongly with prior GSL objects. M2 shares Bayesian
-source/nuisance inference with atmospheric and GSL literature but differs in
-the retained native stochastic response-member identity, mobile sequential
-stops, persistent sensor state and exact PMFS channel replacement.
+The present novelty verdict is **provisional Level 2–3 — High-to-Medium
+Overlap**, not yet frozen. M1 and M3 overlap strongly with prior GSL objects.
+M2 shares recursive Bayesian source/nuisance estimation with atmospheric and
+mobile-robot source-term estimation, while recent 2026 sequential neural GSL
+occupies part of the broad wording. The claim survives only if the comparator
+isolates persistence of the **native stochastic realization identity \(K\)**,
+rather than persistence of low-dimensional plume parameters, source strength,
+sensor parameters or a learned intermediate field. Full mechanism-level
+comparison with the 2019 JFR/TRO source-term papers and arXiv:2608.16221 is
+required before assigning a final Level 3.
 
 The one-sentence delta is:
 
-> Unlike PMFS, which constructs candidate hit evidence without retaining one
-> native stochastic plume realization as a joint latent state across the whole
-> robot run, CTT maintains and marginalizes a persistent source–transport–
-> sensor atom across completed stops, aiming to prevent mutually incompatible
-> per-stop plume explanations from reversing source evidence.
+> Unlike PMFS and mobile source-term estimators that retain candidate hit maps
+> or low-dimensional plume parameters, CTT retains the identity of one native
+> stochastic transport realization \(K\) across completed mobile-robot stops
+> while holding placement, strength, airflow context and sensor state
+> persistent in both the method and its transport-only ablation, aiming to
+> prevent incompatible per-stop plume realizations from reversing source
+> evidence.
 
 This is a search-bounded conclusion, not a claim that no such method exists
 anywhere. During the 2026-08-30 search, Semantic Scholar returned rate-limit
@@ -482,24 +538,29 @@ papers above were checked through DOI/publisher or official venue pages.
 
 ### G0 — metric, prior, tie and recurrence audit
 
-Freeze before execution and use existing H01 data:
+The executable numerical contract is frozen in
+CTT_SHADOW_G0_PREREGISTRATION_20260830.json before outcome access. It uses
+existing H01 data and defines:
 
-1. authoritative \(q_0\)-only formal error;
-2. source-label permutation that keeps candidate coordinates and \(q_0\) fixed
-   while permuting likelihood rows relative to source identity;
-3. observation-to-stop pairing permutation; a pure multiplication-order
-   permutation is not a valid destruction control;
-4. raw-tape chronological destruction only by rerunning the persistent sensor
-   pipeline, when the raw tape is available;
-5. legal cell-row permutations and a tie-aware boundary sensitivity analysis,
-   while retaining the original PMFS formal metric as authoritative;
-6. true-cell rank/mass, carrier rank/mass, raw score, and posterior mass within
-   0.5/1/2 m;
-7. online joint recursion versus batch parity at all five source updates.
+1. authoritative \(q_0\)-only formal error from the pre-gas geometry snapshot;
+2. 64 deterministic candidate-label permutations that keep coordinates and
+   \(q_0\) fixed;
+3. 64 deterministic observation-to-stop pairing permutations that preserve hit
+   count; pure multiplication-order permutation is not a destruction control;
+4. eight cell-row permutations plus an order-invariant fractional treatment of
+   exact top-5% boundary ties;
+5. true-cell/carrier rank and mass, raw score, and mass within 0.5/1/2 m;
+6. online joint recursion versus batch parity at all five updates.
 
-Stop with **CTT_SHADOW_METRIC_OR_RECURRENCE_NO_GO** if the 43.60% signal
-survives source-label/pairing destruction, changes materially under legal row
-ordering, or online=batch parity fails.
+The primary statistic is CTRE's pooled incremental improvement over \(q_0\).
+Each permutation family supplies an empirical one-sided null with
+\((1+\#\{\Delta_{null}\ge\Delta_{obs}\})/(64+1)\); family-wise
+\(\alpha=0.05\) is split to 0.025 across label and pairing families. Row/tie
+tolerance is \(10^{-10}\) m and posterior online=batch tolerance is
+\(10^{-12}\). \(q_0\) alone must not already meet the 10% PMFS target, and CTRE
+must beat \(q_0\) in at least 7/10 pairs with positive pooled increment.
+
+Any failed check yields **CTT_SHADOW_METRIC_OR_RECURRENCE_NO_GO**.
 
 ### G1 — M1 source ordering and environment provenance
 
@@ -508,15 +569,20 @@ ordering, or online=batch parity fails.
 - use reserved source/placement/transport worlds;
 - compare true-source ordering with a candidate-label permutation null;
 - audit H01/H02/H03 separately;
-- prove \(W\) is deployable source-independent context or marginalize it;
+- prove \(E_{obs}\) is deployable, marginalize latent \(H,\tau_0\), and include
+  global-time-shift controls;
 - require non-null ordering and no House reversal.
 
 Current status: H01 premise PASS; external-House and provenance Gates pending.
+Before H02/H03 are read, the exact statistic, effect threshold, confidence
+interval, multiplicity and House aggregation are signed in a separate Gate
+preregistration.
 
 ### G2 — M3 sensor/reachability emission
 
 - preserve actual measured gas as authoritative;
-- process candidate concentration through the same persistent sensor;
+- process candidate concentration through the same persistent sensor from the
+  correct pre-stop state;
 - use source-independent sensor/noise calibration replicates;
 - report calibration, proper score, false-positive/false-negative behavior and
   absolute source-independent adequacy;
@@ -524,22 +590,34 @@ Current status: H01 premise PASS; external-House and provenance Gates pending.
 
 Current status: sensor implementation parity PASS; calibrated likelihood
 pending. The 0.25/0.75 score is not enough.
+Its external Gate is preregistered before outcome with a proper predictive
+score, calibration interval, source-independent null and House-level
+non-reversal rule.
 
 ### G3 — M2 coherence and future-predictive increment
 
-On identical M1/M3 emissions, compare:
+On identical M1/M3 emissions and identical persistent
+\(A=(H,U,Q,\tau_0,\Psi)\), compare:
 
-- coherent whole-run \(w_t(S,J)\);
-- valid independent-per-stop nuisance marginalization;
+- coherent whole-run \(w_t(S,A,K)\);
+- transport-only per-stop redraw of \(K\);
+- whole-\(J\) redraw only as a secondary stress control;
 - member-identity permutation;
 - future-stop prediction from previous stops;
 - observation-to-stop pairing destruction;
-- raw chronological destruction through the sensor model when feasible.
+- raw chronological destruction through the sensor model;
+- global simulator-time shift.
 
 Report proper score, true-source rank/mass and formal error at actual update
 boundaries. Require a preregistered directional paired test and no House
 reversal. Current H01 result is only a coherence premise PASS under a surrogate
 score.
+
+The primary future-predictive test fits no outcome-dependent parameters: past
+stops update \(w_{t-1}\), and the next unseen stop is scored before
+assimilation. Before external results are read, the effect statistic,
+one-sided \(\alpha\), confidence interval, multiplicity and House aggregation
+are frozen.
 
 ### G4 — optional neural acceleration Gate
 
@@ -584,15 +662,16 @@ not mathematically valid.
 | M1 diagnostic | native candidate concentration family, no event likelihood | does physical response contain source ordering? | diagnostic only |
 | M2 only | no candidate response or emission | none | structural N/A |
 | M3 only | sensor model without candidate concentration | none | structural N/A |
-| M1+M3 | native response plus calibrated sensor emission, nuisance marginalized independently per stop | does higher-fidelity physical/sensor evidence help without coherence? | valid coherence ablation |
-| M1+M2 | coherent update using the frozen surrogate score | does persistent nuisance have a premise signal before calibration? | diagnostic, not deployable likelihood |
+| M1+M3 | native response plus calibrated sensor emission; \(A\) stays persistent while \(K\) is independently marginalized per stop | does physical/sensor evidence help without native transport-member identity? | valid transport-only coherence ablation |
+| M1+M2 | coherent update using the frozen surrogate score, with transport-only and whole-\(J\) redraw reported separately | does persistent \(K\) have a premise signal before calibration? | diagnostic, not deployable likelihood |
 | M2+M3 | no source-conditioned physical family | none | structural N/A |
 | M1+M2+M3 | exact native response, calibrated sensor emission and coherent whole-run filter | full scientific method | valid after G0–G3/G5 |
 
 Additional controls:
 
 - M1 source-label, placement-quantile and transport-member permutations;
-- M2 independent-per-stop, member-identity and pairing destruction;
+- M2 transport-only redraw, whole-\(J\) stress redraw, member identity, global
+  time shift and stop-pairing destruction;
 - M3 sensorless, detection-null and exact-phase comparisons;
 - PMFS OFF and neutral-bypass parity;
 - exact versus neural acceleration is a separate engineering comparison, not a
@@ -647,6 +726,12 @@ observation world, initial pose, planner RNG, candidate nuisance and binary.
 Observation nuisance keys remain disjoint from predictive keys. Do not inspect
 or modify the batch midway.
 
+Define pooled improvement as:
+
+$$
+\Delta_{pool}=1-\frac{\sum_r e_{ON,r}}{\sum_r e_{OFF,r}}.
+$$
+
 Development GO requires:
 
 - 30/30 valid pairs;
@@ -658,8 +743,9 @@ Development GO requires:
 
 A performance catastrophe is preregistered as both
 \(e_{ON}>e_{OFF}+1\,m\) and \(e_{ON}>1.5e_{OFF}\).
-A false-confident catastrophe is posterior internal variance below
-\(1\,m^2\) while final Euclidean error exceeds \(2\,m\).
+A false-confident catastrophe is
+\(\mathrm{tr}\{\mathrm{Cov}_{q_t^{cell}}(x,y)\}<1\,m^2\) while final
+Euclidean error exceeds \(2\,m\).
 Report a paired bootstrap confidence interval; development is not the paper's
 confirmatory claim.
 
@@ -667,8 +753,9 @@ confirmatory claim.
 
 Freeze source, binary, launch, exact bank generation, sensor calibration,
 metrics and all thresholds. Use previously unseen seeds 10–19 or a genuinely
-unseen airflow/environment split. The paper-level 10% claim must come from this
-stage.
+unseen airflow/environment split. A paper claim of “at least 10%” requires the
+one-sided 95% cluster-bootstrap lower confidence bound for \(\Delta_{pool}\)
+to be at least 0.10, not only a point estimate at 0.10.
 
 ### Optional Phase 7 — engineering acceleration
 
@@ -706,13 +793,14 @@ Current status:
 
 | Item | Verdict |
 |---|---|
-| M1 native interventional source information | H01 PREMISE PASS / EXTERNAL AND PROVENANCE PENDING |
-| M2 persistent coherent source–transport state | H01 COHERENCE PREMISE PASS UNDER SURROGATE / EXTERNAL PENDING |
+| M1 native interventional source information | H01 PREMISE PASS / LATENT AIRFLOW, RELEASE-PHASE, EXTERNAL AND PROVENANCE PENDING |
+| M2 persistent coherent source–transport state | H01 WHOLE-J COHERENCE PREMISE PASS UNDER SURROGATE / TRANSPORT-ONLY ATTRIBUTION PENDING |
 | M3 calibrated sensor-aware detection emission | IMPLEMENTATION PARITY PASS / CALIBRATION NOT PASSED |
 | neural scientific module | REJECT_COLLISION_AND_NO_EVIDENCE |
 | exact PMFS channel replacement and ledger | NOT IMPLEMENTED / G5 NOT PASSED |
 | H01 shadow formal improvement | STRONG DEVELOPMENT SIGNAL |
-| H01 exact-carrier consistency | FAILING / UNRESOLVED |
+| H01 exact-carrier and cell-lifting consistency | FAILING / UNRESOLVED |
+| novelty collision verdict | PROVISIONAL LEVEL 2–3 / FULL M2 COMPARISON PENDING |
 | closed-loop authorization | NO |
 | confirmed improvement of at least 10% | NOT ESTABLISHED |
 

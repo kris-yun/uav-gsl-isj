@@ -57,6 +57,7 @@ Timestamp: 2026-08-30
 
 Overall method verdict is not the minimum level of familiar support modules,
 because M1 and M3 are explicitly not claimed as innovations. For the narrowed
-M2 main claim, the worst verified comparison is **Level 3 — Medium Overlap**.
-Any manuscript that claims the broad three-piece pipeline itself as novel
-would fall to Level 2 or worse.
+M2 main claim the present verdict is **provisional Level 2–3** pending a full
+mechanism comparison with JFR/TRO 2019 source-term estimation and the 2026
+physical-dependency sequential GSL preprint. Any manuscript that claims the
+broad three-piece pipeline itself as novel would fall to Level 2 or worse.
