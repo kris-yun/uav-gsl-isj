@@ -332,6 +332,7 @@ def main() -> int:
     parser.add_argument("--placement-manifest", type=Path)
     parser.add_argument("--preregistration", type=Path)
     parser.add_argument("--null-maps", type=Path)
+    parser.add_argument("--evaluation-addendum", type=Path)
     parser.add_argument("--schedule-root", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--selftest", action="store_true")
@@ -341,7 +342,7 @@ def main() -> int:
         return 0
     required = (
         "formal_bank", "fixed_bank", "placement_manifest", "preregistration",
-        "null_maps", "schedule_root", "output",
+        "null_maps", "evaluation_addendum", "schedule_root", "output",
     )
     missing = [name for name in required if getattr(args, name) is None]
     if missing:
@@ -386,17 +387,30 @@ def main() -> int:
     ):
         raise SystemExit("CTT_FIXED_U8_EVAL_INFERENCE_UNIT_CONTRACT_FAIL")
     null_maps = load_json(args.null_maps)
-    null_contract = "CTT_M2_FIXED_U_PROSPECTIVE_K_NULL_MAPS_V2"
+    null_contract = "CTT_M2_FIXED_U_PROSPECTIVE_K_NULL_MAPS_V3"
+    addendum = load_json(args.evaluation_addendum)
+    unchanged = addendum.get("scientific_changes", {})
     if (
         null_maps.get("contract") != null_contract
         or null_maps.get("replicates") != NULL_REPLICATES
         or null_maps.get("source_count") != SOURCE_COUNT
         or null_maps.get("predictive_K_count") != len(PREDICTIVE_MEMBERS)
         or null_maps.get("routes") != list(EVALUATION_ROUTES)
-        or sha256_file(args.null_maps)
-        != preregistration.get("destruction_controls", {}).get("null_map_sha256")
+        or addendum.get("contract")
+        != "CTT_M2_FIXED_U_PROSPECTIVE_K_EVALUATION_REPAIR_V1"
+        or addendum.get("status")
+        != "FROZEN_AFTER_PHYSICAL_MATERIALIZATION_BEFORE_ANY_SOURCE_SCORE_OR_OUTCOME_READ"
+        or addendum.get("original_generation_preregistration_sha256")
+        != sha256_file(args.preregistration)
+        or addendum.get("physical_bank", {}).get("bank_summary_sha256")
+        != sha256_file(fixed_summary_path)
+        or addendum.get("active_evaluation_null_map", {}).get("sha256")
+        != sha256_file(args.null_maps)
+        or addendum.get("active_evaluation_null_map", {}).get("contract")
+        != null_contract
+        or any(value is not False for value in unchanged.values())
     ):
-        raise SystemExit("CTT_FIXED_U8_EVAL_NULL_MAP_CONTRACT_FAIL")
+        raise SystemExit("CTT_FIXED_U8_EVAL_REPAIR_CONTRACT_FAIL")
 
     schedules = {
         route: args.schedule_root / "H01" / "reserved" / f"trajectory_seed_{route}.csv"
@@ -431,6 +445,7 @@ def main() -> int:
         "status": "FROZEN_BEFORE_PHYSICAL_SEQUENCE_READ",
         "preregistration_sha256": sha256_file(args.preregistration),
         "null_maps_sha256": sha256_file(args.null_maps),
+        "evaluation_addendum_sha256": sha256_file(args.evaluation_addendum),
         "evaluator_sha256": sha256_file(Path(__file__)),
         "fixed_bank_summary_sha256": sha256_file(fixed_summary_path),
         "factorial_manifest_sha256": sha256_file(args.fixed_bank / "FACTORIAL_SHA256.tsv"),
@@ -692,6 +707,7 @@ def main() -> int:
             "schedules": {str(route): sha256_file(schedules[route]) for route in ROUTES},
             "preregistration": sha256_file(args.preregistration),
             "null_maps": sha256_file(args.null_maps),
+            "evaluation_addendum": sha256_file(args.evaluation_addendum),
             "evaluation_freeze": sha256_file(args.output / "EVALUATION_FREEZE.json"),
         },
         "downstream_rule": (

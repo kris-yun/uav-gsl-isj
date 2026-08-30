@@ -1,0 +1,43 @@
+{
+  "contract": "CTT_M2_FIXED_U_PROSPECTIVE_K_EVALUATION_REPAIR_V1",
+  "date": "2026-08-31",
+  "status": "FROZEN_AFTER_PHYSICAL_MATERIALIZATION_BEFORE_ANY_SOURCE_SCORE_OR_OUTCOME_READ",
+  "reason": "The V2 null map counted raw stop IDs uniformly as 10 per route, whereas the frozen CTT observation operator defines a completed physical stop as the first 80 stationary samples and excludes a final stop with fewer than 80 samples.",
+  "failed_before_score_markers": [
+    "CTT_FIXED_U8_EVAL_STOP_SIZE_FAIL:route4004:stop7:90",
+    "CTT_FIXED_U8_EVAL_NULL_STOP_COUNT_FAIL:4004"
+  ],
+  "physical_bank": {
+    "path": "/home/zyc/CTT_M2_FIXED_U_PROSPECTIVE_K_BANK_20260831_R3",
+    "bank_summary_sha256": "17fe0d233b85310f7d7f339db744ca8fa6724faf6d22e3860e9b89b061f0d544",
+    "factorial_manifest_sha256": "ba0f87eeb2dbdfe198fb384474e1241e0716dc7f58fe073440b0b4300cf8ed65",
+    "materialization_verdict": "CTT_H01_FIXED_U_PROSPECTIVE_K_MATERIALIZATION_PASS",
+    "reused_without_regeneration": true
+  },
+  "original_generation_preregistration_sha256": "708139ee04ce859e946771f2fdaf046b56ed22c94c3cba0ee22fb35f61de7544",
+  "superseded_null_map": {
+    "contract": "CTT_M2_FIXED_U_PROSPECTIVE_K_NULL_MAPS_V2",
+    "sha256": "0a284c0fbd71e1d46615e04b3a05e74b450978a509dc60f5ab3fbe0af92ce5af",
+    "status": "SUPERSEDED_BEFORE_ANY_SOURCE_SCORE_OR_OUTCOME_READ"
+  },
+  "active_evaluation_null_map": {
+    "contract": "CTT_M2_FIXED_U_PROSPECTIVE_K_NULL_MAPS_V3",
+    "sha256": "e28c645393fe38dafa2a958f9f55eb01e47036c6337eef6f69fec047b76f4795",
+    "stop_count_by_route": {
+      "4004": 9,
+      "4005": 10
+    },
+    "rng_seeds_unchanged_from_v2": true,
+    "replicates_unchanged": 256
+  },
+  "frozen_observation_block_rule": "For each stop_id, collect stationary schedule rows in chronological order; if fewer than 80, exclude the incomplete stop; otherwise use exactly the first 80 rows.",
+  "scientific_changes": {
+    "score_equations_changed": false,
+    "transport_seeds_changed": false,
+    "source_or_route_set_changed": false,
+    "threshold_changed": false,
+    "inference_unit_changed": false,
+    "null_family_or_rng_seed_changed": false
+  },
+  "closed_loop_authorized": false
+}
