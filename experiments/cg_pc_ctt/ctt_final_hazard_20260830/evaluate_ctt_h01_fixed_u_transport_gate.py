@@ -82,11 +82,13 @@ def load_stops(path: Path) -> list[np.ndarray]:
         ], dtype=np.int64)
         if not len(indices):
             continue
-        if len(indices) != STOP_SAMPLES:
-            raise ValueError(
-                f"CTT_FIXED_U8_EVAL_STOP_SIZE_FAIL:{path}:{stop_id}:{len(indices)}"
-            )
-        stops.append(indices)
+        # The frozen trajectory generator may keep the UAV stationary beyond
+        # the 80-sample sensing block, while a final truncated stop may contain
+        # fewer than 80 samples.  Every authoritative CTT first-passage reader
+        # uses the first 80 stationary samples and excludes incomplete blocks.
+        if len(indices) < STOP_SAMPLES:
+            continue
+        stops.append(indices[:STOP_SAMPLES])
     if len(stops) < 3:
         raise ValueError(f"CTT_FIXED_U8_EVAL_TOO_FEW_STOPS:{path}:{len(stops)}")
     return stops
@@ -275,6 +277,22 @@ def transport_unit_statistic(
 
 
 def selftest() -> None:
+    with tempfile.TemporaryDirectory() as directory:
+        schedule = Path(directory) / "schedule.csv"
+        with schedule.open("w", newline="", encoding="utf-8") as target:
+            writer = csv.DictWriter(target, fieldnames=("stop_id", "is_moving"))
+            writer.writeheader()
+            # Complete, overlong and incomplete physical stops exercise the
+            # exact frozen block extraction rule used by prior CTT audits.
+            for stop_id, count in ((1, STOP_SAMPLES), (2, STOP_SAMPLES + 10),
+                                   (3, STOP_SAMPLES - 1), (4, STOP_SAMPLES)):
+                writer.writerows(
+                    {"stop_id": stop_id, "is_moving": 0} for _ in range(count)
+                )
+        extracted = load_stops(schedule)
+        assert len(extracted) == 3
+        assert all(len(indices) == STOP_SAMPLES for indices in extracted)
+        assert int(extracted[1][-1] - extracted[1][0] + 1) == STOP_SAMPLES
     predictive = np.asarray([
         [[1, 0, 1], [1, 0, 1], [1, 0, 1], [0, 1, 0], [0, 1, 0], [0, 1, 0]],
         [[0, 1, 0], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, 1]],

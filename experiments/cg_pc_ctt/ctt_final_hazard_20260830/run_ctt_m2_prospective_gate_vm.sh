@@ -12,7 +12,7 @@ export NUMEXPR_NUM_THREADS=1
 export PYTHONHASHSEED=0
 set -u
 
-code=/home/zyc/CTT_M2_PROSPECTIVE_GATE_CODE_20260831_R4
+code=/home/zyc/CTT_M2_PROSPECTIVE_GATE_CODE_20260831_R5
 formal=/home/zyc/CTT_H01_WIND_BANK_FULL_20260830_R2_FORMAL_PERSISTED
 placement=/home/zyc/PF_DEI_V3_STREAM_BUILD/src/frozen_region_placement_manifest.json
 contexts=/home/zyc/CTT_H01_NATIVE_WIND_CONTEXTS_20260830/context_manifest.json
@@ -24,7 +24,7 @@ running_sim=/home/zyc/PF_DEI_V3_GADEN_BUILD/src/GADEN/gaden_common/third_party/g
 environment=/home/zyc/rmfe_cl_env/H01/OccupancyGrid3D.csv
 schedules=/home/zyc/PF_DEI_V3_TRAJECTORIES_20260828_R1
 bank=${CTT_M2_BANK_OUT:-/home/zyc/CTT_M2_FIXED_U_PROSPECTIVE_K_BANK_20260831_R3}
-evidence=${CTT_M2_EVIDENCE_OUT:-/home/zyc/CTT_M2_FIXED_U_PROSPECTIVE_K_EVIDENCE_20260831_R3}
+evidence=${CTT_M2_EVIDENCE_OUT:-/home/zyc/CTT_M2_FIXED_U_PROSPECTIVE_K_EVIDENCE_20260831_R4}
 
 cd "$code"
 sha256sum -c CTT_M2_PROSPECTIVE_GATE_CODE_SHA256SUMS.txt
