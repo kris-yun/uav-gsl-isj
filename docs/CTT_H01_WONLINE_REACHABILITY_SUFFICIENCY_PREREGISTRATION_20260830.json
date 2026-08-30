@@ -1,0 +1,34 @@
+{
+  "contract": "CTT_H01_WONLINE_REACHABILITY_SUFFICIENCY_DIAGNOSTIC_V1",
+  "status": "POST_NO_GO_DIAGNOSTIC_ONLY",
+  "target_contexts": [10, 11, 12, 13],
+  "development_donors": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "fresh_loco_donors": "all target contexts except the target",
+  "route_seed": 4005,
+  "route_stream_index": 4,
+  "wind_distance": "prefix RMSE over raw causal local (u,v), fixed physical scale 1 m/s",
+  "predictive_members": [0, 1, 2, 3, 4, 5],
+  "observation_members": [6, 7],
+  "primary_outcome": "ten-stop Bernoulli reachability Brier source ordering",
+  "comparators": {
+    "static_development_mixture": "equal empirical mixture of all 10 development contexts and six members",
+    "oracle_same_context": "six predictive members from the target context",
+    "development_nearest": "at each stop, nearest development context under causal wind-prefix RMSE",
+    "fresh_loco_nearest": "at each stop, nearest other fresh context under causal wind-prefix RMSE"
+  },
+  "pass_rule": "lower mean normalized true-source rank than static mixture, one-sided exact sign p <= 0.01, and no target-context mean-rank reversal",
+  "interpretation": {
+    "development_nearest_pass": "current training support contains usable online-wind transport matching",
+    "fresh_loco_only_pass": "online wind contains a diversity signal but the current single-family development support is inadequate",
+    "neither_pass": "no demonstrated sufficiency; does not prove intrinsic impossibility because donor airflow support is sparse"
+  },
+  "forbidden": [
+    "network training",
+    "GADEN generation",
+    "bandwidth or kernel fitting",
+    "learned weights",
+    "PMFS posterior",
+    "localization error",
+    "threshold tuning"
+  ]
+}
