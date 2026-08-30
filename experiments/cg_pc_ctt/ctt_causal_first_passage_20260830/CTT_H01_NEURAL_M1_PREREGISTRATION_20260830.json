@@ -1,0 +1,21 @@
+{
+  "contract": "CTT_H01_NEURAL_M1_FIRST_PASSAGE_PHYSICAL_GATE_V1",
+  "status": "FROZEN_BEFORE_TEST",
+  "code_sha256": "4cb4b0f053c95c22e829e4afeb9744d139b4e675a8106a3317b6aaa369477fe8",
+  "source_split": "sha256 carrier ordering: 150 train / 30 val / 30 test",
+  "trajectory_split": {"train": [4001,4002,4003], "validation": [4004], "test": [4005]},
+  "objective": "categorical first-passage NLL only",
+  "classes": 81,
+  "native_dt_s": 0.2,
+  "stop_samples": 80,
+  "threshold_ppm": 0.1,
+  "checkpoint_selection": "validation NLL only",
+  "comparison": "capacity-matched static-wind model",
+  "gates": [
+    "source-cluster bootstrap lower95(STATIC-CONDITIONAL NLL)>0",
+    "source-cluster bootstrap lower95(STATIC-CONDITIONAL integrated Brier)>0",
+    "source-cluster bootstrap lower95(context-shuffle-CONDITIONAL NLL)>0",
+    "max probability normalization error < 1e-6"
+  ],
+  "forbidden": ["source rank", "localization error", "PMFS posterior", "planner outcome", "future observation", "closed-loop reward"]
+}
