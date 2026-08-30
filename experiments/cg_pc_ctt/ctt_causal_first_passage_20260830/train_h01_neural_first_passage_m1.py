@@ -96,12 +96,15 @@ def stop_records(rows,w):
  for sid in sorted(set(r['stop_id'] for r in rows)):
   idx=np.array([i for i,r in enumerate(rows) if r['stop_id']==sid and r['moving']==0],dtype=int)
   if len(idx)<STOP_SAMPLES: continue
+  # Strictly use the first 8x10 samples as the completed PMFS blocks.  Sensor
+  # state itself is propagated over the complete trajectory outside this helper.
   idx=idx[:STOP_SAMPLES]; start=int(idx[0]); end=int(idx[-1])+1
   q=rows[start]; cur=np.array([q['x'],q['y']],dtype=float)
   dprev=np.zeros(2) if prev_xy is None else cur-prev_xy
-  wc=w[idx]; wp=w[:end]
+  wc=w[idx]
+  wp=w[:end]
   feat_route=np.array([q['t_sim_s'],cum[start],dprev[0],dprev[1],math.sin(q['yaw']),math.cos(q['yaw'])],dtype=np.float32)
-  feat_w=np.concatenate([wc.mean(0),wc.std(0),wc[-1],wp.mean(0),wp.std(0)]).astype(np.float32)
+  feat_w=np.concatenate([wc.mean(0),wc.std(0),wc[-1],wp.mean(0),wp.std(0)]).astype(np.float32) # 15
   stops.append(dict(sid=sid,start=start,end=end,idx=idx,xy=cur,route=feat_route,wind=feat_w))
   prev_xy=cur
  return stops
@@ -113,6 +116,7 @@ def first_passage(measured,idx):
 
 def base_features(c,st):
  sx,sy=c['x'],c['y']; qx,qy=st['xy']; dx=qx-sx;dy=qy-sy;dist=math.hypot(dx,dy);ux=dx/max(dist,1e-6);uy=dy/max(dist,1e-6)
+ # carrier half diagonal on the PMFS 0.3-m grid; geometry only.
  halfdiag=.5*.3*math.hypot(c['size_i'],c['size_j'])
  return np.array([sx,sy,qx,qy,dx,dy,dist,ux,uy,halfdiag,*st['route']],dtype=np.float32)
 
@@ -129,6 +133,7 @@ def build(args):
  stops=[stop_records(schedules[i],winds[i]) for i in range(5)]
  assert [len(s) for s in stops]==[10,10,10,9,10], [len(s) for s in stops]
  bank=root/'remote_full8/PF_DEI_H01_SOURCE_INFORMATION_AUDIT_20260829/predictive8'
+ # labels[c][traj] = list stop arrays of 8 first-passage labels.
  labels=[[None]*5 for _ in cs]
  for ci,c in enumerate(cs):
   streams=[]
@@ -138,6 +143,7 @@ def build(args):
    meas=sensor_batch(phys)
    labels[ci][tr]=[first_passage(meas,st['idx']) for st in stops[tr]]
   if (ci+1)%50==0: print(f'PREPROCESS {ci+1}/210',flush=True)
+ # train dynamic mean is calculated without test trajectory/source.
  dyn_train=[]
  for ci in split['train']:
   for tr in TRAIN_TRAJ:
@@ -201,6 +207,7 @@ def score(P,Y):
  p=np.clip(P,1e-12,1);nll=-np.log(p[np.arange(len(Y)),Y]);cdf=np.cumsum(P[:,:NEVER],axis=1);obs=(Y[:,None]<=np.arange(NEVER)[None,:]).astype(np.float32);brier=((cdf-obs)**2).mean(1);return nll,brier
 
 def bootstrap(delta,clusters,nboot=5000):
+ # cluster by source carrier to respect repeated stops/members.
  ids=np.array([c[0] for c in clusters]); uniq=np.unique(ids); vals=np.array([delta[ids==u].mean() for u in uniq]);rng=np.random.default_rng(SEED);means=np.empty(nboot)
  for i in range(nboot):means[i]=rng.choice(vals,len(vals),replace=True).mean()
  return float(vals.mean()),[float(x) for x in np.quantile(means,[.025,.975])]
@@ -220,6 +227,7 @@ def main():
   X,Y,C=sets[arm]['test'];P=predict(models[arm],cks[arm],X);n,b=score(P,Y);raw[arm]=(n,b,C,P,Y);results[arm]={'test_nll':float(n.mean()),'test_brier':float(b.mean()),'best_epoch':int(cks[arm]['epoch']),'val_nll':float(cks[arm]['val_nll']),'normalization_error':float(np.max(abs(P.sum(1)-1)))}
  dn=raw['static'][0]-raw['conditional'][0];db=raw['static'][1]-raw['conditional'][1]
  mn,nci=bootstrap(dn,raw['conditional'][2]);mb,bci=bootstrap(db,raw['conditional'][2])
+ # Destructive context control: conditional model evaluated with dynamic features shuffled among test stop contexts, independently of candidate/source label.
  X,Y,C=sets['conditional']['test']; base_dim=X.shape[1]-len(dyn_mean); Xp=X.copy(); rng=np.random.default_rng(SEED+17); perm=rng.permutation(len(Xp));Xp[:,base_dim:]=Xp[perm,base_dim:]
  Pp=predict(models['conditional'],cks['conditional'],Xp);np_,bp=score(Pp,Y);dperm_n=np_-raw['conditional'][0];dperm_b=bp-raw['conditional'][1];mpn,pnci=bootstrap(dperm_n,C);mpb,pbci=bootstrap(dperm_b,C)
  gate={'conditional_beats_static_nll':nci[0]>0,'conditional_beats_static_brier':bci[0]>0,'context_shuffle_hurts_nll':pnci[0]>0,'normalization_pass':results['conditional']['normalization_error']<1e-6}
