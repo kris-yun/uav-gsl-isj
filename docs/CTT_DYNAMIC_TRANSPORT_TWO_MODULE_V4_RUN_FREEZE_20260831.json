@@ -1,0 +1,35 @@
+{
+  "contract": "CTT_DYNAMIC_TRANSPORT_TWO_MODULE_V4_RUN_FREEZE",
+  "status": "FROZEN_BEFORE_V4_EXECUTION",
+  "git_commit": "a8ef1bc",
+  "evaluator_sha256": "75b001d97c1a40ddeb01af5c683a872f56c9cb924194a4663a28088dfe61881b",
+  "selftest_sha256": "8eefc2add3b1a01c6b74f71b4d36ae187224b2c4b894dda0900a55d751343eaf",
+  "preregistration_sha256": "d56dd03059c3290dce295ce945532ad661b2f312b874e37dd9e3fae7a70dbdd1",
+  "selftest_required_stdout": "CTT_DYNAMIC_TRANSPORT_TWO_MODULE_V4_SELFTEST=PASS",
+  "execution_order": [
+    "syntax and selftest",
+    "simulation-only member-LOO premise",
+    "external hash anchor of premise",
+    "stop immediately if premise is not PASS",
+    "measured truth-blind Stage 1",
+    "external hash anchor of all 150 posteriors",
+    "truth/native Stage 2",
+    "stop at frozen PASS or NO-GO"
+  ],
+  "output_roots": {
+    "control": "/home/zyc/CTT_DYNAMIC_TRANSPORT_V4_CONTROL_20260831_R1",
+    "premise": "/home/zyc/CTT_DYNAMIC_TRANSPORT_V4_PREMISE_20260831_R1",
+    "stage1": "/home/zyc/CTT_DYNAMIC_TRANSPORT_V4_STAGE1_20260831_R1",
+    "stage2": "/home/zyc/CTT_DYNAMIC_TRANSPORT_V4_EVIDENCE_20260831_R1"
+  },
+  "closed_loop": {
+    "authorized_before_both_gates_pass": false,
+    "authorized_after_both_gates_pass": "exactly H01/H02/H03 seeds1-3, PMFS OFF versus frozen M1+M2 ON, 300 seconds per arm"
+  },
+  "forbidden": [
+    "editing the evaluator, preregistration, M1, Q, rho estimator or Gate after this freeze",
+    "reading Stage 2 when premise fails",
+    "running closed loop after a V4 NO-GO",
+    "adding a third module"
+  ]
+}
