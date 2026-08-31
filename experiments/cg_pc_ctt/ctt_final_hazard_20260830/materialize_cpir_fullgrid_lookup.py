@@ -66,8 +66,9 @@ def load_cells(path: Path) -> list[dict[str, str]]:
     if not rows or not required.issubset(rows[0]):
         raise ValueError("CPIR_LOOKUP_CELL_SCHEMA")
     rows.sort(key=lambda row: int(row["cell_index"]))
-    if [int(row["cell_index"]) for row in rows] != list(range(len(rows))):
-        raise ValueError("CPIR_LOOKUP_CELL_INDEX_SEQUENCE")
+    indices = [int(row["cell_index"]) for row in rows]
+    if len(set(indices)) != len(indices) or any(index < 0 for index in indices):
+        raise ValueError("CPIR_LOOKUP_CELL_INDEX_UNIQUE_NONNEGATIVE")
     return rows
 
 
@@ -132,6 +133,12 @@ def main() -> int:
             write_schedule(temporary, cell)
             os.replace(temporary, path)
         schedule_paths.append(path)
+    with (output / "cell_manifest.csv").open("w", newline="", encoding="utf-8") as target:
+        writer = csv.DictWriter(target, fieldnames=("stream_ordinal", "native_cell_index", "x", "y"))
+        writer.writeheader()
+        for ordinal, cell in enumerate(cells):
+            writer.writerow({"stream_ordinal": ordinal, "native_cell_index": int(cell["cell_index"]),
+                             "x": cell["x"], "y": cell["y"]})
 
     frozen_env = os.environ.copy()
     frozen_env.update(GENERATION_ENVIRONMENT)
@@ -197,6 +204,7 @@ def main() -> int:
         "observation_realization": str(args.observation_realization),
         "observation_realization_sha256": sha256_file(args.observation_realization),
         "cell_csv_sha256": sha256_file(args.cell_csv),
+        "cell_manifest_sha256": sha256_file(output / "cell_manifest.csv"),
         "placement_manifest_sha256": sha256_file(args.placement_manifest),
         "native_binary_sha256": sha256_file(args.native_binary),
         "environment_sha256": sha256_file(args.environment),
