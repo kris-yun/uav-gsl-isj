@@ -1,5 +1,19 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
+set -Ee
+
+# Native multistream binary links against ROS 2 libraries.  The previous launch
+# inherited a bare SSH environment and failed before any physics was generated
+# (`librclcpp.so: cannot open shared object file`).  Source the frozen ROS
+# runtime here; this changes only process setup, not the CPIR physics contract.
+source /opt/ros/humble/setup.bash
+if [[ -f /home/zyc/ros2_ws/install/setup.bash ]]; then
+  source /home/zyc/ros2_ws/install/setup.bash
+fi
+# The ros2_ws gaden_common install currently contains a dangling symlink.  Use
+# the parity-validated frozen GADEN build used by the V3 native binary and its
+# bundled libbsc dependency; this is a loader repair only.
+export LD_LIBRARY_PATH="/opt/ros/humble/lib:/home/zyc/PF_DEI_V3_GADEN_BUILD/install/lib:/home/zyc/PF_DEI_V3_GADEN_BUILD/build/gaden_common/third_party/gaden_core/third_party/libbsc:${LD_LIBRARY_PATH:-}"
+set -uo pipefail
 
 code=/home/zyc/materialize_cpir_fullgrid_lookup.py
 placement=/home/zyc/PF_DEI_V3_REGION_SUPPORT_20260828/frozen_region_placement_manifest.json
