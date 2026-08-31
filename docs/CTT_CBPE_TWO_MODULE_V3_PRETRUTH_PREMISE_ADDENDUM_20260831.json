@@ -1,0 +1,49 @@
+{
+  "contract": "CTT_CBPE_TWO_MODULE_V3_PRETRUTH_PREMISE_ADDENDUM",
+  "status": "FROZEN_BEFORE_CBPE_PREMISE_OR_HISTORICAL_V3_OUTCOME_READ",
+  "parent_preregistration_sha256": "9d2ebae2a1227a6a0720b17972370b238b810d99be81756231900fe3410c19a7",
+  "purpose": "Require positive source-identifiable and ordered block-temporal information from M2 on synthetic member-held-out evidence before any measured PMFS replay can authorise runtime.",
+  "units": {
+    "clusters": "House x frozen route index 0..9 x held-out transport member 0..7",
+    "cluster_count": 240,
+    "pseudo_observations_per_cluster": "every candidate source in that House, scored only for rank aggregation inside its cluster",
+    "independent_n_for_inference": "clusters, never sources, blocks, transitions or updates"
+  },
+  "strict_member_LOO": {
+    "heldout_observation": "the five ordered block counts of source s and held-out member h",
+    "calibration_Q_minus_h": "exclude every ordered member pair in which either member equals h",
+    "candidate_predictive_members": "the seven members other than h",
+    "coherent_score": "logmeanexp over predictive member m outside the product of five aligned block emission probabilities",
+    "prior": "rank likelihood only; do not use q0, native PMFS or truth"
+  },
+  "controls": {
+    "BLOCK_ORDER_PERMUTE": "one deterministic non-identity permutation of the five pseudo-observed block counts per cluster; preserve its histogram",
+    "INCOHERENT_PER_BLOCK": "sum over blocks of logmeanexp across predictive members, allowing the member to switch",
+    "SOURCE_LABEL_NULL": "256 deterministic House-shared uniform source-label permutations",
+    "WITHIN_BLOCK_PERMUTE": "any permutation of the three stop labels must be exactly invariant before block counts are formed",
+    "CANDIDATE_PERMUTE": "restored candidate scores must match within 1e-12",
+    "MEMBER_PERMUTE": "restored scores must match within 1e-12"
+  },
+  "hard_go_rules": {
+    "clusters_exactly": 240,
+    "all_Q_rows_sum_max_abs": 1e-12,
+    "strict_member_LOO": "PASS",
+    "within_block_permutation_max_abs": 0.0,
+    "candidate_permutation_max_abs": 1e-12,
+    "member_permutation_max_abs": 1e-12,
+    "ordered_mean_normalized_true_source_rank_at_most": 0.35,
+    "each_house_ordered_mean_normalized_true_source_rank_at_most": 0.45,
+    "source_label_empirical_upper_tail_p_at_most": 0.01,
+    "ordered_better_than_block_permute_mean_rank": true,
+    "ordered_vs_block_permute_cluster_sign_p_at_most": 0.01,
+    "coherent_better_than_incoherent_mean_rank": true,
+    "coherent_vs_incoherent_cluster_sign_p_at_most": 0.01,
+    "each_house_order_and_coherence_direction_not_reversed": true
+  },
+  "terminal_states": {
+    "pass": "CTT_CBPE_M2_PRETRUTH_PREMISE_PASS",
+    "fail": "CTT_CBPE_M2_PRETRUTH_PREMISE_NO_GO",
+    "invalid": "CTT_CBPE_M2_PRETRUTH_PREMISE_INVALID"
+  },
+  "downstream": "Only a complete premise PASS permits the same frozen run to write measured Stage-1 posteriors. Premise failure stops V3 before native PMFS or localization truth is opened."
+}
