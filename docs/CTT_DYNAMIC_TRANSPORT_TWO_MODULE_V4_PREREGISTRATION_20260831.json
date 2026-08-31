@@ -1,0 +1,125 @@
+{
+  "contract": "CTT_DYNAMIC_TRANSPORT_TWO_MODULE_V4",
+  "status": "FROZEN_BEFORE_V4_PREDICTIVE_OR_MEASURED_RESULT_READ",
+  "scope": "ONE_FINAL_M2_INTERNAL_PHYSICAL_REVISION",
+  "scientific_modules": {
+    "M1": "frozen causal GADEN do(S=s) reachability through the run-persistent sensor, summarized as the hit count in each ordered three-stop source-update block",
+    "M2": "exact Bayesian filtering over a temporally persistent but evolving exchangeable transport latent",
+    "third_module": "FORBIDDEN_AND_DEFERRED"
+  },
+  "preserved_results": {
+    "v3_verdict": "CTT_CBPE_TWO_MODULE_V3_NO_GO",
+    "v3_summary_sha256": "850d5ebf21b5277d11caacf451a44f7a5d0d9c8488188c3ac9cd520d7580ba42",
+    "v3_verdict_sha256": "3e4616eca6ea6c2531ec25777b4c90ae0f3c25aecb67cec099d115baa77b56ff",
+    "v3_result_document_sha256": "5c7a15738ef1e2a5688f65364d5b015ed7943281d9457b4e11bc3db23ce577a1",
+    "interpretation": "V3 preserves a 49.4218 percent fixed-trajectory pooled development signal and 27 of 30 wins, but is NO-GO because whole-run fixed transport is not incrementally stable and one catastrophic regression remains."
+  },
+  "frozen_dependencies": {
+    "v3_evaluator_sha256": "7039a4948108a667c04a77053b0b559c308a3bda214aac34356930b5cbe6d479",
+    "v1_evaluator_sha256": "201fb8933b9c309863bc8e7bb80424a294a56e08a928a2b3f4495abe009dee58",
+    "v2_projection_sha256": "29171c4fb64e9388ac01aa9dd0a049ffd8d3723d7c034ee15ea97703cfae37d3",
+    "causal_gate_sha256": "4ad995f3331f4460a6e45c808c79b9656b9e8b0aad3b9c7ff4c9aaa42aa92351",
+    "houses": ["House01", "House02", "House03"],
+    "historical_stream_indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "transport_members": [0, 1, 2, 3, 4, 5, 6, 7],
+    "source_updates": 5,
+    "stops_per_update": 3,
+    "emission_states": [0, 1, 2, 3],
+    "global_emission_matrix": "the source-, House-, route-, truth- and outcome-independent Jeffreys-smoothed V3 4x4 Q fitted from ordered strict member-LOO pairs"
+  },
+  "state_definition": {
+    "latent": "Z_j in {0,...,7} is the exchangeable transport-realization state at source-update block j",
+    "initial_distribution": "uniform over the active predictive members",
+    "time_unit": "one physical source-update block containing exactly three newly completed stops",
+    "forbidden_interpretation": "member labels are not named meteorological regimes and no member-specific transition parameter may be fitted"
+  },
+  "transition_model": {
+    "formula": "A[m,m_prime] = rho * 1[m=m_prime] + (1-rho)/M",
+    "meaning": "with probability rho retain the prior realization; otherwise redraw uniformly from the active exchangeable member set",
+    "free_parameters": 0,
+    "label_invariance": "simultaneous permutation of transport-member labels leaves A, likelihood and posterior unchanged"
+  },
+  "persistence_estimator": {
+    "domain": "frozen simulation block counts only; no measured tape, native PMFS posterior, truth coordinate or localization error",
+    "matched_design": "same House, candidate source, trajectory stream and adjacent source-update blocks",
+    "same_rows": "indicator that the same transport member has equal block count across adjacent blocks",
+    "cross_rows": "indicator that two different transport members have equal block count across the same adjacent blocks",
+    "smoothing": "Jeffreys Bernoulli: p=(success+0.5)/(trials+1)",
+    "formula": "rho = clip((p_same-p_cross)/(1-p_cross), 0, 1)",
+    "interpretation": "chance-corrected excess adjacent agreement attributable to retaining one simulated realization",
+    "LOO_rule": "each held-out-member predictive premise fold estimates rho after excluding that member from every same and cross row",
+    "invalid_conditions": [
+      "p_cross is nonfinite or >= 1",
+      "no eligible same or cross rows",
+      "any measured, truth, posterior or localization field is consumed"
+    ],
+    "degenerate_boundary_rule": "rho equal to 0 or 1 is reported; DYNAMIC then equals IID or FIXED and cannot pass the strict incremental Gate"
+  },
+  "exact_inference": {
+    "emission": "e_s,m,j = Q[K_s,m,j, k_obs,j]",
+    "initial": "alpha_1(s,m) = q0(s) * e_s,m,1 / M",
+    "recursion": "alpha_j(s,m_prime) = e_s,m_prime,j * sum_m alpha_(j-1)(s,m) A[m,m_prime]",
+    "carrier_posterior": "normalize sum_m alpha_J(s,m) jointly over source and member",
+    "numerics": "exact finite-state forward recursion with global positive rescaling after each block; no particle approximation, MAP state selection or beam pruning",
+    "online_batch_contract": "prefix-online recursion must equal a fresh batch recursion to absolute tolerance 1e-12"
+  },
+  "arms": {
+    "PMFS": "native PMFS posterior and planner baseline",
+    "M1_CAUSAL_ONLY": "frozen V1 global-count causal reachability likelihood",
+    "M1_M2_DYNAMIC_FULL": "the exact dynamic-latent recursion at simulation-estimated rho",
+    "M1_M2_TIME_SHUFFLE": "same dynamic model and rho, with a deterministic nonidentity permutation of the observed block order for every prefix of length at least two",
+    "M1_M2_IID_TRANSPORT": "same recursion with rho=0",
+    "M1_M2_FIXED_TRANSPORT": "same recursion with rho=1"
+  },
+  "destructive_controls": {
+    "time_shuffle": "preserves each observed block count and its histogram while destroying temporal alignment",
+    "iid_transport": "destroys transport persistence while preserving Q and every candidate block prediction",
+    "fixed_transport": "forbids transport evolution and exactly recovers the V3 whole-run coherent-member model",
+    "M1_only": "removes M2 while preserving the causal physical evidence operator"
+  },
+  "premise_gate": {
+    "independent_unit": "House x historical route, exactly 30 clusters; member-LOO folds are averaged within cluster before inference",
+    "source_label_randomization_replicates": 256,
+    "hard_rules": {
+      "route_clusters_exactly": 30,
+      "dynamic_source_label_empirical_p_at_most": 0.01,
+      "dynamic_vs_M1_route_exact_sign_p_at_most": 0.01,
+      "dynamic_vs_time_shuffle_route_exact_sign_p_at_most": 0.01,
+      "dynamic_vs_iid_route_exact_sign_p_at_most": 0.01,
+      "dynamic_vs_fixed_route_exact_sign_p_at_most": 0.01,
+      "each_House_dynamic_minus_each_comparator_mean_rank_delta_not_positive": true
+    }
+  },
+  "measured_fixed_trajectory_gate": {
+    "independent_unit": "one historical House-seed run, exactly 30 paired runs",
+    "primary_tie_modes": ["ascending", "descending", "symmetric"],
+    "hard_rules": {
+      "valid_updates_exactly": 150,
+      "valid_final_pairs_exactly": 30,
+      "pooled_relative_improvement_vs_PMFS_each_primary_at_least": 0.10,
+      "improved_pairs_vs_PMFS_each_primary_at_least": 20,
+      "each_House_pooled_relative_improvement_each_primary_at_least": -0.05,
+      "catastrophic_regressions_each_primary_at_most": 0,
+      "new_false_confident_collapses_each_primary_at_most": 0,
+      "dynamic_total_error_strictly_lower_than_M1_time_shuffle_iid_fixed_each_primary": true,
+      "dynamic_vs_M1_time_shuffle_iid_fixed_one_sided_exact_sign_p_each_primary_at_most": 0.05
+    }
+  },
+  "catastrophe_definition": "reuse the frozen V1/V2/V3 definition without modification",
+  "projection": "reuse the frozen V2 hierarchical KL/I-projection; ABSTAIN is exact native PMFS",
+  "forbidden": [
+    "third module",
+    "threshold, temperature, blend, adaptive weight or posterior reset",
+    "House-, seed-, source-, truth- or outcome-specific persistence",
+    "localization-result-driven persistence estimation",
+    "learning an unrestricted 8x8 transition matrix",
+    "changing Q, M1, planner, PMFS or source support",
+    "changing the method after any V4 result is read"
+  ],
+  "terminal_policy": {
+    "premise_fail": "CTT_DYNAMIC_TRANSPORT_M2_PREMISE_NO_GO; stop and retire M2",
+    "measured_gate_fail": "CTT_DYNAMIC_TRANSPORT_TWO_MODULE_V4_NO_GO; stop and retire M2 while preserving M1",
+    "all_pass": "freeze M1+M2 and authorize exactly H01/H02/H03 seeds1-3 contemporaneous paired 300 s PMFS OFF versus frozen ON",
+    "closed_loop_claim_before_nine_pairs": false
+  }
+}
