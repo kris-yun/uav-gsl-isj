@@ -1,0 +1,122 @@
+{
+  "contract_id": "CPIR_THREE_MODULE_FORMULA_CONTRACT_20260831",
+  "status": "THEORY_FROZEN_IMPLEMENTATION_PARTIAL_CLOSED_LOOP_NOT_AUTHORIZED",
+  "base_commit": "ea450ffc84ce4607988d0deb2867618acb1fa6d7",
+  "method_name": "Causal Physical Intervention Reachability",
+  "paper_modules": {
+    "M1": {
+      "name": "Causal Stochastic Physical Intervention",
+      "role": "candidate-conditioned native physical forward response under do(S=s)",
+      "equation": "C_{1:N}^{s,k}=F_GADEN(do(S=s),K=k,X_{1:N},E)",
+      "transport_member_semantics": "exchangeable_nuisance_sample_not_temporal_state",
+      "member_count_runtime": 8,
+      "forbidden": [
+        "true_source_input",
+        "true_or_best_transport_member_selection",
+        "observation_world_hidden_member_id",
+        "posterior_or_rank_training_target",
+        "localization_error_tuning"
+      ]
+    },
+    "M2": {
+      "name": "Persistent Sensor-State Transduction",
+      "role": "candidate physical tape to carried sensor state to stop detection",
+      "dt_s": 0.2,
+      "tau_s": 1.2,
+      "alpha": 0.846481724890614,
+      "delay_samples": 2,
+      "dead_time_s": 0.4,
+      "threshold_ppm": 0.1,
+      "stop_samples": 80,
+      "stop_duration_s": 16.0,
+      "state_equation": "R_n^{s,k}=alpha R_{n-1}^{s,k}+(1-alpha)C_{n-2}^{s,k}",
+      "candidate_event": "Z_{sbk}=1[max_{n in I_b} R_n^{s,k}>theta]",
+      "observed_event": "Y_b=1[max_{n in I_b} M_n^obs>theta]",
+      "state_reset_policy": "never_reset_at_motion_stop_or_source_update",
+      "observation_policy": "real_measured_tape_is_not_filtered_again"
+    },
+    "M3": {
+      "name": "Stop-Resolved Reachability Detection Composite Likelihood",
+      "role": "retain physical-stop identity in repeated detection/non-detection evidence",
+      "predictive_hit_count": "h_{sb}=sum_k Z_{sbk}",
+      "prior": "Beta(1/2,1/2)",
+      "predictive_probability": "q_{sb}=(h_{sb}+1/2)/(M+1)",
+      "full_score": "ell_M3(s)=sum_b[Y_b log q_{sb}+(1-Y_b)log(1-q_{sb})]",
+      "count_only_comparator": "ell_count(s)=H_plus log qbar_s+(B-H_plus)log(1-qbar_s), qbar_s=mean_b q_{sb}",
+      "joint_claim": "composite_likelihood_not_exact_joint_transport_probability",
+      "first_passage_phase": "forbidden_from_primary_score"
+    }
+  },
+  "carrier_to_cell_interface": {
+    "counted_as_module": false,
+    "name": "KL information projection",
+    "constraint": "sum_{c in C_i} Q_cell(c)=Q_carrier(i)",
+    "solution": "Q_cell(c)=Q_carrier(i(c))*p_ref(c)/sum_{u in C_i(c)}p_ref(u)",
+    "reference_policy": "p_ref_must_not_have_consumed_the_same_gas_observations",
+    "required_tests": [
+      "carrier_mass_conservation",
+      "within_carrier_odds_preservation",
+      "identity_reconstruction",
+      "row_and_tie_order_invariance"
+    ]
+  },
+  "nested_ablation": {
+    "A0": "authoritative_main_v8_PMFS",
+    "A1": "M1_native_physics_plus_memoryless_raw_event_plus_count_only",
+    "A2": "M1_plus_M2_stateful_sensor_plus_count_only",
+    "A3": "M1_plus_M2_plus_M3_stop_resolved_score",
+    "M2_increment": "A2-A1",
+    "M3_increment": "A3-A2",
+    "controls": [
+      "M2_MEMORYLESS_RAW",
+      "M2_RESET_AT_STOP",
+      "M3_COUNT_ONLY",
+      "M3_REVERSE_STOP",
+      "SOURCE_LABEL_DESTRUCTION",
+      "PREDICTIVE_OBSERVATION_MEMBER_DISJOINTNESS"
+    ]
+  },
+  "evidence_boundaries": {
+    "current_cpir_base_shadow": {
+      "historical_label": "M1-only",
+      "paper_level_label": "CPIR-base_M1_plus_embedded_sensor_count_collapsed",
+      "pairs": 30,
+      "pmfs_mean_error_m": 5.1823,
+      "cpir_base_mean_error_m": 2.6808,
+      "pooled_mean_improvement": 0.4827,
+      "wins_losses_ties": [23, 7, 0],
+      "one_sided_sign_p": 0.00261,
+      "claim_boundary": "fixed_trajectory_shadow_not_closed_loop_and_not_clean_M1_ablation"
+    },
+    "M2_h01_development": {
+      "normalized_rank_raw": 0.1498425039872408,
+      "normalized_rank_stateful": 0.1325125313283208,
+      "rank_relative_reduction": 0.11565458529974686,
+      "error_raw_m": 2.7284684206596292,
+      "error_stateful_m": 2.539350542662363,
+      "error_relative_reduction": 0.0693128337367913,
+      "wins_losses_ties": [39, 1, 0],
+      "claim_boundary": "development_only_leave_one_predictive_member_out"
+    },
+    "M3_h01_development": {
+      "normalized_rank_full": 0.1325125313283208,
+      "normalized_rank_count": 0.21014268626110733,
+      "normalized_rank_reverse_stop": 0.3991014467988152,
+      "error_full_m": 2.539350542662363,
+      "error_count_m": 3.2587285693017036,
+      "error_reverse_stop_m": 3.5713917001092286,
+      "full_vs_count_wins_losses_ties": [40, 0, 0],
+      "full_vs_reverse_wins_losses_ties": [40, 0, 0],
+      "claim_boundary": "development_only_leave_one_predictive_member_out"
+    }
+  },
+  "terminal_rejections": [
+    "exact_first_passage_phase_as_main_mechanism",
+    "coherent_whole_run_transport_member_state",
+    "dynamic_markov_transport_member_state",
+    "local_wind_neural_hazard",
+    "posterior_temperature_blend_topk_rescue",
+    "truth_conditioned_nuisance_selection"
+  ],
+  "next_permitted_scientific_action": "implement_and_run_fixed_trajectory_nested_A0_A1_A2_A3_ablation_with_formula_parity_before_new_closed_loop_claim"
+}
