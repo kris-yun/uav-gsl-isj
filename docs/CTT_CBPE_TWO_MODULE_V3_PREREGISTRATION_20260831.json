@@ -1,0 +1,137 @@
+{
+  "contract": "CTT_CBPE_TWO_MODULE_V3",
+  "date": "2026-08-31",
+  "status": "PREREGISTERED_BEFORE_CBPE_STAGE1_POSTERIORS_OR_V3_OUTCOME_READ",
+  "development_status": "ONE_FORMULA_REVISION_AFTER_PRESERVED_V1_AND_V2_NO_GO",
+  "purpose": "Test whether causal physical reachability plus a coherent block-partially-exchangeable temporal likelihood supplies safe incremental source evidence over PMFS without adding a third scientific module.",
+  "preserved_negative_dependencies": {
+    "v1_verdict": "CTT_CAUSAL_TEMPORAL_PMFS_SHADOW_NO_GO",
+    "v1_summary_sha256": "db71e93f1e346406a13ac65abe615e3b3c34de490047a379e4e5d29ccd0ab7b0",
+    "v2_verdict": "CTT_CAUSAL_TEMPORAL_HIERARCHICAL_PROJECTION_V2_NO_GO",
+    "v2_summary_sha256": "36bd50881f19bb6119e28a8444908bed8e5058ed14151dd253ece65350107f98",
+    "v2_failure_used_for_revision": "per-stop nuisance-member switching and within-block pseudo-replication were falsified; the V2 carrier-to-cell projection remains unchanged"
+  },
+  "scientific_modules": {
+    "M1_causal_physical_operator": "native GADEN do(S=s) physical concentration followed by the frozen run-persistent sensor operator and a reached/not-reached event over the first 80 samples of each completed stop",
+    "M2_CBPE_temporal_operator": "three newly completed stops form one ordered physical block; stop identity is exchangeable only inside the block, block order is preserved, and one latent transport member persists across all blocks before it is marginalized"
+  },
+  "scope": {
+    "houses": ["H01", "H02", "H03"],
+    "historical_off_seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "updates_per_run": 5,
+    "new_stops_per_update": 3,
+    "updates": 150,
+    "final_pairs": 30,
+    "predictive_members": [0, 1, 2, 3, 4, 5, 6, 7],
+    "observation_field": "sensor_trace.csv:measured_gas_ppm",
+    "forbidden_observation_fields": ["true_gas_ppm"],
+    "threshold_ppm": 0.1,
+    "stop_samples": 80,
+    "dt_s": 0.2,
+    "sensor_tau_s": 1.2,
+    "sensor_dead_time_s": 0.4,
+    "fixed_trajectory": true,
+    "new_gaden_runs": 0,
+    "neural_training": false,
+    "closed_loop_claim": false
+  },
+  "frozen_inputs": {
+    "bank_contract": "PF_DEI_V3_HISTORICAL_NATIVE_BANK_V1",
+    "bank_summary_sha256": "17364eb744f4fc53c4b52eee0362f09bdee3e8655b74c9d5e5a2eb0a3a9e2d47",
+    "bank_audit_sha256": "3a0954782f46bbfc2bc900c69273f9cbf99040ecb53b811671460f2189457d7e",
+    "bank_shard_manifest_sha256": "c68e4bcbd196a85d74ff9a44db01b2090f4487fc84943f82fcd0d17a18629bed",
+    "region_support_manifest_sha256": "4fec448feed607ea8c63148750ae9a610cf2e837a3df30808a256402c2d3a402",
+    "bank_shards": 7404,
+    "bank_samples": 311500812,
+    "bank_bytes": 1246832496,
+    "historical_root": "/home/zyc/CG_PC_CTT_V3_ORR_FULL60_PACKAGE_20260827/results",
+    "premise_verdict_required": "CTT_CAUSAL_REACHABILITY_CROSSHOUSE_PREMISE_PASS",
+    "premise_verdict_sha256": "71f12782025ec0c8cb93ec2e6a9f0fd0034ba015e72ecc52704351dec45607ba",
+    "premise_summary_sha256": "7a9fc8ea61102da463c100739233f47daaf47daec8b8f6cbd6f3f8b6740adde6"
+  },
+  "CBPE_formula": {
+    "simulated_stop_event": "E[s,r,m,b] in {0,1} is the frozen M1 reachability event for source s, historical route r, member m and completed stop b",
+    "simulated_block_count": "K[s,r,m,j] = sum over the three stops b in source-update block j of E[s,r,m,b], so K is in {0,1,2,3}",
+    "observed_block_count": "k_obs[r,j] is the analogous sum of the three measured-gas reachability events in block j",
+    "calibration_kernel": "Q[a,b] = (1/2 + N[a,b]) / (2 + sum_c N[a,c]), where N[a,b] pools ordered member pairs m != m_prime over every House, source, frozen route and block with K[m]=a and K[m_prime]=b",
+    "calibration_interpretation": "one global 4x4 source-, House- and seed-independent Dirichlet-Jeffreys posterior-predictive kernel; identity member pairs are prohibited and no measured observation, native PMFS posterior, truth or localization error enters Q",
+    "joint_state_initialization": "w_0(s,m) = q0(s)/8",
+    "sequential_update": "w_j(s,m) is proportional to w_(j-1)(s,m) Q[K[s,r,m,j], k_obs[r,j]]",
+    "carrier_posterior": "q_CBPE,j(s) = sum_m w_j(s,m)",
+    "batch_formula": "q_CBPE,J(s) is proportional to q0(s) times (1/8) sum_m product_(j=1..J) Q[K[s,r,m,j], k_obs[r,j]]",
+    "coherence": "the same m remains inside the product across all ordered blocks and is marginalized exactly once",
+    "partial_exchangeability": "the three stop labels inside one block are discarded, but the ordered sequence of block counts is retained",
+    "no_double_count": "M1 supplies the interventional predictive state K to this one CBPE likelihood; no separate M1 reach/count likelihood is multiplied into CBPE",
+    "geometry_prior": "q0(s) is proportional to the frozen number of native free PMFS cells in carrier s"
+  },
+  "cell_interface": {
+    "formula": "q_cell(x) = q_CBPE(B(x)) p_N(x) / p_N(B(x))",
+    "interpretation": "the frozen V2 minimum-KL projection; CBPE replaces only the carrier marginal while independent native PMFS supplies its within-carrier conditional",
+    "zero_mass_policy": "if q_CBPE(B)>0 and p_N(B)=0 for any B, the entire update returns native PMFS exactly",
+    "prohibited": ["epsilon floor", "uniform fill", "posterior blend", "temperature", "adaptive weight", "truth/error gate"]
+  },
+  "frozen_controls": {
+    "GLOBAL_COUNT": "the preserved V1 exchangeable count-only score over all visible stops",
+    "BLOCK_ORDER_PERMUTE": "apply one deterministic SHA256-domain-separated non-identity permutation to the observed completed-block order for J>=2; J=1 is necessarily identical",
+    "INCOHERENT_PER_BLOCK": "product over blocks of the member-averaged Q term, allowing member identity to switch between blocks",
+    "SOURCE_LABEL_NULL": "uniform unrestricted and equal-free-cell-count-stratified label permutations, with identity allowed inside individual strata",
+    "IDENTITY_PROJECTION": "using the native carrier marginal must reconstruct native PMFS cell mass exactly"
+  },
+  "truth_separation": {
+    "stage_1": "verify and read only the frozen bank, support, route geometry, update timing and measured_gas_ppm; write all 150 CBPE and control carrier posteriors and their SHA-256 manifest before reading a native PMFS posterior or case_result truth",
+    "stage_2": "reload Stage 1 by externally supplied manifest hash; then read only byte-identical native PMFS posteriors and case_result files already preserved in the V1 summary",
+    "development_boundary": "all seeds0..9 are opened development trajectories; PASS authorizes a runtime pilot, not a held-out paper claim"
+  },
+  "invariants": {
+    "Q_row_sum_max_abs": 1e-12,
+    "Q_strict_member_LOO": true,
+    "online_batch_joint_posterior_max_abs": 1e-12,
+    "candidate_permutation_max_abs_after_restore": 1e-12,
+    "member_permutation_max_abs_after_restore": 1e-12,
+    "identity_projection_max_abs": 1e-12,
+    "carrier_marginal_max_abs": 1e-12,
+    "within_carrier_conditional_max_abs": 1e-12,
+    "total_mass_max_abs": 1e-12,
+    "native_final_endpoint_parity_max_abs_m": 1e-10
+  },
+  "endpoints": {
+    "primary": ["ascending", "descending", "symmetric"],
+    "fixed_random_sensitivity": 16,
+    "official_metric": "ExpectedValue(sourceProbability,0.05)"
+  },
+  "hard_go_rules": {
+    "valid_updates_exactly": 150,
+    "valid_final_pairs_exactly": 30,
+    "all_invariants": "PASS",
+    "pooled_relative_improvement_each_primary_mode_at_least": 0.10,
+    "fixed_random_minimum_pooled_relative_improvement_at_least": 0.10,
+    "improved_pairs_each_primary_mode_at_least": 20,
+    "fixed_random_minimum_improved_pairs_at_least": 20,
+    "each_house_each_tie_mode_pooled_relative_improvement_at_least": -0.05,
+    "median_pair_relative_improvement_each_primary_mode_at_least": 0.0,
+    "catastrophic_regressions_every_tie_mode_at_most": 0,
+    "new_false_confident_collapses_every_primary_mode_at_most": 0,
+    "unrestricted_source_label_empirical_p_at_most": 0.01,
+    "free_count_stratified_source_label_empirical_p_at_most": 0.01,
+    "full_total_error_no_greater_than_GLOBAL_COUNT_each_primary_mode": true,
+    "full_total_error_no_greater_than_BLOCK_ORDER_PERMUTE_each_primary_mode": true,
+    "full_total_error_no_greater_than_INCOHERENT_PER_BLOCK_each_primary_mode": true,
+    "historical_measured_tape_exact_train_member_matches": 0
+  },
+  "catastrophe_definition": "method error is more than PMFS error plus 1.0 m and also greater than 1.5 times PMFS error",
+  "false_confident_collapse_definition": "posterior variance is below 1.0 m^2 while official error exceeds 2.0 m",
+  "forbidden": [
+    "changing M1, threshold, sensor constants, stop length, block size, member count, Q smoothing, source support, projection, endpoint or Gate after outcome read",
+    "House-, seed-, source- or error-conditioned Q",
+    "using true_gas_ppm, true source, localization error or a native PMFS posterior in Stage-1 evidence",
+    "adding a third scientific module, learned network, gate, blend, temperature or adaptive coefficient",
+    "selecting among multiple temporal formulas after this preregistration",
+    "starting runtime or closed loop after any hard-rule failure"
+  ],
+  "terminal_states": {
+    "pass": "CTT_CBPE_TWO_MODULE_V3_PASS_TO_RUNTIME_PILOT",
+    "fail": "CTT_CBPE_TWO_MODULE_V3_NO_GO",
+    "invalid": "CTT_CBPE_TWO_MODULE_V3_INVALID"
+  },
+  "downstream": "Only a complete hard PASS permits one immutable runtime implementation followed by the requested H01/H02/H03 seeds1-3 paired 300-second OFF versus ON development pilot. A paper claim still requires untouched held-out seeds."
+}
