@@ -1,6 +1,9 @@
 #pragma once
 #include <gsl_server/algorithms/Common/Algorithm.hpp>
 #include <string>
+#include <filesystem>
+#include <fstream>
+#include <unordered_map>
 
 #include <gsl_server/algorithms/PMFS/internal/HitProbability.hpp>
 #include <gsl_server/algorithms/PMFS/internal/Settings.hpp>
@@ -41,6 +44,11 @@ namespace GSL
         void saveResultsToFile(GSLResult result) override;
         void OnCompleteNavigation(GSLResult result, State* previousState) override;
         float gasCallback(olfaction_msgs::msg::GasSensor::SharedPtr msg) override;
+
+        void initializeCPIR();
+        void recordCPIRRawSample(float measuredPpm);
+        void finalizeCPIRPhysicalStop();
+        void applyCPIRPosterior(uint64_t sourceUpdateId, double simTime);
 
         template <typename T>
         Grid2D<T> AsGrid(std::vector<T>& vec)
@@ -94,6 +102,41 @@ namespace GSL
         bool contextBankExportEnabled = false;
         std::string contextBankExportDirectory;
         double contextBankPreviousSimTime = -1.0;
+
+        // Causal Physical Intervention Reachability (M1 only).  This state is
+        // unreachable in the authoritative OFF mode.
+        struct CPIRSample
+        {
+            int timeIndex = -1;
+            size_t nativeCellIndex = 0;
+            int stopIndex = -1;
+            int stopSampleIndex = -1;
+        };
+        bool cpirEnabled = false;
+        std::string cpirLookupRoot;
+        std::string cpirAuditDirectory;
+        std::vector<CPIRSample> cpirTrace;
+        std::vector<unsigned char> cpirObservedStopHit;
+        bool cpirStopActive = false;
+        int cpirCurrentStopIndex = -1;
+        int cpirCurrentStopSamples = 0;
+        bool cpirCurrentObservedHit = false;
+        int cpirLastTimeIndex = -1;
+        size_t cpirProcessedSamples = 0;
+        size_t cpirCellCount = 0;
+        size_t cpirCarrierCount = 0;
+        static constexpr size_t cpirMemberCount = 8;
+        static constexpr size_t cpirTimeCount = 1500;
+        std::unordered_map<size_t, size_t> cpirNativeCellToStream;
+        std::vector<std::string> cpirCarrierIds;
+        std::unordered_map<std::string, size_t> cpirCarrierToIndex;
+        std::vector<std::filesystem::path> cpirWorldPaths;
+        std::unordered_map<size_t, std::vector<float>> cpirCellCache;
+        std::vector<double> cpirSensorState;
+        std::vector<float> cpirDelayOne;
+        std::vector<float> cpirDelayTwo;
+        std::vector<std::vector<unsigned char>> cpirPredictedStopHit;
+        std::ofstream cpirUpdateAudit;
 
         IF_GUI(PMFS_internal::UI ui;)
     };

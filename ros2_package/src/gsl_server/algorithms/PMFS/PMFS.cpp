@@ -76,11 +76,14 @@ namespace GSL
         p2ShadowTransportSubstream = getParam<int64_t>("p2_transport_substream", 0x5053465354524E53LL);
         tadmEnabled = getParam<bool>("tadm_enabled", false);
         pfdiMode = getParam<std::string>("pfdi_mode", tadmEnabled ? "joint" : "off");
-        if (pfdiMode != "off" && pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" &&
+        if (pfdiMode != "off" && pfdiMode != "cpir_m1" && pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" &&
             pfdiMode != "al" && pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" && pfdiMode != "ec_edcl" &&
             pfdiMode != "ec_edcl_shadow")
-            throw std::invalid_argument("pfdi_mode must be off, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
-        tadmEnabled = pfdiMode != "off";
+            throw std::invalid_argument("pfdi_mode must be off, cpir_m1, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
+        cpirEnabled = pfdiMode == "cpir_m1";
+        tadmEnabled = pfdiMode != "off" && !cpirEnabled;
+        cpirLookupRoot = getParam<std::string>("cpir_lookup_root", "");
+        cpirAuditDirectory = getParam<std::string>("cpir_audit_directory", "");
         posteriorGuidanceWeight = std::clamp(getParam<double>("posterior_guidance_weight", 0.0), 0.0, 1.0);
         tadmDirectory = getParam<std::string>("tadm_directory", "");
         tadmPriorSet = getParam<int>("tadm_prior_set", 0);
@@ -206,6 +209,9 @@ namespace GSL
             static_cast<uint64_t>(getParam<int64_t>("seed", 0)),
             0x4E4154495645504DULL);
 
+        if (cpirEnabled)
+            initializeCPIR();
+
         // set all variables to the prior probability
         for (HitProbability& h : hitProbability)
             h.setProbability(settings.hitProbability.prior);
@@ -300,6 +306,8 @@ namespace GSL
         if (number_of_updates >= settings.hitProbability.maxUpdatesPerStop)
         {
             number_of_updates = 0;
+            if (cpirEnabled)
+                finalizeCPIRPhysicalStop();
 
             // Simulations are slow, so we only run them every few positions, when the map has had time to meaningfully change
             //----------------------------------------
@@ -317,6 +325,8 @@ namespace GSL
                 if (contextBankExportEnabled)
                     simulations.beginContextBankUpdate(p2SourceUpdateId, sourceUpdateSimTime);
                 simulations.updateSourceProbability(settings.simulation.refineFraction);
+                if (cpirEnabled)
+                    applyCPIRPosterior(p2SourceUpdateId, sourceUpdateSimTime);
                 if (contextBankExportEnabled)
                 {
                     simulations.exportContextBankState(
@@ -440,6 +450,8 @@ namespace GSL
     float PMFS::gasCallback(olfaction_msgs::msg::GasSensor::SharedPtr msg)
     {
         float ppm = Algorithm::gasCallback(msg);
+        if (cpirEnabled)
+            recordCPIRRawSample(ppm);
         IF_GUI(ui.addConcentrationReading(ppm));
         return ppm;
     }
