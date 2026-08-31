@@ -44,6 +44,14 @@ METHOD_CHANNELS = (
     "count_only",
     "stop_label_permute",
 )
+PROJECTION_INVARIANT_KEYS = (
+    "identity_reconstruction_max_abs",
+    "carrier_marginal_max_abs",
+    "within_carrier_conditional_max_abs",
+    "total_mass_max_abs",
+    "fail_closed_native_max_abs",
+    "cell_row_permutation_max_abs_after_restore",
+)
 
 
 def sha256_file(path: Path) -> str:
@@ -337,14 +345,8 @@ def evaluate(
     final_internal: list[dict[str, Any]] = []
     case_cache: dict[tuple[str, int], tuple[dict[str, Any], str]] = {}
     comparator_hashes: dict[str, str] = {}
-    invariant_max = {
-        "identity_reconstruction_max_abs": 0.0,
-        "carrier_marginal_max_abs": 0.0,
-        "within_carrier_conditional_max_abs": 0.0,
-        "total_mass_max_abs": 0.0,
-        "fail_closed_native_max_abs": 0.0,
-        "cell_row_permutation_max_abs_after_restore": 0.0,
-    }
+    invariant_max = {key: 0.0 for key in PROJECTION_INVARIANT_KEYS}
+    invariant_max["native_final_endpoint_parity_max_abs_m"] = 0.0
     abstained_updates: dict[str, int] = {name: 0 for name in METHOD_CHANNELS}
 
     for record in records:
@@ -356,7 +358,10 @@ def evaluate(
         comparator_hashes[f"{house}_seed{seed}_update{update_id}"] = sha256_file(native_path)
         mapping = v1.map_native_cells(native_rows, record["timing"], support)
         cell_fields, invariants = build_update_arms(record, mapping, support)
-        for key in invariant_max:
+        # Final-endpoint parity persists across runs but is not an invariant
+        # returned by build_update_arms.  Keep the projection-key set static so
+        # a previous run's update 5 cannot poison the next run's update 1.
+        for key in PROJECTION_INVARIANT_KEYS:
             invariant_max[key] = max(invariant_max[key], float(invariants[key]))
         for arm in invariants["abstained_arms"]:
             abstained_updates[arm] = abstained_updates.get(arm, 0) + 1
@@ -400,7 +405,7 @@ def evaluate(
         if update_id == v1.SOURCE_UPDATES:
             parity = abs(endpoints["native_ascending"]["error_m"] - float(case["primary_error_m"]))
             invariant_max["native_final_endpoint_parity_max_abs_m"] = max(
-                invariant_max.get("native_final_endpoint_parity_max_abs_m", 0.0), parity
+                invariant_max["native_final_endpoint_parity_max_abs_m"], parity
             )
             final_internal.append({
                 **record,
@@ -682,6 +687,16 @@ def selftest() -> None:
         float(value) for key, value in arm_invariants.items()
         if key != "abstained_arms"
     ) <= TOL
+    # Regression for R1 INVALID: after one run contributes final-endpoint
+    # parity, the next run's first update must still iterate only over the
+    # invariants returned by build_update_arms.
+    cross_run_accumulator = {key: 0.0 for key in PROJECTION_INVARIANT_KEYS}
+    cross_run_accumulator["native_final_endpoint_parity_max_abs_m"] = 0.25
+    for key in PROJECTION_INVARIANT_KEYS:
+        cross_run_accumulator[key] = max(
+            cross_run_accumulator[key], float(arm_invariants[key])
+        )
+    assert cross_run_accumulator["native_final_endpoint_parity_max_abs_m"] == 0.25
 
     rows = [{"cell_index": str(index), "x": str(index), "y": "0"} for index in range(40)]
     mass = np.zeros(40); mass[:4] = 0.25
