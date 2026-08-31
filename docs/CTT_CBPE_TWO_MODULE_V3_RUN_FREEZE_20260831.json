@@ -1,0 +1,57 @@
+{
+  "contract": "CTT_CBPE_TWO_MODULE_V3_RUN_FREEZE",
+  "status": "FROZEN_AFTER_CODE_REVIEW_BEFORE_ANY_CBPE_BANK_OR_OUTCOME_RUN",
+  "branch": "codex/ctt-wonline-sufficiency-audit-20260830",
+  "git_commit": "77e400b7157d8c851467b084de211abd9dd8c9d0",
+  "implementation": {
+    "evaluator": {
+      "path": "experiments/cg_pc_ctt/ctt_final_hazard_20260830/evaluate_ctt_coherent_block_partial_exchange_shadow.py",
+      "sha256": "7039a4948108a667c04a77053b0b559c308a3bda214aac34356930b5cbe6d479"
+    },
+    "selftest": {
+      "path": "experiments/cg_pc_ctt/ctt_final_hazard_20260830/selftest_ctt_coherent_block_partial_exchange_shadow.py",
+      "sha256": "707da3036618858887b3ff08144ef219a87b165befa52fd01240d109446414ce"
+    },
+    "imported_v1_sha256": "201fb8933b9c309863bc8e7bb80424a294a56e08a928a2b3f4495abe009dee58",
+    "imported_v2_sha256": "29171c4fb64e9388ac01aa9dd0a049ffd8d3723d7c034ee15ea97703cfae37d3",
+    "imported_causal_gate_sha256": "4ad995f3331f4460a6e45c808c79b9656b9e8b0aad3b9c7ff4c9aaa42aa92351",
+    "synthetic_selftest_required": "CTT_CBPE_TWO_MODULE_V3_SELFTEST=PASS",
+    "independent_redteam": "READY_TO_FREEZE"
+  },
+  "contracts": {
+    "preregistration_sha256": "9d2ebae2a1227a6a0720b17972370b238b810d99be81756231900fe3410c19a7",
+    "premise_addendum_sha256": "186e8a04aaf35c6a0f823dd66c4459a61d1f7d7c540e7d86c6943de256a5a8eb",
+    "stop_support_addendum_sha256": "106aa36d04d3e1e0af030ba1de7d06f30c0231533f09388ea0e21a6c75d4f765",
+    "inference_addendum_sha256": "db66e1912e5f25b9746c78b0abbda1f2b48d6d8a13a32017438931aed89e35ee"
+  },
+  "vm_inputs": {
+    "bank_root": "/home/zyc/PF_DEI_V3_FINAL_SIM_BANK_20260828_R1",
+    "historical_root": "/home/zyc/CG_PC_CTT_V3_ORR_FULL60_PACKAGE_20260827/results",
+    "source_support": "/home/zyc/PF_DEI_V3_REGION_SUPPORT_20260828/source_region_3d_support_manifest.csv",
+    "causal_premise_root": "/home/zyc/CTT_CAUSAL_REACHABILITY_CROSSHOUSE_EVIDENCE_20260831_R1",
+    "causal_premise_summary_sha256": "7a9fc8ea61102da463c100739233f47daaf47daec8b8f6cbd6f3f8b6740adde6",
+    "causal_premise_verdict_sha256": "71f12782025ec0c8cb93ec2e6a9f0fd0034ba015e72ecc52704351dec45607ba",
+    "frozen_v2_summary": "/home/zyc/CTT_CAUSAL_TEMPORAL_HIERARCHICAL_V2_EVIDENCE_20260831_R2/SUMMARY.json",
+    "frozen_v2_summary_sha256": "36bd50881f19bb6119e28a8444908bed8e5058ed14151dd253ece65350107f98"
+  },
+  "vm_outputs": {
+    "code_root": "/home/zyc/CTT_CBPE_TWO_MODULE_V3_CODE_20260831_77e400b",
+    "premise_root": "/home/zyc/CTT_CBPE_M2_PRETRUTH_PREMISE_20260831_R1",
+    "stage1_root": "/home/zyc/CTT_CBPE_TWO_MODULE_V3_STAGE1_20260831_R1",
+    "stage2_root": "/home/zyc/CTT_CBPE_TWO_MODULE_V3_EVIDENCE_20260831_R1"
+  },
+  "sequence": [
+    "verify every source, contract and input hash; py_compile and selftest",
+    "run predictive-only M2 premise and stop on any non-PASS verdict",
+    "externally record premise summary, verdict and input-freeze hashes",
+    "run measured-only Stage 1 and externally record its manifest hash",
+    "run Stage 2 against byte-identical native PMFS and truth comparators",
+    "stop at the frozen PASS or NO-GO; do not tune or select another formula"
+  ],
+  "forbidden_before_pass": [
+    "new GADEN simulation",
+    "neural training",
+    "formula, threshold, gate, planner, weight or temperature change",
+    "runtime or closed-loop implementation"
+  ]
+}
