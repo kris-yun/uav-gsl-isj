@@ -1,0 +1,23 @@
+{
+  "contract": "CTT_CBPE_TWO_MODULE_V3_STOP_SUPPORT_ADDENDUM",
+  "status": "FROZEN_BEFORE_CBPE_PREMISE_OR_HISTORICAL_V3_OUTCOME_READ",
+  "parent_preregistration_sha256": "9d2ebae2a1227a6a0720b17972370b238b810d99be81756231900fe3410c19a7",
+  "premise_addendum_sha256": "186e8a04aaf35c6a0f823dd66c4459a61d1f7d7c540e7d86c6943de256a5a8eb",
+  "reason": "historical routes contain 17 or 18 completed stops, but only 15 had completed before the five frozen PMFS source updates and are scientifically authorised for CBPE",
+  "selection": {
+    "inputs": "pose timestamps, complete-stop index sets and the five frozen source-update timestamps only; measured gas is prohibited when selecting support",
+    "visible_prefixes": "for source update j, a stop is visible only when its 80th pose sample time is no later than that update timestamp",
+    "required_prefix_lengths": [3, 6, 9, 12, 15],
+    "required_new_stops_each_update": 3,
+    "block_definition": "block j is exactly the three newly visible original-schedule stop indices at update j, in original schedule order",
+    "authorized_union_size": 15,
+    "excluded": "every completed stop outside the union of the five verified visible prefixes, including the final 2 or 3 post-update stops",
+    "prohibited": ["blindly slicing the first 15 stops without verifying timestamps", "using measured hit/miss or truth to select stops", "including post-fifth-update stops in Q, premise, score or controls"]
+  },
+  "hard_invariants": {
+    "all_30_routes_prefix_lengths_exact": true,
+    "all_150_blocks_have_three_unique_stop_indices": true,
+    "each_route_authorized_union_size": 15,
+    "no_excluded_stop_consumed": true
+  }
+}
