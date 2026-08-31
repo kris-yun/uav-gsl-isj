@@ -1,0 +1,140 @@
+{
+  "contract": "CTT_CAUSAL_TEMPORAL_PMFS_SHADOW_V1",
+  "date": "2026-08-31",
+  "status": "PREREGISTERED_BEFORE_HISTORICAL_MEASURED_SCORE_OR_ERROR_READ",
+  "purpose": "Test whether the frozen two-module causal-temporal source channel improves the official PMFS localization endpoint on 30 measured historical OFF trajectories before any runtime or planner intervention is authorized.",
+  "scientific_modules": {
+    "M1_causal_physical_operator": "native GADEN do(S=s) physical concentration followed by the frozen run-persistent sensor operator",
+    "M2_temporal_reachability_operator": "right-censored ever/never evidence from the first 80 samples of each completed physical stop, with eight-member predictive nuisance marginalized inside each stop and evidence accumulated across completed stops"
+  },
+  "premise_dependency": {
+    "required_verdict": "CTT_CAUSAL_REACHABILITY_CROSSHOUSE_PREMISE_PASS",
+    "verdict_sha256": "71f12782025ec0c8cb93ec2e6a9f0fd0034ba015e72ecc52704351dec45607ba",
+    "summary_sha256": "7a9fc8ea61102da463c100739233f47daaf47daec8b8f6cbd6f3f8b6740adde6"
+  },
+  "scope": {
+    "houses": ["H01", "H02", "H03"],
+    "historical_off_seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "updates_per_run": 5,
+    "final_pairs": 30,
+    "predictive_split": "train",
+    "predictive_members": [0, 1, 2, 3, 4, 5, 6, 7],
+    "observation_field": "sensor_trace.csv:measured_gas_ppm",
+    "observation_forbidden_fields": ["true_gas_ppm"],
+    "physical_stop": "one maximal contiguous is_moving=0 run; use its first 80 samples and exclude runs shorter than 80 samples",
+    "visible_stop_rule": "a stop is visible at update u only when the timestamp of its 80th sample is no later than the frozen PMFS source-update timestamp",
+    "threshold": "measured_ppm > 0.1",
+    "sensor": {
+      "dt_s": 0.2,
+      "tau_s": 1.2,
+      "dead_time_s": 0.4,
+      "state_reset_between_stops": false
+    },
+    "new_gaden_runs": 0,
+    "neural_training": false,
+    "planner_changed": false,
+    "fixed_trajectory": true,
+    "closed_loop_claim": false
+  },
+  "frozen_inputs": {
+    "bank_contract": "PF_DEI_V3_HISTORICAL_NATIVE_BANK_V1",
+    "bank_summary_sha256": "17364eb744f4fc53c4b52eee0362f09bdee3e8655b74c9d5e5a2eb0a3a9e2d47",
+    "bank_audit_sha256": "3a0954782f46bbfc2bc900c69273f9cbf99040ecb53b811671460f2189457d7e",
+    "bank_shard_manifest_sha256": "c68e4bcbd196a85d74ff9a44db01b2090f4487fc84943f82fcd0d17a18629bed",
+    "region_support_manifest_sha256": "4fec448feed607ea8c63148750ae9a610cf2e837a3df30808a256402c2d3a402",
+    "bank_shards": 7404,
+    "bank_samples": 311500812,
+    "bank_bytes": 1246832496,
+    "historical_root": "/home/zyc/CG_PC_CTT_V3_ORR_FULL60_PACKAGE_20260827/results",
+    "schedule_mapping_rule": "each historical OFF sim_pose_trace SHA-256 and row count must equal the same House/seed train stream in bank_summary.json",
+    "source_update_rule": "use the five existing source_update_timing.csv rows and matching source_posterior.csv snapshots without modification"
+  },
+  "frozen_inference": {
+    "predictive_probability": "p[s,b] = (0.5 + sum over eight train members E[s,m,b]) / 9",
+    "candidate_log_score": "L_t[s] = sum over completed visible stops b of E_obs[b] log p[s,b] + (1-E_obs[b]) log(1-p[s,b])",
+    "geometry_prior": "one equal prior quantum per native free PMFS cell; carrier q0 mass is proportional to its count of free cells",
+    "source_channel_replacement": "q_CTRE_t[s] is proportional to q0[s] exp(L_t[s]); the native PMFS posterior is never multiplied into q_CTRE because it already consumed the same measured observations",
+    "cell_projection": "each cell receives its equal cell prior times its carrier likelihood, followed by one normalization",
+    "sequential_contract": "multiplying only newly completed-stop likelihoods into the previous CTRE posterior must equal recomputing q0 times all visible-stop likelihoods",
+    "native_pmfs_role": "immutable comparator only",
+    "fitted_parameters": false
+  },
+  "official_endpoint": {
+    "name": "ExpectedValue(sourceProbability,0.05)",
+    "cell_count": "ceil(0.05 times native free-cell count)",
+    "ordering": "descending posterior probability with native ascending cell_index as the frozen exact-tie order",
+    "error": "Euclidean distance from the posterior-weighted selected-cell centroid to truth_eval_only",
+    "native_final_parity_tolerance_m": 1e-10
+  },
+  "tie_artifact_guard": {
+    "reason": "carrier likelihoods are constant within a carrier, so the top-five-percent boundary can bisect an exact tie",
+    "symmetrized_endpoint": "select all cells strictly above the boundary and the same fractional inclusion of every boundary-tied cell needed to reach the official selected-cell count",
+    "reverse_order_endpoint": "repeat the official endpoint with descending cell_index as the exact-tie order",
+    "fixed_random_sensitivity": "also report sixteen SHA256-domain-separated fixed exact-tie orders without using them to choose a favorable result",
+    "status": "canonical, reverse-order and symmetrized endpoints are co-primary artifact guards; none can rescue another failed endpoint"
+  },
+  "truth_separation": {
+    "stage_1": "read only train8 bank, support geometry, pose, update timing and measured_gas_ppm; write and SHA-256 freeze all 150 FULL and temporal-control carrier scores/posteriors",
+    "stage_2": "reload the exact Stage-1 artifact by hash, then and only then read native source_posterior.csv and case_result.json truth_eval_only",
+    "rule": "Stage 2 refuses an unfrozen or hash-mismatched Stage-1 artifact",
+    "truth_use": "endpoint evaluation, true-carrier rank diagnostics, catastrophe and false-confident-collapse classification only"
+  },
+  "temporal_increment_controls": {
+    "count_only": "retain only the number of observed reached stops and each candidate's mean reachability probability over the visible stops; discard physical-stop identity",
+    "stop_label_permute": "within each visible prefix, apply a deterministic SHA256-domain-separated non-identity permutation to candidate stop labels while leaving observed stop labels fixed",
+    "hard_requirement": "FULL final pooled error must be no greater than both controls under canonical and tie-symmetrized endpoints; otherwise M2 has not shown incremental value"
+  },
+  "source_label_null": {
+    "replicates": 256,
+    "mapping": "one deterministic SHA256-domain-separated non-identity permutation per House/replicate, shared across its ten runs; permute frozen carrier score labels while leaving q0, cell geometry, trajectories and PMFS comparator fixed",
+    "statistic": "pooled relative final-error improvement over native PMFS",
+    "empirical_upper_tail_p": "(1 + count(null improvement >= observed improvement))/(256+1)"
+  },
+  "hard_go_rules": {
+    "valid_final_pairs_exactly": 30,
+    "valid_updates_exactly": 150,
+    "native_final_error_parity_max_abs_m": 1e-10,
+    "schedule_hash_mapping": "PASS",
+    "carrier_cell_coverage_and_mass_conservation": "PASS",
+    "online_batch_posterior_max_abs": 1e-12,
+    "official_pooled_relative_improvement_at_least": 0.10,
+    "reverse_order_pooled_relative_improvement_at_least": 0.10,
+    "tie_symmetrized_pooled_relative_improvement_at_least": 0.10,
+    "official_improved_pairs_at_least": 20,
+    "reverse_order_improved_pairs_at_least": 20,
+    "tie_symmetrized_improved_pairs_at_least": 20,
+    "official_each_house_pooled_relative_improvement_at_least": -0.05,
+    "reverse_order_each_house_pooled_relative_improvement_at_least": -0.05,
+    "tie_symmetrized_each_house_pooled_relative_improvement_at_least": -0.05,
+    "official_median_relative_improvement_at_least": 0.0,
+    "reverse_order_median_relative_improvement_at_least": 0.0,
+    "tie_symmetrized_median_relative_improvement_at_least": 0.0,
+    "official_catastrophic_regressions_at_most": 0,
+    "reverse_order_catastrophic_regressions_at_most": 0,
+    "tie_symmetrized_catastrophic_regressions_at_most": 0,
+    "new_false_confident_collapses_at_most": 0,
+    "official_source_label_empirical_p_at_most": 0.01,
+    "tie_symmetrized_source_label_empirical_p_at_most": 0.01,
+    "free_cell_count_stratified_source_label_empirical_p_at_most": 0.01,
+    "full_pooled_error_no_greater_than_count_only": true,
+    "full_pooled_error_no_greater_than_stop_label_permute": true,
+    "historical_measured_tape_exact_train_member_matches": 0
+  },
+  "catastrophe_definition": "CTRE error is more than PMFS error plus 1.0 m and also greater than 1.5 times PMFS error",
+  "false_confident_collapse_definition": "posterior variance is below 1.0 m^2 while official error exceeds 2.0 m",
+  "forbidden": [
+    "using true_gas_ppm, a PMFS posterior, source truth or localization error to form CTRE evidence",
+    "multiplying CTRE likelihood into the native PMFS posterior",
+    "retaining one coherent turbulent member identity across physical stops",
+    "changing threshold, sensor constants, stop length, member count, prior, likelihood, endpoint, Gate or source support after outcome read",
+    "calling a fixed-trajectory shadow a closed-loop result",
+    "treating the ten repeated trajectories with one fixed source in a House as ten independent source-generalization units",
+    "authorizing runtime or paired closed loop after any hard-rule failure"
+  ],
+  "terminal_states": {
+    "pass": "CTT_CAUSAL_TEMPORAL_PMFS_SHADOW_PASS_TO_RUNTIME",
+    "fail": "CTT_CAUSAL_TEMPORAL_PMFS_SHADOW_NO_GO",
+    "invalid": "CTT_CAUSAL_TEMPORAL_PMFS_SHADOW_INVALID"
+  },
+  "downstream": "Only PASS permits immutable runtime lookup/single-consumption integration followed by H01/H02/H03 seeds1-3 paired 300-s OFF versus ON closed loop."
+}
