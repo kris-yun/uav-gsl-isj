@@ -1,0 +1,131 @@
+{
+  "contract": "CTT_CAUSAL_TEMPORAL_HIERARCHICAL_PROJECTION_V2",
+  "date": "2026-08-31",
+  "status": "PREREGISTERED_BEFORE_V2_HIERARCHICAL_PROJECTION_OUTCOME_READ",
+  "development_status": "ONE_SHOT_INTERFACE_REPAIR_AFTER_FROZEN_V1_NO_GO",
+  "purpose": "Complete the resolution interface between frozen causal-temporal carrier evidence and the native PMFS cell grid without changing M1, M2, their likelihood, or any threshold/weight/gate.",
+  "preserved_v1": {
+    "verdict": "CTT_CAUSAL_TEMPORAL_PMFS_SHADOW_NO_GO",
+    "summary_sha256": "db71e93f1e346406a13ac65abe615e3b3c34de490047a379e4e5d29ccd0ab7b0",
+    "final_pairs_sha256": "41762eaf041a982ea4b87e3a9c9f1ec1c35f3f3cf78710806c135f4f5c622178",
+    "verdict_sha256": "f1b7ba009050e001b1bce9a0d0dbf5b20d86e99754676995350e8160cc4515a0",
+    "reason": "V1 passed all primary performance, source-label and temporal-control rules, but H01 seed3 triggered the reverse-order and tie-symmetrized catastrophe rules after uniform carrier-to-cell projection."
+  },
+  "frozen_scientific_modules": {
+    "M1": "native GADEN do(S=s) physical concentration followed by the frozen run-persistent sensor operator",
+    "M2": "right-censored reached/not-reached evidence for each completed physical stop, with the eight-member predictive nuisance marginalized inside each stop and evidence accumulated across stops",
+    "changed_from_v1": false
+  },
+  "frozen_stage1": {
+    "records": 150,
+    "verified_train_shards": 4936,
+    "method_posteriors_npz_sha256": "e1c2e15f2778272f4ad3bcffa84414cfc1829736af2740065afb95cdd5dc3926",
+    "method_posteriors_manifest_sha256": "f6af7ad328dc40db7554a9f2daee8f80619e627f8c26c1ed5067529c7de94518",
+    "input_freeze_sha256": "6d0ce89c50e90d564b2344fd21c7f5d50c3d9a48b1db004a0aa151e939bbc1dd",
+    "semantic_pretruth_posterior_sha256": "95d68bf4078fa6117a0555acfad78f827a5c51f4b69d2a55869c5dca16f65032",
+    "v1_evaluator_sha256": "201fb8933b9c309863bc8e7bb80424a294a56e08a928a2b3f4495abe009dee58",
+    "v1_preregistration_sha256": "ed0a2759fb3d7ab4771b25e056fef679d476c9c0cbde00bff81f5b0981b1aae1"
+  },
+  "scope": {
+    "houses": ["H01", "H02", "H03"],
+    "historical_off_seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "updates_per_run": 5,
+    "updates": 150,
+    "final_pairs": 30,
+    "historical_root": "/home/zyc/CG_PC_CTT_V3_ORR_FULL60_PACKAGE_20260827/results",
+    "region_support_manifest_sha256": "4fec448feed607ea8c63148750ae9a610cf2e837a3df30808a256402c2d3a402",
+    "new_gaden_runs": 0,
+    "new_neural_training": false,
+    "M1_or_M2_recomputation": false,
+    "fixed_trajectory": true,
+    "closed_loop_claim": false
+  },
+  "hierarchical_projection": {
+    "partition": "the frozen persistent carrier partition B(x) of native free PMFS cells x",
+    "native_cell_posterior": "p_N,t(x|D_t)",
+    "native_carrier_mass": "p_N,t(B|D_t) = sum over x in B of p_N,t(x|D_t)",
+    "ctre_carrier_posterior": "q_T,t(B|D_t), loaded byte-identically from frozen Stage 1",
+    "formula": "q_V2,t(x|D_t) = q_T,t(B(x)|D_t) * p_N,t(x|D_t) / p_N,t(B(x)|D_t)",
+    "interpretation": "CTRE completely replaces the carrier marginal; native PMFS supplies only the within-carrier conditional p_N(x|B,D)",
+    "I_projection": "q_V2 is the unique argmin KL(q || p_N) over cell distributions whose carrier marginal equals q_T whenever q_T is absolutely continuous with respect to the native carrier support",
+    "not": ["likelihood multiplication", "posterior blend", "temperature", "adaptive weight", "truth/error gate", "third scientific module"]
+  },
+  "zero_mass_policy": {
+    "positive_native_carrier_mass": "apply the exact formula",
+    "native_zero_and_ctre_zero": "assign zero to all cells in that carrier",
+    "native_zero_and_ctre_positive": "ABSTAIN_NATIVE_CARRIER_ZERO_MASS for the entire update and return the native PMFS cell posterior exactly",
+    "prohibited": ["epsilon floor", "uniform fill", "renormalizing CTRE onto native-positive carriers", "House/seed-specific exception"]
+  },
+  "frozen_arms": {
+    "NATIVE": "p_N(x|D)",
+    "IDENTITY_RECONSTRUCTION": "use q_T(B)=p_N(B); must reconstruct p_N(x) exactly",
+    "CONDITIONAL_ONLY": "q_0(B) p_N(x|B,D)",
+    "COARSE_ONLY_V1": "q_T(B) q_0(x|B), the preserved V1 uniform projection",
+    "FULL_V2": "q_T(B) p_N(x|B,D)",
+    "COUNT_ONLY_V2": "the frozen Stage-1 count-only carrier posterior projected through p_N(x|B,D)",
+    "STOP_LABEL_PERMUTE_V2": "the frozen Stage-1 stop-label-permuted carrier posterior projected through p_N(x|B,D)",
+    "SOURCE_LABEL_NULL_V2": "the frozen Stage-1 carrier score labels are permuted before q_T is projected through the unchanged native conditional"
+  },
+  "invariants": {
+    "identity_reconstruction_max_abs": 1e-12,
+    "carrier_marginal_max_abs": 1e-12,
+    "within_carrier_conditional_max_abs": 1e-12,
+    "total_mass_max_abs": 1e-12,
+    "cell_row_permutation_max_abs_after_restore": 1e-12,
+    "stage1_external_manifest_hash": "required",
+    "native_final_endpoint_parity_max_abs_m": 1e-10
+  },
+  "endpoints": {
+    "canonical": "official ExpectedValue(sourceProbability,0.05) with ascending cell_index exact-tie order",
+    "reverse": "same endpoint with descending cell_index exact-tie order",
+    "symmetric": "fractionally include every boundary-tied cell",
+    "fixed_random": "sixteen SHA256-domain-separated exact-tie orders; all are evaluated and none is selected post hoc"
+  },
+  "source_label_null": {
+    "replicates": 256,
+    "unrestricted": true,
+    "free_cell_count_stratified": true,
+    "empirical_upper_tail_p_max": 0.01
+  },
+  "hard_go_rules": {
+    "valid_updates_exactly": 150,
+    "valid_final_pairs_exactly": 30,
+    "all_invariants": "PASS",
+    "official_pooled_relative_improvement_at_least": 0.10,
+    "reverse_pooled_relative_improvement_at_least": 0.10,
+    "symmetric_pooled_relative_improvement_at_least": 0.10,
+    "random_tie_minimum_pooled_relative_improvement_at_least": 0.10,
+    "official_improved_pairs_at_least": 20,
+    "reverse_improved_pairs_at_least": 20,
+    "symmetric_improved_pairs_at_least": 20,
+    "random_tie_minimum_improved_pairs_at_least": 20,
+    "each_house_each_tie_mode_pooled_relative_improvement_at_least": -0.05,
+    "median_pair_relative_improvement_each_primary_mode_at_least": 0.0,
+    "catastrophic_regressions_every_tie_mode_at_most": 0,
+    "new_false_confident_collapses_every_primary_mode_at_most": 0,
+    "unrestricted_source_label_empirical_p_at_most": 0.01,
+    "free_count_stratified_source_label_empirical_p_at_most": 0.01,
+    "full_total_error_no_greater_than_conditional_only": true,
+    "full_total_error_no_greater_than_count_only": true,
+    "full_total_error_no_greater_than_stop_label_permute": true
+  },
+  "interpretation_boundary": {
+    "joint_claim_allowed_after_pass": "the joint causal-temporal carrier operator plus its resolution-consistent interface improves fixed-trajectory PMFS source localization",
+    "separate_M2_claim": "not allowed solely from this Gate because H01 showed a count-only reversal in V1",
+    "closed_loop_claim": "not allowed",
+    "held_out_claim": "not allowed; all 30 development trajectories were already opened in V1"
+  },
+  "forbidden": [
+    "changing M1, M2, threshold, stop length, sensor constants, members, carrier support or Stage-1 posteriors",
+    "adding a gate, blend coefficient, temperature, likelihood weight, House/seed rule or error-aware fallback",
+    "feeding FULL_V2 back into the independent native PMFS shadow",
+    "using V1 outcome to select among multiple projection formulas",
+    "calling a V2 development replay confirmatory or closed loop"
+  ],
+  "terminal_states": {
+    "pass": "CTT_CAUSAL_TEMPORAL_HIERARCHICAL_PROJECTION_V2_PASS_TO_RUNTIME",
+    "fail": "CTT_CAUSAL_TEMPORAL_HIERARCHICAL_PROJECTION_V2_NO_GO",
+    "invalid": "CTT_CAUSAL_TEMPORAL_HIERARCHICAL_PROJECTION_V2_INVALID"
+  },
+  "downstream": "Only a hard PASS permits one immutable runtime implementation and the requested H01/H02/H03 seeds1-3 paired 300-second closed-loop pilot. Those seeds remain development/pilot evidence; a paper claim still requires untouched held-out seeds."
+}
