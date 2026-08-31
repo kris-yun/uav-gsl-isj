@@ -366,7 +366,7 @@ def exact_persistent_sensor_tape_matches(physical: np.ndarray, measured: np.ndar
         # Historical sensor_trace is serialized to six decimal places.  Exact
         # tape identity is therefore defined in that authoritative stored
         # representation, not in an unavailable pre-serialization float.
-        matches &= np.round(state, 6) == observation[time]
+        matches &= np.round(state, 6) == np.round(observation[time], 6)
     return int(np.count_nonzero(matches))
 
 
@@ -481,9 +481,19 @@ def stratified_permutation(free_cells: np.ndarray, house: str, replicate: int) -
 
 
 def input_freeze(
-    bank_root: Path, historical_root: Path, support_path: Path, prereg: dict[str, Any]
+    bank_root: Path, historical_root: Path, support_path: Path,
+    premise_verdict_path: Path, premise_summary_path: Path, prereg: dict[str, Any]
 ) -> tuple[dict[str, Any], list[dict[str, str]], dict[str, list[dict[str, Any]]], dict[str, Any]]:
     frozen = prereg["frozen_inputs"]
+    if str(historical_root.resolve()) != frozen["historical_root"]:
+        raise SystemExit("CTT_SHADOW_HISTORICAL_ROOT_FREEZE_FAIL")
+    premise = prereg["premise_dependency"]
+    if (
+        sha256_file(premise_verdict_path) != premise["verdict_sha256"]
+        or sha256_file(premise_summary_path) != premise["summary_sha256"]
+        or premise_verdict_path.read_text(encoding="utf-8").strip() != premise["required_verdict"]
+    ):
+        raise SystemExit("CTT_SHADOW_PREMISE_DEPENDENCY_FAIL")
     paths = {
         "bank_summary": bank_root / "bank_summary.json",
         "bank_audit": bank_root / "bank_audit_summary.json",
@@ -531,6 +541,10 @@ def input_freeze(
             house: [item["sha256"] for item in schedules[house]] for house in HOUSES
         },
         "historical_measured_only_hashes": historical_hashes,
+        "premise_dependency_hashes": {
+            "verdict": sha256_file(premise_verdict_path),
+            "summary": sha256_file(premise_summary_path),
+        },
     }
     return summary, manifest, schedules, freeze
 
@@ -1054,6 +1068,8 @@ def main() -> int:
     parser.add_argument("--bank-root", type=Path)
     parser.add_argument("--historical-root", type=Path)
     parser.add_argument("--source-support", type=Path)
+    parser.add_argument("--premise-verdict", type=Path)
+    parser.add_argument("--premise-summary", type=Path)
     parser.add_argument("--stage1-root", type=Path)
     parser.add_argument("--stage1-manifest-sha256")
     parser.add_argument("--preregistration", type=Path)
@@ -1077,10 +1093,14 @@ def main() -> int:
         raise SystemExit("CTT_SHADOW_SOURCE_SUPPORT_HASH_FAIL")
     support_all = load_support(args.source_support)
     if args.stage == "1":
-        if args.bank_root is None or args.stage1_root is not None:
+        if (
+            args.bank_root is None or args.stage1_root is not None
+            or args.premise_verdict is None or args.premise_summary is None
+        ):
             raise SystemExit("CTT_SHADOW_STAGE1_ARGUMENT_FAIL")
         summary, manifest, schedules, freeze = input_freeze(
-            args.bank_root, args.historical_root, args.source_support, prereg
+            args.bank_root, args.historical_root, args.source_support,
+            args.premise_verdict, args.premise_summary, prereg
         )
         args.output.mkdir(parents=True)
         freeze["preregistration_sha256"] = sha256_file(args.preregistration)
@@ -1122,7 +1142,8 @@ def main() -> int:
     report = {
         "contract": CONTRACT,
         "fixed_trajectory_development_only": True,
-        "closed_loop_authorized": result["verdict"] == GO,
+        "closed_loop_effectiveness_established": False,
+        "runtime_and_paired_trial_authorized": result["verdict"] == GO,
         "gaden_runs": 0,
         "neural_training": False,
         "observations": "historical measured_gas_ppm only",
