@@ -1,0 +1,85 @@
+{
+  "contract": "CTT_CAUSAL_REACHABILITY_CROSSHOUSE_GATE_V1",
+  "date": "2026-08-31",
+  "status": "PREREGISTERED_BEFORE_REACHABILITY_SCORE_READ",
+  "purpose": "Test whether a native interventional source-response operator followed by a persistent sensor and transport-marginalized censored reachability evidence gives reproducible source ordering across H01, H02 and H03.",
+  "scientific_modules": {
+    "M1": "native GADEN do(S=s) physical concentration followed by the frozen run-persistent sensor operator",
+    "M2": "one ever/never event per completed physical stop; predictive transport/placement nuisance is marginalized inside each stop before censored Bernoulli evidence is accumulated across stops"
+  },
+  "scope": {
+    "houses": ["H01", "H02", "H03"],
+    "historical_off_seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "predictive_split": "train",
+    "predictive_members": [0, 1, 2, 3, 4, 5, 6, 7],
+    "observation_split": "reserved",
+    "observation_members": [0, 1, 2, 3],
+    "independent_units": 12,
+    "independent_unit": "House x reserved observation member; seeds, sources and stops are repeated measurements inside a unit",
+    "carrier_counts": {"H01": 210, "H02": 201, "H03": 206},
+    "physical_stop": "one maximal contiguous is_moving=0 run; use its first 80 samples and exclude runs shorter than 80 samples",
+    "threshold": "measured_ppm > 0.1",
+    "sensor": {"dt_s": 0.2, "tau_s": 1.2, "dead_time_s": 0.4, "state_reset_between_stops": false},
+    "new_gaden_runs": 0,
+    "neural_training": false,
+    "pmfs_posterior_read": false,
+    "localization_error_read": false
+  },
+  "frozen_inputs": {
+    "bank_contract": "PF_DEI_V3_HISTORICAL_NATIVE_BANK_V1",
+    "bank_summary_sha256": "17364eb744f4fc53c4b52eee0362f09bdee3e8655b74c9d5e5a2eb0a3a9e2d47",
+    "bank_audit_sha256": "3a0954782f46bbfc2bc900c69273f9cbf99040ecb53b811671460f2189457d7e",
+    "bank_shard_manifest_sha256": "c68e4bcbd196a85d74ff9a44db01b2090f4487fc84943f82fcd0d17a18629bed",
+    "bank_shards": 7404,
+    "bank_samples": 311500812,
+    "bank_bytes": 1246832496,
+    "schedule_mapping_rule": "for every House and seed0..9, the historical OFF sim_pose_trace SHA-256 must equal the same numbered train and reserved stream hash in bank_summary.json"
+  },
+  "frozen_score": {
+    "event": "E[s,m,r,b] = 1 if max measured_ppm over the first 80 samples of physical stop b is greater than 0.1, else 0",
+    "predictive_probability": "p[s,r,b] = (0.5 + sum over 8 train members E[s,m,r,b]) / 9",
+    "candidate_score": "L[s] = sum over physical stops b of E_obs[b] log p[s,b] + (1-E_obs[b]) log(1-p[s,b])",
+    "rank": "descending exact-equality midrank among all House carriers",
+    "normalized_rank": "(rank-1)/(carrier_count-1)",
+    "likelihood_boundary": "a fixed finite-ensemble composite predictive likelihood, not an exact joint likelihood for autocorrelated stops",
+    "transport_semantics": "no K identity is retained across stops; the run-persistent sensor is applied to the complete chronology before stop events are extracted",
+    "fitted_parameters": false
+  },
+  "first_passage_ablation": {
+    "role": "report-only temporal-resolution ablation; it cannot change the Gate verdict",
+    "support": "first strict hit sample 0..79 or 80 for right-censored no-hit",
+    "predictive_model": "symmetric Jeffreys-Dirichlet categorical predictive distribution from the same eight train members",
+    "prohibition": "a favorable exact-phase result cannot rescue a failed reachability Gate"
+  },
+  "source_label_null": {
+    "replicates": 256,
+    "mapping": "one deterministic SHA256-domain-separated non-identity carrier-label permutation per House and replicate, shared across seeds and reserved members",
+    "statistic": "mean normalized source rank",
+    "empirical_lower_tail_p": "(1 + count(null_mean_rank <= observed_mean_rank))/(256+1)"
+  },
+  "hard_pass_rules": {
+    "pooled_mean_normalized_rank_strictly_less_than": 0.30,
+    "each_house_mean_normalized_rank_strictly_less_than": 0.35,
+    "all_12_unit_mean_normalized_ranks_strictly_less_than": 0.50,
+    "at_least_9_of_12_unit_mean_normalized_ranks_strictly_less_than": 0.35,
+    "pooled_source_label_empirical_p_at_most": 0.01,
+    "each_house_source_label_empirical_p_at_most": 0.01,
+    "candidate_source_and_predictive_member_permutation_invariance_max_abs": 1e-12,
+    "schedule_hash_mapping": "PASS",
+    "bank_audit": "PASS"
+  },
+  "forbidden": [
+    "changing threshold, stop length, sensor constants, member count or carrier set after reading scores",
+    "treating sources, stops or seeds as independent probability units",
+    "using PMFS posterior, source truth from historical runs, localization error or planner outcome",
+    "retaining a coherent turbulent K across stops",
+    "calling exact first-passage phase the main mechanism",
+    "calling this fixed-trajectory premise Gate a closed-loop result"
+  ],
+  "terminal_states": {
+    "pass": "CTT_CAUSAL_REACHABILITY_CROSSHOUSE_PREMISE_PASS",
+    "fail": "CTT_CAUSAL_REACHABILITY_CROSSHOUSE_PREMISE_NO_GO",
+    "invalid": "CTT_CAUSAL_REACHABILITY_CROSSHOUSE_PREMISE_INVALID"
+  },
+  "downstream": "PASS permits a separate measured-only PMFS source-update shadow. Only that shadow plus runtime provider, single-consumption replacement and planner closure can authorize paired 300-s OFF/ON experiments."
+}
