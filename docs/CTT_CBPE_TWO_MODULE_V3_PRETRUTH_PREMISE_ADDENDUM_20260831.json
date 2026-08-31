@@ -19,7 +19,7 @@
   "controls": {
     "BLOCK_ORDER_PERMUTE": "one deterministic non-identity permutation of the five pseudo-observed block counts per cluster; preserve its histogram",
     "INCOHERENT_PER_BLOCK": "sum over blocks of logmeanexp across predictive members, allowing the member to switch",
-    "SOURCE_LABEL_NULL": "256 deterministic House-shared uniform source-label permutations",
+    "SOURCE_LABEL_NULL": "256 deterministic House-shared uniform source-label permutations; the statistic is mean normalized true-source rank and lower is better",
     "WITHIN_BLOCK_PERMUTE": "any permutation of the three stop labels must be exactly invariant before block counts are formed",
     "CANDIDATE_PERMUTE": "restored candidate scores must match within 1e-12",
     "MEMBER_PERMUTE": "restored scores must match within 1e-12"
@@ -33,7 +33,7 @@
     "member_permutation_max_abs": 1e-12,
     "ordered_mean_normalized_true_source_rank_at_most": 0.35,
     "each_house_ordered_mean_normalized_true_source_rank_at_most": 0.45,
-    "source_label_empirical_upper_tail_p_at_most": 0.01,
+    "source_label_empirical_lower_tail_p_at_most": 0.01,
     "ordered_better_than_block_permute_mean_rank": true,
     "ordered_vs_block_permute_cluster_sign_p_at_most": 0.01,
     "coherent_better_than_incoherent_mean_rank": true,
