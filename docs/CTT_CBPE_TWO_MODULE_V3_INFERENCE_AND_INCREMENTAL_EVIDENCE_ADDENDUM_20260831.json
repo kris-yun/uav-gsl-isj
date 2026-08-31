@@ -1,0 +1,49 @@
+{
+  "contract": "CTT_CBPE_TWO_MODULE_V3_INFERENCE_AND_INCREMENTAL_EVIDENCE_ADDENDUM",
+  "status": "FROZEN_BEFORE_CBPE_PREMISE_OR_HISTORICAL_V3_OUTCOME_READ",
+  "parent_preregistration_sha256": "9d2ebae2a1227a6a0720b17972370b238b810d99be81756231900fe3410c19a7",
+  "premise_addendum_sha256": "186e8a04aaf35c6a0f823dd66c4459a61d1f7d7c540e7d86c6943de256a5a8eb",
+  "stop_support_addendum_sha256": "106aa36d04d3e1e0af030ba1de7d06f30c0231533f09388ea0e21a6c75d4f765",
+  "reason": "Close two pre-outcome audit gaps: overlapping leave-one-member folds are diagnostic replicates rather than independent trials, and a two-module claim requires measured-run incremental evidence over temporal ablations rather than non-inferiority alone.",
+  "premise_inference": {
+    "diagnostic_fold_rows": "retain all 240 House x route x held-out-member LOO rows",
+    "independent_unit": "House x route, exactly 30 clusters",
+    "aggregation_before_inference": "within each House x route, average the eight held-out-member ordered-minus-control normalized-rank deltas",
+    "ordered_vs_block_permute_test": "one-sided exact sign test on the 30 route-cluster mean deltas; negative is a FULL win and exact ties are omitted",
+    "coherent_vs_incoherent_test": "one-sided exact sign test on the 30 route-cluster mean deltas; negative is a FULL win and exact ties are omitted",
+    "source_label_null": "unchanged 256 deterministic House-shared label permutations; it is a randomization test and does not use the 240 folds as an independent sample size",
+    "hard_go_rules": {
+      "independent_route_clusters_exactly": 30,
+      "ordered_vs_block_permute_route_cluster_sign_p_at_most": 0.01,
+      "coherent_vs_incoherent_route_cluster_sign_p_at_most": 0.01,
+      "each_house_route_cluster_direction_not_reversed": true
+    }
+  },
+  "stage2_incremental_evidence": {
+    "independent_unit": "one completed historical run, exactly 30 paired runs",
+    "primary_modes": ["ascending", "descending", "symmetric"],
+    "comparators": ["global_count", "block_order_permute", "incoherent_per_block"],
+    "paired_delta": "FULL final localization error minus comparator final localization error for the same House, seed and tie mode",
+    "win_loss_tie": "win if delta < -1e-12, loss if delta > 1e-12, otherwise tie; ties are omitted from the exact sign test",
+    "hard_go_rules": {
+      "paired_runs_exactly": 30,
+      "full_total_error_strictly_lower_than_each_comparator_each_primary_mode": true,
+      "full_vs_each_comparator_each_primary_mode_exact_sign_p_at_most": 0.05
+    },
+    "interpretation": "Synthetic member-LOO premise establishes that ordered coherent evidence exists in the frozen simulator family. These run-level rules additionally require M2 to contribute positive measured-data evidence after M1, so a tie with all temporal ablations cannot authorize the two-module claim."
+  },
+  "Q_reporting": {
+    "ordered_pair_rows": "report as pairwise U-statistic expansion, never as independent calibration sample size",
+    "physical_nuisance_replicates": "eight transport members per House-route-source design point"
+  },
+  "required_synthetic_regressions": [
+    "a block-order permutation changes a crafted ordered score while preserving the block-count histogram",
+    "a crafted member-switch counterexample distinguishes coherent from incoherent marginalization in the expected direction",
+    "global Q is invariant to source, House and route enumeration permutations"
+  ],
+  "forbidden": [
+    "using 240 overlapping held-out-member folds as independent n for a sign test",
+    "claiming M2 measured-data utility when FULL only ties a temporal ablation",
+    "changing either correction after premise, native PMFS, truth or localization outcome is read"
+  ]
+}
