@@ -224,6 +224,13 @@ namespace GSL
         }
         cpirProcessedSamples = cpirTrace.size();
 
+        // The ledger is cumulative, but cell payloads are not scientific state:
+        // once this batch has advanced the persistent sensor for all new raw
+        // samples, previously loaded cell streams are never needed again.
+        // Release them at each source update so a long trajectory cannot
+        // materialize the entire 626-cell bank in VM RAM.
+        cpirCellCache.clear();
+
         const size_t stops = cpirObservedStopHit.size();
         const size_t observedReached = std::count(cpirObservedStopHit.begin(), cpirObservedStopHit.end(), 1);
         std::vector<double> score(cpirCarrierCount, 0.0);
