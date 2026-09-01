@@ -410,14 +410,15 @@ def freeze_stage(
         records: list[dict[str, Any]] = []
         posterior: dict[str, list[np.ndarray]] = {name: [] for name in (*ARMS, "STOP_PERMUTE")}
         for case_index, case in enumerate(cases):
+            observed = case.observed_events[:ANALYSIS_STOP_COUNT]
             for update_id, visible in enumerate(case.visible, start=1):
-                _, f00 = carrier_scores(bank.q0, q_raw[case_index], case.observed_events,
+                _, f00 = carrier_scores(bank.q0, q_raw[case_index], observed,
                                         visible, "count_only")
-                _, f01 = carrier_scores(bank.q0, q_raw[case_index], case.observed_events,
+                _, f01 = carrier_scores(bank.q0, q_raw[case_index], observed,
                                         visible, "stop_resolved")
-                _, f10 = carrier_scores(bank.q0, q_stateful[case_index], case.observed_events,
+                _, f10 = carrier_scores(bank.q0, q_stateful[case_index], observed,
                                         visible, "count_only")
-                _, f11 = carrier_scores(bank.q0, q_stateful[case_index], case.observed_events,
+                _, f11 = carrier_scores(bank.q0, q_stateful[case_index], observed,
                                         visible, "stop_resolved")
                 permutation = deterministic_nonidentity_permutation(
                     len(visible), house, case.seed, update_id
@@ -425,7 +426,7 @@ def freeze_stage(
                 q_permuted = q_raw[case_index].copy()
                 q_permuted[:, visible] = q_raw[case_index][:, visible[permutation]]
                 _, stop_permute = carrier_scores(
-                    bank.q0, q_permuted, case.observed_events, visible, "stop_resolved"
+                    bank.q0, q_permuted, observed, visible, "stop_resolved"
                 )
                 for name, value in {
                     "F00": f00, "F01": f01, "F10": f10, "F11": f11,
@@ -439,9 +440,7 @@ def freeze_stage(
                     "update_time_s": float(case.update_times[update_id - 1]),
                     "visible_stops": [int(value) for value in visible],
                     "stop_permutation": [int(value) for value in permutation],
-                    "observed_events": [
-                        bool(value) for value in case.observed_events[:ANALYSIS_STOP_COUNT]
-                    ],
+                    "observed_events": [bool(value) for value in observed],
                 })
         np.savez_compressed(
             output / f"{house}_FACTORIAL.npz",
@@ -938,6 +937,7 @@ def evaluate_stage(
 
 
 def selftest() -> None:
+    assert ANALYSIS_STOP_COUNT == 15
     assert math.isclose(trapezoid_auc(np.asarray([0.0, 1.0, 2.0]),
                                       np.asarray([2.0, 1.0, 0.0])), 2.0)
     time, reached = time_to_threshold(np.asarray([0.0, 10.0, 300.0]),
@@ -954,6 +954,16 @@ def selftest() -> None:
         assert not np.array_equal(permutation, np.arange(count))
     cal = calibration(np.asarray([0.1, 0.9]), np.asarray([0.0, 1.0]))
     assert math.isclose(cal["mean_brier"], 0.01)
+    # Physical stops after update 5 are outside the analysis window. Verify
+    # that both predictive and observed vectors use the same frozen prefix.
+    q = np.full((2, ANALYSIS_STOP_COUNT), 0.5, dtype=np.float64)
+    observed_with_tail = np.zeros(ANALYSIS_STOP_COUNT + 2, dtype=np.bool_)
+    _, posterior = carrier_scores(
+        np.asarray([0.5, 0.5]), q,
+        observed_with_tail[:ANALYSIS_STOP_COUNT],
+        np.arange(ANALYSIS_STOP_COUNT), "stop_resolved",
+    )
+    assert np.allclose(posterior, np.asarray([0.5, 0.5]))
     print("CPIR_FACTORIAL_OFFLINE_SELFTEST=PASS")
 
 
