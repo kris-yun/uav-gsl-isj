@@ -7,11 +7,11 @@ set -Eeo pipefail
 # cadence.  STEPS_SOURCE_UPDATE, MAX_WARMUP_ITERATIONS and
 # MIN_WARMUP_ITERATIONS are mandatory inputs recovered from the exact frozen
 # paired PMFS runtime/parameter manifest.  The same values must be used for
-# A0/A1/A2/A3.
+# A0/F00/F01/F10/F11.
 
 HOUSE="${HOUSE:?set HOUSE=H01,H02,H03 (or House01,House02,House03)}"
 SEED="${SEED:?set SEED explicitly}"
-ARM="${ARM:?set ARM=A0,A1,A2,A3}"
+ARM="${ARM:?set ARM=A0,F00,F01,F10,F11}"
 RUN_ROOT="${RUN_ROOT:?set RUN_ROOT}"
 PFDI_INSTALL_ROOT="${PFDI_INSTALL_ROOT:?set PFDI_INSTALL_ROOT to the build of the current frozen commit}"
 STEPS_SOURCE_UPDATE="${STEPS_SOURCE_UPDATE:?recover STEPS_SOURCE_UPDATE from the authoritative paired PMFS manifest}"
@@ -70,9 +70,10 @@ esac
 
 case "${ARM}" in
   A0) PFDI_MODE="off" ;;
-  A1) PFDI_MODE="cpir_a1" ;;
-  A2) PFDI_MODE="cpir_a2" ;;
-  A3) PFDI_MODE="cpir_a3" ;;
+  F00) PFDI_MODE="cpir_a1" ;;
+  F01) PFDI_MODE="cpir_m1_m3" ;;
+  F10) PFDI_MODE="cpir_a2" ;;
+  F11) PFDI_MODE="cpir_a3" ;;
   *) echo "CPIR_FORMAL_UNSUPPORTED_ARM=${ARM}" >&2; exit 2 ;;
 esac
 

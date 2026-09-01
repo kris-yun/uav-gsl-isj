@@ -242,8 +242,11 @@ namespace GSL
         }
 
         const double alpha = std::exp(-kDt / kTau);
-        const bool rawEventA1 = pfdiMode == "cpir_a1";
-        const bool stopResolvedA3 = pfdiMode == "cpir_a3";
+        // Frozen 2x2 factorial switches. cpir_m1_m3 is not a fourth module:
+        // it combines the existing raw M1 event operator with the existing M3
+        // stop-resolved score. No scientific constant or formula is changed.
+        const bool rawEventMode = pfdiMode == "cpir_a1" || pfdiMode == "cpir_m1_m3";
+        const bool stopResolvedMode = pfdiMode == "cpir_a3" || pfdiMode == "cpir_m1_m3";
         for (size_t index = cpirProcessedSamples; index < cpirTrace.size(); ++index)
         {
             const CPIRSample& sample = cpirTrace[index];
@@ -258,7 +261,7 @@ namespace GSL
                 // including motion samples between stops and samples crossing
                 // a source-update boundary.  Only the event ledger below is
                 // restricted to the first 80 samples of a completed stop.
-                if (!rawEventA1)
+                if (!rawEventMode)
                 {
                     const double target = cpirDelayTwo[world];
                     cpirDelayTwo[world] = cpirDelayOne[world];
@@ -271,7 +274,7 @@ namespace GSL
                 if (sample.stopIndex >= 0 && sample.stopSampleIndex < kStopSamples &&
                     sample.stopIndex < static_cast<int>(cpirPredictedStopHit.size()))
                 {
-                    if (rawEventA1)
+                    if (rawEventMode)
                     {
                         if (physical > kThreshold)
                             cpirPredictedStopHit[sample.stopIndex][world] = 1;
@@ -298,7 +301,7 @@ namespace GSL
         std::vector<double> score(cpirCarrierCount, 0.0);
         for (size_t source = 0; source < cpirCarrierCount; ++source)
         {
-            if (stopResolvedA3)
+            if (stopResolvedMode)
             {
                 double logLikelihood = 0.0;
                 for (size_t stop = 0; stop < stops; ++stop)

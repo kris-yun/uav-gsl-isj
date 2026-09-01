@@ -44,13 +44,15 @@ def main() -> int:
         'wind_value_server.py',
     )
 
-    # The same wrapper owns A0/A1/A2/A3 and always hashes/preflights the bank.
+    # The same wrapper owns the A0 plus 2x2 factorial arms and always
+    # hashes/preflights the bank.
     require(
         runner,
         'A0) PFDI_MODE="off"',
-        'A1) PFDI_MODE="cpir_a1"',
-        'A2) PFDI_MODE="cpir_a2"',
-        'A3) PFDI_MODE="cpir_a3"',
+        'F00) PFDI_MODE="cpir_a1"',
+        'F01) PFDI_MODE="cpir_m1_m3"',
+        'F10) PFDI_MODE="cpir_a2"',
+        'F11) PFDI_MODE="cpir_a3"',
         'cpir_expected_bank_summary_sha256:=${BANK_SUMMARY_SHA}',
         'cpir_expected_cell_manifest_sha256:=${CELL_MANIFEST_SHA}',
         'measurement_deduplicate_sim_timestamps:=true',

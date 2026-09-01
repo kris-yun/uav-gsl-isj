@@ -78,11 +78,11 @@ namespace GSL
         tadmEnabled = getParam<bool>("tadm_enabled", false);
         pfdiMode = getParam<std::string>("pfdi_mode", tadmEnabled ? "joint" : "off");
         if (pfdiMode != "off" && pfdiMode != "cpir_m1" && pfdiMode != "cpir_a1" && pfdiMode != "cpir_a2" &&
-            pfdiMode != "cpir_a3" && pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" &&
+            pfdiMode != "cpir_a3" && pfdiMode != "cpir_m1_m3" && pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" &&
             pfdiMode != "al" && pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" &&
             pfdiMode != "ec_edcl" && pfdiMode != "ec_edcl_shadow")
-            throw std::invalid_argument("pfdi_mode must be off, cpir_m1, cpir_a1, cpir_a2, cpir_a3, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
-        cpirEnabled = pfdiMode == "cpir_m1" || pfdiMode == "cpir_a1" || pfdiMode == "cpir_a2" || pfdiMode == "cpir_a3";
+            throw std::invalid_argument("pfdi_mode must be off, cpir_m1, cpir_a1, cpir_a2, cpir_a3, cpir_m1_m3, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
+        cpirEnabled = pfdiMode == "cpir_m1" || pfdiMode == "cpir_a1" || pfdiMode == "cpir_a2" || pfdiMode == "cpir_a3" || pfdiMode == "cpir_m1_m3";
         tadmEnabled = pfdiMode != "off" && !cpirEnabled;
         if (cpirEnabled)
         {

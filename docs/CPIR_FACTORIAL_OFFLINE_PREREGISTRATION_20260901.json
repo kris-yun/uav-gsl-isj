@@ -1,0 +1,89 @@
+{
+  "contract": "CPIR_FACTORIAL_OFFLINE_V1",
+  "date": "2026-09-01",
+  "status": "PREREGISTERED_BEFORE_FACTORIAL_BANK_PAYLOAD_OR_OUTCOME_READ",
+  "scope": {
+    "houses": ["H01", "H02", "H03"],
+    "historical_seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "source_updates_per_case": 5,
+    "horizon_s": 300.0,
+    "threshold_m": 2.0,
+    "right_censor_s": 300.0,
+    "new_gaden_runs": 0,
+    "neural_training": false,
+    "scientific_parameter_tuning": false,
+    "closed_loop": false
+  },
+  "factorial_arms": {
+    "F00": "M1 raw event plus count-only score (runtime cpir_a1)",
+    "F01": "M1 raw event plus M3 stop-resolved score (runtime cpir_m1_m3)",
+    "F10": "M1 plus M2 persistent state plus count-only score (runtime cpir_a2)",
+    "F11": "M1 plus M2 persistent state plus M3 stop-resolved score (runtime cpir_a3)"
+  },
+  "formal_comparisons": {
+    "M1": "F00 versus A0",
+    "M3": "F01 versus F00",
+    "M2": "F11 versus F01",
+    "M2_interaction_diagnostic_only": "F10 versus F00"
+  },
+  "per_update_outputs": [
+    "official ExpectedValue(sourceProbability,0.05) localization error",
+    "true-source carrier normalized rank (midrank-1)/(carrier_count-1)",
+    "true-cell normalized rank (midrank-1)/(free_cell_count-1)",
+    "cell-posterior entropy in nats",
+    "maximum cell-posterior probability"
+  ],
+  "trajectory_metrics": {
+    "final_error": "official final posterior at T=300 s",
+    "error_auc": "trapezoidal integration at t=0, the five common source-update times, and T=300 s; t=0 is the common geometry-only uniform free-cell prior",
+    "time_to_2m": "first common source-update time with official error <=2.0 m; use t=0 if the common prior already satisfies it; otherwise right-censor at 300 s",
+    "final_rank": "true-source carrier normalized rank at T"
+  },
+  "fixed_statistics": {
+    "clear_increment": "right-arm pooled mean is lower, pairwise wins exceed losses, and the one-sided exact sign-test p-value excluding ties is <=0.05",
+    "significant_final_worsening": "the one-sided exact sign-test for right-arm final error being larger is <=0.05",
+    "stable_house_reverse": "within a House, right-arm mean is larger and at least 8 of 10 pairs are worse",
+    "cross_house_repeatability": "the selected improved metric has a lower mean in at least two of three Houses and no House meets stable_house_reverse",
+    "ties": "absolute paired difference <=1e-12"
+  },
+  "m1_gate": {
+    "requirements": [
+      "at least one of final_error, error_auc, time_to_2m, or final_rank is a clear increment for F00 versus A0",
+      "the selected metric is cross-House repeatable",
+      "F00 final error does not significantly worsen versus A0"
+    ]
+  },
+  "m2_prediction_gate": {
+    "unit": "one historical held-out observation tape; score the true source carrier's per-stop predictive event probabilities",
+    "metrics": ["event NLL", "Brier score", "fixed five-bin ECE", "hit and no-hit subset calibration"],
+    "pass": "persistent-state pooled NLL and Brier are both lower than raw-event values, at least one has one-sided paired sign p<=0.05 across 30 tapes, fixed-bin ECE is not larger, and neither NLL nor Brier has a stable House reverse"
+  },
+  "m2_downstream_gate": {
+    "requirements": [
+      "m2_prediction_gate passes",
+      "at least one of final_error, error_auc, or time_to_2m is a clear increment for F11 versus F01",
+      "the selected metric is cross-House repeatable",
+      "F11 final error does not significantly worsen versus F01",
+      "no House meets stable_house_reverse"
+    ],
+    "failure_verdict": "M2_PERSISTENT_SENSOR_MAIN_MODULE_NO_GO"
+  },
+  "m3_gate": {
+    "stop_permute": "for each House, seed, and visible prefix, apply one SHA256-domain-separated deterministic non-identity permutation to candidate raw-event stop labels while preserving the observed tape and hit count",
+    "requirements": [
+      "F01 versus F00 has a clear increment in final_error or error_auc",
+      "final true-source normalized rank changes in the same direction",
+      "F01 final error does not significantly worsen versus F00",
+      "F01 beats STOP_PERMUTE in final_error or error_auc with one-sided exact sign p<=0.05 and rank in the same direction",
+      "the F01 versus F00 selected metric improves in at least two Houses and has no stable House reverse"
+    ]
+  },
+  "overall_pass": "M1, M2, and M3 gates all pass and the pooled means show A0 -> F00 -> F01 -> F11 monotone improvement in final_error or error_auc",
+  "forbidden": [
+    "regenerate GADEN banks",
+    "change M1, M2, or M3 scientific formulas or constants",
+    "restore dynamic-K, coherent-K, exact first-passage, or neural hazard",
+    "tune after reading outcomes",
+    "start any closed-loop run from this offline evaluator"
+  ]
+}

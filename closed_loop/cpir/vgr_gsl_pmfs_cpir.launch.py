@@ -50,13 +50,14 @@ def _validate_cpir_launch(context):
     """Fail closed before starting ROS nodes when the frozen contract drifts."""
     value = lambda name: LaunchConfiguration(name).perform(context)
     mode = value('pfdi_mode')
-    allowed = {'off', 'cpir_m1', 'cpir_a1', 'cpir_a2', 'cpir_a3'}
+    allowed = {'off', 'cpir_m1', 'cpir_a1', 'cpir_a2', 'cpir_a3', 'cpir_m1_m3'}
     if mode not in allowed:
         raise RuntimeError(f'CPIR_MODE_NOT_EXPLICIT:{mode}')
     if value('algorithm') != 'PMFS':
         raise RuntimeError('CPIR_ALGORITHM_MUST_BE_PMFS')
     expected_ablation = {
-        'off': 'A0', 'cpir_a1': 'A1', 'cpir_a2': 'A2', 'cpir_a3': 'A3',
+        'off': 'A0', 'cpir_a1': 'F00', 'cpir_m1_m3': 'F01',
+        'cpir_a2': 'F10', 'cpir_a3': 'F11',
         'cpir_m1': 'CPIR_BASE_LEGACY',
     }[mode]
     if value('ablation_id') != expected_ablation:
