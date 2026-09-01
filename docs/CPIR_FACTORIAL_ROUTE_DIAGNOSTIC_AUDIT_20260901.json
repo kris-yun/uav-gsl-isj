@@ -1,0 +1,110 @@
+{
+  "contract": "CPIR_FACTORIAL_ROUTE_DIAGNOSTIC_AUDIT_V1",
+  "date": "2026-09-01",
+  "verdict": "CPIR_FACTORIAL_ROUTE_DIAGNOSTIC_NO_GO",
+  "evidence_class": "coverage-complete continuous-route diagnostic; can reject modules but cannot authorize full-grid runtime parity or closed loop",
+  "closed_loop_started": false,
+  "parity_or_closed_loop_authorized": false,
+  "scientific_parameters_changed": false,
+  "gaden_runs": 0,
+  "code": {
+    "authoritative_base_commit": "57cd4e41bb02f5e3e85b3d3a7986c9e4ff72632d",
+    "evaluator_commit": "e2bb4a003baa4b2438dd63c9d83f145fcdc1b7f4",
+    "git_archive_sha256": "90f3759c21fa9b2bb29267904f02e97f67ca4af2b4e3e755dd2990da791f5f57",
+    "preregistration_sha256": "2fd5d0f7c4463a3f8f853ecddb7292be1962e9b1a0eae379c50f1de627b3af58"
+  },
+  "stage1": {
+    "status": "F00_F01_F10_F11_FROZEN_BEFORE_A0_AND_TRUTH",
+    "semantic_freeze_sha256": "a32d1d343f446bb02f86e0d14e604dc5fffaf5d5add449d2eb134a10505b65de",
+    "manifest_file_sha256": "a284dd44158bca847d1dbb2689153264ba54e29a0764a1fb1dd9e6785da92cb8",
+    "route_bank_summary_sha256": "17364eb744f4fc53c4b52eee0362f09bdee3e8655b74c9d5e5a2eb0a3a9e2d47",
+    "route_bank_manifest_sha256": "c68e4bcbd196a85d74ff9a44db01b2090f4487fc84943f82fcd0d17a18629bed",
+    "verified_shards": {"H01": 1680, "H02": 1608, "H03": 1648},
+    "physical_values_consumed": {"H01": 25200000, "H02": 24120000, "H03": 24720000},
+    "schedule_hashes_verified_per_house": 10,
+    "analysis_stop_count": 15
+  },
+  "integrity": {
+    "summary_sha256": "9ba3c3b01b477d868873bf1175f066998bfdc8063e85252c294bf660e7a9b1a8",
+    "case_metrics_sha256": "4eeb683c25ac1f4e0fbeb48c5b01b6a467e6d393f869b31f6291357e57460239",
+    "per_update_metrics_sha256": "b5c11f472b9a83c9fe9c6978923fbbd661e71446ec36fef454f03fc4a60b74ba",
+    "m2_mechanism_cases_sha256": "3b16e6cb77a7ee6d7a215a5ede229b8f32a293dbfa5e1878a24db7f78cf27162",
+    "m2_mechanism_events_sha256": "93d5fbc7d69eb6adc85cf9a0d15fd9bcabc79b167cb2761cd3bde687c5ca1e65",
+    "artifact_sha256s_v2_sha256": "b6f9f9786124126077e0ff0352abd85d686bcfa56505db344d2dbb98642e11ec",
+    "package_sha256": "8a1a50c240dcabf7c1ff23ea0b21be80680087197b24a80881acbfe3c133e9fc",
+    "package_path": "/home/zyc/CPIR_FACTORIAL_ROUTE_DIAGNOSTIC_20260901_e2bb4a0_R3_NO_GO.tar.gz",
+    "per_update_rows": 900,
+    "case_metric_rows": 180,
+    "invalid_numeric_rows": 0,
+    "a0_final_vs_update5_posterior_max_abs": 0.0
+  },
+  "pooled_progression": {
+    "final_error_m": {"A0": 5.1823216386050595, "F00": 2.6271364966939723, "F01": 2.4680408782007457, "F11": 2.5520239749256843},
+    "error_auc_m_s": {"A0": 1497.7297454662264, "F00": 945.4507567334094, "F01": 941.731171269978, "F11": 996.3165064124339},
+    "monotone_metrics": []
+  },
+  "module_gates": {
+    "M1": {
+      "verdict": "M1_CAUSAL_PHYSICAL_INTERVENTION_PASS",
+      "selected_increment_metrics": ["final_error_m", "time_to_2m_s", "final_true_source_normalized_rank"],
+      "final_error": {"A0": 5.1823216386050595, "F00": 2.6271364966939723, "wins": 22, "losses": 8, "p": 0.008062400855123997, "stable_reverse_houses": []},
+      "time_to_2m_s": {"A0": 278.41015652339996, "F00": 208.03864903000004, "wins": 15, "losses": 3, "ties": 12, "p": 0.0037689208984375},
+      "final_rank": {"A0": 0.7665000583498659, "F00": 0.30036179834286375, "wins": 30, "losses": 0, "p": 9.313225746154785e-10}
+    },
+    "M2": {
+      "verdict": "M2_PERSISTENT_SENSOR_MAIN_MODULE_NO_GO",
+      "prediction_gate_pass": false,
+      "selected_increment_metrics": [],
+      "prediction": {
+        "raw_nll": 1.1165672298296283,
+        "persistent_nll": 1.1061988889506065,
+        "nll_sign_p": 0.06690025329589844,
+        "raw_brier": 0.34640603566529493,
+        "persistent_brier": 0.3441015089163237,
+        "brier_sign_p": 0.01734483242034912,
+        "raw_ece_5bin": 0.3224691358024691,
+        "persistent_ece_5bin": 0.3350617283950619,
+        "raw_hit_mean_predicted_hit": 0.6130072051573758,
+        "persistent_hit_mean_predicted_hit": 0.6213500189609404,
+        "raw_no_hit_mean_predicted_no_hit": 0.5084925690021233,
+        "persistent_no_hit_mean_predicted_no_hit": 0.5035385704175515
+      },
+      "downstream": {
+        "final_error_m": {"F01": 2.4680408782007457, "F11": 2.5520239749256843},
+        "error_auc_m_s": {"F01": 941.731171269978, "F11": 996.3165064124339},
+        "time_to_2m_s": {"F01": 210.26138095273336, "F11": 243.71414336936667},
+        "stable_reverse_houses": ["H03"]
+      },
+      "H03_stable_reverse": {
+        "final_error_m": {"F01": 0.9526457701476374, "F11": 2.111486802977475, "wins": 1, "losses": 9, "worsening_p": 0.0107421875},
+        "error_auc_m_s": {"F01": 523.4191198646179, "F11": 844.3782928671384, "wins": 1, "losses": 9, "worsening_p": 0.0107421875},
+        "time_to_2m_s": {"F01": 70.36218857659999, "F11": 236.81076273809998, "wins": 0, "losses": 8, "ties": 2, "worsening_p": 0.00390625}
+      }
+    },
+    "M3": {
+      "verdict": "M3_STOP_RESOLVED_MAIN_MODULE_NO_GO",
+      "selected_increment_metrics": [],
+      "rank_same_direction": false,
+      "stop_permute_increment_metrics": [],
+      "F01_vs_F00": {
+        "final_error_m": {"F00": 2.6271364966939723, "F01": 2.4680408782007457, "wins": 20, "losses": 10, "p": 0.04936857335269451, "stable_reverse_houses": ["H01"]},
+        "error_auc_m_s": {"F00": 945.4507567334094, "F01": 941.731171269978, "wins": 20, "losses": 10, "p": 0.04936857335269451, "stable_reverse_houses": ["H01"]},
+        "final_rank": {"F00": 0.30036179834286375, "F01": 0.3263977613101489}
+      },
+      "H01_stable_reverse": {
+        "final_error_m": {"F00": 2.996322380928108, "F01": 4.045048342472311, "wins": 2, "losses": 8},
+        "error_auc_m_s": {"F00": 1097.504079204624, "F01": 1348.064993219377, "wins": 2, "losses": 8}
+      },
+      "stop_permute_control": {
+        "final_error_m": {"STOP_PERMUTE": 2.5410398337259212, "F01": 2.4680408782007457, "p": 0.6494459807872772},
+        "error_auc_m_s": {"STOP_PERMUTE": 925.157375558401, "F01": 941.731171269978, "p": 0.5747229903936386},
+        "final_rank": {"STOP_PERMUTE": 0.3249444509277628, "F01": 0.3263977613101489}
+      }
+    }
+  },
+  "failed_pretruth_attempts_preserved": [
+    {"commit": "38607028146786a6e583100b8db3f9c72d3e318a", "reason": "total physical stop count differed after source-update 5", "stage1_log_sha256": "3c9c3a023827b4ef51ac353d4688c38ed6b1225698eeb728f8f03d18b2f36d08"},
+    {"commit": "d14c28558f205303aef8c9dfccd1d56bb29c8189", "reason": "observation vector retained post-update5 stops after prediction trim", "stage1_log_sha256": "887ab15229afe2c303fd5998a9775667bbc87d42679ccc0391a8b52595099c92"}
+  ],
+  "overall_conclusion": "One supported module (M1, route-diagnostic evidence) and two rejected modules (M2/M3). Do not rescue-tune, run parity, or start closed loop."
+}
