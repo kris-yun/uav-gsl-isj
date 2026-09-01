@@ -73,6 +73,22 @@ def main() -> int:
     ):
         assert marker in cpp, marker
 
+    pmfs_cpp = (ROOT / "ros2_package" / "src" / "gsl_server" / "algorithms" /
+                "PMFS" / "PMFS.cpp").read_text(encoding="utf-8")
+    for marker in (
+        'CPIR_PLANNER_VARIANCE_SIZE',
+        'CPIR_PLANNER_VARIANCE_INVALID',
+        'CPIR_PLANNER_FORWARD_STATE_EMPTY',
+        'CPIR planner refresh {} PASS',
+        'CPIR requires th_gas_present=0.1',
+        'posterior_guidance_weight must remain 0',
+    ):
+        assert marker in pmfs_cpp, marker
+    native_refresh = pmfs_cpp.index('simulations.updateSourceProbability(settings.simulation.refineFraction);',
+                                    pmfs_cpp.index('if (cpirEnabled)\n                {'))
+    cpir_write = pmfs_cpp.index('applyCPIRPosterior(p2SourceUpdateId, sourceUpdateSimTime);', native_refresh)
+    assert native_refresh < cpir_write, "native planner refresh must precede CPIR posterior restore"
+
     launch = (ROOT / "closed_loop" / "cpir" /
               "vgr_gsl_pmfs_cpir.launch.py").read_text(encoding="utf-8")
     assert launch_default(launch, "flight_height") == "0.3"
@@ -80,9 +96,28 @@ def main() -> int:
     assert launch_default(launch, "measurement_block_samples") == "10"
     assert launch_default(launch, "measurement_settle_samples") == "0"
     assert launch_default(launch, "deltaTime") == "0.2"
+    assert launch_default(launch, "th_gas_present") == "0.1"
+    assert launch_default(launch, "stepsSourceUpdate") == "3"
+    assert launch_default(launch, "measurement_deduplicate_sim_timestamps") == "true"
+    assert launch_default(launch, "sensor_config") == "fopdt_tau1p2_dead0p4_noise0"
+    assert launch_default(launch, "sensor_model_mode") == "dynamic"
     assert launch_default(launch, "pfdi_mode") == "UNSET"
     assert launch_default(launch, "algorithm") == "PMFS"
     assert launch_default(launch, "ablation_id") == "UNSET"
+    assert launch_default(launch, "cpir_expected_house") == "UNSET"
+    assert launch_default(launch, "cpir_expected_bank_summary_sha256") == "UNSET"
+    assert launch_default(launch, "cpir_expected_cell_manifest_sha256") == "UNSET"
+    for marker in (
+        "CPIR_STEPS_SOURCE_UPDATE_MUST_BE_3",
+        "CPIR_SIM_TIMESTAMP_DEDUP_MUST_BE_TRUE",
+        "CPIR_BANK_SUMMARY_SHA_MISMATCH",
+        "CPIR_INTEGRITY_REPORT_NOT_PASS",
+        "CPIR_RUNTIME_CONFIG_MISMATCH",
+        "CPIR_PREDICTIVE_TRANSPORT_KEYS_NOT_EIGHT_UNIQUE",
+        "'seed': _int('seed')",
+        "'posterior_guidance_weight': 0.0",
+    ):
+        assert marker in launch, marker
     declared = re.findall(r"DeclareLaunchArgument\('([^']+)'", launch)
     assert len(declared) == len(set(declared)), "duplicate launch argument"
     assert "CPIR_STOP_MUST_BE_EXACTLY_80_SAMPLES_WITH_ZERO_SETTLE" in launch

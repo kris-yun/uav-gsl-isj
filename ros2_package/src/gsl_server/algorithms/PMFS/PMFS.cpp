@@ -95,10 +95,14 @@ namespace GSL
                     "maxUpdatesPerStop*measurement_block_samples=80");
             if (std::abs(settings.simulation.deltaTime - 0.2) > 1.0e-12)
                 throw std::invalid_argument("CPIR requires deltaTime=0.2");
+            if (std::abs(thresholdGas - 0.1) > 1.0e-12)
+                throw std::invalid_argument("CPIR requires th_gas_present=0.1");
         }
         cpirLookupRoot = getParam<std::string>("cpir_lookup_root", "");
         cpirAuditDirectory = getParam<std::string>("cpir_audit_directory", "");
         posteriorGuidanceWeight = std::clamp(getParam<double>("posterior_guidance_weight", 0.0), 0.0, 1.0);
+        if (cpirEnabled && std::abs(posteriorGuidanceWeight) > 1.0e-12)
+            throw std::invalid_argument("CPIR posterior_guidance_weight must remain 0; planner coupling is not a paper module");
         tadmDirectory = getParam<std::string>("tadm_directory", "");
         tadmPriorSet = getParam<int>("tadm_prior_set", 0);
         tadmGlobalSeed = getParam<int64_t>("tadm_global_seed", 0);
@@ -339,7 +343,36 @@ namespace GSL
                 if (contextBankExportEnabled)
                     simulations.beginContextBankUpdate(p2SourceUpdateId, sourceUpdateSimTime);
                 if (cpirEnabled)
+                {
+                    // CPIR replaces only the source-inference channel.  The
+                    // existing PMFS controller still requires a freshly
+                    // simulated predictive state (resultsFirstLevel and
+                    // varianceOfHitProb) to evaluate information gain.  Run
+                    // the native update first, retain its planner-side forward
+                    // products, then overwrite the transient native posterior
+                    // with the CPIR posterior before the controller sees it.
+                    // This keeps planning truth-blind and prevents a stale/zero
+                    // variance map without multiplying the native source
+                    // likelihood into the CPIR posterior.
+                    simulations.updateSourceProbability(settings.simulation.refineFraction);
+                    if (simulations.varianceOfHitProb.size() != sourceProbability.size())
+                        throw std::runtime_error("CPIR_PLANNER_VARIANCE_SIZE");
+                    bool anyPositivePlannerVariance = false;
+                    for (size_t cell = 0; cell < simulations.varianceOfHitProb.size(); ++cell)
+                    {
+                        if (occupancy[cell] != Occupancy::Free)
+                            continue;
+                        const double value = simulations.varianceOfHitProb[cell];
+                        if (!(std::isfinite(value) && value >= 0.0))
+                            throw std::runtime_error("CPIR_PLANNER_VARIANCE_INVALID");
+                        anyPositivePlannerVariance = anyPositivePlannerVariance || value > 0.0;
+                    }
+                    if (!anyPositivePlannerVariance || simulations.resultsFirstLevel.empty())
+                        throw std::runtime_error("CPIR_PLANNER_FORWARD_STATE_EMPTY");
                     applyCPIRPosterior(p2SourceUpdateId, sourceUpdateSimTime);
+                    GSL_INFO("CPIR planner refresh {} PASS: native forward products retained, CPIR source posterior restored",
+                             p2SourceUpdateId);
+                }
                 else
                     simulations.updateSourceProbability(settings.simulation.refineFraction);
                 if (contextBankExportEnabled)

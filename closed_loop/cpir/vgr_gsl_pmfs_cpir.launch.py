@@ -1,10 +1,14 @@
-"""Canonical SAISC-PF/VGR launch file for auditable reruns.
+"""Canonical CPIR/PMFS launch file for auditable paired reruns.
 
-This file intentionally disables GT-proximity source declaration by setting
-`distanceThreshold=-1.0`. Ground-truth source coordinates are still passed to
-GSL only so result loggers can compute offline evaluation metrics. Algorithms
-must not call GT in their online decision/declaration logic.
+This file disables GT-proximity source declaration by setting
+`distanceThreshold=-1.0`. Ground-truth source coordinates are passed only to
+result loggers for offline evaluation.  CPIR runs additionally fail closed on
+bank provenance, House identity, measurement cadence, and timestamp handling.
 """
+import hashlib
+import json
+from pathlib import Path
+
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, TimerAction, ExecuteProcess, OpaqueFunction
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
@@ -19,12 +23,21 @@ def _int(name: str):
 def _bool(name: str):
     return ParameterValue(LaunchConfiguration(name), value_type=bool)
 
+
 def _float(name: str):
     return ParameterValue(LaunchConfiguration(name), value_type=float)
 
 
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open('rb') as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b''):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def _validate_cpir_launch(context):
-    """Fail closed before starting ROS nodes when the frozen tape drifts."""
+    """Fail closed before starting ROS nodes when the frozen contract drifts."""
     value = lambda name: LaunchConfiguration(name).perform(context)
     mode = value('pfdi_mode')
     allowed = {'off', 'cpir_m1', 'cpir_a1', 'cpir_a2', 'cpir_a3'}
@@ -48,9 +61,97 @@ def _validate_cpir_launch(context):
         raise RuntimeError('CPIR_STOP_MUST_BE_EXACTLY_80_SAMPLES_WITH_ZERO_SETTLE')
     if abs(float(value('deltaTime')) - 0.2) > 1.0e-12:
         raise RuntimeError('CPIR_DELTA_TIME_MUST_BE_0P2')
+    if abs(float(value('th_gas_present')) - 0.1) > 1.0e-12:
+        raise RuntimeError('CPIR_GAS_THRESHOLD_MUST_BE_0P1')
+    # The frozen historical H01/H02/H03 tapes have five source updates after
+    # 3,6,9,12,15 completed physical stops.  OFF and all CPIR arms must use the
+    # same cadence for the paired formal contract.
+    if int(value('stepsSourceUpdate')) != 3:
+        raise RuntimeError('CPIR_STEPS_SOURCE_UPDATE_MUST_BE_3')
+    if value('measurement_deduplicate_sim_timestamps').lower() != 'true':
+        raise RuntimeError('CPIR_SIM_TIMESTAMP_DEDUP_MUST_BE_TRUE')
+    if value('sensor_model_mode') != 'dynamic':
+        raise RuntimeError('CPIR_SENSOR_MODEL_MODE_MUST_BE_DYNAMIC')
+    if value('sensor_config') != 'fopdt_tau1p2_dead0p4_noise0':
+        raise RuntimeError('CPIR_SENSOR_CONFIG_MUST_MATCH_FROZEN_FOPDT')
+
     if mode != 'off':
-        if not value('cpir_lookup_root') or not value('cpir_audit_directory'):
-            raise RuntimeError('CPIR_LOOKUP_AND_AUDIT_PATHS_REQUIRED')
+        required = {
+            'cpir_lookup_root': value('cpir_lookup_root'),
+            'cpir_audit_directory': value('cpir_audit_directory'),
+            'cpir_expected_house': value('cpir_expected_house'),
+            'cpir_expected_bank_summary_sha256': value('cpir_expected_bank_summary_sha256'),
+            'cpir_expected_cell_manifest_sha256': value('cpir_expected_cell_manifest_sha256'),
+            'cpir_integrity_report': value('cpir_integrity_report'),
+        }
+        missing = [name for name, item in required.items()
+                   if not item or item == 'UNSET']
+        if missing:
+            raise RuntimeError('CPIR_PROVENANCE_ARGS_REQUIRED:' + ','.join(missing))
+
+        root = Path(required['cpir_lookup_root']).resolve()
+        summary_path = root / 'bank_summary.json'
+        cell_manifest_path = root / 'cell_manifest.csv'
+        integrity_path = Path(required['cpir_integrity_report']).resolve()
+        if not root.is_dir() or not summary_path.is_file() or not cell_manifest_path.is_file():
+            raise RuntimeError('CPIR_BANK_PROVENANCE_FILES_MISSING')
+        if (root / 'IN_PROGRESS').exists():
+            raise RuntimeError('CPIR_BANK_IN_PROGRESS')
+        if not integrity_path.is_file():
+            raise RuntimeError('CPIR_INTEGRITY_REPORT_MISSING')
+
+        try:
+            summary = json.loads(summary_path.read_text(encoding='utf-8'))
+            integrity = json.loads(integrity_path.read_text(encoding='utf-8'))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise RuntimeError(f'CPIR_PROVENANCE_JSON:{exc}') from exc
+
+        expected_house = required['cpir_expected_house']
+        if expected_house not in {'H01', 'H02', 'H03'}:
+            raise RuntimeError(f'CPIR_EXPECTED_HOUSE_INVALID:{expected_house}')
+        if summary.get('contract') != 'CPIR_FULLGRID_LOOKUP_V1' or summary.get('verdict') != 'CPIR_FULLGRID_LOOKUP_PASS':
+            raise RuntimeError('CPIR_BANK_CONTRACT_OR_VERDICT')
+        if summary.get('house') != expected_house:
+            raise RuntimeError(f'CPIR_BANK_HOUSE_MISMATCH:{summary.get("house")}:{expected_house}')
+        if int(summary.get('member_count', -1)) != 8 or int(summary.get('time_count', -1)) != 1500:
+            raise RuntimeError('CPIR_BANK_MEMBER_OR_TIME_COUNT')
+        prediction_keys = summary.get('prediction_transport_keys')
+        if not isinstance(prediction_keys, list) or len(prediction_keys) != 8 or len(set(prediction_keys)) != 8:
+            raise RuntimeError('CPIR_PREDICTIVE_TRANSPORT_KEYS_NOT_EIGHT_UNIQUE')
+        if summary.get('prediction_rng_domain') != 'PF_DEI_V3_REGION_PLACEMENT_V1/train':
+            raise RuntimeError('CPIR_PREDICTION_RNG_DOMAIN')
+        if summary.get('observation_rng_domain') != 'immutable_external_GADEN_dataset_world':
+            raise RuntimeError('CPIR_OBSERVATION_RNG_DOMAIN')
+
+        actual_summary_sha = _sha256(summary_path)
+        actual_cell_sha = _sha256(cell_manifest_path)
+        if actual_summary_sha != required['cpir_expected_bank_summary_sha256']:
+            raise RuntimeError('CPIR_BANK_SUMMARY_SHA_MISMATCH')
+        if actual_cell_sha != required['cpir_expected_cell_manifest_sha256']:
+            raise RuntimeError('CPIR_CELL_MANIFEST_SHA_MISMATCH')
+        if summary.get('cell_manifest_sha256') != actual_cell_sha:
+            raise RuntimeError('CPIR_SUMMARY_CELL_MANIFEST_SHA_MISMATCH')
+        if integrity.get('verdict') != 'CPIR_LOOKUP_INTEGRITY_PASS':
+            raise RuntimeError('CPIR_INTEGRITY_REPORT_NOT_PASS')
+        if integrity.get('house') != expected_house:
+            raise RuntimeError('CPIR_INTEGRITY_HOUSE_MISMATCH')
+        if integrity.get('bank_summary_sha256') != actual_summary_sha:
+            raise RuntimeError('CPIR_INTEGRITY_SUMMARY_SHA_MISMATCH')
+        if integrity.get('cell_manifest_sha256') != actual_cell_sha:
+            raise RuntimeError('CPIR_INTEGRITY_CELL_SHA_MISMATCH')
+
+        house_contract = {
+            'H01': ('VGR_House01', 'VGR_House01', '2,4-1_fast', (-0.40, -2.90, -0.30)),
+            'H02': ('VGR_House02', 'VGR_House02', '3,5-1_fast', (0.00, -1.00, 0.20)),
+            'H03': ('VGR_House03', 'VGR_House03', '1-2,5_fast', (-0.45, 1.90, -0.10)),
+        }[expected_house]
+        if value('environment_id') != house_contract[0] or value('dataset') != house_contract[1]:
+            raise RuntimeError('CPIR_RUNTIME_HOUSE_METADATA_MISMATCH')
+        if value('config_id') != house_contract[2]:
+            raise RuntimeError('CPIR_RUNTIME_CONFIG_MISMATCH')
+        actual_source = (float(value('source_x')), float(value('source_y')), float(value('source_z')))
+        if any(abs(a - b) > 1.0e-9 for a, b in zip(actual_source, house_contract[3])):
+            raise RuntimeError(f'CPIR_RUNTIME_SOURCE_MISMATCH:{actual_source}:{house_contract[3]}')
     return []
 
 
@@ -76,7 +177,7 @@ def generate_launch_description():
         DeclareLaunchArgument('dataset', default_value='VGR_House01'),
         DeclareLaunchArgument('source_config', default_value='official_gaden_source'),
         DeclareLaunchArgument('wind_config', default_value='official_gaden_wind'),
-        DeclareLaunchArgument('sensor_config', default_value='dynamic_pid_tau1p2_4p0_noise'),
+        DeclareLaunchArgument('sensor_config', default_value='fopdt_tau1p2_dead0p4_noise0'),
         DeclareLaunchArgument('start_config', default_value='start_default'),
 
         DeclareLaunchArgument('source_x', default_value='-0.40'),
@@ -89,15 +190,13 @@ def generate_launch_description():
         DeclareLaunchArgument('timeout_sec', default_value='300.0'),
         DeclareLaunchArgument('path_budget_m', default_value='-1.0'),
 
-        # Frozen House1 PMFS runtime contract.  These are explicit launch
-        # arguments so the Main-V8 fallback values cannot silently replace
-        # the archived experiment contract.
+        # Frozen paired PMFS/CPIR runtime contract.
         DeclareLaunchArgument('scale', default_value='3'),
         DeclareLaunchArgument('useWindGroundTruth', default_value='false'),
         DeclareLaunchArgument('convergence_thr', default_value='-1.0'),
         DeclareLaunchArgument('sourceDiscriminationPower', default_value='1.0'),
         DeclareLaunchArgument('refineFraction', default_value='0.25'),
-        DeclareLaunchArgument('stepsSourceUpdate', default_value='10'),
+        DeclareLaunchArgument('stepsSourceUpdate', default_value='3'),
         DeclareLaunchArgument('maxRegionSize', default_value='5'),
         DeclareLaunchArgument('deltaTime', default_value='0.2'),
         DeclareLaunchArgument('noiseSTDev', default_value='0.5'),
@@ -107,6 +206,7 @@ def generate_launch_description():
         DeclareLaunchArgument('blurSigmaX', default_value='0.0'),
         DeclareLaunchArgument('blurSigmaY', default_value='0.0'),
         DeclareLaunchArgument('hitPriorProbability', default_value='0.1'),
+        DeclareLaunchArgument('th_gas_present', default_value='0.1'),
         DeclareLaunchArgument('maxUpdatesPerStop', default_value='8'),
         DeclareLaunchArgument('kernelSigma', default_value='0.5'),
         DeclareLaunchArgument('kernelStretchConstant', default_value='1.5'),
@@ -120,10 +220,7 @@ def generate_launch_description():
         DeclareLaunchArgument('markers_height', default_value='0.2'),
         DeclareLaunchArgument('measurement_settle_samples', default_value='0'),
         DeclareLaunchArgument('measurement_block_samples', default_value='10'),
-        # VGR can repeat readiness messages while /clock is paused.  The
-        # deterministic closed-loop contract accepts at most one gas/wind
-        # observation per simulation timestamp.
-        DeclareLaunchArgument('measurement_deduplicate_sim_timestamps', default_value='false'),
+        DeclareLaunchArgument('measurement_deduplicate_sim_timestamps', default_value='true'),
         DeclareLaunchArgument('hover_forward_export_enabled', default_value='false'),
         DeclareLaunchArgument('hover_forward_export_directory', default_value=''),
         DeclareLaunchArgument('hover_forward_export_every_measurement', default_value='false'),
@@ -139,13 +236,13 @@ def generate_launch_description():
         DeclareLaunchArgument('p2_shadow_replicas', default_value='0'),
         DeclareLaunchArgument('p2_transport_substream', default_value='5788047269812129363'),
         DeclareLaunchArgument('tadm_enabled', default_value='false'),
-        # Every CPIR/A0 run must select its arm explicitly.
         DeclareLaunchArgument('pfdi_mode', default_value='UNSET'),
-        # CPIR is an isolated source-channel replacement.  These paths are
-        # explicit launch arguments so the node cannot silently use a stale
-        # lookup or audit directory.
         DeclareLaunchArgument('cpir_lookup_root', default_value=''),
         DeclareLaunchArgument('cpir_audit_directory', default_value=''),
+        DeclareLaunchArgument('cpir_expected_house', default_value='UNSET'),
+        DeclareLaunchArgument('cpir_expected_bank_summary_sha256', default_value='UNSET'),
+        DeclareLaunchArgument('cpir_expected_cell_manifest_sha256', default_value='UNSET'),
+        DeclareLaunchArgument('cpir_integrity_report', default_value=''),
         DeclareLaunchArgument('tadm_directory', default_value=''),
         DeclareLaunchArgument('tadm_prior_set', default_value='0'),
         DeclareLaunchArgument('tadm_global_seed', default_value='0'),
@@ -179,9 +276,6 @@ def generate_launch_description():
         DeclareLaunchArgument('use_evidence_splat_beacon', default_value='0'),
         DeclareLaunchArgument('sensor_model_mode', default_value='dynamic'),
         DeclareLaunchArgument('gaden_iteration_mode', default_value='seeded_time_replay'),
-        # Keep the simulator replay below the callback/service saturation
-        # point.  At 4x, the wall-clock PMFS loop can batch different numbers
-        # of deterministic simulation ticks across repeated runs.
         DeclareLaunchArgument('realtime_factor', default_value='1.0'),
         DeclareLaunchArgument('sim_stop_at_s', default_value='-1.0'),
         DeclareLaunchArgument('nav_command_quantum_s', default_value='2.0'),
@@ -192,7 +286,6 @@ def generate_launch_description():
         DeclareLaunchArgument('repo_root', default_value='/home/zyc/gsl_ws/src/GasSourceLocalization'),
         DeclareLaunchArgument('parameter_manifest_json', default_value=''),
         DeclareLaunchArgument('scenario_manifest_json', default_value=''),
-
 
         OpaqueFunction(function=_validate_cpir_launch),
 
@@ -234,101 +327,102 @@ def generate_launch_description():
                     name='gsl_server',
                     output='screen',
                     parameters=[{
-                'scale': _int('scale'),
-                'use_infotaxis': _bool('use_infotaxis'),
-                'infoTaxis': _bool('infoTaxis'),
-                'use_gui': False,
-                'maxSearchTime': _float('timeout_sec'),
-                'distanceThreshold': -1.0,
-                'useWindGroundTruth': _bool('useWindGroundTruth'), 'anemometer_frame': 'map',
-                'ground_truth_x': _float('source_x'),
-                'ground_truth_y': _float('source_y'),
-                'ground_truth_z': _float('source_z'),
-                'random_seed': _int('seed'),
-                'run_uuid': LaunchConfiguration('run_uuid'),
-                'convergence_thr': _float('convergence_thr'),
-                'sourceDiscriminationPower': _float('sourceDiscriminationPower'),
-                'refineFraction': _float('refineFraction'),
-                'stepsSourceUpdate': _int('stepsSourceUpdate'),
-                'maxRegionSize': _int('maxRegionSize'),
-                'deltaTime': _float('deltaTime'),
-                'noiseSTDev': _float('noiseSTDev'),
-                'iterationsToRecord': _int('iterationsToRecord'),
-                'maxWarmupIterations': _int('maxWarmupIterations'),
-                'minWarmupIterations': _int('minWarmupIterations'),
-                'blurSigmaX': _float('blurSigmaX'),
-                'blurSigmaY': _float('blurSigmaY'),
-                'hitPriorProbability': _float('hitPriorProbability'),
-                'maxUpdatesPerStop': _int('maxUpdatesPerStop'),
-                'kernelSigma': _float('kernelSigma'),
-                'kernelStretchConstant': _float('kernelStretchConstant'),
-                'confidenceMeasurementWeight': _float('confidenceMeasurementWeight'),
-                'confidenceSigmaSpatial': _float('confidenceSigmaSpatial'),
-                'localEstimationWindowSize': _int('localEstimationWindowSize'),
-                'openMoveSetExpasion': _int('openMoveSetExpasion'),
-                'explorationProbability': _float('explorationProbability'),
-                'initialExplorationMoves': _int('initialExplorationMoves'),
-                'distanceWeight': _float('distanceWeight'),
-                'markers_height': _float('markers_height'),
-                'measurement_settle_samples': _int('measurement_settle_samples'),
-                'measurement_block_samples': _int('measurement_block_samples'),
-                'measurement_deduplicate_sim_timestamps': _bool('measurement_deduplicate_sim_timestamps'),
-                'hover_forward_export_enabled': _bool('hover_forward_export_enabled'),
-                'hover_forward_export_directory': LaunchConfiguration('hover_forward_export_directory'),
-                'hover_forward_export_every_measurement': _bool('hover_forward_export_every_measurement'),
-                'hover_forward_export_complete_grid': _bool('hover_forward_export_complete_grid'),
-                'hover_forward_export_continuous_exposure': _bool('hover_forward_export_continuous_exposure'),
-                'hover_forward_pmfs_parameters_hash': LaunchConfiguration('hover_forward_pmfs_parameters_hash'),
-                'hover_forward_map_hash': LaunchConfiguration('hover_forward_map_hash'),
-                'hover_forward_wind_hash': LaunchConfiguration('hover_forward_wind_hash'),
-                'hover_forward_code_hash': LaunchConfiguration('hover_forward_code_hash'),
-                'p2_shadow_enabled': _bool('p2_shadow_enabled'),
-                'p2_shadow_directory': LaunchConfiguration('p2_shadow_directory'),
-                'p2_global_seed': _int('p2_global_seed'),
-                'p2_shadow_replicas': _int('p2_shadow_replicas'),
-                'p2_transport_substream': _int('p2_transport_substream'),
-                'tadm_enabled': _bool('tadm_enabled'),
-                # Force a string: YAML parses the literal ``off`` as boolean
-                # unless the launch parameter type is explicit.
-                'pfdi_mode': ParameterValue(LaunchConfiguration('pfdi_mode'), value_type=str),
-                'cpir_lookup_root': LaunchConfiguration('cpir_lookup_root'),
-                'cpir_audit_directory': LaunchConfiguration('cpir_audit_directory'),
-                'tadm_directory': LaunchConfiguration('tadm_directory'),
-                'tadm_prior_set': _int('tadm_prior_set'),
-                'tadm_global_seed': _int('tadm_global_seed'),
-                'tadm_replicas': _int('tadm_replicas'),
-                'tadm_transport_substream': _int('tadm_transport_substream'),
-                'context_bank_export_enabled': _bool('context_bank_export_enabled'),
-                'context_bank_export_directory': LaunchConfiguration('context_bank_export_directory'),
-                'saisc.use_sdbe': _int('use_sdbe'),
-                'saisc.use_kb_tme': _int('use_kb_tme'),
-                'saisc.use_av_rise': _int('use_av_rise'),
-                'saisc.use_entropy_only_active': _int('use_entropy_only_active'),
-                'saisc.use_sapa_hpa': _int('use_sapa_hpa'),
-                'saisc.use_sapa_sig': _int('use_sapa_sig'),
-                'saisc.use_sage': _int('use_sage'),
-                'saisc.use_beacon': _int('use_beacon'),
-                'saisc.use_beacon_tr': _int('use_beacon_tr'),
-                'saisc.use_evidence_splat_beacon': _int('use_evidence_splat_beacon'),
-                'saisc.use_iasc': _int('use_iasc'),
-                'saisc.use_sepf': _int('use_sepf'),
-                'saisc.use_pcrd': _int('use_pcrd'),
-                'saisc.use_pgn': _int('use_pgn'),
-                'saisc.use_tpp': _int('use_tpp'),
-                'saisc.use_hmm': _int('use_hmm'),
-                'saisc.sepf.temperature_tau': _float('temperature_tau'),
-                'saisc.sepf.tau_adaptive': _int('tau_adaptive'),
-                'saisc.sepf.tau_ess_target_ratio': _float('tau_ess_target_ratio'),
-                'saisc.sepf.tau_alpha': _float('tau_alpha'),
-                'saisc.audit_file': PathJoinSubstitution([LaunchConfiguration('run_dir'), 'saisc_pf_audit.csv']),
-                'resultsFile': PathJoinSubstitution([LaunchConfiguration('run_dir'), 'official_gsl_results.csv']),
-                'pf_estimate_file': PathJoinSubstitution([LaunchConfiguration('run_dir'), 'pf_estimate.csv']),
-                'navigationPathFile': PathJoinSubstitution([LaunchConfiguration('run_dir'), 'official_navigation_path.csv']),
+                        'scale': _int('scale'),
+                        'use_infotaxis': _bool('use_infotaxis'),
+                        'infoTaxis': _bool('infoTaxis'),
+                        'use_gui': False,
+                        'maxSearchTime': _float('timeout_sec'),
+                        'distanceThreshold': -1.0,
+                        'useWindGroundTruth': _bool('useWindGroundTruth'),
+                        'anemometer_frame': 'map',
+                        'ground_truth_x': _float('source_x'),
+                        'ground_truth_y': _float('source_y'),
+                        'ground_truth_z': _float('source_z'),
+                        'random_seed': _int('seed'),
+                        'seed': _int('seed'),
+                        'run_uuid': LaunchConfiguration('run_uuid'),
+                        'convergence_thr': _float('convergence_thr'),
+                        'sourceDiscriminationPower': _float('sourceDiscriminationPower'),
+                        'refineFraction': _float('refineFraction'),
+                        'stepsSourceUpdate': _int('stepsSourceUpdate'),
+                        'maxRegionSize': _int('maxRegionSize'),
+                        'deltaTime': _float('deltaTime'),
+                        'noiseSTDev': _float('noiseSTDev'),
+                        'iterationsToRecord': _int('iterationsToRecord'),
+                        'maxWarmupIterations': _int('maxWarmupIterations'),
+                        'minWarmupIterations': _int('minWarmupIterations'),
+                        'blurSigmaX': _float('blurSigmaX'),
+                        'blurSigmaY': _float('blurSigmaY'),
+                        'hitPriorProbability': _float('hitPriorProbability'),
+                        'th_gas_present': _float('th_gas_present'),
+                        'maxUpdatesPerStop': _int('maxUpdatesPerStop'),
+                        'kernelSigma': _float('kernelSigma'),
+                        'kernelStretchConstant': _float('kernelStretchConstant'),
+                        'confidenceMeasurementWeight': _float('confidenceMeasurementWeight'),
+                        'confidenceSigmaSpatial': _float('confidenceSigmaSpatial'),
+                        'localEstimationWindowSize': _int('localEstimationWindowSize'),
+                        'openMoveSetExpasion': _int('openMoveSetExpasion'),
+                        'explorationProbability': _float('explorationProbability'),
+                        'initialExplorationMoves': _int('initialExplorationMoves'),
+                        'distanceWeight': _float('distanceWeight'),
+                        'markers_height': _float('markers_height'),
+                        'measurement_settle_samples': _int('measurement_settle_samples'),
+                        'measurement_block_samples': _int('measurement_block_samples'),
+                        'measurement_deduplicate_sim_timestamps': _bool('measurement_deduplicate_sim_timestamps'),
+                        'hover_forward_export_enabled': _bool('hover_forward_export_enabled'),
+                        'hover_forward_export_directory': LaunchConfiguration('hover_forward_export_directory'),
+                        'hover_forward_export_every_measurement': _bool('hover_forward_export_every_measurement'),
+                        'hover_forward_export_complete_grid': _bool('hover_forward_export_complete_grid'),
+                        'hover_forward_export_continuous_exposure': _bool('hover_forward_export_continuous_exposure'),
+                        'hover_forward_pmfs_parameters_hash': LaunchConfiguration('hover_forward_pmfs_parameters_hash'),
+                        'hover_forward_map_hash': LaunchConfiguration('hover_forward_map_hash'),
+                        'hover_forward_wind_hash': LaunchConfiguration('hover_forward_wind_hash'),
+                        'hover_forward_code_hash': LaunchConfiguration('hover_forward_code_hash'),
+                        'p2_shadow_enabled': _bool('p2_shadow_enabled'),
+                        'p2_shadow_directory': LaunchConfiguration('p2_shadow_directory'),
+                        'p2_global_seed': _int('p2_global_seed'),
+                        'p2_shadow_replicas': _int('p2_shadow_replicas'),
+                        'p2_transport_substream': _int('p2_transport_substream'),
+                        'tadm_enabled': _bool('tadm_enabled'),
+                        'pfdi_mode': ParameterValue(LaunchConfiguration('pfdi_mode'), value_type=str),
+                        'cpir_lookup_root': LaunchConfiguration('cpir_lookup_root'),
+                        'cpir_audit_directory': LaunchConfiguration('cpir_audit_directory'),
+                        'posterior_guidance_weight': 0.0,
+                        'tadm_directory': LaunchConfiguration('tadm_directory'),
+                        'tadm_prior_set': _int('tadm_prior_set'),
+                        'tadm_global_seed': _int('tadm_global_seed'),
+                        'tadm_replicas': _int('tadm_replicas'),
+                        'tadm_transport_substream': _int('tadm_transport_substream'),
+                        'context_bank_export_enabled': _bool('context_bank_export_enabled'),
+                        'context_bank_export_directory': LaunchConfiguration('context_bank_export_directory'),
+                        'saisc.use_sdbe': _int('use_sdbe'),
+                        'saisc.use_kb_tme': _int('use_kb_tme'),
+                        'saisc.use_av_rise': _int('use_av_rise'),
+                        'saisc.use_entropy_only_active': _int('use_entropy_only_active'),
+                        'saisc.use_sapa_hpa': _int('use_sapa_hpa'),
+                        'saisc.use_sapa_sig': _int('use_sapa_sig'),
+                        'saisc.use_sage': _int('use_sage'),
+                        'saisc.use_beacon': _int('use_beacon'),
+                        'saisc.use_beacon_tr': _int('use_beacon_tr'),
+                        'saisc.use_evidence_splat_beacon': _int('use_evidence_splat_beacon'),
+                        'saisc.use_iasc': _int('use_iasc'),
+                        'saisc.use_sepf': _int('use_sepf'),
+                        'saisc.use_pcrd': _int('use_pcrd'),
+                        'saisc.use_pgn': _int('use_pgn'),
+                        'saisc.use_tpp': _int('use_tpp'),
+                        'saisc.use_hmm': _int('use_hmm'),
+                        'saisc.sepf.temperature_tau': _float('temperature_tau'),
+                        'saisc.sepf.tau_adaptive': _int('tau_adaptive'),
+                        'saisc.sepf.tau_ess_target_ratio': _float('tau_ess_target_ratio'),
+                        'saisc.sepf.tau_alpha': _float('tau_alpha'),
+                        'saisc.audit_file': PathJoinSubstitution([LaunchConfiguration('run_dir'), 'saisc_pf_audit.csv']),
+                        'resultsFile': PathJoinSubstitution([LaunchConfiguration('run_dir'), 'official_gsl_results.csv']),
+                        'pf_estimate_file': PathJoinSubstitution([LaunchConfiguration('run_dir'), 'pf_estimate.csv']),
+                        'navigationPathFile': PathJoinSubstitution([LaunchConfiguration('run_dir'), 'official_navigation_path.csv']),
                     }],
                 ),
             ],
         ),
-
 
         # GMRF Wind Estimation Node (required for PMFS)
         Node(
@@ -365,7 +459,7 @@ def generate_launch_description():
                     parameters=[{
                         'algorithm': LaunchConfiguration('algorithm'),
                         'method': LaunchConfiguration('method'),
-                'method_family': LaunchConfiguration('method_family'),
+                        'method_family': LaunchConfiguration('method_family'),
                         'ablation_id': LaunchConfiguration('ablation_id'),
                         'run_id': LaunchConfiguration('run_id'),
                         'run_dir': LaunchConfiguration('run_dir'),
@@ -396,11 +490,6 @@ def generate_launch_description():
                         'use_sage': _int('use_sage'),
                         'use_beacon': _int('use_beacon'),
                         'repo_root': LaunchConfiguration('repo_root'),
-                        'scenario_id': LaunchConfiguration('scenario_id'),
-                        'source_config': LaunchConfiguration('source_config'),
-                        'wind_config': LaunchConfiguration('wind_config'),
-                        'sensor_config': LaunchConfiguration('sensor_config'),
-                        'start_config': LaunchConfiguration('start_config'),
                         'parameter_manifest_json': LaunchConfiguration('parameter_manifest_json'),
                         'scenario_manifest_json': LaunchConfiguration('scenario_manifest_json'),
                         'saisc_audit_file': PathJoinSubstitution([LaunchConfiguration('run_dir'), 'saisc_pf_audit.csv']),
@@ -413,8 +502,8 @@ def generate_launch_description():
             ],
         ),
 
-        # The VGR bridge starts paused by contract.  Start the deterministic
-        # clock after all three consumers (sim, GMRF, GSL) are discoverable.
+        # The VGR bridge starts paused by contract. Start the deterministic
+        # clock after all consumers are discoverable.
         TimerAction(
             period=8.0,
             actions=[
@@ -425,6 +514,4 @@ def generate_launch_description():
                 ),
             ],
         ),
-
-
     ])
