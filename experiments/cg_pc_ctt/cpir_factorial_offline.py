@@ -279,24 +279,123 @@ def build_factorial_events(
     return raw, stateful, audit
 
 
+def build_route_diagnostic_events(
+    bank: BankHouse, cases: list[Any], route_bank_root: Path,
+) -> tuple[np.ndarray, np.ndarray, dict[str, Any]]:
+    """Coverage-complete fixed-tape diagnostic using frozen route shards."""
+    manifest_path = route_bank_root / "bank_shard_manifest.csv"
+    summary_path = route_bank_root / "bank_summary.json"
+    manifest = read_csv(manifest_path)
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    if summary.get("contract") != "PF_DEI_V3_HISTORICAL_NATIVE_BANK_V1":
+        raise RuntimeError("CPIR_FACTORIAL_ROUTE_BANK_CONTRACT")
+    rows = [row for row in manifest
+            if row["house"] == bank.house and row["split"] == "train"]
+    row_by_key = {(row["carrier_id"], int(row["member_id"])): row for row in rows}
+    expected_keys = {(carrier, member) for carrier in bank.carriers for member in range(MEMBER_COUNT)}
+    if set(row_by_key) != expected_keys:
+        raise RuntimeError(f"CPIR_FACTORIAL_ROUTE_BANK_CARRIER_SET:{bank.house}")
+    schedule_hashes = summary["trajectory_schedule_sha256"][bank.house + "_train"]
+    schedule_lengths = summary["trajectory_lengths"][bank.house + "_train"]
+    for case in cases:
+        pose_path = case.runtime / "sim_pose_trace.csv"
+        if (sha256_file(pose_path) != schedule_hashes[case.seed] or
+                len(read_csv(pose_path)) != int(schedule_lengths[case.seed])):
+            raise RuntimeError(f"CPIR_FACTORIAL_ROUTE_SCHEDULE:{bank.house}:{case.seed}")
+    max_stops = max(len(case.stops) for case in cases)
+    raw = np.zeros((len(cases), len(bank.carriers), MEMBER_COUNT, max_stops), dtype=np.bool_)
+    stateful = np.zeros_like(raw)
+    values_checked = 0
+    for carrier_index, carrier in enumerate(bank.carriers):
+        for member in range(MEMBER_COUNT):
+            row = row_by_key[(carrier, member)]
+            streams = read_route_streams(route_bank_root / row["relative_path"], row["sha256"])
+            for case_index, case in enumerate(cases):
+                physical = np.asarray(streams[case.seed][:1500], dtype=np.float32)
+                if len(physical) != 1500:
+                    raise RuntimeError(f"CPIR_FACTORIAL_ROUTE_TAPE_LENGTH:{bank.house}:{case.seed}")
+                values_checked += len(physical)
+                for stop_index, stop in enumerate(case.stops):
+                    raw[case_index, carrier_index, member, stop_index] = bool(
+                        np.max(physical[stop]) > THRESHOLD_PPM
+                    )
+                stop_for_time = np.full(1500, -1, dtype=np.int64)
+                for stop_index, stop in enumerate(case.stops):
+                    stop_for_time[stop] = stop_index
+                sensor_state = 0.0; delay_one = 0.0; delay_two = 0.0
+                for time in range(1500):
+                    target = delay_two
+                    delay_two = delay_one
+                    delay_one = float(physical[time])
+                    sensor_state = ALPHA * sensor_state + (1.0 - ALPHA) * target
+                    stop_index = int(stop_for_time[time])
+                    if stop_index >= 0 and sensor_state > THRESHOLD_PPM:
+                        stateful[case_index, carrier_index, member, stop_index] = True
+            completed = carrier_index * MEMBER_COUNT + member + 1
+            if completed % 500 == 0 or completed == len(bank.carriers) * MEMBER_COUNT:
+                print(f"CPIR_FACTORIAL_ROUTE_PROGRESS={bank.house}:{completed}/{len(bank.carriers) * MEMBER_COUNT}", flush=True)
+    audit = {
+        "contract": "CPIR_FACTORIAL_ROUTE_DIAGNOSTIC_INPUT_V1",
+        "route_bank_summary_sha256": sha256_file(summary_path),
+        "route_bank_manifest_sha256": sha256_file(manifest_path),
+        "verified_shards": len(rows),
+        "physical_values_consumed": values_checked,
+        "schedule_hashes_verified": 10,
+        "fullgrid_runtime_claim": False,
+        "verdict": "CPIR_FACTORIAL_ROUTE_DIAGNOSTIC_INPUT_PASS",
+    }
+    return raw, stateful, audit
+
+
 def freeze_stage(
     bank_root: Path, historical_root: Path, support_path: Path,
     route_bank_root: Path, prereg_path: Path, output: Path,
+    physical_backend: str,
 ) -> dict[str, Any]:
     prereg = json.loads(prereg_path.read_text(encoding="utf-8"))
     if prereg.get("contract") != CONTRACT or not str(prereg.get("status", "")).startswith("PREREGISTERED_"):
         raise RuntimeError("CPIR_FACTORIAL_PREREG_CONTRACT")
+    prereg_backend = prereg.get("physical_backend", "fullgrid_hybrid")
+    if prereg_backend != physical_backend:
+        raise RuntimeError(
+            f"CPIR_FACTORIAL_PREREG_BACKEND:{prereg_backend}:{physical_backend}"
+        )
+    if physical_backend == "route_diagnostic":
+        expected_route = prereg.get("frozen_input_hashes", {}).get("route_bank", {})
+        actual_route = {
+            "bank_summary_sha256": sha256_file(route_bank_root / "bank_summary.json"),
+            "bank_shard_manifest_sha256": sha256_file(
+                route_bank_root / "bank_shard_manifest.csv"
+            ),
+        }
+        if expected_route != actual_route:
+            raise RuntimeError(
+                f"CPIR_FACTORIAL_ROUTE_PREREG_HASH:{expected_route}:{actual_route}"
+            )
     support_rows = read_csv(support_path)
     output.mkdir(parents=True, exist_ok=False)
     bank_hashes: dict[str, dict[str, str]] = {}
     coverage_interface: dict[str, Any] = {}
     for house in HOUSES:
         bank = BankHouse.load(house, bank_root, support_rows)
+        expected_house_hash = prereg.get("frozen_input_hashes", {}).get(
+            "fullgrid_bank_summary_sha256", {}
+        ).get(house)
+        if expected_house_hash is not None and expected_house_hash != bank.summary_sha256:
+            raise RuntimeError(
+                f"CPIR_FACTORIAL_FULLGRID_PREREG_HASH:{house}:"
+                f"{expected_house_hash}:{bank.summary_sha256}"
+            )
         cases = [load_case(historical_root, house, seed, bank, strict_full_coverage=False)
                  for seed in range(10)]
-        raw, stateful, coverage_interface[house] = build_factorial_events(
-            bank, cases, route_bank_root
-        )
+        if physical_backend == "route_diagnostic":
+            raw, stateful, coverage_interface[house] = build_route_diagnostic_events(
+                bank, cases, route_bank_root
+            )
+        else:
+            raw, stateful, coverage_interface[house] = build_factorial_events(
+                bank, cases, route_bank_root
+            )
         if any(len(case.stops) != raw.shape[-1] for case in cases):
             raise RuntimeError(f"CPIR_FACTORIAL_STOP_COUNT_DRIFT:{house}")
         q_raw = (raw.sum(axis=2) + 0.5) / (MEMBER_COUNT + 1.0)
@@ -368,6 +467,7 @@ def freeze_stage(
         "coverage_interface": coverage_interface,
         "bank_root": str(bank_root),
         "historical_root": str(historical_root),
+        "physical_backend": physical_backend,
         "files": files,
         "formula": {
             "dt_s": DT_S, "alpha": ALPHA, "delay_samples": DELAY_SAMPLES,
@@ -779,7 +879,14 @@ def evaluate_stage(
     write_csv("CASE_METRICS.csv", case_rows)
     write_csv("M2_MECHANISM_CASES.csv", mechanism_case_rows)
     write_csv("M2_MECHANISM_EVENTS.csv", mechanism_event_rows)
-    final_verdict = "CPIR_FACTORIAL_OFFLINE_PASS_TO_PARITY" if overall_pass else "CPIR_FACTORIAL_OFFLINE_NO_GO"
+    physical_backend = str(manifest.get("physical_backend", "fullgrid_hybrid"))
+    if physical_backend == "route_diagnostic":
+        final_verdict = (
+            "CPIR_FACTORIAL_ROUTE_DIAGNOSTIC_THREE_MODULE_PASS"
+            if overall_pass else "CPIR_FACTORIAL_ROUTE_DIAGNOSTIC_NO_GO"
+        )
+    else:
+        final_verdict = "CPIR_FACTORIAL_OFFLINE_PASS_TO_PARITY" if overall_pass else "CPIR_FACTORIAL_OFFLINE_NO_GO"
     report: dict[str, Any] = {
         "contract": CONTRACT,
         "status": "FACTORIAL_OFFLINE_COMPLETE",
@@ -788,6 +895,10 @@ def evaluate_stage(
         "gaden_runs": 0,
         "neural_training": False,
         "scientific_parameters_changed": False,
+        "physical_backend": physical_backend,
+        "parity_or_closed_loop_authorized": bool(
+            overall_pass and physical_backend != "route_diagnostic"
+        ),
         "case_count": 30,
         "update_rows": len(update_rows),
         "module_gates": module_gates,
@@ -803,6 +914,7 @@ def evaluate_stage(
             "A0 and all factorial arms use the same historical measurement tape and source-update times.",
             "AUC includes the common t=0 prior and carries the final posterior to 300 s.",
             "This is fixed-trajectory offline evidence, not closed loop.",
+            "A route_diagnostic backend can reject modules but cannot authorize full-grid runtime parity or closed loop.",
         ],
     }
     (output / "SUMMARY.json").write_text(
@@ -840,6 +952,8 @@ def main() -> int:
     parser.add_argument("--bank-root", type=Path)
     parser.add_argument("--historical-root", type=Path)
     parser.add_argument("--route-bank-root", type=Path)
+    parser.add_argument("--physical-backend", choices=("fullgrid_hybrid", "route_diagnostic"),
+                        default="fullgrid_hybrid")
     parser.add_argument("--support", type=Path)
     parser.add_argument("--prereg", type=Path,
                         default=Path(__file__).resolve().parents[2] / "docs" / PREREG_NAME)
@@ -858,6 +972,7 @@ def main() -> int:
         freeze_stage(
             args.bank_root, args.historical_root, args.support,
             args.route_bank_root, args.prereg, args.output,
+            args.physical_backend,
         )
     else:
         if not args.stage1:
