@@ -2,7 +2,7 @@
 
 This file disables GT-proximity source declaration by setting
 `distanceThreshold=-1.0`. Ground-truth source coordinates are passed only to
-result loggers for offline evaluation.  CPIR runs additionally fail closed on
+result loggers for offline evaluation. CPIR runs additionally fail closed on
 bank provenance, House identity, measurement cadence, and timestamp handling.
 """
 import hashlib
@@ -36,6 +36,16 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _required_int(value, name: str) -> int:
+    raw = value(name)
+    if not raw or raw == 'UNSET':
+        raise RuntimeError(f'CPIR_EXPECTED_RUNTIME_VALUE_REQUIRED:{name}')
+    try:
+        return int(raw)
+    except ValueError as exc:
+        raise RuntimeError(f'CPIR_EXPECTED_RUNTIME_VALUE_INVALID:{name}:{raw}') from exc
+
+
 def _validate_cpir_launch(context):
     """Fail closed before starting ROS nodes when the frozen contract drifts."""
     value = lambda name: LaunchConfiguration(name).perform(context)
@@ -63,17 +73,25 @@ def _validate_cpir_launch(context):
         raise RuntimeError('CPIR_DELTA_TIME_MUST_BE_0P2')
     if abs(float(value('th_gas_present')) - 0.1) > 1.0e-12:
         raise RuntimeError('CPIR_GAS_THRESHOLD_MUST_BE_0P1')
-    # The frozen historical H01/H02/H03 tapes have five source updates after
-    # 3,6,9,12,15 completed physical stops.  OFF and all CPIR arms must use the
-    # same cadence for the paired formal contract.
-    if int(value('stepsSourceUpdate')) != 3:
-        raise RuntimeError('CPIR_STEPS_SOURCE_UPDATE_MUST_BE_3')
     if value('measurement_deduplicate_sim_timestamps').lower() != 'true':
         raise RuntimeError('CPIR_SIM_TIMESTAMP_DEDUP_MUST_BE_TRUE')
     if value('sensor_model_mode') != 'dynamic':
         raise RuntimeError('CPIR_SENSOR_MODEL_MODE_MUST_BE_DYNAMIC')
     if value('sensor_config') != 'fopdt_tau1p2_dead0p4_noise0':
         raise RuntimeError('CPIR_SENSOR_CONFIG_MUST_MATCH_FROZEN_FOPDT')
+
+    # Do not infer the authoritative source-update/warmup cadence from an old
+    # development replay. The formal runner must recover these values from the
+    # frozen paired PMFS parameter manifest and state them explicitly.
+    expected_steps = _required_int(value, 'cpir_expected_steps_source_update')
+    expected_max_warmup = _required_int(value, 'cpir_expected_max_warmup_iterations')
+    expected_min_warmup = _required_int(value, 'cpir_expected_min_warmup_iterations')
+    if int(value('stepsSourceUpdate')) != expected_steps:
+        raise RuntimeError('CPIR_STEPS_SOURCE_UPDATE_EXPECTED_MISMATCH')
+    if int(value('maxWarmupIterations')) != expected_max_warmup:
+        raise RuntimeError('CPIR_MAX_WARMUP_EXPECTED_MISMATCH')
+    if int(value('minWarmupIterations')) != expected_min_warmup:
+        raise RuntimeError('CPIR_MIN_WARMUP_EXPECTED_MISMATCH')
 
     if mode != 'off':
         required = {
@@ -190,13 +208,15 @@ def generate_launch_description():
         DeclareLaunchArgument('timeout_sec', default_value='300.0'),
         DeclareLaunchArgument('path_budget_m', default_value='-1.0'),
 
-        # Frozen paired PMFS/CPIR runtime contract.
+        # Defaults remain compatible with the prior launch. Formal paired runs
+        # must also pass the three cpir_expected_* values recovered from their
+        # authoritative frozen parameter manifest.
         DeclareLaunchArgument('scale', default_value='3'),
         DeclareLaunchArgument('useWindGroundTruth', default_value='false'),
         DeclareLaunchArgument('convergence_thr', default_value='-1.0'),
         DeclareLaunchArgument('sourceDiscriminationPower', default_value='1.0'),
         DeclareLaunchArgument('refineFraction', default_value='0.25'),
-        DeclareLaunchArgument('stepsSourceUpdate', default_value='3'),
+        DeclareLaunchArgument('stepsSourceUpdate', default_value='10'),
         DeclareLaunchArgument('maxRegionSize', default_value='5'),
         DeclareLaunchArgument('deltaTime', default_value='0.2'),
         DeclareLaunchArgument('noiseSTDev', default_value='0.5'),
@@ -243,6 +263,9 @@ def generate_launch_description():
         DeclareLaunchArgument('cpir_expected_bank_summary_sha256', default_value='UNSET'),
         DeclareLaunchArgument('cpir_expected_cell_manifest_sha256', default_value='UNSET'),
         DeclareLaunchArgument('cpir_integrity_report', default_value=''),
+        DeclareLaunchArgument('cpir_expected_steps_source_update', default_value='UNSET'),
+        DeclareLaunchArgument('cpir_expected_max_warmup_iterations', default_value='UNSET'),
+        DeclareLaunchArgument('cpir_expected_min_warmup_iterations', default_value='UNSET'),
         DeclareLaunchArgument('tadm_directory', default_value=''),
         DeclareLaunchArgument('tadm_prior_set', default_value='0'),
         DeclareLaunchArgument('tadm_global_seed', default_value='0'),
@@ -424,7 +447,6 @@ def generate_launch_description():
             ],
         ),
 
-        # GMRF Wind Estimation Node (required for PMFS)
         Node(
             package='gmrf_wind_mapping',
             executable='gmrf_wind_mapping_node',
@@ -502,8 +524,6 @@ def generate_launch_description():
             ],
         ),
 
-        # The VGR bridge starts paused by contract. Start the deterministic
-        # clock after all consumers are discoverable.
         TimerAction(
             period=8.0,
             actions=[

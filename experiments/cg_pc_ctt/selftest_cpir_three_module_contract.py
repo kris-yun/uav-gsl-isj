@@ -19,7 +19,6 @@ from cpir_three_module_shadow import (
     stateful_events_members,
 )
 
-
 ROOT = Path(__file__).resolve().parents[2]
 
 
@@ -42,7 +41,6 @@ def main() -> int:
     assert modules["M2"]["stop_samples"] == STOP_SAMPLES == 80
     assert modules["M3"]["joint_claim"] == "composite_likelihood_not_exact_joint_transport_probability"
 
-    # Pure synthetic M1/M2/M3 isolation. No bank metadata or payload is opened.
     physical = np.zeros((MEMBER_COUNT, 170), dtype=np.float64)
     physical[:, 2:6] = 1.0
     stops = [np.arange(0, 80), np.arange(80, 160)]
@@ -84,10 +82,11 @@ def main() -> int:
         'posterior_guidance_weight must remain 0',
     ):
         assert marker in pmfs_cpp, marker
-    native_refresh = pmfs_cpp.index('simulations.updateSourceProbability(settings.simulation.refineFraction);',
-                                    pmfs_cpp.index('if (cpirEnabled)\n                {'))
+    native_refresh = pmfs_cpp.index(
+        'simulations.updateSourceProbability(settings.simulation.refineFraction);',
+        pmfs_cpp.index('if (cpirEnabled)\n                {'))
     cpir_write = pmfs_cpp.index('applyCPIRPosterior(p2SourceUpdateId, sourceUpdateSimTime);', native_refresh)
-    assert native_refresh < cpir_write, "native planner refresh must precede CPIR posterior restore"
+    assert native_refresh < cpir_write
 
     launch = (ROOT / "closed_loop" / "cpir" /
               "vgr_gsl_pmfs_cpir.launch.py").read_text(encoding="utf-8")
@@ -97,18 +96,26 @@ def main() -> int:
     assert launch_default(launch, "measurement_settle_samples") == "0"
     assert launch_default(launch, "deltaTime") == "0.2"
     assert launch_default(launch, "th_gas_present") == "0.1"
-    assert launch_default(launch, "stepsSourceUpdate") == "3"
+    assert launch_default(launch, "stepsSourceUpdate") == "10"
     assert launch_default(launch, "measurement_deduplicate_sim_timestamps") == "true"
     assert launch_default(launch, "sensor_config") == "fopdt_tau1p2_dead0p4_noise0"
     assert launch_default(launch, "sensor_model_mode") == "dynamic"
     assert launch_default(launch, "pfdi_mode") == "UNSET"
     assert launch_default(launch, "algorithm") == "PMFS"
     assert launch_default(launch, "ablation_id") == "UNSET"
-    assert launch_default(launch, "cpir_expected_house") == "UNSET"
-    assert launch_default(launch, "cpir_expected_bank_summary_sha256") == "UNSET"
-    assert launch_default(launch, "cpir_expected_cell_manifest_sha256") == "UNSET"
+    for name in (
+        "cpir_expected_house",
+        "cpir_expected_bank_summary_sha256",
+        "cpir_expected_cell_manifest_sha256",
+        "cpir_expected_steps_source_update",
+        "cpir_expected_max_warmup_iterations",
+        "cpir_expected_min_warmup_iterations",
+    ):
+        assert launch_default(launch, name) == "UNSET"
     for marker in (
-        "CPIR_STEPS_SOURCE_UPDATE_MUST_BE_3",
+        "CPIR_STEPS_SOURCE_UPDATE_EXPECTED_MISMATCH",
+        "CPIR_MAX_WARMUP_EXPECTED_MISMATCH",
+        "CPIR_MIN_WARMUP_EXPECTED_MISMATCH",
         "CPIR_SIM_TIMESTAMP_DEDUP_MUST_BE_TRUE",
         "CPIR_BANK_SUMMARY_SHA_MISMATCH",
         "CPIR_INTEGRITY_REPORT_NOT_PASS",

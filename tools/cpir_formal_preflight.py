@@ -2,8 +2,9 @@
 """Read-only formal preflight for one frozen CPIR House bank.
 
 It never opens world payloads beyond the already-produced integrity report.
-It binds the bank summary/cell-manifest hashes to a House and prints the exact
-launch arguments required by vgr_gsl_pmfs_cpir.launch.py.
+It binds the bank summary/cell-manifest hashes to a House and records the
+runtime cadence that must already have been recovered from the authoritative
+paired PMFS parameter manifest.
 """
 from __future__ import annotations
 
@@ -30,8 +31,18 @@ def main() -> int:
     parser.add_argument('--house', choices=('H01', 'H02', 'H03'), required=True)
     parser.add_argument('--bank-root', type=Path, required=True)
     parser.add_argument('--integrity-report', type=Path, required=True)
+    parser.add_argument('--steps-source-update', type=int, required=True,
+                        help='Recover from the frozen paired PMFS parameter manifest; do not guess.')
+    parser.add_argument('--max-warmup-iterations', type=int, required=True,
+                        help='Recover from the frozen paired PMFS parameter manifest; do not guess.')
+    parser.add_argument('--min-warmup-iterations', type=int, required=True,
+                        help='Recover from the frozen paired PMFS parameter manifest; do not guess.')
     parser.add_argument('--json-out', type=Path)
     args = parser.parse_args()
+    if args.steps_source_update < 0 or args.max_warmup_iterations <= 0 or args.min_warmup_iterations < 0:
+        fail('CPIR_PREFLIGHT_RUNTIME_CADENCE_INVALID')
+    if args.min_warmup_iterations > args.max_warmup_iterations:
+        fail('CPIR_PREFLIGHT_WARMUP_ORDER')
 
     root = args.bank_root.resolve()
     report_path = args.integrity_report.resolve()
@@ -104,7 +115,9 @@ def main() -> int:
         'observation_realization_sha256': summary.get('observation_realization_sha256'),
         'runtime_contract': {
             **house_contract,
-            'stepsSourceUpdate': 3,
+            'stepsSourceUpdate': args.steps_source_update,
+            'maxWarmupIterations': args.max_warmup_iterations,
+            'minWarmupIterations': args.min_warmup_iterations,
             'deltaTime': 0.2,
             'maxUpdatesPerStop': 8,
             'measurement_block_samples': 10,
@@ -120,6 +133,12 @@ def main() -> int:
             'cpir_expected_house': args.house,
             'cpir_expected_bank_summary_sha256': summary_sha,
             'cpir_expected_cell_manifest_sha256': cell_sha,
+            'cpir_expected_steps_source_update': args.steps_source_update,
+            'cpir_expected_max_warmup_iterations': args.max_warmup_iterations,
+            'cpir_expected_min_warmup_iterations': args.min_warmup_iterations,
+            'stepsSourceUpdate': args.steps_source_update,
+            'maxWarmupIterations': args.max_warmup_iterations,
+            'minWarmupIterations': args.min_warmup_iterations,
             'environment_id': house_contract['environment_id'],
             'dataset': house_contract['dataset'],
             'config_id': house_contract['config_id'],
@@ -128,10 +147,13 @@ def main() -> int:
             'source_z': house_contract['source'][2],
         },
         'claim_boundary': (
-            'This proves file/domain provenance only. It does not prove that an '
-            'external immutable GADEN observation realization is numerically '
-            'independent of every predictive transport draw; no hidden '
-            'observation member id is available to runtime.'
+            'This proves file/domain provenance only. The source-update and '
+            'warmup values are user-supplied recovered contract values; this '
+            'script deliberately does not infer them from development replays. '
+            'It also does not prove numerical identity separation between an '
+            'external immutable GADEN observation realization and every '
+            'synthetic prediction draw because no hidden observation member id '
+            'is available to runtime.'
         ),
     }
     if args.json_out:
