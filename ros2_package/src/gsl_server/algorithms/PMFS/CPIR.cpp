@@ -1,6 +1,7 @@
 #include <gsl_server/algorithms/PMFS/PMFS.hpp>
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -35,6 +36,17 @@ namespace
             throw std::runtime_error("CPIR_CARRIER_ID_PARSE:" + id);
         return result;
     }
+
+    std::string carrierIdForCell(const GSL::Grid2DMetadata& gridMetadata, size_t cell)
+    {
+        const GSL::Vector2Int ij = gridMetadata.indices2D(cell);
+        const int oi = (ij.x / 2) * 2;
+        const int oj = (ij.y / 2) * 2;
+        const int sx = std::min(2, gridMetadata.dimensions.x - oi);
+        const int sy = std::min(2, gridMetadata.dimensions.y - oj);
+        return "quadtree_" + std::to_string(oi) + "_" + std::to_string(oj) +
+               "_" + std::to_string(sx) + "_" + std::to_string(sy);
+    }
 }
 
 namespace GSL
@@ -59,6 +71,8 @@ namespace GSL
             if (fields.size() != 4 || std::stoull(fields[0]) != expectedOrdinal)
                 throw std::runtime_error("CPIR_CELL_MANIFEST_ROW");
             const size_t native = std::stoull(fields[1]);
+            if (native >= occupancy.size() || occupancy[native] != Occupancy::Free)
+                throw std::runtime_error("CPIR_CELL_MANIFEST_NOT_FREE");
             if (!cpirNativeCellToStream.emplace(native, expectedOrdinal).second)
                 throw std::runtime_error("CPIR_CELL_MANIFEST_DUPLICATE");
             ++expectedOrdinal;
@@ -66,6 +80,12 @@ namespace GSL
         cpirCellCount = expectedOrdinal;
         if (cpirCellCount != gridMetadata.numFreeCells)
             throw std::runtime_error("CPIR_FREE_CELL_COUNT_MISMATCH");
+        for (size_t cell = 0; cell < occupancy.size(); ++cell)
+        {
+            if (occupancy[cell] == Occupancy::Free &&
+                cpirNativeCellToStream.find(cell) == cpirNativeCellToStream.end())
+                throw std::runtime_error("CPIR_CELL_MANIFEST_MISSING_FREE_CELL");
+        }
 
         const fs::path member0 = root / "worlds" / "member_00";
         for (const auto& item : fs::directory_iterator(member0))
@@ -93,6 +113,26 @@ namespace GSL
             }
         }
         const size_t worlds = cpirCarrierCount * cpirMemberCount;
+        cpirReferenceCellMass.assign(gridMetadata.dimensions.x * gridMetadata.dimensions.y, 0.0);
+        const double uniformFreeMass = 1.0 / static_cast<double>(cpirCellCount);
+        for (const auto& entry : cpirNativeCellToStream)
+            cpirReferenceCellMass[entry.first] = uniformFreeMass;
+        cpirCarrierReferenceMass.assign(cpirCarrierCount, 0.0);
+        for (size_t cell = 0; cell < cpirReferenceCellMass.size(); ++cell)
+        {
+            if (occupancy[cell] != Occupancy::Free)
+                continue;
+            const std::string id = carrierIdForCell(gridMetadata, cell);
+            const auto found = cpirCarrierToIndex.find(id);
+            if (found == cpirCarrierToIndex.end())
+                throw std::runtime_error("CPIR_FREE_CELL_WITHOUT_CARRIER:" + id);
+            cpirCarrierReferenceMass[found->second] += cpirReferenceCellMass[cell];
+        }
+        for (size_t source = 0; source < cpirCarrierReferenceMass.size(); ++source)
+        {
+            if (!(cpirCarrierReferenceMass[source] > 0.0))
+                throw std::runtime_error("CPIR_CARRIER_REFERENCE_MASS_ZERO");
+        }
         cpirSensorState.assign(worlds, 0.0);
         cpirDelayOne.assign(worlds, 0.0f);
         cpirDelayTwo.assign(worlds, 0.0f);
@@ -202,6 +242,8 @@ namespace GSL
         }
 
         const double alpha = std::exp(-kDt / kTau);
+        const bool rawEventA1 = pfdiMode == "cpir_a1";
+        const bool stopResolvedA3 = pfdiMode == "cpir_a3";
         for (size_t index = cpirProcessedSamples; index < cpirTrace.size(); ++index)
         {
             const CPIRSample& sample = cpirTrace[index];
@@ -211,15 +253,35 @@ namespace GSL
                 const float physical = values[world * cpirTimeCount + sample.timeIndex];
                 if (!(std::isfinite(physical) && physical >= 0.0f))
                     throw std::runtime_error("CPIR_NONFINITE_OR_NEGATIVE_PPM");
-                const double target = cpirDelayTwo[world];
-                cpirDelayTwo[world] = cpirDelayOne[world];
-                cpirDelayOne[world] = physical;
-                cpirSensorState[world] = std::clamp(
-                    alpha * cpirSensorState[world] + (1.0 - alpha) * target, 0.0, 1.0e6);
+                // M2 is a physical sensor state, not a stop-local feature.  It
+                // must advance for every newly consumed native sample,
+                // including motion samples between stops and samples crossing
+                // a source-update boundary.  Only the event ledger below is
+                // restricted to the first 80 samples of a completed stop.
+                if (!rawEventA1)
+                {
+                    const double target = cpirDelayTwo[world];
+                    cpirDelayTwo[world] = cpirDelayOne[world];
+                    cpirDelayOne[world] = physical;
+                    cpirSensorState[world] =
+                        alpha * cpirSensorState[world] + (1.0 - alpha) * target;
+                    if (!(std::isfinite(cpirSensorState[world]) && cpirSensorState[world] >= 0.0))
+                        throw std::runtime_error("CPIR_SENSOR_STATE_INVALID");
+                }
                 if (sample.stopIndex >= 0 && sample.stopSampleIndex < kStopSamples &&
-                    sample.stopIndex < static_cast<int>(cpirPredictedStopHit.size()) &&
-                    cpirSensorState[world] > kThreshold)
-                    cpirPredictedStopHit[sample.stopIndex][world] = 1;
+                    sample.stopIndex < static_cast<int>(cpirPredictedStopHit.size()))
+                {
+                    if (rawEventA1)
+                    {
+                        if (physical > kThreshold)
+                            cpirPredictedStopHit[sample.stopIndex][world] = 1;
+                    }
+                    else
+                    {
+                        if (cpirSensorState[world] > kThreshold)
+                            cpirPredictedStopHit[sample.stopIndex][world] = 1;
+                    }
+                }
             }
         }
         cpirProcessedSamples = cpirTrace.size();
@@ -236,19 +298,57 @@ namespace GSL
         std::vector<double> score(cpirCarrierCount, 0.0);
         for (size_t source = 0; source < cpirCarrierCount; ++source)
         {
-            double probabilityMean = 0.0;
-            for (size_t stop = 0; stop < stops; ++stop)
+            if (stopResolvedA3)
             {
-                int hits = 0;
-                for (size_t member = 0; member < cpirMemberCount; ++member)
-                    hits += cpirPredictedStopHit[stop][source * cpirMemberCount + member];
-                probabilityMean += (0.5 + hits) / 9.0;
+                double logLikelihood = 0.0;
+                for (size_t stop = 0; stop < stops; ++stop)
+                {
+                    int hits = 0;
+                    for (size_t member = 0; member < cpirMemberCount; ++member)
+                        hits += cpirPredictedStopHit[stop][source * cpirMemberCount + member];
+                    const double qsb = (0.5 + hits) /
+                                       (static_cast<double>(cpirMemberCount) + 1.0);
+                    logLikelihood += cpirObservedStopHit[stop]
+                        ? std::log(qsb)
+                        : std::log1p(-qsb);
+                }
+                score[source] = logLikelihood;
             }
-            probabilityMean /= static_cast<double>(stops);
-            score[source] = observedReached * std::log(probabilityMean) +
-                            (stops - observedReached) * std::log1p(-probabilityMean);
+            else
+            {
+                double probabilityMean = 0.0;
+                for (size_t stop = 0; stop < stops; ++stop)
+                {
+                    int hits = 0;
+                    for (size_t member = 0; member < cpirMemberCount; ++member)
+                        hits += cpirPredictedStopHit[stop][source * cpirMemberCount + member];
+                    probabilityMean += (0.5 + hits) /
+                                       (static_cast<double>(cpirMemberCount) + 1.0);
+                }
+                probabilityMean /= static_cast<double>(stops);
+                score[source] = observedReached * std::log(probabilityMean) +
+                                (stops - observedReached) * std::log1p(-probabilityMean);
+            }
         }
         const double maxScore = *std::max_element(score.begin(), score.end());
+        std::vector<double> carrierPosterior(cpirCarrierCount, 0.0);
+        long double carrierMassSum = 0.0L;
+        for (size_t source = 0; source < cpirCarrierCount; ++source)
+        {
+            // The pre-gas reference is uniform over native free cells, so its
+            // carrier marginal is proportional to the number of free cells in
+            // that carrier.  This factor is the frozen pi_0^C(s); omitting it
+            // would silently replace the PMFS cell prior by a uniform-carrier
+            // prior whenever carrier sizes differ.
+            carrierPosterior[source] = cpirCarrierReferenceMass[source] *
+                                       std::exp(score[source] - maxScore);
+            carrierMassSum += carrierPosterior[source];
+        }
+        if (!(std::isfinite(static_cast<double>(carrierMassSum)) && carrierMassSum > 0.0L))
+            throw std::runtime_error("CPIR_CARRIER_POSTERIOR_MASS_INVALID");
+        for (double& value : carrierPosterior)
+            value /= static_cast<double>(carrierMassSum);
+
         long double mass = 0.0L;
         double minimum = std::numeric_limits<double>::infinity();
         double maximum = 0.0;
@@ -259,17 +359,16 @@ namespace GSL
                 sourceProbability[cell] = 0.0;
                 continue;
             }
-            const Vector2Int ij = gridMetadata.indices2D(cell);
-            const int oi = (ij.x / 2) * 2;
-            const int oj = (ij.y / 2) * 2;
-            const int sx = std::min(2, gridMetadata.dimensions.x - oi);
-            const int sy = std::min(2, gridMetadata.dimensions.y - oj);
-            const std::string id = "quadtree_" + std::to_string(oi) + "_" + std::to_string(oj) +
-                                   "_" + std::to_string(sx) + "_" + std::to_string(sy);
+            const std::string id = carrierIdForCell(gridMetadata, cell);
             const auto found = cpirCarrierToIndex.find(id);
             if (found == cpirCarrierToIndex.end())
                 throw std::runtime_error("CPIR_FREE_CELL_WITHOUT_CARRIER:" + id);
-            const double value = std::exp(score[found->second] - maxScore);
+            const size_t carrier = found->second;
+            const double refMass = cpirReferenceCellMass[cell];
+            const double carrierRefMass = cpirCarrierReferenceMass[carrier];
+            if (!(refMass > 0.0) || !(carrierRefMass > 0.0))
+                throw std::runtime_error("CPIR_REFERENCE_MASS_INVALID");
+            const double value = carrierPosterior[carrier] * refMass / carrierRefMass;
             sourceProbability[cell] = value;
             mass += value;
         }
@@ -294,7 +393,8 @@ namespace GSL
                         << static_cast<double>(normalizedSum) << ',' << minimum << ',' << maximum
                         << ",0,0," << residual << '\n';
         cpirUpdateAudit.flush();
-        GSL_INFO("CPIR M1-only posterior update {}: stops={}, reaches={}, samples={}, carriers={}",
-                 sourceUpdateId, stops, observedReached, cpirProcessedSamples, cpirCarrierCount);
+        GSL_INFO("CPIR {} posterior update {}: stops={}, reaches={}, samples={}, carriers={}",
+                 pfdiMode, sourceUpdateId, stops, observedReached, cpirProcessedSamples,
+                 cpirCarrierCount);
     }
 }

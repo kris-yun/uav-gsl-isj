@@ -6,10 +6,9 @@ GSL only so result loggers can compute offline evaluation metrics. Algorithms
 must not call GT in their online decision/declaration logic.
 """
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, TimerAction, ExecuteProcess
+from launch.actions import DeclareLaunchArgument, TimerAction, ExecuteProcess, OpaqueFunction
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
-from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.parameter_descriptions import ParameterValue
 
 
@@ -24,14 +23,45 @@ def _float(name: str):
     return ParameterValue(LaunchConfiguration(name), value_type=float)
 
 
+def _validate_cpir_launch(context):
+    """Fail closed before starting ROS nodes when the frozen tape drifts."""
+    value = lambda name: LaunchConfiguration(name).perform(context)
+    mode = value('pfdi_mode')
+    allowed = {'off', 'cpir_m1', 'cpir_a1', 'cpir_a2', 'cpir_a3'}
+    if mode not in allowed:
+        raise RuntimeError(f'CPIR_MODE_NOT_EXPLICIT:{mode}')
+    if value('algorithm') != 'PMFS':
+        raise RuntimeError('CPIR_ALGORITHM_MUST_BE_PMFS')
+    expected_ablation = {
+        'off': 'A0', 'cpir_a1': 'A1', 'cpir_a2': 'A2', 'cpir_a3': 'A3',
+        'cpir_m1': 'CPIR_BASE_LEGACY',
+    }[mode]
+    if value('ablation_id') != expected_ablation:
+        raise RuntimeError(
+            f'CPIR_ABLATION_MODE_MISMATCH:{value("ablation_id")}:{mode}'
+        )
+    if abs(float(value('flight_height')) - 0.3) > 1.0e-12:
+        raise RuntimeError('CPIR_FLIGHT_HEIGHT_MUST_BE_0P3')
+    updates = int(value('maxUpdatesPerStop'))
+    block = int(value('measurement_block_samples'))
+    if int(value('measurement_settle_samples')) != 0 or updates * block != 80:
+        raise RuntimeError('CPIR_STOP_MUST_BE_EXACTLY_80_SAMPLES_WITH_ZERO_SETTLE')
+    if abs(float(value('deltaTime')) - 0.2) > 1.0e-12:
+        raise RuntimeError('CPIR_DELTA_TIME_MUST_BE_0P2')
+    if mode != 'off':
+        if not value('cpir_lookup_root') or not value('cpir_audit_directory'):
+            raise RuntimeError('CPIR_LOOKUP_AND_AUDIT_PATHS_REQUIRED')
+    return []
+
+
 def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument('vgr_data_path', default_value=''),
         DeclareLaunchArgument('config_id', default_value='2,4-1_fast'),
-        DeclareLaunchArgument('algorithm', default_value='SensorAwareSurgeCastPF'),
-        DeclareLaunchArgument('method', default_value='M7_full_saisc_pf'),
-        DeclareLaunchArgument('method_family', default_value='proposed_ablation'),
-        DeclareLaunchArgument('ablation_id', default_value='M7'),
+        DeclareLaunchArgument('algorithm', default_value='PMFS'),
+        DeclareLaunchArgument('method', default_value='CPIR_THREE_MODULE_NESTED'),
+        DeclareLaunchArgument('method_family', default_value='cpir_nested'),
+        DeclareLaunchArgument('ablation_id', default_value='UNSET'),
         DeclareLaunchArgument('run_id', default_value='UNSET_RUN_ID'),
         DeclareLaunchArgument('run_uuid', default_value='unknown'),
         DeclareLaunchArgument('run_dir', default_value='/tmp/gsl_runs/UNSET_RUN_ID'),
@@ -55,7 +85,7 @@ def generate_launch_description():
         DeclareLaunchArgument('start_x', default_value='-5.0'),
         DeclareLaunchArgument('start_y', default_value='-5.0'),
         DeclareLaunchArgument('seed', default_value='0'),
-        DeclareLaunchArgument('flight_height', default_value='1.0'),
+        DeclareLaunchArgument('flight_height', default_value='0.3'),
         DeclareLaunchArgument('timeout_sec', default_value='300.0'),
         DeclareLaunchArgument('path_budget_m', default_value='-1.0'),
 
@@ -77,7 +107,7 @@ def generate_launch_description():
         DeclareLaunchArgument('blurSigmaX', default_value='0.0'),
         DeclareLaunchArgument('blurSigmaY', default_value='0.0'),
         DeclareLaunchArgument('hitPriorProbability', default_value='0.1'),
-        DeclareLaunchArgument('maxUpdatesPerStop', default_value='3'),
+        DeclareLaunchArgument('maxUpdatesPerStop', default_value='8'),
         DeclareLaunchArgument('kernelSigma', default_value='0.5'),
         DeclareLaunchArgument('kernelStretchConstant', default_value='1.5'),
         DeclareLaunchArgument('confidenceMeasurementWeight', default_value='0.5'),
@@ -109,7 +139,8 @@ def generate_launch_description():
         DeclareLaunchArgument('p2_shadow_replicas', default_value='0'),
         DeclareLaunchArgument('p2_transport_substream', default_value='5788047269812129363'),
         DeclareLaunchArgument('tadm_enabled', default_value='false'),
-        DeclareLaunchArgument('pfdi_mode', default_value='joint'),
+        # Every CPIR/A0 run must select its arm explicitly.
+        DeclareLaunchArgument('pfdi_mode', default_value='UNSET'),
         # CPIR is an isolated source-channel replacement.  These paths are
         # explicit launch arguments so the node cannot silently use a stale
         # lookup or audit directory.
@@ -159,14 +190,11 @@ def generate_launch_description():
         DeclareLaunchArgument('raw_env_root', default_value=''),
         DeclareLaunchArgument('raw_gas_results', default_value=''),
         DeclareLaunchArgument('repo_root', default_value='/home/zyc/gsl_ws/src/GasSourceLocalization'),
-        DeclareLaunchArgument('scenario_id', default_value='house01_default'),
-        DeclareLaunchArgument('source_config', default_value='official_gaden_source'),
-        DeclareLaunchArgument('wind_config', default_value='official_gaden_wind'),
-        DeclareLaunchArgument('sensor_config', default_value='dynamic_pid_tau1p2_4p0_noise'),
-        DeclareLaunchArgument('start_config', default_value='start_A'),
         DeclareLaunchArgument('parameter_manifest_json', default_value=''),
         DeclareLaunchArgument('scenario_manifest_json', default_value=''),
 
+
+        OpaqueFunction(function=_validate_cpir_launch),
 
         Node(
             package='vgr_bridge',
@@ -400,4 +428,3 @@ def generate_launch_description():
 
 
     ])
-

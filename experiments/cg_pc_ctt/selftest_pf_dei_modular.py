@@ -53,9 +53,57 @@ r2=infer(y,x,q0,0.1,Mode.FULL)
 assert np.allclose(r.posterior,r2.posterior)
 assert abs(r.posterior.sum()-1)<1e-12
 
-# 5) each inference-side ablation switch is isolated and numerically valid.
+# 5) carrier-to-cell KL/I-projection preserves carrier marginal and within-carrier odds.
+carrier_of_cell = np.array([0, 0, 1, 1, 1, 2], dtype=np.int64)
+reference_cell_mass = np.array([0.05, 0.15, 0.10, 0.20, 0.30, 0.20], dtype=np.float64)
+carrier_posterior = np.array([0.2, 0.5, 0.3], dtype=np.float64)
+cell_posterior = carrier_to_cell_projection(carrier_posterior, carrier_of_cell, reference_cell_mass)
+carrier_sums = np.array([cell_posterior[carrier_of_cell == i].sum() for i in range(3)])
+assert np.allclose(carrier_sums, carrier_posterior / carrier_posterior.sum())
+for i in range(3):
+    idx = np.where(carrier_of_cell == i)[0]
+    if len(idx) >= 2:
+        ratios_ref = reference_cell_mass[idx] / reference_cell_mass[idx[0]]
+        ratios_out = cell_posterior[idx] / cell_posterior[idx[0]]
+        assert np.allclose(ratios_ref, ratios_out)
+reference_carrier_mass = np.array([reference_cell_mass[carrier_of_cell == i].sum() for i in range(3)])
+same_reference = carrier_to_cell_projection(reference_carrier_mass, carrier_of_cell, reference_cell_mass)
+assert np.allclose(same_reference, reference_cell_mass / reference_cell_mass.sum())
+try:
+    carrier_to_cell_projection([0.2, 0.5, 0.3, 0.0], carrier_of_cell, reference_cell_mass)
+    raise AssertionError("missing carrier support was accepted")
+except ValueError as exc:
+    assert "no reference cells" in str(exc)
+
+# 6) each inference-side ablation switch is isolated and numerically valid.
 # Sensor ablation is applied at the observation adapter, not inside infer().
 for mode in [Mode.FULL,Mode.ABLATE_TEMPORAL,Mode.ABLATE_COHERENCE,Mode.ABLATE_NUISANCE]:
     rr=infer(y,x,q0,0.1,mode)
     assert np.all(np.isfinite(rr.scores)) and np.all(np.isfinite(rr.posterior))
+
+# 7) persistent sensor state must be continuous across source-update / stop
+# boundaries.  Splitting the same physical tape into two contiguous chunks and
+# resuming from the carried state must match one uninterrupted pass exactly.
+def advance_persistent_sensor(samples, state=0.0, delay_one=0.0, delay_two=0.0):
+    out = []
+    for physical in np.asarray(samples, dtype=np.float64):
+        target = delay_two
+        delay_two = delay_one
+        delay_one = float(physical)
+        state = alpha * state + (1.0 - alpha) * target
+        out.append(state)
+    return np.asarray(out, dtype=np.float64), float(state), float(delay_one), float(delay_two)
+
+trace = np.array([0.0, 0.25, 0.5, 0.0, 0.8, 0.1, 0.0, 0.4, 0.0, 0.0], dtype=np.float64)
+full_trace, full_state, full_d1, full_d2 = advance_persistent_sensor(trace)
+prefix_trace, prefix_state, prefix_d1, prefix_d2 = advance_persistent_sensor(trace[:6])
+suffix_trace, suffix_state, suffix_d1, suffix_d2 = advance_persistent_sensor(
+    trace[6:], prefix_state, prefix_d1, prefix_d2
+)
+stitched_trace = np.concatenate([prefix_trace, suffix_trace])
+assert np.allclose(stitched_trace, full_trace)
+assert np.isclose(suffix_trace[0], full_trace[6])
+assert np.allclose([suffix_state, suffix_d1, suffix_d2], [full_state, full_d1, full_d2])
+reset_suffix_trace, *_ = advance_persistent_sensor(trace[6:])
+assert not np.allclose(reset_suffix_trace, suffix_trace)
 print('PF_DEI_MODULAR_SELFTEST PASS')

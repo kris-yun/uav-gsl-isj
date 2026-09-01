@@ -227,6 +227,34 @@ def reversible_posterior(prior, z_evidence) -> np.ndarray:
     return q / q.sum()
 
 
+def carrier_to_cell_projection(carrier_posterior, carrier_of_cell, reference_cell_mass) -> np.ndarray:
+    """KL/I-projection from carrier mass to cell mass under a frozen reference.
+
+    The carrier posterior is preserved exactly at the carrier marginal, while
+    the within-carrier shape is inherited from `reference_cell_mass`.
+    """
+    q_carrier = _norm_mass(carrier_posterior)
+    carrier_of_cell = np.asarray(carrier_of_cell, dtype=np.int64)
+    ref = np.asarray(reference_cell_mass, dtype=np.float64)
+    if carrier_of_cell.ndim != 1 or ref.ndim != 1 or carrier_of_cell.size != ref.size:
+        raise ValueError("shape mismatch")
+    if carrier_of_cell.size == 0 or np.any(carrier_of_cell < 0) or not np.all(np.isfinite(ref)) or np.any(ref < 0):
+        raise ValueError("invalid carrier projection inputs")
+    if q_carrier.size <= int(carrier_of_cell.max()):
+        raise ValueError("carrier posterior too small for cell assignment")
+
+    out = np.zeros_like(ref, dtype=np.float64)
+    for carrier in range(q_carrier.size):
+        mask = carrier_of_cell == carrier
+        if not np.any(mask):
+            raise ValueError("carrier has no reference cells")
+        denom = float(ref[mask].sum())
+        if not math.isfinite(denom) or denom <= 0.0:
+            raise ValueError("reference mass missing within carrier")
+        out[mask] = q_carrier[carrier] * ref[mask] / denom
+    return out
+
+
 def infer(observed_physical_ppm, predicted_physical_ppm, prior, reference_ppm: float,
           mode: Mode | str = Mode.FULL) -> InferenceResult:
     mode = Mode(mode)

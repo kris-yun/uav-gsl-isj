@@ -6,6 +6,7 @@
 #include <fstream>
 #include <filesystem>
 #include <iomanip>
+#include <cmath>
 #include <stdexcept>
 #include <gsl_server/algorithms/PMFS/PMFSLib.hpp>
 #include <gsl_server/algorithms/PMFS/PMFSViz.hpp>
@@ -76,12 +77,25 @@ namespace GSL
         p2ShadowTransportSubstream = getParam<int64_t>("p2_transport_substream", 0x5053465354524E53LL);
         tadmEnabled = getParam<bool>("tadm_enabled", false);
         pfdiMode = getParam<std::string>("pfdi_mode", tadmEnabled ? "joint" : "off");
-        if (pfdiMode != "off" && pfdiMode != "cpir_m1" && pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" &&
-            pfdiMode != "al" && pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" && pfdiMode != "ec_edcl" &&
-            pfdiMode != "ec_edcl_shadow")
-            throw std::invalid_argument("pfdi_mode must be off, cpir_m1, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
-        cpirEnabled = pfdiMode == "cpir_m1";
+        if (pfdiMode != "off" && pfdiMode != "cpir_m1" && pfdiMode != "cpir_a1" && pfdiMode != "cpir_a2" &&
+            pfdiMode != "cpir_a3" && pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" &&
+            pfdiMode != "al" && pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" &&
+            pfdiMode != "ec_edcl" && pfdiMode != "ec_edcl_shadow")
+            throw std::invalid_argument("pfdi_mode must be off, cpir_m1, cpir_a1, cpir_a2, cpir_a3, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
+        cpirEnabled = pfdiMode == "cpir_m1" || pfdiMode == "cpir_a1" || pfdiMode == "cpir_a2" || pfdiMode == "cpir_a3";
         tadmEnabled = pfdiMode != "off" && !cpirEnabled;
+        if (cpirEnabled)
+        {
+            const int settleSamples = getParam<int>("measurement_settle_samples", -1);
+            const int blockSamples = getParam<int>("measurement_block_samples", -1);
+            if (settleSamples != 0 || blockSamples <= 0 ||
+                settings.hitProbability.maxUpdatesPerStop * blockSamples != 80)
+                throw std::invalid_argument(
+                    "CPIR requires measurement_settle_samples=0 and "
+                    "maxUpdatesPerStop*measurement_block_samples=80");
+            if (std::abs(settings.simulation.deltaTime - 0.2) > 1.0e-12)
+                throw std::invalid_argument("CPIR requires deltaTime=0.2");
+        }
         cpirLookupRoot = getParam<std::string>("cpir_lookup_root", "");
         cpirAuditDirectory = getParam<std::string>("cpir_audit_directory", "");
         posteriorGuidanceWeight = std::clamp(getParam<double>("posterior_guidance_weight", 0.0), 0.0, 1.0);
@@ -324,9 +338,10 @@ namespace GSL
                     simulations.beginTADMUpdate(p2SourceUpdateId, sourceUpdateSimTime);
                 if (contextBankExportEnabled)
                     simulations.beginContextBankUpdate(p2SourceUpdateId, sourceUpdateSimTime);
-                simulations.updateSourceProbability(settings.simulation.refineFraction);
                 if (cpirEnabled)
                     applyCPIRPosterior(p2SourceUpdateId, sourceUpdateSimTime);
+                else
+                    simulations.updateSourceProbability(settings.simulation.refineFraction);
                 if (contextBankExportEnabled)
                 {
                     simulations.exportContextBankState(

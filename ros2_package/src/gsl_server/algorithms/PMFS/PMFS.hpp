@@ -103,8 +103,8 @@ namespace GSL
         std::string contextBankExportDirectory;
         double contextBankPreviousSimTime = -1.0;
 
-        // Causal Physical Intervention Reachability (M1 only).  This state is
-        // unreachable in the authoritative OFF mode.
+        // Causal Physical Intervention Reachability nested A1/A2/A3 runtime.
+        // This state is unreachable in the authoritative OFF mode.
         struct CPIRSample
         {
             int timeIndex = -1;
@@ -131,6 +131,8 @@ namespace GSL
         std::vector<std::string> cpirCarrierIds;
         std::unordered_map<std::string, size_t> cpirCarrierToIndex;
         std::vector<std::filesystem::path> cpirWorldPaths;
+        std::vector<double> cpirReferenceCellMass;
+        std::vector<double> cpirCarrierReferenceMass;
         std::unordered_map<size_t, std::vector<float>> cpirCellCache;
         std::vector<double> cpirSensorState;
         std::vector<float> cpirDelayOne;
