@@ -1,0 +1,58 @@
+{
+  "contract": "CPIR_FACTORIAL_OFFLINE_BLOCKED_AUDIT_V1",
+  "date": "2026-09-01",
+  "authoritative_base_commit": "57cd4e41bb02f5e3e85b3d3a7986c9e4ff72632d",
+  "factorial_code_commit": "b3eab73e844bc4963f5a15223255e0a603265648",
+  "coverage_interface_audit_commit": "0141bb8844a04225796ff1b0c0cc767ab8693e03",
+  "status": "CPIR_FACTORIAL_OFFLINE_INVALID_FULLGRID_COVERAGE",
+  "closed_loop_authorized": false,
+  "vm_release_parity_authorized": false,
+  "formal_9_pair_closed_loop_started": false,
+  "bank_integrity": {
+    "verdict": "CPIR_FACTORIAL_BANK_PREFLIGHT_PASS",
+    "H01_bank_summary_sha256": "8bab8c2e5c39d091137beef5d2efe69eb2131be09c75efb1347f18411a776888",
+    "H02_bank_summary_sha256": "f00daf24c70771d95f945de098fed29e17cc72a763b000bdd281038383bd2845",
+    "H03_bank_summary_sha256": "736444246178d89432cfde5bc2f12699e7ec9d5600f2e11fa385e609fbfa68ab"
+  },
+  "coverage": {
+    "all_source_update_schedules_ok": true,
+    "cases": 30,
+    "cases_with_missing_samples": 27,
+    "missing_samples_total": 146,
+    "missing_stop_samples": 0,
+    "missing_motion_samples": 146,
+    "missing_motion_by_house": {"H01": 34, "H02": 42, "H03": 70},
+    "coverage_report_sha256": "550fc3ab3ad3381a79ecd3e085fde0f2a19b03fd156774064d9bcbcaf2dc857e"
+  },
+  "forbidden_fill_audit": {
+    "route_bank_summary_sha256": "17364eb744f4fc53c4b52eee0362f09bdee3e8655b74c9d5e5a2eb0a3a9e2d47",
+    "route_bank_manifest_sha256": "c68e4bcbd196a85d74ff9a44db01b2090f4487fc84943f82fcd0d17a18629bed",
+    "missing_motion_values_checked": {"H01": 57120, "H02": 67536, "H03": 115360},
+    "exact_nonzero_values": {"H01": 38822, "H02": 43002, "H03": 17999},
+    "max_abs_ppm": {"H01": 54.28540802001953, "H02": 103.76213836669922, "H03": 37.9774284362793},
+    "missing_value_audit_verdict": "CPIR_FULLGRID_MISSING_MOTION_NONZERO_FAIL",
+    "missing_value_audit_sha256": "58f09de047e189f5b089b055c4dc85e2a0def5738026554c49f32c6b3a8a1d8e",
+    "fullgrid_route_overlap_first_counterexample": {
+      "house": "H01",
+      "carrier_id": "quadtree_0_0_2_2",
+      "member_id": 0,
+      "seed": 0,
+      "sample_index": 371,
+      "fullgrid_ppm": 0.0,
+      "route_ppm": 0.00298071070574224
+    },
+    "overlap_audit_log_sha256": "7d6a3f2bbc1f10b11ef1a752806e0c697541277fb963e4f366f521b6dd5a1731",
+    "conclusion": "Zero fill, skipping, nearest-neighbor/interpolation, and historical-route substitution are all invalid."
+  },
+  "module_verdicts": {
+    "M1": "NOT_EVALUATED_BECAUSE_COMMON_FACTORIAL_INPUT_INVALID",
+    "M2": "M2_PERSISTENT_SENSOR_MAIN_MODULE_NO_GO",
+    "M3": "NOT_EVALUATED_BECAUSE_COMMON_FACTORIAL_INPUT_INVALID"
+  },
+  "overall_verdict": "CPIR_FACTORIAL_OFFLINE_INVALID_FULLGRID_COVERAGE_NO_CLOSED_LOOP",
+  "truth_or_outcome_read": false,
+  "new_gaden_runs": 0,
+  "neural_training": false,
+  "scientific_parameter_changes": false,
+  "required_resolution": "Create and independently verify a prediction bank that covers every trajectory sample required by the persistent M2 state, then rerun the unchanged preregistered factorial. Do not rescue the current result by filling missing samples."
+}
