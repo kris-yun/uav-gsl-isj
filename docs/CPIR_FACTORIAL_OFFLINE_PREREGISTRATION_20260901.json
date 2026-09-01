@@ -1,7 +1,15 @@
 {
   "contract": "CPIR_FACTORIAL_OFFLINE_V1",
   "date": "2026-09-01",
-  "status": "PREREGISTERED_BEFORE_FACTORIAL_BANK_PAYLOAD_OR_OUTCOME_READ",
+  "status": "PREREGISTERED_AMENDED_PREOUTCOME_FOR_MOTION_COVERAGE_INTERFACE",
+  "coverage_interface_amendment": {
+    "reason": "The read-only coverage preflight found that every 80-sample stop is covered but 29 of 30 tapes contain a small number of uncovered motion samples. M2 carries state through motion, so zero fill, nearest-neighbor fill, or sample skipping is forbidden.",
+    "fullgrid_policy": "Use the frozen full-grid value at every covered trajectory sample.",
+    "missing_motion_policy": "Only for an uncovered motion sample, use the corresponding source/member/sample float32 value from the already-frozen PF_DEI_V3_HISTORICAL_NATIVE_BANK_V1 train shard for that exact historical tape.",
+    "required_parity": "For every source, member, tape, and trajectory sample covered by both banks, the full-grid and historical-route float32 values must be exactly equal. Any mismatch makes Stage 1 INVALID.",
+    "required_schedule": "Every historical sim_pose_trace hash and length must equal the frozen route-bank train schedule entry.",
+    "forbidden": ["new GADEN execution", "interpolation", "nearest-cell substitution", "zero fill", "dropping motion samples", "using the route bank where full-grid coverage exists"]
+  },
   "scope": {
     "houses": ["H01", "H02", "H03"],
     "historical_seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],

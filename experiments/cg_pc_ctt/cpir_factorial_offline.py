@@ -14,6 +14,7 @@ import csv
 import hashlib
 import json
 import math
+import struct
 from pathlib import Path
 from typing import Any
 
@@ -30,7 +31,6 @@ from cpir_three_module_shadow import (
     STOP_SAMPLES,
     THRESHOLD_PPM,
     BankHouse,
-    build_events,
     carrier_scores,
     endpoint,
     load_case,
@@ -140,9 +140,148 @@ def deterministic_nonidentity_permutation(
     return order
 
 
+def read_route_streams(path: Path, expected_sha256: str) -> list[np.ndarray]:
+    raw = path.read_bytes()
+    if hashlib.sha256(raw).hexdigest() != expected_sha256:
+        raise RuntimeError(f"CPIR_FACTORIAL_ROUTE_SHARD_HASH:{path}")
+    if len(raw) < 12 or raw[:8] != b"PFV3STR1":
+        raise RuntimeError(f"CPIR_FACTORIAL_ROUTE_SHARD_MAGIC:{path}")
+    (count,) = struct.unpack_from("<I", raw, 8)
+    header_end = 12 + 4 * count
+    if count == 0 or header_end > len(raw):
+        raise RuntimeError(f"CPIR_FACTORIAL_ROUTE_SHARD_HEADER:{path}")
+    lengths = struct.unpack_from(f"<{count}I", raw, 12)
+    if any(length <= 0 for length in lengths) or header_end + 4 * sum(lengths) != len(raw):
+        raise RuntimeError(f"CPIR_FACTORIAL_ROUTE_SHARD_LENGTH:{path}")
+    flat = np.frombuffer(raw, dtype="<f4", offset=header_end)
+    if not np.isfinite(flat).all() or np.any(flat < 0.0):
+        raise RuntimeError(f"CPIR_FACTORIAL_ROUTE_SHARD_VALUES:{path}")
+    streams = []
+    start = 0
+    for length in lengths:
+        streams.append(flat[start:start + length].copy())
+        start += length
+    return streams
+
+
+def build_factorial_events(
+    bank: BankHouse, cases: list[Any], route_bank_root: Path,
+) -> tuple[np.ndarray, np.ndarray, dict[str, Any]]:
+    """Use full-grid values, with exact-route fallback only for missing motion."""
+    route_manifest_path = route_bank_root / "bank_shard_manifest.csv"
+    route_summary_path = route_bank_root / "bank_summary.json"
+    route_manifest = read_csv(route_manifest_path)
+    route_summary = json.loads(route_summary_path.read_text(encoding="utf-8"))
+    if route_summary.get("contract") != "PF_DEI_V3_HISTORICAL_NATIVE_BANK_V1":
+        raise RuntimeError("CPIR_FACTORIAL_ROUTE_BANK_CONTRACT")
+    rows = [row for row in route_manifest
+            if row["house"] == bank.house and row["split"] == "train"]
+    row_by_key = {(row["carrier_id"], int(row["member_id"])): row for row in rows}
+    expected_keys = {(carrier, member) for carrier in bank.carriers for member in range(MEMBER_COUNT)}
+    if set(row_by_key) != expected_keys:
+        raise RuntimeError(f"CPIR_FACTORIAL_ROUTE_BANK_CARRIER_SET:{bank.house}")
+    schedule_hashes = route_summary["trajectory_schedule_sha256"][bank.house + "_train"]
+    schedule_lengths = route_summary["trajectory_lengths"][bank.house + "_train"]
+    for case in cases:
+        pose_path = case.runtime / "sim_pose_trace.csv"
+        if (sha256_file(pose_path) != schedule_hashes[case.seed] or
+                len(read_csv(pose_path)) != int(schedule_lengths[case.seed])):
+            raise RuntimeError(f"CPIR_FACTORIAL_ROUTE_SCHEDULE:{bank.house}:{case.seed}")
+    max_stops = max(len(case.stops) for case in cases)
+    raw = np.zeros((len(cases), len(bank.carriers), MEMBER_COUNT, max_stops), dtype=np.bool_)
+    stateful = np.zeros_like(raw)
+    supported_streams = np.unique(np.concatenate([
+        case.stream_indices[case.stream_indices >= 0] for case in cases
+    ]))
+    stream_position = {int(stream): row for row, stream in enumerate(supported_streams)}
+    overlap_values_checked = 0
+    overlap_exact_mismatches = 0
+    overlap_max_abs = 0.0
+    fallback_values_used = 0
+    fallback_nonzero_values = 0
+    first_mismatch = None
+    from cpir_three_module_shadow import read_world_streams
+    for carrier_index, carrier in enumerate(bank.carriers):
+        for member in range(MEMBER_COUNT):
+            full_values = read_world_streams(
+                bank.world_paths[carrier_index][member], supported_streams
+            )
+            route_row = row_by_key[(carrier, member)]
+            route_streams = read_route_streams(
+                route_bank_root / route_row["relative_path"], route_row["sha256"]
+            )
+            for case_index, case in enumerate(cases):
+                route_tape = np.asarray(route_streams[case.seed][:1500], dtype=np.float32)
+                if len(route_tape) != 1500:
+                    raise RuntimeError(f"CPIR_FACTORIAL_ROUTE_TAPE_LENGTH:{bank.house}:{case.seed}")
+                supported_positions = np.flatnonzero(case.stream_indices >= 0)
+                rows_for_case = np.asarray([
+                    stream_position[int(case.stream_indices[position])]
+                    for position in supported_positions
+                ], dtype=np.int64)
+                full_tape = full_values[rows_for_case, supported_positions]
+                route_overlap = route_tape[supported_positions]
+                difference = np.abs(full_tape.astype(np.float64) - route_overlap.astype(np.float64))
+                mismatch = full_tape != route_overlap
+                overlap_values_checked += int(len(supported_positions))
+                overlap_exact_mismatches += int(np.count_nonzero(mismatch))
+                if len(difference):
+                    overlap_max_abs = max(overlap_max_abs, float(np.max(difference)))
+                if np.any(mismatch) and first_mismatch is None:
+                    offset = int(np.flatnonzero(mismatch)[0])
+                    first_mismatch = {
+                        "carrier_id": carrier, "member_id": member,
+                        "seed": case.seed, "sample_index": int(supported_positions[offset]),
+                        "fullgrid": float(full_tape[offset]),
+                        "route": float(route_overlap[offset]),
+                    }
+                physical = route_tape.copy()
+                physical[supported_positions] = full_tape
+                fallback_positions = np.flatnonzero(case.stream_indices < 0)
+                fallback = physical[fallback_positions]
+                fallback_values_used += int(len(fallback))
+                fallback_nonzero_values += int(np.count_nonzero(fallback))
+                for stop_index, stop in enumerate(case.stops):
+                    raw[case_index, carrier_index, member, stop_index] = bool(
+                        np.max(physical[stop]) > THRESHOLD_PPM
+                    )
+                stop_for_time = np.full(1500, -1, dtype=np.int64)
+                for stop_index, stop in enumerate(case.stops):
+                    stop_for_time[stop] = stop_index
+                sensor_state = 0.0; delay_one = 0.0; delay_two = 0.0
+                for time in range(1500):
+                    target = delay_two
+                    delay_two = delay_one
+                    delay_one = float(physical[time])
+                    sensor_state = ALPHA * sensor_state + (1.0 - ALPHA) * target
+                    stop_index = int(stop_for_time[time])
+                    if stop_index >= 0 and sensor_state > THRESHOLD_PPM:
+                        stateful[case_index, carrier_index, member, stop_index] = True
+            completed = carrier_index * MEMBER_COUNT + member + 1
+            if completed % 100 == 0 or completed == len(bank.carriers) * MEMBER_COUNT:
+                print(f"CPIR_FACTORIAL_EVENT_PROGRESS={bank.house}:{completed}/{len(bank.carriers) * MEMBER_COUNT}", flush=True)
+    audit = {
+        "contract": "CPIR_FACTORIAL_FULLGRID_ROUTE_COVERAGE_INTERFACE_V1",
+        "fullgrid_bank_summary_sha256": bank.summary_sha256,
+        "route_bank_summary_sha256": sha256_file(route_summary_path),
+        "route_bank_manifest_sha256": sha256_file(route_manifest_path),
+        "overlap_values_checked": overlap_values_checked,
+        "overlap_exact_mismatches": overlap_exact_mismatches,
+        "overlap_max_abs_ppm": overlap_max_abs,
+        "fallback_motion_values_used": fallback_values_used,
+        "fallback_nonzero_values": fallback_nonzero_values,
+        "first_mismatch": first_mismatch,
+        "verdict": "CPIR_FACTORIAL_COVERAGE_INTERFACE_PASS"
+        if overlap_exact_mismatches == 0 else "CPIR_FACTORIAL_COVERAGE_INTERFACE_INVALID",
+    }
+    if overlap_exact_mismatches:
+        raise RuntimeError(f"CPIR_FACTORIAL_FULLGRID_ROUTE_PARITY:{bank.house}:{first_mismatch}")
+    return raw, stateful, audit
+
+
 def freeze_stage(
     bank_root: Path, historical_root: Path, support_path: Path,
-    prereg_path: Path, output: Path,
+    route_bank_root: Path, prereg_path: Path, output: Path,
 ) -> dict[str, Any]:
     prereg = json.loads(prereg_path.read_text(encoding="utf-8"))
     if prereg.get("contract") != CONTRACT or not str(prereg.get("status", "")).startswith("PREREGISTERED_"):
@@ -150,10 +289,14 @@ def freeze_stage(
     support_rows = read_csv(support_path)
     output.mkdir(parents=True, exist_ok=False)
     bank_hashes: dict[str, dict[str, str]] = {}
+    coverage_interface: dict[str, Any] = {}
     for house in HOUSES:
         bank = BankHouse.load(house, bank_root, support_rows)
-        cases = [load_case(historical_root, house, seed, bank) for seed in range(10)]
-        raw, stateful = build_events(bank, cases)
+        cases = [load_case(historical_root, house, seed, bank, strict_full_coverage=False)
+                 for seed in range(10)]
+        raw, stateful, coverage_interface[house] = build_factorial_events(
+            bank, cases, route_bank_root
+        )
         if any(len(case.stops) != raw.shape[-1] for case in cases):
             raise RuntimeError(f"CPIR_FACTORIAL_STOP_COUNT_DRIFT:{house}")
         q_raw = (raw.sum(axis=2) + 0.5) / (MEMBER_COUNT + 1.0)
@@ -222,6 +365,7 @@ def freeze_stage(
         "preregistration_sha256": sha256_file(prereg_path),
         "support_sha256": sha256_file(support_path),
         "bank_hashes": bank_hashes,
+        "coverage_interface": coverage_interface,
         "bank_root": str(bank_root),
         "historical_root": str(historical_root),
         "files": files,
@@ -369,7 +513,8 @@ def evaluate_stage(
     a0_final_snapshot_max_abs = 0.0
     for house in HOUSES:
         bank = BankHouse.load(house, bank_root, support_rows)
-        cases = [load_case(historical_root, house, seed, bank) for seed in range(10)]
+        cases = [load_case(historical_root, house, seed, bank, strict_full_coverage=False)
+                 for seed in range(10)]
         frozen = np.load(stage1 / f"{house}_FACTORIAL.npz")
         cell_rows = [
             {"cell_index": str(int(cell)), "x": str(float(x)), "y": str(float(y))}
@@ -694,6 +839,7 @@ def main() -> int:
     parser.add_argument("--stage", choices=("1", "2"))
     parser.add_argument("--bank-root", type=Path)
     parser.add_argument("--historical-root", type=Path)
+    parser.add_argument("--route-bank-root", type=Path)
     parser.add_argument("--support", type=Path)
     parser.add_argument("--prereg", type=Path,
                         default=Path(__file__).resolve().parents[2] / "docs" / PREREG_NAME)
@@ -707,7 +853,12 @@ def main() -> int:
     if args.output.exists():
         raise SystemExit(f"CPIR_FACTORIAL_REFUSE_OVERWRITE:{args.output}")
     if args.stage == "1":
-        freeze_stage(args.bank_root, args.historical_root, args.support, args.prereg, args.output)
+        if not args.route_bank_root:
+            parser.error("--route-bank-root required for Stage 1 motion-coverage interface")
+        freeze_stage(
+            args.bank_root, args.historical_root, args.support,
+            args.route_bank_root, args.prereg, args.output,
+        )
     else:
         if not args.stage1:
             parser.error("--stage1 required for stage 2")
