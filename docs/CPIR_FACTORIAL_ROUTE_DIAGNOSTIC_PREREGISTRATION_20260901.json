@@ -1,7 +1,7 @@
 {
   "contract": "CPIR_FACTORIAL_OFFLINE_V1",
   "date": "2026-09-01",
-  "status": "PREREGISTERED_ROUTE_DIAGNOSTIC_BEFORE_A0_TRUTH_OR_OUTCOME_READ",
+  "status": "PREREGISTERED_ROUTE_DIAGNOSTIC_R2_WINDOW_CLARIFIED_BEFORE_A0_TRUTH_OR_OUTCOME_READ",
   "physical_backend": "route_diagnostic",
   "evidence_boundary": {
     "purpose": "Coverage-complete fixed-trajectory factorial diagnostic of the frozen M1, M2, and M3 formulas on the exact continuous historical route responses.",
@@ -9,6 +9,12 @@
     "negative_result_permission": "A failed module gate is sufficient to reject that module under the frozen formulas; no rescue tuning is permitted.",
     "fullgrid_runtime_claim": false,
     "closed_loop_authorized": false
+  },
+  "stage1_window_amendment": {
+    "reason": "The first Stage-1-only attempt found 16 or 17 physical stops per 300 s trajectory, while the five frozen source-update prefixes are identically [3,6,9,12,15] stops for all 30 tapes. No A0 posterior, source truth, or outcome metric had been read.",
+    "analysis_stop_count": 15,
+    "policy": "Use exactly stops 0 through 14, the common support visible at source update 5. Ignore any stop completed after source update 5 in both likelihoods and the M2 predictive Gate.",
+    "formula_change": false
   },
   "frozen_input_hashes": {
     "route_bank": {
@@ -26,6 +32,7 @@
     "historical_seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     "route_split": "train",
     "source_updates_per_case": 5,
+    "analysis_stop_count": 15,
     "horizon_s": 300.0,
     "threshold_m": 2.0,
     "right_censor_s": 300.0,

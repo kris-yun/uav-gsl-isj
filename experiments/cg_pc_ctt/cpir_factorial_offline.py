@@ -48,6 +48,7 @@ PAIR_TOL = 1.0e-12
 PREREG_NAME = "CPIR_FACTORIAL_OFFLINE_PREREGISTRATION_20260901.json"
 ARMS = ("F00", "F01", "F10", "F11")
 OUTPUT_ARMS = ("A0", "F00", "F01", "F10", "F11", "STOP_PERMUTE")
+ANALYSIS_STOP_COUNT = 3 * SOURCE_UPDATES
 
 
 def posterior_diagnostics(mass: np.ndarray) -> tuple[float, float]:
@@ -396,8 +397,14 @@ def freeze_stage(
             raw, stateful, coverage_interface[house] = build_factorial_events(
                 bank, cases, route_bank_root
             )
-        if any(len(case.stops) != raw.shape[-1] for case in cases):
-            raise RuntimeError(f"CPIR_FACTORIAL_STOP_COUNT_DRIFT:{house}")
+        expected_visible = np.arange(ANALYSIS_STOP_COUNT, dtype=np.int64)
+        if any(not np.array_equal(case.visible[-1], expected_visible) for case in cases):
+            raise RuntimeError(f"CPIR_FACTORIAL_UPDATE5_STOP_WINDOW:{house}")
+        # Some trajectories contain one or two completed stops after the fifth
+        # and final source update. They are outside every frozen posterior and
+        # must not enter either the likelihood or the M2 predictive Gate.
+        raw = raw[..., :ANALYSIS_STOP_COUNT]
+        stateful = stateful[..., :ANALYSIS_STOP_COUNT]
         q_raw = (raw.sum(axis=2) + 0.5) / (MEMBER_COUNT + 1.0)
         q_stateful = (stateful.sum(axis=2) + 0.5) / (MEMBER_COUNT + 1.0)
         records: list[dict[str, Any]] = []
@@ -432,13 +439,17 @@ def freeze_stage(
                     "update_time_s": float(case.update_times[update_id - 1]),
                     "visible_stops": [int(value) for value in visible],
                     "stop_permutation": [int(value) for value in permutation],
-                    "observed_events": [bool(value) for value in case.observed_events],
+                    "observed_events": [
+                        bool(value) for value in case.observed_events[:ANALYSIS_STOP_COUNT]
+                    ],
                 })
         np.savez_compressed(
             output / f"{house}_FACTORIAL.npz",
             q_raw=q_raw,
             q_stateful=q_stateful,
-            observed=np.stack([case.observed_events for case in cases]),
+            observed=np.stack([
+                case.observed_events[:ANALYSIS_STOP_COUNT] for case in cases
+            ]),
             carrier_ids=np.asarray(bank.carriers),
             cell_indices=bank.cell_indices,
             cell_to_carrier=bank.cell_to_carrier,
@@ -473,6 +484,7 @@ def freeze_stage(
             "dt_s": DT_S, "alpha": ALPHA, "delay_samples": DELAY_SAMPLES,
             "threshold_ppm": THRESHOLD_PPM, "stop_samples": STOP_SAMPLES,
             "member_count": MEMBER_COUNT,
+            "analysis_stop_count": ANALYSIS_STOP_COUNT,
         },
     }
     manifest["semantic_freeze_sha256"] = hashlib.sha256(
