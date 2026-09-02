@@ -21,7 +21,10 @@ case "${HOUSE}" in
   *) echo "CTPI_V04_SAFE_UNSUPPORTED_HOUSE=${HOUSE}" >&2; exit 2 ;;
 esac
 
-# Old CPIR factorial identifiers are deliberately rejected.  CTPI V0.4 has a
+[[ "${SEED}" =~ ^[0-9]+$ ]] || { echo "CTPI_V04_SAFE_INVALID_SEED=${SEED}" >&2; exit 2; }
+[[ "${ARM}" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo "CTPI_V04_SAFE_INVALID_ARM=${ARM}" >&2; exit 2; }
+
+# Old CPIR factorial identifiers are deliberately rejected. CTPI V0.4 has a
 # different module graph and must not inherit F00/F01/F10/F11 -> cpir_* mapping.
 case "${ARM}" in
   F00|F01|F10|F11|cpir_*|CPIR_*)
@@ -61,20 +64,29 @@ if [[ -e "${RUN_DIR}" ]]; then
   exit 70
 fi
 
-mkdir -p "${RUN_DIR}"
-PARITY_JSON="${RUN_DIR}/ctpi_v04_runtime_parity.json"
+# Keep preflight evidence outside RUN_DIR so the true canonical runner remains
+# the first process allowed to create RUN_DIR. This avoids a false collision
+# with canonical runners that also require a non-existent target directory.
+SAFE_META_DIR="${RUN_ROOT}/.${HSHORT}_seed${SEED}_${ARM}_ctpi_v04_safe"
+if [[ -e "${SAFE_META_DIR}" ]]; then
+  echo "CTPI_V04_SAFE_META_DIR_ALREADY_EXISTS=${SAFE_META_DIR}" >&2
+  exit 70
+fi
+mkdir "${SAFE_META_DIR}"
+PARITY_JSON="${SAFE_META_DIR}/ctpi_v04_runtime_parity.json"
+
 python3 "${REPO_ROOT}/tools/ctpi_v04_runtime_parity_guard.py" \
   --repo-root "${REPO_ROOT}" \
   --binary "${ALGORITHM_BINARY}" \
   --json-out "${PARITY_JSON}"
 
-# Guard exits 42 while the real CREL/APRS C++ runtime is absent.  Do not
+# Guard exits 42 while the real CREL/APRS C++ runtime is absent. Do not
 # override that exit code and do not map CTPI to a CPIR mode to make it pass.
 
 START_NS="$(date +%s%N)"
 SOURCE_HEAD="$(git -C "${REPO_ROOT}" rev-parse HEAD 2>/dev/null || echo UNKNOWN)"
 BINARY_SHA256="$(sha256sum "${ALGORITHM_BINARY}" | awk '{print $1}')"
-cat >"${RUN_DIR}/ctpi_v04_safe_wrapper_manifest.json" <<EOF
+cat >"${SAFE_META_DIR}/ctpi_v04_safe_wrapper_manifest.json" <<EOF
 {
   "contract": "CTPI_V04_SAFE_WRAPPER_V1",
   "house": "${HSHORT}",
@@ -91,7 +103,6 @@ EOF
 export ROS_DOMAIN_ID="${DOMAIN_ID}"
 export RMW_IMPLEMENTATION="${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}"
 
-# Preserve caller inputs but force the same fresh run directory/root identity.
 set +e
 HOUSE="${HOUSE}" SEED="${SEED}" ARM="${ARM}" RUN_ROOT="${RUN_ROOT}" \
   REPO_ROOT="${REPO_ROOT}" PFDI_INSTALL_ROOT="${PFDI_INSTALL_ROOT}" \
@@ -123,6 +134,12 @@ text = json.dumps(d).lower()
 if "cpir_a1" in text or "cpir_a2" in text or "cpir_a3" in text or "cpir_m1" in text:
     raise SystemExit("CTPI_V04_SAFE_RUN_STATUS_REPORTS_CPIR_MODE")
 PY
+
+if [[ -d "${RUN_DIR}" ]]; then
+  cp "${PARITY_JSON}" "${RUN_DIR}/ctpi_v04_runtime_parity.json"
+  cp "${SAFE_META_DIR}/ctpi_v04_safe_wrapper_manifest.json" \
+     "${RUN_DIR}/ctpi_v04_safe_wrapper_manifest.json"
+fi
 
 if (( child_status != 0 )); then
   echo "CTPI_V04_SAFE_CANONICAL_RUNNER_FAILED=${child_status}" >&2
