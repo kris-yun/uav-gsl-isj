@@ -1,0 +1,102 @@
+{
+  "commit": "7a58f02",
+  "decision": "CTPI_FULL_LAW_FACTORIAL_NO_GO",
+  "execution": {
+    "closed_loop_runs": 0,
+    "gaden_runs": 0,
+    "houses": ["H01", "H02", "H03"],
+    "neural_training": false,
+    "seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "source_updates_per_case": 5
+  },
+  "f00_authoritative_parity": {
+    "case_metric_differing_rows": 0,
+    "per_update_differing_rows": 0,
+    "policy": "verify formula parity and preserve frozen posterior bit-for-bit"
+  },
+  "m1": {
+    "comparison": "F00_vs_A0",
+    "final_error_m": {
+      "a0_mean": 5.1823216386050595,
+      "f00_mean": 2.6271364966939723,
+      "losses": 8,
+      "one_sided_exact_sign_p": 0.008062400855123997,
+      "ties": 0,
+      "wins": 22
+    },
+    "pass": true,
+    "selected_increment_metrics": ["final_error_m", "time_to_2m_s"],
+    "time_to_2m_s": {
+      "a0_mean": 278.41015652339996,
+      "f00_mean": 208.03864903000004,
+      "losses": 3,
+      "one_sided_exact_sign_p": 0.0037689208984375,
+      "ties": 12,
+      "wins": 15
+    },
+    "true_source_normalized_rank": {
+      "a0_mean": 0.7665000583498659,
+      "f00_mean": 0.30036179834286375,
+      "losses": 0,
+      "one_sided_exact_sign_p": 9.313225746154785e-10,
+      "ties": 0,
+      "wins": 30
+    }
+  },
+  "m2": {
+    "comparison": "F01_vs_F00",
+    "error_auc_m_s": {
+      "f00_mean": 945.4507567334094,
+      "f01_mean": 1169.0741523591373,
+      "losses": 23,
+      "significant_worsening": true,
+      "stable_reverse_houses": ["H02", "H03"],
+      "ties": 0,
+      "wins": 7
+    },
+    "final_error_m": {
+      "f00_mean": 2.6271364966939723,
+      "f01_mean": 2.863679220363582,
+      "losses": 11,
+      "stable_reverse_houses": ["H03"],
+      "ties": 0,
+      "wins": 19
+    },
+    "pass": false,
+    "selected_increment_metrics": [],
+    "time_to_2m_s": {
+      "f00_mean": 208.03864903000004,
+      "f01_mean": 234.73043208036668,
+      "losses": 11,
+      "stable_reverse_houses": ["H03"],
+      "ties": 11,
+      "wins": 8
+    },
+    "true_source_normalized_rank": {
+      "f00_mean": 0.30036179834286375,
+      "f01_mean": 0.6563749465126228,
+      "losses": 25,
+      "same_direction": false,
+      "significant_worsening": true,
+      "stable_reverse_houses": ["H01", "H02"],
+      "ties": 0,
+      "wins": 5
+    }
+  },
+  "m2_law_reassignment_control": {
+    "auc_clear_increment": true,
+    "final_error_clear_increment": true,
+    "rank_same_direction": true
+  },
+  "m3": {
+    "pass": false,
+    "status": "CLOSED_LOOP_ONLY_NOT_EVALUATED_OFFLINE"
+  },
+  "evidence": {
+    "archive_sha256": "cfc33131ee15eba0172b1bb863e0b98c61e7e42f7188d1862e8156f73ff6f2d4",
+    "archive_vm_path": "/home/zyc/CTPI_THREE_MODULE_OFFLINE_NO_GO_20260902_7a58f02_R3.tar.gz",
+    "factorial_summary_sha256": "131a08c0bcff72f0caedb2d69d0e10364494ea20c4497920e363f070dc3396be",
+    "oracle_summary_sha256": "44e755038770e54028d591e8fdd510b7497f5e5d7396e0fef19aaeb8d738dbf3"
+  },
+  "next_authorized_action": "replace M2 under a new preregistration and validate on untouched confirmatory tapes; do not implement M3 runtime or start closed loop for this candidate"
+}
