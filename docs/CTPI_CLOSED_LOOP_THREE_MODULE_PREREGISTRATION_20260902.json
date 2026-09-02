@@ -1,0 +1,59 @@
+{
+  "contract": "CTPI_FULL_LAW_FACTORIAL_V1",
+  "date": "2026-09-02",
+  "purpose": "Qualify M1 and M2 on identical frozen historical tapes before any M3 runtime or closed-loop implementation.",
+  "houses": ["H01", "H02", "H03"],
+  "seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "source_updates": 5,
+  "analysis_stop_prefix": 15,
+  "horizon_s": 300.0,
+  "localization_threshold_m": 2.0,
+  "module_chain": {
+    "M1": "CREL member-level causal route-encounter law",
+    "M2": "complete count-law categorical proper-score assimilation",
+    "M3": "posterior-weighted predictive-information action selection"
+  },
+  "arms": {
+    "A0": "authoritative native PMFS posterior and native planner",
+    "F00": "M1 mean projection plus frozen count likelihood; native planner",
+    "F01": "M1 complete empirical count law plus M2 categorical proper log score; native planner",
+    "F11": "F01 inference plus M3 information action; closed-loop only"
+  },
+  "module_comparisons": {
+    "M1": "F00_vs_A0",
+    "M2": "F01_vs_F00"
+  },
+  "m3_status": "CLOSED_LOOP_ONLY_NOT_CLAIMED_OFFLINE",
+  "m2_predictive_law": {
+    "outcome": "cumulative observed hit count H on the visible route prefix",
+    "support": "K=0..N",
+    "member_count": 8,
+    "symmetric_categorical_jeffreys_alpha": 0.5,
+    "formula": "P(H|s)=(n_s(H)+0.5)/(M+0.5*(N+1))",
+    "posterior": "q(s|H) proportional q0(s) P(H|s)",
+    "update_ownership": "recompute the current-prefix posterior from q0; do not multiply dependent source-update snapshots or native PMFS source evidence"
+  },
+  "m3_action_law": {
+    "formula": "I(S;Y|a)=H(sum_s q_s p_sa)-sum_s q_s H(p_sa)",
+    "finite_member_probability": "p_sa=(hits_sa+0.5)/(M+1)",
+    "selection": "maximize information over the unchanged feasible action set; break exact ties by minimum native travel cost then stable action index",
+    "truth_access": false
+  },
+  "gate": {
+    "eligible_robot_metrics": ["final_error_m", "error_auc_m_s", "time_to_2m_s"],
+    "m1": "F00 vs A0 must have a clear cross-House increment on at least one eligible metric, no significant final-error worsening, and no stable reverse House.",
+    "m2": "F01 vs F00 must have a clear cross-House increment on at least one eligible metric, true-source rank in the same direction, no significant final-error worsening, and no stable reverse House.",
+    "m2_destructive_control": "F01 must beat the per-tape median over every canonical non-identity source-law reassignment on final error or error AUC, with true-source rank in the same direction.",
+    "statistics": "one-sided exact paired sign test p<=0.05; stable reverse means worse House mean with at least 8 of 10 losses.",
+    "authorization": "Only M1+M2 PASS authorizes runtime parity and a preregistered M3 closed-loop smoke. It never establishes M3 or a three-module PASS by itself."
+  },
+  "prohibited": [
+    "new GADEN generation",
+    "neural training or rescue",
+    "outcome-selected alpha, temperature, blend, threshold, House or seed",
+    "candidate-specific source-strength fitting",
+    "reuse of old persistent-sensor or stop-resolved NO-GO modules",
+    "claiming PSRG or CDIG telemetry as a main-module robot-task increment",
+    "starting closed loop before M1 and M2 offline PASS"
+  ]
+}
