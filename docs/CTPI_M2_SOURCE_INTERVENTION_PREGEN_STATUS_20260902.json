@@ -1,0 +1,54 @@
+{
+  "contract": "CTPI_M2_SOURCE_INTERVENTION_PREGEN_STATUS_V1",
+  "branch": "research/ctpi-m2-ba0de54-audit-fix-20260902",
+  "base_head": "17a9bc59823cd084b6275e7d2feeb1e8bcaf7363",
+  "authoritative_m2": "SOURCE_INTERVENTION_ACTION_CONDITIONED_PREDICTIVE_LAW",
+  "deprecated_candidate": "GLOBAL_POSTERIOR_WEIGHTED_ISOTONIC_EVENT_RELIABILITY",
+  "deprecated_candidate_status": "PREGEN_NO_GO_INFORMATION_COLLAPSE",
+  "resolved": [
+    "M2 no longer posterior-weights one realized event across counterfactual sources",
+    "M2 confirmatory target is the source-conditioned forward law directly",
+    "M2 calibration API no longer requires a rectangular cross-House source matrix",
+    "M1 posterior is not an input to M2 calibration/confirmation",
+    "controlled-source selection is deterministic and bank-only",
+    "CAL and CONFIRM controlled carriers are selected before new observation outcomes",
+    "source/action response coverage is selected from frozen bank only",
+    "predictive bank remains read-only and is not regenerated"
+  ],
+  "unresolved_p0_before_any_cal_generation": [
+    {
+      "id": "P0_FREEZE_CONTROLLED_SOURCE_MANIFEST",
+      "requirement": "Run the deterministic bank-only selector on authoritative frozen bank assets and commit the exact 10 CAL + 10 CONFIRM carrier IDs and route assignment for each House, including bank input hashes and selector commit/hash. No source or route may be changed after observation generation."
+    },
+    {
+      "id": "P0_MAP_CARRIER_TO_RESERVED_PHYSICAL_PLACEMENT",
+      "requirement": "For every selected carrier, resolve the authoritative reserved latent placement U from the existing V3 placement/source contract. Do not use the quadtree center or an ad-hoc representative point. Record carrier region, placement quantile/index, exact physical xyz, source-contract provenance, and hashes."
+    },
+    {
+      "id": "P0_ASSET_DERIVED_LEGACY_RNG_INVENTORY",
+      "requirement": "Build and hash an inventory from authoritative prior predictive-member and observation-world manifests/evidence. New CAL/CONFIRM transport seeds/domains must be checked against that inventory. Unknown historical seed provenance must remain UNKNOWN rather than being asserted disjoint."
+    },
+    {
+      "id": "P0_FREEZE_GENERATOR_RUNTIME",
+      "requirement": "Freeze and preflight OMP_NUM_THREADS=4, OMP_DYNAMIC=FALSE, BLAS thread counts, PYTHONHASHSEED=0, overlay order, native generator binary/source hash, loaded GADEN library hash, and RNG/MathUtils/RunningSimulation source hashes used on the VM."
+    },
+    {
+      "id": "P0_COMMIT_FAIL_CLOSED_WORLD_MATERIALIZER",
+      "requirement": "Commit a one-world-per-invocation materializer that enforces fresh output, read-only bank, controlled carrier and reserved placement identity, new transport seed/domain, full-route causal sensor forward operator, 1500 physical samples, 1502 forward samples including tail, 15 stop events, >0.1 ppm event rule, output hashes, and terminal PASS/FAIL."
+    },
+    {
+      "id": "P0_SMOKE_ONLY_BEFORE_CAL",
+      "requirement": "Run one disposable smoke world whose identity is explicitly excluded from CAL/CONFIRM. Verify deterministic rerun under the frozen runtime, event extraction, hashes, and no bank writes."
+    }
+  ],
+  "cal_generation_authorized": false,
+  "confirm_generation_authorized": false,
+  "m3_authorized": false,
+  "cpp_ros_authorized": false,
+  "unlock_marker": "CTPI_M2_SOURCE_INTERVENTION_PREGEN=PASS",
+  "after_unlock": {
+    "cal": "Generate only the preregistered 30 CAL worlds (10 per House), fit the global source-intervention reliability mapping using experiments/cg_pc_ctt/ctpi_m2_source_intervention_forecast.py, freeze table + code + hashes.",
+    "confirm": "Then generate/open only the preregistered 30 CONFIRM worlds once and run direct source-conditioned NLL/Brier/ECE/stable-reverse Gate. No formula or source-selection changes after seeing CONFIRM.",
+    "m3": "Only if M2 source-conditioned predictive Gate passes may the same frozen M2 law be exposed to M3 predictive-information planning."
+  }
+}
