@@ -1,0 +1,61 @@
+{
+  "contract": "CTPI_M2_OBSERVATION_AND_FORECAST_FREEZE_V1",
+  "date": "2026-09-02",
+  "predictive_bank_generation": false,
+  "predictive_bank_root": "/mnt/hgfs/workspace/CPIR_M1_FULLGRID_LOOKUP_20260831_R1",
+  "bank_summary_sha256": {
+    "H01": "8bab8c2e5c39d091137beef5d2efe69eb2131be09c75efb1347f18411a776888",
+    "H02": "f00daf24c70771d95f945de098fed29e17cc72a763b000bdd281038383bd2845",
+    "H03": "736444246178d89432cfde5bc2f12699e7ec9d5600f2e11fa385e609fbfa68ab"
+  },
+  "generator": {
+    "binary": "/home/zyc/PF_DEI_V3_STREAM_BUILD/install/bin/pf_dei_v3_native_multistream",
+    "binary_sha256": "ad0772d994875d009a1e8720928a9f40db56c20f6bf83a03b309049696a7ead4",
+    "source_sha256": "7a1570637eac1ca97758baddd05e7762b47fcd2e12afd77239698bd1132b01b4",
+    "one_independent_world_per_invocation": true
+  },
+  "sets": {"M2_CAL": 10, "M2_CONFIRM": 10},
+  "houses": ["H01", "H02", "H03"],
+  "routes_per_house": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "rng": {
+    "derivation": "uint32_be_first4_sha256(domain|retry=N)",
+    "domain_prefix": "CTPI_M2_OBSERVATION_V1",
+    "forbidden_numeric_seeds": [101, 211, 307, 401, 503, 601, 701, 809, 907, 1009, 1103, 1201, 5489],
+    "all_new_seeds_mutually_distinct": true
+  },
+  "observation_operator": {
+    "dt_s": 0.2,
+    "dead_time_s": 0.4,
+    "tau_s": 1.2,
+    "gain": 1.0,
+    "baseline_ppm": 0.0,
+    "initial_input_ppm": 0.0,
+    "initial_state_ppm": 0.0,
+    "stop_samples": 80,
+    "threshold_ppm_strict_gt": 0.1,
+    "event_aggregation": "max_measured_over_first_80_stationary_samples"
+  },
+  "baseline": "p0=(member_hit_count+0.5)/9",
+  "M2": {
+    "name": "GLOBAL_POSTERIOR_WEIGHTED_ISOTONIC_EVENT_RELIABILITY",
+    "fit_scope": "POOLED_M2_CAL_ONLY",
+    "source_truth_access": false,
+    "preliminary_rate": "r_k=(A_k+0.5)/(W_k+1)",
+    "pav_weights": "W_k+1",
+    "monotonic": "nondecreasing",
+    "house_specific_parameters": false,
+    "temperature": null
+  },
+  "confirm_gate": {
+    "pooled_nll_strictly_lower": true,
+    "pooled_brier_strictly_lower": true,
+    "one_of_paired_nll_or_brier_exact_sign_p_le": 0.05,
+    "ece_bins": [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+    "ece_worsening_tolerance": 1e-12,
+    "stable_reverse_losses_of_10": 8,
+    "minimum_distinct_table_values": 3,
+    "variation_tolerance": 1e-6,
+    "failure_marker": "CTPI_M2_PREDICTIVE_GATE_NO_GO",
+    "pass_marker": "CTPI_M2_PREDICTIVE_GATE_PASS"
+  }
+}

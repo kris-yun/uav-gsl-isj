@@ -97,6 +97,11 @@ Before generation, prove every observation RNG key/domain is absent from all old
 
 CAL may tune M2 only with proper predictive metrics. CONFIRM may be evaluated once after the formula and all hyperparameters are frozen.
 
+The exact world, event, calibration, and confirmatory decision rules are frozen
+before generation in `CTPI_M2_OBSERVATION_AND_FORECAST_FREEZE_20260902.md`
+and its machine-readable JSON companion.  Those addenda narrow this directive;
+they do not authorize a bank rebuild or any downstream runtime stage.
+
 ## 4. M2 predictive Gate — before truth
 
 For every held-out transition, create the prediction using information available strictly before that transition and score the newly observed event.
