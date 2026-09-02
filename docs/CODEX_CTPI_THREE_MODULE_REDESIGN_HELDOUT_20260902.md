@@ -1,33 +1,32 @@
-# Codex directive — CTPI three-module redesign after complete-count-law NO-GO
+# Codex directive — CTPI three-module redesign after M2 NO-GO
 
-Branch base: `9a4e163683e08e90bde7b08c7fb971069296c19b`
+Base: `9a4e163683e08e90bde7b08c7fb971069296c19b`
 
-This directive starts from the terminal result:
+Machine-readable preregistration: `docs/CTPI_THREE_MODULE_REDESIGN_PREREGISTRATION_20260902.json`.
+
+## Frozen prior result
 
 - M1 CREL: **PASS**.
 - Complete-count-law M2: **NO-GO**.
-- M3: not evaluated.
-- No C++/ROS/closed-loop claim is authorized yet.
+- M3: **NOT EVALUATED**.
+- The old H01/H02/H03 seed0--9 observation tapes are development/failure-analysis data only.
+- Do not implement formal C++/ROS closed loop until the replacement M2 and the M3 offline gates pass.
 
-The previous 30 H01/H02/H03 seed0--9 tapes are now **development/failure-analysis only**. They may be used to diagnose mechanisms and write tests, but they must never be reused as confirmatory evidence for a replacement M2.
+The previous M2 failed because eight coherent members were used to estimate an exact `N+1`-category cumulative-count law. Sparse categorical floors destroyed the smooth distance information already retained by F00. Source-law reassignment controls show the physical source-law association is real; the failed component is the assimilation rule, not CREL or the bank.
 
-## 1. Scientific decision
+## 1. Do not rescue or rename rejected ideas
 
-Do **not** rescue the failed M2 by changing Jeffreys alpha, temperature, smoothing strength, count bins, likelihood blending, posterior weights, or any source-truth-selected hyperparameter.
+Do not tune the failed complete-count likelihood on the old 30 cases. In particular, no alpha/temperature/bin/smoothing/posterior-blend search is allowed.
 
-Do **not** rename any previously rejected module and reintroduce it. In particular, the replacement M2 must not be equivalent to:
+Do not reintroduce under a new name:
 
-- the old CPIR persistent sensor-state module;
-- the old stop-resolved source likelihood;
-- a fixed coherent transport-member identity across stops;
-- a per-stop latent transport redraw model;
-- first-passage / temporal-order source scoring already rejected in earlier gates.
+- old CPIR persistent sensor state;
+- old stop-resolved current-source likelihood;
+- fixed coherent transport-member identity across stops without a new premise gate;
+- per-stop transport redraw as a current-source scorer;
+- previously rejected first-passage / temporal-order source scoring.
 
-The failed complete-count-law result establishes that the current route contains useful source-law information (M1 passes and source-law reassignment controls degrade), but exact cumulative-count categorical assimilation is a bad way to extract additional source evidence from only eight members.
-
-## 2. Freeze the new three-module graph
-
-The preferred redesign is:
+## 2. New load-bearing module graph
 
 ```text
 M1 CREL current-route source inference
@@ -35,165 +34,197 @@ M1 CREL current-route source inference
         v
 posterior pi_t(s)
         |
-        +------------------------------+
-        |                              |
-        v                              v
-M2 action-conditional future        candidate actions a
-sensor-event predictive law           |
-P(Y_{t+1} | s, a, history_t)           |
-        |                              |
-        +--------------+---------------+
-                       v
-M3 predictive-information planner
-argmax_a I(S;Y_{t+1} | a, history_t)
-                       |
-                       v
-UAV motion -> fresh observation -> M1 update
+        +-------------------------------+
+        |                               |
+        v                               v
+M2 action-conditional future        feasible actions a
+sensor-event predictive law            |
+P(Y_next | s,a,history_t)               |
+        |                               |
+        +---------------+---------------+
+                        v
+M3 posterior-weighted predictive-information planner
+                        |
+                        v
+selected action -> UAV motion -> fresh observation -> M1
 ```
 
 ### M1 — CREL
 
-M1 is frozen from the passing F00 implementation. Do not modify its formula, prior, route-event definition, candidate support, or bank association while qualifying M2/M3.
+Freeze the passing F00 implementation bit-for-bit. Do not change its formula, support, prior, route-event statistic, or source-law association while qualifying M2/M3.
 
-Role: infer the current source posterior from the robust route-encounter statistic already proven useful.
+M1 owns source inference from the **already executed** route.
 
-### M2 — Action-conditional Sensor-Event Predictive Law
+### M2 — action-conditional future sensor-event predictive law
 
-M2 is **not another source-posterior update on the same current observation**.
+M2 does **not** assimilate the same current observation a second time and does not write `sourceProbability`.
 
-Its job is to predict the distribution of the *next unseen sensor event* under each feasible candidate action and each source hypothesis:
+Its output is
 
-`P(Y_next | S=s, action=a, history_t)`.
+`P(Y_next | S=s, candidate_action=a, allowed_history_t)`
 
-This prevents double assimilation and prevents M2 from fighting an already strong M1 posterior on the same executed-route evidence.
+for every relevant source/action pair before the action is executed.
 
-The initial event should remain simple and observable, e.g. next completed-stop hit/no-hit, unless existing frozen data contain a richer pre-registered event whose calibration can be evaluated without source truth.
+Start with a directly observable future event such as next completed-stop hit/no-hit unless a richer event is preregistered before confirmatory data are opened.
 
-The predictive provider may use the coherent transport members supplied by CREL, but member identity itself must not be treated as a persistent hidden state unless a new independent premise gate first validates it.
+M2 may use the frozen CREL transport ensemble as a predictive provider, but transport member identity must not become a persistent hidden state unless separately proven.
 
-M2 must not read source truth, localization error, future realized gas, planner reward, or downstream rank while being fitted/calibrated.
+Forbidden during M2 design/selection:
 
-### M3 — Predictive-Information Planning
+- source truth;
+- localization error;
+- source rank;
+- future realized gas;
+- planner reward;
+- downstream closed-loop outcome.
 
-M3 consumes only:
+## 3. New data authorization
 
-- M1 posterior `pi_t(s)`;
-- M2 predictive event law for feasible candidate actions;
-- truth-blind feasibility/travel constraints.
+Do **not** generate a new predictive bank for this gate.
 
-The default scientific utility is posterior-weighted predictive mutual information:
+Reuse the exact frozen predictive bank/provider used for the M1 PASS.
 
-`I(S;Y | a) = H(sum_s pi_s P(Y|s,a)) - sum_s pi_s H(P(Y|s,a))`.
+Generate new **observation tapes only**, because seed0--9 truth has already been opened.
 
-No localization truth, source distance, future observation, or post-outcome tuned planner weight is permitted.
+For each House create two disjoint provenance-locked sets:
 
-M3 must actually change selected actions/trajectory relative to the native planner in at least a nontrivial subset of cases; a telemetry-only score is not a main module.
+- `M2_CAL`: calibration/development;
+- `M2_CONFIRM`: untouched confirmation.
 
-## 3. New data authorization — observation tapes only
+Suggested minimum if runtime permits: 10 tapes per House per set.
 
-A new bank is **not** authorized for this gate.
+Before generation, prove every observation RNG key/domain is absent from all old observation worlds and disjoint from the predictive-member RNG domain. Do not assume integer seed labels alone prove independence.
 
-Reuse the exact frozen predictive bank / transport-member provider used for the M1 PASS.
+CAL may tune M2 only with proper predictive metrics. CONFIRM may be evaluated once after the formula and all hyperparameters are frozen.
 
-Authorize generation of new **observation tapes** only, because the old 30 tapes have been opened for failure analysis.
+## 4. M2 predictive Gate — before truth
 
-Create two disjoint, provenance-locked sets for each House:
+For every held-out transition, create the prediction using information available strictly before that transition and score the newly observed event.
 
-- `M2_CAL`: development/calibration observation tapes;
-- `M2_CONFIRM`: untouched confirmatory observation tapes.
+Primary metrics:
 
-Use fresh RNG-domain-separated observation seeds. Do not assume simple integer seeds are automatically independent: before running, scan existing manifests and prove that every new observation RNG key/domain is absent from all prior H01/H02/H03 seed0--9 evidence and from the predictive-member RNG domain.
+- event NLL, lower is better;
+- Brier score, lower is better;
+- reliability/calibration error.
 
-The predictive bank/member RNG domain and observation-world RNG domain must remain disjoint.
+Baseline forecast: the frozen uncalibrated finite-member predictive probability implied by CREL, unless another baseline is preregistered before CONFIRM is opened.
 
-Suggested minimum scope if runtime cost permits:
+`CTPI_M2_PREDICTIVE_GATE_PASS` requires:
 
-- 10 CAL observation tapes per House;
-- 10 CONFIRM observation tapes per House.
+1. pooled confirmatory NLL improves;
+2. pooled confirmatory Brier improves;
+3. calibration is not materially worse;
+4. no House has a stable reverse on both NLL and Brier;
+5. predictor is finite and nondegenerate;
+6. source/action predictive variation remains nonzero — calibration must not collapse the signal.
 
-If fewer are generated, document the loss of statistical power before truth is opened; do not change the Gate afterward.
+If this fails, stop. Do not use M3 to hide a bad predictor.
 
-Do not use source truth in CAL formula fitting either. CAL may use only proper predictive scores of actually observed future events. Source truth is allowed only in downstream Stage 2 after M2 has been frozen.
+## 5. Ownership Gate
 
-## 4. M2 Stage-1 predictive Gate
+With M2 enabled in forecast-only mode and the native planner retained:
 
-Before any downstream localization evaluation and before source truth is read, freeze M2 and evaluate one-step-ahead predictions on `M2_CONFIRM`.
+- M1 posterior must remain bit-for-bit unchanged;
+- no current measurement is assimilated twice;
+- M2 may read M1 posterior but may not mutate it;
+- M2 may only use allowed past/current state plus candidate action;
+- forecasts must vary for at least some source/action pairs.
 
-For every executed transition, construct the M2 prediction using only data available before that transition, then score the newly observed event.
+Required marker:
 
-Primary predictive metrics:
+`M2_FORECAST_ONLY_OWNERSHIP=PASS`
 
-1. event negative log likelihood (NLL), lower is better;
-2. Brier score, lower is better;
-3. calibration / reliability error, with explicit bin counts and confidence intervals where practical.
+## 6. M3 offline Gate
 
-Reference comparator: the uncalibrated finite-member predictive event probability implied by the frozen M1/CREL provider. If another comparator is used, it must be frozen before CONFIRM is opened.
+M3 utility is posterior-weighted predictive mutual information:
 
-M2 PASS requires all of the following:
+`I(S;Y|a)=H(sum_s pi_s P(Y|s,a))-sum_s pi_s H(P(Y|s,a))`.
 
-- pooled confirmatory NLL improves;
-- pooled confirmatory Brier improves;
-- calibration is not materially worse;
-- no stable reverse House on both NLL and Brier;
-- no NaN/floor-dominated or degenerate constant predictor behavior;
-- action/source predictive variation remains nonzero (the calibration method must not erase source/action discrimination).
+Inputs only:
 
-Do not select a calibration formula/hyperparameter by localization error or source rank.
+- frozen M1 posterior;
+- a predictive-event-law provider;
+- truth-blind feasibility;
+- travel cost only as a frozen tie break / constraint rule.
 
-If M2 fails this predictive Gate, terminate this candidate. Do not run M3 to compensate.
+Offline fixed tapes may prove mathematical validity and action discrimination only, not localization improvement under counterfactual actions.
 
-## 5. M1 + M2 downstream sanity Gate
+Require:
 
-After M2 Stage-1 is frozen and hashed, source truth may be opened for a downstream sanity analysis.
+- finite nonnegative information scores;
+- deterministic ties;
+- no truth/future observation access;
+- nontrivial contexts where M3 changes the action;
+- destructive source/action-law controls alter the intended information structure in the expected direction.
 
-This analysis must **not** require M2 to re-update the current source posterior; M2's scientific role is future-event prediction. Therefore point-localization equality between M1 and M1+M2 under the same native planner is expected by construction and is not a failure.
+Only then authorize runtime parity work.
 
-Instead verify:
+## 7. Four-arm true closed-loop isolation
 
-- M1 posterior remains bit-for-bit unchanged by enabling M2 in forecast-only mode;
-- M2 does not read or mutate `sourceProbability` except through a read-only M1 posterior interface;
-- M2 forecast at decision time depends only on past/current allowed state and candidate action;
-- forecast output changes across at least some `(source, action)` pairs.
+The final task-level design must permit all three modules to carry a distinct measurable increment.
 
-Output a machine-readable `M2_FORECAST_ONLY_OWNERSHIP=PASS` only if all checks pass.
+### A0
 
-## 6. M3 offline counterfactual Gate
+Native PMFS.
 
-Before ROS implementation, use frozen M1 posterior + frozen M2 forecast to compute candidate-action information scores on held-out contexts.
+### F00
 
-This stage may test mathematical validity and action discrimination only. It must not claim localization improvement from fixed historical tapes because historical observations were generated under different actions.
+Passing M1 CREL source inference + native planner.
 
-Required checks:
+Tests M1:
 
-- information score finite and >= 0 within numerical tolerance;
-- deterministic tie handling;
-- no source-truth access;
-- no future-observation access;
-- at least some contexts where the M3-selected feasible action differs from the native planner action;
-- destructive source-law or action-law permutation reduces/changes the intended information structure in the expected direction without using truth.
+`M1 task increment = F00 - A0`.
 
-Only then authorize C++ parity.
+### F10
 
-## 7. C++/ROS integration boundary
+M1 + **baseline uncalibrated finite-member future-event forecast** + M3 predictive-information planner.
 
-Do not reuse CPIR/TADM mode aliases.
+M2 replacement is OFF; M3 is ON using the frozen baseline forecast.
 
-Implement a dedicated CTPI runtime contract only after M2 predictive and M3 offline gates pass.
+Tests M3:
 
-Runtime invariants:
+`M3 task increment = F10 - F00`.
 
-- M1 owns source inference for the current executed-route observation;
-- M2 is forecast-only before the next action;
-- M3 reads M1 posterior and M2 forecasts to choose an action;
-- the same observation is never assimilated twice;
-- PSRG/old diagnostic geometry is not silently inserted as a planner weight;
-- no truth is available to inference/planner code.
+F10 must actually change selected actions/trajectory. If it does not, M3 is NO-GO.
 
-Required true-loop trace:
+### F11
 
-`posterior_t -> M2 forecast_t(a) -> M3 selected_action_t -> command -> pose_{t+1} -> fresh observation_{t+1} -> posterior_{t+1}`.
+M1 + qualified M2 predictive law + **the exact same M3 planner** used in F10.
 
-Required terminal checks:
+F10 and F11 must differ only in the predictive-event-law provider. M3 utility, feasible actions, tie handling, budgets, start state, observation world, and M1 posterior definition must be identical.
+
+Tests M2 at robot-task level:
+
+`M2 task increment = F11 - F10`.
+
+This is the critical task-level ablation: if better held-out prediction does not improve decisions when inserted into the same M3, M2 cannot be claimed as a useful closed-loop module even if its NLL is better.
+
+Optional `F01` is engineering-only: M1 + M2 forecast + native planner. Its trajectory/task result should match F00 by construction; use it only to prove forecast-only ownership and no double assimilation.
+
+## 8. Closed-loop task metrics and PASS logic
+
+Primary task metrics:
+
+- final localization error;
+- error-time AUC;
+- time-to-2m.
+
+Also log true-source rank/support as secondary evidence.
+
+For every decision log:
+
+- M1 posterior hash/state;
+- baseline forecast used by F10;
+- qualified M2 forecast used by F11;
+- M3 information scores;
+- native candidate action;
+- selected action;
+- command acknowledgement;
+- pose before/after;
+- fresh next observation;
+- next posterior.
+
+Required causal markers:
 
 - `NO_TRUTH_LEAKAGE=PASS`
 - `NO_DOUBLE_ASSIMILATION=PASS`
@@ -203,60 +234,39 @@ Required terminal checks:
 - `FRESH_OBSERVATION=PASS`
 - `TRUE_CLOSED_LOOP_CAUSAL_CHAIN=PASS`
 
-## 8. Closed-loop arm ladder
+Do not claim a three-module PASS unless:
 
-Do not pretend every module must lower point error in a fixed replay. Use role-consistent gates.
+- M1 has a task increment `F00 > A0`;
+- M3 has a task increment `F10 > F00` with actual trajectory change;
+- M2 first passes the independent held-out predictive Gate and then has a task increment `F11 > F10` under the identical M3;
+- full F11 has no stable reverse House on the preregistered primary metrics.
 
-Closed-loop formal arms after all upstream gates pass:
+If one increment fails, report that module NO-GO. Do not compensate by retuning another module.
 
-- `A0`: native PMFS.
-- `F00`: passing M1 CREL source inference + native planner.
-- `F11`: M1 + passing M2 forecast + M3 predictive-information planner.
+## 9. Strict alternative if M2 must directly refine the current posterior
 
-For implementation diagnostics also log:
+This is disabled by default and must not be tried in parallel on CONFIRM.
 
-- native action under F00 at every decision;
-- M3 action under the same pre-action state;
-- M2 predictive distribution and M3 information score.
+The only structurally admissible development candidate after the current failure is **exact-M1-alias-only refinement**:
 
-If a four-arm implementation is required for engineering isolation, `F01` may mean M1+M2 forecast-only with the native planner. By construction its trajectory and localization must match F00; its purpose is ownership/parity checking, not a claimed robot-task increment.
+1. group source hypotheses with exactly equal frozen F00 mean projection;
+2. preserve each group's total F00 posterior mass exactly;
+3. use richer member-law information only to redistribute mass inside that M1-indistinguishable group;
+4. forbid movement of posterior mass between different M1 groups.
 
-The main module-specific evidence is therefore:
+Any smoothing/calibration constant must be chosen on CAL with truth-blind predictive criteria and frozen before CONFIRM. If it fails once on CONFIRM, abandon direct source-refinement M2.
 
-- M1: robot-task increment `F00 vs A0` — already PASS offline and must be rechecked closed-loop;
-- M2: independent held-out predictive-skill PASS;
-- M3: closed-loop task increment `F11 vs F00` together with actual action/trajectory change.
+## 10. Deliverables before formal ROS closed loop
 
-This is a scientifically valid three-module chain because every module has a distinct indispensable role and an independently testable output. Do not force M2 to manufacture a second localization update merely to obtain another error delta.
+Commit:
 
-## 9. Strict alternative only if a source-refinement M2 is mandatory
+1. CAL/CONFIRM provenance manifests;
+2. RNG-domain disjointness proof;
+3. frozen M2 mathematics;
+4. truth-blind M2 confirmatory NLL/Brier/calibration report;
+5. M2 ownership/double-assimilation audit;
+6. M3 offline action-discrimination audit;
+7. Python selftests and destructive controls;
+8. terminal markers for each Gate.
 
-Do not run this alternative on CONFIRM in parallel with the preferred forecast-only design.
-
-If the project explicitly requires M2 itself to change the current source posterior, the only admissible structural candidate after the current failure analysis is an **M1-alias-only refinement**:
-
-- partition source hypotheses into exact M1 mean-projection equivalence classes;
-- preserve each class's total F00 posterior mass exactly;
-- use richer member-law information only to redistribute mass *within* a class that M1 cannot distinguish;
-- forbid any change between classes.
-
-This architecture cannot overturn robust M1 evidence and makes the incremental question precise: can full-law shape resolve hypotheses that have exactly the same M1 projection?
-
-Any smoothing/calibration constant must be selected from CAL using source-truth-free predictive criteria and frozen once. Then evaluate exactly once on CONFIRM. If it fails, abandon source-refinement M2 rather than trying more formulas.
-
-## 10. Deliverables before asking for closed-loop authorization
-
-Commit all of the following:
-
-1. provenance manifest for CAL and CONFIRM observation tapes;
-2. proof of RNG-domain/seed disjointness;
-3. frozen M2 mathematical specification;
-4. M2 truth-blind predictive Stage-1 outputs and hashes;
-5. M2 confirmatory NLL/Brier/calibration report;
-6. M2 ownership/double-assimilation audit;
-7. M3 offline mathematical/action-discrimination audit;
-8. explicit terminal decision:
-   - `CTPI_M2_PREDICTIVE_GATE_PASS`, or
-   - `CTPI_M2_PREDICTIVE_GATE_NO_GO`.
-
-Do not implement the formal ROS closed loop unless the PASS verdict is supported by untouched confirmatory tapes.
+No CPIR/TADM alias may be relabeled as CTPI. No formal closed-loop run is authorized until all upstream gates pass.
