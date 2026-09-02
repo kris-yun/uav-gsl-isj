@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """Fail-closed CTPI V0.4 runtime-parity guard.
 
-This script is intentionally conservative.  The CTPI V0.4 offline reference
+This script is intentionally conservative. The CTPI V0.4 offline reference
 (CREL -> APRS for point scoring, with PSRG as a parallel metrology output) must
 not be reported as a closed-loop runtime merely because an experiment is
-labelled CTPI.  In particular, the inherited CPIR `pfdi_mode` path is not an
-acceptable substitute.
+labelled CTPI. In particular, inherited CPIR/TADM `pfdi_mode` paths are not
+acceptable substitutes.
 
 The guard exits 0 only when the ROS/C++ runtime advertises the explicit frozen
-runtime contract marker and mode below.  Until the real runtime port adds those
-markers, the correct result is BLOCKED_BY_RUNTIME_PARITY.
+runtime/ownership/planner markers below. These strings are provenance markers,
+not scientific parameters. Until the real runtime port deliberately satisfies
+them, the correct result is BLOCKED_BY_RUNTIME_PARITY.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
-import os
 from pathlib import Path
 import subprocess
 import sys
@@ -24,6 +24,9 @@ import sys
 RUNTIME_MARKER = "CTPI_V04_RUNTIME_CONTRACT_V1"
 RUNTIME_MODE = "ctpi_v04"
 POSTERIOR_MARKER = "applyCTPIV04Posterior"
+APRS_OWNERSHIP_MARKER = "CTPI_V04_APRS_OWNS_CURRENT_OBSERVATION_V1"
+PSRG_BOUNDARY_MARKER = "CTPI_V04_PSRG_TELEMETRY_ONLY_V1"
+PLANNER_MARKER = "CTPI_V04_PLANNER_CONSUMES_POSTERIOR_V1"
 REFERENCE_REL = Path("experiments/cg_pc_ctt/ctpi_v04_reference.py")
 PMFS_CPP_REL = Path("ros2_package/src/gsl_server/algorithms/PMFS/PMFS.cpp")
 PMFS_HPP_REL = Path("ros2_package/src/gsl_server/algorithms/PMFS/PMFS.hpp")
@@ -61,12 +64,15 @@ def main() -> int:
     hpp = repo / PMFS_HPP_REL
 
     result = {
-        "contract": "CTPI_V04_RUNTIME_PARITY_GUARD_V1",
+        "contract": "CTPI_V04_RUNTIME_PARITY_GUARD_V2",
         "repo_root": str(repo),
         "git_commit": git_head(repo),
         "required_runtime_marker": RUNTIME_MARKER,
         "required_runtime_mode": RUNTIME_MODE,
         "required_posterior_marker": POSTERIOR_MARKER,
+        "required_aprs_ownership_marker": APRS_OWNERSHIP_MARKER,
+        "required_psrg_boundary_marker": PSRG_BOUNDARY_MARKER,
+        "required_planner_marker": PLANNER_MARKER,
         "checks": {},
         "warnings": [],
     }
@@ -76,6 +82,8 @@ def main() -> int:
     result["checks"]["required_files_present"] = not missing
     if missing:
         result["missing_files"] = missing
+    if ref.is_file():
+        result["offline_reference_sha256"] = sha256(ref)
 
     source_text = ""
     if cpp.is_file():
@@ -86,10 +94,23 @@ def main() -> int:
     result["checks"]["explicit_ctpi_v04_mode"] = RUNTIME_MODE in source_text
     result["checks"]["runtime_contract_marker"] = RUNTIME_MARKER in source_text
     result["checks"]["ctpi_posterior_entrypoint"] = POSTERIOR_MARKER in source_text
+    result["checks"]["aprs_current_observation_ownership"] = APRS_OWNERSHIP_MARKER in source_text
+    result["checks"]["psrg_telemetry_only_boundary"] = PSRG_BOUNDARY_MARKER in source_text
+    result["checks"]["planner_consumes_ctpi_posterior"] = PLANNER_MARKER in source_text
 
-    # This is diagnostic only: CPIR may remain in the repository for historical
-    # controls, but it must never be the only alternative-posterior runtime when
-    # the run is labelled CTPI V0.4.
+    # If a future patch merely adds `ctpi_v04` to the existing allowed-mode
+    # list, this broad legacy assignment would route CTPI into TADM. That is a
+    # hard wiring error, not an acceptable implementation shortcut.
+    broad_tadm_assignment = 'tadmEnabled = pfdiMode != "off" && !cpirEnabled' in source_text
+    unsafe_tadm_alias = result["checks"]["explicit_ctpi_v04_mode"] and broad_tadm_assignment
+    result["checks"]["ctpi_not_aliased_to_legacy_tadm"] = not unsafe_tadm_alias
+    if unsafe_tadm_alias:
+        result["warnings"].append(
+            "CTPI_V04_MODE_WOULD_ALIAS_TO_LEGACY_TADM; split an explicit ctpiV04Enabled path"
+        )
+
+    # CPIR may remain for historical controls, but it must never be the only
+    # alternative-posterior runtime when a run is labelled CTPI V0.4.
     cpir_present = "applyCPIRPosterior" in source_text or "cpir_a3" in source_text
     result["checks"]["legacy_cpir_present"] = cpir_present
     if cpir_present and not result["checks"]["ctpi_posterior_entrypoint"]:
@@ -104,23 +125,45 @@ def main() -> int:
         if binary.is_file():
             result["binary_sha256"] = sha256(binary)
             blob = binary.read_bytes()
-            result["checks"]["binary_runtime_contract_marker"] = RUNTIME_MARKER.encode() in blob
-            result["checks"]["binary_runtime_mode"] = RUNTIME_MODE.encode() in blob
+            for key, marker in (
+                ("binary_runtime_contract_marker", RUNTIME_MARKER),
+                ("binary_runtime_mode", RUNTIME_MODE),
+                ("binary_posterior_entrypoint", POSTERIOR_MARKER),
+                ("binary_aprs_ownership_marker", APRS_OWNERSHIP_MARKER),
+                ("binary_psrg_boundary_marker", PSRG_BOUNDARY_MARKER),
+                ("binary_planner_marker", PLANNER_MARKER),
+            ):
+                result["checks"][key] = marker.encode() in blob
         else:
-            result["checks"]["binary_runtime_contract_marker"] = False
-            result["checks"]["binary_runtime_mode"] = False
+            for key in (
+                "binary_runtime_contract_marker",
+                "binary_runtime_mode",
+                "binary_posterior_entrypoint",
+                "binary_aprs_ownership_marker",
+                "binary_psrg_boundary_marker",
+                "binary_planner_marker",
+            ):
+                result["checks"][key] = False
 
     blocking_keys = [
         "required_files_present",
         "explicit_ctpi_v04_mode",
         "runtime_contract_marker",
         "ctpi_posterior_entrypoint",
+        "aprs_current_observation_ownership",
+        "psrg_telemetry_only_boundary",
+        "planner_consumes_ctpi_posterior",
+        "ctpi_not_aliased_to_legacy_tadm",
     ]
     if binary is not None:
         blocking_keys += [
             "binary_present",
             "binary_runtime_contract_marker",
             "binary_runtime_mode",
+            "binary_posterior_entrypoint",
+            "binary_aprs_ownership_marker",
+            "binary_psrg_boundary_marker",
+            "binary_planner_marker",
         ]
 
     passed = all(bool(result["checks"].get(k)) for k in blocking_keys)
