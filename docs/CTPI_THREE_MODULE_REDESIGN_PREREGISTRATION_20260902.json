@@ -71,7 +71,7 @@
   },
   "M3_role": {
     "utility": "I(S;Y_next | candidate_action, allowed_history)",
-    "inputs": ["M1_POSTERIOR", "M2_FORECAST", "TRUTH_BLIND_FEASIBILITY", "TRAVEL_COST_TIEBREAK_ONLY"],
+    "inputs": ["M1_POSTERIOR", "PREDICTIVE_EVENT_LAW", "TRUTH_BLIND_FEASIBILITY", "TRAVEL_COST_TIEBREAK_ONLY"],
     "truth_access": false,
     "future_observation_access": false,
     "must_change_some_actions": true
@@ -92,7 +92,7 @@
   },
   "closed_loop_chain": [
     "POSTERIOR_t",
-    "M2_FORECAST_t_BY_ACTION",
+    "PREDICTIVE_EVENT_LAW_t_BY_ACTION",
     "M3_SELECTED_ACTION_t",
     "COMMAND_ACK",
     "POSE_t_plus_1",
@@ -111,14 +111,33 @@
   "formal_roles": {
     "A0": "NATIVE_PMFS",
     "F00": "M1_CREL_PLUS_NATIVE_PLANNER",
-    "F01_optional_engineering": "M1_PLUS_M2_FORECAST_ONLY_PLUS_NATIVE_PLANNER_EXPECT_BITEXACT_TASK_PARITY_WITH_F00",
-    "F11": "M1_PLUS_M2_PLUS_M3"
+    "F01_optional_engineering": "M1_PLUS_M2_FORECAST_ONLY_PLUS_NATIVE_PLANNER_EXPECT_TASK_PARITY_WITH_F00",
+    "F10": "M1_PLUS_BASELINE_UNCALIBRATED_EVENT_FORECAST_PLUS_M3",
+    "F11": "M1_PLUS_QUALIFIED_M2_EVENT_FORECAST_PLUS_M3"
+  },
+  "task_level_factorial_isolation": {
+    "M1_increment": "F00_vs_A0",
+    "M3_increment": "F10_vs_F00",
+    "M2_increment_when_used_for_action": "F11_vs_F10",
+    "full_system": "F11",
+    "requirements": [
+      "F10_AND_F11_USE_IDENTICAL_M3_UTILITY_FEASIBILITY_AND_TIEBREAK",
+      "F10_AND_F11_DIFFER_ONLY_IN_EVENT_FORECAST_PROVIDER",
+      "F00_AND_F10_SHARE_THE_SAME_M1_POSTERIOR_DEFINITION",
+      "M2_MUST_FIRST_PASS_INDEPENDENT_HELDOUT_PREDICTIVE_GATE"
+    ]
   },
   "module_specific_claims": {
     "M1": "ROBOT_TASK_INCREMENT_F00_VS_A0",
-    "M2": "INDEPENDENT_HELDOUT_PREDICTIVE_SKILL",
-    "M3": "TRUE_CLOSED_LOOP_TASK_INCREMENT_F11_VS_F00_WITH_ACTION_AND_TRAJECTORY_CHANGE"
+    "M2": "HELDOUT_PREDICTIVE_SKILL_AND_TASK_INCREMENT_F11_VS_F10_WHEN_COUPLED_TO_THE_SAME_M3",
+    "M3": "TRUE_CLOSED_LOOP_TASK_INCREMENT_F10_VS_F00_WITH_ACTION_AND_TRAJECTORY_CHANGE",
+    "FULL": "F11_MUST_NOT_HAVE_A_STABLE_REVERSE_HOUSE_ON_PRIMARY_TASK_METRICS"
   },
+  "primary_closed_loop_task_metrics": [
+    "FINAL_LOCALIZATION_ERROR_M",
+    "ERROR_TIME_AUC_M_S",
+    "TIME_TO_2M_S"
+  ],
   "strict_source_refinement_alternative": {
     "enabled_by_default": false,
     "candidate": "EXACT_M1_MEAN_ALIAS_CLASS_MASS_PRESERVING_REFINEMENT",
