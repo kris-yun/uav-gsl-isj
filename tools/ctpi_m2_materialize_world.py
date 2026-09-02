@@ -88,11 +88,14 @@ def forward_sensor(physical: np.ndarray) -> np.ndarray:
     return measured
 
 
-def read_route(path: Path) -> tuple[list[dict[str, str]], list[np.ndarray]]:
+def read_route(path: Path) -> tuple[list[dict[str, str]], list[np.ndarray], list[str]]:
     with path.open(newline="", encoding="utf-8") as source:
-        rows = list(csv.DictReader(source))
-    if len(rows) != TIME_COUNT:
-        raise RuntimeError(f"CTPI_WORLD_ROUTE_LENGTH:{len(rows)}")
+        reader = csv.DictReader(source)
+        fieldnames = list(reader.fieldnames or [])
+        all_rows = list(reader)
+    if len(all_rows) < TIME_COUNT:
+        raise RuntimeError(f"CTPI_WORLD_ROUTE_TOO_SHORT:{len(all_rows)}")
+    rows = all_rows[:TIME_COUNT]
     times = np.asarray([float(row["t_sim_s"]) for row in rows])
     expected = np.arange(1, TIME_COUNT + 1, dtype=np.float64) * DT_S
     if np.max(np.abs(times - expected)) > 1.0e-6:
@@ -111,7 +114,7 @@ def read_route(path: Path) -> tuple[list[dict[str, str]], list[np.ndarray]]:
         stops.append(np.arange(start, start + STOP_SAMPLES, dtype=np.int64))
     if len(stops) != STOP_COUNT or any(len(stop) != STOP_SAMPLES for stop in stops):
         raise RuntimeError(f"CTPI_WORLD_STOP_CONTRACT:{len(stops)}")
-    return rows, stops
+    return rows, stops, fieldnames
 
 
 def unique_route(house: str, route: int) -> Path:
@@ -159,14 +162,19 @@ def materialize(args: argparse.Namespace) -> dict[str, Any]:
         bank_before = bank_metadata_fingerprint(BANK_ROOT)
         house = str(world["house"])
         route_path = unique_route(house, int(world["route_index"]))
-        route_rows, stops = read_route(route_path)
+        route_rows, stops, route_fieldnames = read_route(route_path)
         house_runtime = runtime["houses"][house]
+        generator_schedule = args.output / "route_1500.csv"
+        with generator_schedule.open("w", newline="", encoding="utf-8") as target:
+            writer = csv.DictWriter(target, fieldnames=route_fieldnames)
+            writer.writeheader()
+            writer.writerows(route_rows)
         binary_path = args.output / "physical_world.bin"
         command = [
             str(NATIVE_BINARY), house_runtime["environment"], house_runtime["wind_dir"],
             *(repr(float(value)) for value in world["source_xyz_m"]),
             str(int(world["observation_transport_seed_uint32"])), repr(DT_S),
-            str(binary_path), str(route_path),
+            str(binary_path), str(generator_schedule),
         ]
         completed = subprocess.run(command, env=os.environ.copy(), text=True,
                                    capture_output=True, check=False)
@@ -224,7 +232,8 @@ def materialize(args: argparse.Namespace) -> dict[str, Any]:
         if bank_after != bank_before:
             raise RuntimeError("CTPI_WORLD_BANK_METADATA_CHANGED")
 
-        payload_files = [binary_path, physical_path, measured_path, events_path, tape_path, sealed_path]
+        payload_files = [generator_schedule, binary_path, physical_path, measured_path,
+                         events_path, tape_path, sealed_path]
         payload_hashes = {path.relative_to(args.output).as_posix(): sha256_file(path)
                           for path in payload_files}
         combined = hashlib.sha256()
@@ -235,7 +244,9 @@ def materialize(args: argparse.Namespace) -> dict[str, Any]:
             "house": house, "route_index": int(world["route_index"]),
             "world_manifest_sha256": sha256_file(args.world_manifest),
             "runtime_report_sha256": sha256_file(args.runtime_report),
-            "route_path": str(route_path), "route_sha256": sha256_file(route_path),
+            "source_route_path": str(route_path), "source_route_sha256": sha256_file(route_path),
+            "generator_schedule": "route_1500.csv",
+            "generator_schedule_sha256": sha256_file(generator_schedule),
             "physical_samples": int(len(physical)), "forward_sensor_samples": int(len(measured)),
             "completed_stop_events": int(len(events)), "hit_count": int(np.count_nonzero(events)),
             "event_rule": "max_measured_first_80_stationary_samples_strict_gt_0.1_ppm",
@@ -275,6 +286,19 @@ def selftest() -> None:
             target.write(MAGIC); target.write(struct.pack("<I", 1)); target.write(struct.pack("<I", TIME_COUNT))
             target.write(physical.astype("<f4").tobytes())
         np.testing.assert_allclose(read_single_stream(path), physical)
+        route = Path(directory) / "route.csv"
+        fields = ["t_sim_s", "step", "x", "y", "z", "yaw", "is_moving", "seed"]
+        with route.open("w", newline="", encoding="utf-8") as target:
+            writer = csv.DictWriter(target, fieldnames=fields)
+            writer.writeheader()
+            for index in range(TIME_COUNT + 1):
+                writer.writerow({
+                    "t_sim_s": f"{DT_S * (index + 1):.6f}", "step": index + 1,
+                    "x": 0, "y": 0, "z": 0.3, "yaw": 0,
+                    "is_moving": int(index % 100 >= STOP_SAMPLES), "seed": 0,
+                })
+        rows, stops, names = read_route(route)
+        assert len(rows) == TIME_COUNT and len(stops) == STOP_COUNT and names == fields
     print("CTPI_M2_ONE_WORLD_MATERIALIZER_SELFTEST=PASS")
 
 
