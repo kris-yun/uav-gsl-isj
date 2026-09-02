@@ -1,0 +1,128 @@
+{
+  "contract": "CTPI_THREE_MODULE_REDESIGN_PREREG_V1",
+  "date": "2026-09-02",
+  "base_commit": "9a4e163683e08e90bde7b08c7fb971069296c19b",
+  "prior_terminal_decision": "CTPI_FULL_LAW_FACTORIAL_NO_GO",
+  "frozen_prior_results": {
+    "M1_CREL": "PASS",
+    "M2_complete_count_law": "NO_GO",
+    "M3": "NOT_EVALUATED"
+  },
+  "module_graph": {
+    "M1": "CREL_CURRENT_ROUTE_SOURCE_INFERENCE",
+    "M2": "ACTION_CONDITIONAL_FUTURE_SENSOR_EVENT_PREDICTIVE_LAW",
+    "M3": "POSTERIOR_WEIGHTED_PREDICTIVE_INFORMATION_PLANNER"
+  },
+  "forbidden_reintroductions": [
+    "CPIR_PERSISTENT_SENSOR_STATE_AS_NEW_M2",
+    "STOP_RESOLVED_CURRENT_SOURCE_LIKELIHOOD_AS_NEW_M2",
+    "FIXED_COHERENT_TRANSPORT_MEMBER_IDENTITY_WITHOUT_NEW_PREMISE_GATE",
+    "PER_STOP_TRANSPORT_REDRAW_SOURCE_SCORER",
+    "FIRST_PASSAGE_OR_TEMPORAL_ORDER_SOURCE_SCORER_ALREADY_REJECTED",
+    "COMPLETE_COUNT_LAW_HYPERPARAMETER_RESCUE_ON_OLD_30_CASES"
+  ],
+  "old_development_scope": {
+    "houses": ["H01", "H02", "H03"],
+    "observation_seeds": [0,1,2,3,4,5,6,7,8,9],
+    "status": "DEVELOPMENT_FAILURE_ANALYSIS_ONLY",
+    "confirmatory_reuse_forbidden": true
+  },
+  "new_data_policy": {
+    "new_predictive_bank_generation": false,
+    "reuse_frozen_predictive_bank": true,
+    "new_observation_tapes_authorized": true,
+    "sets": ["M2_CAL", "M2_CONFIRM"],
+    "minimum_suggested_per_house_per_set": 10,
+    "rng_policy": "DOMAIN_SEPARATED_AND_PROVEN_DISJOINT_FROM_PRIOR_OBSERVATION_AND_PREDICTIVE_MEMBER_KEYS",
+    "confirm_set_formula_tuning_forbidden": true
+  },
+  "M1_freeze": {
+    "formula_changes": false,
+    "candidate_support_changes": false,
+    "bank_association_changes": false,
+    "role": "CURRENT_SOURCE_POSTERIOR"
+  },
+  "M2_role": {
+    "target": "P(Y_next | source, candidate_action, allowed_history)",
+    "current_observation_posterior_reassimilation": false,
+    "source_truth_access": false,
+    "future_realized_observation_access": false,
+    "localization_error_for_model_selection": false,
+    "source_rank_for_model_selection": false
+  },
+  "M2_confirmatory_primary_metrics": [
+    "EVENT_NLL",
+    "BRIER_SCORE",
+    "CALIBRATION_RELIABILITY"
+  ],
+  "M2_gate": {
+    "pooled_NLL_improves": true,
+    "pooled_Brier_improves": true,
+    "calibration_not_materially_worse": true,
+    "no_stable_reverse_house_on_both_NLL_and_Brier": true,
+    "nondegenerate_predictive_variation_across_source_action": true,
+    "failure_action": "TERMINATE_REPLACEMENT_M2_AND_DO_NOT_RUN_M3"
+  },
+  "M2_ownership_gate": {
+    "M1_posterior_bitexact_when_M2_forecast_only_enabled": true,
+    "double_assimilation_forbidden": true,
+    "M2_sourceProbability_write_forbidden": true,
+    "required_terminal_marker": "M2_FORECAST_ONLY_OWNERSHIP=PASS"
+  },
+  "M3_role": {
+    "utility": "I(S;Y_next | candidate_action, allowed_history)",
+    "inputs": ["M1_POSTERIOR", "M2_FORECAST", "TRUTH_BLIND_FEASIBILITY", "TRAVEL_COST_TIEBREAK_ONLY"],
+    "truth_access": false,
+    "future_observation_access": false,
+    "must_change_some_actions": true
+  },
+  "M3_offline_gate": {
+    "finite_nonnegative_information": true,
+    "deterministic_ties": true,
+    "action_discrimination_nontrivial": true,
+    "fixed_replay_localization_claim_forbidden": true
+  },
+  "runtime_authorization": {
+    "allowed_only_if": [
+      "CTPI_M2_PREDICTIVE_GATE_PASS",
+      "M2_FORECAST_ONLY_OWNERSHIP=PASS",
+      "M3_OFFLINE_ACTION_GATE_PASS"
+    ],
+    "cpir_tadm_alias_reuse_forbidden": true
+  },
+  "closed_loop_chain": [
+    "POSTERIOR_t",
+    "M2_FORECAST_t_BY_ACTION",
+    "M3_SELECTED_ACTION_t",
+    "COMMAND_ACK",
+    "POSE_t_plus_1",
+    "FRESH_OBSERVATION_t_plus_1",
+    "POSTERIOR_t_plus_1"
+  ],
+  "closed_loop_required_markers": [
+    "NO_TRUTH_LEAKAGE=PASS",
+    "NO_DOUBLE_ASSIMILATION=PASS",
+    "M2_FORECAST_ONLY_OWNERSHIP=PASS",
+    "POSTERIOR_TO_ACTION=PASS",
+    "ACTION_TO_MOTION=PASS",
+    "FRESH_OBSERVATION=PASS",
+    "TRUE_CLOSED_LOOP_CAUSAL_CHAIN=PASS"
+  ],
+  "formal_roles": {
+    "A0": "NATIVE_PMFS",
+    "F00": "M1_CREL_PLUS_NATIVE_PLANNER",
+    "F01_optional_engineering": "M1_PLUS_M2_FORECAST_ONLY_PLUS_NATIVE_PLANNER_EXPECT_BITEXACT_TASK_PARITY_WITH_F00",
+    "F11": "M1_PLUS_M2_PLUS_M3"
+  },
+  "module_specific_claims": {
+    "M1": "ROBOT_TASK_INCREMENT_F00_VS_A0",
+    "M2": "INDEPENDENT_HELDOUT_PREDICTIVE_SKILL",
+    "M3": "TRUE_CLOSED_LOOP_TASK_INCREMENT_F11_VS_F00_WITH_ACTION_AND_TRAJECTORY_CHANGE"
+  },
+  "strict_source_refinement_alternative": {
+    "enabled_by_default": false,
+    "candidate": "EXACT_M1_MEAN_ALIAS_CLASS_MASS_PRESERVING_REFINEMENT",
+    "confirm_parallel_formula_search_forbidden": true,
+    "class_total_F00_mass_must_be_preserved": true
+  }
+}
