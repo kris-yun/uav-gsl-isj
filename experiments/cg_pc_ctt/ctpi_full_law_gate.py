@@ -70,6 +70,7 @@ from ctpi_full_law_controls import (
     canonical_cyclic_reassignment_indices,
     transport_break_strength_for_permutation,
 )
+from ctpi_closed_loop_core import preserve_bitexact_reference
 
 CONTRACT = "CTPI_FULL_LAW_ORACLE_GATE_V0_3_IDEASPARK"
 PRIOR_CPIR_CONTRACT = "CPIR_FACTORIAL_OFFLINE_V1"
@@ -405,9 +406,7 @@ def stage1(
 
         if record != rec_count:
             raise RuntimeError(f"CTPI_RECORD_COUNT:{house}:{record}")
-        parity = float(np.max(np.abs(f00_recomputed - prior_f00)))
-        if parity > 1.0e-12:
-            raise RuntimeError(f"CTPI_F00_PARITY:{house}:{parity}")
+        f00_frozen, parity = preserve_bitexact_reference(f00_recomputed, prior_f00)
 
         np.savez_compressed(
             output / f"{house}_CTPI_STAGE1.npz",
@@ -429,7 +428,7 @@ def stage1(
             surface_area=area_all,
             mean_alias_distinct_pair_count=hard_pair_count,
             mean_alias_pair_count=mean_alias_pair_count,
-            f00=f00_recomputed,
+            f00=f00_frozen,
             f00_matched_surface=f00_surface_all,
             f00_persistence_count=f00_persistence_count,
             f00_surface_area=f00_area_all,
@@ -444,6 +443,7 @@ def stage1(
             "bank_summary_sha256": bank.summary_sha256,
             "cell_manifest_sha256": sha256_file(bank.root / "cell_manifest.csv"),
             "f00_max_abs_parity": parity,
+            "f00_bitexact_reference_preserved": True,
             "route_audit": route_audit,
             "mean_alias_distinct_pairs_total": int(np.sum(hard_pair_count)),
             "contexts_with_mean_alias_distinct_pairs": int(np.count_nonzero(hard_pair_count)),

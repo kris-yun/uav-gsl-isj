@@ -41,7 +41,11 @@ from cpir_factorial_offline import (
     time_to_threshold,
     trapezoid_auc,
 )
-from ctpi_closed_loop_core import f00_posterior, full_law_posterior
+from ctpi_closed_loop_core import (
+    f00_posterior,
+    full_law_posterior,
+    preserve_bitexact_reference,
+)
 from ctpi_full_law_controls import canonical_cyclic_reassignment_indices
 
 
@@ -129,9 +133,7 @@ def stage1(upstream_root: Path, prereg_path: Path, output: Path) -> dict[str, An
                 control[shift - 1, record] = full_law_posterior(
                     q0, counts[record, permutation], h, n
                 )
-        parity = float(np.max(np.abs(f00 - upstream_f00)))
-        if parity > 1.0e-12:
-            raise RuntimeError(f"CTPI_FACTORIAL_F00_PARITY:{house}:{parity}")
+        f00_frozen, parity = preserve_bitexact_reference(f00, upstream_f00)
         np.savez_compressed(
             output / f"{house}_CTPI_FACTORIAL.npz",
             carrier_ids=carrier_ids,
@@ -144,7 +146,7 @@ def stage1(upstream_root: Path, prereg_path: Path, output: Path) -> dict[str, An
             update_time_s=np.asarray(frozen["update_time_s"], dtype=np.float64),
             observed_hit_count=observed,
             visible_count=visible,
-            f00=f00,
+            f00=f00_frozen,
             f01=f01,
             law_reassignment=control,
         )
@@ -152,6 +154,7 @@ def stage1(upstream_root: Path, prereg_path: Path, output: Path) -> dict[str, An
             "carrier_count": int(len(q0)),
             "canonical_nonidentity_controls": int(len(q0) - 1),
             "f00_upstream_max_abs": parity,
+            "f00_bitexact_reference_preserved": True,
         }
         print(f"CTPI_FULL_LAW_FACTORIAL_STAGE1_{house}=PASS", flush=True)
 

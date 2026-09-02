@@ -24,6 +24,30 @@ JEFFREYS_CATEGORICAL_ALPHA = 0.5
 PAIR_TOL = 1.0e-12
 
 
+def preserve_bitexact_reference(
+    recomputed: np.ndarray,
+    reference: np.ndarray,
+    *,
+    tolerance: float = PAIR_TOL,
+) -> tuple[np.ndarray, float]:
+    """Verify formula parity while retaining the frozen posterior bit-for-bit.
+
+    The official endpoint selects the top 5% of cells.  Near a probability tie,
+    harmless floating-point re-evaluation can change which boundary cell enters
+    that set and therefore change localization error.  A successful parity
+    check must consequently retain the authoritative frozen array rather than
+    publish the numerically equivalent recomputation.
+    """
+    actual = np.asarray(recomputed, dtype=np.float64)
+    frozen = np.asarray(reference, dtype=np.float64)
+    if actual.shape != frozen.shape or not np.isfinite(actual).all() or not np.isfinite(frozen).all():
+        raise ValueError("CTPI_REFERENCE_POSTERIOR_INPUT")
+    max_abs = float(np.max(np.abs(actual - frozen))) if actual.size else 0.0
+    if max_abs > float(tolerance):
+        raise RuntimeError(f"CTPI_REFERENCE_POSTERIOR_PARITY:{max_abs}")
+    return frozen.copy(), max_abs
+
+
 def _normalized_prior(prior: np.ndarray) -> np.ndarray:
     q = np.asarray(prior, dtype=np.float64)
     if q.ndim != 1 or q.size < 2 or np.any(q < 0.0) or not np.isfinite(q).all():
@@ -202,6 +226,14 @@ def selftest() -> None:
     )
     assert choice == 1 and score[1] > score[0] + 1e-12
     assert abs(float(np.sum(full)) - 1.0) <= 1e-15
+
+    # Formula parity is not permission to replace a frozen posterior: the
+    # endpoint's top-set boundary can be tie-sensitive at machine precision.
+    frozen = np.asarray([0.4, 0.3, 0.3], dtype=np.float64)
+    recomputed = frozen.copy()
+    recomputed[1] = np.nextafter(recomputed[1], np.inf)
+    preserved, delta = preserve_bitexact_reference(recomputed, frozen)
+    assert delta > 0.0 and np.array_equal(preserved, frozen)
     print("CTPI_CLOSED_LOOP_CORE_SELFTEST=PASS")
 
 
