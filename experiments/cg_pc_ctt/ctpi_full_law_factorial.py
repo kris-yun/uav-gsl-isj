@@ -223,6 +223,7 @@ def evaluate(
     update_rows: list[dict[str, Any]] = []
     case_rows: list[dict[str, Any]] = []
     control_rows: list[dict[str, Any]] = []
+    a0_final_update5_max_abs = 0.0
 
     for house in HOUSES:
         bank = BankHouse.load(house, bank_root, support_rows)
@@ -247,22 +248,27 @@ def evaluate(
             )
             series: dict[str, list[dict[str, float]]] = {arm: [] for arm in OUTPUT_ARMS}
             control_series: list[list[dict[str, float]]] = [list() for _ in range(controls.shape[0])]
+            a0_update5_cell: np.ndarray | None = None
             for update_index in range(SOURCE_UPDATES):
                 record = case_index * SOURCE_UPDATES + update_index
                 update_dir = case.runtime / "context_bank" / f"source_update_{update_index + 1:04d}"
-                carrier_mass = {
-                    "A0": np.bincount(
-                        bank.cell_to_carrier,
-                        weights=align_cell_mass(read_csv(update_dir / "source_posterior.csv"), bank),
-                        minlength=len(bank.carriers),
+                a0_cell = align_cell_mass(read_csv(update_dir / "source_posterior.csv"), bank)
+                if update_index == SOURCE_UPDATES - 1:
+                    a0_update5_cell = a0_cell.copy()
+                cell_mass = {
+                    "A0": a0_cell,
+                    "F00": projection(
+                        np.asarray(frozen["f00"][record], dtype=np.float64),
+                        bank.cell_to_carrier, bank.carrier_cell_counts,
                     ),
-                    "F00": np.asarray(frozen["f00"][record], dtype=np.float64),
-                    "F01": np.asarray(frozen["f01"][record], dtype=np.float64),
+                    "F01": projection(
+                        np.asarray(frozen["f01"][record], dtype=np.float64),
+                        bank.cell_to_carrier, bank.carrier_cell_counts,
+                    ),
                 }
                 for arm in OUTPUT_ARMS:
-                    cell_mass = projection(carrier_mass[arm], bank.cell_to_carrier, bank.carrier_cell_counts)
                     item = metric_record(
-                        bank, cell_rows, cell_mass, truth, truth_carrier, truth_cell_row
+                        bank, cell_rows, cell_mass[arm], truth, truth_carrier, truth_cell_row
                     )
                     series[arm].append(item)
                     update_rows.append({
@@ -281,16 +287,33 @@ def evaluate(
                         bank, cell_rows, cell_mass, truth, truth_carrier, truth_cell_row
                     ))
 
+            if a0_update5_cell is None:
+                raise RuntimeError(f"CTPI_FACTORIAL_A0_UPDATE5_MISSING:{house}:{case.seed}")
+            a0_final_cell = align_cell_mass(
+                read_csv(case.runtime.parent.parent / "final_posterior.csv"), bank
+            )
+            a0_final_update5_max_abs = max(
+                a0_final_update5_max_abs,
+                float(np.max(np.abs(a0_final_cell - a0_update5_cell))),
+            )
+            a0_final_metric = metric_record(
+                bank, cell_rows, a0_final_cell, truth, truth_carrier, truth_cell_row
+            )
+            endpoint_delta = abs(a0_final_metric["error_m"] - float(native["primary_error_m"]))
+            if endpoint_delta > 1.0e-8:
+                raise RuntimeError(
+                    f"CTPI_FACTORIAL_A0_ENDPOINT_PARITY:{house}:{case.seed}:{endpoint_delta}"
+                )
             times = np.asarray(
                 [0.0] + [float(v) for v in case.update_times] + [HORIZON_S], dtype=np.float64
             )
             for arm in OUTPUT_ARMS:
+                final = a0_final_metric if arm == "A0" else series[arm][-1]
                 errors = np.asarray(
                     [prior_metric["error_m"]] + [v["error_m"] for v in series[arm]] +
-                    [series[arm][-1]["error_m"]], dtype=np.float64
+                    [final["error_m"]], dtype=np.float64
                 )
                 t2, reached = time_to_threshold(times, errors)
-                final = series[arm][-1]
                 case_rows.append({
                     "house": house,
                     "seed": case.seed,
@@ -396,6 +419,7 @@ def evaluate(
         "gaden_runs": 0,
         "neural_training": False,
         "closed_loop": False,
+        "a0_final_vs_update5_posterior_max_abs": a0_final_update5_max_abs,
         "module_gates": {
             "M1_CREL": {"pass": m1_pass, "selected_increment_metrics": m1_selected},
             "M2_FULL_LAW_PROPER_SCORE": {
