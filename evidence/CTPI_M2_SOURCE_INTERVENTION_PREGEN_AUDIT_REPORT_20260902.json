@@ -1,0 +1,77 @@
+{
+  "CTPI_M2_SOURCE_INTERVENTION_PREGEN": "PASS",
+  "cal_generation_authorized": true,
+  "confirm_generation_authorized": false,
+  "contract": "CTPI_M2_SOURCE_INTERVENTION_PREGEN_AUDIT_V1",
+  "formal_world_counts": {
+    "M2_CAL": 30,
+    "M2_CONFIRM": 30
+  },
+  "historical_observation_numeric_seed_disjointness": "UNKNOWN_NOT_ASSERTED_TRUE",
+  "inputs": {
+    "materializer_code": {
+      "path": "/home/zyc/CTPI_M2_SOURCE_INTERVENTION_PHASE0_20260902/ctpi_m2_materialize_world.py",
+      "sha256": "9572faaf807db5905e8137bdb9e9c0c1c492dc18b65b9a15ae1cb4ccfb890768"
+    },
+    "rng_inventory": {
+      "path": "/home/zyc/CTPI_M2_SOURCE_INTERVENTION_PHASE0_20260902/LEGACY_RNG_INVENTORY.json",
+      "sha256": "0bcdfda6332f5c5428fc9fee67c7587e859cb27d03a336edbeb2e1c1e8ebc133"
+    },
+    "runtime_report": {
+      "path": "/home/zyc/CTPI_M2_SOURCE_INTERVENTION_PHASE0_20260902/GENERATOR_RUNTIME_IDENTITY.json",
+      "sha256": "0a8b7af60eda172d324b8625f1e49c95108ac661e920de7332ec69407702840f"
+    },
+    "selection": {
+      "path": "/home/zyc/CTPI_M2_SOURCE_INTERVENTION_PHASE0_20260902/CONTROLLED_SOURCE_SELECTION.json",
+      "sha256": "135331bd2cf7b10a4f4a84a9f1906ab9f0d7753c4cce0d7a118b1cfbecc8488f"
+    },
+    "smoke_a": {
+      "path": "/home/zyc/CTPI_M2_SOURCE_INTERVENTION_PHASE0_20260902/SMOKE_RUN_A_R3/WORLD_AUDIT.json",
+      "sha256": "01fb38beb6cd84e42bbaac0f1776f188346aae7affc827533b3140f24595dff4"
+    },
+    "smoke_b": {
+      "path": "/home/zyc/CTPI_M2_SOURCE_INTERVENTION_PHASE0_20260902/SMOKE_RUN_B_R3/WORLD_AUDIT.json",
+      "sha256": "01fb38beb6cd84e42bbaac0f1776f188346aae7affc827533b3140f24595dff4"
+    },
+    "world_manifest": {
+      "path": "/home/zyc/CTPI_M2_SOURCE_INTERVENTION_PHASE0_20260902/SOURCE_INTERVENTION_WORLD_MANIFEST.json",
+      "sha256": "143e2458986d57c1c5bb4f439cfb119799a3a66e125aa553f20f0460c909f2fe"
+    }
+  },
+  "m3_cpp_ros_authorized": false,
+  "pass": true,
+  "phase_checks": {
+    "A_CONTROLLED_SOURCE_MANIFEST": true,
+    "B_RESERVED_PHYSICAL_PLACEMENT": true,
+    "C_ASSET_DERIVED_RNG_INVENTORY": true,
+    "D_GENERATOR_RUNTIME_IDENTITY": true,
+    "E_FAIL_CLOSED_MATERIALIZER_COMMITTED": true,
+    "F_DISPOSABLE_SMOKE_DETERMINISTIC": true
+  },
+  "preserved_failed_smoke_preflights": [
+    {
+      "path": "/home/zyc/CTPI_M2_SOURCE_INTERVENTION_PHASE0_20260902/SMOKE_RUN_A/FAIL",
+      "sha256": "0a57a5a184d0728ccfe608ce7da2bf811e68534e2847ff42d99f425d6b868736",
+      "text": "CTPI_M2_WORLD_MATERIALIZATION=FAIL\nRuntimeError:CTPI_WORLD_ROUTE_LENGTH:1676"
+    },
+    {
+      "path": "/home/zyc/CTPI_M2_SOURCE_INTERVENTION_PHASE0_20260902/SMOKE_RUN_A_R2/FAIL",
+      "sha256": "1c4662a4baa50c28910ed555a78ea73e45de6ad6ca641ff2c300bdafe36b796b",
+      "text": "CTPI_M2_WORLD_MATERIALIZATION=FAIL\nRuntimeError:CTPI_WORLD_STOP_CONTRACT:16"
+    }
+  ],
+  "remote_head_implementation": "6b60c26474429fbbfb1b79a9c8453fb7aa3b38c5",
+  "smoke_checks": {
+    "bank_unchanged": true,
+    "event_counts": true,
+    "m1_visible_cadence": true,
+    "one_native_invocation_each": true,
+    "same_disposable_identity": true,
+    "same_payload_sha256": true,
+    "same_world_audit_sha256": true,
+    "sample_counts": true,
+    "source_metadata_sealed": true
+  },
+  "smoke_payload_sha256": "ba714bff27304b970759923c1c5adf8ff4673801955a7332b05886f071884f58",
+  "verdict": "CTPI_M2_SOURCE_INTERVENTION_PREGEN=PASS"
+}
