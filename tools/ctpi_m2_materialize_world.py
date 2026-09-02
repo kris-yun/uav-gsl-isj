@@ -22,6 +22,7 @@ TIME_COUNT = 1500
 DT_S = 0.2
 STOP_SAMPLES = 80
 STOP_COUNT = 15
+SOURCE_UPDATE_COUNT = 5
 THRESHOLD_PPM = 0.1
 DELAY_SAMPLES = 2
 ALPHA = math.exp(-DT_S / 1.2)
@@ -112,9 +113,21 @@ def read_route(path: Path) -> tuple[list[dict[str, str]], list[np.ndarray], list
             start = None
     if start is not None and TIME_COUNT - start >= STOP_SAMPLES:
         stops.append(np.arange(start, start + STOP_SAMPLES, dtype=np.int64))
-    if len(stops) != STOP_COUNT or any(len(stop) != STOP_SAMPLES for stop in stops):
-        raise RuntimeError(f"CTPI_WORLD_STOP_CONTRACT:{len(stops)}")
+    if len(stops) < STOP_COUNT or any(len(stop) != STOP_SAMPLES for stop in stops):
+        raise RuntimeError(f"CTPI_WORLD_STOP_SUPPORT:{len(stops)}")
     return rows, stops, fieldnames
+
+
+def read_update_times(route_path: Path) -> tuple[np.ndarray, Path]:
+    path = route_path.parent / "context_bank" / "source_update_timing.csv"
+    with path.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    if len(rows) != SOURCE_UPDATE_COUNT:
+        raise RuntimeError(f"CTPI_WORLD_SOURCE_UPDATE_COUNT:{len(rows)}")
+    times = np.asarray([float(row["sim_time"]) for row in rows], dtype=np.float64)
+    if not np.isfinite(times).all() or np.any(np.diff(times) <= 0.0):
+        raise RuntimeError("CTPI_WORLD_SOURCE_UPDATE_TIMES")
+    return times, path
 
 
 def unique_route(house: str, route: int) -> Path:
@@ -162,7 +175,17 @@ def materialize(args: argparse.Namespace) -> dict[str, Any]:
         bank_before = bank_metadata_fingerprint(BANK_ROOT)
         house = str(world["house"])
         route_path = unique_route(house, int(world["route_index"]))
-        route_rows, stops, route_fieldnames = read_route(route_path)
+        route_rows, all_stops, route_fieldnames = read_route(route_path)
+        update_times, timing_path = read_update_times(route_path)
+        route_times = np.asarray([float(row["t_sim_s"]) for row in route_rows])
+        visible = [
+            [stop for stop in all_stops if route_times[int(stop[-1])] <= update_time + 1.0e-6]
+            for update_time in update_times
+        ]
+        visible_counts = [len(item) for item in visible]
+        if visible_counts != [3, 6, 9, 12, 15]:
+            raise RuntimeError(f"CTPI_WORLD_VISIBLE_STOP_CADENCE:{visible_counts}")
+        stops = visible[-1]
         house_runtime = runtime["houses"][house]
         generator_schedule = args.output / "route_1500.csv"
         with generator_schedule.open("w", newline="", encoding="utf-8") as target:
@@ -245,6 +268,11 @@ def materialize(args: argparse.Namespace) -> dict[str, Any]:
             "world_manifest_sha256": sha256_file(args.world_manifest),
             "runtime_report_sha256": sha256_file(args.runtime_report),
             "source_route_path": str(route_path), "source_route_sha256": sha256_file(route_path),
+            "source_update_timing_path": str(timing_path),
+            "source_update_timing_sha256": sha256_file(timing_path),
+            "source_update_times_s": update_times.tolist(),
+            "visible_stop_counts": visible_counts,
+            "completed_stops_in_1500_sample_route": int(len(all_stops)),
             "generator_schedule": "route_1500.csv",
             "generator_schedule_sha256": sha256_file(generator_schedule),
             "physical_samples": int(len(physical)), "forward_sensor_samples": int(len(measured)),
