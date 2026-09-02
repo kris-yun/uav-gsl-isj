@@ -1,0 +1,40 @@
+{
+  "contract": "CTPI_CREL_PSRG_APRS_V04_DEVELOPMENT_20260902",
+  "status": "CTPI_V04_DEVELOPMENT_GO_TO_VM_EXACT_OFFLINE_AND_RUNTIME_PARITY",
+  "m1": {
+    "name": "CREL",
+    "status": "PASS_INHERITED_PLUS_H01_DEVELOPMENT_INCREMENT",
+    "h01_ensemble_mean_error_m": 3.532279349890555,
+    "h01_equal_member_single_mean_error_m": 3.5904253003299025,
+    "h01_error_reduction_pct": 1.6194725018789462,
+    "truth_proper_score_gain_mean": 0.06370405791223688
+  },
+  "m2": {
+    "name": "PSRG",
+    "status": "DEVELOPMENT_PASS_LOCAL_METROLOGY_ONLY",
+    "h01_support_vs_median_resolution_spearman": -0.8737041769057267,
+    "h01_shuffle_fit_wins": "36/36",
+    "h01_loo_resolution_rank_rho_min": 0.97258107529816,
+    "full60_pooled_support_vs_median_resolution_spearman": -0.597945048005705,
+    "confidence_radius_interpretation": "REJECTED_0_OF_36_COVERAGE"
+  },
+  "m3": {
+    "name": "APRS",
+    "status": "H01_DEVELOPMENT_PASS_CURRENT_FIELD_LOG_SCORE",
+    "contexts": 36,
+    "c0_mean_top_error_m": 4.436277191011583,
+    "aprs_mean_top_error_m": 3.532279349890555,
+    "mean_error_reduction_pct": 20.37739758355572,
+    "equal_config_normalized_aue_c0": 4.429824529500498,
+    "equal_config_normalized_aue_aprs": 3.531779839579366,
+    "equal_config_aue_reduction_pct": 20.27269215610205,
+    "configs_aue_improved": "4/4",
+    "source_reassignment_real_error_better_than_control_median": "36/36",
+    "loo_score_rank_rho_min": 0.9644655019247852,
+    "stale_future_context_test": "NO_GO_NEGATIVE_CONTROL"
+  },
+  "closed_loop": {
+    "authorization": "AFTER_VM_EXACT_OFFLINE_AND_RUNTIME_PARITY_ONLY",
+    "m2_first_runtime_role": "PROSPECTIVE_SHADOW_NOT_CONFIDENCE_RADIUS"
+  }
+}
