@@ -1,0 +1,47 @@
+{
+  "contract": "CTPI_M2_BA0DE54_AUDIT_BLOCKERS_V1",
+  "audited_commit": "ba0de54311b762a22ba43a712b4f60a37b08ff5e",
+  "verdict": "BLOCKED_BEFORE_M2_CAL_GENERATION",
+  "carrier_counts_from_frozen_stage1": {
+    "H01": 210,
+    "H02": 201,
+    "H03": 206
+  },
+  "p0_blockers": [
+    {
+      "id": "P0_RAGGED_HOUSE_SOURCE_DIMENSION",
+      "required_resolution": "Use ragged/per-House batches or an explicit preregistered valid-source mask; no silent padding."
+    },
+    {
+      "id": "P0_MIXTURE_GATE_NOT_SOURCE_CONDITIONAL",
+      "required_resolution": "Add a preregistered validation of the source-conditioned predictive law required by M3, or narrow the M2 claim to mixture calibration and forbid M3 authorization from this Gate alone."
+    },
+    {
+      "id": "P0_M1_15_EVENT_VS_5_UPDATE_CADENCE",
+      "required_resolution": "Freeze the exact pre-event M1 posterior schedule without changing the passing M1 update cadence."
+    },
+    {
+      "id": "P0_RNG_INVENTORY_NOT_SCANNED",
+      "required_resolution": "Generate and hash an authoritative legacy RNG inventory from prior manifests/evidence; provenance must consume it and fail closed."
+    },
+    {
+      "id": "P0_GENERATOR_OPENMP_RUNTIME_NOT_FROZEN",
+      "required_resolution": "Freeze OMP/thread/runtime overlay configuration and GADEN runtime source/library hashes before defining a seed as a world identity."
+    },
+    {
+      "id": "P0_NO_COMMITTED_TAPE_MATERIALIZER",
+      "required_resolution": "Commit a fail-closed CAL/CONFIRM world materializer with hash/environment/read-only/length/event-count/source-sealing checks before first generation."
+    }
+  ],
+  "p1_blockers": [
+    "P1_ACTION_VARIATION_HAS_NO_ACTION_METADATA",
+    "P1_ISOTONIC_TABLE_IS_CALIBRATION_LAYER_NOT_MAIN_NOVELTY",
+    "P1_HISTORY_CONDITIONING_NOT_IMPLEMENTED",
+    "P1_M1_POSTERIOR_SILENTLY_RENORMALIZED",
+    "P1_SELFTEST_POSTERIOR_DEPENDS_ON_FUTURE_OUTCOME"
+  ],
+  "generation_authorized": false,
+  "m3_authorized": false,
+  "cpp_ros_authorized": false,
+  "required_next_marker": "CTPI_M2_BA0DE54_PREGEN_AUDIT=PASS"
+}
