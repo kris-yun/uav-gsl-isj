@@ -1,0 +1,161 @@
+{
+  "all_resolved_numeric_seeds": [
+    101,
+    211,
+    307,
+    401,
+    503,
+    601,
+    701,
+    809,
+    907,
+    1009,
+    1103,
+    1201,
+    5489
+  ],
+  "checks": {
+    "bank_train_keys_match_asset_rows": true,
+    "fallback_default_seed_source_verified": true,
+    "historical_unknown_preserved_as_unknown": true,
+    "placement_contract": true,
+    "three_bank_summaries_scanned": true,
+    "train_reserved_numeric_disjoint": true
+  },
+  "contract": "CTPI_M2_LEGACY_RNG_INVENTORY_V1",
+  "fallback_default_generator": {
+    "mathutils_source_sha256": "374ec0ed56cbd38ff5bc017ad668a831c8da5c19e34b5b81186e4e8a5eee4c05",
+    "numeric_seed": 5489,
+    "rng_domain": "GADEN_STD_MT19937_NO_EXPLICIT_HOOK"
+  },
+  "historical_observation_worlds": [
+    {
+      "house": "H01",
+      "numeric_disjointness_claim_permitted": false,
+      "numeric_seed": "UNKNOWN",
+      "rng_domain": "immutable_external_GADEN_dataset_world",
+      "source_asset_sha256": "8bab8c2e5c39d091137beef5d2efe69eb2131be09c75efb1347f18411a776888",
+      "world_sha256": "19235f9ef87f31c532f992a9ff311efa67141a0517521f2aa3fd80e18e4d66c8"
+    },
+    {
+      "house": "H02",
+      "numeric_disjointness_claim_permitted": false,
+      "numeric_seed": "UNKNOWN",
+      "rng_domain": "immutable_external_GADEN_dataset_world",
+      "source_asset_sha256": "f00daf24c70771d95f945de098fed29e17cc72a763b000bdd281038383bd2845",
+      "world_sha256": "c3f186e82ff13822694296ea4619e848c0e74c544872d74c31ec3523ea7329aa"
+    },
+    {
+      "house": "H03",
+      "numeric_disjointness_claim_permitted": false,
+      "numeric_seed": "UNKNOWN",
+      "rng_domain": "immutable_external_GADEN_dataset_world",
+      "source_asset_sha256": "736444246178d89432cfde5bc2f12699e7ec9d5600f2e11fa385e609fbfa68ab",
+      "world_sha256": "3e2888ddc2a8e4d801127ed08d0a099ea0316871f2b2a0fd064da96073b3baee"
+    }
+  ],
+  "pass": true,
+  "predictive_members": [
+    {
+      "bank_summary_sha256": "8bab8c2e5c39d091137beef5d2efe69eb2131be09c75efb1347f18411a776888",
+      "house": "H01",
+      "numeric_seeds": [
+        101,
+        211,
+        307,
+        401,
+        503,
+        601,
+        701,
+        809
+      ],
+      "rng_domain": "PF_DEI_V3_REGION_PLACEMENT_V1/train"
+    },
+    {
+      "bank_summary_sha256": "f00daf24c70771d95f945de098fed29e17cc72a763b000bdd281038383bd2845",
+      "house": "H02",
+      "numeric_seeds": [
+        101,
+        211,
+        307,
+        401,
+        503,
+        601,
+        701,
+        809
+      ],
+      "rng_domain": "PF_DEI_V3_REGION_PLACEMENT_V1/train"
+    },
+    {
+      "bank_summary_sha256": "736444246178d89432cfde5bc2f12699e7ec9d5600f2e11fa385e609fbfa68ab",
+      "house": "H03",
+      "numeric_seeds": [
+        101,
+        211,
+        307,
+        401,
+        503,
+        601,
+        701,
+        809
+      ],
+      "rng_domain": "PF_DEI_V3_REGION_PLACEMENT_V1/train"
+    }
+  ],
+  "prospective_reserved_members": {
+    "numeric_seeds": [
+      907,
+      1009,
+      1103,
+      1201
+    ],
+    "rng_domain": "PF_DEI_V3_REGION_PLACEMENT_V1/reserved",
+    "source_asset_sha256": "2dfe8bf70cc5dd191db8659cfc66ed9934927b69d0b6798b9a6b5062e1dd959f"
+  },
+  "scanned_assets": [
+    {
+      "path": "/home/zyc/PF_DEI_V3_REGION_SUPPORT_20260828/frozen_region_placement_manifest.json",
+      "role": "V3_PLACEMENT_SOURCE_CONTRACT",
+      "sha256": "2dfe8bf70cc5dd191db8659cfc66ed9934927b69d0b6798b9a6b5062e1dd959f"
+    },
+    {
+      "path": "/mnt/hgfs/workspace/CPIR_M1_FULLGRID_LOOKUP_20260831_R1/H01/bank_summary.json",
+      "role": "FROZEN_PREDICTIVE_BANK_H01",
+      "sha256": "8bab8c2e5c39d091137beef5d2efe69eb2131be09c75efb1347f18411a776888"
+    },
+    {
+      "path": "/mnt/hgfs/workspace/CPIR_M1_FULLGRID_LOOKUP_20260831_R1/H02/bank_summary.json",
+      "role": "FROZEN_PREDICTIVE_BANK_H02",
+      "sha256": "f00daf24c70771d95f945de098fed29e17cc72a763b000bdd281038383bd2845"
+    },
+    {
+      "path": "/mnt/hgfs/workspace/CPIR_M1_FULLGRID_LOOKUP_20260831_R1/H03/bank_summary.json",
+      "role": "FROZEN_PREDICTIVE_BANK_H03",
+      "sha256": "736444246178d89432cfde5bc2f12699e7ec9d5600f2e11fa385e609fbfa68ab"
+    },
+    {
+      "path": "/home/zyc/PF_DEI_V3_FINAL_SIM_BANK_20260828_R1/bank_summary.json",
+      "role": "V3_FINAL_BANK_SUMMARY",
+      "sha256": "17364eb744f4fc53c4b52eee0362f09bdee3e8655b74c9d5e5a2eb0a3a9e2d47"
+    },
+    {
+      "path": "/home/zyc/CPIR_FACTORIAL_ROUTE_DIAGNOSTIC_20260901_e2bb4a0_R3/01_STAGE1/FACTORIAL_STAGE1_MANIFEST.json",
+      "role": "OLD_ROUTE_STAGE1_MANIFEST",
+      "sha256": "a284dd44158bca847d1dbb2689153264ba54e29a0764a1fb1dd9e6785da92cb8"
+    },
+    {
+      "path": "/home/zyc/PF_DEI_V3_GADEN_SRC/gaden_common/third_party/gaden_core/src/RngHook.cpp",
+      "role": "GADEN_RNG_HOOK_SOURCE",
+      "sha256": "826fbe242e152a09d03bc50849f6b882b58b0b3fc41a6b3e595c3811b20a9131"
+    },
+    {
+      "path": "/home/zyc/PF_DEI_V3_GADEN_SRC/gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp",
+      "role": "GADEN_MATHUTILS_SOURCE",
+      "sha256": "374ec0ed56cbd38ff5bc017ad668a831c8da5c19e34b5b81186e4e8a5eee4c05"
+    }
+  ],
+  "scanner_mode": "ASSET_DERIVED_EXPLICIT_RNG_FIELDS_ONLY",
+  "unresolved_numeric_disjointness": "UNKNOWN",
+  "unresolved_numeric_identity_count": 3,
+  "verdict": "CTPI_M2_LEGACY_RNG_INVENTORY=PASS"
+}
