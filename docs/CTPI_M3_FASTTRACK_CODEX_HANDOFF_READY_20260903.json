@@ -1,24 +1,15 @@
 {
-  "contract": "CTPI_M3_FASTTRACK_CODEX_HANDOFF_READY_V3",
+  "contract": "CTPI_M3_FASTTRACK_CODEX_HANDOFF_READY_V4_ENV_RECOVERY",
   "status": "CODEX_HANDOFF_READY=PASS",
   "repository": "kris-yun/uav-gsl-isj",
   "branch": "research/ctpi-m3-fasttrack-20260903",
-  "handoff_anchor_commit": "dc3c25c9348b13d03f264c9288f194d34ffb3c41",
-  "supersedes_handoff_heads": [
-    "998beb23553ec4153536a4925c155a3ed0ba6769",
-    "7e1c3f29a700179a991cdcd3bc9b90f140b74795"
-  ],
-  "phase0_errata": [
-    "docs/CTPI_M3_FASTTRACK_PHASE0_HASH_ERRATUM_20260903.json",
-    "docs/CTPI_M3_FASTTRACK_PHASE0_V2_PATCH_TRUNCATION_ERRATUM_20260903.json"
-  ],
-  "final_head_policy": "Use the exact branch HEAD containing this V3 JSON as supplied by the ChatGPT handoff message. Do not use either superseded handoff HEAD or any older handoff HEAD.",
+  "science_anchor": "bcd56dd276e0e29a22399d695203101e7c09022f",
   "scientific_state": {
     "M1_CREL_F00": "CONFIRMED_PASS",
     "M2_TSDC_V0": "FRESH_CONFIRM_PASS_FROZEN",
     "M3_PIP": "FROZEN_FOR_TRUE_CLOSED_LOOP",
-    "true_closed_loop_outcomes_seen_before_freeze": false,
-    "phase0_repairs_change_scientific_method": false
+    "true_closed_loop_outcomes_seen": false,
+    "environment_recovery_changes_scientific_method": false
   },
   "frozen_runtime": {
     "stepsSourceUpdate": 3,
@@ -53,46 +44,27 @@
     "complete_patch_sha256": "96e1e425a7c4e6e97ad123c1d46e67120dc86574b3d3927a370e5b99d1020743",
     "hunk_content_change": false
   },
-  "critical_git_blobs": {
-    "tools/ctpi_m3_runtime_patch_materializer.py": "33401568bdeac2a8be8e6144a5c2eab6709a5eb0",
-    "tools/ctpi_m3_fasttrack_handoff_check.py": "679e8c18235e8947043660dccfacfdce4cedab57",
-    "tools/apply_ctpi_m3_fasttrack_runtime_patch.py": "2885bcd568cf3c1f5c37f2fa8882492d92545fa0",
-    "tools/ctpi_m3_fasttrack_preflight.py": "0063539802b99c970c2871a34fd622c2b2656f4d",
-    "tools/ctpi_fasttrack_terminal_guard.py": "e224ca0a6e95206af363228876fbf607b757a067",
-    "closed_loop/ctpi/run_ctpi_h01_seed0_smoke_20260903.sh": "4674052d118a92cc1a62318bbdf35ec38105e982",
-    "closed_loop/ctpi/run_ctpi_h01_3seed_screen_20260903.sh": "8f804c4ac563d49d3e9236dd322154247ed96686",
-    "closed_loop/ctpi/run_ctpi_crosshouse_36run_confirm_20260903.sh": "7db6b6e3455867a91f593140d6d47c454381f0ab",
-    "closed_loop/ctpi/prepare_ctpi_m3_fasttrack_vm_20260903.sh": "754b8c1762216b38e7b87b6867adfc43d008f8de",
-    "tools/materialize_ctpi_m3_fasttrack_vm_files.py": "1cf33f0d547547de68ddebee9944755826777e48",
-    "tools/ctpi_m3_static_parity.py": "4cafdf53cdf886c4843b9e33d0323a2857a56edb",
-    "tools/ctpi_m3_action_sanity.py": "5b1a734a96af21f30f5f95c98a5699cc27e95212",
-    "tools/ctpi_true_closed_loop_check.py": "568cf909964d7b222474a378ebc84630f938f4cb",
-    "tools/ctpi_fasttrack_performance.py": "01c6b36b1e829ba96bc66cae1de7c1683e45fe15",
-    "tools/ctpi_fasttrack_screen_gate.py": "1d60f8aae7ce7c9795a642916cd57322fef12552",
-    "tools/ctpi_crosshouse_performance.py": "c9813a9de6e9b00ac2dd658137f624114e3904fd",
-    "docs/CTPI_M3_FASTTRACK_FREEZE_20260903.md": "2318ce390b072978c2fb18a892b7dfe867ef328a",
-    "docs/CTPI_M3_FASTTRACK_PREREG_20260903.json": "a6a13a2e874d7ae96918cf2c28665de067f88524"
+  "vm_environment_recovery": {
+    "failure_classification": "BLOCKED_BY_VM_ENVIRONMENT",
+    "authorized_gaden_overlay_root": "/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install",
+    "qualification_tool": "tools/ctpi_vm_dependency_qualifier.py",
+    "environment_handoff_gate": "tools/ctpi_m3_fasttrack_env_recovery_check.py",
+    "contract": "docs/CTPI_M3_FASTTRACK_VM_ENV_RECOVERY_V4_20260903.json",
+    "codex_instruction": "docs/CODEX_CTPI_M3_FASTTRACK_PHASE1_ENV_RECOVERY_V4_20260903.md",
+    "broken_aggregate_ros2_ws_setup_is_not_build_authority": true,
+    "regenerate_gaden": false
   },
   "required_execution_order": [
-    "clean_isolated_checkout_at_final_handoff_head",
-    "ctpi_m3_fasttrack_handoff_check_PASS",
-    "prepare_materialize_patch_preflight_release_build_PASS",
-    "H01_H02_H03_existing_bank_integrity_PASS",
-    "H01_seed0_F00_F10_F11_true_closed_loop_smoke_PASS",
-    "H01_seeds0_1_2_12run_screen_only_if_smoke_PASS",
-    "crosshouse_seeds3_4_5_36run_confirm_only_if_screen_PASS"
+    "fresh_clean_checkout_at_exact_V4_head",
+    "CTPI_M3_FASTTRACK_CODEX_HANDOFF_PASS",
+    "CTPI_M3_FASTTRACK_ENV_RECOVERY_HANDOFF_PASS",
+    "CTPI_VM_DEPENDENCY_QUALIFICATION_PASS",
+    "CTPI_M3_FASTTRACK_VM_BUILD_PASS",
+    "CTPI_FASTTRACK_ALL_BANKS_INTEGRITY_PASS",
+    "CTPI_H01_SEED0_SMOKE_PASS",
+    "CTPI_FASTTRACK_H01_3SEED_SCREEN_PASS_only_if_smoke_pass",
+    "CTPI_CROSSHOUSE_36RUN_CONFIRM_only_if_screen_pass"
   ],
-  "terminal_gates": {
-    "prebuild": "CTPI_M3_FASTTRACK_CODEX_HANDOFF=PASS",
-    "build": "CTPI_M3_FASTTRACK_VM_BUILD=PASS",
-    "banks": "CTPI_FASTTRACK_ALL_BANKS_INTEGRITY=PASS",
-    "smoke_action": "CTPI_M3_ACTION_SANITY=PASS",
-    "smoke_causal": "TRUE_CLOSED_LOOP_CAUSAL_CHAIN=PASS",
-    "smoke": "CTPI_H01_SEED0_SMOKE=PASS",
-    "screen": "CTPI_FASTTRACK_H01_3SEED_SCREEN=PASS",
-    "formal_pass": "CTPI_CROSSHOUSE_36RUN_CONFIRM=PASS",
-    "formal_no_go": "CTPI_CROSSHOUSE_36RUN_CONFIRM=NO_GO"
-  },
   "forbidden": [
     "modify_M1_formula",
     "modify_TSDC_beta_or_features",
@@ -100,13 +72,10 @@
     "modify_action_domain_or_tiebreak",
     "modify_3_3_1_cadence",
     "modify_240s_horizon",
-    "add_planner_weight_or_temperature",
-    "use_truth_or_future_observation_in_planner",
     "regenerate_predictive_bank",
     "change_Gate_after_outcomes",
-    "reuse_screen_seeds_0_1_2_as_formal_confirmation",
-    "continue_after_any_required_Gate_failure"
+    "use_unqualified_VM_overlay",
+    "select_a_different_overlay_after_qualification_failure"
   ],
-  "codex_instruction": "docs/CODEX_CTPI_M3_FASTTRACK_TRUE_CLOSED_LOOP_FROM_HANDOFF_20260903.md",
-  "outcome_state_at_handoff": "NO_TRUE_CLOSED_LOOP_OUTCOME_GENERATED_BY_THIS_FASTTRACK"
+  "outcome_state_at_handoff": "NO_TRUE_CLOSED_LOOP_OUTCOME_GENERATED"
 }
