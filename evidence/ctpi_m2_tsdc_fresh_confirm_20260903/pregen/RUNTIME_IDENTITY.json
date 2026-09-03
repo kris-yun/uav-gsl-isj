@@ -1,0 +1,213 @@
+{
+  "checks": {
+    "all_frozen_files_match": true,
+    "all_house_physical_assets_match_frozen_bank": true,
+    "ld_library_prefix_exact": true,
+    "loader_identity": true,
+    "process_environment_exact": true
+  },
+  "contract": "CTPI_M2_GENERATOR_RUNTIME_IDENTITY_V1",
+  "environment_checks": {
+    "MKL_NUM_THREADS": true,
+    "NUMEXPR_NUM_THREADS": true,
+    "OMP_DYNAMIC": true,
+    "OMP_NUM_THREADS": true,
+    "OPENBLAS_NUM_THREADS": true,
+    "PYTHONHASHSEED": true
+  },
+  "file_identity": {
+    "gaden_library": {
+      "expected_sha256": "0b6a2160917a1e8791c1980635b0969c40794b96d591abba31d743758fc5f048",
+      "match": true,
+      "path": "/home/zyc/PF_DEI_V3_GADEN_BUILD/install/lib/libgaden.so",
+      "sha256": "0b6a2160917a1e8791c1980635b0969c40794b96d591abba31d743758fc5f048"
+    },
+    "libbsc": {
+      "expected_sha256": "8e7873a03fc27c42715f579d5dad25d99f8e69de9bacc857fe71489d7ac2b89b",
+      "match": true,
+      "path": "/home/zyc/PF_DEI_V3_GADEN_BUILD/build/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc.so",
+      "sha256": "8e7873a03fc27c42715f579d5dad25d99f8e69de9bacc857fe71489d7ac2b89b"
+    },
+    "mathutils_source": {
+      "expected_sha256": "374ec0ed56cbd38ff5bc017ad668a831c8da5c19e34b5b81186e4e8a5eee4c05",
+      "match": true,
+      "path": "/home/zyc/PF_DEI_V3_GADEN_SRC/gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp",
+      "sha256": "374ec0ed56cbd38ff5bc017ad668a831c8da5c19e34b5b81186e4e8a5eee4c05"
+    },
+    "native_binary": {
+      "expected_sha256": "ad0772d994875d009a1e8720928a9f40db56c20f6bf83a03b309049696a7ead4",
+      "match": true,
+      "path": "/home/zyc/PF_DEI_V3_STREAM_BUILD/install/bin/pf_dei_v3_native_multistream",
+      "sha256": "ad0772d994875d009a1e8720928a9f40db56c20f6bf83a03b309049696a7ead4"
+    },
+    "native_source": {
+      "expected_sha256": "7a1570637eac1ca97758baddd05e7762b47fcd2e12afd77239698bd1132b01b4",
+      "match": true,
+      "path": "/home/zyc/PF_DEI_V3_STREAM_BUILD/src/pf_dei_v3_native_multistream.cpp",
+      "sha256": "7a1570637eac1ca97758baddd05e7762b47fcd2e12afd77239698bd1132b01b4"
+    },
+    "rng_hook_source": {
+      "expected_sha256": "826fbe242e152a09d03bc50849f6b882b58b0b3fc41a6b3e595c3811b20a9131",
+      "match": true,
+      "path": "/home/zyc/PF_DEI_V3_GADEN_SRC/gaden_common/third_party/gaden_core/src/RngHook.cpp",
+      "sha256": "826fbe242e152a09d03bc50849f6b882b58b0b3fc41a6b3e595c3811b20a9131"
+    },
+    "running_simulation_header": {
+      "expected_sha256": "1f57a0ccfd02fa6cc3a18714cd96b795c49e4e81e41f4d4b136fc05f35040abe",
+      "match": true,
+      "path": "/home/zyc/PF_DEI_V3_GADEN_SRC/gaden_common/third_party/gaden_core/include/gaden/RunningSimulation.hpp",
+      "sha256": "1f57a0ccfd02fa6cc3a18714cd96b795c49e4e81e41f4d4b136fc05f35040abe"
+    },
+    "running_simulation_source": {
+      "expected_sha256": "b699492b816980b583301e025cdbd04d5b9adedff90b9419593b2160a091ae2a",
+      "match": true,
+      "path": "/home/zyc/PF_DEI_V3_GADEN_SRC/gaden_common/third_party/gaden_core/src/RunningSimulation.cpp",
+      "sha256": "b699492b816980b583301e025cdbd04d5b9adedff90b9419593b2160a091ae2a"
+    }
+  },
+  "generator_environment_observed": {
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_DYNAMIC": "FALSE",
+    "OMP_NUM_THREADS": "4",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONHASHSEED": "0"
+  },
+  "generator_environment_required": {
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_DYNAMIC": "FALSE",
+    "OMP_NUM_THREADS": "4",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONHASHSEED": "0"
+  },
+  "houses": {
+    "H01": {
+      "bank_summary": "/mnt/hgfs/workspace/CPIR_M1_FULLGRID_LOOKUP_20260831_R1/H01/bank_summary.json",
+      "bank_summary_sha256": "8bab8c2e5c39d091137beef5d2efe69eb2131be09c75efb1347f18411a776888",
+      "checks": {
+        "environment_hash_match": true,
+        "native_binary_hash_match": true,
+        "wind_hashes_match": true
+      },
+      "environment": "/home/zyc/rmfe_cl_env/H01/OccupancyGrid3D.csv",
+      "environment_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+      "wind_dir": "/home/zyc/rmfe_cl_env/H01/wind",
+      "wind_iteration_hashes": {
+        "wind_iteration_0": "106d8da07e4b92afb390fbb292891a10c2539e10b1b777f76da54fce6f7b261d",
+        "wind_iteration_1": "c9f9d44a81753aef5d4ad82ad9ccd710ab1c6d0646171eec6e330c4e25317212",
+        "wind_iteration_10": "3d161a7ac1230788bec1aa2ae56f5b465ac2c872ed1bf2c7f244159330e8d69a",
+        "wind_iteration_2": "7077e5deae400299465fbb28287c7a5c759bae70bb37d82f3587f9a8822edc29",
+        "wind_iteration_3": "a314adf03b856995ae03891835afcddbe93c4074471683e9ad42c0f8e770c048",
+        "wind_iteration_4": "1df0613ec86d0830a5f40f126960f41712ea7c66e617f2568df0c494decdc0c9",
+        "wind_iteration_5": "6048ca231b56593d398fac5047f53138b884f7db0487b4953b2ce5215294bf06",
+        "wind_iteration_6": "fe61217b6cae64e7a27e59da2cfbc6ad7115f9a6a1c6b5834d5d1e7765191b4b",
+        "wind_iteration_7": "dccfe0ad0bb0af9b132f587d7a93f4885f59446c359300c00951a3bb8d78e995",
+        "wind_iteration_8": "e621dad08061c9b7520ee9e0db8e4927c0cc7321d0addec56ce567754c2f1ef9",
+        "wind_iteration_9": "a0b870560ef5541819c1c2c0d6e1876f9f8a2711a895d0552705592529c1d043"
+      }
+    },
+    "H02": {
+      "bank_summary": "/mnt/hgfs/workspace/CPIR_M1_FULLGRID_LOOKUP_20260831_R1/H02/bank_summary.json",
+      "bank_summary_sha256": "f00daf24c70771d95f945de098fed29e17cc72a763b000bdd281038383bd2845",
+      "checks": {
+        "environment_hash_match": true,
+        "native_binary_hash_match": true,
+        "wind_hashes_match": true
+      },
+      "environment": "/home/zyc/H02_ACIT_TRANSPORT_MISMATCH_AUDIT_WORK/assets/House02/OccupancyGrid3D.csv",
+      "environment_sha256": "9402690152be4568ced8f2256e9098d82691aaaa1f22a1887eeac55d0e5d098d",
+      "wind_dir": "/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/converted_wind_house02",
+      "wind_iteration_hashes": {
+        "wind_iteration_0": "3ecede983d3bf5799ccdb02937ab8ecafeb7d927426020c565225bedb1a5a3fa",
+        "wind_iteration_1": "872faac290fcaba936c85abcaf2e1c40bff06d40dd6c4e3d277e5c6eb23e637e",
+        "wind_iteration_10": "1eb4d0c24e32bc3a850939c42cc3c457bda17073d1c1c2b232fc35886a69de0a",
+        "wind_iteration_2": "71220731e1224d84efbb83473353e1141ce59d06f925813ebcdb3a4b97caf621",
+        "wind_iteration_3": "f4a71f55fd82c88971c0df746cb304877322c7f35eaeb2278dbc70c92840f4d2",
+        "wind_iteration_4": "b5e448e030a1fcb7f0d615510cf3cde6298a512177f6d8d568f5b8c47a130347",
+        "wind_iteration_5": "17af7e2bd88fd08e10b1a5c07ea51e9c8ca3e617a2080bcb6c2ff2085f328230",
+        "wind_iteration_6": "4dac0f52d1b7743ea3d371d5a1c66f087350d4c00109aa6710a9dc42cbf54355",
+        "wind_iteration_7": "9011f524d2d536a79be56b8bb00b5ff816750e8619c7b3a386c95206a0686d91",
+        "wind_iteration_8": "a8f6d799356465406a31d49a8faa9bb267a5141700a2afd116b28f816ee81623",
+        "wind_iteration_9": "0b9332b8dab6cfff4fe924da0aba73ed154034ddd6793efca444a3d866d8c258"
+      }
+    },
+    "H03": {
+      "bank_summary": "/mnt/hgfs/workspace/CPIR_M1_FULLGRID_LOOKUP_20260831_R1/H03/bank_summary.json",
+      "bank_summary_sha256": "736444246178d89432cfde5bc2f12699e7ec9d5600f2e11fa385e609fbfa68ab",
+      "checks": {
+        "environment_hash_match": true,
+        "native_binary_hash_match": true,
+        "wind_hashes_match": true
+      },
+      "environment": "/home/zyc/rmfe_cl_env/H03/OccupancyGrid3D.csv",
+      "environment_sha256": "ac8c9e69e762c8941dab46cd7e804684c2aa50dc6f0912806d19b070c135c4af",
+      "wind_dir": "/home/zyc/rmfe_cl_env/H03/wind",
+      "wind_iteration_hashes": {
+        "wind_iteration_0": "64344e7a191a05e27746c080a16ccbcc9e6f3ca6f9c8e1b34d0557c199e6af8e",
+        "wind_iteration_1": "0320dfa63b6b228803f88ab9f8669fb0891ee62806f9259bca488edeb67fa486",
+        "wind_iteration_10": "476ee4fbc0b0f24e058b183e10d1a8dfc3fa4414a46d1ff431eba24890762341",
+        "wind_iteration_2": "8d99032f2f19c45423acafdc1cb89dc7912c53d3c2ceeecad2b6409e05121908",
+        "wind_iteration_3": "5a75bd46289e599c0920cb6fc33052993c8e2f6909c762afaaa27597d82475e0",
+        "wind_iteration_4": "11d494ae4b78ece3525e5b6a64c23b37dc1b2f9c87654d7f8ae0bb661d09e603",
+        "wind_iteration_5": "0f4da26a744ac0228b85b9b970126fb7cc455fa3bb1bf101506aaf26e9622df1",
+        "wind_iteration_6": "b4c53ec6677784f135b4bb06126504bb3c84d8c29eb0cdadfc873063de4778d0",
+        "wind_iteration_7": "804de18410b2375df416dfc1608eda6c19a4aa6bd389a565c48162b00f48b1d3",
+        "wind_iteration_8": "edca1fed408e4c09914ab6f6634064958a30c20d22e399bda8e7510b3e9e5d1f",
+        "wind_iteration_9": "a1200cc23020f097e149eab3bad44148d15f4af2a6c2ff4080b6bac15065c608"
+      }
+    }
+  },
+  "ld_library_path_observed": "/opt/ros/humble/lib:/home/zyc/PF_DEI_V3_GADEN_BUILD/install/lib:/home/zyc/PF_DEI_V3_GADEN_BUILD/build/gaden_common/third_party/gaden_core/third_party/libbsc:/home/zyc/ros2_ws/install/olfaction_msgs/lib:/home/zyc/ros2_ws/install/gsl_actions/lib:/home/zyc/ros2_ws/install/gmrf_wind_mapping/lib:/home/zyc/ros2_ws/install/gmrf_msgs/lib:/home/zyc/ros2_ws/install/gaden_msgs/lib:/home/zyc/ros2_ws/install/gaden_common/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib",
+  "ld_library_path_prefix": [
+    "/opt/ros/humble/lib",
+    "/home/zyc/PF_DEI_V3_GADEN_BUILD/install/lib",
+    "/home/zyc/PF_DEI_V3_GADEN_BUILD/build/gaden_common/third_party/gaden_core/third_party/libbsc"
+  ],
+  "loaded_library_paths": {
+    "libament_index_cpp.so": "/opt/ros/humble/lib/libament_index_cpp.so",
+    "libbsc.so": "/home/zyc/PF_DEI_V3_GADEN_BUILD/build/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc.so",
+    "libbuiltin_interfaces__rosidl_generator_c.so": "/opt/ros/humble/lib/libbuiltin_interfaces__rosidl_generator_c.so",
+    "libc.so.6": "/lib/x86_64-linux-gnu/libc.so.6",
+    "libfmt.so.8": "/lib/x86_64-linux-gnu/libfmt.so.8",
+    "libgaden.so": "/home/zyc/PF_DEI_V3_GADEN_BUILD/install/lib/libgaden.so",
+    "libgcc_s.so.1": "/lib/x86_64-linux-gnu/libgcc_s.so.1",
+    "libgomp.so.1": "/lib/x86_64-linux-gnu/libgomp.so.1",
+    "liblibstatistics_collector.so": "/opt/ros/humble/lib/liblibstatistics_collector.so",
+    "libm.so.6": "/lib/x86_64-linux-gnu/libm.so.6",
+    "librcl.so": "/opt/ros/humble/lib/librcl.so",
+    "librcl_interfaces__rosidl_generator_c.so": "/opt/ros/humble/lib/librcl_interfaces__rosidl_generator_c.so",
+    "librcl_interfaces__rosidl_typesupport_c.so": "/opt/ros/humble/lib/librcl_interfaces__rosidl_typesupport_c.so",
+    "librcl_interfaces__rosidl_typesupport_cpp.so": "/opt/ros/humble/lib/librcl_interfaces__rosidl_typesupport_cpp.so",
+    "librcl_logging_interface.so": "/opt/ros/humble/lib/librcl_logging_interface.so",
+    "librcl_logging_spdlog.so": "/opt/ros/humble/lib/librcl_logging_spdlog.so",
+    "librcl_yaml_param_parser.so": "/opt/ros/humble/lib/librcl_yaml_param_parser.so",
+    "librclcpp.so": "/opt/ros/humble/lib/librclcpp.so",
+    "librcpputils.so": "/opt/ros/humble/lib/librcpputils.so",
+    "librcutils.so": "/opt/ros/humble/lib/librcutils.so",
+    "librmw.so": "/opt/ros/humble/lib/librmw.so",
+    "librmw_implementation.so": "/opt/ros/humble/lib/librmw_implementation.so",
+    "librosgraph_msgs__rosidl_typesupport_cpp.so": "/opt/ros/humble/lib/librosgraph_msgs__rosidl_typesupport_cpp.so",
+    "librosidl_runtime_c.so": "/opt/ros/humble/lib/librosidl_runtime_c.so",
+    "librosidl_typesupport_c.so": "/opt/ros/humble/lib/librosidl_typesupport_c.so",
+    "librosidl_typesupport_cpp.so": "/opt/ros/humble/lib/librosidl_typesupport_cpp.so",
+    "libspdlog.so.1": "/lib/x86_64-linux-gnu/libspdlog.so.1",
+    "libstatistics_msgs__rosidl_typesupport_cpp.so": "/opt/ros/humble/lib/libstatistics_msgs__rosidl_typesupport_cpp.so",
+    "libstdc++.so.6": "/lib/x86_64-linux-gnu/libstdc++.so.6",
+    "libtracetools.so": "/opt/ros/humble/lib/libtracetools.so",
+    "libyaml.so": "/opt/ros/humble/lib/libyaml.so",
+    "libz.so.1": "/lib/x86_64-linux-gnu/libz.so.1"
+  },
+  "loader_checks": {
+    "frozen_gaden_library_loaded": true,
+    "frozen_libbsc_loaded": true,
+    "ldd_exit_zero": true,
+    "no_library_not_found": true
+  },
+  "overlay_order": [
+    "/opt/ros/humble/setup.bash",
+    "/home/zyc/ros2_ws/install/setup.bash"
+  ],
+  "pass": true,
+  "verdict": "CTPI_M2_GENERATOR_RUNTIME=PASS"
+}

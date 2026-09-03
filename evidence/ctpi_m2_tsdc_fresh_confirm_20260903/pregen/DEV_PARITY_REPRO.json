@@ -1,0 +1,226 @@
+{
+  "contract": "CTPI_M2_TSDC_DEV_AUDIT_V0",
+  "status": "DEV_SPENT_ONLY_NOT_CONFIRMATORY",
+  "events": 900,
+  "worlds": 60,
+  "frozen_beta": [
+    -1.1915279295661385,
+    1.0423583775118566,
+    2.989667055088417
+  ],
+  "refit_beta": [
+    -1.191527929566138,
+    1.0423583775118566,
+    2.989667055088417
+  ],
+  "beta_max_abs_diff": 4.440892098500626e-16,
+  "oof": {
+    "raw": {
+      "nll": 0.3117266476030675,
+      "brier": 0.09595336076817558,
+      "ece5": 0.040617283950617276
+    },
+    "tsdc": {
+      "nll": 0.21010887029792777,
+      "brier": 0.06379834727806956,
+      "ece5": 0.016746022245203645
+    },
+    "sensor_only": {
+      "nll": 0.36143741693339065,
+      "brier": 0.11126485159489294,
+      "ece5": 0.05301125006000033
+    },
+    "vs_raw_nll": {
+      "wins": 54,
+      "losses": 6,
+      "ties": 0,
+      "p_one_sided": 4.8614808359492834e-11
+    },
+    "vs_raw_brier": {
+      "wins": 53,
+      "losses": 7,
+      "ties": 0,
+      "p_one_sided": 3.8359591371384116e-10
+    },
+    "vs_sensor_nll": {
+      "wins": 53,
+      "losses": 7,
+      "ties": 0,
+      "p_one_sided": 3.8359591371384116e-10
+    },
+    "vs_sensor_brier": {
+      "wins": 54,
+      "losses": 6,
+      "ties": 0,
+      "p_one_sided": 4.8614808359492834e-11
+    },
+    "fold_beta_mean": [
+      -1.1895122009076504,
+      1.0437735086267224,
+      2.990260461202602
+    ],
+    "fold_beta_min": [
+      -1.2831469723191453,
+      1.0036260142914206,
+      2.9091563664217803
+    ],
+    "fold_beta_max": [
+      -1.0262450602597748,
+      1.0900072390185866,
+      3.1442791776060437
+    ],
+    "per_house": {
+      "H01": {
+        "raw_nll": 0.3287646493501651,
+        "oof_nll": 0.24760736794124702,
+        "raw_brier": 0.09847736625514404,
+        "oof_brier": 0.0723395187248177,
+        "nll_sign": {
+          "wins": 18,
+          "losses": 2,
+          "ties": 0,
+          "p_one_sided": 0.00020122528076171875
+        },
+        "brier_sign": {
+          "wins": 18,
+          "losses": 2,
+          "ties": 0,
+          "p_one_sided": 0.00020122528076171875
+        }
+      },
+      "H02": {
+        "raw_nll": 0.28130575489467985,
+        "oof_nll": 0.18589960237895822,
+        "raw_brier": 0.08720164609053499,
+        "oof_brier": 0.05738312532414947,
+        "nll_sign": {
+          "wins": 18,
+          "losses": 2,
+          "ties": 0,
+          "p_one_sided": 0.00020122528076171875
+        },
+        "brier_sign": {
+          "wins": 17,
+          "losses": 3,
+          "ties": 0,
+          "p_one_sided": 0.0012884140014648438
+        }
+      },
+      "H03": {
+        "raw_nll": 0.32510953856435765,
+        "oof_nll": 0.19681964057357798,
+        "raw_brier": 0.10218106995884774,
+        "oof_brier": 0.06167239778524151,
+        "nll_sign": {
+          "wins": 18,
+          "losses": 2,
+          "ties": 0,
+          "p_one_sided": 0.00020122528076171875
+        },
+        "brier_sign": {
+          "wins": 18,
+          "losses": 2,
+          "ties": 0,
+          "p_one_sided": 0.00020122528076171875
+        }
+      }
+    },
+    "leave_one_house_out": {
+      "H01": {
+        "raw_nll": 0.3287646493501651,
+        "tsdc_nll": 0.26095041939089925,
+        "nll_sign": {
+          "wins": 15,
+          "losses": 5,
+          "ties": 0,
+          "p_one_sided": 0.020694732666015625
+        },
+        "beta": [
+          -1.5442354504160727,
+          1.114693624073668,
+          3.0653260261351623
+        ]
+      },
+      "H02": {
+        "raw_nll": 0.28130575489467985,
+        "tsdc_nll": 0.19970892471463922,
+        "nll_sign": {
+          "wins": 16,
+          "losses": 4,
+          "ties": 0,
+          "p_one_sided": 0.005908966064453125
+        },
+        "beta": [
+          -1.1947914584345751,
+          0.9672537118893203,
+          3.6536403365122854
+        ]
+      },
+      "H03": {
+        "raw_nll": 0.32510953856435765,
+        "tsdc_nll": 0.20272815745055575,
+        "nll_sign": {
+          "wins": 18,
+          "losses": 2,
+          "ties": 0,
+          "p_one_sided": 0.00020122528076171875
+        },
+        "beta": [
+          -0.8877063667982156,
+          1.0787401216136034,
+          2.5412451780076943
+        ]
+      }
+    }
+  },
+  "retrospective_cal_to_old_confirm": {
+    "status": "DEV_ONLY_OLD_CONFIRM_ALREADY_OPENED",
+    "cal_beta": [
+      -1.276473182791232,
+      1.041637049456089,
+      2.854572928048474
+    ],
+    "raw_nll": 0.29357638344124853,
+    "tsdc_nll": 0.1924098941208341,
+    "raw_brier": 0.08857338820301783,
+    "tsdc_brier": 0.05809674511531465,
+    "raw_ece5": 0.041975308641975295,
+    "tsdc_ece5": 0.023627347951668532,
+    "nll_sign": {
+      "wins": 27,
+      "losses": 3,
+      "ties": 0,
+      "p_one_sided": 4.215165972709656e-06
+    },
+    "brier_sign": {
+      "wins": 26,
+      "losses": 4,
+      "ties": 0,
+      "p_one_sided": 2.9738061130046848e-05
+    }
+  },
+  "destructive_controls": {
+    "count": 31,
+    "permutations": "31 unique fixed-point-free affine permutations over 20 worlds within each House, stop_id preserved",
+    "real_in_sample_nll": 0.20642813603681215,
+    "transport_destroyed_nll": {
+      "min": 0.5166145139673978,
+      "median": 0.6023918161559947,
+      "max": 0.6841011239828362,
+      "real_better": 31
+    },
+    "sensor_state_destroyed_nll": {
+      "min": 0.5251546015741284,
+      "median": 0.6107854909559971,
+      "max": 0.767514882074552,
+      "real_better": 31
+    }
+  },
+  "authorization": {
+    "fresh_confirm_only": true,
+    "m3": false,
+    "cpp": false,
+    "ros": false,
+    "closed_loop": false
+  }
+}
