@@ -1,0 +1,34 @@
+{
+  "contract": "CTPI_M3_FASTTRACK_PHASE0_HASH_ERRATUM_V1",
+  "date": "2026-09-03",
+  "superseded_handoff_head": "998beb23553ec4153536a4925c155a3ed0ba6769",
+  "phase0_result_at_superseded_head": "CTPI_M3_FASTTRACK_CODEX_HANDOFF=FAIL",
+  "execution_stopped_before": [
+    "materialization",
+    "runtime_patch_application",
+    "release_build",
+    "bank_access",
+    "closed_loop_smoke"
+  ],
+  "upstream_decision": "CURRENT_COMMITTED_BYTES_ARE_AUTHORITATIVE",
+  "decision_basis": [
+    "ctpi_m3_pip_frozen_v0.py current bytes are the bytes introduced by commit 4574c1181e4fb07dbd4340ed674d99dd010e5524 whose message is 'ctpi: freeze M3 PIP Python reference'",
+    "CTPI_M3_FASTTRACK_RUNTIME_INTEGRATION_20260903.patch current bytes are the latest repaired bytes from commit 83ec5b94e5577df685873670ad52b783bc52efe8 whose message is 'ctpi: repair M3 runtime integration patch'",
+    "the two superseded expected SHA-256 values were not committed versions of those paths in the transferred complete history",
+    "VM files were byte-identical to Git blobs, so the failure was an upstream contract inconsistency rather than a VM or line-ending issue"
+  ],
+  "authoritative_sha256": {
+    "experiments/cg_pc_ctt/ctpi_m3_pip_frozen_v0.py": "75323d10faf1b9d8695f61fa59d7478fd258b969d64ce510f14dcc2fdf4a645a",
+    "patches/CTPI_M3_FASTTRACK_RUNTIME_INTEGRATION_20260903.patch": "a054a28c593f095956469e87713350e89baf3f30c94a9d23e8708b63379f4713"
+  },
+  "superseded_sha256": {
+    "experiments/cg_pc_ctt/ctpi_m3_pip_frozen_v0.py": "bcf065903ec8cd88533ff0ac0dbd453131a9aeaf0d075fbf71ec92dc00fc2706",
+    "patches/CTPI_M3_FASTTRACK_RUNTIME_INTEGRATION_20260903.patch": "96e1e425a7c4e6e97ad123c1d46e67120dc86574b3d3927a370e5b99d1020743"
+  },
+  "scientific_change": false,
+  "formula_change": false,
+  "gate_change": false,
+  "bank_change": false,
+  "required_reexecution": "RESTART_FROM_PHASE0_ON_NEW_AUTHORITATIVE_HEAD",
+  "outcome_state": "NO_TRUE_CLOSED_LOOP_OUTCOME_SEEN"
+}
