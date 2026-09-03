@@ -59,15 +59,20 @@ namespace GSL
             return Grid2D<T>(vec, occupancy, gridMetadata);
         }
 
+        //-------------Core-------------
         Grid2DMetadata gridMetadata;
         std::vector<double> sourceProbability;
         std::vector<HitProbability> hitProbability;
         std::vector<Occupancy> occupancy;
         std::vector<Vector2> estimatedWindVectors;
+
         PMFS_internal::Simulations simulations;
+
+        //-------------Data-------------
         PMFS_internal::Settings settings;
         PMFS_internal::PublishersAndSubscribers pubs;
 
+        //-------------Utils-------------
         bool paused = false;
         std::optional<VisibilityMap> visibilityMap;
         uint iterationsCounter;
@@ -83,9 +88,14 @@ namespace GSL
         int p2ShadowReplicas = 0;
         uint64_t p2ShadowTransportSubstream = 0;
         uint64_t p2SourceUpdateId = 0;
+        // Monotone completed StopAndMeasure block identity for the optional
+        // PC-ACI/A9 event carrier.  It does not alter the native PMFS path.
         uint64_t completedMeasurementBlockId = 0;
         bool tadmEnabled = false;
         std::string pfdiMode = "off";
+        // Optional inference-to-control coupling.  The frozen OFF path keeps
+        // this at zero; the protected ON path can use the PFDI posterior when
+        // ranking the next measurement goal.
         double posteriorGuidanceWeight = 0.0;
         std::string tadmDirectory;
         int tadmPriorSet = 0;
@@ -96,6 +106,8 @@ namespace GSL
         std::string contextBankExportDirectory;
         double contextBankPreviousSimTime = -1.0;
 
+        // Causal Physical Intervention Reachability nested A1/A2/A3 runtime.
+        // This state is unreachable in the authoritative OFF mode.
         struct CPIRSample
         {
             int timeIndex = -1;
