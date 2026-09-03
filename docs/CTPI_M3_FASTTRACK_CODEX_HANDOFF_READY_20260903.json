@@ -1,0 +1,95 @@
+{
+  "contract": "CTPI_M3_FASTTRACK_CODEX_HANDOFF_READY_V1",
+  "status": "CODEX_HANDOFF_READY=PASS",
+  "repository": "kris-yun/uav-gsl-isj",
+  "branch": "research/ctpi-m3-fasttrack-20260903",
+  "handoff_anchor_commit": "dd5f71111096193e81ccda9c1ce5f9a54628fd25",
+  "final_head_policy": "Use the exact branch HEAD containing this JSON as supplied by the ChatGPT handoff message. It must be a descendant of handoff_anchor_commit. Do not use an older commit.",
+  "scientific_state": {
+    "M1_CREL_F00": "CONFIRMED_PASS",
+    "M2_TSDC_V0": "FRESH_CONFIRM_PASS_FROZEN",
+    "M3_PIP": "FROZEN_FOR_TRUE_CLOSED_LOOP",
+    "true_closed_loop_outcomes_seen_before_freeze": false
+  },
+  "frozen_runtime": {
+    "stepsSourceUpdate": 3,
+    "maxWarmupIterations": 3,
+    "minWarmupIterations": 1,
+    "performance_horizon_s": 240.0,
+    "m3_horizontal_speed_mps": 0.4,
+    "dt_s": 0.2,
+    "dwell_samples": 80,
+    "bank_time_samples": 1500,
+    "same_cadence_all_arms": true
+  },
+  "arms": {
+    "A0": "native_PMFS",
+    "F00": "frozen_M1_plus_native_planner",
+    "F10": "frozen_M1_plus_raw_finite8_forecast_plus_PIP",
+    "F11": "frozen_M1_plus_frozen_TSDC_plus_same_PIP"
+  },
+  "critical_sha256": {
+    "experiments/cg_pc_ctt/ctpi_m2_tsdc_frozen_v0.py": "854a2fc8513201cdb2ae497a62c0cd3c5fa09fdae2f1bc309ad594a8b1aaacf7",
+    "experiments/cg_pc_ctt/ctpi_m3_pip_frozen_v0.py": "bcf065903ec8cd88533ff0ac0dbd453131a9aeaf0d075fbf71ec92dc00fc2706",
+    "ros2_package/src/gsl_server/algorithms/PMFS/CTPI.cpp": "e5ce97b3f6ed5d1c7d17636933130a3b7207be9286b6173255d9ffca65fb8675",
+    "ros2_package/src/gsl_server/algorithms/PMFS/PMFS.hpp": "7fe197312c6ea93cd8edf4876dd5d8c60328a64aa017b236f97848c24a00339e",
+    "patches/CTPI_M3_FASTTRACK_RUNTIME_INTEGRATION_20260903.patch": "96e1e425a7c4e6e97ad123c1d46e67120dc86574b3d3927a370e5b99d1020743",
+    "patches/CTPI_M3_FASTTRACK_LAUNCH_20260903.patch": "d4d9d992d78285ab87721e5249c7641f39181d9f9fb56057307d2ba2c9574c55",
+    "patches/CTPI_M3_FASTTRACK_RUNNER_20260903.patch": "e4d6a3137dadca6997cd34d9177becc83861c16493c0057b80e4ca5acfd34ea0"
+  },
+  "critical_git_blobs": {
+    "tools/ctpi_m3_fasttrack_handoff_check.py": "100a2579d162a9ea93afad82685d9a1e49a3862b",
+    "tools/ctpi_fasttrack_terminal_guard.py": "e224ca0a6e95206af363228876fbf607b757a067",
+    "closed_loop/ctpi/run_ctpi_h01_seed0_smoke_20260903.sh": "4674052d118a92cc1a62318bbdf35ec38105e982",
+    "closed_loop/ctpi/run_ctpi_h01_3seed_screen_20260903.sh": "8f804c4ac563d49d3e9236dd322154247ed96686",
+    "closed_loop/ctpi/run_ctpi_crosshouse_36run_confirm_20260903.sh": "7db6b6e3455867a91f593140d6d47c454381f0ab",
+    "closed_loop/ctpi/prepare_ctpi_m3_fasttrack_vm_20260903.sh": "754b8c1762216b38e7b87b6867adfc43d008f8de",
+    "tools/materialize_ctpi_m3_fasttrack_vm_files.py": "1cf33f0d547547de68ddebee9944755826777e48",
+    "tools/apply_ctpi_m3_fasttrack_runtime_patch.py": "a268addae6cbd901ffe191983604c77ff51b481e",
+    "tools/ctpi_m3_fasttrack_preflight.py": "36716109361288fa85dd0bb9bd87f3591852bd8e",
+    "tools/ctpi_m3_static_parity.py": "4cafdf53cdf886c4843b9e33d0323a2857a56edb",
+    "tools/ctpi_m3_action_sanity.py": "5b1a734a96af21f30f5f95c98a5699cc27e95212",
+    "tools/ctpi_true_closed_loop_check.py": "568cf909964d7b222474a378ebc84630f938f4cb",
+    "tools/ctpi_fasttrack_performance.py": "01c6b36b1e829ba96bc66cae1de7c1683e45fe15",
+    "tools/ctpi_fasttrack_screen_gate.py": "1d60f8aae7ce7c9795a642916cd57322fef12552",
+    "tools/ctpi_crosshouse_performance.py": "c9813a9de6e9b00ac2dd658137f624114e3904fd",
+    "docs/CTPI_M3_FASTTRACK_FREEZE_20260903.md": "2318ce390b072978c2fb18a892b7dfe867ef328a",
+    "docs/CTPI_M3_FASTTRACK_PREREG_20260903.json": "a6a13a2e874d7ae96918cf2c28665de067f88524"
+  },
+  "required_execution_order": [
+    "clean_isolated_checkout_at_final_handoff_head",
+    "ctpi_m3_fasttrack_handoff_check_PASS",
+    "prepare_materialize_patch_preflight_release_build_PASS",
+    "H01_H02_H03_existing_bank_integrity_PASS",
+    "H01_seed0_F00_F10_F11_true_closed_loop_smoke_PASS",
+    "H01_seeds0_1_2_12run_screen_only_if_smoke_PASS",
+    "crosshouse_seeds3_4_5_36run_confirm_only_if_screen_PASS"
+  ],
+  "terminal_gates": {
+    "prebuild": "CTPI_M3_FASTTRACK_CODEX_HANDOFF=PASS",
+    "build": "CTPI_M3_FASTTRACK_VM_BUILD=PASS",
+    "banks": "CTPI_FASTTRACK_ALL_BANKS_INTEGRITY=PASS",
+    "smoke_action": "CTPI_M3_ACTION_SANITY=PASS",
+    "smoke_causal": "TRUE_CLOSED_LOOP_CAUSAL_CHAIN=PASS",
+    "smoke": "CTPI_H01_SEED0_SMOKE=PASS",
+    "screen": "CTPI_FASTTRACK_H01_3SEED_SCREEN=PASS",
+    "formal_pass": "CTPI_CROSSHOUSE_36RUN_CONFIRM=PASS",
+    "formal_no_go": "CTPI_CROSSHOUSE_36RUN_CONFIRM=NO_GO"
+  },
+  "forbidden": [
+    "modify_M1_formula",
+    "modify_TSDC_beta_or_features",
+    "modify_M3_information_objective",
+    "modify_action_domain_or_tiebreak",
+    "modify_3_3_1_cadence",
+    "modify_240s_horizon",
+    "add_planner_weight_or_temperature",
+    "use_truth_or_future_observation_in_planner",
+    "regenerate_predictive_bank",
+    "change_Gate_after_outcomes",
+    "reuse_screen_seeds_0_1_2_as_formal_confirmation",
+    "continue_after_any_required_Gate_failure"
+  ],
+  "codex_instruction": "docs/CODEX_CTPI_M3_FASTTRACK_TRUE_CLOSED_LOOP_FROM_HANDOFF_20260903.md",
+  "outcome_state_at_handoff": "NO_TRUE_CLOSED_LOOP_OUTCOME_GENERATED_BY_THIS_FASTTRACK"
+}
