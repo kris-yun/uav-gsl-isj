@@ -1,0 +1,110 @@
+{
+  "contract": "CTPI_M3_FASTTRACK_AGENT_HANDOFF_AFTER_CODEX_QUOTA_V1",
+  "status": "AGENT_CONTINUATION_READY",
+  "repository": "kris-yun/uav-gsl-isj",
+  "branch": "research/ctpi-m3-fasttrack-20260903",
+  "runtime_anchor_commit": "c4445ee69d478f48ada19dfb9425726ab78c2d33",
+  "science_anchor_commit": "bcd56dd276e0e29a22399d695203101e7c09022f",
+  "scientific_state": {
+    "M1_CREL_F00": "CONFIRMED_PASS",
+    "M2_TSDC_V0": "FRESH_CONFIRM_PASS_FROZEN",
+    "M3_PIP": "FROZEN_FOR_TRUE_CLOSED_LOOP",
+    "true_closed_loop_outcomes_generated": false,
+    "science_no_go": false
+  },
+  "frozen_runtime": {
+    "stepsSourceUpdate": 3,
+    "maxWarmupIterations": 3,
+    "minWarmupIterations": 1,
+    "performance_horizon_s": 240.0,
+    "m3_horizontal_speed_mps": 0.4,
+    "dt_s": 0.2,
+    "dwell_samples": 80,
+    "bank_time_samples": 1500
+  },
+  "arms": {
+    "A0": "native_PMFS",
+    "F00": "frozen_M1_plus_native_planner",
+    "F10": "frozen_M1_plus_raw_finite8_forecast_plus_PIP",
+    "F11": "frozen_M1_plus_frozen_TSDC_plus_same_PIP"
+  },
+  "completed_gates": {
+    "phase0_v3": "PASS",
+    "v5_environment_autonomous_recovery": "PASS",
+    "dependency_overlay_rebuild": "PASS",
+    "gaden_dependency_qualification": "PASS",
+    "tsdc_selftest": "PASS",
+    "m3_pip_selftest": "PASS",
+    "python_cpp_parity_max_abs_error": 2.22e-16,
+    "truth_blind_source_preflight": "PASS",
+    "authoritative_release_build": "PASS",
+    "H01_bank_integrity": "PASS",
+    "H02_bank_integrity": "PASS",
+    "H03_bank_integrity": "PASS"
+  },
+  "environment_recovery_completed": {
+    "authorized_gaden_overlay": "/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install",
+    "rebuilt_non_scientific_ros_packages": ["olfaction_msgs", "gsl_actions"],
+    "system_cmake_repairs": ["spdlog", "fmt"],
+    "build_parallelism": "serial",
+    "low_memory_release_build": true,
+    "reason_for_low_memory_build": "previous parallel Release build hit OOM; serial low-memory Release retained -O3 and changed diagnostics/build-memory only",
+    "previous_storage_failure": "prototype3 linked after compile but /dev/shm filled; subsequent recovery cleaned failed roots and used one isolated build root"
+  },
+  "authoritative_vm_artifacts_if_still_present": {
+    "repo": "/home/zyc/CTPI_M3_FASTTRACK_TRUE_CLOSED_LOOP_20260903_R8_C4445EE/repo",
+    "build_root": "/dev/shm/ctpi_m3_fasttrack_build_v5_c4445ee",
+    "runtime_env": "/dev/shm/ctpi_m3_fasttrack_build_v5_c4445ee/ctpi_prepare_audit/CTPI_VM_ENV.sh",
+    "bank_audit_root": "/dev/shm/ctpi_m3_fasttrack_bank_audit_v5_c4445ee",
+    "H01_integrity_report": "/dev/shm/ctpi_m3_fasttrack_bank_audit_v5_c4445ee/H01_CPIR_LOOKUP_INTEGRITY.json"
+  },
+  "current_blocker": {
+    "classification": "ENVIRONMENT_COMPATIBILITY_ONLY",
+    "missing_path": "/dev/shm/house1_raw_query",
+    "required_semantics": "H01 raw_house1_snapshot executable query backend",
+    "smoke_started": false,
+    "arm_outcomes_generated": false,
+    "do_not_replace_backend": true
+  },
+  "next_agent_mission": [
+    "Inspect the VM for the historical source/build/provenance of /dev/shm/house1_raw_query using prior workdirs, shell history, source trees and archived evidence.",
+    "Recreate only the missing H01 raw_house1_snapshot compatibility executable or symlink in a reproducible environment-only way.",
+    "Do not change the H01 gas backend, runner science parameters, M1/M2/M3, Gates, cadence, horizon, or banks.",
+    "Validate the recovered query executable deterministically before running CTPI smoke.",
+    "Use a fresh smoke RUN_ROOT so the prior pre-arm failed attempt cannot contaminate results.",
+    "Run H01 seed0 F00/F10/F11 smoke and enforce terminal/action/causal-chain Gates.",
+    "If smoke PASS, run the frozen H01 seeds0-2 12-run screening; only if screening PASS run H01/H02/H03 seeds3-5 A0/F00/F10/F11 36-run formal confirmation.",
+    "Commit all reproducible environment recovery scripts/manifests/hashes and final evidence pointers to this same branch."
+  ],
+  "required_smoke_gates": [
+    "CTPI_FASTTRACK_CASE_TERMINAL=PASS for every arm",
+    "CTPI_M3_ACTION_SANITY=PASS for F10/F11",
+    "TRUE_CLOSED_LOOP_CAUSAL_CHAIN=PASS",
+    "CTPI_H01_SEED0_SMOKE=PASS"
+  ],
+  "formal_progression": {
+    "screen": "H01 seeds 0,1,2 x A0/F00/F10/F11 = 12 runs",
+    "screen_gate": "CTPI_FASTTRACK_H01_3SEED_SCREEN=PASS",
+    "formal": "H01/H02/H03 x seeds 3,4,5 x A0/F00/F10/F11 = 36 runs",
+    "formal_terminal": ["CTPI_CROSSHOUSE_36RUN_CONFIRM=PASS", "CTPI_CROSSHOUSE_36RUN_CONFIRM=NO_GO"]
+  },
+  "forbidden": [
+    "modify_M1_formula",
+    "modify_TSDC_beta_or_features",
+    "modify_M3_information_objective",
+    "modify_action_domain_or_tiebreak",
+    "modify_3_3_1_cadence",
+    "modify_240s_horizon",
+    "regenerate_predictive_bank",
+    "change_Gate_after_outcomes",
+    "replace_H01_raw_house1_snapshot_backend_with_another_backend",
+    "use_truth_or_future_observation_in_planner",
+    "reuse_screen_seeds_0_1_2_as_formal_confirmation",
+    "continue_after_required_scientific_or_runtime_Gate_failure"
+  ],
+  "notes": [
+    "The repository history contains references to /dev/shm/house1_raw_query but no authoritative builder for it was found in GitHub code search; the next agent must recover provenance from the VM rather than invent a new backend.",
+    "The previous smoke command was blocked before any arm outcome was produced, so no true closed-loop result has been observed yet.",
+    "If the authoritative build or bank audit paths have vanished from /dev/shm, rebuild/reverify from runtime_anchor_commit rather than modifying science."
+  ]
+}
