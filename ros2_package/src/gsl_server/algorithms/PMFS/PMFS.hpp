@@ -59,20 +59,15 @@ namespace GSL
             return Grid2D<T>(vec, occupancy, gridMetadata);
         }
 
-        //-------------Core-------------
         Grid2DMetadata gridMetadata;
         std::vector<double> sourceProbability;
         std::vector<HitProbability> hitProbability;
         std::vector<Occupancy> occupancy;
         std::vector<Vector2> estimatedWindVectors;
-
         PMFS_internal::Simulations simulations;
-
-        //-------------Data-------------
         PMFS_internal::Settings settings;
         PMFS_internal::PublishersAndSubscribers pubs;
 
-        //-------------Utils-------------
         bool paused = false;
         std::optional<VisibilityMap> visibilityMap;
         uint iterationsCounter;
@@ -86,7 +81,7 @@ namespace GSL
         std::string p2ShadowDirectory;
         uint64_t p2ShadowGlobalSeed = 0;
         int p2ShadowReplicas = 0;
-        uint64_t p2TransportSubstream = 0;
+        uint64_t p2ShadowTransportSubstream = 0;
         uint64_t p2SourceUpdateId = 0;
         uint64_t completedMeasurementBlockId = 0;
         bool tadmEnabled = false;
