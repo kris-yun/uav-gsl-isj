@@ -1,0 +1,163 @@
+{
+  "authorization_sha256": "a340c6955238da6838e7ed69db3b1aa36e05375a9f06d24fe87738ae0bb53cf4",
+  "baseline": {
+    "brier": 0.08857338820301783,
+    "ece_5bin": 0.041975308641975295,
+    "nll": 0.29357638344124853
+  },
+  "by_house": {
+    "H01": {
+      "paired_tape_brier": {
+        "baseline_mean": 0.09312757201646091,
+        "losses": 7,
+        "m2_mean": 0.09676540398728507,
+        "one_sided_exact_sign_p": 0.9453125,
+        "pairs": 10,
+        "ties": 0,
+        "wins": 3
+      },
+      "paired_tape_nll": {
+        "baseline_mean": 0.3145773080934731,
+        "losses": 5,
+        "m2_mean": 0.32357078315309135,
+        "one_sided_exact_sign_p": 0.623046875,
+        "pairs": 10,
+        "ties": 0,
+        "wins": 5
+      },
+      "stable_reverse_both": false
+    },
+    "H02": {
+      "paired_tape_brier": {
+        "baseline_mean": 0.08934156378600824,
+        "losses": 3,
+        "m2_mean": 0.08213739515097293,
+        "one_sided_exact_sign_p": 0.171875,
+        "pairs": 10,
+        "ties": 0,
+        "wins": 7
+      },
+      "paired_tape_nll": {
+        "baseline_mean": 0.2849373090224522,
+        "losses": 3,
+        "m2_mean": 0.2565627774370333,
+        "one_sided_exact_sign_p": 0.171875,
+        "pairs": 10,
+        "ties": 0,
+        "wins": 7
+      },
+      "stable_reverse_both": false
+    },
+    "H03": {
+      "paired_tape_brier": {
+        "baseline_mean": 0.08325102880658437,
+        "losses": 5,
+        "m2_mean": 0.08233614802605593,
+        "one_sided_exact_sign_p": 0.623046875,
+        "pairs": 10,
+        "ties": 0,
+        "wins": 5
+      },
+      "paired_tape_nll": {
+        "baseline_mean": 0.28121453320782014,
+        "losses": 4,
+        "m2_mean": 0.26730973546881365,
+        "one_sided_exact_sign_p": 0.376953125,
+        "pairs": 10,
+        "ties": 0,
+        "wins": 6
+      },
+      "stable_reverse_both": false
+    }
+  },
+  "confirm_opened_once": true,
+  "contract": "CTPI_M2_SOURCE_INTERVENTION_CONFIRM_GATE_V1",
+  "controlled_source_is_forward_intervention": true,
+  "criteria": {
+    "at_least_three_observed_k_levels": true,
+    "at_least_three_table_values": true,
+    "direct_source_conditioned_brier_lower": true,
+    "direct_source_conditioned_nll_lower": true,
+    "ece_not_worse": true,
+    "finite_interior_probability": true,
+    "no_stable_reverse_house": true,
+    "paired_sign_support": false
+  },
+  "distinct_table_values": 6,
+  "events": 450,
+  "forecast_code_sha256": "808abc59b8f7b4cb20cfaac0a67f54dfd6155df9fa8ffe671f4688f8c3bd6dcd",
+  "formula_tuned_on_confirm": false,
+  "k_coverage": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "m1_posterior_argument_present": false,
+  "m2": {
+    "brier": 0.0870796490547713,
+    "ece_5bin": 0.024938086482310103,
+    "nll": 0.28248109868631277
+  },
+  "paired_tape_brier": {
+    "baseline_mean": 0.0885733882030178,
+    "losses": 15,
+    "m2_mean": 0.08707964905477131,
+    "one_sided_exact_sign_p": 0.572232224047184,
+    "pairs": 30,
+    "ties": 0,
+    "wins": 15
+  },
+  "paired_tape_nll": {
+    "baseline_mean": 0.29357638344124853,
+    "losses": 12,
+    "m2_mean": 0.2824810986863128,
+    "one_sided_exact_sign_p": 0.1807973040267825,
+    "pairs": 30,
+    "ties": 0,
+    "wins": 18
+  },
+  "pass": false,
+  "stable_reverse_houses": [],
+  "table_sha256": "e4bb453b0de0a3a2872e5a86d7a9a018b08fd9b9fc3b58a8ea5d6829b776f40e",
+  "tapes": 30,
+  "verdict": "CTPI_M2_SOURCE_CONDITIONED_PREDICTIVE_GATE_NO_GO",
+  "world_audit_sha256": {
+    "M2_CONFIRM_H01_00": "c689ecb88fd4d6c8d6ff55a215982ae4f7c90610ebde55e4f9554c4904495c97",
+    "M2_CONFIRM_H01_01": "b4c3de8f7df9f31ab0802a282178fa6088a501b13ab5e63d10620763b6ea55b4",
+    "M2_CONFIRM_H01_02": "06b6e96abc2fc7ad24b4a63eec0ebd6580ecf7c1af71b511bdfa3331fab6339b",
+    "M2_CONFIRM_H01_03": "5aaaba0edbb0d2e3bedaecb1e2447e81e502a8c06a0306ebc1d49079965896f6",
+    "M2_CONFIRM_H01_04": "67f1b6329cc76b04bdd984459d0d1603c1a100bbb1625ac3ed6e35d82849d222",
+    "M2_CONFIRM_H01_05": "8dd07268302a88c83c71787d0b7efe9c24155ba8da9ec3e10667709add14ae0e",
+    "M2_CONFIRM_H01_06": "de229cc67c7a9c6e34beff7253711e43e2d47c64961b9751d586bb93537adf1c",
+    "M2_CONFIRM_H01_07": "6060215950e513c2ddab44c952144ba35695fcb4ec47c253e2edc1849181e687",
+    "M2_CONFIRM_H01_08": "f2d60346196de6ebb0167714fc97c73487a7d0aa2ad41ee9cf966af846d8e4ba",
+    "M2_CONFIRM_H01_09": "bc3aad9640cae96cbf98ebbf2de71ec68401350d855dc88320afbb149a4309eb",
+    "M2_CONFIRM_H02_00": "1e72484180ea8aa2eff27b834e9f0c3803b28a54cc3ef1c9ca462cc8b8c9d56e",
+    "M2_CONFIRM_H02_01": "26e08ffd208f4265c3e9e9e3c681dbadd2a7e39ce8fbad846494b8b1bfa8f130",
+    "M2_CONFIRM_H02_02": "471103b91c538e70bb2a3299535fa0d927254bfd846dc0fcc0577b76b18da306",
+    "M2_CONFIRM_H02_03": "33c3356aaacaa028439cdc6abae53a846cc5f4657d08e559b4b85d2237859d70",
+    "M2_CONFIRM_H02_04": "f94117336fe7ea62c1b602e8f2a850d7768cba09275eb65fd71c4df7f18c4d68",
+    "M2_CONFIRM_H02_05": "fae7aaeba658fc26ea90b09b3d4c55a1050f6c6a29d73ea2b7ce1ba4e3455275",
+    "M2_CONFIRM_H02_06": "b19ccbcddd942a169a4205f9e838e5396d22fe8cfcd5883e7abaa572102d8e1b",
+    "M2_CONFIRM_H02_07": "86889f6998cd768087de59a3030f7602dc01ec54bbfefbcdb9ab9a9a12acc6aa",
+    "M2_CONFIRM_H02_08": "1b7d24419114e85a6f021a96b9a6fcb20a4bb6eb2ed51b82d0ac02d4b5a6880e",
+    "M2_CONFIRM_H02_09": "85ded323db5ade082fb0ebf9f1bca5c3804a1958d18374ad1ef071d922832055",
+    "M2_CONFIRM_H03_00": "f330dcf61edca8e8828224eb2d885f74d971bc223ff35466d27b106597080323",
+    "M2_CONFIRM_H03_01": "ed7db0263e57b764e22ea242027ed88fe7f21266cb0b541f6b28369c277c495f",
+    "M2_CONFIRM_H03_02": "426b38f2dd363bca1e33070c19aa3b869483d800795d9b6344d4ce84af41483e",
+    "M2_CONFIRM_H03_03": "ae0b8bc71d2b7b285d23baf0615715b0d1a70c2074dfae2e1f3c04dcbbcb4a9e",
+    "M2_CONFIRM_H03_04": "7c9b77ed73cad40a25cdd93c0d5594a7ca3821a576e9d5b66312ef54acef18ae",
+    "M2_CONFIRM_H03_05": "a3b0d24096fb55c553393b7238669d4c6f0777eed93246eb87e0a764468119ac",
+    "M2_CONFIRM_H03_06": "6d209cf61d77548ee2df832b90621923ca5cad0a64bfe90c477758d16bdf84c7",
+    "M2_CONFIRM_H03_07": "04a1049a17fc24fc46118bd3ee39719f4c51811df820830578b6cd7fef445d34",
+    "M2_CONFIRM_H03_08": "8081196623227225208c257c753fde88d95c443172890b487838fe0baf5a2e08",
+    "M2_CONFIRM_H03_09": "af774e5ae587145d65d343feb4587da3448814ece71985448b86400690f0bba6"
+  },
+  "world_manifest_sha256": "143e2458986d57c1c5bb4f439cfb119799a3a66e125aa553f20f0460c909f2fe"
+}
