@@ -1,5 +1,5 @@
 {
-  "contract": "CTPI_M3_FASTTRACK_CODEX_HANDOFF_READY_V4_ENV_RECOVERY",
+  "contract": "CTPI_M3_FASTTRACK_CODEX_HANDOFF_READY_V5_ENV_AUTONOMY",
   "status": "CODEX_HANDOFF_READY=PASS",
   "repository": "kris-yun/uav-gsl-isj",
   "branch": "research/ctpi-m3-fasttrack-20260903",
@@ -44,21 +44,31 @@
     "complete_patch_sha256": "96e1e425a7c4e6e97ad123c1d46e67120dc86574b3d3927a370e5b99d1020743",
     "hunk_content_change": false
   },
-  "vm_environment_recovery": {
-    "failure_classification": "BLOCKED_BY_VM_ENVIRONMENT",
-    "authorized_gaden_overlay_root": "/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install",
-    "qualification_tool": "tools/ctpi_vm_dependency_qualifier.py",
-    "environment_handoff_gate": "tools/ctpi_m3_fasttrack_env_recovery_check.py",
-    "contract": "docs/CTPI_M3_FASTTRACK_VM_ENV_RECOVERY_V4_20260903.json",
-    "codex_instruction": "docs/CODEX_CTPI_M3_FASTTRACK_PHASE1_ENV_RECOVERY_V4_20260903.md",
-    "broken_aggregate_ros2_ws_setup_is_not_build_authority": true,
-    "regenerate_gaden": false
+  "latest_environment_state": {
+    "classification": "BLOCKED_BY_VM_ENVIRONMENT",
+    "gaden_overlay": "/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install",
+    "gaden_candidate_passed": true,
+    "known_missing_or_unresolved": [
+      "olfaction_msgsConfig.cmake",
+      "gsl_actionsConfig.cmake",
+      "system_spdlog_CMake_discovery"
+    ],
+    "latest_v4_candidate_tree_sha256": "b4a77336059df257428ca3a8da7c934bf5d6e95f07d11c3809b49361f5260966"
+  },
+  "environment_autonomy": {
+    "authorized": true,
+    "instruction": "docs/CODEX_CTPI_M3_FASTTRACK_ENV_AUTONOMOUS_RECOVERY_V5_20260903.md",
+    "may_iterate_without_manual_approval": true,
+    "may_search_existing_VM_overlays_and_sources": true,
+    "may_rebuild_non_scientific_ROS_dependencies_in_isolated_overlay": true,
+    "may_fix_CMake_ament_ld_python_paths": true,
+    "may_set_package_specific_DIR_variables": true,
+    "may_install_system_dev_dependencies_if_available_and_logged": true,
+    "must_commit_reproducibility_relevant_environment_changes_to_GitHub": true,
+    "must_not_modify_scientific_method_or_Gates": true
   },
   "required_execution_order": [
-    "fresh_clean_checkout_at_exact_V4_head",
-    "CTPI_M3_FASTTRACK_CODEX_HANDOFF_PASS",
-    "CTPI_M3_FASTTRACK_ENV_RECOVERY_HANDOFF_PASS",
-    "CTPI_VM_DEPENDENCY_QUALIFICATION_PASS",
+    "autonomous_environment_recovery_until_frozen_release_build_pass_or_scientific_interface_blocker",
     "CTPI_M3_FASTTRACK_VM_BUILD_PASS",
     "CTPI_FASTTRACK_ALL_BANKS_INTEGRITY_PASS",
     "CTPI_H01_SEED0_SMOKE_PASS",
@@ -66,16 +76,15 @@
     "CTPI_CROSSHOUSE_36RUN_CONFIRM_only_if_screen_pass"
   ],
   "forbidden": [
-    "modify_M1_formula",
-    "modify_TSDC_beta_or_features",
-    "modify_M3_information_objective",
-    "modify_action_domain_or_tiebreak",
+    "modify_M1_formula_or_runtime_semantics",
+    "modify_TSDC_beta_features_or_definition",
+    "modify_M3_information_objective_action_domain_or_tiebreak",
+    "modify_runtime_integration_scientific_hunk_content",
     "modify_3_3_1_cadence",
     "modify_240s_horizon",
     "regenerate_predictive_bank",
-    "change_Gate_after_outcomes",
-    "use_unqualified_VM_overlay",
-    "select_a_different_overlay_after_qualification_failure"
+    "change_scientific_Gate_after_outcomes",
+    "use_truth_or_future_observation_in_planner"
   ],
   "outcome_state_at_handoff": "NO_TRUE_CLOSED_LOOP_OUTCOME_GENERATED"
 }
