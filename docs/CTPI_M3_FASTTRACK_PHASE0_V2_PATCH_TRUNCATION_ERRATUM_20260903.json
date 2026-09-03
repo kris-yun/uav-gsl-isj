@@ -1,0 +1,26 @@
+{
+  "contract": "CTPI_M3_FASTTRACK_PHASE0_V2_PATCH_TRUNCATION_ERRATUM_V1",
+  "date": "2026-09-03",
+  "supersedes_head": "7e1c3f29a700179a991cdcd3bc9b90f140b74795",
+  "v2_failure": "runtime_patch_applies_cleanly=false",
+  "diagnostic": "git apply --check reported corrupt patch at line 223 because the committed patch ended without an EOF LF after the final context line",
+  "byte_level_finding": {
+    "broken_patch_sha256": "a054a28c593f095956469e87713350e89baf3f30c94a9d23e8708b63379f4713",
+    "broken_patch_lines": 223,
+    "broken_patch_ends_with_lf": false,
+    "repair": "append exactly one LF byte; do not change any hunk content",
+    "repaired_patch_sha256": "96e1e425a7c4e6e97ad123c1d46e67120dc86574b3d3927a370e5b99d1020743",
+    "hunk_count_check": "the final hunk declares old=13,new=124 and the committed 223-line patch already contains exactly old=13,new=124 lines; no scientific code lines are missing from the hunk"
+  },
+  "authoritative_decision_v3": {
+    "ctpi_m3_pip_frozen_v0.py": "keep current committed bytes sha256=75323d10faf1b9d8695f61fa59d7478fd258b969d64ce510f14dcc2fdf4a645a",
+    "runtime_integration_patch": "same logical patch with exactly one EOF LF restored sha256=96e1e425a7c4e6e97ad123c1d46e67120dc86574b3d3927a370e5b99d1020743"
+  },
+  "scientific_change": false,
+  "formula_change": false,
+  "hunk_content_change": false,
+  "gate_change": false,
+  "bank_change": false,
+  "outcome_seen": false,
+  "required_reexecution": "restart from Phase 0 on the new V3 authoritative HEAD"
+}
