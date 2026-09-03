@@ -3,45 +3,92 @@
 @@ -1,4 +1,4 @@
 -"""Canonical CPIR/PMFS launch file for auditable paired reruns.
 +"""Canonical CTPI M1/M2/M3 fast-track launch file for auditable paired reruns.
+ 
+ This file disables GT-proximity source declaration by setting
+ `distanceThreshold=-1.0`. Ground-truth source coordinates are passed only to
 @@ -46,19 +46,17 @@
+         raise RuntimeError(f'CPIR_EXPECTED_RUNTIME_VALUE_INVALID:{name}:{raw}') from exc
+ 
+ 
 -def _validate_cpir_launch(context):
 +def _validate_ctpi_launch(context):
-@@
+     """Fail closed before starting ROS nodes when the frozen contract drifts."""
+     value = lambda name: LaunchConfiguration(name).perform(context)
+     mode = value('pfdi_mode')
 -    allowed = {'off', 'cpir_m1', 'cpir_a1', 'cpir_a2', 'cpir_a3', 'cpir_m1_m3'}
 +    allowed = {'off', 'ctpi_f00', 'ctpi_f10', 'ctpi_f11'}
-@@
--    expected_ablation = {
+     if mode not in allowed:
+         raise RuntimeError(f'CPIR_MODE_NOT_EXPLICIT:{mode}')
+     if value('algorithm') != 'PMFS':
+         raise RuntimeError('CPIR_ALGORITHM_MUST_BE_PMFS')
+     expected_ablation = {
 -        'off': 'A0', 'cpir_a1': 'F00', 'cpir_m1_m3': 'F01',
 -        'cpir_a2': 'F10', 'cpir_a3': 'F11',
 -        'cpir_m1': 'CPIR_BASE_LEGACY',
--    }[mode]
-+    expected_ablation = {'off': 'A0', 'ctpi_f00': 'F00', 'ctpi_f10': 'F10', 'ctpi_f11': 'F11'}[mode]
++        'off': 'A0', 'ctpi_f00': 'F00', 'ctpi_f10': 'F10', 'ctpi_f11': 'F11',
+     }[mode]
+     if value('ablation_id') != expected_ablation:
+         raise RuntimeError(
 @@ -80,6 +78,10 @@
+         raise RuntimeError('CPIR_SENSOR_MODEL_MODE_MUST_BE_DYNAMIC')
      if value('sensor_config') != 'fopdt_tau1p2_dead0p4_noise0':
          raise RuntimeError('CPIR_SENSOR_CONFIG_MUST_MATCH_FROZEN_FOPDT')
 +    if abs(float(value('ctpi_m3_horizontal_speed_mps')) - 0.4) > 1.0e-12:
 +        raise RuntimeError('CTPI_M3_HORIZONTAL_SPEED_MUST_BE_0P4')
 +    if value('method') != 'CTPI_CREL_TSDC_PIP' or value('method_family') != 'ctpi_three_module':
 +        raise RuntimeError('CTPI_METHOD_IDENTITY_MISMATCH')
+ 
+     # Do not infer the authoritative source-update/warmup cadence from an old
+     # development replay. The formal runner must recover these values from the
 @@ -179,13 +181,15 @@
+         DeclareLaunchArgument('vgr_data_path', default_value=''),
+         DeclareLaunchArgument('config_id', default_value='2,4-1_fast'),
+         DeclareLaunchArgument('algorithm', default_value='PMFS'),
 -        DeclareLaunchArgument('method', default_value='CPIR_THREE_MODULE_NESTED'),
 -        DeclareLaunchArgument('method_family', default_value='cpir_nested'),
 +        DeclareLaunchArgument('method', default_value='CTPI_CREL_TSDC_PIP'),
 +        DeclareLaunchArgument('method_family', default_value='ctpi_three_module'),
-@@
+         DeclareLaunchArgument('ablation_id', default_value='UNSET'),
+         DeclareLaunchArgument('run_id', default_value='UNSET_RUN_ID'),
+         DeclareLaunchArgument('run_uuid', default_value='unknown'),
+         DeclareLaunchArgument('run_dir', default_value='/tmp/gsl_runs/UNSET_RUN_ID'),
          DeclareLaunchArgument('output_dir', default_value='/tmp/gsl_runs'),
 +        DeclareLaunchArgument('navigation_trace_file', default_value=''),
 +        DeclareLaunchArgument('source_estimate_trace_file', default_value=''),
+         DeclareLaunchArgument('git_commit', default_value='UNKNOWN'),
+         DeclareLaunchArgument('parameter_manifest_sha256', default_value='UNKNOWN'),
+         DeclareLaunchArgument('scenario_manifest_sha256', default_value='UNKNOWN'),
 @@ -258,6 +262,7 @@
+         DeclareLaunchArgument('p2_transport_substream', default_value='5788047269812129363'),
+         DeclareLaunchArgument('tadm_enabled', default_value='false'),
          DeclareLaunchArgument('pfdi_mode', default_value='UNSET'),
 +        DeclareLaunchArgument('ctpi_m3_horizontal_speed_mps', default_value='0.4'),
+         DeclareLaunchArgument('cpir_lookup_root', default_value=''),
+         DeclareLaunchArgument('cpir_audit_directory', default_value=''),
+         DeclareLaunchArgument('cpir_expected_house', default_value='UNSET'),
 @@ -311,7 +316,7 @@
+         DeclareLaunchArgument('parameter_manifest_json', default_value=''),
+         DeclareLaunchArgument('scenario_manifest_json', default_value=''),
+ 
 -        OpaqueFunction(function=_validate_cpir_launch),
 +        OpaqueFunction(function=_validate_ctpi_launch),
+ 
+         Node(
+             package='vgr_bridge',
 @@ -365,6 +370,8 @@
+                         'random_seed': _int('seed'),
+                         'seed': _int('seed'),
                          'run_uuid': LaunchConfiguration('run_uuid'),
 +                        'navigation_trace_file': LaunchConfiguration('navigation_trace_file'),
 +                        'source_estimate_trace_file': LaunchConfiguration('source_estimate_trace_file'),
+                         'convergence_thr': _float('convergence_thr'),
+                         'sourceDiscriminationPower': _float('sourceDiscriminationPower'),
+                         'refineFraction': _float('refineFraction'),
 @@ -412,6 +419,7 @@
+                         'cpir_lookup_root': LaunchConfiguration('cpir_lookup_root'),
+                         'cpir_audit_directory': LaunchConfiguration('cpir_audit_directory'),
                          'posterior_guidance_weight': 0.0,
 +                        'ctpi_m3_horizontal_speed_mps': _float('ctpi_m3_horizontal_speed_mps'),
+                         'tadm_directory': LaunchConfiguration('tadm_directory'),
+                         'tadm_prior_set': _int('tadm_prior_set'),
+                         'tadm_global_seed': _int('tadm_global_seed'),
