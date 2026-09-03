@@ -97,7 +97,7 @@ def main() -> int:
                 posterior = posterior / float(np.sum(posterior))
                 if abs(float(np.sum(posterior)) - 1.0) > PAIR_TOL:
                     raise RuntimeError("PIP_M1_POSTERIOR_MASS")
-                probability = np.asarray(q_raw[case_index, :, candidate_stops], dtype=np.float64).T
+                probability = np.asarray(q_raw[case_index, :, candidate_stops], dtype=np.float64)
                 m = decision_sensor_state(case, visible_count)
                 result = decide(posterior, probability, m, candidate_stops.tolist())
                 raw_top = float(np.max(result.raw_scores))
