@@ -22,6 +22,9 @@ for ARM in F00 F10 F11; do
     MAX_WARMUP_ITERATIONS="${MAX_WARMUP_ITERATIONS}" MIN_WARMUP_ITERATIONS="${MIN_WARMUP_ITERATIONS}" \
     INTEGRITY_REPORT="${INTEGRITY_REPORT}" DOMAIN_ID="${DOMAIN_ID}" TIMEOUT_SEC="${TIMEOUT_SEC}" \
     bash "${REPO_ROOT}/closed_loop/ctpi/run_ctpi_fasttrack_case_safe_20260903.sh"
+  python3 "${REPO_ROOT}/tools/ctpi_fasttrack_terminal_guard.py" \
+    --run-dir "${RUN_ROOT}/H01_seed0_${ARM}" --arm "${ARM}" \
+    --output "${RUN_ROOT}/H01_seed0_${ARM}/CTPI_FASTTRACK_CASE_TERMINAL.json"
   if [[ "${ARM}" == F10 || "${ARM}" == F11 ]]; then
     python3 "${REPO_ROOT}/tools/ctpi_m3_action_sanity.py" \
       --audit "${RUN_ROOT}/H01_seed0_${ARM}/ctpi_audit/ctpi_m3_action_audit.csv" \
