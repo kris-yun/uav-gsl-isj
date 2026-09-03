@@ -1,0 +1,57 @@
+{
+  "contract": "CTPI_M3_FASTTRACK_ENV_RECOVERY_PROTOTYPE4_AUDIT_V1",
+  "classification": "ENVIRONMENT_ONLY_PROTOTYPE",
+  "source_head": "c44b204731f976f6aac1de2af71b53a0ed828b9d",
+  "scientific_change": false,
+  "formula_change": false,
+  "gate_change": false,
+  "bank_change": false,
+  "dependency_overlay": {
+    "status": "CTPI_MESSAGE_DEPENDENCY_OVERLAY=PASS",
+    "olfaction_msgs_source_tree_sha256": "1658d0fc07306b4d3add77759ee9de515b9f7db8a54ff9d9a429b0d8c6e31514",
+    "gsl_actions_source_tree_sha256": "eddb0e31568e297c37ac00d4c0f4ba38beb98ad654c8ea00ebd6bd4f8ec4bf14",
+    "olfaction_msgs_config_sha256": "27f223cba57c499fd082f1bd0113308f69269539dfde9f4d832d625b24e5fc3b",
+    "gsl_actions_config_sha256": "0525724bfcb737aef560bbdca39bcf7138a5270274d53c8ee6ffe79ea5fe61fd",
+    "prototype_install_tree_sha256": "387b216ebcc631c77f475871d10243998010de59517059685e68d6128e950679",
+    "libspdlog_dev_version": "1:1.9.2+ds-0.2",
+    "libfmt_dev_version": "8.1.1+ds1-2"
+  },
+  "dependency_qualification": {
+    "status": "CTPI_VM_DEPENDENCY_QUALIFICATION=PASS",
+    "gaden_overlay": "/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install",
+    "gaden_tree_sha256": "b4a77336059df257428ca3a8da7c934bf5d6e95f07d11c3809b49361f5260966",
+    "all_checks_pass": true
+  },
+  "release_build": {
+    "status": "CTPI_M3_FASTTRACK_VM_BUILD=PASS",
+    "build_type": "Release",
+    "pfdi_low_memory_build": true,
+    "cmake_build_parallel_level": 1,
+    "makeflags": "-j1",
+    "elapsed_seconds_approx": 238,
+    "binary_sha256": "4a8221732b040400b6c2e3cc9da058db731f3b11bbe328ec3d1ae960dc654995",
+    "binary_strings_sha256": "10894997800efcf7a9e3aff31094256698a588cde4515c9c356696a4a8761614",
+    "ctpi_f10_exact_string": true,
+    "ctpi_f11_exact_string": true
+  },
+  "prebuild_scientific_identity": {
+    "tsdc_frozen_selftest": "PASS",
+    "m3_pip_frozen_selftest": "PASS",
+    "cpp_tsdc_static_parity": "PASS",
+    "cpp_tsdc_max_abs": 2.220446049250313e-16,
+    "truth_blind_runtime_preflight": "PASS"
+  },
+  "frozen_bank_integrity": {
+    "status": "CTPI_FASTTRACK_ALL_BANKS_INTEGRITY=PASS",
+    "H01_report_sha256": "f2d19053cc295e5b6e8aadfb3f23584b48150519cdaf8fd49c10e7ede3d35f00",
+    "H02_report_sha256": "3d50e527bbf03070894ea01368a54ac67643cca026e718b7b98bd7bcf905b589",
+    "H03_report_sha256": "2d34e1c7b0b88e72bf7e10bdacd6cd29d87db607343576877fdaf21fe83c29fb"
+  },
+  "prototype_failure_history": [
+    "prototype1: fmt config filename discovery fixed",
+    "prototype2: parallel compiler OOM fixed by serial build",
+    "prototype3: debug-heavy build exhausted /dev/shm fixed by pre-existing low-memory Release option",
+    "prototype4: build succeeded; binary identity pipefail false negative fixed by materialized strings audit"
+  ],
+  "verdict": "CTPI_M3_FASTTRACK_ENV_RECOVERY_PROTOTYPE4=PASS"
+}

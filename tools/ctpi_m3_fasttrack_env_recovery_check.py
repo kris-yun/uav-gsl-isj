@@ -10,21 +10,29 @@ ALLOWED_CHANGED={
  'tools/ctpi_vm_dependency_qualifier.py',
  'tools/ctpi_m3_fasttrack_env_recovery_check.py',
  'closed_loop/ctpi/prepare_ctpi_m3_fasttrack_vm_20260903.sh',
+ 'closed_loop/ctpi/build_ctpi_vm_dependency_overlay_20260903.sh',
  'docs/CTPI_M3_FASTTRACK_VM_ENV_RECOVERY_V4_20260903.json',
  'docs/CODEX_CTPI_M3_FASTTRACK_PHASE1_ENV_RECOVERY_V4_20260903.md',
+ 'docs/CODEX_CTPI_M3_FASTTRACK_ENV_AUTONOMOUS_RECOVERY_V5_20260903.md',
+ 'docs/CTPI_M3_FASTTRACK_ENV_AUTONOMOUS_RECOVERY_IMPLEMENTATION_V5_20260903.md',
  'docs/CTPI_M3_FASTTRACK_CODEX_HANDOFF_READY_20260903.json',
 }
+ALLOWED_PREFIXES=('evidence/ctpi_m3_fasttrack_env_recovery_v5_20260903/',)
 
 def main()->int:
  ap=argparse.ArgumentParser(); ap.add_argument('--repo-root',type=Path,required=True); ap.add_argument('--output',type=Path); a=ap.parse_args(); root=a.repo_root.resolve(); checks={}
  checks['clean_worktree']=subprocess.run(['git','-C',str(root),'status','--porcelain'],capture_output=True,text=True,check=True).stdout.strip()==''
  checks['science_anchor_is_ancestor']=subprocess.run(['git','-C',str(root),'merge-base','--is-ancestor',SCIENCE_ANCHOR,'HEAD']).returncode==0
  changed=set(subprocess.run(['git','-C',str(root),'diff','--name-only',f'{SCIENCE_ANCHOR}..HEAD'],capture_output=True,text=True,check=True).stdout.splitlines())
- checks['environment_only_diff']=bool(changed) and changed.issubset(ALLOWED_CHANGED)
+ checks['environment_only_diff']=bool(changed) and all(
+  path in ALLOWED_CHANGED or any(path.startswith(prefix) for prefix in ALLOWED_PREFIXES)
+  for path in changed
+ )
  checks['qualifier_present']=(root/'tools/ctpi_vm_dependency_qualifier.py').is_file()
  prep=(root/'closed_loop/ctpi/prepare_ctpi_m3_fasttrack_vm_20260903.sh').read_text(encoding='utf-8')
  checks['authorized_candidate_frozen']=AUTHORIZED_ROOT in prep
  checks['qualifier_called']='ctpi_vm_dependency_qualifier.py' in prep
+ checks['message_overlay_builder_called']='build_ctpi_vm_dependency_overlay_20260903.sh' in prep
  checks['broken_aggregate_setup_not_sourced']='source /home/zyc/ros2_ws/install/setup.bash' not in prep
  checks['compat_overlay_fail_closed']='CTPI_PREP_GADEN_COMPAT_REFUSE_EXISTING_NONLINK' in prep
  contract_path=root/'docs/CTPI_M3_FASTTRACK_VM_ENV_RECOVERY_V4_20260903.json'
