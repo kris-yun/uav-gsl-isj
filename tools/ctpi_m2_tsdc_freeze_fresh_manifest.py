@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Freeze the 30-world TSDC fresh-confirm manifest without reading outcomes."""
+"""Freeze TSDC fresh-confirm worlds and one disposable smoke without outcomes."""
 from __future__ import annotations
 
 import argparse
@@ -36,6 +36,17 @@ def derive_seed(domain: str, occupied: set[int]) -> tuple[int, str, int]:
         retry += 1
 
 
+def placement_payload(row: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "reserved_placement_quantile": float(row["placement_quantile"]),
+        "reserved_horizontal_index": int(row["horizontal_index"]),
+        "reserved_height_index": int(row["height_index"]),
+        "source_xyz_m": [float(row["x"]), float(row["y"]), float(row["z"])],
+        "source_xyz_semantics": "EXACT_PF_DEI_V3_RESERVED_PLACEMENT_NOT_QUADTREE_CENTER",
+        "placement_row_transport_seed_provenance_only": int(row["transport_seed"]),
+    }
+
+
 def build(selection_path: Path, placement_path: Path, registry_path: Path) -> dict[str, Any]:
     selection = json.loads(selection_path.read_text(encoding="utf-8"))
     placement = json.loads(placement_path.read_text(encoding="utf-8"))
@@ -48,6 +59,7 @@ def build(selection_path: Path, placement_path: Path, registry_path: Path) -> di
         raise RuntimeError("TSDC_USED_ASSET_REGISTRY")
 
     reserved: dict[tuple[str, str, int], dict[str, Any]] = {}
+    carriers_by_house: dict[str, set[str]] = {house: set() for house in HOUSES}
     for row in placement["rows"]:
         if row.get("split") != "reserved":
             continue
@@ -55,12 +67,14 @@ def build(selection_path: Path, placement_path: Path, registry_path: Path) -> di
         if key in reserved:
             raise RuntimeError(f"TSDC_DUP_RESERVED:{key}")
         reserved[key] = row
+        carriers_by_house[key[0]].add(key[1])
 
     occupied = set(int(value) for value in registry["reserved_numeric_seeds"])
     used_carriers = {
         house: set(str(value) for value in registry["used_carriers_by_house"][house])
         for house in HOUSES
     }
+    fresh_carriers: dict[str, set[str]] = {house: set() for house in HOUSES}
     worlds: list[dict[str, Any]] = []
     for house in HOUSES:
         records = selection["houses"][house]["worlds"]
@@ -75,8 +89,9 @@ def build(selection_path: Path, placement_path: Path, registry_path: Path) -> di
             row = reserved.get((house, carrier, member))
             if row is None:
                 raise RuntimeError(f"TSDC_RESERVED_MISSING:{house}:{carrier}:{member}")
-            domain = f"{DOMAIN_PREFIX}/{house}/{carrier}/route{route:02d}/U{member}"
+            domain = f"{DOMAIN_PREFIX}/FORMAL/{house}/{carrier}/route{route:02d}/U{member}"
             seed, preimage, retry = derive_seed(domain, occupied)
+            fresh_carriers[house].add(carrier)
             worlds.append(
                 {
                     "world_id": f"TSDC_FRESH_{house}_{int(item['ordinal']):02d}",
@@ -86,12 +101,7 @@ def build(selection_path: Path, placement_path: Path, registry_path: Path) -> di
                     "controlled_carrier_id": carrier,
                     "route_index": route,
                     "reserved_placement_member": member,
-                    "reserved_placement_quantile": float(row["placement_quantile"]),
-                    "reserved_horizontal_index": int(row["horizontal_index"]),
-                    "reserved_height_index": int(row["height_index"]),
-                    "source_xyz_m": [float(row["x"]), float(row["y"]), float(row["z"])],
-                    "source_xyz_semantics": "EXACT_PF_DEI_V3_RESERVED_PLACEMENT_NOT_QUADTREE_CENTER",
-                    "placement_row_transport_seed_provenance_only": int(row["transport_seed"]),
+                    **placement_payload(row),
                     "observation_rng_domain": domain,
                     "observation_transport_seed_uint32": seed,
                     "seed_derivation_preimage": preimage,
@@ -100,6 +110,34 @@ def build(selection_path: Path, placement_path: Path, registry_path: Path) -> di
                 }
             )
 
+    smoke_candidates = sorted(
+        carriers_by_house["H01"] - used_carriers["H01"] - fresh_carriers["H01"]
+    )
+    if not smoke_candidates:
+        raise RuntimeError("TSDC_FRESH_NO_DISPOSABLE_SMOKE_CARRIER")
+    smoke_carrier = smoke_candidates[0]
+    smoke_member = 0
+    smoke_row = reserved.get(("H01", smoke_carrier, smoke_member))
+    if smoke_row is None:
+        raise RuntimeError(f"TSDC_FRESH_SMOKE_RESERVED_MISSING:{smoke_carrier}")
+    smoke_domain = f"{DOMAIN_PREFIX}/SMOKE/H01/{smoke_carrier}/route00/U0"
+    smoke_seed, smoke_preimage, smoke_retry = derive_seed(smoke_domain, occupied)
+    smoke = {
+        "world_id": "TSDC_FRESH_SMOKE_H01_00",
+        "set": "SMOKE",
+        "house": "H01",
+        "ordinal": 0,
+        "controlled_carrier_id": smoke_carrier,
+        "route_index": 0,
+        "reserved_placement_member": smoke_member,
+        **placement_payload(smoke_row),
+        "observation_rng_domain": smoke_domain,
+        "observation_transport_seed_uint32": smoke_seed,
+        "seed_derivation_preimage": smoke_preimage,
+        "seed_derivation_retry": smoke_retry,
+        "formal_dataset_exclusion": ["TSDC_FRESH_CONFIRM"],
+    }
+
     numeric = [int(row["observation_transport_seed_uint32"]) for row in worlds]
     checks = {
         "world_count_30": len(worlds) == 30,
@@ -107,13 +145,17 @@ def build(selection_path: Path, placement_path: Path, registry_path: Path) -> di
         "all_carriers_fresh": all(
             row["controlled_carrier_id"] not in used_carriers[row["house"]] for row in worlds
         ),
-        "all_numeric_seeds_unique": len(set(numeric)) == 30,
+        "all_numeric_seeds_unique": len(set(numeric + [smoke_seed])) == 31,
         "all_numeric_seeds_disjoint_from_registry": not bool(
-            set(numeric) & set(registry["reserved_numeric_seeds"])
+            set(numeric + [smoke_seed]) & set(registry["reserved_numeric_seeds"])
         ),
         "all_reserved_placements_resolved": len(worlds) == 30,
         "domain_prefix_new": all(
-            row["observation_rng_domain"].startswith(DOMAIN_PREFIX + "/") for row in worlds
+            row["observation_rng_domain"].startswith(DOMAIN_PREFIX + "/FORMAL/") for row in worlds
+        ),
+        "smoke_carrier_outside_used_and_formal": (
+            smoke_carrier not in used_carriers["H01"]
+            and smoke_carrier not in fresh_carriers["H01"]
         ),
     }
     result = {
@@ -124,6 +166,7 @@ def build(selection_path: Path, placement_path: Path, registry_path: Path) -> di
         "domain_prefix": DOMAIN_PREFIX,
         "predictive_bank_generation": False,
         "formal_worlds": worlds,
+        "disposable_smoke_world": smoke,
         "checks": checks,
         "pass": all(checks.values()),
     }
