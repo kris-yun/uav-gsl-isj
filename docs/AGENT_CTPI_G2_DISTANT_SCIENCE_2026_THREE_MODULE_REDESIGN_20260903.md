@@ -1,5 +1,7 @@
 # Agent directive — CTPI G2 distant-science three-module redesign (2026-09-03)
 
+> **Mandatory companion contract:** also read `docs/AGENT_CTPI_G2_CAUSAL_MAIN_INNOVATION_BANKFREE_ZERO_SHOT_20260903.md`. The companion contract strengthens this directive by fixing the paper-level main innovation as causal representation / causal world modeling and making bank-free zero-shot deployment in unfamiliar environments a hard G2 requirement.
+
 ## Mission
 Run a **parallel next-generation research track** while the currently frozen CREL–TSDC–PIP true-closed-loop validation continues unchanged.
 
