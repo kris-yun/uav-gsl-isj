@@ -1,0 +1,47 @@
+--- closed_loop/cpir/vgr_gsl_pmfs_cpir.launch.py	2026-09-03 05:25:46.000000000 +0000
++++ closed_loop/ctpi/vgr_gsl_pmfs_ctpi_fasttrack.launch.py	2026-09-03 08:09:11.759923826 +0000
+@@ -1,4 +1,4 @@
+-"""Canonical CPIR/PMFS launch file for auditable paired reruns.
++"""Canonical CTPI M1/M2/M3 fast-track launch file for auditable paired reruns.
+@@ -46,19 +46,17 @@
+-def _validate_cpir_launch(context):
++def _validate_ctpi_launch(context):
+@@
+-    allowed = {'off', 'cpir_m1', 'cpir_a1', 'cpir_a2', 'cpir_a3', 'cpir_m1_m3'}
++    allowed = {'off', 'ctpi_f00', 'ctpi_f10', 'ctpi_f11'}
+@@
+-    expected_ablation = {
+-        'off': 'A0', 'cpir_a1': 'F00', 'cpir_m1_m3': 'F01',
+-        'cpir_a2': 'F10', 'cpir_a3': 'F11',
+-        'cpir_m1': 'CPIR_BASE_LEGACY',
+-    }[mode]
++    expected_ablation = {'off': 'A0', 'ctpi_f00': 'F00', 'ctpi_f10': 'F10', 'ctpi_f11': 'F11'}[mode]
+@@ -80,6 +78,10 @@
+     if value('sensor_config') != 'fopdt_tau1p2_dead0p4_noise0':
+         raise RuntimeError('CPIR_SENSOR_CONFIG_MUST_MATCH_FROZEN_FOPDT')
++    if abs(float(value('ctpi_m3_horizontal_speed_mps')) - 0.4) > 1.0e-12:
++        raise RuntimeError('CTPI_M3_HORIZONTAL_SPEED_MUST_BE_0P4')
++    if value('method') != 'CTPI_CREL_TSDC_PIP' or value('method_family') != 'ctpi_three_module':
++        raise RuntimeError('CTPI_METHOD_IDENTITY_MISMATCH')
+@@ -179,13 +181,15 @@
+-        DeclareLaunchArgument('method', default_value='CPIR_THREE_MODULE_NESTED'),
+-        DeclareLaunchArgument('method_family', default_value='cpir_nested'),
++        DeclareLaunchArgument('method', default_value='CTPI_CREL_TSDC_PIP'),
++        DeclareLaunchArgument('method_family', default_value='ctpi_three_module'),
+@@
+         DeclareLaunchArgument('output_dir', default_value='/tmp/gsl_runs'),
++        DeclareLaunchArgument('navigation_trace_file', default_value=''),
++        DeclareLaunchArgument('source_estimate_trace_file', default_value=''),
+@@ -258,6 +262,7 @@
+         DeclareLaunchArgument('pfdi_mode', default_value='UNSET'),
++        DeclareLaunchArgument('ctpi_m3_horizontal_speed_mps', default_value='0.4'),
+@@ -311,7 +316,7 @@
+-        OpaqueFunction(function=_validate_cpir_launch),
++        OpaqueFunction(function=_validate_ctpi_launch),
+@@ -365,6 +370,8 @@
+                         'run_uuid': LaunchConfiguration('run_uuid'),
++                        'navigation_trace_file': LaunchConfiguration('navigation_trace_file'),
++                        'source_estimate_trace_file': LaunchConfiguration('source_estimate_trace_file'),
+@@ -412,6 +419,7 @@
+                         'posterior_guidance_weight': 0.0,
++                        'ctpi_m3_horizontal_speed_mps': _float('ctpi_m3_horizontal_speed_mps'),
