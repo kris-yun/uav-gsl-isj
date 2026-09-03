@@ -1,0 +1,81 @@
+{
+  "contract": "CTPI_M3_FASTTRACK_PREREG_V1",
+  "status": "PREREGISTERED_BEFORE_TRUE_CLOSED_LOOP_OUTCOME",
+  "scientific_state": {
+    "M1_CREL_F00": "PASS",
+    "M2_TSDC_V0": "PASS",
+    "M3_PIP": "FROZEN_FOR_FASTTRACK_TRUE_CLOSED_LOOP"
+  },
+  "arms": {
+    "A0": "native_PMFS",
+    "F00": "frozen_M1_plus_native_planner",
+    "F10": "frozen_M1_plus_raw_finite8_forecast_plus_PIP",
+    "F11": "frozen_M1_plus_frozen_TSDC_plus_same_PIP"
+  },
+  "m3": {
+    "objective": "binary_mutual_information_I_S_Y_given_action_and_decision_sensor_state",
+    "action_domain": "PMFS_openMoveSet_union_native_PMFS_goal",
+    "tie_break": "information_first_then_existing_distanceFromRobot_then_grid_index",
+    "horizontal_speed_mps": 0.4,
+    "dt_s": 0.2,
+    "dwell_samples": 80,
+    "bank_time_samples": 1500,
+    "runtime_horizon_s": 240.0,
+    "future_bank_extrapolation": false,
+    "f10_probability": "(K+0.5)/9",
+    "f11_probability": "frozen_TSDC_V0(K,previous_completed_dwell_end_measured_sensor_state)"
+  },
+  "smoke": {
+    "house": "H01",
+    "seed": 0,
+    "arms": ["F00","F10","F11"],
+    "required": [
+      "F10_action_sanity_PASS",
+      "F11_action_sanity_PASS",
+      "navigation_command_exists",
+      "motion_feedback_gt_0p05m",
+      "fresh_sensor_stream",
+      "posterior_trace_changes",
+      "M3_selected_goal_reaches_navigation_trace",
+      "F10_trajectory_differs_from_F00",
+      "F11_trajectory_differs_from_F00"
+    ]
+  },
+  "screening": {
+    "house": "H01",
+    "seeds": [0,1,2],
+    "arms": ["A0","F00","F10","F11"],
+    "run_count": 12,
+    "pass_rule_each_increment": "at_least_one_of_error_auc_or_time_to_2m_improves_in_at_least_2_of_3_pairs_and_final_error_does_not_lose_all_3",
+    "role": "screening_only_not_confirmatory"
+  },
+  "confirmatory_36run": {
+    "houses": ["H01","H02","H03"],
+    "seeds": [3,4,5],
+    "arms": ["A0","F00","F10","F11"],
+    "run_count": 36,
+    "paired_units": 9,
+    "increments": ["F00_vs_A0","F10_vs_F00","F11_vs_F10"],
+    "primary_temporal_metrics": ["error_auc_m_s","time_to_2m_s"],
+    "paired_test": "exact_sign_flip_randomization_on_continuous_left_minus_right_improvement",
+    "permutations": 512,
+    "one_sided_alpha": 0.05,
+    "pass_rule_each_increment": "at_least_one_primary_temporal_metric_has_lower_right_mean_and_exact_signflip_p_one_sided_le_0p05_and_no_house_has_3of3_losses_with_worse_mean; final_error_m_must_have_no_house_with_3of3_losses_and_worse_mean",
+    "performance_horizon_s": 240.0,
+    "source_estimate_semantics": "POSTERIOR_MAP_logged_by_runtime",
+    "not_equivalent_to_old_offline_topset_endpoint": true
+  },
+  "forbidden": [
+    "change_TSDC_beta_or_features",
+    "change_M1_F00_formula",
+    "add_planner_weight_or_temperature",
+    "use_source_truth_in_planner",
+    "use_localization_error_in_planner",
+    "use_future_measured_observation_in_planner",
+    "add_travel_time_as_TSDC_feature_after_outcomes",
+    "regenerate_predictive_bank",
+    "reuse_H01_screen_seeds_as_36run_confirmation",
+    "change_action_domain_after_outcomes",
+    "change_Gate_after_outcomes"
+  ]
+}
