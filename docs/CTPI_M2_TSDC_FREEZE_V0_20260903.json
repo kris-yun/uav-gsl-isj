@@ -20,7 +20,11 @@
     "path": "evidence/ctpi_m2_tsdc_dev_20260903/TSDC_FROZEN_CODE_SELFTEST_V0.json",
     "sha256": "63e80bba007baf022d567d3e6aba1d408af9960d25aed7b196edb3ead721abf9"
   },
-  "beta": [-1.1915279295661385, 1.0423583775118566, 2.989667055088417],
+  "beta": [
+    -1.1915279295661385,
+    1.0423583775118566,
+    2.989667055088417
+  ],
   "formula": {
     "pK": "(K+0.5)/9",
     "rK": "logit(pK)",
@@ -28,7 +32,32 @@
     "q": "logistic(beta0+betaK*rK+betaM*rM)"
   },
   "decision_sensor_state": "measured sensor state at end of previous completed 80-sample dwell window; first action=0; any candidate-transit/arrival/pre-stop state forbidden",
-  "forbidden_inputs": ["House ID", "source ID as learned feature", "route ID", "truth source", "localization error", "source rank", "planner reward", "future gas", "future wind", "future transit sensor value"],
-  "forbidden_changes": ["refit beta", "add features", "temperature", "fallback/router", "neural model", "House-specific table", "reopen old CONFIRM as confirmatory"],
-  "authorization": {"new_fresh_confirm": true, "m3": false, "cpp": false, "ros": false, "closed_loop": false}
+  "forbidden_inputs": [
+    "House ID",
+    "source ID as learned feature",
+    "route ID",
+    "truth source",
+    "localization error",
+    "source rank",
+    "planner reward",
+    "future gas",
+    "future wind",
+    "future transit sensor value"
+  ],
+  "forbidden_changes": [
+    "refit beta",
+    "add features",
+    "temperature",
+    "fallback/router",
+    "neural model",
+    "House-specific table",
+    "reopen old CONFIRM as confirmatory"
+  ],
+  "authorization": {
+    "new_fresh_confirm": true,
+    "m3": false,
+    "cpp": false,
+    "ros": false,
+    "closed_loop": false
+  }
 }
