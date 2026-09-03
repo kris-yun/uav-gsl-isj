@@ -6,12 +6,12 @@ from pathlib import Path
 
 EXPECTED={
  'experiments/cg_pc_ctt/ctpi_m2_tsdc_frozen_v0.py':'854a2fc8513201cdb2ae497a62c0cd3c5fa09fdae2f1bc309ad594a8b1aaacf7',
- 'experiments/cg_pc_ctt/ctpi_m3_pip_frozen_v0.py':'bcf065903ec8cd88533ff0ac0dbd453131a9aeaf0d075fbf71ec92dc00fc2706',
+ 'experiments/cg_pc_ctt/ctpi_m3_pip_frozen_v0.py':'75323d10faf1b9d8695f61fa59d7478fd258b969d64ce510f14dcc2fdf4a645a',
  'ros2_package/src/gsl_server/algorithms/PMFS/CTPI.cpp':'e5ce97b3f6ed5d1c7d17636933130a3b7207be9286b6173255d9ffca65fb8675',
  'ros2_package/src/gsl_server/algorithms/PMFS/PMFS.hpp':'7fe197312c6ea93cd8edf4876dd5d8c60328a64aa017b236f97848c24a00339e',
  'closed_loop/ctpi/vgr_gsl_pmfs_ctpi_fasttrack.launch.py':'8559d930df9436917ea2d961fb4cdfd6ea23ac5cd5597c83ef23960be2cd648b',
  'closed_loop/ctpi/run_ctpi_fasttrack_case_safe_20260903.sh':'7a1e8aa8747cb942f7c49edb53efdd65b8064e42d910b3dd73748e33dac32138',
- 'patches/CTPI_M3_FASTTRACK_RUNTIME_INTEGRATION_20260903.patch':'96e1e425a7c4e6e97ad123c1d46e67120dc86574b3d3927a370e5b99d1020743',
+ 'patches/CTPI_M3_FASTTRACK_RUNTIME_INTEGRATION_20260903.patch':'a054a28c593f095956469e87713350e89baf3f30c94a9d23e8708b63379f4713',
 }
 POST={
  'ros2_package/src/gsl_server/algorithms/PMFS/PMFS.cpp':'cb967ec57c52abfb126635075e9c2c7a98c5949327ea16d4a6b8448ba503ba1f',
