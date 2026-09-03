@@ -1,15 +1,37 @@
 {
-  "contract": "CTPI_M3_FASTTRACK_CODEX_HANDOFF_READY_V5_ENV_AUTONOMY",
-  "status": "CODEX_HANDOFF_READY=PASS",
+  "contract": "CTPI_M3_FASTTRACK_HANDOFF_V6_AGENT_CONTINUATION",
+  "status": "AGENT_CONTINUATION_READY",
   "repository": "kris-yun/uav-gsl-isj",
   "branch": "research/ctpi-m3-fasttrack-20260903",
   "science_anchor": "bcd56dd276e0e29a22399d695203101e7c09022f",
+  "runtime_anchor": "c4445ee69d478f48ada19dfb9425726ab78c2d33",
+  "continuation_instruction": "docs/AGENT_CTPI_M3_FASTTRACK_RESUME_AFTER_CODEX_QUOTA_20260903.md",
+  "continuation_state": "docs/CTPI_M3_FASTTRACK_AGENT_HANDOFF_AFTER_CODEX_QUOTA_20260903.json",
   "scientific_state": {
     "M1_CREL_F00": "CONFIRMED_PASS",
     "M2_TSDC_V0": "FRESH_CONFIRM_PASS_FROZEN",
     "M3_PIP": "FROZEN_FOR_TRUE_CLOSED_LOOP",
     "true_closed_loop_outcomes_seen": false,
-    "environment_recovery_changes_scientific_method": false
+    "science_no_go": false
+  },
+  "completed_runtime_state": {
+    "phase0_v3": "PASS",
+    "environment_autonomous_recovery": "PASS",
+    "dependency_qualification": "PASS",
+    "authoritative_release_build_at_runtime_anchor": "PASS",
+    "H01_bank_integrity": "PASS",
+    "H02_bank_integrity": "PASS",
+    "H03_bank_integrity": "PASS",
+    "python_cpp_parity_max_abs_error": 2.22e-16,
+    "truth_blind_preflight": "PASS"
+  },
+  "current_blocker": {
+    "classification": "ENVIRONMENT_COMPATIBILITY_ONLY",
+    "missing_path": "/dev/shm/house1_raw_query",
+    "required_backend": "raw_house1_snapshot",
+    "smoke_started": false,
+    "arm_outcomes_generated": false,
+    "next_agent_may_recover_environment_autonomously": true
   },
   "frozen_runtime": {
     "stepsSourceUpdate": 3,
@@ -19,8 +41,7 @@
     "m3_horizontal_speed_mps": 0.4,
     "dt_s": 0.2,
     "dwell_samples": 80,
-    "bank_time_samples": 1500,
-    "same_cadence_all_arms": true
+    "bank_time_samples": 1500
   },
   "arms": {
     "A0": "native_PMFS",
@@ -28,65 +49,35 @@
     "F10": "frozen_M1_plus_raw_finite8_forecast_plus_PIP",
     "F11": "frozen_M1_plus_frozen_TSDC_plus_same_PIP"
   },
-  "critical_sha256": {
-    "experiments/cg_pc_ctt/ctpi_m2_tsdc_frozen_v0.py": "854a2fc8513201cdb2ae497a62c0cd3c5fa09fdae2f1bc309ad594a8b1aaacf7",
-    "experiments/cg_pc_ctt/ctpi_m3_pip_frozen_v0.py": "75323d10faf1b9d8695f61fa59d7478fd258b969d64ce510f14dcc2fdf4a645a",
-    "ros2_package/src/gsl_server/algorithms/PMFS/CTPI.cpp": "e5ce97b3f6ed5d1c7d17636933130a3b7207be9286b6173255d9ffca65fb8675",
-    "ros2_package/src/gsl_server/algorithms/PMFS/PMFS.hpp": "7fe197312c6ea93cd8edf4876dd5d8c60328a64aa017b236f97848c24a00339e",
-    "patches/CTPI_M3_FASTTRACK_RUNTIME_INTEGRATION_20260903.patch": "a054a28c593f095956469e87713350e89baf3f30c94a9d23e8708b63379f4713",
-    "patches/CTPI_M3_FASTTRACK_LAUNCH_20260903.patch": "d4d9d992d78285ab87721e5249c7641f39181d9f9fb56057307d2ba2c9574c55",
-    "patches/CTPI_M3_FASTTRACK_RUNNER_20260903.patch": "e4d6a3137dadca6997cd34d9177becc83861c16493c0057b80e4ca5acfd34ea0"
-  },
-  "runtime_patch_materialization": {
-    "source_patch_sha256": "a054a28c593f095956469e87713350e89baf3f30c94a9d23e8708b63379f4713",
-    "source_patch_expected_final_lf": false,
-    "operation": "append exactly one LF byte in a temporary file before git apply",
-    "complete_patch_sha256": "96e1e425a7c4e6e97ad123c1d46e67120dc86574b3d3927a370e5b99d1020743",
-    "hunk_content_change": false
-  },
-  "latest_environment_state": {
-    "classification": "ENVIRONMENT_RECOVERY_PROTOTYPE_PASS_FRESH_COMMITTED_BUILD_PENDING",
-    "gaden_overlay": "/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install",
-    "gaden_candidate_passed": true,
-    "known_missing_or_unresolved": [],
-    "isolated_custom_message_overlay": true,
-    "dependency_qualification": "CTPI_VM_DEPENDENCY_QUALIFICATION=PASS",
-    "prototype_release_build": "CTPI_M3_FASTTRACK_VM_BUILD=PASS",
-    "prototype_bank_integrity": "CTPI_FASTTRACK_ALL_BANKS_INTEGRITY=PASS",
-    "latest_v4_candidate_tree_sha256": "b4a77336059df257428ca3a8da7c934bf5d6e95f07d11c3809b49361f5260966",
-    "implementation": "docs/CTPI_M3_FASTTRACK_ENV_AUTONOMOUS_RECOVERY_IMPLEMENTATION_V5_20260903.md",
-    "prototype_audit": "evidence/ctpi_m3_fasttrack_env_recovery_v5_20260903/ENV_RECOVERY_PROTOTYPE4_AUDIT.json"
-  },
-  "environment_autonomy": {
-    "authorized": true,
-    "instruction": "docs/CODEX_CTPI_M3_FASTTRACK_ENV_AUTONOMOUS_RECOVERY_V5_20260903.md",
-    "may_iterate_without_manual_approval": true,
-    "may_search_existing_VM_overlays_and_sources": true,
-    "may_rebuild_non_scientific_ROS_dependencies_in_isolated_overlay": true,
-    "may_fix_CMake_ament_ld_python_paths": true,
-    "may_set_package_specific_DIR_variables": true,
-    "may_install_system_dev_dependencies_if_available_and_logged": true,
-    "must_commit_reproducibility_relevant_environment_changes_to_GitHub": true,
-    "must_not_modify_scientific_method_or_Gates": true
-  },
   "required_execution_order": [
-    "autonomous_environment_recovery_until_frozen_release_build_pass_or_scientific_interface_blocker",
-    "CTPI_M3_FASTTRACK_VM_BUILD_PASS",
-    "CTPI_FASTTRACK_ALL_BANKS_INTEGRITY_PASS",
-    "CTPI_H01_SEED0_SMOKE_PASS",
-    "CTPI_FASTTRACK_H01_3SEED_SCREEN_PASS_only_if_smoke_pass",
-    "CTPI_CROSSHOUSE_36RUN_CONFIRM_only_if_screen_pass"
+    "recover_and_validate_house1_raw_query_without_changing_H01_backend",
+    "H01_seed0_F00_F10_F11_true_closed_loop_smoke",
+    "H01_seeds0_1_2_12run_screen_only_if_smoke_pass",
+    "crosshouse_seeds3_4_5_36run_confirm_only_if_screen_pass"
+  ],
+  "required_smoke_gates": [
+    "CTPI_FASTTRACK_CASE_TERMINAL=PASS",
+    "CTPI_M3_ACTION_SANITY=PASS_for_F10_F11",
+    "TRUE_CLOSED_LOOP_CAUSAL_CHAIN=PASS",
+    "CTPI_H01_SEED0_SMOKE=PASS"
   ],
   "forbidden": [
     "modify_M1_formula_or_runtime_semantics",
     "modify_TSDC_beta_features_or_definition",
     "modify_M3_information_objective_action_domain_or_tiebreak",
-    "modify_runtime_integration_scientific_hunk_content",
     "modify_3_3_1_cadence",
     "modify_240s_horizon",
     "regenerate_predictive_bank",
     "change_scientific_Gate_after_outcomes",
-    "use_truth_or_future_observation_in_planner"
+    "replace_H01_raw_house1_snapshot_backend_with_another_backend",
+    "use_truth_or_future_observation_in_planner",
+    "reuse_screen_seeds_0_1_2_as_formal_confirmation"
   ],
+  "expected_existing_vm_artifacts_if_not_evicted": {
+    "repo": "/home/zyc/CTPI_M3_FASTTRACK_TRUE_CLOSED_LOOP_20260903_R8_C4445EE/repo",
+    "build_root": "/dev/shm/ctpi_m3_fasttrack_build_v5_c4445ee",
+    "runtime_env": "/dev/shm/ctpi_m3_fasttrack_build_v5_c4445ee/ctpi_prepare_audit/CTPI_VM_ENV.sh",
+    "bank_audit_root": "/dev/shm/ctpi_m3_fasttrack_bank_audit_v5_c4445ee"
+  },
   "outcome_state_at_handoff": "NO_TRUE_CLOSED_LOOP_OUTCOME_GENERATED"
 }
