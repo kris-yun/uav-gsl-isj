@@ -1,0 +1,67 @@
+{
+  "contract": "CTPI_M2_TSDC_CODEX_HANDOFF_READY_V0_20260903",
+  "status": "CODEX_HANDOFF_READY=PASS",
+  "branch": "research/ctpi-m2-tsdc-committor-20260903",
+  "scientific_state": {
+    "M1_CREL": "PASS",
+    "M2_TSDC": "FROZEN_DEV_POSITIVE_FRESH_CONFIRM_PENDING",
+    "M3": "NOT_AUTHORIZED",
+    "cpp_ros_closed_loop": "NOT_AUTHORIZED"
+  },
+  "frozen_science": {
+    "module_path": "experiments/cg_pc_ctt/ctpi_m2_tsdc_frozen_v0.py",
+    "module_sha256": "854a2fc8513201cdb2ae497a62c0cd3c5fa09fdae2f1bc309ad594a8b1aaacf7",
+    "selection_output_sha256": "0d4e6162863ca2a07bf93ef74f178b1d4ad5d058ab787345d291362fd8e9f431",
+    "placement_manifest_sha256": "2dfe8bf70cc5dd191db8659cfc66ed9934927b69d0b6798b9a6b5062e1dd959f",
+    "stage1_npz_sha256": {
+      "H01": "1552b799aa808d84a83a9375d7fed82b4495e2ee1ac6bd8f9fdda1424d21c1b5",
+      "H02": "8cafbd2ff8e190ce63a2b9bcb69e47449131d64cd5ef0f8de4be1310fb6b6310",
+      "H03": "7c55a6c6976aeec0d40e1a66ada290c51361ca4f2c631a331c3cf479a2cac91a"
+    }
+  },
+  "engineering_git_blobs": {
+    "fresh_selector": "73a2441a108578f406cb9add67212180799eb4e1",
+    "fresh_manifest_builder": "c83f7caae277aad6df74d7abca51b025e163b2d2",
+    "tsdc_materializer_adapter": "e284c05f11d466aaeb4b48371825a7de565801aa",
+    "tsdc_pregen_auditor": "6f5da7d3282d83732d2fd91fd0963d502df32f3f",
+    "tsdc_one_shot_evaluator": "66fa7067dfdbef941044bd80fc460adca428a911",
+    "used_asset_registry": "1442cf50c011b38d254b8db34ac623ee9c7ae24f",
+    "expected_selection_summary": "404471a7821beb5ac3f7bcc2e324935e7de3f7f5",
+    "upstream_native_materializer": "5301f6cb82dae39b4357dd408a748b3dda06f9e9",
+    "runtime_preflight": "bf9b755eb32bf952aabdf34ad6dfb9e8238c7f18"
+  },
+  "pre_handoff_tests": {
+    "frozen_code_selftest": "PASS",
+    "dev_900_event_reproduction": "PASS",
+    "selector_deterministic_reproduction": "PASS",
+    "selector_reproduction_sha256": "0d4e6162863ca2a07bf93ef74f178b1d4ad5d058ab787345d291362fd8e9f431",
+    "all_new_python_py_compile": "PASS",
+    "manifest_builder_synthetic_schema_seed_smoke_test": "PASS",
+    "fresh_outcomes_generated": false
+  },
+  "vm_paths": {
+    "stage1_root": "/home/zyc/CPIR_FACTORIAL_ROUTE_DIAGNOSTIC_20260901_e2bb4a0_R3/01_STAGE1",
+    "placement_manifest": "/home/zyc/PF_DEI_V3_REGION_SUPPORT_20260828/frozen_region_placement_manifest.json",
+    "predictive_bank": "/mnt/hgfs/workspace/CPIR_M1_FULLGRID_LOOKUP_20260831_R1"
+  },
+  "remaining_codex_work_only": [
+    "fetch exact handoff HEAD into isolated uav-gsl-isj worktree",
+    "verify frozen hashes and runtime preflight",
+    "run fresh selector and require exact frozen output SHA256",
+    "resolve exact reserved placements from frozen PF_DEI_V3 placement manifest and freeze 30-world manifest before outcomes",
+    "run the disposable smoke world twice and require deterministic payload",
+    "obtain CTPI_M2_TSDC_PREGEN=PASS",
+    "materialize exactly 30 fresh formal worlds sequentially without regenerating the predictive bank",
+    "run the already-frozen one-shot evaluator exactly once",
+    "stop on CTPI_M2_TSDC_FRESH_CONFIRM=NO_GO or authorize only M3 offline action gate on PASS"
+  ],
+  "forbidden": [
+    "redesign M2",
+    "change beta/features/sensor-state timing/Gate",
+    "write a new selector after seeing outcomes",
+    "write or alter the evaluator after seeing outcomes",
+    "reuse old 60 DEV_SPENT worlds as confirmation",
+    "regenerate predictive bank",
+    "start M3/C++/ROS/closed-loop before fresh M2 PASS"
+  ]
+}
