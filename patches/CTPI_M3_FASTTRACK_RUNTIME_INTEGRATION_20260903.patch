@@ -121,6 +121,9 @@
 +                ctpiCells.push_back(nativeCell);
 +                ctpiTravel.push_back(travel);
 +            }
++            // Always include the native PMFS goal in the M3 action domain.
++            // This makes the action Gate exact: M3 can only replace the native
++            // action when its predicted information is at least as large.
 +            size_t nativeCandidate = std::numeric_limits<size_t>::max();
 +            if (nativeGoalFound)
 +            {
