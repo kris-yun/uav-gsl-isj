@@ -103,6 +103,7 @@ def selftest() -> None:
     assert np.all(np.diff(q_empty) > 0.0), "transport monotonicity"
     assert np.all(q_memory > q_empty), "sensor-state monotonicity"
 
+    # Frozen-beta guard must reject even a microscopic coefficient change.
     bad = TSDC_BETA_V0.copy(); bad[1] = np.nextafter(bad[1], np.inf)
     try:
         predict_committor(np.asarray([4], dtype=np.int64), 0.0, bad)
@@ -110,11 +111,14 @@ def selftest() -> None:
     except ValueError as exc:
         assert str(exc) == "TSDC_BETA_NOT_FROZEN_V0"
 
+    # An action separating two source hypotheses must have more information than
+    # an action giving identical source-conditioned predictions.
     posterior = np.asarray([0.5, 0.5])
     action_k = np.asarray([[4, 4], [0, 8]], dtype=np.int64)
     info = action_information_scores(posterior, action_k, 0.0)
     assert info[1] > info[0] + 1e-12
 
+    # The M2 runtime must not expose a source-posterior update operator or fitter.
     forbidden = {"fit_dev_mle", "posterior_from_log_score", "source_posterior_update"}
     assert forbidden.isdisjoint(globals())
     print("CTPI_M2_TSDC_FROZEN_V0_SELFTEST=PASS")
