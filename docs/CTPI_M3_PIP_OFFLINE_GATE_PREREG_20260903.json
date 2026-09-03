@@ -1,0 +1,45 @@
+{
+  "contract": "CTPI_M3_PIP_OFFLINE_ACTION_GATE_PREREG_V0_20260903",
+  "parent_m2_pass_commit": "d808b4b37ba7eb4c99a4b34d18aa66b0019c6a75",
+  "m2_frozen_module_sha256": "854a2fc8513201cdb2ae497a62c0cd3c5fa09fdae2f1bc309ad594a8b1aaacf7",
+  "m3_name": "PIP",
+  "m3_expansion": "Predictive Information Planning",
+  "scientific_object": "posterior-weighted mutual information / Jensen-Shannon divergence of source-conditioned TSDC Bernoulli detection committors over a frozen feasible candidate-action set",
+  "formula": "I(S;Y|a)=H(sum_s pi_s q_sa)-sum_s pi_s H(q_sa)",
+  "m1_input": "frozen F00/CREL carrier posterior from Stage1",
+  "m2_input": "frozen TSDC V0 q_sa; M2 does not update M1 posterior",
+  "offline_candidate_action_contract": "for each House/seed and source update 1..4, candidate actions are all unvisited future stops of the same already-feasible 15-stop historical route, chronologically ordered; the first candidate is the historical next stop; exact score ties retain this order",
+  "contexts": 120,
+  "houses": ["H01", "H02", "H03"],
+  "seeds_per_house": 10,
+  "updates_per_seed": 4,
+  "forbidden_inputs": [
+    "source truth",
+    "localization error",
+    "true-source rank",
+    "future gas observation",
+    "future wind observation",
+    "planner reward",
+    "closed-loop outcome"
+  ],
+  "gaden_runs": 0,
+  "gate_all_required": {
+    "context_count_120": true,
+    "all_candidate_sets_at_least_3": true,
+    "all_information_finite_nonnegative": true,
+    "each_house_majority_strict_gain_over_historical_next": 0.50,
+    "each_house_positive_median_gain": true,
+    "pooled_unique_top_fraction_min": 0.75,
+    "m2_changes_m3_policy_in_each_house": true,
+    "pooled_m2_policy_difference_min": 0.10
+  },
+  "interpretation": {
+    "pass": "authorizes only M3 runtime development/parity and preparation for one later true closed-loop smoke; it does not establish localization improvement",
+    "no_go": "stop M3; do not tune the information formula or thresholds on this output"
+  },
+  "terminal": {
+    "pass": "CTPI_M3_PIP_OFFLINE_ACTION_GATE=PASS",
+    "fail": "CTPI_M3_PIP_OFFLINE_ACTION_GATE=NO_GO"
+  },
+  "cpp_ros_closed_loop_authorized_before_gate": false
+}
