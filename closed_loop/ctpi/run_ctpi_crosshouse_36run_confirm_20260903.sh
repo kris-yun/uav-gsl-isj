@@ -3,14 +3,15 @@ set -Eeo pipefail
 REPO_ROOT="${REPO_ROOT:-/home/zyc/gsl_ws/src/GasSourceLocalization}"
 RUN_ROOT="${RUN_ROOT:?set a fresh confirmation RUN_ROOT}"
 PFDI_INSTALL_ROOT="${PFDI_INSTALL_ROOT:?set PFDI_INSTALL_ROOT}"
-STEPS_SOURCE_UPDATE="${STEPS_SOURCE_UPDATE:?set frozen cadence}"
-MAX_WARMUP_ITERATIONS="${MAX_WARMUP_ITERATIONS:?set frozen cadence}"
-MIN_WARMUP_ITERATIONS="${MIN_WARMUP_ITERATIONS:?set frozen cadence}"
+STEPS_SOURCE_UPDATE="${STEPS_SOURCE_UPDATE:-3}"
+MAX_WARMUP_ITERATIONS="${MAX_WARMUP_ITERATIONS:-3}"
+MIN_WARMUP_ITERATIONS="${MIN_WARMUP_ITERATIONS:-1}"
 H01_SCREEN_GATE="${H01_SCREEN_GATE:?point to the PASS H01 seeds0-2 screening Gate}"
 INTEGRITY_H01="${INTEGRITY_H01:?set H01 integrity report}"
 INTEGRITY_H02="${INTEGRITY_H02:?set H02 integrity report}"
 INTEGRITY_H03="${INTEGRITY_H03:?set H03 integrity report}"
 DOMAIN_ID="${DOMAIN_ID:-230}"
+[[ "${STEPS_SOURCE_UPDATE}" == 3 && "${MAX_WARMUP_ITERATIONS}" == 3 && "${MIN_WARMUP_ITERATIONS}" == 1 ]] || { echo "CTPI_FASTTRACK_CADENCE_MUST_BE_3_3_1" >&2; exit 2; }
 python3 - "${H01_SCREEN_GATE}" <<'PY'
 import json,sys
 p=json.load(open(sys.argv[1],encoding='utf-8'))
