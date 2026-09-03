@@ -179,7 +179,9 @@ def build(stage1_root: Path, registry_path: Path) -> dict[str, Any]:
         "contract": CONTRACT,
         "uses_observation_outcomes": False,
         "selection_inputs": ["carrier_ids", "q_raw", "used_asset_registry"],
-        "used_asset_registry_sha256": sha256_file(registry_path),
+        "used_asset_registry_semantic_sha256": hashlib.sha256(
+            json.dumps(registry, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest(),
         "carrier_center_semantics": "REGION_DESCRIPTOR_ONLY_NOT_PHYSICAL_SOURCE_PLACEMENT",
         "physical_placement_requirement": "RESOLVE_FROM_PF_DEI_V3_REGION_PLACEMENT_V1_RESERVED_ROWS",
         "houses": {},
