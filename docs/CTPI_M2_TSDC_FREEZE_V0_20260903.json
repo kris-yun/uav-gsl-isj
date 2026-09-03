@@ -1,0 +1,34 @@
+{
+  "contract": "CTPI_M2_TSDC_FREEZE_V0_20260903",
+  "status": "FROZEN_FOR_FRESH_CONFIRM_ONLY",
+  "parent_terminal_no_go": "749c620bffe1d994370b1ac043c5caa4f8662905",
+  "evidence_zip_sha256": "36cacb3985f42138b231cec969b3ac19ee41a833bbe3002fe7e509292a764824",
+  "frozen_module": {
+    "path": "experiments/cg_pc_ctt/ctpi_m2_tsdc_frozen_v0.py",
+    "sha256": "854a2fc8513201cdb2ae497a62c0cd3c5fa09fdae2f1bc309ad594a8b1aaacf7"
+  },
+  "dev_reference": {
+    "path": "experiments/cg_pc_ctt/ctpi_m2_tsdc_reference.py",
+    "sha256": "c3c21e3665eb35178b866216c3287d99c969a94784410e38361e4be674a8efec",
+    "runtime_authorized": false
+  },
+  "dev_audit": {
+    "path": "evidence/ctpi_m2_tsdc_dev_20260903/TSDC_DEV_AUDIT_V0.json",
+    "sha256": "fbe5505bc55a00e38f68cd899701a4cc844e7a94d09c7d0bf2e26e21947d873a"
+  },
+  "code_selftest": {
+    "path": "evidence/ctpi_m2_tsdc_dev_20260903/TSDC_FROZEN_CODE_SELFTEST_V0.json",
+    "sha256": "63e80bba007baf022d567d3e6aba1d408af9960d25aed7b196edb3ead721abf9"
+  },
+  "beta": [-1.1915279295661385, 1.0423583775118566, 2.989667055088417],
+  "formula": {
+    "pK": "(K+0.5)/9",
+    "rK": "logit(pK)",
+    "rM": "log(1+M_decision/0.1ppm)",
+    "q": "logistic(beta0+betaK*rK+betaM*rM)"
+  },
+  "decision_sensor_state": "measured sensor state at end of previous completed 80-sample dwell window; first action=0; any candidate-transit/arrival/pre-stop state forbidden",
+  "forbidden_inputs": ["House ID", "source ID as learned feature", "route ID", "truth source", "localization error", "source rank", "planner reward", "future gas", "future wind", "future transit sensor value"],
+  "forbidden_changes": ["refit beta", "add features", "temperature", "fallback/router", "neural model", "House-specific table", "reopen old CONFIRM as confirmatory"],
+  "authorization": {"new_fresh_confirm": true, "m3": false, "cpp": false, "ros": false, "closed_loop": false}
+}
