@@ -1,0 +1,220 @@
+--- a/ros2_package/src/gsl_server/algorithms/PMFS/PMFS.cpp
++++ b/ros2_package/src/gsl_server/algorithms/PMFS/PMFS.cpp
+@@ -78,11 +78,15 @@
+         tadmEnabled = getParam<bool>("tadm_enabled", false);
+         pfdiMode = getParam<std::string>("pfdi_mode", tadmEnabled ? "joint" : "off");
+         if (pfdiMode != "off" && pfdiMode != "cpir_m1" && pfdiMode != "cpir_a1" && pfdiMode != "cpir_a2" &&
+-            pfdiMode != "cpir_a3" && pfdiMode != "cpir_m1_m3" && pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" &&
++            pfdiMode != "cpir_a3" && pfdiMode != "cpir_m1_m3" && pfdiMode != "ctpi_f00" && pfdiMode != "ctpi_f10" &&
++            pfdiMode != "ctpi_f11" && pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" &&
+             pfdiMode != "al" && pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" &&
+             pfdiMode != "ec_edcl" && pfdiMode != "ec_edcl_shadow")
+-            throw std::invalid_argument("pfdi_mode must be off, cpir_m1, cpir_a1, cpir_a2, cpir_a3, cpir_m1_m3, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
+-        cpirEnabled = pfdiMode == "cpir_m1" || pfdiMode == "cpir_a1" || pfdiMode == "cpir_a2" || pfdiMode == "cpir_a3" || pfdiMode == "cpir_m1_m3";
++            throw std::invalid_argument("pfdi_mode must be off, cpir_m1, cpir_a1, cpir_a2, cpir_a3, cpir_m1_m3, ctpi_f00, ctpi_f10, ctpi_f11, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
++        ctpiPlannerEnabled = pfdiMode == "ctpi_f10" || pfdiMode == "ctpi_f11";
++        ctpiTSDCEnabled = pfdiMode == "ctpi_f11";
++        cpirEnabled = pfdiMode == "cpir_m1" || pfdiMode == "cpir_a1" || pfdiMode == "cpir_a2" || pfdiMode == "cpir_a3" || pfdiMode == "cpir_m1_m3" ||
++                      pfdiMode == "ctpi_f00" || pfdiMode == "ctpi_f10" || pfdiMode == "ctpi_f11";
+         tadmEnabled = pfdiMode != "off" && !cpirEnabled;
+         if (cpirEnabled)
+         {
+@@ -102,7 +106,10 @@
+         cpirAuditDirectory = getParam<std::string>("cpir_audit_directory", "");
+         posteriorGuidanceWeight = std::clamp(getParam<double>("posterior_guidance_weight", 0.0), 0.0, 1.0);
+         if (cpirEnabled && std::abs(posteriorGuidanceWeight) > 1.0e-12)
+-            throw std::invalid_argument("CPIR posterior_guidance_weight must remain 0; planner coupling is not a paper module");
++            throw std::invalid_argument("CPIR/CTPI posterior_guidance_weight must remain 0; CTPI M3 has its own frozen information planner");
++        ctpiHorizontalSpeedMps = getParam<double>("ctpi_m3_horizontal_speed_mps", 0.4);
++        if (ctpiPlannerEnabled && std::abs(ctpiHorizontalSpeedMps - 0.4) > 1.0e-12)
++            throw std::invalid_argument("CTPI M3 horizontal speed is frozen at 0.4 m/s");
+         tadmDirectory = getParam<std::string>("tadm_directory", "");
+         tadmPriorSet = getParam<int>("tadm_prior_set", 0);
+         tadmGlobalSeed = getParam<int64_t>("tadm_global_seed", 0);
+@@ -229,6 +236,16 @@
+ 
+         if (cpirEnabled)
+             initializeCPIR();
++        if (ctpiPlannerEnabled)
++        {
++            namespace fs = std::filesystem;
++            fs::create_directories(cpirAuditDirectory);
++            ctpiM3Audit.open(fs::path(cpirAuditDirectory) / "ctpi_m3_action_audit.csv",
++                             std::ios::out | std::ios::trunc);
++            if (!ctpiM3Audit)
++                throw std::runtime_error("CTPI_M3_AUDIT_OPEN");
++            ctpiM3Audit << "decision_id,sim_time,mode,decision_sensor_state_ppm,candidate_count,native_goal_x,native_goal_y,native_info_nats,selected_goal_x,selected_goal_y,selected_info_nats,selected_travel_m,prediction_horizon_start_index,action_changed\n";
++        }
+ 
+         // set all variables to the prior probability
+         for (HitProbability& h : hitProbability)
+@@ -498,6 +515,8 @@
+     float PMFS::gasCallback(olfaction_msgs::msg::GasSensor::SharedPtr msg)
+     {
+         float ppm = Algorithm::gasCallback(msg);
++        if (ctpiPlannerEnabled)
++            ctpiLatestMeasuredPpm = ppm;
+         if (cpirEnabled)
+             recordCPIRRawSample(ppm);
+         IF_GUI(ui.addConcentrationReading(ppm));
+--- a/ros2_package/src/gsl_server/algorithms/PMFS/CPIR.cpp
++++ b/ros2_package/src/gsl_server/algorithms/PMFS/CPIR.cpp
+@@ -200,6 +200,12 @@
+         if (cpirCurrentStopIndex != static_cast<int>(cpirObservedStopHit.size()))
+             throw std::runtime_error("CPIR_STOP_LEDGER_INDEX");
+         cpirObservedStopHit.push_back(cpirCurrentObservedHit ? 1 : 0);
++        if (ctpiPlannerEnabled)
++        {
++            if (!(std::isfinite(ctpiLatestMeasuredPpm) && ctpiLatestMeasuredPpm >= 0.0))
++                throw std::runtime_error("CTPI_M2_DECISION_SENSOR_STATE_INVALID");
++            ctpiDecisionSensorStatePpm = ctpiLatestMeasuredPpm;
++        }
+         cpirPredictedStopHit.emplace_back(cpirCarrierCount * cpirMemberCount, 0);
+         cpirStopActive = false;
+         cpirCurrentStopIndex = -1;
+@@ -245,7 +251,8 @@
+         // Frozen 2x2 factorial switches. cpir_m1_m3 is not a fourth module:
+         // it combines the existing raw M1 event operator with the existing M3
+         // stop-resolved score. No scientific constant or formula is changed.
+-        const bool rawEventMode = pfdiMode == "cpir_a1" || pfdiMode == "cpir_m1_m3";
++        const bool rawEventMode = pfdiMode == "cpir_a1" || pfdiMode == "cpir_m1_m3" ||
++                                  pfdiMode == "ctpi_f00" || pfdiMode == "ctpi_f10" || pfdiMode == "ctpi_f11";
+         const bool stopResolvedMode = pfdiMode == "cpir_a3" || pfdiMode == "cpir_m1_m3";
+         for (size_t index = cpirProcessedSamples; index < cpirTrace.size(); ++index)
+         {
+--- a/ros2_package/src/gsl_server/algorithms/PMFS/MovingStatePMFS.cpp
++++ b/ros2_package/src/gsl_server/algorithms/PMFS/MovingStatePMFS.cpp
+@@ -10,6 +10,9 @@
+ #include <gsl_server/algorithms/PMFS/MovingStatePMFS.hpp>
+ #include <gsl_server/algorithms/PMFS/PMFS.hpp>
+ #include <gsl_server/algorithms/PMFS/internal/HitProbability.hpp>
++#include <numeric>
++#include <limits>
++#include <iomanip>
+ #include <std_msgs/msg/detail/color_rgba__struct.hpp>
+ 
+ namespace GSL
+@@ -183,13 +186,124 @@
+             }
+         }
+ 
++        // CTPI M3 fast-track: use the existing PMFS open-move set as the
++        // action domain, then re-rank those actions by posterior-weighted
++        // predictive information. F10 uses raw finite-8 reachability and F11
++        // uses the frozen TSDC committor. No localization truth enters here.
++        if (pmfs->ctpiPlannerEnabled)
++        {
++            std::vector<Vector2Int> ctpiIndices;
++            std::vector<size_t> ctpiCells;
++            std::vector<double> ctpiTravel;
++            for (const auto& indices : openMoveSet)
++            {
++                if (!gridMetadata.indicesInBounds(indices))
++                    continue;
++                const size_t nativeCell = gridMetadata.indexOf(indices);
++                if (pmfs->occupancy[nativeCell] != Occupancy::Free)
++                    continue;
++                const double travel = pmfs->hitProbability[nativeCell].distanceFromRobot;
++                if (!(std::isfinite(travel) && travel >= 0.0))
++                    continue;
++                ctpiIndices.push_back(indices);
++                ctpiCells.push_back(nativeCell);
++                ctpiTravel.push_back(travel);
++            }
++            size_t nativeCandidate = std::numeric_limits<size_t>::max();
++            if (nativeGoalFound)
++            {
++                const Vector2Int nativeIndices = gridMetadata.coordinatesToIndices(nativeGoal.pose.pose);
++                if (gridMetadata.indicesInBounds(nativeIndices))
++                {
++                    const size_t nativeCell = gridMetadata.indexOf(nativeIndices);
++                    auto existing = std::find(ctpiCells.begin(), ctpiCells.end(), nativeCell);
++                    if (existing == ctpiCells.end())
++                    {
++                        if (pmfs->occupancy[nativeCell] == Occupancy::Free)
++                        {
++                            nativeCandidate = ctpiCells.size();
++                            ctpiIndices.push_back(nativeIndices);
++                            ctpiCells.push_back(nativeCell);
++                            ctpiTravel.push_back(pmfs->hitProbability[nativeCell].distanceFromRobot);
++                        }
++                    }
++                    else
++                        nativeCandidate = static_cast<size_t>(std::distance(ctpiCells.begin(), existing));
++                }
++            }
++            if (ctpiCells.empty())
++                throw std::runtime_error("CTPI_M3_EMPTY_ACTION_SET");
++            const auto ctpiScores = pmfs->evaluateCTPIActionInformation(ctpiCells, ctpiTravel);
++            std::vector<size_t> order(ctpiCells.size());
++            std::iota(order.begin(), order.end(), 0);
++            std::stable_sort(order.begin(), order.end(), [&](size_t left, size_t right)
++            {
++                const double sl = ctpiScores[left];
++                const double sr = ctpiScores[right];
++                if (std::abs(sl - sr) > 1.0e-12)
++                    return sl > sr;
++                if (std::abs(ctpiTravel[left] - ctpiTravel[right]) > 1.0e-12)
++                    return ctpiTravel[left] < ctpiTravel[right];
++                if (ctpiIndices[left].x != ctpiIndices[right].x)
++                    return ctpiIndices[left].x < ctpiIndices[right].x;
++                return ctpiIndices[left].y < ctpiIndices[right].y;
++            });
++            bool found = false;
++            size_t chosen = 0;
++            NavigateToPose::Goal ctpiGoal;
++            for (const size_t candidate : order)
++            {
++                if (!std::isfinite(ctpiScores[candidate]))
++                    continue;
++                NavigateToPose::Goal tempGoal = indexToGoal(ctpiIndices[candidate].x, ctpiIndices[candidate].y);
++                if (checkGoal(tempGoal))
++                {
++                    ctpiGoal = tempGoal;
++                    chosen = candidate;
++                    found = true;
++                    break;
++                }
++            }
++            if (!found)
++                throw std::runtime_error("CTPI_M3_NO_REACHABLE_INFORMATION_ACTION");
++            goal = ctpiGoal;
++            ++pmfs->ctpiActionDecisionId;
++            const double simTime = (pmfs->node->now() - pmfs->startTime).seconds();
++            const int travelSamples = static_cast<int>(std::ceil(
++                ctpiTravel[chosen] / pmfs->ctpiHorizontalSpeedMps / 0.2));
++            const int predictionStart = pmfs->cpirLastTimeIndex + 1 + travelSamples;
++            if (pmfs->ctpiM3Audit)
++            {
++                const double nativeInfo = nativeCandidate < ctpiScores.size()
++                    ? ctpiScores[nativeCandidate]
++                    : std::numeric_limits<double>::quiet_NaN();
++                const bool changed = nativeGoalFound &&
++                    (std::hypot(goal.pose.pose.position.x - nativeGoal.pose.pose.position.x,
++                                goal.pose.pose.position.y - nativeGoal.pose.pose.position.y) > 1.0e-9);
++                pmfs->ctpiM3Audit << pmfs->ctpiActionDecisionId << ',' << std::setprecision(17) << simTime << ','
++                    << pmfs->pfdiMode << ',' << pmfs->ctpiDecisionSensorStatePpm << ',' << ctpiCells.size() << ','
++                    << (nativeGoalFound ? nativeGoal.pose.pose.position.x : std::numeric_limits<double>::quiet_NaN()) << ','
++                    << (nativeGoalFound ? nativeGoal.pose.pose.position.y : std::numeric_limits<double>::quiet_NaN()) << ','
++                    << nativeInfo << ',' << goal.pose.pose.position.x << ',' << goal.pose.pose.position.y << ','
++                    << ctpiScores[chosen] << ',' << ctpiTravel[chosen] << ',' << predictionStart << ',' << (changed ? 1 : 0) << '\n';
++                pmfs->ctpiM3Audit.flush();
++            }
++            GSL_INFO("CTPI M3 {} decision {}: candidates={}, info={:.6f}, travel={:.3f}, sensor_state={:.6f}",
++                     pmfs->pfdiMode, pmfs->ctpiActionDecisionId, ctpiCells.size(), ctpiScores[chosen],
++                     ctpiTravel[chosen], pmfs->ctpiDecisionSensorStatePpm);
++        }
++
+         // Active-perception safety contract: posterior guidance may change a
+         // goal only when it reduces posterior-expected source distance versus
+         // the native information-gain goal.  This is truth-blind and keeps a
+         // stale/overconfident likelihood from steering the UAV away from its
+         // own information policy.
+-        goal = nativeGoalFound ? nativeGoal : guidedGoal;
+-        if (effectiveGuidanceWeight > 0.0 && nativeGoalFound && guidedGoalFound)
++        if (!pmfs->ctpiPlannerEnabled)
++            goal = nativeGoalFound ? nativeGoal : guidedGoal;
++        if (!pmfs->ctpiPlannerEnabled && effectiveGuidanceWeight > 0.0 && nativeGoalFound && guidedGoalFound)
+         {
+             const auto posteriorExpectedDistance = [&](const NavigateToPose::Goal& candidateGoal)
+             {
