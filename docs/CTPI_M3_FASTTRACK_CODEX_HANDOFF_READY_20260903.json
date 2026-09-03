@@ -1,39 +1,35 @@
 {
-  "contract": "CTPI_M3_FASTTRACK_HANDOFF_V6_AGENT_CONTINUATION",
-  "status": "AGENT_CONTINUATION_READY",
+  "contract": "CTPI_AUTONOMOUS_TRACKA_THEN_G2_V7",
+  "status": "AUTONOMOUS_CONTINUATION_READY",
   "repository": "kris-yun/uav-gsl-isj",
-  "branch": "research/ctpi-m3-fasttrack-20260903",
+  "branch": "ctpi-agent-resume-20260903",
   "science_anchor": "bcd56dd276e0e29a22399d695203101e7c09022f",
-  "runtime_anchor": "c4445ee69d478f48ada19dfb9425726ab78c2d33",
-  "continuation_instruction": "docs/AGENT_CTPI_M3_FASTTRACK_RESUME_AFTER_CODEX_QUOTA_20260903.md",
-  "continuation_state": "docs/CTPI_M3_FASTTRACK_AGENT_HANDOFF_AFTER_CODEX_QUOTA_20260903.json",
+  "original_runtime_anchor": "c4445ee69d478f48ada19dfb9425726ab78c2d33",
+  "primary_instruction": "docs/AGENT_CTPI_AUTONOMOUS_CLOSED_LOOP_THEN_G2_UNTIL_LOAD_BEARING_20260904.md",
+  "supporting_instructions": [
+    "docs/AGENT_CTPI_M3_FASTTRACK_RESUME_AFTER_CODEX_QUOTA_20260903.md",
+    "docs/AGENT_CTPI_G2_DISTANT_SCIENCE_2026_THREE_MODULE_REDESIGN_20260903.md",
+    "docs/AGENT_CTPI_G2_CAUSAL_MAIN_INNOVATION_BANKFREE_ZERO_SHOT_20260903.md"
+  ],
   "scientific_state": {
-    "M1_CREL_F00": "CONFIRMED_PASS",
-    "M2_TSDC_V0": "FRESH_CONFIRM_PASS_FROZEN",
-    "M3_PIP": "FROZEN_FOR_TRUE_CLOSED_LOOP",
-    "true_closed_loop_outcomes_seen": false,
-    "science_no_go": false
+    "M1_CREL": "PRIOR_DOWNSTREAM_PASS",
+    "M2_TSDC_V0": "FRESH_CONFIRM_PASS_INTERNAL_PREDICTIVE",
+    "M3_PIP": "FROZEN_AWAITING_TRUE_CLOSED_LOOP_DOWNSTREAM_TEST",
+    "full_three_module_true_closed_loop": "NOT_YET_CLEANLY_CONFIRMED",
+    "paper_level_main_paradigm": "CAUSAL_MECHANISM_AND_CAUSAL_REPRESENTATION",
+    "g2_modules_must_have_distinct_mother_fields": true
   },
-  "completed_runtime_state": {
-    "phase0_v3": "PASS",
-    "environment_autonomous_recovery": "PASS",
-    "dependency_qualification": "PASS",
-    "authoritative_release_build_at_runtime_anchor": "PASS",
-    "H01_bank_integrity": "PASS",
-    "H02_bank_integrity": "PASS",
-    "H03_bank_integrity": "PASS",
-    "python_cpp_parity_max_abs_error": 2.22e-16,
-    "truth_blind_preflight": "PASS"
+  "track_a_frozen_ablation": {
+    "A0": "native_PMFS",
+    "F00": "CREL_M1_plus_native_planner",
+    "F10": "CREL_M1_plus_raw_finite8_predictive_probability_plus_PIP",
+    "F11": "CREL_M1_plus_TSDC_M2_plus_same_PIP",
+    "M1_increment": "F00-A0",
+    "M3_increment": "F10-F00",
+    "M2_downstream_increment": "F11-F10",
+    "full_increment": "F11-A0"
   },
-  "current_blocker": {
-    "classification": "ENVIRONMENT_COMPATIBILITY_ONLY",
-    "missing_path": "/dev/shm/house1_raw_query",
-    "required_backend": "raw_house1_snapshot",
-    "smoke_started": false,
-    "arm_outcomes_generated": false,
-    "next_agent_may_recover_environment_autonomously": true
-  },
-  "frozen_runtime": {
+  "frozen_runtime_intent": {
     "stepsSourceUpdate": 3,
     "maxWarmupIterations": 3,
     "minWarmupIterations": 1,
@@ -43,41 +39,91 @@
     "dwell_samples": 80,
     "bank_time_samples": 1500
   },
-  "arms": {
-    "A0": "native_PMFS",
-    "F00": "frozen_M1_plus_native_planner",
-    "F10": "frozen_M1_plus_raw_finite8_forecast_plus_PIP",
-    "F11": "frozen_M1_plus_frozen_TSDC_plus_same_PIP"
-  },
-  "required_execution_order": [
-    "recover_and_validate_house1_raw_query_without_changing_H01_backend",
-    "H01_seed0_F00_F10_F11_true_closed_loop_smoke",
-    "H01_seeds0_1_2_12run_screen_only_if_smoke_pass",
-    "crosshouse_seeds3_4_5_36run_confirm_only_if_screen_pass"
+  "runtime_repairs_completed_or_validated": [
+    "reconstructed_H01_house1_raw_query_from_historical_source",
+    "reconstructed_raw_house1_snapshot_consumer_in_vgr_sim_node",
+    "repaired_vgr_bridge_install",
+    "repaired_result_contract_glue",
+    "normalized_H01_cell_manifest_CRLF_and_consistent_hashes",
+    "gas_sample_time_uses_message_header_stamp",
+    "causal_timestamp_pose_association_uses_latest_pose_with_t_pose_le_t_gas"
   ],
-  "required_smoke_gates": [
+  "timestamp_pose_association": {
+    "classification": "RUNTIME_CORRECTNESS_NOT_SCIENTIFIC_INNOVATION",
+    "causal_rule": "latest historical pose with pose_stamp <= gas_stamp",
+    "future_pose_forbidden": true,
+    "callback_time_current_pose_forbidden": true,
+    "causality_audit_required": "pose_stamp_used <= gas_stamp"
+  },
+  "current_blocker": {
+    "classification": "PREEXISTING_NAVIGATION_TO_CPIR_FREE_CELL_RESOLUTION_MISMATCH",
+    "observed_error": "CPIR_POSE_NOT_FREE_LOOKUP_CELL",
+    "cpir_grid_approx_cell_m": 0.3,
+    "navigation_grid_approx_cell_m": 0.1,
+    "cause": "straight transit can traverse positions free on fine occupancy but non-queryable in reduced CPIR lookup topology",
+    "preferred_resolution": "navigation_layer_path_must_respect_CPIR_queryable_free_space_topology_for_all_arms",
+    "forbidden_shortcuts": [
+      "disable_or_relax_CPIR_POSE_NOT_FREE_LOOKUP_CELL",
+      "arbitrary_nearest_free_cell_projection",
+      "silently_drop_moving_samples_only_to_pass_gate",
+      "regenerate_or_redefine_frozen_trackA_bank"
+    ]
+  },
+  "track_a_required_order": [
+    "freeze_and_commit_runtime_correctness_repairs",
+    "fresh_F00_path_probe_not_used_as_performance_evidence",
+    "fresh_H01_seed0_F00_F10_F11_smoke",
+    "H01_seeds0_1_2_A0_F00_F10_F11_12run_screen_only_if_smoke_pass",
+    "H01_H02_H03_fresh_seeds3_4_5_A0_F00_F10_F11_36run_confirm_only_if_screen_pass"
+  ],
+  "track_a_required_smoke_gates": [
     "CTPI_FASTTRACK_CASE_TERMINAL=PASS",
     "CTPI_M3_ACTION_SANITY=PASS_for_F10_F11",
     "TRUE_CLOSED_LOOP_CAUSAL_CHAIN=PASS",
     "CTPI_H01_SEED0_SMOKE=PASS"
   ],
-  "forbidden": [
-    "modify_M1_formula_or_runtime_semantics",
-    "modify_TSDC_beta_features_or_definition",
-    "modify_M3_information_objective_action_domain_or_tiebreak",
-    "modify_3_3_1_cadence",
-    "modify_240s_horizon",
-    "regenerate_predictive_bank",
-    "change_scientific_Gate_after_outcomes",
-    "replace_H01_raw_house1_snapshot_backend_with_another_backend",
-    "use_truth_or_future_observation_in_planner",
-    "reuse_screen_seeds_0_1_2_as_formal_confirmation"
-  ],
-  "expected_existing_vm_artifacts_if_not_evicted": {
-    "repo": "/home/zyc/CTPI_M3_FASTTRACK_TRUE_CLOSED_LOOP_20260903_R8_C4445EE/repo",
-    "build_root": "/dev/shm/ctpi_m3_fasttrack_build_v5_c4445ee",
-    "runtime_env": "/dev/shm/ctpi_m3_fasttrack_build_v5_c4445ee/ctpi_prepare_audit/CTPI_VM_ENV.sh",
-    "bank_audit_root": "/dev/shm/ctpi_m3_fasttrack_bank_audit_v5_c4445ee"
+  "track_b_g2": {
+    "activate_if": "Track_A_scientifically_insufficient_or_after_full_failure_mechanism_audit",
+    "paper_level_main_innovation": "causal_mechanism_and_causal_representation_for_robotic_GSL",
+    "module_1": {
+      "responsibility": "source_nuisance_separation_and_inverse_source_evidence",
+      "mother_fields": ["causal_representation_learning", "geophysical_statistical_inverse_problems"]
+    },
+    "module_2": {
+      "responsibility": "bank_free_future_transport_observation_dynamics",
+      "mother_fields": ["nonequilibrium_statistical_physics", "turbulence_and_Lagrangian_transport", "rare_event_committor_theory", "operator_learning_and_dynamical_systems"]
+    },
+    "module_3": {
+      "responsibility": "active_experimental_design",
+      "mother_fields": ["Bayesian_experimental_design", "information_geometry", "autonomous_science"]
+    },
+    "modules_must_not_be_one_causal_method_split_into_three_names": true,
+    "bank_free_zero_shot_required": true,
+    "held_out_environment_must_not_generate_site_specific_predictive_bank": true,
+    "held_out_environment_allowed_inputs": ["map_or_geometry_or_SLAM", "online_wind", "online_gas", "robot_pose_and_trajectory", "sensor_state", "once_pretrained_general_model"],
+    "held_out_environment_forbidden_inputs": ["site_specific_GADEN_candidate_source_campaign", "site_specific_source_transport_action_predictive_bank", "site_specific_scientific_model_finetuning_before_evaluation", "truth_or_future_measurements"]
   },
-  "outcome_state_at_handoff": "NO_TRUE_CLOSED_LOOP_OUTCOME_GENERATED"
+  "g2_target": {
+    "preferred_primary_metric": "240s_localization_error_AUC",
+    "full_vs_classic_PMFS_target": ">=10_percent_relative_improvement_on_preregistered_primary_continuous_metric",
+    "if_primary_is_percentage": ">=10_percentage_points",
+    "must_hold_bank_free_on_held_out_environment": true,
+    "all_three_modules_must_have_downstream_increment": true,
+    "no_posthoc_metric_seed_house_or_variant_cherry_pick": true
+  },
+  "autonomy_policy": {
+    "routine_environment_and_runtime_repairs_need_user_approval": false,
+    "routine_exploratory_G2_theory_versions_need_user_approval": false,
+    "may_iterate_new_G2_versions_after_documented_failure": true,
+    "may_not_tune_repeatedly_on_same_confirmatory_data": true,
+    "must_use_fresh_confirmation_for_promoted_version": true,
+    "must_preserve_NO_GO_evidence": true,
+    "must_update_GitHub_handoff_at_major_transitions": true
+  },
+  "stop_only_when": [
+    "Track_A_cleanly_PASS_or_scientifically_NO_GO_after_true_closed_loop",
+    "G2_satisfies_all_three_load_bearing_increments_plus_preregistered_performance_target_plus_bank_free_held_out_environment_confirmation",
+    "hard_external_blocker_requires_unavailable_credentials_hardware_or_data",
+    "ambiguity_would_change_the_scientific_question_itself"
+  ]
 }
