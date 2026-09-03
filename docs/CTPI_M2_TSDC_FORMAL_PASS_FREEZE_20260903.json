@@ -1,0 +1,37 @@
+{
+  "contract": "CTPI_M2_TSDC_FORMAL_PASS_FREEZE_20260903",
+  "status": "CONFIRMED_PASS",
+  "authoritative_commit": "d808b4b37ba7eb4c99a4b34d18aa66b0019c6a75",
+  "evidence_zip_sha256": "52fd5725f55b1f12203a0758880b3c7ffeec583c3b1053b9dd63e4b52095f6d5",
+  "fresh_confirm": {
+    "worlds": 30,
+    "events": 450,
+    "houses": {"H01": 10, "H02": 10, "H03": 10},
+    "raw_nll": 0.30043646188598233,
+    "tsdc_nll": 0.18209351772675716,
+    "nll_world_wins": 27,
+    "nll_world_losses": 3,
+    "raw_brier": 0.09093278463648834,
+    "tsdc_brier": 0.053067771144835886,
+    "brier_world_wins": 24,
+    "brier_world_losses": 6,
+    "raw_ece5": 0.035802469135802456,
+    "tsdc_ece5": 0.0345747787073743,
+    "house_nll_wins": {"H01": 8, "H02": 9, "H03": 10},
+    "all_preregistered_gate_criteria_pass": true,
+    "independent_recompute_pass": true,
+    "all_world_audits_pass": true,
+    "bank_regenerated": false
+  },
+  "scientific_state": {
+    "M1_CREL": "PASS",
+    "M2_TSDC": "PASS",
+    "legacy_M2_global_PY_given_K": "REJECTED_NO_GO",
+    "M3": "OFFLINE_ACTION_GATE_AUTHORIZED_ONLY",
+    "cpp": "NOT_AUTHORIZED",
+    "ros": "NOT_AUTHORIZED",
+    "closed_loop": "NOT_AUTHORIZED"
+  },
+  "archival_todo": "When the VM is online, mirror the original 30 formal world directories into the final archival bundle before paper/reproducibility freeze. This is an archival completeness item, not a reason to invalidate the current Gate because the frozen Gate inputs/outputs, per-world metrics, generation audit ledger, independent recomputation, and source snapshot are preserved.",
+  "next_gate": "M3_OFFLINE_ACTION_GATE"
+}
