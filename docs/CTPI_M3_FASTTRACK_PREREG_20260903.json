@@ -12,6 +12,13 @@
     "F10": "frozen_M1_plus_raw_finite8_forecast_plus_PIP",
     "F11": "frozen_M1_plus_frozen_TSDC_plus_same_PIP"
   },
+  "runtime_cadence": {
+    "stepsSourceUpdate": 3,
+    "maxWarmupIterations": 3,
+    "minWarmupIterations": 1,
+    "basis": "frozen paired reference runner fixes warmup=3/1 and qualified H01/H02/H03 runtime manifests record steps_source_update=3",
+    "same_for_all_arms": true
+  },
   "m3": {
     "objective": "binary_mutual_information_I_S_Y_given_action_and_decision_sensor_state",
     "action_domain": "PMFS_openMoveSet_union_native_PMFS_goal",
@@ -68,6 +75,7 @@
   "forbidden": [
     "change_TSDC_beta_or_features",
     "change_M1_F00_formula",
+    "change_runtime_cadence_after_outcomes",
     "add_planner_weight_or_temperature",
     "use_source_truth_in_planner",
     "use_localization_error_in_planner",
