@@ -1,0 +1,46 @@
+{
+  "contract": "CTPI_M2_TSDC_FRESH_CONFIRM_PREREG_V0_20260903",
+  "depends_on_freeze_sha256": "e80b2ac3eba3797606b5e4b95d3dfb9f7deaf026564aaf99cc31a8d081129f1e",
+  "frozen_module_sha256": "854a2fc8513201cdb2ae497a62c0cd3c5fa09fdae2f1bc309ad594a8b1aaacf7",
+  "beta": [-1.1915279295661385, 1.0423583775118566, 2.989667055088417],
+  "old_worlds_status": "all 60 prior CAL/CONFIRM worlds are DEV_SPENT and prohibited from confirmatory scoring",
+  "new_worlds": {
+    "total": 30,
+    "per_house": {"H01": 10, "H02": 10, "H03": 10},
+    "carrier_selection": "deterministic bank-only before outcomes; prefer carriers unused in DEV where feasible",
+    "observation_rng": "new and disjoint from all known historical/CAL/CONFIRM RNG domains",
+    "predictive_bank": "frozen read-only, no regeneration"
+  },
+  "generation_integrity": [
+    "freeze+hash manifest before first formal outcome",
+    "one native world invocation per world",
+    "1500 physical samples",
+    "1502 causal sensor samples",
+    "15 completed 80-sample event windows",
+    "bank before/after hash identical",
+    "runtime/OMP identity frozen",
+    "per-world audit PASS"
+  ],
+  "scoring": {
+    "raw": "pK=(K+0.5)/9",
+    "tsdc": "frozen module only; no fitting",
+    "unit": "world/tape, 15 events per world"
+  },
+  "gate_all_required": {
+    "pooled_nll_lower": true,
+    "pooled_brier_lower": true,
+    "ece5_not_worse": true,
+    "paired_world_nll_sign_p_max": 0.05,
+    "paired_world_brier_sign_p_max": 0.05,
+    "per_house_nll_wins_min": 6,
+    "no_house_mean_nll_and_brier_both_worse": true,
+    "finite_probabilities": true,
+    "beta_hash_match": true,
+    "no_confirm_refit": true
+  },
+  "terminal": {
+    "pass": "CTPI_M2_TSDC_FRESH_CONFIRM=PASS",
+    "fail": "CTPI_M2_TSDC_FRESH_CONFIRM=NO_GO"
+  },
+  "after_pass_authorization": "M3 OFFLINE ACTION GATE ONLY; C++/ROS/closed-loop still forbidden"
+}
