@@ -49,6 +49,9 @@ namespace GSL
         void recordCPIRRawSample(float measuredPpm);
         void finalizeCPIRPhysicalStop();
         void applyCPIRPosterior(uint64_t sourceUpdateId, double simTime);
+        std::vector<double> evaluateCTPIActionInformation(
+            const std::vector<size_t>& nativeCells,
+            const std::vector<double>& travelDistancesM);
 
         template <typename T>
         Grid2D<T> AsGrid(std::vector<T>& vec)
@@ -83,16 +86,11 @@ namespace GSL
         std::string p2ShadowDirectory;
         uint64_t p2ShadowGlobalSeed = 0;
         int p2ShadowReplicas = 0;
-        uint64_t p2ShadowTransportSubstream = 0;
+        uint64_t p2TransportSubstream = 0;
         uint64_t p2SourceUpdateId = 0;
-        // Monotone completed StopAndMeasure block identity for the optional
-        // PC-ACI/A9 event carrier.  It does not alter the native PMFS path.
         uint64_t completedMeasurementBlockId = 0;
         bool tadmEnabled = false;
         std::string pfdiMode = "off";
-        // Optional inference-to-control coupling.  The frozen OFF path keeps
-        // this at zero; the protected ON path can use the PFDI posterior when
-        // ranking the next measurement goal.
         double posteriorGuidanceWeight = 0.0;
         std::string tadmDirectory;
         int tadmPriorSet = 0;
@@ -103,8 +101,6 @@ namespace GSL
         std::string contextBankExportDirectory;
         double contextBankPreviousSimTime = -1.0;
 
-        // Causal Physical Intervention Reachability nested A1/A2/A3 runtime.
-        // This state is unreachable in the authoritative OFF mode.
         struct CPIRSample
         {
             int timeIndex = -1;
@@ -113,6 +109,13 @@ namespace GSL
             int stopSampleIndex = -1;
         };
         bool cpirEnabled = false;
+        bool ctpiPlannerEnabled = false;
+        bool ctpiTSDCEnabled = false;
+        double ctpiDecisionSensorStatePpm = 0.0;
+        double ctpiLatestMeasuredPpm = 0.0;
+        double ctpiHorizontalSpeedMps = 0.4;
+        uint64_t ctpiActionDecisionId = 0;
+        std::ofstream ctpiM3Audit;
         std::string cpirLookupRoot;
         std::string cpirAuditDirectory;
         std::vector<CPIRSample> cpirTrace;
