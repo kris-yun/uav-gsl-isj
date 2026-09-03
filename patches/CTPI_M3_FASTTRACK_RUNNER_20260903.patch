@@ -6,12 +6,20 @@
  
 -# House-aware formal CPIR/PMFS paired runner.
 +# House-aware CTPI M1/M2/M3 fast-track paired runner.
+ #
+ # Scientific rule: this wrapper does not infer or tune the authoritative PMFS
+ # cadence.  STEPS_SOURCE_UPDATE, MAX_WARMUP_ITERATIONS and
 @@ -11,7 +11,7 @@
+ 
  HOUSE="${HOUSE:?set HOUSE=H01,H02,H03 (or House01,House02,House03)}"
  SEED="${SEED:?set SEED explicitly}"
 -ARM="${ARM:?set ARM=A0,F00,F01,F10,F11}"
 +ARM="${ARM:?set ARM=A0,F00,F10,F11}"
+ RUN_ROOT="${RUN_ROOT:?set RUN_ROOT}"
+ PFDI_INSTALL_ROOT="${PFDI_INSTALL_ROOT:?set PFDI_INSTALL_ROOT to the build of the current frozen commit}"
+ STEPS_SOURCE_UPDATE="${STEPS_SOURCE_UPDATE:?recover STEPS_SOURCE_UPDATE from the authoritative paired PMFS manifest}"
 @@ -21,16 +21,23 @@
+ 
  REPO_ROOT="${REPO_ROOT:-/home/zyc/gsl_ws/src/GasSourceLocalization}"
  BANK_ROOT_BASE="${BANK_ROOT_BASE:-/mnt/hgfs/workspace/CPIR_M1_FULLGRID_LOOKUP_20260831_R1}"
 -CPIR_LAUNCH_FILE="${CPIR_LAUNCH_FILE:-${REPO_ROOT}/closed_loop/cpir/vgr_gsl_pmfs_cpir.launch.py}"
@@ -22,16 +30,23 @@
  OUTER_DEADLINE_SEC="${OUTER_DEADLINE_SEC:-1200}"
 -TIMEOUT_SEC="${TIMEOUT_SEC:-300.0}"
 +TIMEOUT_SEC="${TIMEOUT_SEC:-240.0}"
-@@
+ REALTIME_FACTOR="${REALTIME_FACTOR:-1.0}"
+ NAV_COMMAND_QUANTUM_S="${NAV_COMMAND_QUANTUM_S:-2.0}"
+ FRAME_QUERY_WAIT_SEC="${FRAME_QUERY_WAIT_SEC:-120}"
  GMRF_UPDATE_ON_NEW_OBSERVATION_ONLY="${GMRF_UPDATE_ON_NEW_OBSERVATION_ONLY:-false}"
-+
+ 
 +python3 - "${TIMEOUT_SEC}" <<'PY_HORIZON'
 +import sys
 +v=float(sys.argv[1])
 +if abs(v-240.0)>1e-12:
 +    raise SystemExit('CTPI_FASTTRACK_TIMEOUT_MUST_BE_240_FOR_FROZEN_BANK_HORIZON')
 +PY_HORIZON
++
+ case "${HOUSE}" in
+   H01|House01)
+     HSHORT="H01"; HOUSE_LONG="House01"
 @@ -70,21 +77,20 @@
+ 
  case "${ARM}" in
    A0) PFDI_MODE="off" ;;
 -  F00) PFDI_MODE="cpir_a1" ;;
@@ -57,36 +72,61 @@
  
 -for path in "${CPIR_LAUNCH_FILE}" "${CPIR_PREFLIGHT_SCRIPT}" "${ALGORITHM_BINARY}" "${INTEGRITY_REPORT}"; do
 +for path in "${CTPI_LAUNCH_FILE}" "${CTPI_PREFLIGHT_SCRIPT}" "${ALGORITHM_BINARY}" "${INTEGRITY_REPORT}"; do
+   [[ -e "${path}" ]] || { echo "CPIR_FORMAL_REQUIRED_PATH_MISSING=${path}" >&2; exit 3; }
+ done
+ [[ -d "${BANK_ROOT}" ]] || { echo "CPIR_FORMAL_BANK_ROOT_MISSING=${BANK_ROOT}" >&2; exit 3; }
 @@ -96,8 +102,9 @@
+   [[ -d "${REALIZATION}" ]] || { echo "CPIR_FORMAL_REALIZATION_MISSING=${REALIZATION}" >&2; exit 3; }
  fi
  
 +[[ ! -e "${RUN_DIR}" ]] || { echo "CTPI_FASTTRACK_REFUSE_STALE_RUN_DIR=${RUN_DIR}" >&2; exit 70; }
  mkdir -p "${RUN_DIR}" "${CPIR_AUDIT_DIR}"
 -python3 "${CPIR_PREFLIGHT_SCRIPT}" \
 +python3 "${CTPI_PREFLIGHT_SCRIPT}" \
+   --house "${HSHORT}" \
+   --bank-root "${BANK_ROOT}" \
+   --integrity-report "${INTEGRITY_REPORT}" \
 @@ -124,7 +131,7 @@
+ GIT_COMMIT="${GIT_COMMIT:-$(git -C "${REPO_ROOT}" rev-parse HEAD 2>/dev/null || echo UNKNOWN)}"
  cat >"${RUN_DIR}/formal_runtime_manifest.json" <<EOF
  {
 -  "contract": "CPIR_FORMAL_PAIRED_RUN_V1",
 +  "contract": "CTPI_FASTTRACK_PAIRED_RUN_V0",
+   "run_id": "${RUN_ID}",
+   "house": "${HSHORT}",
+   "seed": ${SEED},
 @@ -211,7 +218,7 @@
+ 
  ARGS=(
    "vgr_data_path:=${VGR_DATA}" "config_id:=${CONFIG_ID}" "algorithm:=PMFS"
 -  "method:=CPIR_THREE_MODULE_NESTED" "method_family:=cpir_nested" "ablation_id:=${ARM}"
 +  "method:=CTPI_CREL_TSDC_PIP" "method_family:=ctpi_three_module" "ablation_id:=${ARM}"
+   "run_id:=${RUN_ID}" "run_uuid:=${RUN_ID}" "run_dir:=${RUN_DIR}" "output_dir:=${RUN_ROOT}"
+   "git_commit:=${GIT_COMMIT}" "code_manifest_sha256:=${ALGORITHM_SHA256}"
+   "environment_id:=${ENV_ID}" "scenario_id:=${SCENARIO_ID}" "dataset:=${ENV_ID}"
 @@ -241,14 +248,17 @@
+   "cpir_expected_max_warmup_iterations:=${MAX_WARMUP_ITERATIONS}"
    "cpir_expected_min_warmup_iterations:=${MIN_WARMUP_ITERATIONS}"
    "context_bank_export_enabled:=false"
 +  "ctpi_m3_horizontal_speed_mps:=0.4"
 +  "navigation_trace_file:=${RUN_DIR}/navigation_trace.csv"
 +  "source_estimate_trace_file:=${RUN_DIR}/source_estimate_trace.csv"
-@@
+   "use_sdbe:=1" "use_iasc:=1" "use_sepf:=1" "use_sage:=0" "use_beacon:=0"
+   "use_beacon_tr:=0" "use_pcrd:=0" "use_pgn:=0" "use_tpp:=0" "use_hmm:=0"
+   "temperature_tau:=1.0" "tau_adaptive:=0" "infoTaxis:=false" "use_infotaxis:=false"
+ )
+ 
 -echo "CPIR_FORMAL_CASE_START HOUSE=${HSHORT} SEED=${SEED} ARM=${ARM} MODE=${PFDI_MODE} DOMAIN=${ROS_DOMAIN_ID}"
 +echo "CTPI_FASTTRACK_CASE_START HOUSE=${HSHORT} SEED=${SEED} ARM=${ARM} MODE=${PFDI_MODE} DOMAIN=${ROS_DOMAIN_ID}"
  set +e
 -setsid ros2 launch "${CPIR_LAUNCH_FILE}" "${ARGS[@]}" >"${RUN_DIR}/launch.log" 2>&1 &
 +setsid ros2 launch "${CTPI_LAUNCH_FILE}" "${ARGS[@]}" >"${RUN_DIR}/launch.log" 2>&1 &
+ launch_pid=$!
+ deadline=$((SECONDS + OUTER_DEADLINE_SEC))
+ while kill -0 "${launch_pid}" 2>/dev/null; do
 @@ -273,8 +283,15 @@
+ set -e
+ 
  if [[ ! -s "${RUN_DIR}/run_status.json" ]]; then
 -  echo "CPIR_FORMAL_CASE_NO_TERMINAL_STATUS HOUSE=${HSHORT} SEED=${SEED} ARM=${ARM} STATUS=${status}" >&2
 -  exit "${status:-1}"
