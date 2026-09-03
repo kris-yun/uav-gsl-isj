@@ -1,15 +1,18 @@
 {
-  "contract": "CTPI_M3_FASTTRACK_CODEX_HANDOFF_READY_V1",
+  "contract": "CTPI_M3_FASTTRACK_CODEX_HANDOFF_READY_V2",
   "status": "CODEX_HANDOFF_READY=PASS",
   "repository": "kris-yun/uav-gsl-isj",
   "branch": "research/ctpi-m3-fasttrack-20260903",
-  "handoff_anchor_commit": "dd5f71111096193e81ccda9c1ce5f9a54628fd25",
-  "final_head_policy": "Use the exact branch HEAD containing this JSON as supplied by the ChatGPT handoff message. It must be a descendant of handoff_anchor_commit. Do not use an older commit.",
+  "handoff_anchor_commit": "3952b98ad2f73c8db5948cc8a45a9608acf59793",
+  "supersedes_handoff_head": "998beb23553ec4153536a4925c155a3ed0ba6769",
+  "phase0_hash_erratum": "docs/CTPI_M3_FASTTRACK_PHASE0_HASH_ERRATUM_20260903.json",
+  "final_head_policy": "Use the exact branch HEAD containing this V2 JSON as supplied by the ChatGPT handoff message. It must be a descendant of handoff_anchor_commit. Do not use 998beb23553ec4153536a4925c155a3ed0ba6769 or any older handoff HEAD.",
   "scientific_state": {
     "M1_CREL_F00": "CONFIRMED_PASS",
     "M2_TSDC_V0": "FRESH_CONFIRM_PASS_FROZEN",
     "M3_PIP": "FROZEN_FOR_TRUE_CLOSED_LOOP",
-    "true_closed_loop_outcomes_seen_before_freeze": false
+    "true_closed_loop_outcomes_seen_before_freeze": false,
+    "phase0_erratum_changes_scientific_method": false
   },
   "frozen_runtime": {
     "stepsSourceUpdate": 3,
@@ -30,23 +33,23 @@
   },
   "critical_sha256": {
     "experiments/cg_pc_ctt/ctpi_m2_tsdc_frozen_v0.py": "854a2fc8513201cdb2ae497a62c0cd3c5fa09fdae2f1bc309ad594a8b1aaacf7",
-    "experiments/cg_pc_ctt/ctpi_m3_pip_frozen_v0.py": "bcf065903ec8cd88533ff0ac0dbd453131a9aeaf0d075fbf71ec92dc00fc2706",
+    "experiments/cg_pc_ctt/ctpi_m3_pip_frozen_v0.py": "75323d10faf1b9d8695f61fa59d7478fd258b969d64ce510f14dcc2fdf4a645a",
     "ros2_package/src/gsl_server/algorithms/PMFS/CTPI.cpp": "e5ce97b3f6ed5d1c7d17636933130a3b7207be9286b6173255d9ffca65fb8675",
     "ros2_package/src/gsl_server/algorithms/PMFS/PMFS.hpp": "7fe197312c6ea93cd8edf4876dd5d8c60328a64aa017b236f97848c24a00339e",
-    "patches/CTPI_M3_FASTTRACK_RUNTIME_INTEGRATION_20260903.patch": "96e1e425a7c4e6e97ad123c1d46e67120dc86574b3d3927a370e5b99d1020743",
+    "patches/CTPI_M3_FASTTRACK_RUNTIME_INTEGRATION_20260903.patch": "a054a28c593f095956469e87713350e89baf3f30c94a9d23e8708b63379f4713",
     "patches/CTPI_M3_FASTTRACK_LAUNCH_20260903.patch": "d4d9d992d78285ab87721e5249c7641f39181d9f9fb56057307d2ba2c9574c55",
     "patches/CTPI_M3_FASTTRACK_RUNNER_20260903.patch": "e4d6a3137dadca6997cd34d9177becc83861c16493c0057b80e4ca5acfd34ea0"
   },
   "critical_git_blobs": {
-    "tools/ctpi_m3_fasttrack_handoff_check.py": "100a2579d162a9ea93afad82685d9a1e49a3862b",
+    "tools/ctpi_m3_fasttrack_handoff_check.py": "45e7e4f0373fe09675ef77afb91cdc11a9ab969d",
     "tools/ctpi_fasttrack_terminal_guard.py": "e224ca0a6e95206af363228876fbf607b757a067",
     "closed_loop/ctpi/run_ctpi_h01_seed0_smoke_20260903.sh": "4674052d118a92cc1a62318bbdf35ec38105e982",
     "closed_loop/ctpi/run_ctpi_h01_3seed_screen_20260903.sh": "8f804c4ac563d49d3e9236dd322154247ed96686",
     "closed_loop/ctpi/run_ctpi_crosshouse_36run_confirm_20260903.sh": "7db6b6e3455867a91f593140d6d47c454381f0ab",
     "closed_loop/ctpi/prepare_ctpi_m3_fasttrack_vm_20260903.sh": "754b8c1762216b38e7b87b6867adfc43d008f8de",
     "tools/materialize_ctpi_m3_fasttrack_vm_files.py": "1cf33f0d547547de68ddebee9944755826777e48",
-    "tools/apply_ctpi_m3_fasttrack_runtime_patch.py": "a268addae6cbd901ffe191983604c77ff51b481e",
-    "tools/ctpi_m3_fasttrack_preflight.py": "36716109361288fa85dd0bb9bd87f3591852bd8e",
+    "tools/apply_ctpi_m3_fasttrack_runtime_patch.py": "5e016e2bdb88e300dc2a0e08824c71df432ce2b9",
+    "tools/ctpi_m3_fasttrack_preflight.py": "0063539802b99c970c2871a34fd622c2b2656f4d",
     "tools/ctpi_m3_static_parity.py": "4cafdf53cdf886c4843b9e33d0323a2857a56edb",
     "tools/ctpi_m3_action_sanity.py": "5b1a734a96af21f30f5f95c98a5699cc27e95212",
     "tools/ctpi_true_closed_loop_check.py": "568cf909964d7b222474a378ebc84630f938f4cb",
