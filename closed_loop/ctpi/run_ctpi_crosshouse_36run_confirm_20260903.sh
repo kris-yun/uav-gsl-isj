@@ -29,6 +29,9 @@ for HOUSE in H01 H02 H03; do
         MAX_WARMUP_ITERATIONS="$MAX_WARMUP_ITERATIONS" MIN_WARMUP_ITERATIONS="$MIN_WARMUP_ITERATIONS" \
         INTEGRITY_REPORT="$IR" DOMAIN_ID="$DOMAIN_ID" TIMEOUT_SEC=240.0 \
         bash "$REPO_ROOT/closed_loop/ctpi/run_ctpi_fasttrack_case_safe_20260903.sh"
+      python3 "$REPO_ROOT/tools/ctpi_fasttrack_terminal_guard.py" \
+        --run-dir "$RUN_ROOT/${HOUSE}_seed${SEED}_${ARM}" --arm "$ARM" \
+        --output "$RUN_ROOT/${HOUSE}_seed${SEED}_${ARM}/CTPI_FASTTRACK_CASE_TERMINAL.json"
       if [[ "$ARM" == F10 || "$ARM" == F11 ]]; then
         python3 "$REPO_ROOT/tools/ctpi_m3_action_sanity.py" --audit "$RUN_ROOT/${HOUSE}_seed${SEED}_${ARM}/ctpi_audit/ctpi_m3_action_audit.csv" --output "$RUN_ROOT/${HOUSE}_seed${SEED}_${ARM}/ctpi_m3_action_sanity.json"
       fi
