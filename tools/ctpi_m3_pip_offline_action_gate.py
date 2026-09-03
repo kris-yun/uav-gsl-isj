@@ -2,9 +2,9 @@
 """Truth-blind offline action gate for frozen CTPI M3 PIP V0.
 
 The gate uses only already-spent historical routes to construct a feasible
-candidate-action library. At source updates 1..4, the candidates are the
-unvisited future stops of that same route. No source truth, localization error,
-future observation, or planner outcome is read. Passing this gate proves only
+candidate-action library.  At source updates 1..4, the candidates are the
+unvisited future stops of that same route.  No source truth, localization error,
+future observation, or planner outcome is read.  Passing this gate proves only
 that PIP produces a non-degenerate, M2-sensitive action policy; it does not prove
 a localization improvement and does not authorize formal closed-loop.
 """
@@ -20,12 +20,20 @@ from typing import Any
 import numpy as np
 
 from cpir_three_module_shadow import HOUSES, BankHouse, load_case, read_csv
-from ctpi_m3_pip_frozen_v0 import decide
+from ctpi_m3_pip_frozen_v0 import decide, stable_argmax
 
 CONTRACT = "CTPI_M3_PIP_OFFLINE_ACTION_GATE_V0"
 SOURCE_UPDATES = 5
 ANALYZED_UPDATES = 4
 PAIR_TOL = 1e-12
+
+
+def sha256_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def canonical_bytes(value: dict[str, Any]) -> bytes:
@@ -172,10 +180,10 @@ def main() -> int:
         "candidate_action_contract": "at updates 1..4, all unvisited future stops of the same already-feasible 15-stop historical route, ordered chronologically; exact ties keep chronological/native order",
         "m1_posterior": "frozen F00/CREL carrier posterior",
         "m2_predictor": "frozen TSDC V0",
-        "truth_read": false,
-        "future_observation_read": false,
-        "localization_error_read": false,
-        "planner_reward_read": false,
+        "truth_read": False,
+        "future_observation_read": False,
+        "localization_error_read": False,
+        "planner_reward_read": False,
         "gaden_runs": 0,
         "contexts": len(contexts),
         "pooled": pooled,
@@ -184,10 +192,10 @@ def main() -> int:
         "pass": passed,
         "authorization": {
             "m3_runtime_development": passed,
-            "cpp_ros_closed_loop": false,
-            "formal_localization_claim": false
+            "cpp_ros_closed_loop": False,
+            "formal_localization_claim": False,
         },
-        "verdict": "CTPI_M3_PIP_OFFLINE_ACTION_GATE=PASS" if passed else "CTPI_M3_PIP_OFFLINE_ACTION_GATE=NO_GO"
+        "verdict": "CTPI_M3_PIP_OFFLINE_ACTION_GATE=PASS" if passed else "CTPI_M3_PIP_OFFLINE_ACTION_GATE=NO_GO",
     }
 
     args.output_dir.mkdir(parents=True, exist_ok=False)
