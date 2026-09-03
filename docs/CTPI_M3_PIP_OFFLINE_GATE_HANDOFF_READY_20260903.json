@@ -1,0 +1,63 @@
+{
+  "contract": "CTPI_M3_PIP_OFFLINE_GATE_HANDOFF_READY_V0_20260903",
+  "status": "CODEX_M3_OFFLINE_GATE_HANDOFF_READY=PASS",
+  "branch": "research/ctpi-m3-pip-offline-gate-20260903",
+  "parent_m2_fresh_confirm_pass": "d808b4b37ba7eb4c99a4b34d18aa66b0019c6a75",
+  "scientific_state": {
+    "M1_CREL": "PASS",
+    "M2_TSDC": "FORMAL_FRESH_CONFIRM_PASS",
+    "M3_PIP": "FROZEN_OFFLINE_GATE_PENDING",
+    "cpp_ros_closed_loop": "NOT_AUTHORIZED"
+  },
+  "frozen_files": {
+    "m2_runtime": {
+      "path": "experiments/cg_pc_ctt/ctpi_m2_tsdc_frozen_v0.py",
+      "sha256": "854a2fc8513201cdb2ae497a62c0cd3c5fa09fdae2f1bc309ad594a8b1aaacf7"
+    },
+    "m3_runtime": {
+      "path": "experiments/cg_pc_ctt/ctpi_m3_pip_frozen_v0.py",
+      "sha256": "a01f4b667de85abe39437e7f8d9b01787ed59862b76e6986fd997dcbadec3b63"
+    },
+    "offline_gate": {
+      "path": "tools/ctpi_m3_pip_offline_action_gate.py",
+      "sha256": "61871b59cccd7127e7eeefb0842422ca8e2ee8d74eac586eaf9da38e80a5d0d1"
+    },
+    "preregistration": "docs/CTPI_M3_PIP_OFFLINE_GATE_PREREG_20260903.json",
+    "codex_directive": "docs/CODEX_CTPI_M3_PIP_OFFLINE_GATE_20260903.md"
+  },
+  "pre_handoff_tests": {
+    "m3_frozen_selftest": "PASS",
+    "m3_gate_python_compile": "PASS",
+    "m3_gate_import_help": "PASS",
+    "stage1_real_npz_shape_audit": "PASS",
+    "stage1_shape_audit_sha256": "0b47413523c097bdb5ee7280e91972f99a9c630d4addf15ef839eab902941bdf",
+    "fresh_m3_outcome_generated": false,
+    "gaden_runs": 0
+  },
+  "offline_gate_scope": {
+    "contexts": 120,
+    "houses": ["H01", "H02", "H03"],
+    "seeds_each": 10,
+    "source_updates_each": 4,
+    "candidate_actions": "all unvisited future stops of the same already-feasible historical route",
+    "truth_blind": true,
+    "localization_claim": false
+  },
+  "runtime_integration_after_pass": "preserve native PMFS feasibility checks, exploration cadence, and navigation-cost term; replace only the native information-interest signal with PIP; no outcome-tuned planner weight",
+  "remaining_codex_work_only": [
+    "fetch exact branch HEAD in isolated uav-gsl-isj worktree",
+    "verify M2 and M3 frozen SHA256 values",
+    "resolve the exact historical OFF route root and support CSV from the preserved Stage1 provenance; do not substitute new assets",
+    "run M3 frozen selftest and gate syntax/import checks",
+    "run the preregistered offline action gate exactly once on the 120 truth-blind contexts",
+    "preserve output hashes and return terminal PASS or NO_GO"
+  ],
+  "forbidden": [
+    "change M1 or M2",
+    "change PIP formula",
+    "change Gate thresholds after observing output",
+    "use source truth, localization error, future gas/wind or planner outcome",
+    "run GADEN",
+    "start C++/ROS/closed-loop before M3 offline Gate PASS"
+  ]
+}
