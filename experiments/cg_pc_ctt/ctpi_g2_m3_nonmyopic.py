@@ -225,4 +225,3 @@ def predicted_concentration_exploit_scores(
     if np.any(concentration < 0.0) or not np.isfinite(concentration).all():
         raise ValueError("CTPI_G2_M3_EXPLOIT_VALUE")
     return pi @ concentration
-

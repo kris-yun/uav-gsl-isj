@@ -1,6 +1,6 @@
 # CTPI-G2 M3 code and contract audit
 
-Date: 2026-09-04  
+Date: 2026-09-04
 Base: `c5949c8a89b4d360fe239a3c8948890a5dd84a36`
 
 ## VERIFIED — old exploit definition

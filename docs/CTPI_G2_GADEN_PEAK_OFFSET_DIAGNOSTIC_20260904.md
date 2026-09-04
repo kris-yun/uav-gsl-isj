@@ -1,6 +1,6 @@
 # CTPI-G2 GADEN instantaneous peak-offset diagnostic
 
-Date: 2026-09-04  
+Date: 2026-09-04
 Status: `DIAGNOSTIC_ONLY_NOT_M3_GATE`
 
 The diagnostic inspected the true carrier in each House across eight frozen
