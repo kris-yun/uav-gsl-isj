@@ -23,6 +23,7 @@
   "evaluation": {
     "target": "mean of per-member max-normalized nonzero GADEN peak fields",
     "zero_target_member_rule": "exclude an all-zero member because normalized spatial shape is undefined; record every exclusion and require at least one nonzero member per carrier",
+    "zero_prediction_rule": "retain an all-zero predictor carrier, assign correlation 0 and normalized MSE equal to mean(target_normalized squared), and record counts separately for M2 and plume",
     "M2_prediction": "max-over-time advection-diffusion field, then shape normalization",
     "baseline": "current G2 Gaussian plume max over the same wind states",
     "same_U_given_S_marginalization": true,

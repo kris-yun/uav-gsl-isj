@@ -165,8 +165,13 @@ def normalized_shape(value: np.ndarray) -> np.ndarray:
 
 
 def field_metrics(prediction: np.ndarray, target: np.ndarray) -> tuple[float, float]:
-    predicted = normalized_shape(prediction)
     observed = normalized_shape(target)
+    prediction_maximum = float(np.max(prediction))
+    if not np.isfinite(prediction_maximum) or prediction_maximum < 0.0:
+        raise ValueError("CTPI_G2_M2_INVALID_PREDICTION_FIELD")
+    if prediction_maximum == 0.0:
+        return 0.0, float(np.mean(observed ** 2))
+    predicted = normalized_shape(prediction)
     if float(np.std(predicted)) <= 0.0 or float(np.std(observed)) <= 0.0:
         correlation = 0.0
     else:
@@ -234,6 +239,8 @@ def evaluate_house(bank_root: Path, scenario_root: Path, house: str) -> dict[str
             "free_placement_count": len(placements),
             "nonzero_target_member_count": len(target_members),
             "zero_target_member_count": member_count - len(target_members),
+            "numerical_zero_prediction": bool(float(np.max(numerical)) == 0.0),
+            "plume_zero_prediction": bool(float(np.max(plume)) == 0.0),
             "numerical_correlation": numerical_corr,
             "plume_correlation": plume_corr,
             "numerical_mse": numerical_mse,
@@ -253,6 +260,8 @@ def evaluate_house(bank_root: Path, scenario_root: Path, house: str) -> dict[str
         "carrier_mse_wins_exceed_losses": bool(np.count_nonzero(numerical_mse < plume_mse) > np.count_nonzero(numerical_mse > plume_mse)),
     }
     zero_target_members = int(sum(row["zero_target_member_count"] for row in records))
+    numerical_zero_predictions = int(sum(row["numerical_zero_prediction"] for row in records))
+    plume_zero_predictions = int(sum(row["plume_zero_prediction"] for row in records))
     return {
         "house": house,
         "held_out": house in {"H02", "H03"},
@@ -261,6 +270,9 @@ def evaluate_house(bank_root: Path, scenario_root: Path, house: str) -> dict[str
         "free_placement_count_histogram": placement_histogram,
         "zero_target_member_count": zero_target_members,
         "zero_target_rule": "exclude from normalized-shape mean because an all-zero field has no defined spatial shape; require at least one nonzero member per carrier",
+        "numerical_zero_prediction_count": numerical_zero_predictions,
+        "plume_zero_prediction_count": plume_zero_predictions,
+        "zero_prediction_metric_rule": "retain carrier; assign correlation 0 and MSE mean(target_normalized squared)",
         "numerical_median_correlation": float(np.median(numerical_corr)),
         "plume_median_correlation": float(np.median(plume_corr)),
         "numerical_median_mse": float(np.median(numerical_mse)),
