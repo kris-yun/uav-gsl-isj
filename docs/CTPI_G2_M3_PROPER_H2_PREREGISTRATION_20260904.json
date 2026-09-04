@@ -1,0 +1,74 @@
+{
+  "contract": "CTPI_G2_M3_PROPER_H2_PREREGISTRATION_V1",
+  "date": "2026-09-04",
+  "base_commit": "c5949c8a89b4d360fe239a3c8948890a5dd84a36",
+  "branch": "g2-bankfree-closedloop-20260904",
+  "science_freeze": {
+    "M1": "NO_CHANGE",
+    "M2_transport_equations_and_parameters": "NO_CHANGE",
+    "M3_manual_posterior_multiplier": "FORBIDDEN",
+    "M3_distance_penalty_or_explore_exploit_weight": "FORBIDDEN"
+  },
+  "verified_old_exploit": {
+    "source": "/tmp/_tmp_m3_falsification.py on the preserved VM",
+    "source_sha256": "3bdaa79ee4fe5d883dbc3827ba40c2305b76f356f5129b73f89c95ace096c090",
+    "definition": "argmax_a sum_s posterior[s] * predicted_concentration[s,a] among unvisited actions",
+    "classification": "predicted-concentration exploit",
+    "not_posterior_map": true,
+    "not_measured_concentration_chase": true
+  },
+  "observation_law_audit": {
+    "current_G2_runtime_transport_output": "deterministic Gaussian-plume-like concentration response",
+    "current_runtime_soft_probability": "C/(C+0.3)",
+    "current_runtime_soft_probability_calibrated": false,
+    "unused_legacy_function": "tsdcProbability(count,sensorState)",
+    "legacy_TSDC_is_bank_free_G2": false,
+    "G2_L0_numeric_transport_output": "deterministic concentration field/peak field",
+    "G2_L0_code_committed_before_this_preregistration": false,
+    "gate_blocker": "A held-out-valid p(Y|S,a,h) adapter must be frozen from data before an M3 scientific gate can run"
+  },
+  "source_carrier_contract": {
+    "state": "region-valued carrier S with physical placement U conditional on S",
+    "marginalization": "uniform over every free native cell inside the carrier rectangle",
+    "obstacle_rule": "exclude occupancy cells that are not Free before normalization",
+    "weights": "1 divided by the number of free placements in that carrier",
+    "shared_by_myopic_and_H2": true,
+    "carrier_center_substitution": false
+  },
+  "policies": [
+    "random",
+    "verified predicted-concentration exploit",
+    "proper myopic EID",
+    "proper observation-branched H2 EID"
+  ],
+  "proper_H2": "Q2(pi,a0)=I_pi(S;Y0|a0)+sum_y p(y|pi,a0) max_a1 I_pi^y(S;Y1|a1)",
+  "branching": "exact y in {0,1}; expected-observation posterior forbidden",
+  "primary_comparison": "proper H2 versus proper myopic EID",
+  "primary_metric": "paired source-risk AUC over the frozen observation budget",
+  "secondary_metrics": [
+    "true-source carrier rank trajectory",
+    "true-source posterior mass trajectory",
+    "posterior entropy trajectory",
+    "localization-error AUC",
+    "time-to-resolution",
+    "travel distance diagnostic",
+    "action diversity diagnostic",
+    "runtime"
+  ],
+  "gate": {
+    "required": [
+      "observation-law qualification passes before outcome evaluation",
+      "H2 source-risk AUC is lower than myopic in a strict majority of paired held-out worlds",
+      "mean paired source-risk AUC delta favors H2",
+      "no House has all paired worlds worsening",
+      "all raw trajectories and seeds are preserved"
+    ],
+    "if_fail": "CTPI_G2_M3_PROPER_H2_NO_GO_NO_RESCUE_TUNING",
+    "if_pass": "AUTHORIZE_RUNTIME_INTEGRATION_AND_CLOSED_LOOP_SMOKE_ONLY"
+  },
+  "gaden_peak_diagnostic": {
+    "required": true,
+    "counts_as_M3_gate": false,
+    "signed_wind_offset_requires_snapshot_aligned_wind_ledger": true
+  }
+}

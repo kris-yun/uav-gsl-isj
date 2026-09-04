@@ -1,0 +1,39 @@
+{
+  "contract": "CTPI_G2_M2_CROSSHOUSE_FIELD_GATE_PREREGISTRATION_V1",
+  "date": "2026-09-04",
+  "base_commit": "c5949c8a89b4d360fe239a3c8948890a5dd84a36",
+  "development_house": "H01",
+  "held_out_houses": ["H02", "H03"],
+  "frozen_M2": {
+    "equation": "dC/dt = -div(u C) + D laplacian(C) + unit_source",
+    "diffusivity_m2_s": 0.01,
+    "cell_size_m": 0.3,
+    "time_step_s": 1.0,
+    "wind_states": 11,
+    "steps_per_wind_state": 27,
+    "actual_integrated_time_s": 297.0,
+    "negative_concentration_rule": "clip to zero after each step",
+    "obstacle_rule": "set non-free coarse cells to zero after each step"
+  },
+  "source_carrier_contract": {
+    "placements": "all free native cells inside each carrier rectangle",
+    "weights": "uniform within carrier",
+    "bank_argmax_to_choose_source_position": "FORBIDDEN"
+  },
+  "evaluation": {
+    "target": "mean of per-member max-normalized GADEN peak fields",
+    "M2_prediction": "max-over-time advection-diffusion field, then shape normalization",
+    "baseline": "current G2 Gaussian plume max over the same wind states",
+    "same_U_given_S_marginalization": true,
+    "metrics": ["per-carrier spatial correlation", "per-carrier normalized MSE"]
+  },
+  "pass_gate_each_held_out_house": [
+    "M2 median correlation strictly exceeds plume median correlation",
+    "M2 median normalized MSE is strictly below plume median normalized MSE",
+    "per-carrier correlation wins exceed losses",
+    "per-carrier MSE wins exceed losses"
+  ],
+  "overall_pass": "all four criteria pass in both H02 and H03",
+  "failure_action": "M2_L0_CROSSHOUSE_NO_GO; do not tune D or source placement after outcomes",
+  "scope": "predictive field/generalization evidence only; downstream closed-loop utility remains separate"
+}
