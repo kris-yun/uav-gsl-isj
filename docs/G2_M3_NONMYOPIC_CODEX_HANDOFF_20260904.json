@@ -1,0 +1,179 @@
+{
+  "contract": "CTPI_G2_M3_NONMYOPIC_CODEX_HANDOFF_V1",
+  "status": "READY_FOR_CODEX_CONTINUATION",
+  "date": "2026-09-04",
+  "repository": "kris-yun/uav-gsl-isj",
+  "branch": "g2-bankfree-closedloop-20260904",
+  "input_science_progress_anchor": "463aed33c7c10a7bcb1256bdab9aa6da16cc2a34",
+  "human_handoff": "docs/AGENT_G2_M3_NONMYOPIC_CONTINUE_20260904.md",
+  "primary_references": [
+    "docs/AGENT_CTPI_G2_BANKFREE_RESUME_20260904.md",
+    "docs/CTPI_G2_M3_OFFLINE_FALSIFICATION_20260904.md",
+    "ros2_package/src/gsl_server/algorithms/PMFS/CTPI.cpp"
+  ],
+  "current_state": {
+    "M1": {
+      "status": "PASS_LOAD_BEARING",
+      "instruction": "freeze M1 science during M3 work"
+    },
+    "M2": {
+      "status": "BANK_FREE_CROSS_ENV_OFFLINE_PASS_DOWNSTREAM_CLOSED_LOOP_INCONCLUSIVE",
+      "instruction": "freeze M2 equations and parameters; interface-only refactors allowed if numerically identical"
+    },
+    "M3": {
+      "status": "NOT_LOAD_BEARING_REDESIGN_REQUIRED",
+      "current_blocker": "M3_NOT_LOAD_BEARING"
+    }
+  },
+  "verified_current_m3": {
+    "function": "PMFS::evaluateCTPIActionInformation",
+    "myopic": true,
+    "observation_abstraction": "soft binary hit probability from Gaussian-plume-like response",
+    "objective": "H(mixture)-sum_s pi_s H(pHit_s)",
+    "manual_modulation": "score = information * (1 + 20 * posteriorMass)",
+    "manual_modulation_allowed_in_redesign": false,
+    "source_position_issue": "planner collapses each region-valued carrier to the 2x2 quadtree center rather than marginalizing physical placement U|S"
+  },
+  "completed_offline_falsification": {
+    "metric": "true-source rank trajectory",
+    "steps": [5, 10, 15, 20, 25, 30, 35, 40],
+    "random": [179, 168, 149, 140, 128, 119, 101, 92],
+    "exploit": [125, 110, 95, 75, 65, 47, 39, 35],
+    "myopic_EIG": [119, 103, 92, 72, 55, 45, 39, 37],
+    "deterministic_pseudo_nonmyopic": [120, 104, 95, 86, 71, 63, 55, 50],
+    "supported_conclusion": "in the tested surrogate, old myopic EIG has no demonstrated incremental source-rank benefit over the tested exploit baseline; deterministic expected-observation lookahead is worse",
+    "unsupported_overclaim_to_avoid": "this alone does not prove the causal root cause of the 12-run closed-loop M3 failure and does not falsify proper non-myopic EID"
+  },
+  "audit_findings": [
+    {
+      "severity": "HIGH",
+      "id": "M3_REGION_SOURCE_COLLAPSE",
+      "finding": "M3 uses quadtree carrier centers as physical source positions",
+      "required_fix": "marginalize U within each source carrier S using a frozen deterministic support/weight scheme shared across policies"
+    },
+    {
+      "severity": "HIGH",
+      "id": "PSEUDO_NONMYOPIC",
+      "finding": "current lookahead updates with expected observation rather than expectation over observation-conditioned future posteriors",
+      "required_fix": "implement proper Bayesian observation branching/integration E_Y[V(pi^Y)]"
+    },
+    {
+      "severity": "HIGH",
+      "id": "EXPLOIT_DEFINITION_AMBIGUITY",
+      "finding": "existing report labels exploit as posterior-peak chasing but later interprets it as concentration-peak chasing",
+      "required_fix": "inspect the actual offline script, write exact exploit mathematics, freeze that definition before new outcomes"
+    },
+    {
+      "severity": "MEDIUM",
+      "id": "DOWNSTREAM_PEAK_HYPOTHESIS",
+      "finding": "the claim that instantaneous GADEN concentration maxima are downstream of the source is plausible but not universally established",
+      "required_fix": "measure peak offset on actual GADEN snapshots by House/wind/time; do not count this diagnostic as M3 PASS"
+    },
+    {
+      "severity": "HIGH",
+      "id": "LIKELIHOOD_CONTRACT",
+      "finding": "proper EID requires a predictive observation distribution, not merely a deterministic predicted concentration",
+      "required_fix": "inventory the frozen M2 interface; use exact Bernoulli EID if a calibrated hit law exists, otherwise validate/freeze p(C|S,a,h) before continuous EIG"
+    }
+  ],
+  "proper_nonmyopic_definition": {
+    "generic_observation_likelihood": "L_s(y|a)=p(y|S=s,a,h_t)",
+    "predictive_observation": "p(y|pi,a)=sum_s pi_s L_s(y|a)",
+    "posterior_branch": "pi_s^y proportional to pi_s L_s(y|a)",
+    "myopic_EID": "I_pi(S;Y_a)=H(pi)-sum_y p(y|pi,a)H(pi^y)",
+    "horizon_2": "Q2(pi,a)=I_pi(S;Y_a)+sum_y p(y|pi,a) max_b I_{pi^y}(S;Y_b)",
+    "binary_case": "branch exactly over y in {0,1}; no Monte Carlo and no expected-observation shortcut",
+    "continuous_case": "use a prevalidated p(C|S,a,h) and quadrature or common-random-number observation samples"
+  },
+  "offline_falsification_design": {
+    "policies": [
+      "random",
+      "frozen_exactly_defined_exploit",
+      "proper_myopic_EID_without_20x_hack",
+      "proper_nonmyopic_EID_H2"
+    ],
+    "same_candidate_actions": true,
+    "same_motion_constraints": true,
+    "travel_cost_tuning": false,
+    "travel_distance_role": "deterministic tie-break only unless a separate cost hypothesis is frozen before outcomes",
+    "planning_model": "frozen current M2",
+    "outcome_model": "held-out GADEN snapshots or independent transport realizations; must not be the exact same deterministic field used for planning",
+    "paired_worlds": true,
+    "common_random_numbers_when_applicable": true,
+    "metrics": [
+      "true_source_rank_trajectory",
+      "true_source_posterior_mass",
+      "posterior_entropy",
+      "localization_error_or_source_risk",
+      "error_or_risk_AUC",
+      "time_to_resolution",
+      "action_diversity_and_travel_as_diagnostics",
+      "runtime_and_rollout_budget"
+    ]
+  },
+  "gaden_peak_offset_diagnostic": {
+    "required": true,
+    "outputs": [
+      "x_peak(t)",
+      "distance_to_true_source",
+      "fraction_peak_inside_true_carrier",
+      "fraction_within_fixed_radii",
+      "signed_along_wind_offset",
+      "stratification_by_House_wind_time"
+    ],
+    "counts_as_M3_gate": false
+  },
+  "predeclared_gate": {
+    "freeze_before_heldout_outcomes": true,
+    "primary_comparison": "proper_nonmyopic_EID_H2 versus proper_myopic_EID",
+    "primary_metric": "predeclared temporal source-resolution metric such as error/source-risk AUC",
+    "paired_test": "exact paired sign/randomization test when unit count permits",
+    "house_reversal_guard": true,
+    "effect_size_required": true,
+    "if_fail": "M3_NONMYOPIC_ROUTE_NO_GO; no rescue tuning",
+    "if_pass": "runtime integration -> true closed-loop smoke -> small H01 screening -> fresh multi-House confirmatory closed loop"
+  },
+  "codex_execution_order": [
+    "inspect VM and current checkout/build; verify ephemeral /dev/shm before reuse",
+    "confirm branch and exact commit",
+    "read human handoff, existing G2 resume doc, existing M3 falsification report, CTPI.cpp, and actual offline benchmark script",
+    "resolve and document exact exploit definition",
+    "inventory frozen M2 predictive observation law",
+    "implement U|S source-placement marginalization in offline M3 evaluator",
+    "implement proper myopic EID and observation-branched H2 nonmyopic EID",
+    "add normalization/entropy/branching/reproducibility/carrier-marginalization tests",
+    "add GADEN peak-offset diagnostic",
+    "run toy correctness tests then frozen held-out offline falsification",
+    "package commands, commits, hashes, seeds, worlds, trajectories and PASS/NO-GO",
+    "only if offline gate passes, integrate exact same M3 objective into runtime and start closed-loop smoke"
+  ],
+  "codex_autonomy": {
+    "allowed": [
+      "repair ROS/CMake/build/overlay/runtime paths",
+      "recover reproducible ephemeral artifacts",
+      "vectorize/cache computation while preserving numerical science",
+      "add tests/audit/profiling/result packaging",
+      "interface-only M1/M2 refactors with numerical parity"
+    ],
+    "forbidden": [
+      "change M1 or M2 science to make M3 win",
+      "use carrier centroid as physical source truth/prediction substitute",
+      "add posterior multiplier 20 or other hand-tuned planner weights",
+      "use J-lambda-distance rescue tuning",
+      "call expected-observation lookahead proper nonmyopic EID",
+      "tune on held-out outcomes and relabel them confirmatory",
+      "change the gate after seeing outcomes",
+      "claim downstream GADEN peak behavior without measurement",
+      "claim M3 PASS from entropy alone without source-resolution benefit"
+    ]
+  },
+  "required_next_report_questions": [
+    "What exactly did the old exploit policy do?",
+    "What predictive observation law does frozen M2 provide to M3?",
+    "How is physical placement U marginalized within source carrier S?",
+    "Is H2 implemented as an expectation over future observations?",
+    "Does proper H2 beat proper myopic EID on held-out source-resolution trajectories under the frozen gate?",
+    "Does actual GADEN peak-offset evidence support the downstream-peak hypothesis?",
+    "If PASS, what exact runtime objective replaces information*(1+20*posteriorMass); if NO-GO, where is the frozen negative result?"
+  ]
+}
