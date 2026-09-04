@@ -1,0 +1,58 @@
+{
+  "contract": "CTPI_G2_M3_HELDOUT_OFFLINE_GATE_PREREGISTRATION_V1",
+  "date": "2026-09-04",
+  "development_house": "H01",
+  "held_out_houses": ["H02", "H03"],
+  "scope": "static max-over-300s acquisition falsification before runtime integration",
+  "observation_adapter": {
+    "event": "GADEN peak concentration at action exceeds 0.1 ppm",
+    "feature": "frozen M2 L0 concentration divided by its per-source spatial maximum",
+    "law": "Bernoulli sigmoid(beta0 + beta1 * feature)",
+    "fit": "unpenalized two-parameter MLE on all H01 source-action-member records only",
+    "monotonicity": "beta1 must be positive",
+    "held_out_gate_each_house": [
+      "NLL lower than constant H01 event-rate predictor",
+      "Brier score lower than constant H01 event-rate predictor"
+    ],
+    "on_failure": "INVALID_OBSERVATION_LAW_NO_M3_GATE"
+  },
+  "source_state": "all carriers in posterior; carrier coordinates are means of all free cells inside the carrier",
+  "action_set": {
+    "count": 32,
+    "selection": "deterministic farthest-point coverage over free cells, lexicographically first start",
+    "feasibility": "unvisited selected actions; all selected actions reachable in this static-acquisition falsification",
+    "travel": "Euclidean distance is tie-break only"
+  },
+  "worlds": {
+    "true_sources_per_house": 8,
+    "source_selection": "eight lexicographically smallest SHA256 keys CTPI_G2_M3_HELDOUT_V1:house:carrier",
+    "members_per_source": 8,
+    "paired_world_count": 128,
+    "budget": 10
+  },
+  "policies": [
+    "random with frozen world-keyed seed",
+    "predicted-concentration exploit",
+    "proper myopic EID",
+    "proper exact binary observation-branched H2 EID"
+  ],
+  "posterior_update": "same qualified Bernoulli observation law for exploit, myopic and H2; uniform initial carrier posterior",
+  "primary_metric": "source-risk AUC=sum_t(1-posterior_true_t), lower is better",
+  "primary_comparison": "H2 minus myopic",
+  "pass_gate": [
+    "H2 strict paired wins exceed losses",
+    "mean paired source-risk AUC delta is negative",
+    "each held-out House has at least one H2 win"
+  ],
+  "secondary_metrics": [
+    "localization-error AUC",
+    "true-rank trajectory",
+    "true-mass trajectory",
+    "H2 versus exploit",
+    "H2 versus random",
+    "travel distance",
+    "unique actions"
+  ],
+  "failure_action": "CTPI_G2_M3_PROPER_H2_NO_GO_NO_RESCUE_TUNING",
+  "pass_action": "authorize runtime integration and closed-loop smoke only; do not claim final closed-loop success"
+}
