@@ -180,7 +180,8 @@ def field_metrics(prediction: np.ndarray, target: np.ndarray) -> tuple[float, fl
     return correlation, mse
 
 
-def evaluate_house(bank_root: Path, scenario_root: Path, house: str) -> dict[str, Any]:
+def evaluate_house(bank_root: Path, scenario_root: Path, house: str,
+                   prediction_output_dir: Path | None = None) -> dict[str, Any]:
     root = bank_root / house
     summary = json.loads((root / "bank_summary.json").read_text(encoding="utf-8"))
     cells = load_cells(root / "cell_manifest.csv")
@@ -207,6 +208,8 @@ def evaluate_house(bank_root: Path, scenario_root: Path, house: str) -> dict[str
     target_peak = raw_peak.reshape(carrier_count, member_count, cell_count)
 
     records: list[dict[str, Any]] = []
+    numerical_fields = np.empty((carrier_count, cell_count), dtype=np.float32)
+    plume_fields = np.empty_like(numerical_fields)
     placement_histogram: dict[str, int] = {}
     for carrier_index, carrier in enumerate(carriers):
         oi, oj, sx, sy = carrier_rect(carrier)
@@ -227,6 +230,8 @@ def evaluate_house(bank_root: Path, scenario_root: Path, house: str) -> dict[str
             plume += plume_peak(xy_for_native[native], action_x, action_y, wind_u, wind_v)
         numerical /= float(len(placements))
         plume /= float(len(placements))
+        numerical_fields[carrier_index] = numerical
+        plume_fields[carrier_index] = plume
         target_members = [member for member in target_peak[carrier_index]
                           if float(np.max(member)) > 0.0]
         if not target_members:
@@ -262,6 +267,26 @@ def evaluate_house(bank_root: Path, scenario_root: Path, house: str) -> dict[str
     zero_target_members = int(sum(row["zero_target_member_count"] for row in records))
     numerical_zero_predictions = int(sum(row["numerical_zero_prediction"] for row in records))
     plume_zero_predictions = int(sum(row["plume_zero_prediction"] for row in records))
+    prediction_artifact = None
+    if prediction_output_dir is not None:
+        prediction_output_dir.mkdir(parents=True, exist_ok=True)
+        prediction_path = prediction_output_dir / f"{house}_M2_FIELDS_V1.npz"
+        np.savez_compressed(
+            prediction_path,
+            house=np.asarray(house),
+            carrier_ids=np.asarray(carriers),
+            native_cells=np.asarray([cell["native"] for cell in cells], dtype=np.int64),
+            action_x=action_x,
+            action_y=action_y,
+            numerical_fields=numerical_fields,
+            plume_fields=plume_fields,
+            gaden_peak_fields=target_peak,
+        )
+        prediction_artifact = {
+            "path": str(prediction_path),
+            "sha256": sha256_file(prediction_path),
+            "shape": [carrier_count, cell_count],
+        }
     return {
         "house": house,
         "held_out": house in {"H02", "H03"},
@@ -273,6 +298,7 @@ def evaluate_house(bank_root: Path, scenario_root: Path, house: str) -> dict[str
         "numerical_zero_prediction_count": numerical_zero_predictions,
         "plume_zero_prediction_count": plume_zero_predictions,
         "zero_prediction_metric_rule": "retain carrier; assign correlation 0 and MSE mean(target_normalized squared)",
+        "prediction_artifact": prediction_artifact,
         "numerical_median_correlation": float(np.median(numerical_corr)),
         "plume_median_correlation": float(np.median(plume_corr)),
         "numerical_median_mse": float(np.median(numerical_mse)),
@@ -305,8 +331,10 @@ def main() -> int:
     parser.add_argument("--scenario-root", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--houses", nargs="+", choices=sorted(HOUSE), default=["H02", "H03"])
+    parser.add_argument("--prediction-output-dir", type=Path)
     args = parser.parse_args()
-    results = [evaluate_house(args.bank_root, args.scenario_root, house) for house in args.houses]
+    results = [evaluate_house(args.bank_root, args.scenario_root, house,
+                              args.prediction_output_dir) for house in args.houses]
     held_out = [result for result in results if result["held_out"]]
     passed = bool(held_out) and all(result["pass"] for result in held_out)
     report = {
