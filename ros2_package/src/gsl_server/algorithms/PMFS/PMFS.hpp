@@ -46,7 +46,7 @@ namespace GSL
         float gasCallback(olfaction_msgs::msg::GasSensor::SharedPtr msg) override;
 
         void initializeCPIR();
-        void recordCPIRRawSample(float measuredPpm);
+        void recordCPIRRawSample(float measuredPpm, double simTime);
         void finalizeCPIRPhysicalStop();
         void applyCPIRPosterior(uint64_t sourceUpdateId, double simTime);
         std::vector<double> evaluateCTPIActionInformation(
@@ -114,6 +114,12 @@ namespace GSL
             size_t nativeCellIndex = 0;
             int stopIndex = -1;
             int stopSampleIndex = -1;
+            // audit: observation timestamp-pose association (not used in formulas)
+            double gasStamp = -1.0;
+            double poseStampUsed = -1.0;
+            double poseAgeSec = 0.0;
+            double poseX = 0.0;
+            double poseY = 0.0;
         };
         bool cpirEnabled = false;
         bool ctpiPlannerEnabled = false;
@@ -144,6 +150,13 @@ namespace GSL
         std::vector<double> cpirReferenceCellMass;
         std::vector<double> cpirCarrierReferenceMass;
         std::unordered_map<size_t, std::vector<float>> cpirCellCache;
+        std::vector<float> cpirPeakField;          // G2-M1: carrier × member × cell 稳态峰值
+        std::vector<float> cpirObservedCellPeak;   // G2-M1: 626 cell 观测峰值累积
+        std::vector<char> cpirObservedCellVisited; // G2-M1: cell 是否被访问过
+        // G2-M1 v3: bank-free plume per-stop downwind direction history
+        // (max over observed directions keeps the time-varying wind info).
+        std::vector<double> cpirWindHistoryU;
+        std::vector<double> cpirWindHistoryV;
         std::vector<double> cpirSensorState;
         std::vector<float> cpirDelayOne;
         std::vector<float> cpirDelayTwo;

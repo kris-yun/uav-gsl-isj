@@ -26,7 +26,7 @@ namespace GSL
         // Subscribers
         //------------
         using namespace std::placeholders;
-        localizationSub = node->create_subscription<PoseWithCovarianceStamped>(getParam<std::string>("robot_location_topic", "amcl_pose"), 1,
+        localizationSub = node->create_subscription<PoseWithCovarianceStamped>(getParam<std::string>("robot_location_topic", "amcl_pose"), 500,
                                                                                std::bind(&Algorithm::localizationCallback, this, _1));
         rclcpp::Rate rate(1);
         while (resultLogging.robotPosesVector.size() == 0)
@@ -36,7 +36,7 @@ namespace GSL
             GSL_INFO("Waiting to hear from localization topic: {}", localizationSub->get_topic_name());
         }
 
-        gasSub = node->create_subscription<olfaction_msgs::msg::GasSensor>(getParam<std::string>("enose_topic", "PID/Sensor_reading"), 1,
+        gasSub = node->create_subscription<olfaction_msgs::msg::GasSensor>(getParam<std::string>("enose_topic", "PID/Sensor_reading"), 500,
                                                                            std::bind(&Algorithm::gasCallback, this, _1));
 
         GSL_INFO("Gas sensor topic: '{}'", gasSub->get_topic_name());

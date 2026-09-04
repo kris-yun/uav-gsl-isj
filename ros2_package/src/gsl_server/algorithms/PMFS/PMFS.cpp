@@ -78,11 +78,15 @@ namespace GSL
         tadmEnabled = getParam<bool>("tadm_enabled", false);
         pfdiMode = getParam<std::string>("pfdi_mode", tadmEnabled ? "joint" : "off");
         if (pfdiMode != "off" && pfdiMode != "cpir_m1" && pfdiMode != "cpir_a1" && pfdiMode != "cpir_a2" &&
-            pfdiMode != "cpir_a3" && pfdiMode != "cpir_m1_m3" && pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" &&
+            pfdiMode != "cpir_a3" && pfdiMode != "cpir_m1_m3" && pfdiMode != "ctpi_f00" && pfdiMode != "ctpi_f10" &&
+            pfdiMode != "ctpi_f11" && pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" &&
             pfdiMode != "al" && pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" &&
             pfdiMode != "ec_edcl" && pfdiMode != "ec_edcl_shadow")
-            throw std::invalid_argument("pfdi_mode must be off, cpir_m1, cpir_a1, cpir_a2, cpir_a3, cpir_m1_m3, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
-        cpirEnabled = pfdiMode == "cpir_m1" || pfdiMode == "cpir_a1" || pfdiMode == "cpir_a2" || pfdiMode == "cpir_a3" || pfdiMode == "cpir_m1_m3";
+            throw std::invalid_argument("pfdi_mode must be off, cpir_m1, cpir_a1, cpir_a2, cpir_a3, cpir_m1_m3, ctpi_f00, ctpi_f10, ctpi_f11, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
+        ctpiPlannerEnabled = pfdiMode == "ctpi_f10" || pfdiMode == "ctpi_f11";
+        ctpiTSDCEnabled = pfdiMode == "ctpi_f11";
+        cpirEnabled = pfdiMode == "cpir_m1" || pfdiMode == "cpir_a1" || pfdiMode == "cpir_a2" || pfdiMode == "cpir_a3" || pfdiMode == "cpir_m1_m3" ||
+                      pfdiMode == "ctpi_f00" || pfdiMode == "ctpi_f10" || pfdiMode == "ctpi_f11";
         tadmEnabled = pfdiMode != "off" && !cpirEnabled;
         if (cpirEnabled)
         {
@@ -102,7 +106,10 @@ namespace GSL
         cpirAuditDirectory = getParam<std::string>("cpir_audit_directory", "");
         posteriorGuidanceWeight = std::clamp(getParam<double>("posterior_guidance_weight", 0.0), 0.0, 1.0);
         if (cpirEnabled && std::abs(posteriorGuidanceWeight) > 1.0e-12)
-            throw std::invalid_argument("CPIR posterior_guidance_weight must remain 0; planner coupling is not a paper module");
+            throw std::invalid_argument("CPIR/CTPI posterior_guidance_weight must remain 0; CTPI M3 has its own frozen information planner");
+        ctpiHorizontalSpeedMps = getParam<double>("ctpi_m3_horizontal_speed_mps", 0.4);
+        if (ctpiPlannerEnabled && std::abs(ctpiHorizontalSpeedMps - 0.4) > 1.0e-12)
+            throw std::invalid_argument("CTPI M3 horizontal speed is frozen at 0.4 m/s");
         tadmDirectory = getParam<std::string>("tadm_directory", "");
         tadmPriorSet = getParam<int>("tadm_prior_set", 0);
         tadmGlobalSeed = getParam<int64_t>("tadm_global_seed", 0);
@@ -229,6 +236,16 @@ namespace GSL
 
         if (cpirEnabled)
             initializeCPIR();
+        if (ctpiPlannerEnabled)
+        {
+            namespace fs = std::filesystem;
+            fs::create_directories(cpirAuditDirectory);
+            ctpiM3Audit.open(fs::path(cpirAuditDirectory) / "ctpi_m3_action_audit.csv",
+                             std::ios::out | std::ios::trunc);
+            if (!ctpiM3Audit)
+                throw std::runtime_error("CTPI_M3_AUDIT_OPEN");
+            ctpiM3Audit << "decision_id,sim_time,mode,decision_sensor_state_ppm,candidate_count,native_goal_x,native_goal_y,native_info_nats,selected_goal_x,selected_goal_y,selected_info_nats,selected_travel_m,prediction_horizon_start_index,action_changed\n";
+        }
 
         // set all variables to the prior probability
         for (HitProbability& h : hitProbability)
@@ -272,6 +289,13 @@ namespace GSL
     void PMFS::processGasAndWindMeasurements(double concentration, double windSpeed, double windDirection)
     {
         static int number_of_updates = 0;
+        // G2-M1 v3: record the per-stop downwind direction for the bank-free
+        // time-varying plume kernel.
+        if (cpirEnabled)
+        {
+            cpirWindHistoryU.push_back(std::cos(windDirection));
+            cpirWindHistoryV.push_back(std::sin(windDirection));
+        }
 
         // Update the gas presence map
         //  ------------------------------
@@ -498,8 +522,11 @@ namespace GSL
     float PMFS::gasCallback(olfaction_msgs::msg::GasSensor::SharedPtr msg)
     {
         float ppm = Algorithm::gasCallback(msg);
+        if (ctpiPlannerEnabled)
+            ctpiLatestMeasuredPpm = ppm;
         if (cpirEnabled)
-            recordCPIRRawSample(ppm);
+            recordCPIRRawSample(ppm,
+                msg->header.stamp.sec + static_cast<double>(msg->header.stamp.nanosec) * 1e-9);
         IF_GUI(ui.addConcentrationReading(ppm));
         return ppm;
     }

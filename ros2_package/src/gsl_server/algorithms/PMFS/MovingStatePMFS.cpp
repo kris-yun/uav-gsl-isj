@@ -10,6 +10,9 @@
 #include <gsl_server/algorithms/PMFS/MovingStatePMFS.hpp>
 #include <gsl_server/algorithms/PMFS/PMFS.hpp>
 #include <gsl_server/algorithms/PMFS/internal/HitProbability.hpp>
+#include <numeric>
+#include <limits>
+#include <iomanip>
 #include <std_msgs/msg/detail/color_rgba__struct.hpp>
 
 namespace GSL
@@ -89,7 +92,7 @@ namespace GSL
         double maxPosterior = 0.0;
         double posteriorSqSum = 0.0;
         size_t freeCellCount = 0;
-        if (pmfs->tadmEnabled && pmfs->posteriorGuidanceWeight > 0.0)
+        if ((pmfs->tadmEnabled && pmfs->posteriorGuidanceWeight > 0.0) || pmfs->cpirEnabled)
         {
             for (size_t i = 0; i < pmfs->sourceProbability.size(); ++i)
             {
@@ -183,13 +186,153 @@ namespace GSL
             }
         }
 
+        // CTPI M3 fast-track: use the existing PMFS open-move set as the
+        // action domain, then re-rank those actions by posterior-weighted
+        // predictive information. F10 uses raw finite-8 reachability and F11
+        // uses the frozen TSDC committor. No localization truth enters here.
+        if (pmfs->ctpiPlannerEnabled)
+        {
+            std::vector<Vector2Int> ctpiIndices;
+            std::vector<size_t> ctpiCells;
+            std::vector<double> ctpiTravel;
+            for (const auto& indices : openMoveSet)
+            {
+                if (!gridMetadata.indicesInBounds(indices))
+                    continue;
+                const size_t nativeCell = gridMetadata.indexOf(indices);
+                if (pmfs->occupancy[nativeCell] != Occupancy::Free)
+                    continue;
+                const double travel = pmfs->hitProbability[nativeCell].distanceFromRobot;
+                if (!(std::isfinite(travel) && travel >= 0.0))
+                    continue;
+                ctpiIndices.push_back(indices);
+                ctpiCells.push_back(nativeCell);
+                ctpiTravel.push_back(travel);
+            }
+            // Always include the native PMFS goal in the M3 action domain.
+            // This makes the action Gate exact: M3 can only replace the native
+            // action when its predicted information is at least as large.
+            size_t nativeCandidate = std::numeric_limits<size_t>::max();
+            if (nativeGoalFound)
+            {
+                const Vector2Int nativeIndices = gridMetadata.coordinatesToIndices(nativeGoal.pose.pose);
+                if (gridMetadata.indicesInBounds(nativeIndices))
+                {
+                    const size_t nativeCell = gridMetadata.indexOf(nativeIndices);
+                    auto existing = std::find(ctpiCells.begin(), ctpiCells.end(), nativeCell);
+                    if (existing == ctpiCells.end())
+                    {
+                        if (pmfs->occupancy[nativeCell] == Occupancy::Free)
+                        {
+                            nativeCandidate = ctpiCells.size();
+                            ctpiIndices.push_back(nativeIndices);
+                            ctpiCells.push_back(nativeCell);
+                            ctpiTravel.push_back(pmfs->hitProbability[nativeCell].distanceFromRobot);
+                        }
+                    }
+                    else
+                        nativeCandidate = static_cast<size_t>(std::distance(ctpiCells.begin(), existing));
+                }
+            }
+            if (ctpiCells.empty())
+                throw std::runtime_error("CTPI_M3_EMPTY_ACTION_SET");
+            const auto ctpiScores = pmfs->evaluateCTPIActionInformation(ctpiCells, ctpiTravel);
+            std::vector<size_t> order(ctpiCells.size());
+            std::iota(order.begin(), order.end(), 0);
+            std::stable_sort(order.begin(), order.end(), [&](size_t left, size_t right)
+            {
+                const double sl = ctpiScores[left];
+                const double sr = ctpiScores[right];
+                if (std::abs(sl - sr) > 1.0e-12)
+                    return sl > sr;
+                if (std::abs(ctpiTravel[left] - ctpiTravel[right]) > 1.0e-12)
+                    return ctpiTravel[left] < ctpiTravel[right];
+                if (ctpiIndices[left].x != ctpiIndices[right].x)
+                    return ctpiIndices[left].x < ctpiIndices[right].x;
+                return ctpiIndices[left].y < ctpiIndices[right].y;
+            });
+            bool found = false;
+            size_t chosen = 0;
+            NavigateToPose::Goal ctpiGoal;
+            for (const size_t candidate : order)
+            {
+                if (!std::isfinite(ctpiScores[candidate]))
+                    continue;
+                NavigateToPose::Goal tempGoal = indexToGoal(ctpiIndices[candidate].x, ctpiIndices[candidate].y);
+                if (checkGoal(tempGoal))
+                {
+                    ctpiGoal = tempGoal;
+                    chosen = candidate;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+                throw std::runtime_error("CTPI_M3_NO_REACHABLE_INFORMATION_ACTION");
+            goal = ctpiGoal;
+            ++pmfs->ctpiActionDecisionId;
+            const double simTime = (pmfs->node->now() - pmfs->startTime).seconds();
+            const int travelSamples = static_cast<int>(std::ceil(
+                ctpiTravel[chosen] / pmfs->ctpiHorizontalSpeedMps / 0.2));
+            const int predictionStart = pmfs->cpirLastTimeIndex + 1 + travelSamples;
+            if (pmfs->ctpiM3Audit)
+            {
+                const double nativeInfo = nativeCandidate < ctpiScores.size()
+                    ? ctpiScores[nativeCandidate]
+                    : std::numeric_limits<double>::quiet_NaN();
+                const bool changed = nativeGoalFound &&
+                    (std::hypot(goal.pose.pose.position.x - nativeGoal.pose.pose.position.x,
+                                goal.pose.pose.position.y - nativeGoal.pose.pose.position.y) > 1.0e-9);
+                pmfs->ctpiM3Audit << pmfs->ctpiActionDecisionId << ',' << std::setprecision(17) << simTime << ','
+                    << pmfs->pfdiMode << ',' << pmfs->ctpiDecisionSensorStatePpm << ',' << ctpiCells.size() << ','
+                    << (nativeGoalFound ? nativeGoal.pose.pose.position.x : std::numeric_limits<double>::quiet_NaN()) << ','
+                    << (nativeGoalFound ? nativeGoal.pose.pose.position.y : std::numeric_limits<double>::quiet_NaN()) << ','
+                    << nativeInfo << ',' << goal.pose.pose.position.x << ',' << goal.pose.pose.position.y << ','
+                    << ctpiScores[chosen] << ',' << ctpiTravel[chosen] << ',' << predictionStart << ',' << (changed ? 1 : 0) << '\n';
+                pmfs->ctpiM3Audit.flush();
+            }
+            GSL_INFO("CTPI M3 {} decision {}: candidates={}, info={:.6f}, travel={:.3f}, sensor_state={:.6f}",
+                     pmfs->pfdiMode, pmfs->ctpiActionDecisionId, ctpiCells.size(), ctpiScores[chosen],
+                     ctpiTravel[chosen], pmfs->ctpiDecisionSensorStatePpm);
+        }
+
         // Active-perception safety contract: posterior guidance may change a
         // goal only when it reduces posterior-expected source distance versus
         // the native information-gain goal.  This is truth-blind and keeps a
         // stale/overconfident likelihood from steering the UAV away from its
         // own information policy.
-        goal = nativeGoalFound ? nativeGoal : guidedGoal;
-        if (effectiveGuidanceWeight > 0.0 && nativeGoalFound && guidedGoalFound)
+        if (!pmfs->ctpiPlannerEnabled)
+            goal = nativeGoalFound ? nativeGoal : guidedGoal;
+        // G2-M1 v2b: M1 load-bearing source-seeking.  In search phase
+        // (after warmup) with a trusted posterior, track the posterior MAP
+        // inside the open move set so the Gaussian-plume posterior actually
+        // steers the UAV toward the inferred source.  Warmup keeps native
+        // PMFS exploration.
+        if (pmfs->cpirEnabled && !pmfs->ctpiPlannerEnabled &&
+            currentMovement == MovementType::Search && posteriorTrusted)
+        {
+            size_t bestCell = std::numeric_limits<size_t>::max();
+            double bestProb = -1.0;
+            for (const Vector2Int& idx : openMoveSet)
+            {
+                const size_t cell = gridMetadata.indexOf(idx);
+                if (pmfs->occupancy[cell] != Occupancy::Free)
+                    continue;
+                if (pmfs->sourceProbability[cell] > bestProb)
+                {
+                    bestProb = pmfs->sourceProbability[cell];
+                    bestCell = cell;
+                }
+            }
+            if (bestCell != std::numeric_limits<size_t>::max())
+            {
+                const Vector2Int mi = gridMetadata.indices2D(bestCell);
+                NavigateToPose::Goal mapGoal = indexToGoal(mi.x, mi.y);
+                if (checkGoal(mapGoal))
+                    goal = mapGoal;
+            }
+        }
+        if (!pmfs->ctpiPlannerEnabled && effectiveGuidanceWeight > 0.0 && nativeGoalFound && guidedGoalFound)
         {
             const auto posteriorExpectedDistance = [&](const NavigateToPose::Goal& candidateGoal)
             {

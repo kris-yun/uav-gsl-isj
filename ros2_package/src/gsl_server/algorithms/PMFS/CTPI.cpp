@@ -29,6 +29,8 @@ namespace
                "_" + std::to_string(sx) + "_" + std::to_string(sy);
     }
 
+    constexpr double kPlumeHitRef = 0.3;
+
     double binaryEntropy(double p)
     {
         if (!(std::isfinite(p) && p >= 0.0 && p <= 1.0))
@@ -36,6 +38,15 @@ namespace
         if (p == 0.0 || p == 1.0)
             return 0.0;
         return -(p * std::log(p) + (1.0 - p) * std::log1p(-p));
+    }
+
+    std::array<int, 4> carrierRect(const std::string& id)
+    {
+        std::array<int, 4> result{};
+        if (std::sscanf(id.c_str(), "quadtree_%d_%d_%d_%d",
+                        &result[0], &result[1], &result[2], &result[3]) != 4)
+            throw std::runtime_error("CTPI_M3_CARRIER_ID_PARSE:" + id);
+        return result;
     }
 
     double logistic(double x)
@@ -73,11 +84,10 @@ namespace GSL
             throw std::runtime_error("CTPI_M3_NOT_ENABLED");
         if (nativeCells.empty() || nativeCells.size() != travelDistancesM.size())
             throw std::runtime_error("CTPI_M3_ACTION_INPUT");
-        if (cpirCarrierCount == 0 || cpirWorldPaths.size() != cpirCarrierCount * cpirMemberCount)
-            throw std::runtime_error("CTPI_M3_BANK_NOT_READY");
         if (!(std::isfinite(ctpiDecisionSensorStatePpm) && ctpiDecisionSensorStatePpm >= 0.0))
             throw std::runtime_error("CTPI_M3_SENSOR_STATE_INVALID");
 
+        // carrier marginal of the cell-level M1 posterior
         std::vector<double> carrierMass(cpirCarrierCount, 0.0);
         for (size_t cell = 0; cell < sourceProbability.size(); ++cell)
         {
@@ -99,85 +109,65 @@ namespace GSL
         for (double& p : carrierMass)
             p /= static_cast<double>(posteriorSum);
 
-        const size_t actionCount = nativeCells.size();
-        std::vector<size_t> stream(actionCount, 0);
-        std::vector<int> start(actionCount, -1);
-        std::vector<unsigned char> valid(actionCount, 1);
-        for (size_t action = 0; action < actionCount; ++action)
-        {
-            const auto found = cpirNativeCellToStream.find(nativeCells[action]);
-            if (found == cpirNativeCellToStream.end())
-                throw std::runtime_error("CTPI_M3_ACTION_NOT_LOOKUP_CELL");
-            if (!(std::isfinite(travelDistancesM[action]) && travelDistancesM[action] >= 0.0))
-                throw std::runtime_error("CTPI_M3_TRAVEL_DISTANCE");
-            stream[action] = found->second;
-            const int travelSamples = static_cast<int>(std::ceil(
-                travelDistancesM[action] / ctpiHorizontalSpeedMps / kDt));
-            start[action] = cpirLastTimeIndex + 1 + travelSamples;
-            if (start[action] < 0 || start[action] + static_cast<int>(kDwellSamples) > static_cast<int>(cpirTimeCount))
-                valid[action] = 0;
-        }
-
-        std::vector<unsigned char> hits(actionCount * cpirCarrierCount * cpirMemberCount, 0);
-        std::array<float, kDwellSamples> window{};
+        // carrier source positions (center of the 2x2 quadtree block)
+        std::vector<double> carrierCx(cpirCarrierCount), carrierCy(cpirCarrierCount);
         for (size_t source = 0; source < cpirCarrierCount; ++source)
         {
-            for (size_t member = 0; member < cpirMemberCount; ++member)
-            {
-                const size_t world = source * cpirMemberCount + member;
-                std::ifstream input(cpirWorldPaths[world], std::ios::binary);
-                char magic[8]{};
-                uint32_t count = 0;
-                input.read(magic, 8);
-                input.read(reinterpret_cast<char*>(&count), sizeof(count));
-                if (!input || std::memcmp(magic, kMagic, 8) != 0 || count != cpirCellCount)
-                    throw std::runtime_error("CTPI_M3_WORLD_HEADER");
-                for (size_t action = 0; action < actionCount; ++action)
-                {
-                    if (!valid[action])
-                        continue;
-                    const std::streamoff offset = static_cast<std::streamoff>(
-                        12 + 4 * cpirCellCount +
-                        4 * (cpirTimeCount * stream[action] + static_cast<size_t>(start[action])));
-                    input.seekg(offset);
-                    input.read(reinterpret_cast<char*>(window.data()),
-                               static_cast<std::streamsize>(sizeof(float) * kDwellSamples));
-                    if (!input)
-                        throw std::runtime_error("CTPI_M3_WORLD_WINDOW_READ");
-                    bool reached = false;
-                    for (const float value : window)
-                    {
-                        if (!(std::isfinite(value) && value >= 0.0f))
-                            throw std::runtime_error("CTPI_M3_WORLD_PPM");
-                        reached = reached || value > kThreshold;
-                    }
-                    hits[(action * cpirCarrierCount + source) * cpirMemberCount + member] = reached ? 1 : 0;
-                }
-            }
+            const std::array<int, 4> r = carrierRect(cpirCarrierIds[source]);
+            carrierCx[source] = static_cast<double>(gridMetadata.origin.x) +
+                (static_cast<double>(r[0]) + static_cast<double>(r[2]) * 0.5 + 0.5) *
+                    static_cast<double>(gridMetadata.cellSize);
+            carrierCy[source] = static_cast<double>(gridMetadata.origin.y) +
+                (static_cast<double>(r[1]) + static_cast<double>(r[3]) * 0.5 + 0.5) *
+                    static_cast<double>(gridMetadata.cellSize);
         }
 
+        // bank-free Gaussian plume EIG: posterior-weighted concentration
+        // variance across source hypotheses at each candidate action.
+        const size_t nWind = cpirWindHistoryU.size();
+        // M2 (F11) realtime transport: most-recent wind only.
+        const size_t wBegin = (ctpiTSDCEnabled && nWind > 0) ? (nWind - 1) : 0;
+        const size_t actionCount = nativeCells.size();
         std::vector<double> score(actionCount, -std::numeric_limits<double>::infinity());
         for (size_t action = 0; action < actionCount; ++action)
         {
-            if (!valid[action])
-                continue;
+            const Vector2 ap = gridMetadata.indexToCoordinates(nativeCells[action]);
+            const double ax = static_cast<double>(ap.x);
+            const double ay = static_cast<double>(ap.y);
             double mixture = 0.0;
             double conditionalEntropy = 0.0;
             for (size_t source = 0; source < cpirCarrierCount; ++source)
             {
-                int count = 0;
-                for (size_t member = 0; member < cpirMemberCount; ++member)
-                    count += hits[(action * cpirCarrierCount + source) * cpirMemberCount + member];
-                const double probability = ctpiTSDCEnabled
-                    ? tsdcProbability(count, ctpiDecisionSensorStatePpm)
-                    : (static_cast<double>(count) + 0.5) / 9.0;
-                mixture += carrierMass[source] * probability;
-                conditionalEntropy += carrierMass[source] * binaryEntropy(probability);
+                double best = 0.0;
+                for (size_t w = wBegin; w < nWind; ++w)
+                {
+                    const double wu = cpirWindHistoryU[w];
+                    const double wv = cpirWindHistoryV[w];
+                    const double ws = std::hypot(wu, wv);
+                    const double cd = ws > 1e-6 ? wu / ws : 1.0;
+                    const double sd = ws > 1e-6 ? wv / ws : 0.0;
+                    const double dx = (ax - carrierCx[source]) * cd + (ay - carrierCy[source]) * sd;
+                    const double dy = -(ax - carrierCx[source]) * sd + (ay - carrierCy[source]) * cd;
+                    if (dx > 0.15)
+                    {
+                        const double sigma = 0.5 * dx + 0.3;
+                        const double v = (1.0 / sigma) * std::exp(-dy * dy / (2.0 * sigma * sigma)) / dx;
+                        best = std::max(best, v);
+                    }
+                }
+                // soft hit probability for source `source` at action `a`
+                const double pHit = best / (best + kPlumeHitRef);
+                mixture += carrierMass[source] * pHit;
+                conditionalEntropy += carrierMass[source] * binaryEntropy(pHit);
             }
             const double information = binaryEntropy(mixture) - conditionalEntropy;
             if (!(std::isfinite(information) && information >= -1.0e-12))
                 throw std::runtime_error("CTPI_M3_INFORMATION_INVALID");
-            score[action] = std::max(0.0, information);
+            // M3 v3: blend explore (mutual information) with exploit
+            // (posterior mass at the action cell), so EID prefers informative
+            // locations near the current source belief.
+            const double posteriorMass = sourceProbability[nativeCells[action]];
+            score[action] = std::max(0.0, information) * (1.0 + 20.0 * posteriorMass);
         }
         return score;
     }
