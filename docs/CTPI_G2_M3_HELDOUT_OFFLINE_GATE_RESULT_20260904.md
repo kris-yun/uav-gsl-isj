@@ -1,6 +1,6 @@
 # CTPI-G2 M3 proper H2 held-out offline gate result
 
-Date: 2026-09-04  
+Date: 2026-09-04
 Verdict: `CTPI_G2_M3_HELDOUT_OFFLINE_GATE=NO_GO`
 
 ## Observation law qualification

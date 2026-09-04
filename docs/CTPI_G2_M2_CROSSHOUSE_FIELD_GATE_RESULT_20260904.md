@@ -1,6 +1,6 @@
 # CTPI-G2 M2 cross-House field gate result
 
-Date: 2026-09-04  
+Date: 2026-09-04
 Verdict: `CTPI_G2_M2_CROSSHOUSE_FIELD_GATE=PASS`
 
 This replacement gate fixes the leakage in the earlier VM `/tmp` scripts. It
