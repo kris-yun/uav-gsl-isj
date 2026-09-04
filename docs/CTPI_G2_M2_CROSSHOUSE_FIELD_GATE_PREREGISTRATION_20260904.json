@@ -21,7 +21,8 @@
     "bank_argmax_to_choose_source_position": "FORBIDDEN"
   },
   "evaluation": {
-    "target": "mean of per-member max-normalized GADEN peak fields",
+    "target": "mean of per-member max-normalized nonzero GADEN peak fields",
+    "zero_target_member_rule": "exclude an all-zero member because normalized spatial shape is undefined; record every exclusion and require at least one nonzero member per carrier",
     "M2_prediction": "max-over-time advection-diffusion field, then shape normalization",
     "baseline": "current G2 Gaussian plume max over the same wind states",
     "same_U_given_S_marginalization": true,

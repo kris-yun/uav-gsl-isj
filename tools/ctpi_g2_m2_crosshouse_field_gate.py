@@ -222,12 +222,18 @@ def evaluate_house(bank_root: Path, scenario_root: Path, house: str) -> dict[str
             plume += plume_peak(xy_for_native[native], action_x, action_y, wind_u, wind_v)
         numerical /= float(len(placements))
         plume /= float(len(placements))
-        target = np.mean(np.asarray([normalized_shape(member) for member in target_peak[carrier_index]]), axis=0)
+        target_members = [member for member in target_peak[carrier_index]
+                          if float(np.max(member)) > 0.0]
+        if not target_members:
+            raise ValueError(f"CTPI_G2_M2_ALL_ZERO_TARGET_MEMBERS:{house}:{carrier}")
+        target = np.mean(np.asarray([normalized_shape(member) for member in target_members]), axis=0)
         numerical_corr, numerical_mse = field_metrics(numerical, target)
         plume_corr, plume_mse = field_metrics(plume, target)
         records.append({
             "carrier_id": carrier,
             "free_placement_count": len(placements),
+            "nonzero_target_member_count": len(target_members),
+            "zero_target_member_count": member_count - len(target_members),
             "numerical_correlation": numerical_corr,
             "plume_correlation": plume_corr,
             "numerical_mse": numerical_mse,
@@ -246,12 +252,15 @@ def evaluate_house(bank_root: Path, scenario_root: Path, house: str) -> dict[str
         "carrier_correlation_wins_exceed_losses": bool(np.count_nonzero(numerical_corr > plume_corr) > np.count_nonzero(numerical_corr < plume_corr)),
         "carrier_mse_wins_exceed_losses": bool(np.count_nonzero(numerical_mse < plume_mse) > np.count_nonzero(numerical_mse > plume_mse)),
     }
+    zero_target_members = int(sum(row["zero_target_member_count"] for row in records))
     return {
         "house": house,
         "held_out": house in {"H02", "H03"},
         "carrier_count": carrier_count,
         "free_placement_rule": "all free native cells inside carrier, uniform weights",
         "free_placement_count_histogram": placement_histogram,
+        "zero_target_member_count": zero_target_members,
+        "zero_target_rule": "exclude from normalized-shape mean because an all-zero field has no defined spatial shape; require at least one nonzero member per carrier",
         "numerical_median_correlation": float(np.median(numerical_corr)),
         "plume_median_correlation": float(np.median(plume_corr)),
         "numerical_median_mse": float(np.median(numerical_mse)),
