@@ -5,9 +5,10 @@ import math
 from cstar_reference import (
     CPORouteLaw,
     bhattacharyya_coefficient,
-    first_passage_to_committor,
+    first_passage_to_encounter_cdf,
     hazards_to_first_passage,
     prospective_resolution_scores,
+    route_committor,
     select_route,
 )
 
@@ -22,9 +23,10 @@ def main():
     expected = [0.2, 0.4, 0.4, 0.0]
     for a, b in zip(law, expected):
         close(a, b)
-    q = first_passage_to_committor(law)
-    for a, b in zip(q, [0.2, 0.6, 1.0]):
+    cdf = first_passage_to_encounter_cdf(law)
+    for a, b in zip(cdf, [0.2, 0.6, 1.0]):
         close(a, b)
+    close(route_committor(law), 1.0)
 
     # Identical laws are maximally confusable; disjoint laws are separable.
     close(bhattacharyya_coefficient([1, 0], [1, 0]), 1.0)
@@ -51,16 +53,22 @@ def main():
 
     # Degenerate posterior means there is no remaining hypothesis pair.
     degenerate = prospective_resolution_scores([1.0, 0.0], route_laws)
-    assert all(item.resolution == 0.0 and item.pair_weight_sum == 0.0 for item in degenerate)
+    assert all(
+        item.resolution == 0.0 and item.pair_weight_sum == 0.0
+        for item in degenerate
+    )
 
-    # M2 contract consistency: q_H = 1 - no-hit probability.
+    # M2 contract consistency: route committor = 1 - no-hit probability.
     cpo = CPORouteLaw.from_hazards(
         [0.1, 0.25, 0.4],
         [math.log1p(0.1), math.log1p(0.2), math.log1p(0.3)],
         [0.2, 0.2, 0.2],
     )
-    close(cpo.committor[-1], 1.0 - cpo.first_hit_prob[-1])
-    assert all(cpo.committor[i] <= cpo.committor[i + 1] for i in range(len(cpo.committor) - 1))
+    close(cpo.route_committor, 1.0 - cpo.first_hit_prob[-1])
+    assert all(
+        cpo.encounter_cdf[i] <= cpo.encounter_cdf[i + 1]
+        for i in range(len(cpo.encounter_cdf) - 1)
+    )
 
     # Input failures are loud, not silently renormalized from negative values.
     try:
