@@ -46,7 +46,7 @@ def main():
     )
     assert all(torch.isfinite(value) for value in losses.values())
 
-    # CPO hazard -> first-passage -> committor contract checks.
+    # CPO hazard -> first-passage -> encounter-CDF/route-committor checks.
     horizon, feature_dim = 10, 14
     features = torch.randn(b, horizon, feature_dim)
     prior_hazard_logit = torch.randn(b, horizon)
@@ -60,10 +60,10 @@ def main():
         cpo.first_hit_prob.sum(dim=-1), torch.ones(b), atol=1e-6
     )
     assert torch.all(
-        cpo.committor[:, 1:] >= cpo.committor[:, :-1] - 1e-7
+        cpo.encounter_cdf[:, 1:] >= cpo.encounter_cdf[:, :-1] - 1e-7
     )
     assert torch.allclose(
-        cpo.committor[:, -1], 1.0 - cpo.first_hit_prob[:, -1], atol=1e-6
+        cpo.route_committor, 1.0 - cpo.first_hit_prob[:, -1], atol=1e-6
     )
     targets = torch.tensor([0, 3, horizon, 7])
     assert torch.isfinite(cpo_first_passage_nll(cpo, targets))
