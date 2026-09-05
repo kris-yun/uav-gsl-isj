@@ -1,0 +1,102 @@
+{
+  "project": "CSTAR causal source-transport active resolution",
+  "date": "2026-09-06",
+  "base_commit": "2387668ec6345d273a8d630af069d65af710850f",
+  "branch": "g3-cstar-causal-redesign-20260906",
+  "scientific_identity": {
+    "main_innovation": "causal representation and causal closed-loop experiment for robotic gas source localization",
+    "deployment": "bank-free zero-shot",
+    "modules": {
+      "M1": {
+        "name": "PICR",
+        "full_name": "Perturbation-Invariant Causal Representation",
+        "mother_field": "single-cell perturbation biology / functional genomics",
+        "input": "causal stamped gas+local-wind+pose history, geometry, sensor state, arbitrary source candidates",
+        "output": "source posterior, source-stable representation, nuisance representation, amplitude state, validity",
+        "load_bearing_test": "F00-A0 plus causal intervention falsification"
+      },
+      "M2": {
+        "name": "CPO",
+        "full_name": "Committor Predictive Operator",
+        "mother_field": "chemical physics / rare-event transition-path theory",
+        "input": "source hypothesis, geometry, sparse local-wind history, causal gas/sensor state, future route intervention",
+        "output": "first-passage law, committor curve, marked log-ppm predictive law, validity/calibration",
+        "load_bearing_test": "F11-F10 plus held-out first-passage/calibration gate"
+      },
+      "M3": {
+        "name": "PHS",
+        "full_name": "Prospective Hypothesis Sweeps",
+        "mother_field": "systems/cognitive neuroscience",
+        "input": "M1 posterior, M2 source-conditioned route laws, feasible equal-horizon routes",
+        "output": "selected route, normalized pairwise resolution, confusion diagnostics",
+        "load_bearing_test": "F10-F00 plus destructive route/source-law shuffle"
+      }
+    }
+  },
+  "documents": [
+    "docs/CTPI_CSTAR_CAUSAL_THREE_MODULE_THEORY_20260906.md",
+    "docs/CTPI_CSTAR_CURRENT_CODE_ALIGNMENT_20260906.md",
+    "docs/CTPI_CSTAR_M2_SPARSE_WIND_CONTRACT_20260906.md",
+    "docs/CTPI_CSTAR_COMPOSITION_THEORY_20260906.md",
+    "docs/CTPI_CSTAR_2026_DISTANT_FIELD_LITERATURE_LEDGER.md",
+    "docs/CODEX_CSTAR_IMPLEMENTATION_CONTRACT_20260906.md"
+  ],
+  "reference_code": [
+    "experiments/ctpi_cstar/cstar_reference.py",
+    "experiments/ctpi_cstar/selftest_cstar_reference.py",
+    "experiments/ctpi_cstar/m3_phs/phs.py",
+    "experiments/ctpi_cstar/m3_phs/selftest_phs.py",
+    "experiments/ctpi_cstar/CSTAR_INTERFACE_CONTRACT.json"
+  ],
+  "current_runtime_facts": {
+    "legacy_M1": "CPIR.cpp peak-normalized Gaussian-plume SSE with -100 factor; not causal representation",
+    "V2_physics": "conservative transport + causal FOPDT/stream are retained as infrastructure/prior",
+    "legacy_M3": "carrier centroid + one-step plume binary MI + 20x posterior multiplier; baseline only",
+    "wind": "only sparse local wind is a hard deployable input; GMRF is not a required full-field provider",
+    "navigation": "distanceFromRobot is a distance field, not a complete planned path"
+  },
+  "allowed_now": [
+    "run reference selftests",
+    "perform exact code-alignment audit and hashes",
+    "build M1 paired-intervention dataset from existing spent/frozen assets",
+    "implement/train/evaluate M1 offline",
+    "build M2 route-law data from existing spent/frozen assets",
+    "implement/train/evaluate M2 offline",
+    "implement/evaluate M3 offline with frozen baseline provider",
+    "write PASS/NO_GO gates without changing thresholds after outcomes"
+  ],
+  "forbidden_now": [
+    "new House/GADEN experiment",
+    "new seed search",
+    "production replacement of legacy CPIR/CTPI scientific functions",
+    "held-out-House predictive bank at runtime",
+    "House-specific parameters",
+    "future wind/gas or source truth input",
+    "GMRF as a mandatory prerequisite",
+    "peak-SSE or Bayes marginalization relabeled as causal M1",
+    "20x posterior or fitted planner weighting",
+    "carrier centroid as physical source state",
+    "straight-line invented routes through obstacles",
+    "turning any negative result into PASS"
+  ],
+  "offline_gate_order": [
+    "reference_math_selftest",
+    "code_alignment_audit",
+    "M1_PICR_gate",
+    "M2_CPO_gate",
+    "M3_PHS_gate_with_baseline_provider",
+    "A0_F00_F10_F11_shadow_composition",
+    "runtime_integration_plan_only_if_all_above_survive"
+  ],
+  "incremental_arms": {
+    "A0": "Classic PMFS",
+    "F00": "PICR + native PMFS information planner using coefficient-free posterior-to-native source-weight adapter",
+    "F10": "PICR + PHS + frozen baseline route-law provider",
+    "F11": "PICR + PHS + full CPO",
+    "M1": "F00-A0",
+    "M3": "F10-F00",
+    "M2": "F11-F10",
+    "full": "F11-A0"
+  },
+  "next_agent_instruction": "Do not ideate a replacement method. Execute docs/CODEX_CSTAR_IMPLEMENTATION_CONTRACT_20260906.md in order. Preserve all negative evidence. Stop at the first failed scientific gate and report the failure rather than tuning around it."
+}
