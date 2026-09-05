@@ -18,6 +18,7 @@ STEPS_SOURCE_UPDATE="${STEPS_SOURCE_UPDATE:?recover STEPS_SOURCE_UPDATE from the
 MAX_WARMUP_ITERATIONS="${MAX_WARMUP_ITERATIONS:?recover MAX_WARMUP_ITERATIONS from the authoritative paired PMFS manifest}"
 MIN_WARMUP_ITERATIONS="${MIN_WARMUP_ITERATIONS:?recover MIN_WARMUP_ITERATIONS from the authoritative paired PMFS manifest}"
 INTEGRITY_REPORT="${INTEGRITY_REPORT:?set INTEGRITY_REPORT for this House bank}"
+VGR_BRIDGE_SOURCE_ROOT="${VGR_BRIDGE_SOURCE_ROOT:?set VGR_BRIDGE_SOURCE_ROOT to an audited vgr_bridge source overlay}"
 
 REPO_ROOT="${REPO_ROOT:-/home/zyc/gsl_ws/src/GasSourceLocalization}"
 BANK_ROOT_BASE="${BANK_ROOT_BASE:-/mnt/hgfs/workspace/CPIR_M1_FULLGRID_LOOKUP_20260831_R1}"
@@ -92,8 +93,9 @@ RUN_DIR="${RUN_ROOT}/${HSHORT}_seed${SEED}_${ARM}"
 CPIR_AUDIT_DIR="${RUN_DIR}/ctpi_audit"
 PREFLIGHT_JSON="${RUN_DIR}/ctpi_formal_preflight.json"
 ALGORITHM_BINARY="${PFDI_INSTALL_ROOT}/install/gsl_server/lib/gsl_server/gsl_actionserver_node"
+VGR_BRIDGE_CONTRACT="${VGR_BRIDGE_SOURCE_ROOT}/vgr_bridge/result_contract.py"
 
-for path in "${CTPI_LAUNCH_FILE}" "${CTPI_PREFLIGHT_SCRIPT}" "${ALGORITHM_BINARY}" "${INTEGRITY_REPORT}"; do
+for path in "${CTPI_LAUNCH_FILE}" "${CTPI_PREFLIGHT_SCRIPT}" "${ALGORITHM_BINARY}" "${INTEGRITY_REPORT}" "${VGR_BRIDGE_CONTRACT}"; do
   [[ -e "${path}" ]] || { echo "CPIR_FORMAL_REQUIRED_PATH_MISSING=${path}" >&2; exit 3; }
 done
 [[ -d "${BANK_ROOT}" ]] || { echo "CPIR_FORMAL_BANK_ROOT_MISSING=${BANK_ROOT}" >&2; exit 3; }
@@ -131,6 +133,7 @@ CELL_MANIFEST_SHA="${PREFLIGHT_VALUES[1]}"
 
 mkdir -p "${RUN_DIR}"
 ALGORITHM_SHA256="$(sha256sum "${ALGORITHM_BINARY}" | awk '{print $1}')"
+VGR_BRIDGE_CONTRACT_SHA256="$(sha256sum "${VGR_BRIDGE_CONTRACT}" | awk '{print $1}')"
 GIT_COMMIT="${GIT_COMMIT:-$(git -C "${REPO_ROOT}" rev-parse HEAD 2>/dev/null || echo UNKNOWN)}"
 cat >"${RUN_DIR}/formal_runtime_manifest.json" <<EOF
 {
@@ -144,6 +147,8 @@ cat >"${RUN_DIR}/formal_runtime_manifest.json" <<EOF
   "method_family": "${METHOD_FAMILY}",
   "git_commit": "${GIT_COMMIT}",
   "algorithm_sha256": "${ALGORITHM_SHA256}",
+  "vgr_bridge_source_root": "${VGR_BRIDGE_SOURCE_ROOT}",
+  "vgr_bridge_contract_sha256": "${VGR_BRIDGE_CONTRACT_SHA256}",
   "bank_summary_sha256": "${BANK_SUMMARY_SHA}",
   "cell_manifest_sha256": "${CELL_MANIFEST_SHA}",
   "steps_source_update": ${STEPS_SOURCE_UPDATE},
@@ -182,8 +187,40 @@ fi
 export AMENT_PREFIX_PATH="${PFDI_INSTALL_ROOT}/install/gsl_server:/dev/shm/house2_gaden_install/gaden_player:/dev/shm/house2_gaden_install/gaden_common:/dev/shm/house2_gaden_install/gaden_msgs:/dev/shm/house1_vgr_install:/dev/shm/house1_msgs_install:/home/zyc/ros2_ws/install/gmrf_wind_mapping:/home/zyc/ros2_ws/install:/opt/ros/humble:${AMENT_PREFIX_PATH:-}"
 export CMAKE_PREFIX_PATH="${AMENT_PREFIX_PATH}"
 export PATH="${PFDI_INSTALL_ROOT}/install/gsl_server:/dev/shm/house1_vgr_install/lib/vgr_bridge:${PATH}"
-export PYTHONPATH="/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/dev/shm/house1_msgs_install/local/lib/python3.10/dist-packages:/dev/shm/house2_gaden_install/gaden_msgs/local/lib/python3.10/dist-packages:/dev/shm/house1_vgr_bridge:/home/zyc/ros2_ws/src/vgr_bridge:${PYTHONPATH:-}"
+export PYTHONPATH="${VGR_BRIDGE_SOURCE_ROOT}:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/dev/shm/house1_msgs_install/local/lib/python3.10/dist-packages:/dev/shm/house2_gaden_install/gaden_msgs/local/lib/python3.10/dist-packages:/dev/shm/house1_vgr_bridge:/home/zyc/ros2_ws/src/vgr_bridge:${PYTHONPATH:-}"
 export LD_LIBRARY_PATH="${PFDI_INSTALL_ROOT}/install/gsl_server:/dev/shm/house2_gaden_install/gaden_player/lib:/dev/shm/house2_gaden_install/gaden_common/lib:/dev/shm/house2_gaden_install/gaden_msgs/lib:/dev/shm/house2_gaden_build/gaden_common/third_party/gaden_core/third_party/libbsc:/dev/shm/house1_msgs_install/lib:/dev/shm/house1_vgr_install/lib:/home/zyc/ros2_ws/install/gmrf_msgs/lib:/home/zyc/ros2_ws/install/gmrf_wind_mapping/lib:/home/zyc/ros2_ws/install/lib:/opt/ros/humble/lib:${LD_LIBRARY_PATH:-}"
+
+python3 - "${RUN_DIR}/vgr_bridge_runtime_preflight.json" "${METHOD}" "${VGR_BRIDGE_SOURCE_ROOT}" <<'PY_VGR_BRIDGE'
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+from vgr_bridge import gsl_benchmark_runner, result_contract
+
+output = Path(sys.argv[1])
+method = sys.argv[2]
+expected_root = Path(sys.argv[3]).resolve()
+if method not in result_contract.CANONICAL:
+    raise SystemExit(f"CTPI_G2_M12_NON_CANONICAL_METHOD={method}")
+contract_path = Path(result_contract.__file__).resolve()
+runner_path = Path(gsl_benchmark_runner.__file__).resolve()
+if expected_root not in contract_path.parents or expected_root not in runner_path.parents:
+    raise SystemExit(
+        "CTPI_G2_M12_VGR_BRIDGE_IMPORT_ESCAPE="
+        f"expected_root:{expected_root},contract:{contract_path},runner:{runner_path}"
+    )
+payload = {
+    "verdict": "CTPI_G2_M12_VGR_BRIDGE_PREFLIGHT_PASS",
+    "method": method,
+    "contract_path": str(contract_path),
+    "contract_sha256": hashlib.sha256(contract_path.read_bytes()).hexdigest(),
+    "runner_path": str(runner_path),
+    "runner_sha256": hashlib.sha256(runner_path.read_bytes()).hexdigest(),
+}
+output.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+print(payload["verdict"])
+PY_VGR_BRIDGE
 
 CHILD_PIDS=()
 cleanup_children() {
@@ -203,7 +240,7 @@ if [[ "${HSHORT}" == "H02" || "${HSHORT}" == "H03" ]]; then
     >"${RUN_DIR}/gaden_player.log" 2>&1 &
   CHILD_PIDS+=("$!")
 
-  python3 /home/zyc/ros2_ws/src/vgr_bridge/vgr_bridge/wind_value_server.py --ros-args \
+  python3 "${VGR_BRIDGE_SOURCE_ROOT}/vgr_bridge/wind_value_server.py" --ros-args \
     -r __node:=wind_value_server -p vgr_data_path:="${VGR_DATA}" -p config_id:="${CONFIG_ID}" \
     >"${RUN_DIR}/wind_value_server.log" 2>&1 &
   CHILD_PIDS+=("$!")
