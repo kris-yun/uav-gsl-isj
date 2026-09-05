@@ -1,0 +1,15 @@
+{
+  "status": "PRE_EXECUTION_SPENT_WIND_MECHANISM_ABLATION_NOT_HOUSE_GATE",
+  "inputs": "Exactly R3 H01 seed12 A0 1200 wind/pose observations and hash-bound navigation slice, no gas or source truth",
+  "baseline": "Preserved R3 one-Picard-iteration cumulative-history GMRF",
+  "arms": [
+    {"name": "checked_cumulative", "latest_cell": false, "change": "Repeat unchanged half-relaxed Picard solve to existing relative-change tolerance, with explicit linear residual and update-equation checks"},
+    {"name": "checked_latest_cell", "latest_cell": true, "change": "Same checked solve, but replace the prior observation at the same GMRF cell with the latest one; retain last observation in other cells"}
+  ],
+  "parameters": {"cell_size": 0.3, "advection": 100, "mass_conservation": 10, "diffusion": 100, "obstacles": 1, "var_speed": 0.001, "var_direction": 0.0001},
+  "numeric_contract": {"relative_change_tolerance": 0.01, "origin": "existing core Parameters.picard_convergence_thr", "minimum_iterations": 2, "maximum_iterations": 100, "maximum_backward_residual": 1e-10, "maximum_relaxation_equation_mismatch": 1e-12},
+  "temporal_interpretation": "Latest-cell is a no-window-length last-value spatial baseline, not a calibrated dynamic wind model. It tests the effect of treating repeated old values at a cell as independent timeless evidence. Unvisited-cell estimates can remain stale.",
+  "prohibition": "No weight/window/House tuning from scores; do not increase iteration limit to hide a numerical failure; no House, gas, source worlds, M3 or multi-seed run",
+  "report": "Same raw one-step pre-assimilation wind predictions and fixed strata as R3, plus per-observation numerical audit, exact input/code/binary identities, and every failed attempt",
+  "interpretation_limit": "Numerical convergence is not a proof of correct wind physics; lower local wind RMSE is not spatial calibration, source identifiability, novelty or closed-loop utility. No M1 launch qualification follows automatically."
+}

@@ -1,0 +1,13 @@
+{
+  "scope": "Deterministic three-cell algebra/unit test only; no House, bank, source-data world or seed run",
+  "hypothesis_under_test": "Known wind, source strength and sensor dynamics suffice for point source identification despite unrestricted unknown nonnegative initial gas field",
+  "prediction": "False when two source forcings differ by the transport generator applied to a state offset invisible along the observation path",
+  "core": "Existing CTPIOnlineCoreV2.hpp, dx=1, velocity=(0.5,0), diffusion=0.01, no-flux boundary, dt=0.2, unit source rate",
+  "algebra": "delta=q/(u+D)*e0; Q delta + q(e0-e1)=0; xA(0)-xB(0)=delta; observation cells 1/2 have H delta=0",
+  "fixtures": "xA(0)=(10,10,10), sourceA=cell0; xB(0)=xA(0)-delta, sourceB=cell1. Values are mathematical witnesses, not physical calibration parameters.",
+  "positive_control": "In the unit test only, later observe cell0; predicted sensor difference equals a separately propagated FOPDT response to the previously hidden offset. This does not authorize changing the real controller or enabling M3.",
+  "misspecification_diagnostic": "Compare same-input zero-initial-field predictions for sources 0/1 against witness A observations; report both squared errors without fitting or choosing parameters after results",
+  "sample_count": 1200,
+  "numerical_tolerance": "128 * double_epsilon * sample_count * max(1,max_state); floating-point regression tolerance, not a scientific utility gate",
+  "interpretation": "A witnessed nonidentifiability is a restriction on any estimator's identifying assumptions, not a new estimator, a whole-domain impossibility, or a House failure"
+}

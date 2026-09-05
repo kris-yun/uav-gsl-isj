@@ -1,0 +1,184 @@
+{
+  "status": "BINARY_INTERFACE_DIAGNOSTIC_ONLY",
+  "cases": [
+    {
+      "case": "legacy_map_message",
+      "requested_downwind_uv": [
+        1.0,
+        0.0
+      ],
+      "intended_sensor_xy": [
+        1.0,
+        1.0
+      ],
+      "query_x": [
+        -1.0,
+        0.0,
+        1.0,
+        2.0
+      ],
+      "query_y": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "baseline_u": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "baseline_v": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "u": [
+        -0.999993740858141,
+        -0.9999990331645785,
+        -0.9999903954362008,
+        -0.9999905704150029
+      ],
+      "v": [
+        2.6535699232164094e-06,
+        2.6535872277778785e-06,
+        1.645123504213101e-06,
+        1.7111214524987016e-06
+      ],
+      "var_u": [
+        0.0001,
+        0.0001,
+        0.0001,
+        0.0001
+      ],
+      "var_v": [
+        0.0001,
+        0.0001,
+        0.0001,
+        0.0001
+      ],
+      "command": [
+        "/home/zyc/ros2_ws/install/gmrf_wind_mapping/lib/gmrf_wind_mapping/gmrf_wind_mapping_node",
+        "--ros-args",
+        "-r",
+        "__node:=gmrf_contract_legacy_map_message",
+        "-r",
+        "WindEstimation:=/ctpi_v2_wind_contract/legacy_map_message/estimate",
+        "-r",
+        "AddWindObservation:=/ctpi_v2_wind_contract/legacy_map_message/add",
+        "-p",
+        "map_topic:=/ctpi_v2_wind_contract/legacy_map_message/map",
+        "-p",
+        "sensor_topic:=/ctpi_v2_wind_contract/legacy_map_message/wind",
+        "-p",
+        "frame_id:=map",
+        "-p",
+        "cell_size:=1.0",
+        "-p",
+        "exec_freq:=10.0",
+        "-p",
+        "verbose:=false",
+        "-p",
+        "visualize_gmrf:=false"
+      ],
+      "log": "/tmp/ctpi-v2-gmrf-contract-x9p6rub9/legacy_map_message.log"
+    },
+    {
+      "case": "explicit_downwind_service",
+      "requested_downwind_uv": [
+        1.0,
+        0.0
+      ],
+      "intended_sensor_xy": [
+        1.0,
+        1.0
+      ],
+      "query_x": [
+        -1.0,
+        0.0,
+        1.0,
+        2.0
+      ],
+      "query_y": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "baseline_u": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "baseline_v": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "u": [
+        0.9999841388268496,
+        0.9999843778537748,
+        0.9999946232449044,
+        0.9999897680437122
+      ],
+      "v": [
+        1.182195771064708e-06,
+        1.3339049655713053e-06,
+        -1.23380529333696e-13,
+        9.353211485645077e-08
+      ],
+      "var_u": [
+        0.0001,
+        0.0001,
+        0.0001,
+        0.0001
+      ],
+      "var_v": [
+        0.0001,
+        0.0001,
+        0.0001,
+        0.0001
+      ],
+      "command": [
+        "/home/zyc/ros2_ws/install/gmrf_wind_mapping/lib/gmrf_wind_mapping/gmrf_wind_mapping_node",
+        "--ros-args",
+        "-r",
+        "__node:=gmrf_contract_explicit_downwind_service",
+        "-r",
+        "WindEstimation:=/ctpi_v2_wind_contract/explicit_downwind_service/estimate",
+        "-r",
+        "AddWindObservation:=/ctpi_v2_wind_contract/explicit_downwind_service/add",
+        "-p",
+        "map_topic:=/ctpi_v2_wind_contract/explicit_downwind_service/map",
+        "-p",
+        "sensor_topic:=/ctpi_v2_wind_contract/explicit_downwind_service/wind",
+        "-p",
+        "frame_id:=map",
+        "-p",
+        "cell_size:=1.0",
+        "-p",
+        "exec_freq:=10.0",
+        "-p",
+        "verbose:=false",
+        "-p",
+        "visualize_gmrf:=false"
+      ],
+      "log": "/tmp/ctpi-v2-gmrf-contract-x9p6rub9/explicit_downwind_service.log"
+    }
+  ],
+  "binary_sha256": "04437cab20366b8adabbc1cab1e71c175354a5de886ea46baf278afc381743c0",
+  "core_library_sha256": "5ce009302ba16f516801504266f875f8e4f1771bfbcf402c66a9d18d8e08d5fd",
+  "script_sha256": "631308b9f45f14b639d386f819801c1feb18b868409dfadc8f9ebf6cf89a7efe",
+  "adapter_sha256": "c2fdf60180bc8e3d3560c012e52d02170c5f0f57364be11701de0fdec23c86fe",
+  "ros_domain_id": "193",
+  "limitations": [
+    "No immutable R4 binary hash was recovered; current binary behavior is not full historical identity proof.",
+    "Not a wind prediction or uncertainty calibration gate.",
+    "The two paths use different observation variances in the implementation; vector magnitudes are not a controlled utility comparison.",
+    "Map-frame TF implies origin position in the source callback; response magnitudes alone do not prove where an observation was inserted."
+  ]
+}

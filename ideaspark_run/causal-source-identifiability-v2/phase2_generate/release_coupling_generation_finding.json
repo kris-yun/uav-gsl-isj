@@ -1,0 +1,101 @@
+{
+  "status": "RELEASE_COUPLING_INFORMATION_CONFIRMED_WHOLE_M1_CONSTRUCTION_NOT_QUALIFIED",
+  "phase": "2.2 bounded generation finding",
+  "formal_phase3_outcome": false,
+  "canonical_candidate_written": false,
+  "selection_path": "phase2_select/phase2_select_output.json",
+  "selected_subpattern": "C10 (Characterize a Limit, Then Surpass It)",
+  "companion_pattern": "structural_prior_encoding",
+  "composition_note": "",
+  "scope": "Reassess the existing selection using the executed release-coupling evidence. This is neither a new candidate cycle nor a global impossibility claim. No new experiment, source world, House run, bank access, algorithm change, controller change or M3 work was performed.",
+  "preserved_blockers": [
+    {"path": "phase2_generate/generation_blocker.json", "sha256_before": "4f1222ca608d7fd5fec85046d8474d2d97fe3b5589b9e43325d9059632717dd6"},
+    {"path": "pre_candidate_attempt_1/generation_blocker.json", "sha256_before": "3b0cba8ca80997ab96a349799dbfccab3fa3602e2baa2b608680f6335b00adf1"}
+  ],
+  "new_evidence_disposition": {
+    "source": "docs/CTPI_V2_RELEASE_LAW_AND_COUPLING_RESULT_20260905.md",
+    "accepted": [
+      "The enumerated fixed-pose gain/amplitude-matched, delay-shifted hypotheses have identical complete observation laws under the stated stationary independent Bernoulli release law, including prehistory and the declared deterministic sensor map.",
+      "Under the prescribed moving XYXY path and known source-conditioned delays, retaining shared release identities gives exact TV=1/2 and equal-prior optimal classification accuracy=3/4. Factoring gas marginals before applying the same sensor gives TV=0 and accuracy=1/2.",
+      "This is positive conditional information: source-dependent reuse of one emission across observations can distinguish laws even when each gas marginal agrees. The finding improves on an exclusively negative premise record."
+    ],
+    "not_established": [
+      "The two matched source-plus-amplitude hypotheses are not complete source likelihoods after integrating all allowed strengths, release laws, initial fields and transport histories.",
+      "The Bernoulli law and delay table are algebraic test assumptions, not verified properties of the historical House generator or quantities estimated from the allowed online stream.",
+      "TV=1/2 does not mean perfect finite-record classification, full physical source identifiability, a House effect size or a novel estimator. Correct joint Bayes obtains all the demonstrated information."
+    ],
+    "old_finding_refinement": "The earlier absence of a positive separation example is no longer current at the conditional two-hypothesis level. The missing physical producer and domain-method contribution remain unresolved; old blockers are preserved as historical artifacts rather than silently rewritten."
+  },
+  "whole_mechanism_dataflow_audit": {
+    "estimand": "Posterior probability of each actual physical source cell given the causally available gas, local wind and pose history, under an explicit physically warranted joint model; not a loss-minimizing simulator calibration location.",
+    "required_object": "For each candidate s, a source-to-observed-path propagation law K_s(t,r), mapping the SAME latent emission at native release time r to concentration at observation time t, together with an initial-plume contribution and the sensor map. A deterministic kernel is only a conditional subcase; uncertain propagation needs a coherent joint law.",
+    "illustrative_conditional_relation": "If transport is linear conditional on its history, c_t = b_t(c_initial, transport) + sum_r K_s(t,r; transport, pose) Q_r, followed by the declared sensor recursion. The index r identifies the same emission wherever reused. This is a dataflow definition, not a new transport model or an assertion that actual transport is known.",
+    "available_producers": [
+      "Timestamped gas, local wind and pose can supply a deduplicated causally ordered observation record subject to the audited startup/freshness contract.",
+      "The dual-clock conditional predictor can propagate an explicitly provided initial field, source-rate path and full transport input and then apply FOPDT. Its unit PASS establishes this conditional numerical composition only.",
+      "Shared emission identity is physically meaningful as a consistency constraint: one release influences later observations through one continuous physical evolution."
+    ],
+    "missing_producers": [
+      "No construction maps the allowed local wind/pose history to candidate-specific source-to-path propagation relations or a calibrated joint law for them. The pointwise unstamped GMRF service cannot be substituted for that producer.",
+      "No qualified distribution specifies the latent release sequence, its time dependence, amplitude family or dependence on transport. Configured variable_rate=true and num_filaments_sec=7 do not supply it; the three inspected implementations differ and are not bound to historical generation identity.",
+      "No qualified law or admissible family specifies the pre-existing plume and its coupling to pre-start source/transport history. Zero sensor initialization supplies no zero-plume restriction."
+    ],
+    "minimality": "Recovering the entire true wind field is not a necessary demand. A justified and testable source-relevant projected propagation relation could suffice. What is missing is that smaller construction and its observable restrictions, not merely a request for more global data.",
+    "not_a_prevalidation_requirement": "A proposal may contain explicit untested physical bets. The failure here is that no substantive, computable domain restriction with a credible producer and falsifier was found; it is not that every research assumption must already have an empirical PASS before ideation."
+  },
+  "bounded_alternatives_considered": [
+    {
+      "construction": "Shared-emission augmented-state Bayes using the existing conditional transport core",
+      "salvage": "Preserves the exact joint information demonstrated by the probe if its conditional inputs and latent laws are supplied.",
+      "obstacle": "With those inputs supplied it is standard latent-state filtering/inversion; without them the method is incomplete. Shared latent identity is necessary correctness, not the substantive domain model contribution."
+    },
+    {
+      "construction": "Infer cross-observation emission reuse from gas temporal covariance or correlation",
+      "salvage": "The probe identifies dependence, rather than amplitude alone, as a possible observable carrier of source information.",
+      "obstacle": "For a conditional linear example the covariance includes K_s R_Q K_s^T plus initial-plume/transport/sensor contributions. Both K_s and release covariance R_Q are unknown here. A single moving finite history does not by itself provide replicated stationary covariance observations, and matching peaks does not identify a release label. No supported restriction was found that separates these producers while preserving the actual source estimand. This is a model-hole diagnosis, not an executed impossibility theorem."
+    },
+    {
+      "construction": "Backtrace source delays using local wind and known geometry",
+      "salvage": "Would target the smaller path-relevant propagation relation rather than insist on complete full-field reconstruction.",
+      "obstacle": "Local sensor velocity observations are not the wind histories along unobserved source-to-sensor transport paths. Uniform-flow extension, frozen turbulence, unique streamline correspondence or known ventilation would add identifying assumptions not supplied by the audited contract; no domain-specific estimator establishing their warranted substitute was found."
+    },
+    {
+      "construction": "Fit a physically constrained wind/emission/initial-state model and validate on held-out online observations",
+      "salvage": "Sequential held-out observations can falsify some model predictions, and an independently derived restricted transport family could be a substantive domain contribution using ordinary Bayes.",
+      "obstacle": "No such new family or identification result is presently constructed. Generic mass conservation, smoothness and nonnegativity do not yet fix the relevant boundary/history ambiguity; predictive adequacy alone cannot distinguish observationally equivalent source explanations. Adding textbook PDE-constrained inverse modeling does not establish an unoccupied methodological step."
+    }
+  ],
+  "naive_baseline_audit": {
+    "runnable_in_principle": "For a declared joint release/transport/initial-state model, propagate each candidate and coherent latent history through the ordered dual-clock transport/sensor recursion, evaluate its sequential gas likelihood, and marginalize those histories to obtain the source posterior.",
+    "branch": "i for deployment: treating the required candidate propagation and release laws as known from sparse local inputs is the unsupported premise. Once the identical correct joint model is supplied, ordinary Bayes works and equality is expected.",
+    "domain_specific_obstacle": "Obtain an identifiable or appropriately qualified source-relevant propagation relation from one moving local observation stream despite uncertain release statistics, unobserved transport and pre-existing plume.",
+    "standard_tool_follow_up": "Latent-state filtering, blind system identification and nuisance marginalization do not supply that domain relation automatically. The positive toy separation does not make their reapplication a new method.",
+    "comparison_rule": "A new physically defensible model may legitimately improve source inference relative to an older misspecified model while using ordinary Bayes. No requirement is imposed to outperform Bayes under an identical correct model."
+  },
+  "pattern_and_hook_admission": {
+    "C10": "The exact probe now supplies a native full-law separation between a factorized and a coupled observation model, satisfying part of the limit/reinjection story. The structurally thin gas-domain transfer remains: correctly specified joint inference already retains that object, and no new warranted source-to-path operator or tractable domain construction surpassing the actual frontier was found.",
+    "companion": "structural_prior_encoding would have to deliver the missing computable, physically defensible shared propagation model. A schematic shared latent state is not that deliverable.",
+    "empirical_reveal": "The exact conditional example supports an information statement, but no defensible downstream physical source-recovery prediction under the available input model follows yet.",
+    "structural_reframe": "The steady-state scope in DGSE and ordered lagged propagation in IASA are explicit. Generic loss of dependence after marginal factorization is not a newly exposed tacit field assumption.",
+    "minimalism": "Using the same inputs and ordinary Bayes is allowed, but no substantive simpler source-relevant domain construction has been obtained."
+  },
+  "method_grounded_comparisons": [
+    {"paper_id": "arxiv:2608.00050v1", "read": "phase0/fulltext/arxiv_2608.00050v1.md: complete cached method", "finding": "Eq. 2 already transports each source-temporal-basis contribution through intervening wind; Eqs. 4-6 align measurements and fit a declared background/response model. No claim is made that IASA models the probe's stochastic release law. Merely retaining wind order is not a substantive missing step."},
+    {"paper_id": "arxiv:2608.16221v1", "read": "phase0/fulltext/arxiv_2608.16221v1.md: III-A and III-C through Eq. 16", "finding": "Steady-state scope is explicit and unknown release/inlet effects and latent wind/concentration marginalization are acknowledged. A transient stochastic model is a real scope change, but scope change alone does not produce the missing physically supported construction."},
+    {"paper_id": "arxiv:2404.03152v3", "read": "phase0/fulltext/arxiv_2404.03152v3.md: complete cached method", "finding": "The calibration estimand can be a loss minimizer when the simulator is biased; restricting covariance or discrepancy to obtain a sharp source posterior cannot silently convert it into physical source identification."}
+  ],
+  "cross_run_soft_negative": {
+    "path": "ideaspark_run/ctpi-m3-after-h2-nogo_2/phase2_generate/phase2_generate_output.json",
+    "title": "Causal Edge Transport Reorders Turbulent Plume Evidence Before Bayesian Search",
+    "use": "Inspected for overlap only; no correctness, novelty or success verdict inherited.",
+    "boundary": "Its observation/likelihood transition alignment and likelihood-value reassignment are not a physical emission-to-sensor propagation law. Importing that score would replace the requested M1 generative-model construction with an unverified M3 heuristic."
+  },
+  "instruction_basis": {
+    "file": "D:/ZYC/UAV/.codex/skills/idea_spark/references/system-prompts/ideate_generate.txt",
+    "quote": "If none passes, candidate isn't ready — back to Phase 2.1.",
+    "application": "No whole-method hook and producer chain qualifies after the bounded release-coupling reassessment. Preserve the blockers and emit this finding, without creating canonical gap-closure or falsification fields that imply a runnable qualified candidate."
+  },
+  "next_information_needed": "A concrete source-relevant propagation restriction or estimator from allowed online inputs, with stated domain justification, an observable falsifier distinct from in-sample gas fit, and coherent release/initial-history handling. Such a contribution may use ordinary Bayes. This finding does not authorize another retry or new data access.",
+  "route": "RETURN_BOUNDED_GENERATION_FINDING_NO_CANONICAL_PHASE2_CANDIDATE",
+  "downstream_gate": "Do not enter candidate validation, Phase 2.3, collision retrieval or formal Phase 3 as if a canonical candidate existed. No House or algorithm execution follows from this finding."
+}

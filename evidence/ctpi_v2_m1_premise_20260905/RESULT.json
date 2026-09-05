@@ -1,0 +1,52 @@
+{
+  "verdict": "M1_SHARED_NUISANCE_CAUSAL_CONTRIBUTION_NOT_ESTABLISHED",
+  "gate": "NO_GO_TO_HOUSE_FOR_THIS_FORMULATION",
+  "implementation_checks_pass": true,
+  "deterministic_fixture_count": 27,
+  "max_candidate_vs_ordinary_bayes_difference": 2.8449465006019636e-16,
+  "ambiguity_probe": {
+    "candidate_posterior": [
+      0.5,
+      0.5
+    ],
+    "baseline_posterior": [
+      0.5,
+      0.5
+    ],
+    "minimum_matched_nuisance_source_contrast": 1.4142135623730951
+  },
+  "independent_wind_cue_probe": {
+    "candidate_posterior": [
+      0.8999999999999999,
+      0.10000000000000003
+    ],
+    "baseline_posterior": [
+      0.8999999999999999,
+      0.10000000000000003
+    ]
+  },
+  "persistent_nuisance_probe": {
+    "correct_posterior": [
+      1.0530617357553812e-20,
+      1.0
+    ],
+    "incorrect_independent_block_mixture": [
+      0.9317384593585716,
+      0.0682615406414285
+    ]
+  },
+  "source_strength_overlap_max_abs": 0.0,
+  "rejected_invalid_block_ids": 3,
+  "interpretation": "Reject only the claim that shared nuisance marginalization itself is a new causal estimator. This is neither a real-world localization failure nor rejection of all causal inference methods.",
+  "missing_for_new_claim": [
+    "A concrete estimator step not equivalent to the same-input baseline",
+    "An identifiable source contrast justified by available observations and structural assumptions",
+    "Independent model qualification, then task benefit"
+  ],
+  "house_runs_launched": 0,
+  "input_hashes": {
+    "docs\\CTPI_V2_M1_PREMISE_GATE_CONTRACT.json": "e1c0760d1e936db19ff1e5660705c898b9701a10d0ae2974b9211ee90b437f5c",
+    "experiments\\cg_pc_ctt\\ctpi_v2_m1_premise_reference.py": "24e3b56d61de883844c558403c555dd331c6912daf10967e6e4b63ac93b63ea5",
+    "tools\\ctpi_v2_m1_premise_gate.py": "ba13afbb1c0ed216c03e006d93df8fad8587910e9d3b9728cf789749d9c55a4b"
+  }
+}

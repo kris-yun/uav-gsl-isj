@@ -1,0 +1,37 @@
+{
+  "status": "CURRENT_SELECTION_HAS_NO_QUALIFIED_WHOLE_M1_CANDIDATE",
+  "scope": "Failure to generate a defensible candidate from this Phase 2.1 selection under the available evidence; not a proof that every admissible M1 is impossible, not a House failure, and not a diagnostic-only replacement deliverable.",
+  "candidate_written": false,
+  "selected_subpattern_if_a_forward_model_construction_becomes_viable": "C20 (Encode Structure by Construction)",
+  "binding_evidence": [
+    "CTPI_V2_M1_PREMISE_GATE_RESULT_20260905.md: shared complete nuisance marginalization equals same-input ordinary Bayes; swapped-nuisance and proportional-strength aliases survive fixed-nuisance contrast.",
+    "CTPI_V2_INITIAL_FIELD_IDENTIFIABILITY_RESULT_20260905.md and tools/selftest_ctpi_v2_initial_field.cpp: a source-forcing difference can be cancelled by a nonnegative initial-field offset invisible along the observation path, despite known wind, strength and sensor parameters.",
+    "CTPI_V2_VM_INPUT_CONTRACT_AUDIT_20260905.md: initial environmental plume predates sensor startup, pre-start transport is unavailable, no-flux warm-up is not a finite-mass steady state, and current GMRF marginal covariance does not specify a calibrated joint transport history."
+  ],
+  "explored_constructions": [
+    {"construction": "Causal transport/sensor inversion with unrestricted persistent initial field", "obstacle": "The executed source-initial-field alias remains inside the model; correct inversion is possible but does not supply the required identifying information or a new mechanism."},
+    {"construction": "Annihilate or profile the initial-field response before source scoring", "obstacle": "This is occupied variable-projection/state-space-observability machinery; the projected source response can vanish, and a sparse path does not establish the required residual source separation."},
+    {"construction": "Restrict the initial field to a source-consistent prehistory reachable family", "obstacle": "A useful restriction requires warranted source persistence, admissible pre-start wind/ventilation and boundary histories. Those contracts are not established by the current online local wind observations, and imposing source age, strength regularity or zero incoming concentration would manufacture the missing information."},
+    {"construction": "Validate nuisance dynamics on withheld local wind and gas before source inference", "obstacle": "Local wind prediction and withheld gas prediction can falsify some models but cannot distinguish two source explanations inducing the same complete observed-history law. The initial-field witness has identical wind and identical observable gas histories."}
+  ],
+  "hook_admission": {
+    "surprising_empirical_reveal": "No new directional downstream-source prediction follows from a warranted identifying restriction; only the existing negative witnesses are available.",
+    "structural_reframe": "The issue is a known observability/calibration ambiguity, already explicit in IASA and orthogonal calibration; relabeling it as causal does not reveal a previously unnamed assumption.",
+    "counter_intuitive_minimalism": "Same-model Bayes equivalence is established locally, but no retrieved evidence says the field believes this correct computation is impossible; equality alone cannot satisfy the minimalism hook."
+  },
+  "instruction_basis": {
+    "file": "D:/ZYC/UAV/.codex/skills/idea_spark/references/system-prompts/ideate_generate.txt",
+    "quote": "If none passes, candidate isn't ready — back to Phase 2.1.",
+    "application": "No hook admission test passes at the requested whole-M1 method scope. Writing canonical candidate fields asserting gap closure would contradict the premise evidence and the generation contract."
+  },
+  "next_information_needed": [
+    "A domain-supported restriction or additional identifying implication computable from existing allowed observations that excludes wrong-source alternative initial/transport histories, with its independent falsifier stated.",
+    "Alternatively, a construction that eliminates those nuisance alternatives without excluding physically admissible cases, together with a source-recovery condition that can actually be met and checked on the existing controller's observations."
+  ],
+  "not_acceptable_as_completion": ["generic uncertainty calibration", "set-valued reporting alone", "abstention on ambiguity", "new policy or M3", "unjustified prehistory or ventilation prior", "Bayesian marginalization renamed as causal"],
+  "resources_read_for_substantive_checks": [
+    "phase0/fulltext/arxiv_2608.16221v1.md: III-A and III-C",
+    "phase0/fulltext/arxiv_2608.00050v1.md: lagged operator, declared temporal basis, initial-condition/open-boundary scope and background projection",
+    "phase0/fulltext/arxiv_2404.03152v3.md: physical versus loss-minimizing calibration estimand and identifying orthogonality"
+  ]
+}

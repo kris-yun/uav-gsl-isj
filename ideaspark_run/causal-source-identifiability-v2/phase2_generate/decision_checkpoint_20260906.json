@@ -1,0 +1,74 @@
+{
+  "status": "NO_QUALIFIED_CANDIDATE",
+  "phase": "2.2 bounded decision checkpoint",
+  "date": "2026-09-06",
+  "canonical_candidate_written": false,
+  "formal_phase3_outcome": false,
+  "candidate_considered": {
+    "name": "Source-consistent plume genealogy for transient source inversion",
+    "estimand": "Probability that each candidate cell contains the actual fixed physical emitter, conditional on the causally available gas, local wind, pose and map observations and a declared generative model. Physical interpretation remains conditional on that model, not on a simulator loss-minimizer convention.",
+    "central_object": "For candidate s and source age A, initialize concentration at source onset to zero and propagate all pre-start and post-start emissions through one continuous transport history: c_0 = sum_{r=-A}^{-1} G(0,r;u) e_s Q_r, and c_t = G(t,0;u)c_0 + sum_{r=0}^{t-1} G(t,r;u)e_s Q_r. G includes the chosen native integration convention; the audited release occurs at its actual integration location, not at an invented sensor clock. The same Q_r is reused in every downstream observation. Candidate-specific sensor histories are then propagated with the audited FOPDT map.",
+    "concrete_provisional_nuisance_law": "A computationally definable research version would use a finite random source age with a proper geometric prior; a two-state Markov-modulated Poisson emission-count process with unknown common rate/transition parameters and nonnegative fixed parcel mass; and a geometry-supported linear Gaussian Markov wind-coefficient process conditioned on timestamped local wind measurements. Wind coefficients represent a declared spatial basis on the common free-space map, including boundary-flow modes; transport and boundary gas conditions must be part of the forward model. Unknown dispersion and wind-process parameters receive proper priors. These are proposed stochastic model choices, not the existing GMRF marginals, not the verified ROS1 PRNG law, and not established House facts. Sensor initialization and sensor parameters follow the available audited contract. This supplies a possible modeling route, but parameter/default specification and a complete boundary implementation have not been promoted to a canonical method.",
+    "physical_bets": [
+      "The plume present at sensor startup originated at the same stationary emitter being localized; no independent contaminant reservoir is silently allowed. This is a useful domain restriction if true, but is untested and excludes other-source remnants or incoming contaminated air unless those are explicitly modeled.",
+      "The proposed emission law is a transport-independent approximation to intermittent release rather than exploitation of simulator phase or PRNG fingerprints; untested -- falsification target.",
+      "The selected geometry-supported wind family covers the source-relevant transport despite sparse adaptive observations. Full true-wind recovery is unnecessary, but source-relevant adequacy is an untested model assumption.",
+      "The observed history is selected by the unchanged controller and conditioned on its past. Local wind values are point observations, not unbiased samples of the global field; sensor memory and duplicate-message handling remain explicit."
+    ],
+    "actual_online_producers": [
+      "Existing timestamped gas, local wind and pose interfaces, subject to startup, deduplication and causal-order checks.",
+      "Existing common navigation-height geometry established by CTPI_V2_SHARED_GEOMETRY_WIND_RESULT_20260905.md.",
+      "Existing conditional transport/FOPDT core and pinned conditional release-schedule reference; these propagate supplied inputs but do not supply the proposed stochastic nuisance law.",
+      "The checked GMRF path is an existing numerical reference. Its cumulative conditional mean has poor next-local-wind prediction in the spent record, and its latest-cell variant failed; neither is a joint dynamic wind posterior. A new dynamic latent wind producer would be a modest implementation task, not an already-existing qualified input."
+    ],
+    "minimal_implementation_route": "Build the explicit nuisance process on the common map, draw or integrate source-age and pre-start release histories jointly with transport, retain each emission identity through the native transport/FOPDT recursion, and use ordinary sequential likelihood marginalization to produce the cell posterior. Compare with ordinary Bayes using the identical complete model as a correctness reference; equality is expected. This route is implementable in principle as an engineering model extension, without another GMRF tuning campaign being a prerequisite to deciding its scientific status. No implementation is authorized by this checkpoint."
+  },
+  "scientific_decision": {
+    "what_is_real": "Same-source reachable prehistory changes the admissible initial-field family and is more physical than an independent arbitrary initial field when the single persistent emitter premise holds. Shared release identity can carry conditional source information, as the preserved release-coupling probe shows. Neither observation is discarded because it lacks House qualification.",
+    "what_is_missing": "No new domain-specific operator, identifying restriction with a demonstrated nontrivial separation, or bounded-cost representation has been constructed beyond standard latent-state Bayesian inversion of a chosen source-age/release/transport model. The candidate's computable part is the classical propagated source-response expansion with source-consistent initialization. Simply assigning Markov release/wind priors does not provide the missing contribution, even if those priors later improve empirical prediction.",
+    "prehistory_boundary": "The executed actual-core three-cell witness in docs/CTPI_V2_REACHABLE_PREHISTORY_RESULT_20260906.md starts both fields at zero one native step before observation. Source A emits d/dt at cell0, source B emits zero at cell1, where d=q/(u+D); thereafter both emit q=1. The resulting reachable state difference d e0 cancels the forcing difference and remains invisible at cells1/2. Over 1200 steps the maximum actual FOPDT output difference is 7.11e-14; observing cell0 in the unit-test positive control produces difference 1.942346. This disproves sufficiency of same-source reachability under arbitrary nonnegative release histories. It does not establish equality of marginal observation laws under a common specified stochastic prior, nor failure on a House or on another path.",
+    "standard_tool_audit": "The naive complete procedure is augmented-state source/age/release/transport inversion under the same specified observation law. Once that law is supplied, it works as ordinary Bayes; outperforming that same-model baseline is neither required nor possible as an information claim. The considered construction has not identified a substantive part outside the occupied source inversion, blind system identification and nuisance marginalization families. Its current defensible grade is an application/engineering model proposal, not the requested principal M1 method contribution.",
+    "pattern_admission": "C10 requires the exact structural object discarded by an established procedure, a native source-law separation, and its substantive bounded-cost reinjection against the frontier. The conditional release-coupling toy supplies one piece but not this complete candidate's separation or new operator. The structural_prior_encoding companion remains a conventional model specification rather than a demonstrated new construction.",
+    "selection_consistency": "The current selection explicitly names post-start transport variation rather than restricted pre-start reachability as the additional information. The latest task expressly permits considering reachable prehistory, so it was considered on scientific merits; this selection mismatch is recorded but is not the reason for rejection. A successful prehistory-based candidate would require an explicit selection update, not silent rewriting of old findings.",
+    "not_reasons_for_rejection": [
+      "Lack of complete empirical qualification before proposing a research assumption.",
+      "Failure to recover the exact entire wind field.",
+      "Equality with correct Bayes under the identical model.",
+      "The engineering failures of checked_latest_cell alone."
+    ]
+  },
+  "prospective_falsifier_if_the_engineering_model_is_pursued": {
+    "load_bearing_variable": "J, the shared candidate-source ancestry linking pre-start plume, release identities and post-start responses.",
+    "procedure": "On the already authorized same-input, same-controller seed12 development scope only after its existing launch conditions are met, compare the coherent model with a decoupled control that permutes source ancestry for pre-start contributions while preserving the chosen marginal age, emission, transport and sensor laws. Measure physical source-cell log score and location error against truth reserved for evaluation. The hypothesis is that coherent ancestry improves those downstream metrics and the matched decoupling removes the improvement; no outcome magnitude is invented. This is a prospective test, not a claim that its prediction has already been established.",
+    "additional_model_check": "Predict withheld future local wind before assimilation and future gas conditional on the available history. Failure can reject proposed nuisance structure; success alone cannot prove source identifiability. Repeat the model comparison under declared release-law and source-age sensitivity, rather than relying on the pinned simulator phase.",
+    "cost_and_authority": "CPU-only model construction could be modest; no measured runtime or full campaign estimate exists. No new experiments, House data, source truth, protected bank, seeds, controller changes or M3 work were used or authorized here."
+  },
+  "method_grounded_comparison": [
+    {
+      "paper_id": "arxiv:2608.00050v1",
+      "read": "phase0/fulltext/arxiv_2608.00050v1.md, complete cached method",
+      "finding": "Eq. 2 already expands source-temporal contributions through intervening wind; Eqs. 4-6 align observations and infer nonnegative coefficients with a declared background. Replacing a free initial field with additional pre-start source columns is a substantive modeling restriction but uses this occupied response construction; no claim is made that IASA implements the proposed stochastic genealogy law."
+    },
+    {
+      "paper_id": "arxiv:2608.16221v1",
+      "read": "phase0/fulltext/arxiv_2608.16221v1.md, III-A and III-C through the conditional distributions following Eq. 15",
+      "finding": "Steady-state scope is explicit and source inference already marginalizes wind/concentration conditionals while treating source rate and inlet velocity as unknown. A transient prehistory model extends the scope, but ordinary dependency factorization is not itself a missing innovation."
+    }
+  ],
+  "binding_new_evidence": [
+    "docs/CTPI_V2_UPSTREAM_RELEASE_OPERATOR_RESULT_20260905.md",
+    "docs/CTPI_V2_SHARED_GEOMETRY_WIND_RESULT_20260905.md",
+    "docs/CTPI_V2_CHECKED_WIND_RESULT_20260905.md",
+    "docs/CTPI_V2_REACHABLE_PREHISTORY_RESULT_20260906.md"
+  ],
+  "preserved_findings": [
+    "phase2_generate/generation_blocker.json",
+    "phase2_generate/release_coupling_generation_finding.json"
+  ],
+  "route": "Return NO_QUALIFIED_CANDIDATE to the main agent and stop this bounded generation. Do not invoke coherence, collision or formal Phase 3 without a canonical qualified candidate; do not turn this checkpoint into a global impossibility or House NO_GO claim.",
+  "instruction_basis": {
+    "path": "D:/ZYC/UAV/.codex/skills/idea_spark/references/system-prompts/ideate_generate.txt",
+    "quote": "If none passes, candidate isn't ready — back to Phase 2.1.",
+    "application": "The immediate user-approved checkpoint permits an honest no-candidate decision. No additional generation loop or engineering diagnostic is implied."
+  }
+}

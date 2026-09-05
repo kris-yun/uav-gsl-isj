@@ -1,0 +1,431 @@
+{
+  "trace_report": {
+    "likely_fatal_step": {
+      "step": "S5",
+      "claim": "The joint circular run-block permutation within q destroys observation-to-field alignment and yields a nontrivial R0.",
+      "why_selected": "G is the load-bearing artifact, but R is a symmetric function of the multiset of completed-run margins. A whole-run permutation within one q only reorders that multiset, so this null is likely to reproduce R exactly and force G to zero before any downstream mechanism can act.",
+      "attack_order": "Tested first with executed enumeration of every permutation of three completed runs."
+    },
+    "formalized_procedure": [
+      {
+        "step": "S1",
+        "consumes": [
+          "binary h_t and h_{t-1}",
+          "Lsrc[:,t] in R_+^N",
+          "Lcar[:,t] in R_+^N",
+          "N candidate identifiers",
+          "realized path prefix through t"
+        ],
+        "produces": [
+          "truth-blind causal record at t"
+        ],
+        "note": "Verbatim: \"Read the frozen M1/M2 causal log at each update t: h_t, Lsrc[:,t], Lcar[:,t], candidate identifiers, and the realized UAV path; emit no truth fields to the M3 process.\" This is formalizable if the input log itself excludes source identity."
+      },
+      {
+        "step": "S2",
+        "consumes": [
+          "binary hit sequence h[0:t]"
+        ],
+        "produces": [
+          "q_t=(h_{t-1},h_t) in {0,1}^2",
+          "for each q, a list of maximal completed timestamp runs b strictly before t"
+        ],
+        "note": "Verbatim: \"Convert h into q_t=(h_{t-1},h_t), close maximal runs when q changes, and store only completed past runs; output a causal run index keyed by the four regimes.\" Onset and exit runs necessarily have length one for a binary h sequence; blank and persistence runs may be longer."
+      },
+      {
+        "step": "S3",
+        "consumes": [
+          "Lsrc[:,u], Lcar[:,u] for timestamps u in completed runs",
+          "run index"
+        ],
+        "produces": [
+          "e[:,u] in [-1,1]^N",
+          "m[s,j,q,b] scalar for every ordered s!=j"
+        ],
+        "note": "Verbatim: \"Compute e[:,u] for samples in completed runs and then every m[s,j,q,b]; output the ordered-pair run-margin table.\" e=(Lsrc-Lcar)/(Lsrc+Lcar), with zero-denominator e=0; m is the normalized within-run sum, with zero-denominator m=0."
+      },
+      {
+        "step": "S4",
+        "consumes": [
+          "m[s,j,q,b] over B_q completed runs",
+          "n_run=3"
+        ],
+        "produces": [
+          "a[s,j,q]=median_b m[s,j,q,b]",
+          "R[s,j,q] replication fraction"
+        ],
+        "note": "Verbatim: \"For each q with at least n_run completed runs, compute a and R; output observed pair orientations and their across-run replication.\" Two readings exist for \"fraction of runs whose nonzero margin has the sign of a\": denominator all completed runs, or only nonzero-margin runs. The patch binds the first reading explicitly; the S5 blocking result holds under either because a run-label permutation preserves both numerator and denominator."
+      },
+      {
+        "step": "S5",
+        "consumes": [
+          "completed run blocks within q",
+          "P_perm=199",
+          "observed a and R"
+        ],
+        "produces": [
+          "permutation replication values R^(p)",
+          "R0[s,j,q]",
+          "G[s,j,q]=a*max(0,R-R0)"
+        ],
+        "note": "Verbatim: \"Apply P_perm joint circular run-block permutations within q and compute R0 and G; output the excess-replicated dominance tensor while preserving candidate coupling and the fixed path.\" R0 aggregation is not specified in the candidate; the natural Monte Carlo mean is patched in. More importantly, any bijective whole-run permutation leaves the multiset of m values invariant, so a, R, and every R^(p) are identical."
+      },
+      {
+        "step": "S6",
+        "consumes": [
+          "G[:,:,q_t] in R^{N x N}",
+          "current regime q_t",
+          "run count B_q"
+        ],
+        "produces": [
+          "S[s,q_t]=(N-1)^-1 sum_{j!=s} G[s,j,q_t]",
+          "candidate order or fallback flag"
+        ],
+        "note": "Verbatim: \"Compute S[:,q_t]; if all scores tie or q_t lacks n_run completed runs, output the identity candidate order, otherwise output the stable descending S order.\" N=1 divides by zero. The phrase \"identity candidate order\" also has two readings downstream: bypass reassignment, or use original identifiers as the target order for sorted values. The patch adds N<2 handling and an explicit bypass flag."
+      },
+      {
+        "step": "S7",
+        "consumes": [
+          "current Lsrc[:,t] in R_+^N",
+          "candidate order or fallback flag"
+        ],
+        "produces": [
+          "Ltilde[:,t], a permutation of Lsrc[:,t]"
+        ],
+        "note": "Verbatim: \"Stable-sort the original Lsrc[:,t] values and assign them by the M3 candidate order to form Ltilde[:,t]; output exactly the original multiset under a possibly different candidate labeling.\" Under the literal target-order reading, a tie sends descending values to original identifiers and is not an identity assignment unless Lsrc already happens to be sorted by identifier. The patch makes fallback bypass sorting."
+      },
+      {
+        "step": "S8",
+        "consumes": [
+          "Ltilde[:,t]",
+          "unchanged prior/posterior state",
+          "unchanged Bayesian update and myopic action selector"
+        ],
+        "produces": [
+          "posterior over candidates",
+          "myopic action ranking"
+        ],
+        "note": "Verbatim: \"Pass Ltilde[:,t], rather than Lsrc[:,t], into the unchanged Bayesian update; the resulting candidate posterior and hence the unchanged myopic action ranking can change only through this pre-accumulation reassignment.\" Dataflow is complete."
+      },
+      {
+        "step": "S9",
+        "consumes": [
+          "same frozen offline path and causal logs",
+          "identity arm",
+          "global-evidence arm",
+          "one sampled block-permutation G arm"
+        ],
+        "produces": [
+          "frozen per-step candidate ranks and action ranks for three arms"
+        ],
+        "note": "Verbatim: \"Re-run the identical offline path for the identity baseline, the naive global-evidence reorder, and a negative control that substitutes one sampled block-permutation G for observed G; output frozen per-step candidate and action ranks for each arm.\" The negative control cannot be informative under S5 as written because observed and permuted replication coincide."
+      },
+      {
+        "step": "S10",
+        "consumes": [
+          "frozen arm outputs",
+          "sequestered H02/H03 source identities",
+          "106 predefined comparisons"
+        ],
+        "produces": [
+          "source-order win rates",
+          "runtime authorization decision"
+        ],
+        "note": "Verbatim: \"After freezing outputs, expose the H02/H03 GADEN source identity only to the evaluator, score the existing 106 comparisons, and authorize runtime integration only if the observed-G arm improves source-order win rate over myopic while the block-permuted arm does not.\" This evaluator does not feed truth back to S1-S9."
+      }
+    ],
+    "dry_run": {
+      "instance": "N=3 candidates A,B,C. The current regime is onset with three completed one-sample runs having e vectors [0.2,0.9,-0.1], [0.1,0.8,-0.2], [0.0,0.7,-0.3], so B>A>C in every current-regime run. Three completed blank runs each contain two copies of [0.9,0.0,-0.4], making the global naive evidence favor A. All 3!=6 joint whole-run permutations are enumerated; because 199 only repeats members of the same permutation-invariant set, enumeration is stronger than sampling 199. Current Lsrc=[0.9,0.4,0.2] for T5; an unsorted perturbation [0.2,0.9,0.4] attacks the identity guarantee.",
+      "execution": {
+        "mode": "executed",
+        "script": "from itertools import permutations\nfrom statistics import median\nCANDS = (\"A\", \"B\", \"C\")\nonset_runs = [[[0.2, 0.9, -0.1]], [[0.1, 0.8, -0.2]], [[0.0, 0.7, -0.3]]]\nblank_runs = [\n    [[0.9, 0.0, -0.4], [0.9, 0.0, -0.4]],\n    [[0.9, 0.0, -0.4], [0.9, 0.0, -0.4]],\n    [[0.9, 0.0, -0.4], [0.9, 0.0, -0.4]],\n]\ndef margin(run, s, j):\n    diffs = [row[s] - row[j] for row in run]\n    den = sum(abs(x) for x in diffs)\n    return 0.0 if den == 0 else sum(diffs) / den\ndef pair_stats(runs, s, j):\n    ms = [margin(run, s, j) for run in runs]\n    a = median(ms)\n    sign_a = (a > 0) - (a < 0)\n    r = sum(m != 0 and ((m > 0) - (m < 0)) == sign_a for m in ms) / len(ms)\n    return ms, a, r\nobs = {(s,j): pair_stats(onset_runs,s,j) for s in range(3) for j in range(3) if s != j}\nperm_rs = {key: [] for key in obs}\nfor perm in permutations(range(len(onset_runs))):\n    permuted = [onset_runs[k] for k in perm]\n    for key in obs:\n        perm_rs[key].append(pair_stats(permuted, *key)[2])\ng = {}\nfor key, (_, a, r) in obs.items():\n    r0 = sum(perm_rs[key]) / len(perm_rs[key])\n    g[key] = a * max(0.0, r-r0)\nscores = [sum(g[s,j] for j in range(3) if j != s)/2 for s in range(3)]\nglobal_sum = [sum(row[s] for run in onset_runs+blank_runs for row in run) for s in range(3)]\nnaive_order = sorted(range(3), key=lambda s: (-global_sum[s], s))\ncurrent_lsrc = [0.9,0.4,0.2]\nsorted_values = sorted(current_lsrc, reverse=True)\nnaive_out = [None]*3\nfor rank,s in enumerate(naive_order): naive_out[s] = sorted_values[rank]\nmechanism_identity = current_lsrc[:]\nperturbed_lsrc = [0.2,0.9,0.4]\nliteral_tie_out = sorted(perturbed_lsrc, reverse=True)\nprint(\"onset_pair_margins_A_vs_B=\", obs[0,1][0])\nprint(\"onset_pair_margins_B_vs_A=\", obs[1,0][0])\nprint(\"observed_R_B_vs_A=\", obs[1,0][2])\nprint(\"unique_permuted_R_B_vs_A=\", sorted(set(perm_rs[1,0])))\nprint(\"R0_B_vs_A=\", sum(perm_rs[1,0])/len(perm_rs[1,0]))\nprint(\"G_B_vs_A=\", g[1,0])\nprint(\"all_G_zero=\", all(x == 0 for x in g.values()))\nprint(\"scores_A_B_C=\", scores)\nprint(\"global_evidence_A_B_C=\", global_sum)\nprint(\"naive_order=\", [CANDS[i] for i in naive_order])\nprint(\"naive_output=\", naive_out)\nprint(\"mechanism_identity_output=\", mechanism_identity)\nprint(\"naive_equals_mechanism=\", naive_out == mechanism_identity)\nprint(\"perturbed_input=\", perturbed_lsrc)\nprint(\"literal_steps_6_7_tie_output=\", literal_tie_out)\nprint(\"literal_tie_is_identity=\", literal_tie_out == perturbed_lsrc)",
+        "output": "onset_pair_margins_A_vs_B= [-1.0, -1.0, -1.0]\nonset_pair_margins_B_vs_A= [1.0, 1.0, 1.0]\nobserved_R_B_vs_A= 1.0\nunique_permuted_R_B_vs_A= [1.0]\nR0_B_vs_A= 1.0\nG_B_vs_A= 0.0\nall_G_zero= True\nscores_A_B_C= [0.0, 0.0, 0.0]\nglobal_evidence_A_B_C= [5.7, 2.4000000000000004, -2.9999999999999996]\nnaive_order= ['A', 'B', 'C']\nnaive_output= [0.9, 0.4, 0.2]\nmechanism_identity_output= [0.9, 0.4, 0.2]\nnaive_equals_mechanism= True\nperturbed_input= [0.2, 0.9, 0.4]\nliteral_steps_6_7_tie_output= [0.9, 0.4, 0.2]\nliteral_tie_is_identity= False"
+      },
+      "computed_quantities": [
+        {
+          "quantity": "Observed current-regime margin and replication for B>A",
+          "value": "m=[1,1,1], a=1, R=1",
+          "arithmetic": "Each one-sample normalized margin is (e_B-e_A)/|e_B-e_A|=1; median=1; 3/3 signs match."
+        },
+        {
+          "quantity": "Permutation null for B>A",
+          "value": "all six R^(p)=1; R0=1",
+          "arithmetic": "Every permutation only reorders [1,1,1], so mean_p R^(p)=(1+1+1+1+1+1)/6=1."
+        },
+        {
+          "quantity": "Load-bearing tensor entry",
+          "value": "G[B,A,onset]=0; all ordered-pair G entries are 0",
+          "arithmetic": "G=1*max(0,1-1)=0; the same permutation-invariance applies to every ordered pair."
+        },
+        {
+          "quantity": "Candidate scores",
+          "value": "S[A]=S[B]=S[C]=0",
+          "arithmetic": "Each score averages two zero G entries."
+        },
+        {
+          "quantity": "Naive global evidence",
+          "value": "[5.7,2.4,-3.0], order A>B>C",
+          "arithmetic": "Onset contributes [0.3,2.4,-0.6]; six blank samples contribute [5.4,0,-2.4]."
+        },
+        {
+          "quantity": "T5 output comparison",
+          "value": "naive=[0.9,0.4,0.2], mechanism promised-identity=[0.9,0.4,0.2], divergence none",
+          "arithmetic": "Both use candidate order A>B>C on the selected instance."
+        },
+        {
+          "quantity": "Identity guarantee perturbation",
+          "value": "input=[0.2,0.9,0.4], literal Steps 6-7 output=[0.9,0.4,0.2]",
+          "arithmetic": "The all-tie original candidate order A,B,C receives the descending sorted values 0.9,0.4,0.2, so output != input."
+        }
+      ],
+      "anomalies": [
+        {
+          "anomaly": "The executed whole-run null produced observed R=1, every permuted R=1, R0=1, G=0, and all scores zero.",
+          "kind": "structural",
+          "why": "R and a depend only on the multiset of run margins, while a bijective whole-run permutation changes only their order. This holds for any number or values of completed runs and under either defensible denominator reading for R."
+        },
+        {
+          "anomaly": "For the unsorted input [0.2,0.9,0.4], the literal all-tie path outputs [0.9,0.4,0.2] despite the claim of identity assignment.",
+          "kind": "structural",
+          "why": "For every unsorted likelihood vector, sorting values before assigning them to original candidate identifiers changes at least one candidate value. The anomaly is reading-dependent on treating \"identity candidate order\" as an order rather than as a bypass; the wording itself is unconditionally ambiguous."
+        },
+        {
+          "anomaly": "On the selected instance the naive and full mechanism both output [0.9,0.4,0.2] even though current-regime runs unanimously favor B.",
+          "kind": "instance_contingent",
+          "why": "The equality with the naive output uses a chosen global-evidence order and current likelihood vector; another instance could give a different naive order. What is structural is that the proposed G machinery cannot influence any instance under the written whole-run null."
+        }
+      ]
+    },
+    "degenerate_probes": [
+      {
+        "probe": "Empty candidate set N=0",
+        "behavior": "No pairwise tensors or posterior support exist; the written method states no precondition or defined downstream output.",
+        "finding": "Patched together with the singleton case by returning the input unchanged for N<2."
+      },
+      {
+        "probe": "Single candidate N=1",
+        "behavior": "S=(N-1)^-1 sum G divides by zero.",
+        "finding": "Patched by an explicit N<2 identity bypass before score normalization."
+      },
+      {
+        "probe": "Fewer than n_run=3 completed current-regime runs, including zero runs",
+        "behavior": "S6 requests identity fallback, but literal S7 sorts and reassigns values, so the fallback is not identity on an unsorted vector.",
+        "finding": "Patched by carrying an explicit fallback flag and setting Ltilde=Lsrc without sorting."
+      },
+      {
+        "probe": "All e values identical across candidates and runs",
+        "behavior": "Every margin denominator is zero, m=a=G=0, and all scores tie. R's denominator is ambiguous but does not change G.",
+        "finding": "R's denominator is patched explicitly; the identity bypass patch makes the tie output defined."
+      },
+      {
+        "probe": "Ties at every S threshold",
+        "behavior": "The core text promises identity while literal Steps 6-7 can reassign sorted values by candidate identifier.",
+        "finding": "Patched by bypassing the reorder whenever all S values tie."
+      },
+      {
+        "probe": "Maximum candidate count",
+        "behavior": "No maximum N is specified. The written loops are finite for finite N but scale at least quadratically in N per run and permutation.",
+        "finding": null
+      }
+    ],
+    "claim_step_map": [
+      {
+        "claim": "G is computed causally before update t.",
+        "established_by": "S1-S5",
+        "strength_grade": "established",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "q gives four structural regimes without a new threshold.",
+        "established_by": "S2",
+        "strength_grade": "established",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "The same run-block permutation preserves candidate coupling and the fixed realized path.",
+        "established_by": "S5",
+        "strength_grade": "conditional",
+        "assumptions_missing": [
+          "the permutation is a joint bijection of intact, timestamped candidate blocks",
+          "variable-length run placement has a defined bijection with no truncation or padding"
+        ],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "The run-block permutation selectively destroys observation-to-field alignment and supplies a truth-blind activation null.",
+        "established_by": "UNESTABLISHED",
+        "strength_grade": "overclaim",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": "Executed: observed R=1, every permuted R=1, R0=1, G=0."
+      },
+      {
+        "claim": "The order transport exactly preserves the likelihood-value multiset.",
+        "established_by": "S7",
+        "strength_grade": "established",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "M3 defaults to the identity assignment whenever all current-regime scores tie.",
+        "established_by": "UNESTABLISHED",
+        "strength_grade": "overclaim",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": "Executed perturbation: [0.2,0.9,0.4] became [0.9,0.4,0.2] under literal Steps 6-7."
+      },
+      {
+        "claim": "Preserving the likelihood multiset therefore leaves instantaneous entropy unchanged.",
+        "established_by": "S7",
+        "strength_grade": "conditional",
+        "assumptions_missing": [
+          "entropy is computed solely as a permutation-invariant functional of the current likelihood-value multiset, not after candidate-specific prior multiplication"
+        ],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "The posterior and action ranking can change only through pre-accumulation reassignment.",
+        "established_by": "S8",
+        "strength_grade": "established",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "Pairwise orientation beyond the null carries source-discriminative structure.",
+        "established_by": "UNESTABLISHED",
+        "strength_grade": "empirical",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "P_perm=199 is the smallest odd count giving two-sided Monte Carlo resolution at most 0.01.",
+        "established_by": "S5",
+        "strength_grade": "conditional",
+        "assumptions_missing": [
+          "two-sided resolution is defined as 2/(P_perm+1)"
+        ],
+        "arbitration": "argument",
+        "measured": null
+      }
+    ],
+    "naive_comparison": {
+      "declared_branch": "(i) false-premise",
+      "naive_version": "Sum each candidate's e[s,t] over all completed samples, rank candidates by that global sum, and assign the current sorted likelihood values by that rank.",
+      "naive_fairness": "It uses the same frozen causal logs, current likelihood multiset, candidate set, realized path, no source truth, and one-pass replay budget; it is simpler because it has no regime ledger, pairwise tensor, or permutation null.",
+      "instance_behavior": {
+        "naive": "Global sums [5.7,2.4,-3.0] give A>B>C and output [0.9,0.4,0.2].",
+        "mechanism": "Every G entry and S score is zero; under the promised identity fallback it outputs [0.9,0.4,0.2].",
+        "divergence": "none on the executed instance, despite all three onset-run margins favoring B over A",
+        "kind": "instance_contingent"
+      },
+      "verdict": "equivalent_to_naive",
+      "reasoning": "On the same constrained instance, the extra machinery cannot overturn the global naive order because its null makes G identically zero. Exact output equality is instance-contingent, but failure of the load-bearing G branch to activate is structural and directly defeats the declared regime-specific obstacle."
+    }
+  },
+  "verdict": "patched",
+  "unrepaired": [
+    {
+      "finding": "The load-bearing coupled run-block null is permutation-invariant: permuting completed runs within a fixed q only reorders the margin multiset, so a and R are unchanged in every null replicate, R0=R, and G=a*max(0,R-R0)=0 for every candidate pair. Consequently the proposed mechanism cannot confront its declared obstacle of regime-specific ordering repair.",
+      "severity": "blocking",
+      "why_not_repaired": "Repair requires changing what is randomized or changing the statistic so the null alters an observation-candidate pairing. That is the core controlled-diagnostic and activation mechanism, so it is an obstacle-hole redesign forbidden to this patch-only gate.",
+      "verbatim_step_quote": "5. Apply P_perm joint circular run-block permutations within q and compute R0 and G; output the excess-replicated dominance tensor while preserving candidate coupling and the fixed path.",
+      "executed_evidence": "Model: three completed onset runs have B-vs-A normalized margins [1,1,1]. Code excerpt: for each permutation, permuted=[runs[k] for k in perm]; append pair_stats(permuted,B,A).R; then R0=mean(permuted R) and G=a*max(0,R-R0). Executed output: observed_R_B_vs_A=1.0; unique_permuted_R_B_vs_A=[1.0]; R0_B_vs_A=1.0; G_B_vs_A=0.0; all_G_zero=True; scores_A_B_C=[0.0,0.0,0.0]. The arithmetic is permutation-independent: a bijection of whole runs preserves the multiset of m values, and both median(a) and sign-match fraction(R) are symmetric functions of that multiset.",
+      "reading_dependence": "reading_robust",
+      "structural_requirement": "(a) Identifying condition: any replacement must create a null contrast that can change the pairing between observation-derived regime/run evidence and candidate-field evidence while preserving the constraints claimed essential, so the observed replication statistic is not algebraically invariant under the null. (b) Available sources are timestamped h/q, completed-run boundaries, Lsrc/Lcar fields, candidate identities, and the frozen realized path. Source truth is excluded until evaluation; iid sample shuffling is excluded because it breaks within-run dependence and adaptive-path structure. A bijection of intact runs within the same q is available but insufficient for this symmetric statistic, as the execution proves. The evidence here does not establish which alternative constrained randomization is valid or affordable. (c) Salvage: retain the bounded source-over-carrier e instrument, causal completed-run ledger, multiset-preserving reassignment interface, frozen-path arm structure, and sequestered-truth evaluator; discard the present R0/G activation construction. No executed evidence supports a concrete replacement null."
+    }
+  ],
+  "applied_revisions": [
+    {
+      "scope": "coherence",
+      "op": "append_sentence",
+      "field": "core_mechanism",
+      "value": "Here R is the number of all completed runs with a nonzero margin whose sign equals sign(a), divided by the total completed-run count; for permutation p compute R^(p) by the same rule and define R0=P_perm^{-1} sum_p R^(p).",
+      "outcome": "applied",
+      "delta_summary": "Repairs the T1 unbound-definition finding by fixing R's denominator and R0's Monte Carlo aggregation; it does not repair the blocking permutation invariance."
+    },
+    {
+      "scope": "coherence",
+      "op": "replace",
+      "field": "core_mechanism_steps",
+      "value": "1. Read the frozen M1/M2 causal log at each update t: h_t, Lsrc[:,t], Lcar[:,t], candidate identifiers, and the realized UAV path; emit no truth fields to the M3 process.\n2. Convert h into q_t=(h_{t-1},h_t), close maximal runs when q changes, and store only completed past runs; output a causal run index keyed by the four regimes.\n3. Compute e[:,u] for samples in completed runs and then every m[s,j,q,b]; output the ordered-pair run-margin table.\n4. For each q with at least n_run completed runs, compute a and R; output observed pair orientations and their across-run replication.\n5. Apply P_perm joint circular run-block permutations within q and compute R0 and G; output the excess-replicated dominance tensor while preserving candidate coupling and the fixed path.\n6. If the candidate count is less than two, set the fallback flag and output the identity assignment. Otherwise compute S[:,q_t]; if all scores tie or q_t lacks n_run completed runs, set the fallback flag and output the identity assignment, otherwise clear the flag and output the stable descending S order, retaining original candidate order within score ties.\n7. If the fallback flag is set, define Ltilde[:,t]=Lsrc[:,t] without sorting. Otherwise stable-sort the original Lsrc[:,t] values in descending order and assign them by the M3 candidate order to form Ltilde[:,t]; output exactly the original multiset under a possibly different candidate labeling.\n8. Pass Ltilde[:,t], rather than Lsrc[:,t], into the unchanged Bayesian update; the resulting candidate posterior and hence the unchanged myopic action ranking can change only through this pre-accumulation reassignment.\n9. Re-run the identical offline path for the identity baseline, the naive global-evidence reorder, and a negative control that substitutes one sampled block-permutation G for observed G; output frozen per-step candidate and action ranks for each arm.\n10. After freezing outputs, expose the H02/H03 GADEN source identity only to the evaluator, score the existing 106 comparisons, and authorize runtime integration only if the observed-G arm improves source-order win rate over myopic while the block-permuted arm does not.",
+      "outcome": "applied",
+      "delta_summary": "Repairs the T2/T3 identity contradiction exposed by [0.2,0.9,0.4] becoming [0.9,0.4,0.2], and the N=1 division by zero, by making fallback an explicit bypass."
+    },
+    {
+      "scope": "coherence",
+      "op": "replace",
+      "field": "hook",
+      "value": "A pre-Bayesian M3 can raise held-out source-order win rate while leaving every step's likelihood-value multiset, and therefore any instantaneous entropy computed solely from that multiset, unchanged. If the gain vanishes when regime-replication scores are block-permuted, the effect is ordering repair rather than calibration.",
+      "outcome": "applied",
+      "delta_summary": "Repairs the T4 conditional entropy claim by stating the required estimand: an entropy functional of the likelihood multiset itself, not a candidate-prior-weighted posterior entropy."
+    }
+  ],
+  "final_candidate": {
+    "title": "Regime-Replicated Likelihood Permutation for Turbulent UAV Source Search",
+    "hook": "A pre-Bayesian M3 can raise held-out source-order win rate while leaving every step's likelihood-value multiset, and therefore any instantaneous entropy computed solely from that multiset, unchanged. If the gain vanishes when regime-replication scores are block-permuted, the effect is ordering repair rather than calibration.",
+    "hook_shape_rationale": "Shape (a), surprising empirical reveal, is admitted because the named held-out source-order win rate is predicted to improve even though the likelihood multiset is exactly conserved. Shape (c) was also viable because the method adds neither planner depth nor likelihood mass, but it was rejected because the supplied literature does not establish a field-wide belief that such a minimal intervention must fail.",
+    "gap_closure": [
+      {
+        "gap": "At the frontier leaf represented by arxiv:2605.13208v1, no retrieved work establishes whether candidate-source ordering remains valid when a single-UAV trajectory samples a turbulent plume whose observed-to-modeled relation changes across intermittent regimes rather than remaining globally monotone — stakes: a source can be ranked below a geometrically incompatible rival before accumulation, wasting the fixed flight budget and making conclusions from monotone-sensor evaluations fail to transfer to held-out GADEN houses.",
+        "main_pattern": "generative_process_redesign",
+        "sub_pattern": "C15 (Liberate a Fixed Generative Component)",
+        "companion_pattern": null,
+        "how_closed": "Closed by replacing the inherited candidate-to-likelihood-value assignment with a causal, regime-replicated assignment while leaving the frozen accumulator and planner untouched; corpus support is thin in gas localization, and C15's closest exemplars concern representation swaps in 3D reconstruction."
+      },
+      {
+        "gap": "At the frontier leaf represented by arxiv:2601.07445v1, no retrieved work determines from truth-blind observed and candidate-field evidence when turbulent correlation contains source-discriminative structure and when it instead produces spurious agreement, so the same dependence can help one regime and reverse evidence in another — stakes: practitioners cannot preregister a safe activation boundary, while the field cannot tell whether reported gains reflect recovered source information or a house-specific correlation artifact.",
+        "main_pattern": "controlled_diagnostic_design",
+        "sub_pattern": "C02 (Design a Confound-Isolating Diagnostic)",
+        "companion_pattern": null,
+        "how_closed": "Closed by a joint run-block randomization instrument that preserves trajectory, autocorrelation, candidate coupling, and likelihood marginals while selectively destroying observation-to-field alignment, yielding a truth-blind activation null and a sequestered-truth offline test."
+      }
+    ],
+    "core_mechanism": "The shared object is a regime-replicated dominance tensor G[s,j,q] computed causally before update t for each ordered candidate pair (s,j) and observed hit-transition regime q. Let h_t be the frozen M1/M2 GADEN hit indicator and q_t=(h_{t-1},h_t), giving the four structural regimes blank, onset, persistence, and exit without a new threshold; let Lsrc[s,t] and Lcar[s,t] be the existing nonnegative source and carrier likelihood fields, and define bounded source-over-carrier evidence e[s,t]=(Lsrc[s,t]-Lcar[s,t])/(Lsrc[s,t]+Lcar[s,t]), with e=0 when the denominator is zero. For every maximal completed run b of regime q strictly before t, compute the pairwise run margin m[s,j,q,b]=sum_{u in b}(e[s,u]-e[j,u])/sum_{u in b}|e[s,u]-e[j,u]|, set to zero only when its denominator is zero, and let a[s,j,q] be the median run margin. With n_run=3 as the preregistered minimum number of completed runs, chosen because it is the smallest count that permits one run to be held out while two establish an orientation, define R[s,j,q] as the fraction of runs whose nonzero margin has the sign of a[s,j,q]; regimes with fewer runs contribute zero. Estimate the spurious-replication level R0[s,j,q] by P_perm=199 joint circular run-block permutations within q, the smallest odd count giving two-sided Monte Carlo resolution at most 0.01, where the same permutation is applied to every candidate field so candidate coupling and temporal blocks survive but observation-to-field alignment is broken. Set G[s,j,q]=a[s,j,q] max(0,R[s,j,q]-R0[s,j,q]) and the current-regime score S[s,q_t]=(|S|-1)^{-1} sum_{j!=s}G[s,j,q_t]; this is not covariance whitening, robust M-estimation, or change detection because the load-bearing artifact is candidate-pair orientation that exceeds a coupled block null. At update t, sort the existing values {Lsrc[s,t]} and assign them in descending order to candidates sorted by S[s,q_t], retaining the original candidate order for ties; this order transport defines Ltilde[s,t], exactly preserves the likelihood-value multiset, and becomes the sole M3 output consumed by the unchanged Bayesian accumulator and myopic action selector. The diagnostic leg evaluates the same G tensor with sequestered GADEN source identities only after all causal outputs are frozen, and M3 defaults to the identity assignment whenever all current-regime scores tie, providing a truth-blind activation boundary rather than a tuned posterior multiplier. Here R is the number of all completed runs with a nonzero margin whose sign equals sign(a), divided by the total completed-run count; for permutation p compute R^(p) by the same rule and define R0=P_perm^{-1} sum_p R^(p).",
+    "core_mechanism_reasoning": "BLOCK 1 — PREMISES ledger:\nP1: Hit-transition runs separate plume intermittency contexts relevant to observed-to-modeled ordering; turbulent indoor plumes commonly alternate absence, onset, persistence, and exit, but whether those four contexts are sufficient is untested — falsification target.\nP2: Pairwise orientation that repeats across completed runs beyond a coupled block-randomization null carries source-discriminative structure rather than house-specific correlation; plausible from repeated plume encounters, but untested — falsification target.\nObservation-model premise: the UAV's samples are adaptively selected by the frozen planner and are neither iid nor unbiased samples of a house; the estimator therefore targets evidence conditional on the realized trajectory, and joint whole-run permutations preserve that selection and within-run dependence.\nESTIMAND: for each candidate pair and hit-transition regime on the realized causal path, G targets signed pairwise source-over-carrier dominance multiplied by replication in excess of the trajectory-conditional joint-block null.\nBLOCK 2 — NAIVE-BASELINE AUDIT: The runnable naive version sums e[s,t] globally for each candidate and reorders the current likelihood vector by that sum; branch (i), it fails because it assumes one stationary observed-to-modeled orientation across plume regimes, which is false in the target setting, so the proposed mechanism estimates orientation separately by hit-transition run and requires excess replication over a coupled null. Block randomization is a standard diagnostic tool, but this instance is not solved by an iid permutation test because all candidate fields share one adaptively chosen UAV path and turbulent blocks; the contribution uses a joint trajectory-preserving null to drive a candidate-label likelihood assignment, not merely a p-value.\nBLOCK 3 — The two gaps share G: the method leg writes the reordered assignment from G, while the diagnostic leg destroys only G's observation-to-field alignment and measures the downstream consequence, so a separate detector module would duplicate machinery. Global empirical ranks, covariance whitening, Huber-style clipping, and CUSUM segmentation were rejected because they respectively occupy the closest frontier or regress to the lineage's collateral nodes; extra lookahead was rejected by the held-out horizon-2 result and the user's hard exclusions.",
+    "core_mechanism_steps": "1. Read the frozen M1/M2 causal log at each update t: h_t, Lsrc[:,t], Lcar[:,t], candidate identifiers, and the realized UAV path; emit no truth fields to the M3 process.\n2. Convert h into q_t=(h_{t-1},h_t), close maximal runs when q changes, and store only completed past runs; output a causal run index keyed by the four regimes.\n3. Compute e[:,u] for samples in completed runs and then every m[s,j,q,b]; output the ordered-pair run-margin table.\n4. For each q with at least n_run completed runs, compute a and R; output observed pair orientations and their across-run replication.\n5. Apply P_perm joint circular run-block permutations within q and compute R0 and G; output the excess-replicated dominance tensor while preserving candidate coupling and the fixed path.\n6. If the candidate count is less than two, set the fallback flag and output the identity assignment. Otherwise compute S[:,q_t]; if all scores tie or q_t lacks n_run completed runs, set the fallback flag and output the identity assignment, otherwise clear the flag and output the stable descending S order, retaining original candidate order within score ties.\n7. If the fallback flag is set, define Ltilde[:,t]=Lsrc[:,t] without sorting. Otherwise stable-sort the original Lsrc[:,t] values in descending order and assign them by the M3 candidate order to form Ltilde[:,t]; output exactly the original multiset under a possibly different candidate labeling.\n8. Pass Ltilde[:,t], rather than Lsrc[:,t], into the unchanged Bayesian update; the resulting candidate posterior and hence the unchanged myopic action ranking can change only through this pre-accumulation reassignment.\n9. Re-run the identical offline path for the identity baseline, the naive global-evidence reorder, and a negative control that substitutes one sampled block-permutation G for observed G; output frozen per-step candidate and action ranks for each arm.\n10. After freezing outputs, expose the H02/H03 GADEN source identity only to the evaluator, score the existing 106 comparisons, and authorize runtime integration only if the observed-G arm improves source-order win rate over myopic while the block-permuted arm does not.",
+    "falsification_prediction": "Replay the frozen M1/M2 H02/H03 logs causally through myopic, naive-global, observed-G, and block-permuted-G arms, freeze all ranks, and only then let the evaluator read GADEN source identities for the existing 106 comparisons. If the mechanism works, held-out source-order win rate for observed-G rises relative to myopic while the likelihood-value multiset remains identical at every update. The load-bearing variable is the excess-replicated dominance tensor G: replacing it with a jointly block-permuted G should return downstream source-order win rate toward or below myopic, whereas an order-only positive control using S without original likelihood magnitudes should preserve the direction of the gain. The claim is falsified before runtime integration if observed-G fails to improve that downstream metric, if the randomized-G control improves similarly, or if gains occur only in one house-defined stratum rather than across the preregistered H02/H03 comparison set.",
+    "compute_budget": "0.2 GPU-day on one 80GB-class GPU (the replay is expected to be CPU-dominated) + $0 API; comfortable within the stated envelope, including the 199-permutation controls and one full rerun for implementation verification.",
+    "differentiation_from_lit": [
+      {
+        "paper_id": "arxiv:2605.13208v1",
+        "delta": "That method globally ranks accumulated observed and modeled concentrations, whereas this candidate constructs hit-transition-run pairwise source-over-carrier dominance, subtracts a coupled block null, and uses it only to reassign an unchanged likelihood-value multiset."
+      },
+      {
+        "paper_id": "arxiv:2304.08879v3",
+        "delta": "That method contrasts a probabilistic gas-hit map with online candidate simulations, whereas this candidate measures whether candidate preference replicates beyond trajectory-preserving spurious correlation before allowing those existing likelihood values to change source order."
+      },
+      {
+        "paper_id": "arxiv:2401.03947v1",
+        "delta": "That study changes planning horizon through a learned far-sighted policy while retaining its evidence model, whereas this candidate freezes the myopic planner and changes only the pre-Bayesian candidate assignment of existing evidence values."
+      }
+    ],
+    "almost_prior_paper_id": "arxiv:2605.13208v1",
+    "what_step_was_missed": "It would have needed to replace one globally pooled observation-to-model rank relation with causal hit-transition-run pairwise source-over-carrier orientations, test their replication against a coupled block null, and use the surviving orientation to permute candidate identities without changing likelihood magnitudes.",
+    "signature_terms": [
+      "regime-replicated evidence permutation",
+      "carrier-corrected pairwise dominance",
+      "likelihood-multiset preserving reordering",
+      "truth-blind activation null",
+      "held-out turbulent source ranking"
+    ],
+    "alias_terms": [
+      "bounded influence robust estimation",
+      "covariance whitening residual decorrelation",
+      "sequential change point segmentation",
+      "simulator discrepancy likelihood free inference",
+      "block randomization conditional inference",
+      "pairwise preference tournament aggregation"
+    ],
+    "composition_note": ""
+  },
+  "falsification_rewritten": false
+}

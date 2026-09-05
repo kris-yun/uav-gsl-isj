@@ -1,0 +1,363 @@
+{
+  "trace_report": {
+    "likely_fatal_step": {
+      "step": "Step 4",
+      "reason": "It simultaneously claims that the coupling is order-preserving and obtained by a cumulative-mass scan, and that the coupling first minimizes direction mismatch over couplings. Those are different feasible sets and can reverse the candidate order; this was attacked first with the executed two-edge counterexample."
+    },
+    "formalized_procedure": [
+      {
+        "step": "S1",
+        "consumes": [
+          "VERBATIM: Read the frozen M1/M2 source likelihood Lsrc_{s,t}, carrier likelihood Lcar_{s,t}, GADEN concentration y_t, timestamp, position, and existing causal run identifier for every candidate s on the realized prefix; output a schema-checked prefix table without source truth."
+        ],
+        "produces": [
+          "prefix table P with rows (r,t,y_t,Lsrc_{s,t},Lcar_{s,t}) and baseline candidate/value order"
+        ],
+        "note": "The stated inputs contain no true-source identity. The source subscript in Lsrc denotes the candidate-conditioned source field, not the sequestered true source."
+      },
+      {
+        "step": "S2",
+        "consumes": [
+          "VERBATIM: Within each run and current causal prefix, difference adjacent y values and adjacent candidate log source-over-carrier contrasts g_{s,t}; output signed transition sequences plus normalized nonnegative masses a_i and b_{s,i}.",
+          "P"
+        ],
+        "produces": [
+          "for each run r: observation tokens (i/n_r,u_i,a_i)",
+          "for each candidate s and run r: field tokens (i/n_r,v_{s,i},b_{s,i})"
+        ],
+        "note": "Original reading: a_i=|Delta y_i|/A_r and b_{s,i}=|Delta g_{s,i}|/B_{sr}. A_r=0 or B_{sr}=0 makes the division undefined before the later identity clause. epsilon_machine is named but its floating dtype is not bound."
+      },
+      {
+        "step": "S3",
+        "consumes": [
+          "VERBATIM: For every candidate, build the ordered observation and field token lists and their direction-mismatch and normalized time-displacement pair costs; output the candidate-specific transport instance.",
+          "normalized tokens"
+        ],
+        "produces": [
+          "candidate/run transport nodes and pair costs d_dir in {0,1}, d_time=|i/n_r-j/n_r|"
+        ],
+        "note": "The token order is chronological within each run."
+      },
+      {
+        "step": "S4",
+        "consumes": [
+          "VERBATIM: Solve the lexicographic one-dimensional monotone transport by cumulative mass scanning; output O_s and T_s=(Cdir_s,Ctime_s) for every candidate, with explicit zero-mass status flags.",
+          "transport instances"
+        ],
+        "produces": [
+          "O_{sr}",
+          "per-run or prefix T_s"
+        ],
+        "note": "DUAL READING M: cumulative scanning fixes the unique chronological monotone coupling, then Cdir and Ctime evaluate that coupling and candidate scores are compared lexicographically. DUAL READING L: optimize Cdir over arbitrary couplings first, then Ctime among direction-optimal couplings. The text supports both; executed results differ. The original does not specify how per-run scores are aggregated after runs are computed independently and concatenated."
+      },
+      {
+        "step": "S5",
+        "consumes": [
+          "VERBATIM: Stable-sort candidates by ascending T_s while preserving the baseline order on exact ties; output the truth-blind candidate permutation.",
+          "T_s",
+          "baseline order"
+        ],
+        "produces": [
+          "permutation pi"
+        ],
+        "note": "This step is deterministic once S4 and run aggregation are fixed; exact ties are fully specified."
+      },
+      {
+        "step": "S6",
+        "consumes": [
+          "VERBATIM: Stable-sort the current baseline likelihood values and assign them to the candidate permutation from step 5; output the multiset-preserving M3 likelihood vector that is passed directly to the unchanged Bayesian accumulator and then to the unchanged action selector.",
+          "pi",
+          "baseline likelihood-value multiset"
+        ],
+        "produces": [
+          "M3 likelihood vector"
+        ],
+        "note": "Reading is unambiguous when combined with core_mechanism: sort values descending and assign in pi order. Candidate associations change whenever pi changes and values are nonconstant, while the multiset is exactly preserved. No truth or tuned threshold enters."
+      },
+      {
+        "step": "S7",
+        "consumes": [
+          "VERBATIM: In the offline gate only, cyclically shift each completed run's candidate-field token values by delta_r=floor(n_r/2) before rebuilding costs, rerun steps 3–6, and output the shifted-pairing negative-control vector; runs without a nonzero shift are marked non-informative rather than silently pooled.",
+          "field token (direction,mass) pairs",
+          "delta_r"
+        ],
+        "produces": [
+          "shifted-control T_s, permutation, and M3 vector"
+        ],
+        "note": "Dual reading of 'token values': shifting direction and mass together is the only reading consistent with rebuilding pair costs; shifting direction alone would detach magnitude from its signed transition. The half-shift can change scores but is not guaranteed to do so."
+      },
+      {
+        "step": "S8",
+        "consumes": [
+          "VERBATIM: Freeze hashes of the baseline, aligned-transport, and shifted-control vectors for all fixed H02/H03 comparisons, then let the sequestered evaluator reveal source identities and compute the preregistered downstream ordering metric.",
+          "three truth-blind vectors"
+        ],
+        "produces": [
+          "frozen hashes",
+          "post-freeze evaluation metric"
+        ],
+        "note": "Truth is consumed only after all candidate orders are frozen, so the mechanism itself is truth-blind."
+      }
+    ],
+    "dry_run": {
+      "instance": "One run with n_r=4 edges. Observation deltas are [3,-1,2,-4]. Candidate transitions are A_local=[5,-10,0.3,-1], A_scaled=10^-6*A_local, and B_pooled=[0.3,-0.3,0.3,-0.3]. Baseline order is [B_pooled,A_scaled,A_local] with likelihood values {0.60,0.25,0.15}. A pooled-Pearson ranking is the fair naive. Both S4 readings are executed. A separate two-edge sign-reversal probe attacks the S4 guarantee; zero-mass and periodic-shift probes attack degeneracies and the null claim.",
+      "execution": {
+        "mode": "executed",
+        "script": "from fractions import Fraction\nfrom math import gcd,sqrt\nfrom collections import deque\ndef lcm(a,b):return a*b//gcd(a,b)\ndef tok(d):\n q=[Fraction(str(abs(x))) for x in d];z=sum(q)\n if z==0:return None\n n=len(d);return [(Fraction(i,n),1 if x>0 else -1 if x<0 else 0,q[i]/z) for i,x in enumerate(d)]\ndef mono(x,z):\n i=j=0;rx=x[0][2];rz=z[0][2];cd=Fraction(0);ct=Fraction(0)\n while i<len(x) and j<len(z):\n  m=min(rx,rz);cd+=m*(x[i][1]!=z[j][1]);ct+=m*abs(x[i][0]-z[j][0]);rx-=m;rz-=m\n  if rx==0:i+=1;rx=x[i][2] if i<len(x) else 0\n  if rz==0:j+=1;rz=z[j][2] if j<len(z) else 0\n return cd,ct\ndef lex(x,z):\n den=1\n for q in [t[2] for t in x+z]:den=lcm(den,q.denominator)\n N=2+len(x)+len(z);src=0;sink=N-1;g=[[] for _ in range(N)]\n def add(u,v,c,w):g[u].append([v,c,w,len(g[v]),0]);g[v].append([u,0,-w,len(g[u])-1,0])\n for i,t in enumerate(x):add(src,1+i,int(t[2]*den),0)\n refs=[];BIG=10*den\n for i,a in enumerate(x):\n  for j,b in enumerate(z):\n   u=1+i;k=len(g[u]);add(u,1+len(x)+j,den,BIG*(a[1]!=b[1])+abs(i-j));refs.append((u,k,i,j))\n for j,t in enumerate(z):add(1+len(x)+j,sink,int(t[2]*den),0)\n flow=0\n while flow<den:\n  dist=[10**30]*N;prev=[None]*N;inq=[False]*N;dist[src]=0;Q=deque([src]);inq[src]=True\n  while Q:\n   u=Q.popleft();inq[u]=False\n   for k,e in enumerate(g[u]):\n    if e[1]>0 and dist[e[0]]>dist[u]+e[2]:\n     dist[e[0]]=dist[u]+e[2];prev[e[0]]=(u,k)\n     if not inq[e[0]]:Q.append(e[0]);inq[e[0]]=True\n  aug=den-flow;v=sink\n  while v!=src:u,k=prev[v];aug=min(aug,g[u][k][1]);v=u\n  v=sink\n  while v!=src:u,k=prev[v];e=g[u][k];e[1]-=aug;e[4]+=aug;g[v][e[3]][1]+=aug;v=u\n  flow+=aug\n cd=Fraction(0);ct=Fraction(0)\n for u,k,i,j in refs:\n  f=g[u][k][4];cd+=Fraction(f,den)*(x[i][1]!=z[j][1]);ct+=Fraction(f,den)*abs(x[i][0]-z[j][0])\n return cd,ct\ndef shift(t):\n n=len(t);d=n//2;v=[(q[1],q[2]) for q in t];v=v[d:]+v[:d];return [(t[i][0],v[i][0],v[i][1]) for i in range(n)]\ndef levels(d):\n a=[0.]\n for q in d:a.append(a[-1]+q)\n return a\ndef corr(x,y):\n mx=sum(x)/len(x);my=sum(y)/len(y);return sum((a-mx)*(b-my) for a,b in zip(x,y))/sqrt(sum((a-mx)**2 for a in x)*sum((b-my)**2 for b in y))\ndef f(t):return tuple(round(float(q),6) for q in t)\nobs=[3.,-1.,2.,-4.];F={'A_local':[5.,-10.,.3,-1.],'A_scaled':[5e-6,-10e-6,.3e-6,-1e-6],'B_pooled':[.3,-.3,.3,-.3]};bo=['B_pooled','A_scaled','A_local'];base={'B_pooled':.6,'A_scaled':.25,'A_local':.15};o=tok(obs)\nprint('obs_mass',[round(float(q[2]),6) for q in o],'sum',float(sum(q[2] for q in o)))\nM={};L={};S={};P={}\nfor n,d in F.items():\n t=tok(d);M[n]=mono(o,t);L[n]=lex(o,t);S[n]=mono(o,shift(t));P[n]=corr(levels(obs),levels(d));print(n,'mass',[round(float(q[2]),6) for q in t],'T_monotone',f(M[n]),'T_direction_first',f(L[n]),'T_shift',f(S[n]),'pearson',round(P[n],6))\ni={s:k for k,s in enumerate(bo)};om=sorted(F,key=lambda s:(M[s],i[s]));ol=sorted(F,key=lambda s:(L[s],i[s]));on=sorted(F,key=lambda s:(-P[s],i[s]));vals=sorted(base.values(),reverse=True);re={s:v for s,v in zip(om,vals)}\nprint('order_monotone',om,'order_direction_first',ol,'order_naive',on);print('baseline',base,'reassigned',re,'multiset_equal',sorted(base.values())==sorted(re.values()));print('scale_invariance',M['A_local']==M['A_scaled'],'TV_ratio',sum(map(abs,F['A_local']))/sum(map(abs,F['A_scaled'])))\nx=[(Fraction(0),1,Fraction(1,2)),(Fraction(1,2),-1,Fraction(1,2))];z=[(Fraction(0),-1,Fraction(1,2)),(Fraction(1,2),1,Fraction(1,2))];print('optimizer_probe','monotone',f(mono(x,z)),'direction_first',f(lex(x,z)));print('zero_obs',tok([0.,0.]),'zero_field',tok([0.,0.]));p=[(Fraction(0),1,Fraction(1,4)),(Fraction(1,4),-1,Fraction(1,4)),(Fraction(1,2),1,Fraction(1,4)),(Fraction(3,4),-1,Fraction(1,4))];print('nonconstant_shift_invariant',p==shift(p),'T',f(mono(p,p)),'T_shift',f(mono(p,shift(p))))",
+        "output": "obs_mass [0.3, 0.1, 0.2, 0.4] sum 1.0\nA_local mass [0.306748, 0.613497, 0.018405, 0.06135] T_monotone (0.225153, 0.216411) T_direction_first (0.174847, 0.216411) T_shift (0.347853, 0.203834) pearson 0.150993\nA_scaled mass [0.306748, 0.613497, 0.018405, 0.06135] T_monotone (0.225153, 0.216411) T_direction_first (0.174847, 0.216411) T_shift (0.347853, 0.203834) pearson 0.150993\nB_pooled mass [0.25, 0.25, 0.25, 0.25] T_monotone (0.3, 0.075) T_direction_first (0.0, 0.1) T_shift (0.3, 0.075) pearson 0.867528\norder_monotone ['A_scaled', 'A_local', 'B_pooled'] order_direction_first ['B_pooled', 'A_scaled', 'A_local'] order_naive ['B_pooled', 'A_scaled', 'A_local']\nbaseline {'B_pooled': 0.6, 'A_scaled': 0.25, 'A_local': 0.15} reassigned {'A_scaled': 0.6, 'A_local': 0.25, 'B_pooled': 0.15} multiset_equal True\nscale_invariance True TV_ratio 1000000.0\noptimizer_probe monotone (1.0, 0.0) direction_first (0.0, 0.5)\nzero_obs None zero_field None\nnonconstant_shift_invariant True T (0.0, 0.0) T_shift (0.0, 0.0)"
+      },
+      "computed_quantities": [
+        {
+          "quantity": "Independent-normalization comparability",
+          "value": "Every nonzero observation and field mass vector sums to 1; therefore Cdir is a transported-mass fraction in [0,1] and Ctime is on the common i/n_r scale in [0,1), conditional on identical run aggregation/support.",
+          "arithmetic": "sum(a)=0.3+0.1+0.2+0.4=1; sum(b_A)=0.306748+0.613497+0.018405+0.061350=1; sum(b_B)=4*0.25=1."
+        },
+        {
+          "quantity": "Effect of independent candidate normalization",
+          "value": "A_local and A_scaled have identical T under both readings although their absolute total transition mass differs by 1,000,000x.",
+          "arithmetic": "b(c*d)=|c*d_i|/sum|c*d|=b(d) for every c>0; executed TV ratio=1,000,000 and T equality=True."
+        },
+        {
+          "quantity": "S4 reading divergence",
+          "value": "On the two-edge attack, monotone scan gives (1.0,0.0), whereas unrestricted direction-first coupling gives (0.0,0.5). On the full instance, the two readings reverse the candidate order.",
+          "arithmetic": "Monotone pairs each 0.5 mass at equal time with opposite direction, so Cdir=1 and Ctime=0. Crossing pairs match both directions, so Cdir=0 and Ctime=0.5*(1/2)+0.5*(1/2)=0.5."
+        },
+        {
+          "quantity": "Truth-blind multiset reassignment",
+          "value": "Under the patched monotone reading, order changes from [B_pooled,A_scaled,A_local] to [A_scaled,A_local,B_pooled], and values become {A_scaled:0.60,A_local:0.25,B_pooled:0.15}; sorted values remain [0.15,0.25,0.60].",
+          "arithmetic": "Sort candidate T ascending with baseline tie-breaking, sort existing values descending, zip; no true-source label is an input."
+        },
+        {
+          "quantity": "Naive versus mechanism",
+          "value": "Pooled Pearson orders [B_pooled,A_scaled,A_local], while monotone transport orders [A_scaled,A_local,B_pooled]; unrestricted direction-first orders exactly like the naive on this instance.",
+          "arithmetic": "Pearson(B)=0.867528 > Pearson(A)=0.150993; monotone Cdir(A)=0.225153 < Cdir(B)=0.300000; unrestricted Cdir(B)=0 < Cdir(A)=0.174847."
+        }
+      ],
+      "anomalies": [
+        {
+          "anomaly": "Step 4's two defensible readings are not equivalent: the two-edge probe returns monotone T=(1.0,0.0) versus unrestricted direction-first T=(0.0,0.5), and the full dry-run candidate orders are opposite.",
+          "kind": "structural",
+          "why": "This is a feasible-set contradiction, not an empirical magnitude: chronological noncrossing and arbitrary direction-optimal transport admit different couplings. Reading-dependent: the defect is present because both readings are asserted simultaneously."
+        },
+        {
+          "anomaly": "The claim that magnitude is retained is too broad: A_local and its 10^-6 scaling receive exactly identical masses and scores despite a 1,000,000x total-variation ratio.",
+          "kind": "structural",
+          "why": "Independent normalization algebraically cancels every positive candidate-wide scale. Reading-robust: only relative within-run magnitude distribution remains."
+        },
+        {
+          "anomaly": "All-identical observations or a flat candidate field produce a zero denominator before the later identity/status clause can act.",
+          "kind": "structural",
+          "why": "The original ordering of operations defines a_i and b_{s,i} by division first; tokens([0,0]) returned None for both sides. Reading-robust."
+        },
+        {
+          "anomaly": "The universal-sounding statement that the half-shift null is not algebraically invariant is false: a nonconstant period-2 direction sequence with equal masses is unchanged by a half shift and has T=T_shift=(0,0).",
+          "kind": "structural",
+          "why": "A half-run cyclic shift has fixed points (including periodic nonconstant sequences); order sensitivity only means the score can change, not that it must. Reading-robust."
+        },
+        {
+          "anomaly": "On the invented full instance, the unrestricted direction-first reading orders candidates exactly like pooled Pearson while the monotone reading changes the evidence order.",
+          "kind": "instance_contingent",
+          "why": "The equality of these two orders depends on the chosen transitions, so it cannot alone block the idea; it demonstrates that the S4 ambiguity changes the claimed depth result. Reading-dependent."
+        }
+      ]
+    },
+    "degenerate_probes": [
+      {
+        "probe": "empty prefix / k=0",
+        "behavior": "No adjacent edges exist. The intended identity behavior is sensible, but the original text does not place the guard before normalization.",
+        "finding": "Patch the guard and common-support definition ahead of all divisions."
+      },
+      {
+        "probe": "all-identical observations",
+        "behavior": "A_r=0, so a_i is undefined; executed token construction returned None.",
+        "finding": "Exclude the run for every candidate before normalization; if no common-informative run remains, return identity."
+      },
+      {
+        "probe": "one flat candidate field with changing observations",
+        "behavior": "B_{sr}=0, so candidate normalization is undefined and candidate scores would not share support.",
+        "finding": "Use a common-informative run set requiring positive field mass for every candidate, avoiding candidate-specific support and invented penalties."
+      },
+      {
+        "probe": "all candidate scores tied",
+        "behavior": "The stable sort keeps baseline order, and descending values zip back to the same candidate order, so M3 is identity.",
+        "finding": null
+      },
+      {
+        "probe": "single-edge run",
+        "behavior": "The aligned coupling is defined when both masses are positive, but delta_r=floor(1/2)=0, so the control is correctly non-informative.",
+        "finding": null
+      },
+      {
+        "probe": "maximum finite prefix allowed by the input ledger",
+        "behavior": "No explicit algorithmic maximum is declared. The cumulative scan halts after at most n_obs+n_field-1 positive transports per candidate/run; memory/time grow linearly in the token lists plus sorting candidates.",
+        "finding": null
+      }
+    ],
+    "claim_step_map": [
+      {
+        "claim": "every candidate is comparable",
+        "established_by": "S2-S4 after patch",
+        "strength_grade": "conditional",
+        "assumptions_missing": [
+          "positive observation and every-candidate field total on a common run set",
+          "same per-run normalization and arithmetic-mean aggregation for every candidate",
+          "finite nonnegative likelihood inputs with one frozen floating dtype"
+        ],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "magnitude is retained as transported mass",
+        "established_by": "S2 only for relative within-run magnitude",
+        "strength_grade": "overclaim",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": "A 1,000,000x positive rescaling left T exactly unchanged."
+      },
+      {
+        "claim": "one-dimensional monotone transport gives O_s and T_s by a deterministic cumulative-mass scan",
+        "established_by": "S4 under reading M",
+        "strength_grade": "conditional",
+        "assumptions_missing": [
+          "O_s is explicitly restricted to chronological noncrossing couplings",
+          "direction mismatch is evaluated on that fixed coupling rather than optimized over arbitrary couplings"
+        ],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "no scalar weight bridges direction and time criteria",
+        "established_by": "S4-S5 after patch",
+        "strength_grade": "established",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "the likelihood-value multiset is unchanged while candidate identity ordering may change",
+        "established_by": "S5-S6",
+        "strength_grade": "established",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": "The example reassigned 0.60 from B_pooled to A_scaled and 0.25 from A_scaled to A_local while multiset_equal=True."
+      },
+      {
+        "claim": "the shifted null is not algebraically invariant to its own operation",
+        "established_by": "UNESTABLISHED",
+        "strength_grade": "overclaim",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": "A nonconstant period-2 token sequence was fixed by the half shift and had T=T_shift=(0,0)."
+      },
+      {
+        "claim": "source identities remain sequestered until all orders are frozen",
+        "established_by": "S1 and S8",
+        "strength_grade": "established",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "the method changes relative candidate evidence without a learned decoder, tuned threshold, or planner-weight change",
+        "established_by": "S5-S6",
+        "strength_grade": "established",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": "The dry-run order and candidate-value associations changed while no truth labels or selected numeric thresholds appeared in the computation."
+      }
+    ],
+    "naive_comparison": {
+      "declared_branch": "(i) false-premise",
+      "naive_version": "For each candidate, compute one pooled Pearson correlation between all observed concentration levels and candidate log source-over-carrier levels, then rank correlation descending with baseline tie-breaking.",
+      "naive_fairness": "It uses the same realized prefix and frozen candidate fields, no truth, no extra pass, no extra planning depth, and less machinery than transport; it respects the same information and deployment interface.",
+      "instance_behavior": {
+        "naive": "Pearson orders [B_pooled,A_scaled,A_local] because 0.867528 > 0.150993=0.150993.",
+        "mechanism": "Patched chronological-monotone transport orders [A_scaled,A_local,B_pooled] because Cdir(A)=0.225153 < Cdir(B)=0.300000. Under the rejected unrestricted direction-first reading it instead orders [B_pooled,A_scaled,A_local].",
+        "divergence": "The patched mechanism moves B_pooled from first to last and changes its assigned likelihood from 0.60 to 0.15; the alternate reading has no order divergence from naive on this instance.",
+        "kind": "instance_contingent"
+      },
+      "verdict": "confronts_obstacle",
+      "reasoning": "After resolving S4 to the repeatedly stated chronological cumulative-scan semantics, the mechanism demonstrably refuses the pooled-correlation order using no extra information and its transition-mass/time object causes the change. This is only an instance-level depth check, not evidence that the new order is correct on GADEN."
+    }
+  },
+  "verdict": "patched",
+  "unrepaired": [],
+  "applied_revisions": [
+    {
+      "scope": "coherence",
+      "op": "replace",
+      "field": "core_mechanism",
+      "value": "For each causally available observation edge i=(t-1,t) in each existing completed run and the current prefix, let n_r be that run's edge count and form Delta y_i=y_t-y_{t-1}. For candidate s, compute g_{s,t}=log((Lsrc_{s,t}+epsilon_machine)/(Lcar_{s,t}+epsilon_machine)), where epsilon_machine is fixed to the machine epsilon of the frozen likelihood-storage dtype (IEEE-754 float64 by default), the dtype and value are hashed, and it is never swept. Before division, compute A_r=sum_i|Delta y_i| and B_{sr}=sum_i|Delta g_{s,i}|. A run is common-informative only when A_r>0 and B_{sr}>0 for every candidate in that comparison; otherwise exclude that run for every candidate. If no common-informative run remains, M3 is the identity. On each common-informative run form observation tokens (i/n_r,u_i,a_i), with u_i=sign(Delta y_i) and a_i=|Delta y_i|/A_r, and field tokens (i/n_r,v_{s,i},b_{s,i}), with v_{s,i}=sign(Delta g_{s,i}) and b_{s,i}=|Delta g_{s,i}|/B_{sr}. Thus both sides carry unit mass on common support: relative within-run transition magnitude is retained, while absolute total-variation scale is intentionally discarded. Define O_{sr} as the unique chronological noncrossing coupling returned by a cumulative-mass scan. Evaluate that fixed coupling by Cdir_{sr}, the transported mass joining opposite directions, and Ctime_{sr}, the transported normalized displacement |i/n_r-j/n_r|. Let T_s be the componentwise arithmetic mean of (Cdir_{sr},Ctime_{sr}) over the same common-informative runs for every candidate. Candidates are compared lexicographically by T_s: direction mismatch is the primary candidate-score coordinate and time displacement the secondary coordinate; direction is not separately optimized over arbitrary crossing couplings, and no scalar weight bridges the coordinates. Stable-sort candidates by ascending T_s, retaining baseline order on exact ties, then sort the current baseline likelihood-value multiset descending and assign those values in that candidate order before unchanged Bayesian accumulation and action scoring. This rank projection can change relative candidate evidence whenever the truth-blind order changes, but preserves the likelihood-value multiset exactly and uses no source truth or selected threshold. For the preregistered control, within each completed common-informative run cyclically shift each candidate's paired (v_{s,i},b_{s,i}) values by delta_r=floor(n_r/2) while retaining time coordinates and observation tokens, then recompute O_s, T_s, and the rank projection. The shift can change an order-sensitive score but need not do so for every nonconstant sequence; delta_r=0 runs and score-invariant shifted runs are marked non-informative/control failures rather than counted as confirmation. Source identities remain sequestered until baseline, aligned-transport, and shifted-control candidate orders have all been frozen.",
+      "outcome": "applied",
+      "delta_summary": "Repairs the T1/T2 contradiction between cumulative monotone scanning and arbitrary direction-first optimization, binds run aggregation and epsilon, handles zero mass before division, and states exactly what independent normalization retains."
+    },
+    {
+      "scope": "coherence",
+      "op": "replace",
+      "field": "core_mechanism_steps",
+      "value": "1. Read the frozen M1/M2 source likelihood Lsrc_{s,t}, carrier likelihood Lcar_{s,t}, GADEN concentration y_t, timestamp, position, and existing causal run identifier for every candidate s on the realized prefix; lock and hash the likelihood-storage dtype and its machine epsilon, and output a schema-checked prefix table without source truth.\n2. Within each run, let n_r be its edge count, compute adjacent Delta y_i and Delta g_{s,i}, and compute totals A_r=sum_i|Delta y_i| and B_{sr}=sum_i|Delta g_{s,i}| before any division. Mark the run common-informative only if A_r>0 and B_{sr}>0 for every candidate; exclude every other run for all candidates, and output identity if none remains.\n3. On each common-informative run, construct ordered observation tokens (i/n_r,sign(Delta y_i),|Delta y_i|/A_r) and candidate field tokens (i/n_r,sign(Delta g_{s,i}),|Delta g_{s,i}|/B_{sr}), plus direction-mismatch and normalized time-displacement pair costs.\n4. For every candidate and common-informative run, obtain the unique chronological noncrossing coupling O_{sr} by cumulative mass scanning and evaluate that fixed coupling as (Cdir_{sr},Ctime_{sr}); do not re-optimize direction mismatch over crossing couplings.\n5. For every candidate, componentwise-average its per-run cost pairs over the identical common-informative run set to obtain T_s, then stable-sort candidates lexicographically by ascending T_s while preserving baseline order on exact ties; output the truth-blind candidate permutation.\n6. Sort the current baseline likelihood values descending and assign them in the candidate order from step 5; output the exactly multiset-preserving M3 likelihood vector for the unchanged Bayesian accumulator and action selector.\n7. In the offline gate only, cyclically shift each completed common-informative run's paired field (direction,mass) values by delta_r=floor(n_r/2) while retaining time coordinates, rerun steps 3-6, and output the shifted-pairing control vector; mark delta_r=0 or aligned/shifted score-invariant runs as non-informative control outcomes.\n8. Freeze hashes of the baseline, aligned-transport, and shifted-control vectors for all fixed H02/H03 comparisons, then let the sequestered evaluator reveal source identities and compute the preregistered downstream ordering metric.",
+      "outcome": "applied",
+      "delta_summary": "Makes the T1 dataflow executable by moving zero guards before normalization, defining common support and aggregation, and making the operative S4 coupling reading explicit."
+    },
+    {
+      "scope": "coherence",
+      "op": "replace",
+      "field": "core_mechanism_reasoning",
+      "value": "BLOCK 1 — PREMISES ledger:\nP1. On the frozen realized path, the true candidate's source-over-carrier field transitions retain temporally ordered local agreement with GADEN concentration transitions even when absolute observed-to-modeled levels are not globally monotone — untested — falsification target.\nP2. On a common-informative run set, transporting independently normalized transition mass by the unique chronological noncrossing coupling preserves relative within-run timing and magnitude shape that global concentration ranks discard; it intentionally discards absolute total-variation scale. Direction mismatch is the primary coordinate when comparing candidate scores and time displacement the secondary coordinate; direction is not optimized over arbitrary crossing couplings — untested — falsification target.\nP3. The existing source/carrier likelihood pair is an internal contrast with stable semantics under frozen M1/M2; no source truth is needed to compute g_{s,t}.\nOBSERVATION-MODEL premise. Samples come from an adaptively chosen, non-IID single-UAV path with intermittent censoring; the method conditions on the realized timestamps, positions, and causal run boundaries and does not assume that sampled edges are unbiased draws from a stationary plume.\nESTIMAND. At prefix k, T_s(k) is the componentwise mean, over the identical common-informative causally observed run prefixes, of the opposite-direction transported-mass fraction and normalized temporal displacement evaluated on the unique chronological noncrossing coupling between normalized observation-change mass and candidate-s normalized source-over-carrier-change mass. The offline evaluation estimand is the change in true-source pairwise ordering frequency over the fixed 106 H02/H03 comparisons after all truth-blind orders are frozen.\nBLOCK 2 — NAIVE-BASELINE AUDIT:\nThe naive runnable version pools all observed and modeled values and ranks a candidate by global rank agreement or one pooled correlation. Branch (i): it silently assumes samples are exchangeable under one stationary monotone relation, which is false in the target setting when intermittent regimes and adaptive motion change that relation; Causal Edge Transport confronts this by making ordered transition atoms and their chronological noncrossing coupling the scored object rather than adding cosmetics to a pooled statistic. STANDARD-TOOL FOLLOW-UP: monotone transport and sequence alignment are textbook tools, but this instance couples adaptively sampled observation edges to paired source-versus-carrier field edges, must preserve the incumbent likelihood multiset at the Bayesian interface, and must expose a pairing-breaking no-truth null; that constrained object and interface are the domain-specific contribution rather than an off-the-shelf distance. The design deliberately avoids the occupied ancestral routes of global empirical ranks, covariance whitening, Huber residual clipping, CUSUM segmentation, and ABC tolerance selection.\nBLOCK 3 — DESIGN RATIONALE:\nThe anchor is kept as one deep gap because a separate correlation-regime or stationarity module is not required to run or falsify the ordering operator; the controlled diagnostic earns its seat only as the companion intervention on the same transport object. Windowed correlation, change-point segmentation, and learned calibration were rejected because they respectively regress to occupied covariance/CUSUM nodes or introduce tuning and access beyond the frozen fields. A likelihood-multiset interface is retained from the salvageable prior attempt, but the failed symmetric replication statistic and its invariant run permutation are replaced by a chronological pre-pairing construction and a null that can, but is not guaranteed to, alter its score; score invariance is reported as a control failure, not as confirming evidence.",
+      "outcome": "applied",
+      "delta_summary": "Repairs the T4 overclaims by aligning the premise and estimand with the fixed monotone coupling, relative-only magnitude, common support, and non-universal control response."
+    }
+  ],
+  "final_candidate": {
+    "title": "Causal Edge Transport Reorders Turbulent Plume Evidence Before Bayesian Search",
+    "hook": "Exact horizon-2 lookahead can lose to myopic search when it plans through a misordered likelihood field; a smaller intervention is to replace global sample comparison with causal transport over the evidence already available. The proposal adds no planning depth, learned model, new House, or new seed.",
+    "hook_shape_rationale": "Counter-intuitive minimalism: relative to exact horizon-2 information gain, the candidate is strictly no larger on planning depth and uses only frozen M1/M2 fields plus the realized observation prefix, while targeting the upstream source-order metric that the 22/106 result implicates. A structural-reframe hook was also viable because arxiv:2605.13208v1 globally ranks accumulated concentrations, but it was rejected because the user-supplied failed-lookahead contrast gives a sharper admission test than redescribing temporal exchangeability as tacit.",
+    "gap_closure": [
+      {
+        "gap": "At the frontier leaf represented by arxiv:2605.13208v1, no retrieved work establishes whether candidate-source ordering remains valid when a single-UAV trajectory samples a turbulent plume whose observed-to-modeled relation changes across intermittent regimes rather than remaining globally monotone — stakes: a source can be ranked below a geometrically incompatible rival before accumulation, wasting the fixed flight budget and making conclusions from monotone-sensor evaluations fail to transfer to held-out GADEN houses.",
+        "main_pattern": "reframe_as_solvable_object",
+        "sub_pattern": "C00 (Reframe as a Solvable Object)",
+        "companion_pattern": "controlled_diagnostic_design",
+        "how_closed": "The gap is closed by reframing candidate support as a lexicographic monotone-transport attribution over causal observation/field edges, then using a pre-cost temporal-pairing intervention—not a permutation of already-scored values—to supply the companion's confound-isolating offline gate."
+      }
+    ],
+    "core_mechanism": "For each causally available observation edge i=(t-1,t) in each existing completed run and the current prefix, let n_r be that run's edge count and form Delta y_i=y_t-y_{t-1}. For candidate s, compute g_{s,t}=log((Lsrc_{s,t}+epsilon_machine)/(Lcar_{s,t}+epsilon_machine)), where epsilon_machine is fixed to the machine epsilon of the frozen likelihood-storage dtype (IEEE-754 float64 by default), the dtype and value are hashed, and it is never swept. Before division, compute A_r=sum_i|Delta y_i| and B_{sr}=sum_i|Delta g_{s,i}|. A run is common-informative only when A_r>0 and B_{sr}>0 for every candidate in that comparison; otherwise exclude that run for every candidate. If no common-informative run remains, M3 is the identity. On each common-informative run form observation tokens (i/n_r,u_i,a_i), with u_i=sign(Delta y_i) and a_i=|Delta y_i|/A_r, and field tokens (i/n_r,v_{s,i},b_{s,i}), with v_{s,i}=sign(Delta g_{s,i}) and b_{s,i}=|Delta g_{s,i}|/B_{sr}. Thus both sides carry unit mass on common support: relative within-run transition magnitude is retained, while absolute total-variation scale is intentionally discarded. Define O_{sr} as the unique chronological noncrossing coupling returned by a cumulative-mass scan. Evaluate that fixed coupling by Cdir_{sr}, the transported mass joining opposite directions, and Ctime_{sr}, the transported normalized displacement |i/n_r-j/n_r|. Let T_s be the componentwise arithmetic mean of (Cdir_{sr},Ctime_{sr}) over the same common-informative runs for every candidate. Candidates are compared lexicographically by T_s: direction mismatch is the primary candidate-score coordinate and time displacement the secondary coordinate; direction is not separately optimized over arbitrary crossing couplings, and no scalar weight bridges the coordinates. Stable-sort candidates by ascending T_s, retaining baseline order on exact ties, then sort the current baseline likelihood-value multiset descending and assign those values in that candidate order before unchanged Bayesian accumulation and action scoring. This rank projection can change relative candidate evidence whenever the truth-blind order changes, but preserves the likelihood-value multiset exactly and uses no source truth or selected threshold. For the preregistered control, within each completed common-informative run cyclically shift each candidate's paired (v_{s,i},b_{s,i}) values by delta_r=floor(n_r/2) while retaining time coordinates and observation tokens, then recompute O_s, T_s, and the rank projection. The shift can change an order-sensitive score but need not do so for every nonconstant sequence; delta_r=0 runs and score-invariant shifted runs are marked non-informative/control failures rather than counted as confirmation. Source identities remain sequestered until baseline, aligned-transport, and shifted-control candidate orders have all been frozen.",
+    "core_mechanism_reasoning": "BLOCK 1 — PREMISES ledger:\nP1. On the frozen realized path, the true candidate's source-over-carrier field transitions retain temporally ordered local agreement with GADEN concentration transitions even when absolute observed-to-modeled levels are not globally monotone — untested — falsification target.\nP2. On a common-informative run set, transporting independently normalized transition mass by the unique chronological noncrossing coupling preserves relative within-run timing and magnitude shape that global concentration ranks discard; it intentionally discards absolute total-variation scale. Direction mismatch is the primary coordinate when comparing candidate scores and time displacement the secondary coordinate; direction is not optimized over arbitrary crossing couplings — untested — falsification target.\nP3. The existing source/carrier likelihood pair is an internal contrast with stable semantics under frozen M1/M2; no source truth is needed to compute g_{s,t}.\nOBSERVATION-MODEL premise. Samples come from an adaptively chosen, non-IID single-UAV path with intermittent censoring; the method conditions on the realized timestamps, positions, and causal run boundaries and does not assume that sampled edges are unbiased draws from a stationary plume.\nESTIMAND. At prefix k, T_s(k) is the componentwise mean, over the identical common-informative causally observed run prefixes, of the opposite-direction transported-mass fraction and normalized temporal displacement evaluated on the unique chronological noncrossing coupling between normalized observation-change mass and candidate-s normalized source-over-carrier-change mass. The offline evaluation estimand is the change in true-source pairwise ordering frequency over the fixed 106 H02/H03 comparisons after all truth-blind orders are frozen.\nBLOCK 2 — NAIVE-BASELINE AUDIT:\nThe naive runnable version pools all observed and modeled values and ranks a candidate by global rank agreement or one pooled correlation. Branch (i): it silently assumes samples are exchangeable under one stationary monotone relation, which is false in the target setting when intermittent regimes and adaptive motion change that relation; Causal Edge Transport confronts this by making ordered transition atoms and their chronological noncrossing coupling the scored object rather than adding cosmetics to a pooled statistic. STANDARD-TOOL FOLLOW-UP: monotone transport and sequence alignment are textbook tools, but this instance couples adaptively sampled observation edges to paired source-versus-carrier field edges, must preserve the incumbent likelihood multiset at the Bayesian interface, and must expose a pairing-breaking no-truth null; that constrained object and interface are the domain-specific contribution rather than an off-the-shelf distance. The design deliberately avoids the occupied ancestral routes of global empirical ranks, covariance whitening, Huber residual clipping, CUSUM segmentation, and ABC tolerance selection.\nBLOCK 3 — DESIGN RATIONALE:\nThe anchor is kept as one deep gap because a separate correlation-regime or stationarity module is not required to run or falsify the ordering operator; the controlled diagnostic earns its seat only as the companion intervention on the same transport object. Windowed correlation, change-point segmentation, and learned calibration were rejected because they respectively regress to occupied covariance/CUSUM nodes or introduce tuning and access beyond the frozen fields. A likelihood-multiset interface is retained from the salvageable prior attempt, but the failed symmetric replication statistic and its invariant run permutation are replaced by a chronological pre-pairing construction and a null that can, but is not guaranteed to, alter its score; score invariance is reported as a control failure, not as confirming evidence.",
+    "core_mechanism_steps": "1. Read the frozen M1/M2 source likelihood Lsrc_{s,t}, carrier likelihood Lcar_{s,t}, GADEN concentration y_t, timestamp, position, and existing causal run identifier for every candidate s on the realized prefix; lock and hash the likelihood-storage dtype and its machine epsilon, and output a schema-checked prefix table without source truth.\n2. Within each run, let n_r be its edge count, compute adjacent Delta y_i and Delta g_{s,i}, and compute totals A_r=sum_i|Delta y_i| and B_{sr}=sum_i|Delta g_{s,i}| before any division. Mark the run common-informative only if A_r>0 and B_{sr}>0 for every candidate; exclude every other run for all candidates, and output identity if none remains.\n3. On each common-informative run, construct ordered observation tokens (i/n_r,sign(Delta y_i),|Delta y_i|/A_r) and candidate field tokens (i/n_r,sign(Delta g_{s,i}),|Delta g_{s,i}|/B_{sr}), plus direction-mismatch and normalized time-displacement pair costs.\n4. For every candidate and common-informative run, obtain the unique chronological noncrossing coupling O_{sr} by cumulative mass scanning and evaluate that fixed coupling as (Cdir_{sr},Ctime_{sr}); do not re-optimize direction mismatch over crossing couplings.\n5. For every candidate, componentwise-average its per-run cost pairs over the identical common-informative run set to obtain T_s, then stable-sort candidates lexicographically by ascending T_s while preserving baseline order on exact ties; output the truth-blind candidate permutation.\n6. Sort the current baseline likelihood values descending and assign them in the candidate order from step 5; output the exactly multiset-preserving M3 likelihood vector for the unchanged Bayesian accumulator and action selector.\n7. In the offline gate only, cyclically shift each completed common-informative run's paired field (direction,mass) values by delta_r=floor(n_r/2) while retaining time coordinates, rerun steps 3-6, and output the shifted-pairing control vector; mark delta_r=0 or aligned/shifted score-invariant runs as non-informative control outcomes.\n8. Freeze hashes of the baseline, aligned-transport, and shifted-control vectors for all fixed H02/H03 comparisons, then let the sequestered evaluator reveal source identities and compute the preregistered downstream ordering metric.",
+    "falsification_prediction": "Replay the fixed 106 H02/H03 comparisons with frozen M1/M2 and the realized paths under three truth-blind arms: myopic baseline, aligned Causal Edge Transport M3, and the half-run cyclic-shift control; freeze all candidate orders before the sequestered GADEN source identities are read. If the mechanism works, held-out true-source pairwise ordering win rate for aligned transport increases relative to myopic, without a preregistered numeric outcome bar. The single load-bearing variable is the aligned candidate-by-edge transport object O_s together with its lexicographic score T_s. As a negative-control intervention, shifting candidate-field token values before pair-cost construction must move the downstream true-source ordering win rate back toward or below myopic; failure of that return, or equality of every aligned and shifted T_s despite nonconstant inputs, falsifies the claimed temporal-pairing mechanism and blocks runtime integration.",
+    "compute_budget": "0.2 80GB-GPU-day equivalent for implementation checks and the full fixed 106-comparison replay; the transport and hashing path is CPU-bound, so no model training is required. $0 API cost for the full campaign.",
+    "differentiation_from_lit": [
+      {
+        "paper_id": "arxiv:2605.13208v1",
+        "delta": "The abstract describes global empirical ranks of accumulated measured and modeled concentrations, whereas this candidate constructs an order-sensitive, magnitude-carrying monotone transport over causal observation/source-carrier edges and an explicit pre-pairing null."
+      },
+      {
+        "paper_id": "arxiv:2304.08879v3",
+        "delta": "The abstract compares an accumulated probabilistic gas-hit map with online dispersion simulations, whereas this candidate attributes each causal concentration-transition mass to candidate-specific source-over-carrier transitions before Bayesian accumulation without constructing a new map."
+      },
+      {
+        "paper_id": "arxiv:2401.03947v1",
+        "delta": "The abstract changes the action policy from myopic information gain to far-sighted reinforcement learning while retaining a fixed plume likelihood, whereas this candidate leaves planning unchanged and replaces the upstream candidate ordering delivered to it."
+      }
+    ],
+    "almost_prior_paper_id": "arxiv:2605.13208v1",
+    "what_step_was_missed": "It would have needed to preserve causal adjacency and magnitude, construct a candidate-specific ordered coupling between observation transitions and source-over-carrier field transitions, and falsify that coupling by breaking the pairings before recomputing the score rather than globally ranking accumulated values.",
+    "signature_terms": [
+      "causal edge transport likelihood",
+      "pre-Bayesian evidence multiset reassignment",
+      "ordered plume transition attribution",
+      "carrier-contrastive source reordering",
+      "pair-breaking temporal null control"
+    ],
+    "alias_terms": [
+      "robust M-estimation residual influence",
+      "generalized least squares covariance whitening",
+      "CUSUM sequential change detection",
+      "approximate Bayesian computation discrepancy matching",
+      "dynamic time warping sequence alignment",
+      "paired functional data registration"
+    ],
+    "composition_note": ""
+  },
+  "falsification_rewritten": false
+}

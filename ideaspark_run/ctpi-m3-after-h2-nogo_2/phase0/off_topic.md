@@ -1,0 +1,188 @@
+# Off-topic papers removed from the gap corpus (Phase 0.4 host partition)
+
+These were retrieved by a connector but the host judged them outside the research direction (cross-domain "memory-augmented" false positives, surveys, unrelated fields). They are archived here for transparency but do NOT feed Phase 1 or the deep-read pool.
+
+- **UAV swarms: research, challenges, and future directions** (`openalex:W4406918931`)
+  - pure survey of UAV swarms; no gas-source localization or source-evidence mechanism
+- **The 2024 report of the Lancet Countdown on health and climate change: facing record-breaking threats** (`openalex:W4403899685`)
+  - climate-health report, outside robotic gas-source localization
+- **Artificial intelligence-driven distributed acoustic sensing technology and engineering application** (`openalex:W4407884366`)
+  - review of fiber-optic acoustic sensing, an unrelated sensing domain
+- **Hydrothermal vents supporting persistent plumes and microbial chemoautotrophy at Gakkel Ridge (Arcti** (`openalex:W4403079630`)
+  - marine hydrothermal-plume microbiology, not robotic source localization
+- **Behavioral Game Theory** (`openalex:W2745547123`)
+  - behavioral-economics textbook, unrelated domain
+- **Leveraging the Internet of Things, Remote Sensing, and Artificial Intelligence for Sustainable Fores** (`openalex:W4406583498`)
+  - review of forest-management sensing, not gas-source localization
+- **Temporal Variations of the Oldest Emperor‐Hawaiian Plume Signature Influenced by Interaction With Sh** (`openalex:W4410933834`)
+  - mantle-plume geochemistry, a plume keyword false positive
+- **A binary system in the S cluster close to the supermassive black hole Sagittarius A*** (`openalex:W4405463695`)
+  - astrophysical binary-system study, unrelated domain
+- **Poços de Caldas – Cabo Frio Alignment: a Petrochronological Review of an Unconventional Plume Model** (`openalex:W4409139498`)
+  - petrochronological mantle-plume review, unrelated domain and review
+- **UAV Communication in Space–Air–Ground Integrated Networks (SAGINs): Technologies, Applications, and ** (`openalex:W4407107941`)
+  - survey of UAV communications, not gas-source localization
+- **The myth of the Bayesian brain** (`openalex:W4411669101`)
+  - cognitive-neuroscience critique of Bayesian-brain theory
+- **Artificial intelligence and machine learning for plasmonic and surface-enhanced sensing** (`openalex:W7131431758`)
+  - review of plasmonic sensing, unrelated sensing modality
+- **Carbon Dioxide Migration Along Faults at the Illinois Basin—Decatur Project Revealed Using Time Shif** (`openalex:W4406552634`)
+  - subsurface CO2 migration from seismic data, not mobile source search
+- **Bayesian insights on digitalization and environmental sustainability practices. Towards the twin tra** (`openalex:W4403286231`)
+  - Bayesian network for EU digitalization policy, unrelated domain
+- **First light for the GRAVITY+ Adaptive Optics: Extreme adaptive optics for the Very Large Telescope I** (`openalex:W4415885594`)
+  - astronomical adaptive-optics instrumentation, unrelated domain
+- **The Mapping Imaging Spectrometer for Europa (MISE)** (`openalex:W3017000734`)
+  - Europa imaging-spectrometer instrument paper, unrelated setting
+- **Remote Sensing and GIS in Natural Resource Management: Comparing Tools and Emphasizing the Importanc** (`openalex:W4404191290`)
+  - review of GIS tools for natural-resource management
+- **From fossils to phylogenies: exploring the integration of paleontological data into Bayesian phyloge** (`openalex:W4409683005`)
+  - review of Bayesian fossil phylogenetics, unrelated domain
+- **Primordial black holes and their gravitational-wave signatures** (`openalex:W4388677413`)
+  - review of primordial black holes and gravitational waves
+- **A participatory impact assessment of digital agriculture: A Bayesian network-based case study in Ger** (`openalex:W4405359573`)
+  - participatory Bayesian network for digital agriculture policy
+- **The Evolution of Gas Sensors Into Neuromorphic Systems** (`openalex:W4417456682`)
+  - pure review of neuromorphic gas-sensor devices, not source localization
+- **Mantle contributions to global tungsten recycling and mineralization** (`openalex:W4411886866`)
+  - mantle geochemistry and tungsten mineralization, unrelated domain
+- **Evolving general cooperation with a Bayesian theory of mind** (`openalex:W4411336026`)
+  - Bayesian theory-of-mind model for cooperation games
+- **Tracking deep mantle heat and volatiles in the Iceland plume from a high-density survey of helium is** (`openalex:W7125982125`)
+  - mantle-plume isotope geochemistry, unrelated domain
+- **The expanding role of multirotor UAVs in precision agriculture with applications AI integration and ** (`openalex:W4414247204`)
+  - pure review of multirotor UAVs in precision agriculture
+- **When Rituals Fail: Rationalization, Bayesianism, and Predictive Processing** (`openalex:W4415918527`)
+  - Bayesian account of ritual belief, unrelated domain
+- **Identifying signals of memory from observations of animal movements** (`openalex:W4404467693`)
+  - review of memory in animal movement models, not odor-source localization
+- **Plume Particle Ejecta Can Trace Habitat-forming Gradients in Ocean Worlds: Insights from Planet Eart** (`openalex:W4409978033`)
+  - planetary plume-particle geochemistry, unrelated domain
+- **Trends of Soil and Solution Nutrient Sensing for Open Field and Hydroponic Cultivation in Facilitate** (`openalex:W4406364145`)
+  - review of agricultural nutrient sensing, unrelated task
+- **Behavioral interventions motivate action to address climate change** (`openalex:W4410345797`)
+  - behavioral climate-action interventions, unrelated domain
+- **Effect of adaptive cruise control on fuel consumption in real-world driving conditions** (`openalex:W4404497694`)
+  - vehicle cruise-control fuel analysis, unrelated task
+- **Interface-engineered non-volatile visible-blind photodetector for in-sensor computing** (`openalex:W4405986538`)
+  - UV photodetector hardware for in-sensor computing
+- **Investor Memory and Biased Beliefs: Evidence from the Field** (`openalex:W4412698073`)
+  - investor memory and financial beliefs, unrelated domain
+- **Characterization of the HIMU Mantle Source from Noble Gas Isotopes in Volcanic Gas Emissions in São ** (`openalex:W4414257784`)
+  - volcanic mantle-source isotope characterization, not robotic localization
+- **In-depth review of AI-enabled unmanned aerial vehicles: trends, vision, and challenges** (`openalex:W4404905824`)
+  - pure broad review of AI-enabled UAV applications
+- **Higher-order and distributed synergistic functional interactions encode information gain in goal-dir** (`openalex:W4412995436`)
+  - neural encoding of information gain in humans, unrelated domain
+- **Rebuttal of Sweatman, Powell, and West's “Rejection of Holliday et al.'s alleged refutation of the Y** (`openalex:W4404332127`)
+  - geoscience rebuttal concerning an impact hypothesis
+- **A systematic literature review on the role of UAV-enabled communications in advancing the UN’s susta** (`openalex:W4403201697`)
+  - systematic review of UAV communications and sustainability
+- **Putting numbers to a metaphor: A Bayesian Belief Network with which to infer Soil Quality and Health** (`openalex:W4408271622`)
+  - Bayesian soil-health assessment, unrelated domain
+- **Research on Trajectory Planning of Six-Degree-of-Freedom Robotic Arm Based on Improved Genetic Algor** (`openalex:W4414335636`)
+  - industrial robotic-arm trajectory optimization, unrelated task
+- **Odor tracking in insects: a multisensory behavior** (`openalex:W7128486343`)
+  - pure review of insect odor-tracking behavior
+- **Which, renewable or non-renewable energy, is more vital for the economic growth of OECD countries? A** (`openalex:W4406821643`)
+  - Bayesian economic-growth analysis, unrelated domain
+- **AI–Driven Multimodal Sensing for Early Detection of Health Disorders in Dairy Cows** (`openalex:W7125975561`)
+  - multimodal livestock-health classification, unrelated task
+- **Measurement report: Emission factors and organic aerosol source apportionment of shipping emissions ** (`openalex:W4411702128`)
+  - stationary aerosol source apportionment for shipping emissions, not robotic source localization
+- **High-Throughput UAV Hyperspectral Remote Sensing Pinpoints Bacterial Leaf Streak Resistance in Wheat** (`openalex:W4413169212`)
+  - UAV crop-disease remote sensing, unrelated target
+- **Are accelerators akin to breweries or wineries? A Bayesian variance decomposition of accelerator and** (`openalex:W4403176693`)
+  - Bayesian variance decomposition of startup accelerators
+- **Opportunities and Challenges in Combining Optical Sensing and Epidemiological Modeling** (`openalex:W4410811630`)
+  - review of plant-disease optical sensing and epidemiology
+- **Earth’s longest preserved linear volcanic ridge generated by a moving Kerguelen hotspot** (`openalex:W4404172601`)
+  - geological hotspot and mantle-plume dynamics
+- **A critical review of how UAVs can transform precision agriculture in the realm of Agroecology** (`openalex:W4409731770`)
+  - pure review of UAV precision agriculture
+- **mmAlert: A Simultaneous Device Localization and Target Tracking System via Cooperative Passive Sensi** (`arxiv:2606.01653v2`)
+  - millimeter-wave device localization and target tracking, unrelated sensing domain
+- **Modeling Volcanic Plume Heights Across Exoplanet Atmospheres: Insights from TRAPPIST-1** (`arxiv:2605.04423v2`)
+  - exoplanet volcanic-plume physics, unrelated task
+- **Knowing the Self, Understanding the World: A Dual-Cognition Benchmark for UAV Spatio-temporal Reason** (`arxiv:2607.16193v1`)
+  - benchmark for UAV vision-language reasoning, not gas-source search
+- **The Bayesian Reflex: A Predictive Coding Engine for Artificial Intelligence** (`arxiv:2608.00492v1`)
+  - generic predictive-coding AI framework without UAV gas localization
+- **Prompt-Calibrated SAM 3 for Open-Vocabulary Remote Sensing Semantic Segmentation** (`arxiv:2606.21863v2`)
+  - remote-sensing image segmentation, unrelated task
+- **Singular Asymptotics of SPADE in Quantum Source Discrimination** (`arxiv:2605.14432v3`)
+  - quantum optical source discrimination, an unrelated physical domain
+- **Bayesian Hierarchical Models and the Maximum Entropy Principle** (`arxiv:2603.10252v2`)
+  - general theory of hierarchical priors and maximum entropy
+- **Real-Time Oriented Object Detection Transformer in Remote Sensing Images** (`arxiv:2603.15497v1`)
+  - oriented object detection in remote-sensing imagery
+- **Adaptive RIS Configuration Design with Environmental Sensing for User Localization in Dynamic Rich S** (`arxiv:2604.17485v1`)
+  - wireless RIS-assisted user localization, unrelated observation physics
+- **On the Two-Dimensional Structure and Asymmetries of Ionic Liquid Electrospray Plumes** (`arxiv:2605.24129v3`)
+  - vacuum electrospray plume composition for spacecraft propulsion
+- **UAV-CAS: A Calibrated Digital-Twin Dataset for Intrusion Detection in UAV Swarm Networks** (`arxiv:2606.17845v1`)
+  - UAV-network intrusion-detection dataset, unrelated task
+- **Sources of Truth: A Multi-Platform, Multilingual Audit of Citations in AI Mental Health Information ** (`arxiv:2609.00319v1`)
+  - audit of citations in AI mental-health answers
+- **Pivot-Centric Trajectory Prediction: Bridging Long Horizons via Dynamical Guidance** (`arxiv:2608.03521v1`)
+  - autonomous-driving trajectory prediction, unrelated task
+- **Two-Stage Machine Learning Strategy for Scalar and Vector Leptoquark Discrimination at the LHC** (`arxiv:2609.00270v1`)
+  - particle-physics signal discrimination, unrelated domain
+- **Robust Information Design with Heterogeneous Beliefs in Bayesian Congestion Games** (`arxiv:2604.10831v1`)
+  - Bayesian congestion-game information design, unrelated domain
+- **Optimization of adaptive optics correction during observations: Algorithms and system parameters ide** (`arxiv:2609.02117v1`)
+  - telescope adaptive-optics system identification, unrelated domain
+- **Agentic Forecasting using Sequential Bayesian Updating of Linguistic Beliefs** (`arxiv:2604.18576v4`)
+  - LLM forecasting with linguistic Bayesian beliefs, unrelated domain
+- **SynIM: a high-performance GPU-accelerated Python library for synthetic interaction and tomographic r** (`arxiv:2606.07759v2`)
+  - adaptive-optics calibration library for telescopes
+- **UW-OCDM for Low-Altitude UAV Communication and Cooperative Sensing** (`arxiv:2608.21050v1`)
+  - integrated UAV communication and RF cooperative sensing
+- **Source-Free MT Evaluation Is Not MT Evaluation** (`arxiv:2608.20925v1`)
+  - machine-translation evaluation, unrelated domain
+- **Privacy Evaluation of Generative Models for Trajectory Generation** (`arxiv:2605.15246v1`)
+  - privacy evaluation of synthetic trajectory models
+- **Baroclinic wave dynamics in the Ekman-free rotating rectangular annulus with localized forced plume** (`arxiv:2606.10386v1`)
+  - rotating-fluid thermal-plume dynamics, not source localization
+- **Conditional Diffusion-Based Point Cloud Imaging for UAV Position and Attitude Sensing** (`arxiv:2603.29822v1`)
+  - RF imaging of UAV pose, unrelated target and sensing field
+- **Distilling Bayesian Belief States into Language Models for Auditable Negotiation** (`arxiv:2605.04507v1`)
+  - Bayesian opponent-belief modeling for negotiation
+- **Embodied Communication: Sensing-Induced Reliability Fields and Capacity Bounds** (`arxiv:2605.08284v1`)
+  - wireless embodied communication and capacity bounds
+- **A Nonhomogeneous Porous-Medium Equation for Field Scale CO$_2$ Plume Spreading** (`arxiv:2603.26169v3`)
+  - subsurface CO2 plume-spreading physics, not robotic search
+- **Edge-Assisted Multimodal UAV Localization with Resource-Efficient Compression and Robust Fusion** (`arxiv:2607.03111v1`)
+  - multimodal localization of the UAV itself, not localization of a gas source
+- **Belief at Risk: Quantifying Agentic AI Model Risk with LLM-Inferred Bayesian State Filters** (`arxiv:2606.15473v1`)
+  - LLM-based financial agent risk filtering, unrelated domain
+- **On the Effectiveness of Adaptation Strategies for VLM-Based Federated Learning in Remote Sensing** (`arxiv:2608.04791v1`)
+  - federated remote-sensing image classification
+- **Influence of plume activity on thermal convection in a rectangular cell** (`arxiv:2604.11670v2`)
+  - thermal-convection plume physics, unrelated task
+- **Modeling and Analysis of Sensing Assisted UAV Networks for Urban Vehicular Communications** (`arxiv:2606.28940v1`)
+  - UAV-assisted vehicular communications and RF sensing
+- **MetaRAG: Belief-Action Aligned Policy Optimization for Agentic RAG** (`arxiv:2608.24214v1`)
+  - agentic RAG belief-action optimization, unrelated domain
+- **Hallucination as Trajectory Commitment: Causal Evidence for Asymmetric Attractor Dynamics in Transfo** (`arxiv:2604.15400v1`)
+  - transformer hallucination dynamics, unrelated domain
+- **Experimental subdiffraction source discrimination enabled by spatial demultiplexing and single-photo** (`arxiv:2605.15929v1`)
+  - quantum optical subdiffraction source discrimination
+- **LAMBDA: A Low-Altitude Multimodal Base Dataset for UAV Sensing and Communication** (`arxiv:2607.03826v1`)
+  - dataset for UAV RF communication and self-localization, not gas-source search
+- **Advances in UAV Path Planning: A Comprehensive Review of Methods, Challenges, and Future Directions** (`openalex:W4410438635`)
+  - pure broad review of UAV path planning
+- **Advances in UAV avionics systems architecture, classification and integration: A comprehensive revie** (`openalex:W4405624835`)
+  - pure review of UAV avionics and systems architecture
+- **Constrained Bayesian Optimization: A Review** (`openalex:W4405778630`)
+  - pure review of constrained Bayesian optimization
+- **UGV-UAV Integration Advancements for Coordinated Missions: A Review** (`openalex:W4410966375`)
+  - review of UGV-UAV coordinated missions
+- **Advanced applications in chronic disease monitoring using IoT mobile sensing device data, machine le** (`openalex:W4407828723`)
+  - systematic review of IoT chronic-disease monitoring
+- **A Comprehensive Review of Path-Planning Algorithms for Multi-UAV Swarms** (`openalex:W7117491041`)
+  - pure review of multi-UAV swarm path planning
+- **Fire Detection with Deep Learning: A Comprehensive Review** (`openalex:W4403494901`)
+  - pure review of deep-learning wildfire detection
+- **Unmanned aerial vehicles and low-cost sensors for air quality monitoring: A comprehensive review of ** (`openalex:W4409846679`)
+  - pure review of UAV low-cost sensing for air-quality monitoring

@@ -1,0 +1,9 @@
+{
+  "status": "PRE_EXECUTION_IDENTICAL_FAILED_ARM_TRACE_ONLY",
+  "arm": "checked_latest_cell",
+  "change": "Only log each Picard iteration's one-step relative change, two-step relative change, unrelaxed fixed-point residual and linear residual; same arithmetic update and thresholds",
+  "expected_failure": "step111 at22.2s, as observed previously; recheck rather than assume",
+  "parity_requirement": "Raw pre-failure predictions and successful update audit must match the preserved failed arm byte-for-byte",
+  "interpretation": "Period-two behavior is supported only if consecutive iterate change stays nonzero while two-step change decays strongly. A large last residual alone does not establish oscillation.",
+  "limits": "No extra iteration budget, no new source/House/seed simulation, no wind weight tuning and no gas/bank/source-truth reads. A trace is diagnosis, not M1 qualification."
+}

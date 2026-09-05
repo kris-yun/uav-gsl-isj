@@ -1,0 +1,74 @@
+# Off-topic papers removed from the gap corpus (Phase 0.4 host partition)
+
+These were retrieved by a connector but the host judged them outside the research direction (cross-domain "memory-augmented" false positives, surveys, unrelated fields). They are archived here for transparency but do NOT feed Phase 1 or the deep-read pool.
+
+- **The oxidative potential of fine ambient particulate matter in Xinxiang, North China: pollution chara** (`semanticscholar:0da69ba019d5811ea7fb38aa5b91d1fe5ae182de`)
+  - Particulate oxidative toxicity and sector apportionment, not spatial gas source inference or sensor-transport identification.
+- **Federated Split Learning with Large Language Models Integration: A Study on Potential Container Sour** (`semanticscholar:48891fee0f6cb7dc3a5a8250ce8e76f326a8ae45`)
+  - Federated language models for shipping-container logistics; source and transport are cross-domain keyword matches.
+- **Source Identification of PM2.5 and Organic Carbon During Various Haze Episodes in a Typical Industri** (`semanticscholar:59aac57511eeb8431504edb96170b67161c46e25`)
+  - Chemical-tracer particulate sector apportionment during haze episodes, outside spatial gas-source and sensor-memory inference.
+- **Polymeric membranes in carbon capture, utilization, and storage: current trends and future direction** (`openalex:W4409167438`)
+  - Carbon-capture membrane materials and decarbonization trends, not gas-source localization.
+- **Species mass transfer governs the selectivity of gas diffusion electrodes toward H2O2 electrosynthes** (`openalex:W4405035184`)
+  - Electrode mass transport and peroxide electrosynthesis selectivity are outside environmental source identification.
+- **A novel application of inverse gas chromatography for estimating contact angles in porous media** (`openalex:W4403915369`)
+  - Inverse gas chromatography estimates material contact angles, a different domain and estimand.
+- **Angular dispersion suppression in deeply subwavelength phonon polariton bound states in the continuu** (`openalex:W4410447708`)
+  - Nanophotonic polariton resonances and angular dispersion, unrelated to gas transport inversion.
+- **Microplastics and nanoplastics: fate, transport, and governance from agricultural soil to food webs ** (`openalex:W4410028287`)
+  - Pure review of soil microplastic fate, toxicity and governance.
+- **A fast radio burst localized at detection to an edge-on galaxy using very-long-baseline interferomet** (`openalex:W4402827516`)
+  - Radio-burst astronomical localization; absent abstract and title unambiguously outside gas-source research.
+- **Demand-side strategies enable rapid and deep cuts in buildings and transport emissions to 2050** (`openalex:W4407150821`)
+  - Energy-demand decarbonization policy scenarios, unrelated to source inference.
+- **Retrieving wind properties from the ultra-hot dayside of WASP-189 b with CRIRES +** (`openalex:W4404871390`)
+  - Exoplanet atmospheric spectroscopy and wind retrieval are outside the specified source-localization field.
+- **The reversal of surface wind speed trend in Northeast China: impact from aerosol emissions** (`openalex:W4405464092`)
+  - Regional climate wind trends due to aerosol emissions, not source reconstruction; abstract unavailable.
+- **Trends in Polychlorinated Biphenyl Contamination in Bucharest’s Urban Soils: A Two-Decade Perspectiv** (`openalex:W4409946890`)
+  - Long-term PCB soil contamination and health-risk mapping, outside gas-source inference.
+- **Proton Exchange Membrane Electrolysis Revisited: Advancements, Challenges, and Two-Phase Transport I** (`openalex:W4409152862`)
+  - Pure review of hydrogen electrolyzer materials and two-phase electrochemical transport.
+- **Particle acceleration and multi-messenger radiation from ultra-luminous X-ray sources** (`openalex:W4404408116`)
+  - Astrophysical particle acceleration in X-ray source winds; cross-domain source and diffusion matches.
+- **Atomic-scale visualization of defect-induced localized vibrations in GaN** (`openalex:W4403563434`)
+  - Atomic phonon defect imaging in semiconductor material, unrelated to airborne sources.
+- **The landscape, trends, challenges, and opportunities of sustainable mobility and transport** (`openalex:W4407839017`)
+  - Bibliometric review of sustainable mobility and transport, not physical dispersion.
+- **An efficient parallel dynamic component tracking model of gas networks by decoupling hydraulic, ther** (`openalex:W4407858099`)
+  - Title concerns hydraulic and thermal component tracking inside gas pipeline networks, outside airborne source localization; abstract unavailable.
+- **Robust Language Identification for Romansh Varieties** (`arxiv:2603.15969v2`)
+  - Romansh language classification, unrelated identification task.
+- **Diffusion-Based Material Regularization for Physics-Based Inverse Rendering** (`arxiv:2606.31065v1`)
+  - Computer graphics inverse rendering and generative diffusion regularization, not physical gas diffusion.
+- **Radiation outer boundary conditions and near-to-far field signal transformations for the Bardeen-Pre** (`arxiv:2604.22734v1`)
+  - Black-hole perturbation radiation boundary conditions, outside environmental transport inference.
+- **Identification Verification for Structural Vector Autoregressions with Sparse Heterogeneous Markov S** (`arxiv:2603.16035v1`)
+  - Macroeconomic structural VAR shock identification through heteroskedasticity, a different field with no transport-source mechanism.
+- **One Inverse Step is a Convex Program: Bayes-Limit Calibration of Diffusion Inversion** (`arxiv:2608.23094v1`)
+  - Generative diffusion-model inversion geometry and Bayes-limit calibration, not source localization in physical gas fields.
+- **Parametrizing the projected wind fields of ultra-hot Jupiters in thermal emission: an application to** (`arxiv:2606.23209v1`)
+  - Exoplanet spectroscopy wind parametrization; unrelated observation and source estimand.
+- **A Tutorial for Evaluating Cure Model Appropriateness** (`arxiv:2605.04999v2`)
+  - Clinical survival cure-model tutorial, outside domain and pure tutorial.
+- **Exploring the Intrinsic Geometry of Diffusion Models with Constrained Inverse Kinematics** (`arxiv:2606.26408v3`)
+  - Generative diffusion geometry for robot inverse kinematics, unrelated to gas-source inversion.
+- **Forward--Inverse Interplay in FEM-Based EEG Source Imaging: Distributional Signatures of Advanced So** (`arxiv:2604.20448v4`)
+  - EEG electrical brain-source imaging, different physical field and observation domain despite generic forward-inverse coupling.
+- **A Tutorial on Diffusion Theory: From Differential Equations to Diffusion Models** (`arxiv:2605.22586v3`)
+  - Pure tutorial on generative diffusion models, not gas transport inversion.
+- **Forgetting is Not Erasure: Recovering Latent Knowledge via Transport Keys** (`arxiv:2606.02860v1`)
+  - Continual-learning interface drift and neural transport keys, unrelated to physical sensor memory or gas transport.
+- **Stability of supermartingale optimal transport problems** (`arxiv:2603.27940v1`)
+  - Abstract optimal-transport coupling stability, not physical contaminant transport or source inference.
+- **Wasserstein gradient flows for Coulomb discrepancies** (`arxiv:2607.12579v2`)
+  - Wasserstein gradient flow and Coulomb discrepancy theory, unrelated to airborne source identification.
+- **Diffusion Mental Averages** (`arxiv:2603.29239v1`)
+  - Generative image concept averaging; diffusion is a keyword false positive.
+- **Coherent Control of Domain-Wall Transport in an Ultracold Bose Gas** (`arxiv:2608.07840v1`)
+  - Ultracold Bose-gas spin-domain transport, a different physical regime and task.
+- **Sustainable Maritime Transport: A Review of Intelligent Shipping Technology and Green Port Construct** (`openalex:W4403041123`)
+  - Pure review of maritime logistics and green ports, outside physical gas dispersion.
+- **A Review of Atmospheric Micro/Nanoplastics: Insights into Source and Fate for Modelling Studies** (`openalex:W4414041115`)
+  - Pure review of atmospheric microplastic lifecycle and modeling, excluded by relevance rubric.

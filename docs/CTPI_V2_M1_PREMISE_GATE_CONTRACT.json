@@ -1,0 +1,22 @@
+{
+  "status": "SPECIFIED_BEFORE_EXECUTION",
+  "scope": "First exact realization of shared-nuisance source inference; NOT all possible causal M1 methods",
+  "candidate": "Persistent source-by-nuisance joint likelihood, same nuisance prior for all source candidates, marginalize nuisance only after accumulating blocks",
+  "comparator": "Ordinary Bayesian inverse inference using identical prediction tensor, source/nuisance priors and block likelihood",
+  "observation_likelihood": "Gaussian iid block errors with specified sigma; a synthetic probe assumption, not a fitted House noise model",
+  "nuisance": "A whole transport/source-strength/sensor-initial-state trajectory per member, not independently resampled blocks",
+  "numeric_tolerance": 1e-12,
+  "checks": [
+    "Independent implementations agree or differ on deterministic nondegenerate tensors",
+    "Persistent nuisance must not become independent block-wise nuisance",
+    "Permutation of exchangeable member labels does not create source information",
+    "Two sources with swapped nuisance responses and equal nuisance weights are observationally indistinguishable",
+    "An independent nuisance observation may break that ambiguity, but benefits the same-input ordinary baseline too",
+    "Unknown source strength can make proportional spatial response profiles coincide",
+    "Duplicate/reversed/missing block IDs are rejected"
+  ],
+  "kill_rule": "If candidate is algebraically and numerically the ordinary baseline, reject it as a separately established causal M1 contribution; do not launch House experiments for this formulation",
+  "identifiability_boundary": "A nonzero source response contrast at matched latent nuisance is not sufficient when that nuisance is unobserved",
+  "cost_boundary": "Synthetic arithmetic only; no bank payload, no new House/source worlds, no experimental seeds, no ROS batch",
+  "next_batch_if_later_qualified": "H01/H02/H03 seed12 only; no automatic multiseed"
+}

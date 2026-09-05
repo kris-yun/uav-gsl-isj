@@ -1,0 +1,11 @@
+{
+  "status": "PRE_EXECUTION_R3_SHARED_NAVIGATION_MAP_INPUT_CORRECTION",
+  "parent": "CTPI_V2_SPENT_WIND_OPERATOR_R2_CONTRACT_20260905.json",
+  "change": "Only the GMRF geometry input changes: use the same declared 0.3 m altitude occupancy slice as the archived navigation map, replacing the different occupancy.pgm read by the old launch.",
+  "evidence": "Original OccupancyGrid3D.csv hash matches R4 launch; exported map round-trip exact. All 1200 H01 wind positions are free in this map, whereas 269 positions are occupied in the old GMRF image.",
+  "unchanged": "R2 executable, wind trace, parameters, update rule, observed positions, scoring order and comparison policy remain fixed. No data-dependent origin snapping or cell-center relocation.",
+  "new_map_input_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+  "exported_map_sha256": "7a0eb65e47428b898be7e24ac7f3519c4afdb7a6cdc861e59896955236ac49b4",
+  "parameters": {"cell_size": 0.3, "advection": 100, "mass_conservation": 10, "diffusion": 100, "obstacles": 1, "var_speed": 0.001, "var_direction": 0.0001},
+  "limits": "Successful replay would establish a conditional wind producer, not calibrated joint uncertainty, source-to-path physics, M1 qualification or closed-loop efficacy. Preserve R1/R2 failures. No House/source simulation is launched."
+}

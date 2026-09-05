@@ -1,0 +1,51 @@
+{
+  "status": "CHECKED_WIND_ABLATION_NOT_M1_OR_CLOSED_LOOP_PASS",
+  "arms": [
+    {
+      "arm": "checked_cumulative",
+      "run_complete": true,
+      "completed_updates": 1200,
+      "all": {
+        "n": 1199,
+        "gmrf_vector_rmse_m_s": 0.3698888047834439,
+        "persistence_vector_rmse_m_s": 0.2569659431582264
+      },
+      "same_printed_pose": {
+        "n": 1144,
+        "gmrf_vector_rmse_m_s": 0.36777394436732574,
+        "persistence_vector_rmse_m_s": 0.25082375951734037
+      },
+      "changed_printed_pose": {
+        "n": 55,
+        "gmrf_vector_rmse_m_s": 0.4114205219425737,
+        "persistence_vector_rmse_m_s": 0.36180851029613587
+      },
+      "max_iterations": 15,
+      "mean_iterations": 2.3716666666666666,
+      "max_backward_residual": 7.870414156507263e-14,
+      "max_update_mismatch": 0.0,
+      "file_hashes": {
+        "predictions.csv": "d5a6dcda209f31c0857463ff0ae44c6f69dff3a3e0927c4b9ce66434efe34071",
+        "solver_audit.csv": "64df728368d238f4589ee08294d4f868a2bbc8120d3bf021dc1a0916c8a09969"
+      }
+    },
+    {
+      "arm": "checked_latest_cell",
+      "run_complete": false,
+      "completed_updates": 110,
+      "last_log_line": "GMRF_FIXED_POINT_DID_NOT_CONVERGE_WITHIN_RESOURCE_LIMIT",
+      "failed_update_step": 111,
+      "prediction_score": "NOT_REPORTED_FAILED_PREFIX",
+      "file_hashes": {
+        "predictions.csv": "9fada9b5a9cd144430c2a941fd2ccd00cfa025e4f76354d2a4c408615df8d592",
+        "solver_audit.csv": "f7e4c35fcc476ea0498a43f3e01f3999a38ae6a8793c543b9703fc6fb54402c3"
+      }
+    }
+  ],
+  "script_sha256": "3f83a01cefffbfcfa8d413615724494fbfbf2eb981254e6cfd8143b73de7eca9",
+  "limitations": [
+    "Linear solve checks and Picard tolerance are not transport/source identification.",
+    "No local numerical result establishes a calibrated joint wind uncertainty law.",
+    "The latest-cell arm, if incomplete, cannot be selected using a favorable prefix."
+  ]
+}

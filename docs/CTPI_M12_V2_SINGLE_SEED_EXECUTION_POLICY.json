@@ -1,0 +1,25 @@
+{
+  "status": "USER_SCOPE_FIXED_IMPLEMENTATION_NOT_YET_QUALIFIED",
+  "user_instruction": "改好觉得可行了，就house123，1seed验证；如果这都不行，就不要多seed验证",
+  "houses": ["H01", "H02", "H03"],
+  "seed": 12,
+  "seed_interpretation": "Previously authorized spent seed; development screen, not fresh held-out proof",
+  "m3_enabled": false,
+  "max_seeds_in_this_stage": 1,
+  "multi_seed_auto_launch": false,
+  "on_valid_screen_no_go": "Preserve all results; do not launch any multi-seed batch",
+  "on_screen_pass": "Report results first; no automatic multi-seed expansion",
+  "on_runtime_failure": "Mark INVALID separately from scientific NO_GO; preserve attempt artifacts",
+  "launch_preconditions": [
+    "VM SSH authentication restored",
+    "M1 source-strength and error model implemented and frozen",
+    "M2 causal online input, boundary and startup-history contracts qualified",
+    "Wind reconstruction and navigation/source propagation use explicitly compatible geometry; successful service return alone is not proof that a wind observation was inserted",
+    "Wind solver update/convergence status and temporal prediction are checked; finite full-field means alone do not qualify a transport posterior",
+    "Native field-frame duration and any seeded replay seam physically qualified; do not assume cyclic archival frames are continuous transport",
+    "Same-input core/runtime parity and ROS build pass",
+    "Same-controller comparison and exact code/binary identity frozen"
+  ],
+  "evidence_boundary": "Local core tests and sensor replay do not authorize claims of closed-loop benefit",
+  "batch_rules": "No tuning after launch, no losing-House removal, no seed replacement to rescue outcomes"
+}

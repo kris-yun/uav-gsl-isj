@@ -1,0 +1,29 @@
+{
+  "status": "DUAL_CLOCK_UNIT_ONLY_PASS",
+  "native_mass": 15,
+  "single_clock_mass": 6,
+  "sensor_correct": 9.4615767712765404,
+  "sensor_wrong_clock": 12.809157312873683,
+  "prediction": 9.4615767712765404,
+  "execution": "Actual VM g++ -std=c++17 -O2 -Wall -Wextra -Werror build and binary execution; stdout transcribed from successful tool output",
+  "vm_binary": "/home/zyc/CTPI_ONLINE_CORE_V2_20260905/dual_clock_probe",
+  "local_vm_source_hashes_match": true,
+  "source_sha256": {
+    "CTPIDualClockV2.hpp": "c55900bd982cead4d7e5b4e331abe987d9c986b4073e79e0a2b7f9c056ebcede",
+    "selftest_ctpi_v2_dual_clock.cpp": "72ba12e2cce3f2a7961a9123a27f28ac7480e0c562ca33362830ed6908a51446",
+    "CTPIOnlineCoreV2.hpp": "a1ef8c3876c4de24fc6f89bad9e94031387d24f37f36140b9f53aa32862d2718"
+  },
+  "checks": [
+    "Alternating source rates integrated over native duration",
+    "Sensor response uses sensor duration, not native field duration",
+    "Constant advection displacement uses native duration",
+    "Equal-clock parity with existing core composition",
+    "Native replay seam and frame gap rejection",
+    "Sensor time gap and nonpositive progression rejection",
+    "Future wind availability rejection",
+    "Malformed wind field rejection without partial state advance",
+    "Successful next frame after rejected inputs",
+    "Invalid clock configuration and tampered step rejection"
+  ],
+  "scope": "Algebraic C++ unit fixtures only. No House execution, no M1 estimator, no global wind qualification, no deployment of the unbound 2.5 time ratio."
+}

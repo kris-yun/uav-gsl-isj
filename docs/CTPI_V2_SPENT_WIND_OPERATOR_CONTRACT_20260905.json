@@ -1,0 +1,14 @@
+{
+  "status": "PRE_EXECUTION_DIAGNOSTIC_CONTRACT_NOT_M1_QUALIFICATION",
+  "input": "Existing R4 H01 seed12 A0 wind_trace.csv, all 1200 observations through 240 s; existing House01 navigation occupancy geometry only",
+  "no_access": ["gas", "source truth", "protected banks", "new source worlds", "new House run"],
+  "purpose": "Construct chronological full-field conditional GMRF means from actually available local wind, then falsify one-step local predictions before using these means as source-to-path transport inputs.",
+  "solver": "Installed GMRF core, synchronous one Picard iteration after each new wind observation, no wall-clock timer",
+  "parameters": {"cell_size": 0.5, "advection": 100, "mass_conservation": 100, "diffusion": 100, "obstacles": 10, "var_speed": 0.001, "var_direction": 0.0001},
+  "parameter_origin": "Current ROS node defaults and explicit AddWindObservation service variances; no fit to this trace",
+  "forecast": "Previous completed spatial mean queried at current observed pose before assimilating current wind; first scored forecast at 0.4 s",
+  "comparators": ["Last local vector persistence queried irrespective of pose; stratify same printed pose versus changed printed pose"],
+  "report": ["Vector RMSE all predictions", "Same-pose and changed-pose RMSE", "Pre/post replay-seam strata", "Raw predictions", "Post-observation chronological full-field snapshots", "Input/code/library/binary hashes"],
+  "interpretation": "This tests a conditional mean forecaster on spent local wind, not spatial field truth, joint uncertainty calibration, gas prediction, source recovery, novelty, or closed-loop benefit. No success gate is inferred from a lower wind RMSE.",
+  "downstream": "If the mean forecast is inadequate, do not call its source propagation trustworthy. Do not tune this diagnostic on H01 or silently re-label the current field as a calibrated wind posterior. Source-to-path response and unknown prehistory remain required."
+}

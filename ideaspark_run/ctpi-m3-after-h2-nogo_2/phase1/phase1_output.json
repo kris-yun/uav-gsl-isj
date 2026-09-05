@@ -1,0 +1,262 @@
+{
+  "fulltext_degraded": false,
+  "intake": {
+    "domain": "Single-UAV gas-source localization in turbulent indoor GADEN environments using CTPI-G2/PMFS-style candidate-source evidence and Bayesian belief updates",
+    "venue": "Information Sciences or a comparable robotics/AI methods journal",
+    "time": "One bounded method-validation cycle culminating in a preregistered offline gate before any runtime integration",
+    "data": [
+      "Existing carrier/source likelihood fields",
+      "Existing GADEN observations from held-out H02/H03",
+      "Frozen M1 and M2 outputs",
+      "No new Houses or seeds"
+    ],
+    "compute": "80GB-class GPUs (A100/H100), up to 8 concurrent (one node), approximately 150 GPU-days over 5 months, plus approximately $10k inference/API budget for the full falsification campaign",
+    "expertise": "Expert research user familiar with CTPI-G2, PMFS, Bayesian source localization, GADEN, held-out evaluation, and preregistration",
+    "preference": "both",
+    "baseline": "Myopic CTPI-G2 with frozen M1/M2; the rejected alternative is exact proper horizon-2 expected information gain, which won only 22 of 106 held-out H02/H03 comparisons against myopic",
+    "user_direction": "The M3 mechanism must act before Bayesian accumulation or action selection, change the relative ordering of source evidence or actions, use the existing carrier/source likelihood fields and GADEN observations without truth leakage, and admit a preregistered offline falsification gate before runtime integration.",
+    "excluded_direction": "No H3, planner weight tuning, distance penalty, posterior multiplier, entropy widening, decoder, new Houses, or new seeds.",
+    "limitation": "Exact horizon-2 expected information gain did not improve held-out H02/H03 behavior, indicating that additional lookahead cannot compensate when the candidate-conditioned evidence presented to Bayesian updating already orders sources or actions incorrectly under turbulent plume mismatch.",
+    "contribution_type": "method",
+    "_inferred_fields": [
+      "venue",
+      "time",
+      "compute",
+      "expertise",
+      "preference"
+    ]
+  },
+  "bottleneck_statement": "For any belief-space source search whose candidate-conditioned observation scores are systematically misordered by intermittent, correlated plume realizations, longer-horizon optimization composes the same invalid local ordering and therefore cannot create the missing source discrimination. The probabilistic-map/online-dispersion line converts point observations into hit maps and compares them with candidate simulations, but leaves model mismatch and dependence on the hit-map abstraction unresolved [arxiv:2304.08879v3]; the information-gain planning line improves foresight yet leaves transfer and the separation of planning gains from evidence-model gains open [arxiv:2401.03947v1]. A recent pre-Bayesian rank feature demonstrates that changing measurement representation can alter candidate likelihood ordering, but its validity still depends on a positive monotonic measured-to-modeled relation and it discards magnitude [arxiv:2605.13208v1]. The user's 22/106 held-out horizon-2 result is the primary instance of this structural failure: when turbulent mismatch has already inverted or flattened pairwise candidate evidence, planning farther ahead evaluates actions through the wrong belief transition rather than repairing the ordering on which that transition depends.",
+  "closest_adjacent": [
+    {
+      "paper_id": "arxiv:2605.13208v1",
+      "is_anchor": true,
+      "summary_and_residue": "This paper transforms measured and candidate-predicted concentrations into dynamically updated empirical ranks before computing the source likelihood, thereby removing dependence on absolute calibration while retaining relative evolution. Its ordering is only justified under a positive monotonic relationship, pools all accumulated samples into global ranks, and discards magnitude, so it does not close the case where turbulent intermittency and candidate-specific transport mismatch make relative order nonmonotone or regime-dependent."
+    },
+    {
+      "paper_id": "arxiv:2304.08879v3",
+      "is_anchor": false,
+      "summary_and_residue": "This paper replaces a single-point observation model with a probabilistic gas-hit map compared against online filament-dispersion simulations, with coarse-to-fine allocation over candidate sources. Its method still depends on a binary hit-map abstraction and an estimated global airflow field, leaving candidate ordering vulnerable when correlated GADEN observations and simulated carrier fields disagree structurally rather than only noisily."
+    },
+    {
+      "paper_id": "arxiv:2401.03947v1",
+      "is_anchor": false,
+      "summary_and_residue": "This paper compares myopic infotaxis with a far-sighted DRL policy trained on an information-based objective for source-term estimation. Both strategies consume a fixed analytic plume likelihood, so the study does not establish that added planning horizon helps when the evidence model itself misorders candidate sources, and it explicitly leaves separation of planning gains from evidence-model gains unresolved."
+    }
+  ],
+  "what_phase_0_did_not_address": [
+    "At the frontier leaf represented by arxiv:2605.13208v1, no retrieved work establishes whether candidate-source ordering remains valid when a single-UAV trajectory samples a turbulent plume whose observed-to-modeled relation changes across intermittent regimes rather than remaining globally monotone — stakes: a source can be ranked below a geometrically incompatible rival before accumulation, wasting the fixed flight budget and making conclusions from monotone-sensor evaluations fail to transfer to held-out GADEN houses.",
+    "At the frontier leaf represented by arxiv:2601.07445v1, no retrieved work determines from truth-blind observed and candidate-field evidence when turbulent correlation contains source-discriminative structure and when it instead produces spurious agreement, so the same dependence can help one regime and reverse evidence in another — stakes: practitioners cannot preregister a safe activation boundary, while the field cannot tell whether reported gains reflect recovered source information or a house-specific correlation artifact.",
+    "Across the retrieved Bayesian frontier leaves, no work tests whether accumulated candidate-conditioned observation contributions may be treated as arising from one stationary evidence relation once the UAV moves through distinct plume regimes — stakes: if this inherited assumption is false, nominally sharper posteriors and information-gain actions can be confidently wrong, and published comparisons of planners rest on a belief-transition model whose validity is unexamined."
+  ],
+  "method_lineage": {
+    "line": "Candidate-conditioned observation construction and belief-space action valuation for robotic gas-source localization",
+    "nodes": [
+      {
+        "node_id": "n0",
+        "method": "Reactive chemotaxis/anemotaxis",
+        "move": "Uses local concentration or wind direction directly to steer toward a presumed source without maintaining an explicit source belief.",
+        "parent": null,
+        "provenance": "parametric",
+        "age_band": ">16y",
+        "confidence": "high",
+        "residual_problem": "Turbulence and intermittency destroy stable local gradients, motivating belief-based search.",
+        "is_frontier_leaf": false,
+        "is_collateral": false
+      },
+      {
+        "node_id": "n1",
+        "method": "Infotaxis with Bayesian encounter likelihood",
+        "move": "Replaces gradient following with a belief over source hypotheses and chooses actions by expected entropy reduction from modeled detections.",
+        "parent": "n0",
+        "provenance": "retrieved:doi:10.1038/nature05464",
+        "age_band": ">16y",
+        "confidence": "high",
+        "residual_problem": "Myopic expected information gain inherits observation-model mismatch and can be inefficient under long-horizon action dependencies.",
+        "is_frontier_leaf": false,
+        "is_collateral": false
+      },
+      {
+        "node_id": "n2",
+        "method": "Probabilistic gas-hit mapping with online filament simulation",
+        "move": "Replaces single-point likelihoods with comparison between an accumulated probabilistic hit map and candidate-specific online dispersion simulations, using coarse-to-fine computation.",
+        "parent": "n1",
+        "provenance": "retrieved:arxiv:2304.08879v3",
+        "age_band": "2-4y",
+        "confidence": "high",
+        "residual_problem": "Model mismatch, airflow-field estimation error, and the hit-map abstraction can still flatten or invert source evidence.",
+        "is_frontier_leaf": false,
+        "is_collateral": false
+      },
+      {
+        "node_id": "n3",
+        "method": "Far-sighted information-gain navigation by deep reinforcement learning",
+        "move": "Replaces myopic action scoring with a learned policy optimized for terminal source-term certainty over a finite flight.",
+        "parent": "n1",
+        "provenance": "retrieved:arxiv:2401.03947v1",
+        "age_band": "2-4y",
+        "confidence": "high",
+        "residual_problem": "Transfer, guarantees, and separation of planning gains from evidence-model gains remain unresolved.",
+        "is_frontier_leaf": false,
+        "is_collateral": false
+      },
+      {
+        "node_id": "n4",
+        "method": "Calibration-free concentration-rank likelihood",
+        "move": "Replaces absolute or thresholded gas features with empirical ranks of observed and candidate-predicted concentrations before Bayesian source updating.",
+        "parent": "n2",
+        "provenance": "retrieved:arxiv:2605.13208v1",
+        "age_band": "0-2y",
+        "confidence": "high",
+        "residual_problem": "Global ranks discard magnitude and require a positive monotonic relation that turbulent, regime-dependent model error may violate.",
+        "is_frontier_leaf": true,
+        "is_collateral": false
+      },
+      {
+        "node_id": "n5",
+        "method": "Noise-enhanced Bayesian odor localization",
+        "move": "Perturbs perceived sensor locations or observations so plume correlations that hide source information can be broken during inference.",
+        "parent": "n1",
+        "provenance": "retrieved:arxiv:2601.07445v1",
+        "age_band": "0-2y",
+        "confidence": "high",
+        "residual_problem": "The beneficial-noise regime is empirically tuned, lacks a general truth-blind selection rule, and is not validated for a moving single robot.",
+        "is_frontier_leaf": true,
+        "is_collateral": false
+      },
+      {
+        "node_id": "n6",
+        "method": "Finite Reliability Representations for belief-space decisions",
+        "move": "Limits usable belief resolution according to sensing and actuation reliability rather than assuming every posterior distinction is decision-relevant.",
+        "parent": "n1",
+        "provenance": "retrieved:arxiv:2607.04019v1",
+        "age_band": "0-2y",
+        "confidence": "high",
+        "residual_problem": "Reliability certification bounds decision resolution but does not establish correct candidate-likelihood ordering under turbulent plume mismatch.",
+        "is_frontier_leaf": true,
+        "is_collateral": false
+      },
+      {
+        "node_id": "c0",
+        "method": "Huber-style robust M-estimation",
+        "move": "Bounds the influence of contaminated residuals rather than accepting every observation contribution at full strength.",
+        "parent": null,
+        "provenance": "parametric",
+        "age_band": ">16y",
+        "confidence": "high",
+        "residual_problem": "Classical contamination robustness does not identify whether correlated plume residuals are nuisance or source-discriminative signal.",
+        "is_frontier_leaf": false,
+        "is_collateral": true
+      },
+      {
+        "node_id": "c1",
+        "method": "Generalized least squares and covariance whitening",
+        "move": "Accounts for correlated residuals by transforming them with an estimated covariance structure before comparison.",
+        "parent": null,
+        "provenance": "parametric",
+        "age_band": ">16y",
+        "confidence": "high",
+        "residual_problem": "It requires an identifiable covariance model and can erase informative plume structure when nuisance and signal share modes.",
+        "is_frontier_leaf": false,
+        "is_collateral": true
+      },
+      {
+        "node_id": "c2",
+        "method": "CUSUM-style sequential change detection",
+        "move": "Segments a stream when its generating regime changes instead of pooling all observations under one stationary law.",
+        "parent": null,
+        "provenance": "parametric",
+        "age_band": ">16y",
+        "confidence": "high",
+        "residual_problem": "Detecting a regime change alone does not determine how that regime should affect relative source evidence.",
+        "is_frontier_leaf": false,
+        "is_collateral": true
+      },
+      {
+        "node_id": "c3",
+        "method": "Approximate Bayesian computation with simulator discrepancies",
+        "move": "Ranks hypotheses through simulator-to-observation discrepancies when an explicit likelihood is unavailable.",
+        "parent": null,
+        "provenance": "parametric",
+        "age_band": "8-16y",
+        "confidence": "high",
+        "residual_problem": "The summary statistic and tolerance can themselves determine candidate ordering, especially under misspecified turbulent simulators.",
+        "is_frontier_leaf": false,
+        "is_collateral": true
+      }
+    ],
+    "notes": "Retrieved nodes are grounded and citable; parametric nodes are awareness-only and are included to expose regression risks, not to support novelty claims. The direct ancestry traces the shift from reactive gradients to Bayesian encounter models, map/simulation comparison, planning horizon, and pre-Bayesian rank features. The collateral families were recognized as older approaches to contamination, dependence, regime change, and simulator discrepancy; they are not legal gap sites or shared-ancestor evidence."
+  },
+  "domain_pattern_distribution": {
+    "n_total": 19,
+    "n_on_topic": 17,
+    "patterns": [
+      {
+        "pattern_id": "structural_prior_encoding",
+        "count": 11,
+        "share": 0.65,
+        "saturation_band": "saturated"
+      },
+      {
+        "pattern_id": "assumption_audit_and_pivot",
+        "count": 6,
+        "share": 0.35,
+        "saturation_band": "mid_frequency"
+      },
+      {
+        "pattern_id": "decompose_and_delegate",
+        "count": 5,
+        "share": 0.29,
+        "saturation_band": "mid_frequency"
+      },
+      {
+        "pattern_id": "reframe_as_solvable_object",
+        "count": 5,
+        "share": 0.29,
+        "saturation_band": "mid_frequency"
+      },
+      {
+        "pattern_id": "architectural_operator_substitution",
+        "count": 4,
+        "share": 0.24,
+        "saturation_band": "mid_frequency"
+      },
+      {
+        "pattern_id": "heterogeneous_decomposition",
+        "count": 4,
+        "share": 0.24,
+        "saturation_band": "mid_frequency"
+      },
+      {
+        "pattern_id": "controlled_diagnostic_design",
+        "count": 3,
+        "share": 0.18,
+        "saturation_band": "mid_frequency"
+      },
+      {
+        "pattern_id": "unify_into_shared_representation",
+        "count": 3,
+        "share": 0.18,
+        "saturation_band": "mid_frequency"
+      },
+      {
+        "pattern_id": "generative_process_redesign",
+        "count": 1,
+        "share": 0.06,
+        "saturation_band": "untested"
+      },
+      {
+        "pattern_id": "relax_discrete_search_to_continuous",
+        "count": 1,
+        "share": 0.06,
+        "saturation_band": "untested"
+      }
+    ],
+    "saturation_threshold_saturated": 0.5,
+    "saturation_threshold_untested_count": 1,
+    "notes": "structural_prior_encoding is the most-used pattern; the closest papers encode plume, map, or rank structure but still share an unresolved dependence on whether that representation preserves relative source evidence under turbulent model mismatch."
+  },
+  "state": "proceed",
+  "ood_reasons": [],
+  "remedial_steps": []
+}

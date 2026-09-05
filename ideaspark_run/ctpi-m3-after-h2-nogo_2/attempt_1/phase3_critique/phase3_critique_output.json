@@ -1,0 +1,134 @@
+{
+  "gap_closure_reject_check": {
+    "entries": [
+      {
+        "gap": "At the frontier leaf represented by arxiv:2605.13208v1, no retrieved work establishes whether candidate-source ordering remains valid when a single-UAV trajectory samples a turbulent plume whose observed-to-modeled relation changes across intermittent regimes rather than remaining globally monotone — stakes: a source can be ranked below a geometrically incompatible rival before accumulation, wasting the fixed flight budget and making conclusions from monotone-sensor evaluations fail to transfer to held-out GADEN houses.",
+        "main_pattern": "generative_process_redesign",
+        "sub_pattern": "C15 (Liberate a Fixed Generative Component)",
+        "tactical_failure_mode_quoted": "The reject papers do execute the representation swap, but fall short on proving necessity. The most common shape: the new representation is adopted to handle a harder input regime (sparse or unevenly sampled data, environment-specific signals, higher resolution) but the paper never exhibits a controlled setting where the prior representation provably fails and theirs does not — so reviewers read the swap as an incremental extension of an existing representation rather than the liberation of a false constraint.",
+        "reject_lessons_evaluated": [
+          {
+            "lesson_quoted": "Swapping a representation to survive a harder input regime, without exhibiting a controlled setting where the old representation provably fails, reads as an extension rather than a liberation.",
+            "candidate_match": "borderline",
+            "reasoning": "The falsification plan names identity and naive-global baselines, but the proposed null makes the new arm algebraically identical to identity, so the written design cannot yet exhibit the claimed old-fails/new-succeeds contrast."
+          },
+          {
+            "lesson_quoted": "Sound theoretical correctness of a new representation does not survive review when empirical gains over strong baselines are marginal and not shown to fix a real downstream failure mode of competitors.",
+            "candidate_match": "no",
+            "reasoning": "The candidate commits to downstream source-order win rate against myopic and naive-global baselines; no marginal-gain result is asserted."
+          },
+          {
+            "lesson_quoted": "A representation borrowed from a neighboring subfield and ported into a new domain is judged incremental unless the paper states exactly what the port resolves that prior representations could not.",
+            "candidate_match": "no",
+            "reasoning": "The candidate explicitly states that the reordered assignment is intended to repair regime-dependent source ordering before accumulation rather than merely porting a neighboring representation."
+          },
+          {
+            "lesson_quoted": "Stacking auxiliary encoders, conditioning tokens, and loss terms around the core substitution without justifying each component's necessity dissolves the contribution into engineering integration with thin novelty.",
+            "candidate_match": "borderline",
+            "reasoning": "The regime ledger, pairwise margins, replication statistic, and permutation null are a substantial apparatus around the assignment swap; their roles are narrated, but the failed null shows that the apparatus has not been justified as a functioning whole."
+          },
+          {
+            "lesson_quoted": "Claiming a structural property the chosen representation should confer — cross-view consistency, validity under symmetry, generalization — without demonstrating it leaves reviewers unconvinced the representation actually delivers the advertised benefit.",
+            "candidate_match": "no",
+            "reasoning": "Likelihood-multiset preservation follows exactly from stable sorting and reassignment, while the claimed downstream ordering benefit is explicitly left to the falsification experiment."
+          }
+        ],
+        "verdict": "borderline"
+      },
+      {
+        "gap": "At the frontier leaf represented by arxiv:2601.07445v1, no retrieved work determines from truth-blind observed and candidate-field evidence when turbulent correlation contains source-discriminative structure and when it instead produces spurious agreement, so the same dependence can help one regime and reverse evidence in another — stakes: practitioners cannot preregister a safe activation boundary, while the field cannot tell whether reported gains reflect recovered source information or a house-specific correlation artifact.",
+        "main_pattern": "controlled_diagnostic_design",
+        "sub_pattern": "C02 (Design a Confound-Isolating Diagnostic)",
+        "tactical_failure_mode_quoted": "Papers attempting this tactic fail most often when the constructed instrument isolates the confound only inside an artificial regime and never demonstrates that the isolated signal transfers to real deployment conditions — the synthetic-to-real gap is asserted rather than shown. A second recurring shape is circularity: the diagnostic is validated against the same definition, assumption, or system population it was built to interrogate (using the evaluated models as their own oracle, or hardcoding a contested definition of the target property), so it cannot independently confirm what it claims.",
+        "reject_lessons_evaluated": [
+          {
+            "lesson_quoted": "A diagnostic that only re-confirms a shortcut already known in advance, surfacing no previously unmeasurable failure, is read as confirmatory rather than as a contribution.",
+            "candidate_match": "no",
+            "reasoning": "The proposed diagnostic targets whether regime-specific observation-to-field alignment predicts downstream source ordering, which the supplied literature does not already measure."
+          },
+          {
+            "lesson_quoted": "Validating a synthetic-ground-truth instrument only on synthetic data, without demonstrating that the controlled finding transfers to real-world instances, leaves ecological validity unestablished and undermines the central claim.",
+            "candidate_match": "borderline",
+            "reasoning": "The planned oracle is confined to held-out H02/H03 GADEN logs; this is properly scoped in the gap and falsification fields, but the broad title and hook could be read as a claim about turbulent UAV search beyond simulation."
+          },
+          {
+            "lesson_quoted": "Building the instrument around one contested definition of the target property means it cannot independently confirm that the definition is correct, and reviewers flag the resulting circularity.",
+            "candidate_match": "no",
+            "reasoning": "Source-order win rate is scored only after freezing outputs using sequestered GADEN identities, so the downstream oracle is independent of the proposed replication statistic."
+          },
+          {
+            "lesson_quoted": "Resting an unsupervised evaluation on the unverified premise that the systems under test can reliably judge one another stakes the entire method on an assumption that collapses under scrutiny.",
+            "candidate_match": "no",
+            "reasoning": "No evaluated candidate judges another; a sequestered simulator truth field supplies the evaluation oracle."
+          },
+          {
+            "lesson_quoted": "Pairing a single-task or small-sample instrument with broad capability claims triggers a scope-mismatch rejection, and assembling retrieval or engineering blocks without an isolating scientific insight reads as application rather than research.",
+            "candidate_match": "borderline",
+            "reasoning": "The experiment is one frozen 106-comparison GADEN setting, while the title is domain-general; the body is narrower, but the outward claim should remain explicitly simulation-scoped."
+          }
+        ],
+        "verdict": "borderline"
+      }
+    ],
+    "verdict": "borderline",
+    "reasoning": "The C15 entry is borderline because its planned contrast cannot demonstrate the new assignment's necessity when the written null forces the observed-G arm to identity. The C02 entry is also borderline on ecological scope because the only planned oracle is H02/H03 GADEN, although it avoids circularity by sequestering truth until evaluation."
+  },
+  "recipe_application_check": {
+    "entries": [
+      {
+        "gap": "At the frontier leaf represented by arxiv:2605.13208v1, no retrieved work establishes whether candidate-source ordering remains valid when a single-UAV trajectory samples a turbulent plume whose observed-to-modeled relation changes across intermittent regimes rather than remaining globally monotone — stakes: a source can be ranked below a geometrically incompatible rival before accumulation, wasting the fixed flight budget and making conclusions from monotone-sensor evaluations fail to transfer to held-out GADEN houses.",
+        "sub_pattern": "C15 (Liberate a Fixed Generative Component)",
+        "tactical_pattern_quoted": "These papers re-choose the geometric/structural representation that a 3D synthesis or reconstruction procedure operates over, treating the conventionally-inherited parameterization as a tractability convenience rather than an actual requirement. The substitution itself is the load-bearing contribution — the surrounding generative, feed-forward, or simulation machinery is deliberately left standard, and the gain is attributed to the representation alone.",
+        "instantiation_in_core_mechanism": "No step re-chooses the geometric or spatial substrate consumed by a standard synthesis/reconstruction engine. Steps 2–7 instead add a new regime ledger, pairwise dominance statistic, permutation null, and label reassignment operator; this performs the parent-level idea of redesigning a generative component but bypasses C15's distinctive representation-substitution move.",
+        "verdict": "bypassed"
+      },
+      {
+        "gap": "At the frontier leaf represented by arxiv:2601.07445v1, no retrieved work determines from truth-blind observed and candidate-field evidence when turbulent correlation contains source-discriminative structure and when it instead produces spurious agreement, so the same dependence can help one regime and reverse evidence in another — stakes: practitioners cannot preregister a safe activation boundary, while the field cannot tell whether reported gains reflect recovered source information or a house-specific correlation artifact.",
+        "sub_pattern": "C02 (Design a Confound-Isolating Diagnostic)",
+        "tactical_pattern_quoted": "The shared move is to construct a controlled set of evaluation instances in which exactly one named confound is either structurally blocked or independently varied, then report the divergence between apparent and de-confounded performance as the primary result rather than an aggregate leaderboard score. The load-bearing artifact is always the controlled instance set paired with an oracle independent of the system under test.",
+        "instantiation_in_core_mechanism": "Step 9 intends to vary only observation-to-field alignment via a sampled block-permutation G while holding path and marginals fixed, with step 10 providing an independent sequestered-truth oracle. However, the stated within-q whole-run permutation does not vary the symmetric statistics a or R, so it never constructs the promised confound-varying instances and therefore bypasses the signature operation in execution.",
+        "verdict": "bypassed"
+      }
+    ],
+    "verdict": "bypassed",
+    "reasoning": "C15 is bypassed because the mechanism changes candidate-label assignment rather than a geometric/structural representation. C02 is bypassed because its nominal controlled intervention is permutation-invariant and therefore fails to independently vary the named confound."
+  },
+  "anti_pattern_check": {
+    "composition_set": [
+      "generative_process_redesign",
+      "controlled_diagnostic_design"
+    ],
+    "matched_pattern_id": null,
+    "required_mitigation_quoted": null,
+    "mitigation_substantively_delivered": "n/a",
+    "reasoning": "The composition contains no `heterogeneous_decomposition`, so none of the three reject-favored pairs applies."
+  },
+  "paper_pointed_threat": {
+    "threat_paper_id": "arxiv:2605.13208v1",
+    "threat_source": "lit_table",
+    "threat_channel": null,
+    "subsumption_argument": "The closest competitor already makes calibration-free gas-source localization depend on concentration ranking, so the candidate cannot claim ordering itself as novel; its claim stands only on the distinct regime-conditioned, carrier-corrected replication statistic and multiset-preserving candidate-label reassignment. The candidate states that distinction explicitly, and neither collision channel contains a gas-localization paper implementing the same mechanism.",
+    "addressable_via": "not_needed",
+    "parametric_family_concern": "Restricted permutation and conditional randomization inference for clustered, dependent, adaptively sampled trajectories; a scoop-check should query `restricted permutation test adaptive sampling` and `cluster-level randomization inference`."
+  },
+  "falsification_structure_check": {
+    "minimal_experiment_named": "yes",
+    "outcome_metric_named": "yes",
+    "load_bearing_variable": "the excess-replicated dominance tensor G",
+    "negative_control_target": "outcome_metric",
+    "numeric_bar_provenance": "none",
+    "verdict": "sound",
+    "reasoning": "The replay names four comparison arms, predicts the direction of held-out source-order win rate, identifies G as the load-bearing variable, and requires block-permuted G to return that downstream metric toward or below myopic. The 106 comparisons are an exempt experiment-scale count rather than an outcome bar."
+  },
+  "blocking_findings_disposition": [
+    {
+      "finding_ref": "The load-bearing coupled run-block null is permutation-invariant: permuting completed runs within a fixed q only reorders",
+      "status": "upheld",
+      "basis": "A within-q bijection of intact runs preserves the margin multiset, while both its median a and sign-match fraction R are symmetric functions; therefore every null replicate has R equal to observed R, forcing R0 equal to R and G to zero. This prevents any non-identity ordering repair and requires replacing the null or statistic, which redesigns the load-bearing mechanism rather than patching a field."
+    }
+  ],
+  "verdict": "abandon",
+  "verdict_layer": "soft_judgment",
+  "verdict_rationale": "The upheld blocking finding proves the C02 controlled intervention cannot alter a or R, so G is identically zero and the mechanism cannot confront its declared ordering obstacle without redesign. Consistently, `recipe_application_check.entries[1].verdict` is bypassed because no confound is actually varied, while `recipe_application_check.entries[0].verdict` is bypassed because the mechanism does not perform C15's geometric/structural representation substitution; these are load-bearing failures, not editable wording defects.",
+  "revision_targets": []
+}

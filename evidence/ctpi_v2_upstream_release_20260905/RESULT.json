@@ -1,0 +1,70 @@
+{
+  "status": "PINNED_ROS1_OPERATOR_CONTRACT_ONLY_NOT_HOUSE_BINDING_OR_M1_PASS",
+  "source_url": "https://raw.githubusercontent.com/MAPIRlab/gaden/4a299217e0e82925ca51762e7be25e83e3c138dd/gaden_filament_simulator/src/filament_simulator.cpp",
+  "commit": "4a299217e0e82925ca51762e7be25e83e3c138dd",
+  "commit_date": "2023-10-26T07:44:47Z",
+  "source_sha256": "23fe9050d70fd9511db18e58f55a40d17723e3737b3bf4560b49c5945f60e331",
+  "source_line_count": 1002,
+  "anchors": [
+    {
+      "expression": "numFilament_aux += numFilaments_step;",
+      "line": 455
+    },
+    {
+      "expression": "int filaments_to_release = floor(numFilament_aux);",
+      "line": 457
+    },
+    {
+      "expression": "filaments_to_release = (int)round(random_number(0.0, filaments_to_release));",
+      "line": 460
+    },
+    {
+      "expression": "current_number_filaments += floor(numFilament_aux);",
+      "line": 790
+    },
+    {
+      "expression": "numFilament_aux -= floor(numFilament_aux);",
+      "line": 791
+    },
+    {
+      "expression": "double n = (double)(rand() % 100);",
+      "line": 853
+    },
+    {
+      "expression": "srand(time(NULL));",
+      "line": 948
+    },
+    {
+      "expression": "sim.sim_time = sim.sim_time + sim.time_step;",
+      "line": 997
+    }
+  ],
+  "fixture": {
+    "rate": 7,
+    "native_dt": 0.1,
+    "initial_carry": 0,
+    "nominal_caps_first_ten_steps": [
+      0,
+      1,
+      1,
+      0,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1
+    ],
+    "actual_expected_total_if_uniform_residues": 3.5,
+    "uniform_residues_are_an_assumption_not_a_generator_proof": true
+  },
+  "operator_sha256": "858079776c86877537be77394860e0eff86fd17ee393cd408c50040af3c3d744",
+  "script_sha256": "1fbd509c9fe864cb597a513e9aaae56572154aff86afbf249b5c88d09013a009",
+  "limitations": [
+    "No historical data-to-generator identity binding.",
+    "No independence or uniformity proof for the shared C PRNG.",
+    "Rate is a nominal cap parameter, not known gas mass flux.",
+    "No release prior, initial plume prior or propagation model qualified.",
+    "No protected bank, House payload or fresh source world accessed."
+  ]
+}

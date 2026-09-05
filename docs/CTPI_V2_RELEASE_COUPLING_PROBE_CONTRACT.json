@@ -1,0 +1,14 @@
+{
+  "status": "PREREGISTERED_EXACT_ALGEBRA_PROBE",
+  "question": "Does independent source-rate fluctuation alone identify source delay and gain, and can source-conditioned cross-pose reuse of the same emission distinguish hypotheses?",
+  "estimand": "Posterior probability of two candidate locations under their exact finite observation-sequence probability laws and equal prior weights",
+  "model": "Four discrete observations. Independent Bernoulli(1/2) emissions at integer times -1 through 3, including pre-start emission. Candidate A gain 1 and source amplitude 1; B gain 2 and source amplitude 1/2, so scale is not an identifying cue. Sensor starts at zero and obeys y_t=(y_(t-1)+gas_(t-1))/2 with gas_-1 at sensor initialization zero. This toy sensor is NOT a claim of numerical FOPDT parity.",
+  "fixed_path_control": "All samples at X: A delay 0, B delay 1. Complete sequence laws should coincide despite random emissions.",
+  "moving_path_control": "Path X,Y,X,Y: A delays X=0,Y=1; B delays X=1,Y=0. Shared emission identities may generate different cross-pose observation laws despite equal one-time gas marginals.",
+  "naive_baseline": "Independently reconstruct each one-time gas marginal, take their product, then apply the same sensor law. Compare the resulting observation law to exact shared-emission enumeration; do not merely compare unfiltered gas variances.",
+  "same_input_bayes": "Exact observation-sequence likelihood with identical source nuisance distribution is the reference, not a method to claim superiority over.",
+  "metrics": "Exact total variation distance between candidate observation laws and equal-prior optimal classification accuracy; use fractions, not Monte Carlo or a tuned numerical threshold.",
+  "predictions": "Fixed-path total variation is zero. Moving-path total variation is positive only under the specified known delay map; the independent-marginal baseline loses that source contrast. The contrast is conditional and is not a novel algorithm or a universal identification proof.",
+  "scope": "Pure algebra and exhaustive enumeration. No House simulation, new physical source worlds, banks, seed experiments, true source inputs, or algorithm takeover.",
+  "required_before_deployment": "Independently justified source innovation family, source-conditioned transport delay law from allowed observations, initial-field/sensor treatment, and evidence beyond an ordinary correctly specified joint Bayesian model."
+}

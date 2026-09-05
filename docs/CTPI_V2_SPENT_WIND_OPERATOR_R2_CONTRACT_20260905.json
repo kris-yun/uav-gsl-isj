@@ -1,0 +1,11 @@
+{
+  "status": "PRE_EXECUTION_R2_EXISTING_LAUNCH_PARAMETERS_NOT_TUNING",
+  "parent": "CTPI_V2_SPENT_WIND_OPERATOR_CONTRACT_20260905.json",
+  "reason": "R1 current node defaults rejected the first H01 observation at the geometry insertion gate; R1 produced no wind predictions. R2 corrects the diagnostic configuration to the existing fasttrack launch values where recognized by current node code, not a parameter search.",
+  "launch_source": "closed_loop/ctpi/vgr_gsl_pmfs_ctpi_fasttrack.launch.py:476",
+  "parameters": {"cell_size": 0.3, "advection": 100, "mass_conservation": 10, "diffusion": 100, "obstacles": 1, "var_speed": 0.001, "var_direction": 0.0001},
+  "unchanged_defaults": "advection and diffusion use current node defaults because the launch does not declare the corresponding names; legacy reg/Obs/ObsLoss names are not read by this node source",
+  "identity_limit": "Current installed core is verified by hash. This does not establish the binary that produced R4.",
+  "inherited": "Same spent H01 wind input, 240 s horizon, prediction-before-assimilation order, persistence comparison, full-field output, reporting and no-qualification limitations as parent.",
+  "prohibition": "Do not move observed positions or ignore rejected insertions to make this run complete. No source/gas payloads, House runs or seed expansion."
+}

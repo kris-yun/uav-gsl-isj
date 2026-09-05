@@ -1,0 +1,150 @@
+{
+  "intake": {
+    "domain": "Causal physical-model identification for single-UAV gas source localization from the existing online gas, wind and timestamped pose stream",
+    "venue": "Robotics or physical inverse-problems research venue; no target venue was specified",
+    "time": "Current M1 redesign before any new House execution; no calendar deadline specified",
+    "data": [
+      "Existing online gas, local wind and pose observations; input availability must follow actual message time and reception order",
+      "Existing known House geometry and corrected C++ transport core with exact FOPDT sensor model; the complete M1 posterior remains unqualified",
+      "Read-only CTPI_V2_VM_INPUT_CONTRACT_AUDIT_20260905.md and CTPI_V2_M1_PREMISE_GATE_RESULT_20260905.md",
+      "Only after qualification: H01/H02/H03 seed12, 240 s, matched-controller three-arm development screening under CTPI_M12_V2_SINGLE_SEED_EXECUTION_POLICY.json"
+    ],
+    "compute": "User-stated CPU-only small deterministic tests first, using existing artifacts. No GPU training campaign, paid-API compute campaign, new Houses, experimental seeds, source worlds, bank generation or protected-bank payload access. Later evaluation is limited to the already authorized H01/H02/H03 seed12 240 s development screen, with no automatic multiseed expansion.",
+    "expertise": "Existing C++/ROS2 physical transport and sensor integration; mathematical inverse-problem reasoning and independent CPU verification are available",
+    "preference": "both",
+    "baseline": "Ordinary Bayesian inversion using exactly the same observations, causal forward model, priors and error law. The executed shared-nuisance proposal is algebraically equivalent to this baseline; a contribution must reside in independently justified model structure or identifying information, not renamed marginalization.",
+    "user_direction": "Contributions may instead be in identifiable, independently validated causal model structure; do not demand beating Bayes under the identical correct model.",
+    "excluded_direction": "M3 and policy redesign are excluded.",
+    "limitation": "Distinct source locations can produce the same observed-history distribution after changing unobserved source strength, transport history, initial plume and sensor state. Fixed-nuisance source contrast and accurate concentration prediction therefore do not establish source identifiability. The available wind map has neither a stamped joint trajectory distribution nor established calibration, and the environmental plume is already present when the sensor starts.",
+    "contribution_type": "method",
+    "_inferred_fields": ["venue", "time", "expertise", "preference", "baseline: exact comparator from provided premise-gate evidence", "data: runtime limitations from provided input-contract audit"]
+  },
+  "lit_grounding_mode": "real",
+  "fulltext_degraded": false,
+  "bottleneck_statement": "For inverse localization from one moving sensor, source location is not identified when two locations admit physically allowed source-strength, transport, pre-observation plume and sensor-history explanations with the same law of the actually observed gas/wind/pose history. The primary instance is the user's transient, adaptively sampled indoor UAV stream. Physical dependency-guided sequential inference already marginalizes wind and concentration fields and accounts implicitly for unknown release rate, but its stated model is single-source steady-state dispersion and its conditional fields do not represent an observed-time history with sensor memory (arxiv:2608.16221v1, III-A and III-C). Rank-based mobile STE explicitly simulates slow MOX dynamics and samples in motion, yet its estimator compares ranks against steady DDPM concentration predictions and requires a positive monotonic relation; history-dependent rank reversals are outside that identifying condition (semanticscholar:fb214b8cbae18ea03c0a852ab3097b570c5ac29f, II-C to II-D). IASA already exposes unknown-strength ambiguity, lag, background absorption and weak distinguishability, conditional on declared inventories and transport (arxiv:2608.00050v1, Eqs. 2-6). The unresolved question for this input regime is which physically warranted restrictions exclude wrong-source alternative histories, and when existing observations can validate those restrictions; neither conditional separation in one assumed operator nor sharper inference within that operator establishes that the inferred location is the physical source.",
+  "closest_adjacent": [
+    {
+      "paper_id": "arxiv:2608.16221v1",
+      "is_anchor": true,
+      "summary_and_residue": "DGSE-S uses separate learned wind, concentration and source conditionals, marginalizing intermediate fields with Monte Carlo; source release rate and inlet velocity are explicitly unknown inputs whose effects enter through measurements, so neither physical dependency factorization nor nuisance marginalization is absent prior art. Its stated domain is steady-state single-source dispersion, with diagonal per-cell field conditionals and spatial accumulated measurements, and the read method supplies no time-indexed transport/sensor-state model or criterion excluding source versus admissible history ambiguity in the user's transient stream.",
+      "evidence_sections": ["III-A: single-source, steady-state indoor gas dispersion", "III-C: Eqs. 12-15 conditional independence and marginalization", "III-C: unknown source rate and inlet velocity", "III-C: Eqs. 17-25 Monte Carlo inference and training"],
+      "residue_confidence": "method-grounded scope difference; no claim that DGSE empirically fails the untested user regime"
+    },
+    {
+      "paper_id": "semanticscholar:fb214b8cbae18ea03c0a852ab3097b570c5ac29f",
+      "is_anchor": false,
+      "summary_and_residue": "Rank STE compares EDF ranks of measured and predicted concentrations, uses a steady DDPM, and explicitly models first-order MOX response/recovery in simulation while evaluating sense-in-motion sensing. Its rank validity is conditional on positive monotonic alignment, while the likelihood compares spatial predicted concentrations to observed ranks without propagating the candidate's sensor history; temporal filtering that reverses order is not covered by static monotonic invariance, and the method does not derive physical source identifiability after arbitrary transport and initial-history uncertainty.",
+      "evidence_sections": ["I-B steady plume and known inlet assumptions", "II-B3 sensor dynamics", "II-C3 Eq. 5 EDF and positive monotonic relation", "II-D Eq. 6 likelihood", "II-E sense-in-motion"],
+      "residue_confidence": "method-grounded; rank reversals are a conditional structural possibility, not a reported experimental failure"
+    },
+    {
+      "paper_id": "arxiv:2608.00050v1",
+      "is_anchor": false,
+      "summary_and_residue": "IASA constructs wind-history-conditioned lagged source-temporal-basis fingerprints, projects a predeclared source-independent background space, and diagnoses coefficient/ray distinguishability while retaining nonnegative unknown source strengths; it also explicitly uses open boundaries, an initial-condition baseline and constrained transport refinement. Its estimand is inventory-based attribution under that declared operator and nuisance class, so the diagnostic does not establish actual point-source location when unknown ventilation, initial plume and temporally correlated wind/sensor histories admit alternative explanations outside that class.",
+      "evidence_sections": ["Intro projected lagged operator and conditional scope", "Method Eq. 2 lagged response", "Method Eq. 3 pre-fit lag selection", "Method Eqs. 4-5 row alignment and background projection", "Method Eq. 6 and referenced Appendix D refinement"],
+      "residue_confidence": "method-grounded formulation scope; Appendix D refinement is acknowledged, not assumed absent"
+    },
+    {
+      "paper_id": "openalex:W4417045481",
+      "is_anchor": false,
+      "summary_and_residue": "The probabilistic gas-inversion method jointly estimates source location/rate, dispersion parameters, background and measurement variance instead of fixing atmospheric stability classes. Its forward model remains a Gaussian plume coupling with fixed ground sensors, a spatially varying temporally stationary background and iid Gaussian measurement error, so changing plume widths does not itself identify a transient indoor moving-sensor source against unknown prehistory and dynamic transport discrepancy.",
+      "evidence_sections": ["Intro Objectives", "2.1 Gaussian plume and flow assumptions", "2.2 inferred dispersion parametrization", "2.4 Eq. 5 observation law"],
+      "residue_confidence": "method-grounded forward-model scope; the cache does not include every MCMC implementation section"
+    },
+    {
+      "paper_id": "arxiv:2404.03152v3",
+      "is_anchor": false,
+      "summary_and_residue": "Orthogonal calibration permits flexible discrepancy priors and posterior projection, building on a calibration target defined as the loss-minimizing simulator parameter and an orthogonality restriction relative to simulator sensitivity. Its own formulation distinguishes this target from a physically true parameter when the simulator is biased, so imposing orthogonality cannot be cited as proof that a misspecified gas transport model recovers the actual source location; the domain validity of such restrictions remains a separate obligation.",
+      "evidence_sections": ["Method definition of theta* as loss minimizer when an exact simulator parameter does not exist", "Method Eqs. 1-2 calibration nonidentifiability and orthogonality"],
+      "residue_confidence": "method-grounded estimand distinction; projection-algorithm details are not needed for this claim"
+    }
+  ],
+  "anchor_fulltext_check": {
+    "paper_id": "arxiv:2608.16221v1",
+    "source_used": "html_arxiv",
+    "method_chars": 27899,
+    "topup_required": false,
+    "role": "Literature comparator, not a procedure selected for faithful reimplementation or simulation in Phase 1",
+    "sufficiency": "The read method explicitly fixes the steady-state scope, unknown-rate treatment, conditional inputs and marginalization. These suffice for the scope residue. No algorithmic faithfulness claim is made. If later phases elect to reproduce DGSE or any other paper, they must first pin the full procedure and unresolved parameters."
+  },
+  "what_phase_0_did_not_address": [
+    "Additive; frontier sites dgse and rank: for a moving sensor with memory, a gas sample is generated by exposure along a history, and distinct location/strength/transport histories can induce the same complete sampled record even though their instantaneous fields or fixed-nuisance responses differ. The retrieved mobile methods do not establish the conditions under which the existing joint history distinguishes those locations when the environmental plume predates sensor startup — stakes: the user's UAV can interpret delayed peaks or persistent residual gas as current spatial evidence, concentrating belief at a wrong source and spending its limited search time there.",
+    "Subtractive; frontier sites dgse and rank, shared ancestor steady: whether the steady-field summary assumed by these two indoor source-inference branches is sufficient for source identification when source age, environmental initial concentration and sensor history are not known. This is a question about that branch's inherited assumption, not a claim that every retrieved paper assumes steady state — stakes: apparent gains from a physically structured estimator may depend on an unexamined reduction of the data-generating process, preventing their interpretation as evidence for physical source identification in the user's transient setting.",
+    "Additive; frontier sites iasa and plume_joint, with orthogonal calibration as an estimand warning: source separability conditional on a declared transport/background class does not establish that this class excludes wrong-source explanations for physically valid reasons. The needed outcome is a source-location claim whose identifying restrictions have testable implications beyond fitting the same gas response, using only the information actually available online — stakes: inventory diagnostics or calibration constraints can produce a unique, precise model-dependent answer while leaving the physical leak location unestablished, undermining both field decisions and the main scientific claim."
+  ],
+  "gap_evidence_map": [
+    {"gap_index": 0, "frontier_node_ids": ["dgse", "rank"], "scope": "Moving-sensor transient histories; no theorem of unrestricted identifiability is claimed"},
+    {"gap_index": 1, "frontier_node_ids": ["dgse", "rank"], "shared_ancestor_node_id": "steady", "scope": "Only the two steady-state indoor branches share this assumption; IASA explicitly has lagged transport"},
+    {"gap_index": 2, "frontier_node_ids": ["iasa", "plume_joint"], "scope": "Physical validity of nuisance restrictions, not absence of conditional inverse-problem diagnostics"}
+  ],
+  "method_lineage": {
+    "line": "Physical source inversion through an assumed transport-to-observation law, including its source/nuisance ambiguity",
+    "nodes": [
+      {"node_id": "root", "method": "Advection-diffusion inverse source modeling", "move": "Infer source parameters by matching transported emissions to sparse observations", "parent": null, "provenance": "parametric", "age_band": ">16y", "confidence": "high", "residual_problem": "Different sources and nuisance processes may induce the same observations; forward-model choice is part of identification", "is_frontier_leaf": false},
+      {"node_id": "steady", "method": "Steady-plume source term estimation", "move": "Reduce the transport history to a source-conditioned spatial concentration response", "parent": "root", "provenance": "parametric", "age_band": ">16y", "confidence": "high", "residual_problem": "Geometry, dispersion and sensor response can invalidate the spatial response; recent descendants improve representation or feature robustness", "is_frontier_leaf": false},
+      {"node_id": "bayes", "method": "Bayesian source and nuisance parameter inversion", "move": "Infer uncertain source and transport parameters under one specified joint observation model", "parent": "root", "provenance": "parametric", "age_band": "8-16y", "confidence": "high", "residual_problem": "Uncertainty propagation does not resolve observational equivalence or unrestricted model discrepancy", "is_frontier_leaf": false},
+      {"node_id": "linear_response", "method": "Linear response inverse modeling with nuisance background", "move": "Express source contributions as transported basis responses and separate declared background terms", "parent": "root", "provenance": "parametric", "age_band": ">16y", "confidence": "high", "residual_problem": "Response columns may be indistinguishable; finite-horizon and application-specific reporting are developed in descendants", "is_frontier_leaf": false},
+      {"node_id": "rank", "method": "Rank-based mobile STE", "move": "Use empirical-distribution ranks for monotonic sensor calibration invariance in steady DDPM source inference", "parent": "steady", "provenance": "retrieved:semanticscholar:fb214b8cbae18ea03c0a852ab3097b570c5ac29f", "age_band": "0-2y", "confidence": "high", "residual_problem": "Positive monotonic alignment need not survive dynamic exposure histories; source identifiability under unknown initial plume and transport history is not established", "is_frontier_leaf": true},
+      {"node_id": "dgse", "method": "DGSE-S physical dependency-guided sequential inference", "move": "Learn and marginalize wind and concentration conditionals before the source posterior", "parent": "steady", "provenance": "retrieved:arxiv:2608.16221v1", "age_band": "0-2y", "confidence": "high", "residual_problem": "The stated steady spatial conditionals do not establish physical source identification from transient history with sensor memory and pre-existing plume", "is_frontier_leaf": true},
+      {"node_id": "plume_joint", "method": "Joint Bayesian source, dispersion and background estimation", "move": "Estimate plume dispersion parameters instead of fixing an atmospheric stability class", "parent": "bayes", "provenance": "retrieved:openalex:W4417045481", "age_band": "0-2y", "confidence": "high", "residual_problem": "Identification remains conditional on Gaussian plume, background and observation-law assumptions; physical correctness under indoor historical discrepancy is unestablished", "is_frontier_leaf": true},
+      {"node_id": "iasa", "method": "IASA projected lagged response diagnostics", "move": "Diagnose wind-conditioned source-basis visibility and ambiguity after source-independent background correction", "parent": "linear_response", "provenance": "retrieved:arxiv:2608.00050v1", "age_band": "0-2y", "confidence": "high", "residual_problem": "Declared inventories and transport/nuisance classes determine the resolved attribution; physical point-source identity under unknown initial plume and dynamic nuisance histories is not established", "is_frontier_leaf": true},
+      {"node_id": "calibration", "method": "Kennedy-O'Hagan simulator calibration with discrepancy", "move": "Represent systematic simulator error separately from physical-model parameters", "parent": "bayes", "provenance": "parametric", "age_band": ">16y", "confidence": "high", "residual_problem": "An unrestricted discrepancy can absorb parameter changes; this is already a classical nonidentifiability issue", "is_frontier_leaf": false},
+      {"node_id": "orthogonal", "method": "Orthogonal calibration via posterior projections", "move": "Constrain discrepancy relative to model sensitivity for an explicitly defined calibration estimand", "parent": "calibration", "provenance": "retrieved:arxiv:2404.03152v3", "age_band": "2-4y", "confidence": "high", "residual_problem": "Loss-minimizing calibration parameters need not equal a physically true source; the paper makes that distinction explicit", "is_frontier_leaf": false},
+      {"node_id": "coll_observe", "method": "State-space observability and unknown-input identification", "move": "Analyze whether distinct hidden states or parameters induce identical output histories", "parent": null, "provenance": "parametric", "age_band": ">16y", "confidence": "high", "residual_problem": "Criteria depend on the actual dynamics, allowed unknown inputs and excitation; sparse local wind is not an automatically known field", "is_frontier_leaf": false, "is_collateral": true},
+      {"node_id": "coll_blind", "method": "Blind deconvolution and system identification", "move": "Analyze or estimate unknown signal and impulse-response factors with explicit ambiguity constraints", "parent": null, "provenance": "parametric", "age_band": ">16y", "confidence": "high", "residual_problem": "Scale, delay and filtering ambiguity require assumptions; applying the label does not justify them for gas transport", "is_frontier_leaf": false, "is_collateral": true},
+      {"node_id": "coll_set", "method": "Set-membership estimation and partial identification", "move": "Retain parameter values compatible with bounded errors or incomplete identifying assumptions", "parent": null, "provenance": "parametric", "age_band": ">16y", "confidence": "high", "residual_problem": "Compatibility sets depend on warranted error/nuisance bounds; reporting ambiguity alone is established methodology", "is_frontier_leaf": false, "is_collateral": true},
+      {"node_id": "coll_profile", "method": "Profile likelihood and variable projection", "move": "Eliminate or optimize nuisance parameters when judging source/model parameters", "parent": null, "provenance": "parametric", "age_band": ">16y", "confidence": "high", "residual_problem": "Profiling does not manufacture identifying information when complete nuisance-adjusted observation laws coincide", "is_frontier_leaf": false, "is_collateral": true},
+      {"node_id": "coll_iv", "method": "Instrumental-variable identification", "move": "Use externally justified exclusion and relevance conditions to identify parameters under confounding", "parent": null, "provenance": "parametric", "age_band": ">16y", "confidence": "high", "residual_problem": "Local wind or time is not automatically a valid instrument; exclusion and relevance require domain justification", "is_frontier_leaf": false, "is_collateral": true}
+    ],
+    "notes": "Retrieved nodes are citable; parametric nodes are awareness-only and are not novelty evidence. Parent edges describe formulation ancestry, not a claim of documented citation descent. A shallow gap in the 2-4y and 4-8y bands is preferable to invented intermediate methods; the only 2-4y node here is directly retrieved. Five collateral families were checked: dynamic observability, blind deconvolution, partial identification, nuisance profiling and instruments. No collateral node is a gap site or shared ancestor. The steady-state assumption is shared only by the rank/DGSE branch; it is explicitly not imposed on IASA, the joint-inversion branch or the entire field."
+  },
+  "domain_pattern_distribution": {
+    "n_total": 64,
+    "n_on_topic": 25,
+    "patterns": [
+      {"pattern_id": "assumption_audit_and_pivot", "count": 1, "share": 0.04, "saturation_band": "untested"},
+      {"pattern_id": "architectural_operator_substitution", "count": 6, "share": 0.24, "saturation_band": "mid_frequency"},
+      {"pattern_id": "generative_process_redesign", "count": 2, "share": 0.08, "saturation_band": "mid_frequency"},
+      {"pattern_id": "controlled_diagnostic_design", "count": 2, "share": 0.08, "saturation_band": "mid_frequency"},
+      {"pattern_id": "unify_into_shared_representation", "count": 3, "share": 0.12, "saturation_band": "mid_frequency"},
+      {"pattern_id": "reframe_as_solvable_object", "count": 9, "share": 0.36, "saturation_band": "mid_frequency"},
+      {"pattern_id": "self_supervised_signal_engineering", "count": 1, "share": 0.04, "saturation_band": "untested"},
+      {"pattern_id": "structural_prior_encoding", "count": 6, "share": 0.24, "saturation_band": "mid_frequency"},
+      {"pattern_id": "algebraic_equivalence_unification", "count": 0, "share": 0.0, "saturation_band": "untested"},
+      {"pattern_id": "heterogeneous_decomposition", "count": 0, "share": 0.0, "saturation_band": "untested"},
+      {"pattern_id": "decompose_and_delegate", "count": 4, "share": 0.16, "saturation_band": "mid_frequency"},
+      {"pattern_id": "relax_discrete_search_to_continuous", "count": 1, "share": 0.04, "saturation_band": "untested"},
+      {"pattern_id": "adapt_via_conditioning", "count": 0, "share": 0.0, "saturation_band": "untested"},
+      {"pattern_id": "characterize_limit_then_surpass", "count": 0, "share": 0.0, "saturation_band": "untested"},
+      {"pattern_id": "targeted_self_supervised_objective", "count": 0, "share": 0.0, "saturation_band": "untested"}
+    ],
+    "saturation_threshold_saturated": 0.5,
+    "saturation_threshold_untested_count": 1,
+    "counting_rule": "Distinct paper IDs with relevance=core in the supplied partition and at least one taxonomy tag, excluding outside_taxonomy. Adjacent rows are off-core for this task and excluded from this task-specific pattern denominator. This is a taxonomy-covered core count, not a count of all domain-relevant literature; outside_taxonomy is not evidence that a gas-localization paper is irrelevant. Grounding adequacy is assessed separately using actual method relevance.",
+    "notes": "Reframe_as_solvable_object is most frequent at 9/25; closest papers still define identification relative to an assumed observation/transport class. These counts are informational and do not select a mechanism."
+  },
+  "grounding_adequacy": {
+    "entry_assertions": {"mode": "real", "table_columns": 9, "table_rows": 64, "canonical_fulltext_cache_present": true},
+    "fulltext_cache_summary": {"entries": 25, "failed": 7, "html_arxiv": 12, "pdf_paper_url_pymupdf": 6},
+    "method_read_paper_ids": ["arxiv:2608.16221v1", "semanticscholar:fb214b8cbae18ea03c0a852ab3097b570c5ac29f", "arxiv:2608.00050v1", "openalex:W4417045481", "arxiv:2404.03152v3"],
+    "routing_basis": "At least five individually method-relevant papers cover physical conditional source inference, mobile sensor dynamics, source-strength/transport inversion, explicit ambiguity diagnostics and calibration confounding. This clears the sparse-grounding criterion independently of pattern counts. Only a scoped residue is established, not literature-wide novelty or a feasible solution.",
+    "limitations": ["Several other papers have abstract-only or method-thin cache entries; no strong residue is inferred from those records", "The recent corpus and host-recalled anchors are not a completed collision search", "The current raw metadata was consulted for provenance and relevance; the strongest residues above override earlier abstract-only wording in lit_table"]
+  },
+  "phase2_hard_constraints": [
+    "Specify the estimand: actual source cell/location versus a simulator-calibration parameter or identified set. Do not silently substitute a loss-minimizing pseudo-true source for the physical source.",
+    "Do not claim location identification under unrestricted transport discrepancy, arbitrary unknown initial gas field and arbitrary source history. State the load-bearing restrictions, domain rationale and what existing observable evidence could contradict them.",
+    "Use the same-input ordinary Bayesian baseline under each identical model. Algebraic equality with correct Bayes is expected; source/nuisance pairing, shared random numbers, marginalization and do(s) notation are not standalone innovations.",
+    "Preserve the executed swapped-nuisance and proportional-source-strength impossibility cases, and complete nuisance identity across time. A common-nuisance contrast is not a proof about marginal observed laws.",
+    "A known zero initial sensor state does not mean a zero initial environmental plume. No-flux continuous positive injection has no finite-mass steady state; arbitrary warm-up does not establish the missing ventilation or plume-age contract.",
+    "The first zero wind message is an initialization placeholder. A GMRF service reception time does not supply the age of its inputs. Pointwise wind covariance is not a calibrated joint space-time wind process; repeated unstamped observations in the current GMRF path do not justify independent nuisance samples.",
+    "Align gas/wind/pose by simulation timestamp and causal availability; count paused duplicate messages once and reject conflicts, regressions and missing required history. These are correctness prerequisites, not a new scientific contribution.",
+    "Adaptive sampling alone does not invalidate a correctly specified sequential likelihood conditioned on the observed past: for a known source-independent controller conditional on that past, policy factors cancel in source likelihood ratios. Do not invent inverse-propensity corrections or treat observed local wind as globally unbiased without establishing the relevant observation law and overlap.",
+    "Do not assume transport error is orthogonal to source sensitivity, low rank, independent of source, or bounded at a chosen scale merely to make identification succeed. Such restrictions require physical justification and an independently testable implication; gas fit alone is insufficient.",
+    "The updated input-contract audit establishes that the old MAP-chasing branch is conditional on cpirEnabled, so old A0/F00 differences mix estimator and controller changes. They are not evidence of a matched-controller M1 ablation. A future matched screen must share control code, parameters, action candidates and trigger rules and log the selected branch and input belief; only source belief and M2 inputs may differ within the authorized comparison.",
+    "CPU-only cheap checks; no new experimental seeds, source worlds, House runs, bank access/generation, algorithm changes or M3/policy redesign within ideation. Any later House execution must satisfy the existing launch preconditions and remain seed12-only development screening.",
+    "Do not claim a cure from this diagnosis. Phase 2 must choose its mechanism and expose its feasibility and falsification assumptions; failure to find one remains an honest outcome."
+  ],
+  "state": "proceed",
+  "ood_reasons": [],
+  "remedial_steps": []
+}

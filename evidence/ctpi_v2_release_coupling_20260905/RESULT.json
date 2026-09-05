@@ -1,0 +1,196 @@
+{
+  "status": "CONDITIONAL_JOINT_EMISSION_INFORMATION_ONLY_NOT_M1_PASS",
+  "fixed_path": {
+    "path": [
+      "X",
+      "X",
+      "X",
+      "X"
+    ],
+    "exact_total_variation": "0",
+    "optimal_equal_prior_success": "1/2",
+    "independent_gas_marginal_baseline_total_variation": "0",
+    "source_A_law_vs_independent_baseline_TV": "0",
+    "source_B_law_vs_independent_baseline_TV": "0",
+    "exact_observation_laws": [
+      {
+        "sensor_sequence": [
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "p_given_A": "1/8",
+        "p_given_B": "1/8",
+        "posterior_A_equal_prior": "1/2"
+      },
+      {
+        "sensor_sequence": [
+          "0",
+          "0",
+          "0",
+          "1/2"
+        ],
+        "p_given_A": "1/8",
+        "p_given_B": "1/8",
+        "posterior_A_equal_prior": "1/2"
+      },
+      {
+        "sensor_sequence": [
+          "0",
+          "0",
+          "1/2",
+          "1/4"
+        ],
+        "p_given_A": "1/8",
+        "p_given_B": "1/8",
+        "posterior_A_equal_prior": "1/2"
+      },
+      {
+        "sensor_sequence": [
+          "0",
+          "0",
+          "1/2",
+          "3/4"
+        ],
+        "p_given_A": "1/8",
+        "p_given_B": "1/8",
+        "posterior_A_equal_prior": "1/2"
+      },
+      {
+        "sensor_sequence": [
+          "0",
+          "1/2",
+          "1/4",
+          "1/8"
+        ],
+        "p_given_A": "1/8",
+        "p_given_B": "1/8",
+        "posterior_A_equal_prior": "1/2"
+      },
+      {
+        "sensor_sequence": [
+          "0",
+          "1/2",
+          "1/4",
+          "5/8"
+        ],
+        "p_given_A": "1/8",
+        "p_given_B": "1/8",
+        "posterior_A_equal_prior": "1/2"
+      },
+      {
+        "sensor_sequence": [
+          "0",
+          "1/2",
+          "3/4",
+          "3/8"
+        ],
+        "p_given_A": "1/8",
+        "p_given_B": "1/8",
+        "posterior_A_equal_prior": "1/2"
+      },
+      {
+        "sensor_sequence": [
+          "0",
+          "1/2",
+          "3/4",
+          "7/8"
+        ],
+        "p_given_A": "1/8",
+        "p_given_B": "1/8",
+        "posterior_A_equal_prior": "1/2"
+      }
+    ]
+  },
+  "moving_path": {
+    "path": [
+      "X",
+      "Y",
+      "X",
+      "Y"
+    ],
+    "exact_total_variation": "1/2",
+    "optimal_equal_prior_success": "3/4",
+    "independent_gas_marginal_baseline_total_variation": "0",
+    "source_A_law_vs_independent_baseline_TV": "1/2",
+    "source_B_law_vs_independent_baseline_TV": "1/2",
+    "exact_observation_laws": [
+      {
+        "sensor_sequence": [
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "p_given_A": "1/4",
+        "p_given_B": "1/4",
+        "posterior_A_equal_prior": "1/2"
+      },
+      {
+        "sensor_sequence": [
+          "0",
+          "0",
+          "0",
+          "1/2"
+        ],
+        "p_given_A": "1/4",
+        "p_given_B": "0",
+        "posterior_A_equal_prior": "1"
+      },
+      {
+        "sensor_sequence": [
+          "0",
+          "0",
+          "1/2",
+          "3/4"
+        ],
+        "p_given_A": "0",
+        "p_given_B": "1/4",
+        "posterior_A_equal_prior": "0"
+      },
+      {
+        "sensor_sequence": [
+          "0",
+          "1/2",
+          "1/4",
+          "1/8"
+        ],
+        "p_given_A": "0",
+        "p_given_B": "1/4",
+        "posterior_A_equal_prior": "0"
+      },
+      {
+        "sensor_sequence": [
+          "0",
+          "1/2",
+          "3/4",
+          "3/8"
+        ],
+        "p_given_A": "1/4",
+        "p_given_B": "0",
+        "posterior_A_equal_prior": "1"
+      },
+      {
+        "sensor_sequence": [
+          "0",
+          "1/2",
+          "3/4",
+          "7/8"
+        ],
+        "p_given_A": "1/4",
+        "p_given_B": "1/4",
+        "posterior_A_equal_prior": "1/2"
+      }
+    ]
+  },
+  "script_sha256": "214a9e832449adb446733b005f233fc9154432ff55b04ab2e5f94e4d1b85d3a6",
+  "contract_sha256": "f56ff029ab9e3c35fe1f7665e138bd4b3b10d4bf877d09a2eb69f0cc7cc5ea8c",
+  "limitations": [
+    "Known source-conditioned delay map is a load-bearing assumption, not supplied by local wind alone.",
+    "Bernoulli emissions are a test assumption, not the verified House release law.",
+    "Toy sensor is an exact causal recurrence, not the actual FOPDT implementation.",
+    "Motion is a diagnostic fixed path, not a proposed controller modification.",
+    "The exact joint Bayes reference obtains all the reported information; no novelty or superiority over that reference is claimed."
+  ]
+}

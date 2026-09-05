@@ -1,0 +1,92 @@
+{
+  "gap_closure_reject_check": {
+    "entries": [
+      {
+        "gap": "At the frontier leaf represented by arxiv:2605.13208v1, no retrieved work establishes whether candidate-source ordering remains valid when a single-UAV trajectory samples a turbulent plume whose observed-to-modeled relation changes across intermittent regimes rather than remaining globally monotone — stakes: a source can be ranked below a geometrically incompatible rival before accumulation, wasting the fixed flight budget and making conclusions from monotone-sensor evaluations fail to transfer to held-out GADEN houses.",
+        "main_pattern": "reframe_as_solvable_object",
+        "sub_pattern": "C00 (Reframe as a Solvable Object)",
+        "tactical_failure_mode_quoted": "The signature failure is treating the reframing as a mechanical wrapper: taking an established attribution, decomposition, or estimation tool and pointing it at a new input granularity, a new architecture, or a new domain without re-deriving why the resulting scores are faithful to the model. These papers supply the computation but not the justification — no causal validation that the identified components actually drive behavior (only correlation), no axiomatic or soundness argument for why the proposed definition is the 'real' importance, and no confound control, so a reviewer can point to a methodological artifact (a computation-granularity difference, a degenerate zero baseline, an off-manifold perturbation) that explains the result instead.",
+        "reject_lessons_evaluated": [
+          {
+            "lesson_quoted": "Pointing an off-the-shelf decomposition at a coarser input granularity without showing the coarser units preserve the signal reads as a wrapper, not a contribution.",
+            "candidate_match": "no",
+            "reasoning": "The candidate moves to finer causal transition edges, states exactly what normalization discards, and tests those edge pairings through a downstream intervention rather than merely coarsening an existing decomposition."
+          },
+          {
+            "lesson_quoted": "Porting a known attribution technique to a new architecture or domain while ignoring that technique's documented failure modes — and omitting comparisons to alternatives — leaves reviewers unable to see any unique benefit.",
+            "candidate_match": "yes",
+            "reasoning": "The candidate explicitly imports textbook monotone transport and sequence alignment into turbulent-plume evidence scoring but neither audits their documented alignment failure modes nor compares the proposed coupling against a same-token identity or alternative alignment baseline, so its unique benefit cannot be separated from edge preprocessing."
+          },
+          {
+            "lesson_quoted": "Proposing a new attribution definition without an axiomatic or causal argument for why it should count as ground-truth collapses the moment a reviewer asks why this is the real importance.",
+            "candidate_match": "borderline",
+            "reasoning": "The three-arm replay causally tests temporal pairing, but the candidate does not derive why unit-mass normalization and direction-first lexicographic ordering are the faithful definition of source evidence rather than merely one workable score."
+          },
+          {
+            "lesson_quoted": "Conflating a methodological artifact — a computation-granularity difference, a degenerate zero baseline — with genuine signal undermines the entire premise once the confound is identified.",
+            "candidate_match": "no",
+            "reasoning": "Common-informative filtering, an identity fallback, and explicit classification of score-invariant shifts as control failures prevent zero-variation or invariance artifacts from being counted as confirmation."
+          },
+          {
+            "lesson_quoted": "Building a suppression or privacy method without formalizing the threat model leaves the central guarantee unverifiable regardless of strong empirical numbers.",
+            "candidate_match": "no",
+            "reasoning": "The candidate is neither a suppression nor a privacy method, so this lesson is inapplicable."
+          },
+          {
+            "lesson_quoted": "Surveying or recombining fragmented methods without a unifying axis or a decisive controlled experiment yields a contribution reviewers dismiss as anecdotal.",
+            "candidate_match": "no",
+            "reasoning": "Causal observation-field edges are the unifying axis, and the preregistered aligned-versus-shifted replay supplies a decisive controlled experiment on the downstream ordering metric."
+          }
+        ],
+        "verdict": "triggered"
+      }
+    ],
+    "verdict": "triggered",
+    "reasoning": "The only entry, the turbulent-plume ordering gap under `reframe_as_solvable_object`, triggers the quoted reject lesson on porting a known attribution technique while omitting its failure-mode audit and comparisons to close alternatives. Its pairing intervention is useful, but it cannot establish whether gains come from the proposed chronological transport, the edge representation, or an arbitrary alignment choice; the separate lesson on grounding the new score is additionally borderline."
+  },
+  "recipe_application_check": {
+    "entries": [
+      {
+        "gap": "At the frontier leaf represented by arxiv:2605.13208v1, no retrieved work establishes whether candidate-source ordering remains valid when a single-UAV trajectory samples a turbulent plume whose observed-to-modeled relation changes across intermittent regimes rather than remaining globally monotone — stakes: a source can be ranked below a geometrically incompatible rival before accumulation, wasting the fixed flight budget and making conclusions from monotone-sensor evaluations fail to transfer to held-out GADEN houses.",
+        "sub_pattern": "C00 (Reframe as a Solvable Object)",
+        "tactical_pattern_quoted": "This cluster recasts an opaque transparency question about an already-trained model or dataset — which feature/datum/internal component is responsible, how uncertain a prediction is, what a hidden representation encodes — as a concrete measurement over a well-studied object: a manifold-constrained counterfactual optimization, a submodular subset selection, an expectation/estimator over marginal statistics, an additive decomposition into a (often sparse) basis, or an influence/Shapley score accumulated along the optimization trajectory. The decisive move is choosing the right unit of analysis and the right faithfulness constraint so the resulting scores reflect the model's actual computation rather than an off-distribution or post-hoc artifact — e.g., searching counterfactuals only on the learned data manifold, decomposing into monosemantic sparse directions before causal tracing, or embedding the explanatory predictors as the primary decision representation.",
+        "instantiation_in_core_mechanism": "Steps 2-6 make causal observation/field edges the attribution atoms, map their normalized transition mass to the well-understood object of a chronological noncrossing transport coupling, evaluate candidate responsibility with `T_s`, and embed that score as the primary evidence-order representation while preserving the incumbent likelihood multiset; step 7 perturbs the identified pairing before scoring and checks the downstream behavior. This performs C00's measurement, fixed-unit, faithfulness-constraint, and causal-intervention moves rather than only invoking the parent reframe label.",
+        "verdict": "applied"
+      }
+    ],
+    "verdict": "applied",
+    "reasoning": "The sole entry instantiates C00 through edge-level transport attribution over frozen fields, a multiset-preserving decision interface, and a pre-score pairing intervention; the concern is the justification of the selected score, not absence of the cluster's tactical move."
+  },
+  "anti_pattern_check": {
+    "composition_set": [
+      "reframe_as_solvable_object",
+      "controlled_diagnostic_design"
+    ],
+    "matched_pattern_id": null,
+    "required_mitigation_quoted": null,
+    "mitigation_substantively_delivered": "n/a",
+    "reasoning": "The composition contains no `heterogeneous_decomposition`, so none of the three reject-favored pairs matches."
+  },
+  "paper_pointed_threat": {
+    "threat_paper_id": "arxiv:2605.13208v1",
+    "threat_source": "lit_table",
+    "threat_channel": null,
+    "subsumption_argument": "This is the closest domain competitor because it already makes concentration calibration unnecessary by ranking accumulated measured and modeled concentrations. The candidate's claim therefore stands or falls on showing that causal edge transport adds held-out source ordering beyond that global empirical-rank solution; the retrieved record does not subsume the candidate because it discards magnitude and lacks causal adjacency, candidate-specific source-over-carrier transport, and a pre-pairing null.",
+    "addressable_via": "not_needed",
+    "parametric_family_concern": null
+  },
+  "falsification_structure_check": {
+    "minimal_experiment_named": "yes",
+    "outcome_metric_named": "yes",
+    "load_bearing_variable": "the aligned candidate-by-edge transport object `O_s` together with its lexicographic score `T_s`",
+    "negative_control_target": "outcome_metric",
+    "numeric_bar_provenance": "none",
+    "verdict": "sound",
+    "reasoning": "The fixed three-arm replay names the setup, predicts an increase in held-out true-source pairwise ordering win rate, and intervenes on the named transport object before scoring so that the downstream win rate should return toward or below myopic. The 106 comparisons are an exempt experiment-scale count, and no numeric outcome bar is asserted."
+  },
+  "blocking_findings_disposition": [],
+  "verdict": "abandon",
+  "verdict_layer": "hard_floor",
+  "verdict_rationale": "`gap_closure_reject_check.entries[0].reject_lessons_evaluated[1].lesson_quoted` is triggered: the proposal ports textbook chronological transport/sequence alignment into a new domain without auditing its documented failure modes or comparing against a close same-token alignment, so the claimed transport contribution is not identifiable. Although `recipe_application_check.entries[0].verdict` is applied, the anti-pattern composition does not match, `arxiv:2605.13208v1` is differentiated rather than subsuming, and the falsification structure is sound, the triggered C00 Reject lesson mechanically activates the hard floor; repairing it would require a redesigned candidate-generation cycle rather than Phase 3.3 wording edits.",
+  "revision_targets": []
+}
