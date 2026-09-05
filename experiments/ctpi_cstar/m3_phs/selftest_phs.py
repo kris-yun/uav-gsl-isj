@@ -1,6 +1,16 @@
 from __future__ import annotations
 
-from phs import marginalize_region_laws, decide_from_region_placements
+from pathlib import Path
+import sys
+
+# Make this test directly runnable as
+#   python experiments/ctpi_cstar/m3_phs/selftest_phs.py
+# without installing the research package.
+CSTAR_ROOT = Path(__file__).resolve().parents[1]
+if str(CSTAR_ROOT) not in sys.path:
+    sys.path.insert(0, str(CSTAR_ROOT))
+
+from m3_phs.phs import marginalize_region_laws, decide_from_region_placements
 
 
 def close(a, b, tol=1e-12):
