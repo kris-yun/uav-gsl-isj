@@ -1,0 +1,74 @@
+{
+  "project": "CSTAR causal source-transport active resolution",
+  "date": "2026-09-06",
+  "base_commit": "2387668ec6345d273a8d630af069d65af710850f",
+  "branch": "g3-cstar-causal-redesign-20260906",
+  "handoff_version": 2,
+  "read_order": [
+    "docs/CTPI_CSTAR_CAUSAL_THREE_MODULE_THEORY_20260906.md",
+    "docs/CTPI_CSTAR_TERMINOLOGY_AND_LOADBEARING_CORRECTION_20260906.md",
+    "docs/CTPI_CSTAR_CURRENT_CODE_ALIGNMENT_20260906.md",
+    "docs/CTPI_CSTAR_M2_SPARSE_WIND_CONTRACT_20260906.md",
+    "docs/CTPI_CSTAR_COMPOSITION_THEORY_20260906.md",
+    "docs/CTPI_CSTAR_2026_DISTANT_FIELD_LITERATURE_LEDGER.md",
+    "docs/CODEX_CSTAR_IMPLEMENTATION_CONTRACT_20260906.md",
+    "experiments/ctpi_cstar/CSTAR_INTERFACE_CONTRACT.json"
+  ],
+  "authoritative_corrections": {
+    "M1": "source posterior must be load-bearing through nuisance-constrained zS; zN/unconstrained hidden state cannot bypass zS into source score",
+    "M2": "length-H quantity is encounter_cdf=P(T<=h); route_committor is scalar P(encounter before route/horizon termination)"
+  },
+  "scientific_identity": {
+    "main_innovation": "causal representation plus action-intervention closed loop for robotic gas source localization",
+    "deployment": "bank-free zero-shot",
+    "M1": "PICR from single-cell perturbation biology + causal representation theory",
+    "M2": "CPO from chemical-physics rare-event/committor theory + gray-box scientific ML",
+    "M3": "PHS from prospective hippocampal sweeps + relative-evidence information symmetry"
+  },
+  "executable_references": [
+    "experiments/ctpi_cstar/cstar_reference.py",
+    "experiments/ctpi_cstar/m1_picr/model.py",
+    "experiments/ctpi_cstar/m2_cpo/model.py",
+    "experiments/ctpi_cstar/m3_phs/phs.py",
+    "experiments/ctpi_cstar/selftest_cstar_reference.py",
+    "experiments/ctpi_cstar/selftest_models.py",
+    "experiments/ctpi_cstar/m3_phs/selftest_phs.py",
+    "experiments/ctpi_cstar/run_reference_selftests.py"
+  ],
+  "first_command": "python experiments/ctpi_cstar/run_reference_selftests.py",
+  "offline_gate_order": [
+    "reference/model selftests",
+    "exact code-alignment audit and hashes",
+    "M1 PICR intervention-pair dataset + causal gate",
+    "M2 CPO first-passage/route-committor dataset + predictive gate",
+    "M3 PHS held-out prospective-sweep gate with frozen baseline provider",
+    "A0/F00/F10/F11 shadow composition",
+    "runtime integration only if every prior gate survives"
+  ],
+  "incremental_arms": {
+    "A0": "Classic PMFS",
+    "F00": "PICR + native PMFS information planner via coefficient-free posterior-to-native-source-weight adapter",
+    "F10": "PICR + PHS + frozen baseline route-law provider",
+    "F11": "PICR + PHS + full CPO",
+    "M1": "F00-A0",
+    "M3": "F10-F00",
+    "M2": "F11-F10",
+    "full": "F11-A0"
+  },
+  "forbidden": [
+    "new House/GADEN experiment before offline gates",
+    "new seed search",
+    "production edit of legacy CPIR/CTPI before gates",
+    "ordinary Bayes marginalization relabeled as causal",
+    "M1 source score bypass around zS",
+    "held-out-House predictive bank at runtime",
+    "mandatory oracle/global wind field",
+    "future gas/wind or source truth as runtime input",
+    "House-specific tuning",
+    "carrier centroid replacement",
+    "20x posterior/explore-exploit planner coefficient",
+    "invented straight route through obstacles",
+    "negative result rewritten as PASS"
+  ],
+  "next_agent_instruction": "Execute the frozen contract. Do not redesign the three modules. Stop and report at the first failed scientific gate; do not tune around a failed causal/predictive/planning falsifier."
+}
