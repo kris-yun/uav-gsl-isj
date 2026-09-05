@@ -1,5 +1,5 @@
 {
-  "version": "CSTAR_INTERFACE_V1_20260906",
+  "version": "CSTAR_INTERFACE_V2_20260906",
   "deployment_identity": {
     "site_specific_predictive_bank": false,
     "house_id_runtime_input": false,
@@ -16,17 +16,17 @@
       "candidates": "arbitrary current-map free source cells or regions"
     },
     "outputs": {
-      "source_posterior": "normalized probability over current candidates",
-      "source_representation": "nuisance-invariant representation used by candidate scorer",
-      "nuisance_representation": "transport/sensor context representation for diagnostics/reconstruction",
+      "source_posterior": "normalized probability over current candidates; scorer is load-bearing through source_representation zS",
+      "source_representation": "nuisance-constrained representation used directly by candidate scorer",
+      "nuisance_representation": "transport/sensor context representation for diagnostics/reconstruction; forbidden as a direct source-scoring bypass",
       "amplitude_state": "source-strength/release nuisance estimate or distributional state",
       "valid": "boolean",
       "abstain_reason": "explicit reason when evidence contract is insufficient"
     },
-    "forbidden": ["house_id", "transport_member_id", "source_truth", "future_frame", "predictive_bank_lookup"]
+    "forbidden": ["house_id", "transport_member_id", "source_truth", "future_frame", "predictive_bank_lookup", "source_score_bypass_around_zS"]
   },
   "M2_CPO": {
-    "responsibility": "predict action-intervention-conditioned future observation law for one source hypothesis",
+    "responsibility": "predict action-intervention-conditioned first-passage/encounter law for one source hypothesis",
     "inputs": {
       "source_hypothesis": "one candidate cell/region, marginalized over a frozen placement quadrature when region-valued",
       "geometry": "navigation-height geometry",
@@ -36,7 +36,8 @@
     },
     "outputs": {
       "first_hit_prob": "length H+1 categorical law for T=1..H and T>H",
-      "committor": "length H monotone P(T<=h)",
+      "encounter_cdf": "length H monotone first-passage CDF F_h=P(T<=h)",
+      "route_committor": "scalar probability of reaching the gas-encounter set before route/horizon termination; equals 1-first_hit_prob[-1]",
       "logppm_mean": "length H conditional/predictive log-ppm location",
       "logppm_scale": "length H positive predictive scale",
       "valid": "boolean",
@@ -48,7 +49,7 @@
     "responsibility": "choose the future intervention that most separates currently competing source hypotheses",
     "inputs": {
       "source_posterior": "M1 normalized posterior",
-      "route_laws": "M2 categorical future law for every source x route",
+      "route_laws": "M2 first-passage categorical future law for every source x route",
       "feasible_routes": "navigation-approved equal-horizon route set",
       "travel_distance": "tie-break diagnostic only"
     },
@@ -65,7 +66,7 @@
     "sensor causal state advances",
     "M1 updates source posterior from executed observations",
     "navigation constructs feasible future routes",
-    "M2 predicts source-conditioned law under do(route)",
+    "M2 predicts source-conditioned first-passage law under do(route)",
     "M3 selects route from M1 posterior and M2 laws",
     "robot executes selected route",
     "new actual observations return to M1"
