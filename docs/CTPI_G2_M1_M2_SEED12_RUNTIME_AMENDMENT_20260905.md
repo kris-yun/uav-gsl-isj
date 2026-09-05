@@ -32,3 +32,19 @@ posterior-weighted predictive variance when a cell's total posterior weight is
 zero.  This introduces no floor, threshold, or tunable value.  The runtime
 logs the number of zero-mass cells.  Because the algorithm binary changes, the
 valid run must restart all A0/F00/F01 arms under a fresh R3 root.
+
+## R3 CRLF manifest compatibility defect
+
+R3 completed all H01 arms and passed the H01 causal-chain check.  H02/A0 also
+completed, but H02/F00 failed during CPIR initialization with
+`CPIR_CELL_MANIFEST_HEADER`.  The protected bank integrity report remained
+PASS.  The cause was a parser-only platform mismatch: H02/H03 manifests use
+CRLF line endings, while `std::getline` removes only LF and the C++ code
+compared the retained trailing carriage return as part of the header.  H01's
+LF manifest did not expose the defect.
+
+The repair strips one trailing carriage return from each in-memory manifest
+line before parsing.  It neither rewrites nor regenerates any protected bank,
+and all expected bank hashes remain unchanged.  R3 is runtime-invalid for the
+cross-House claim.  To keep one exact commit and binary across all Houses and
+arms, the valid run must restart from A0 under a fresh R4 root.

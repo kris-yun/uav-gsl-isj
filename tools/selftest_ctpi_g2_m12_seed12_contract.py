@@ -18,6 +18,7 @@ def main() -> int:
     crosshouse = (ROOT / "closed_loop/ctpi/run_ctpi_g2_m12_seed12_crosshouse_20260905.sh").read_text()
     bridge_prep = (ROOT / "tools/prepare_ctpi_g2_m12_vgr_bridge_overlay.py").read_text()
     simulations = (ROOT / "ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp").read_text()
+    cpir = (ROOT / "ros2_package/src/gsl_server/algorithms/PMFS/CPIR.cpp").read_text()
 
     require(pmfs, 'ctpiPlannerEnabled = pfdiMode == "ctpi_f10" || pfdiMode == "ctpi_f11";')
     require(pmfs, 'ctpiTSDCEnabled = pfdiMode == "ctpi_f01" || pfdiMode == "ctpi_f11";')
@@ -37,6 +38,8 @@ def main() -> int:
     require(simulations, "if (statistics.weight_sum > 0.0)")
     require(simulations, "varianceOfHitProb[cellI] = 0.0;")
     require(simulations, 'GSL_INFO("[CTPI-DIAG] planner variance zero-mass cells={}"')
+    require(cpir, "void stripTrailingCarriageReturn(std::string& line)")
+    require(cpir, "stripTrailingCarriageReturn(line);")
     print("CTPI_G2_M12_F01_STATIC_CONTRACT=PASS")
     print("CTPI_G2_M12_M3_DISABLED_IN_F01=PASS")
     return 0

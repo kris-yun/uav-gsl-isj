@@ -29,6 +29,12 @@ namespace
         return fields;
     }
 
+    void stripTrailingCarriageReturn(std::string& line)
+    {
+        if (!line.empty() && line.back() == '\r')
+            line.pop_back();
+    }
+
     std::array<int, 4> carrierRect(const std::string& id)
     {
         std::array<int, 4> result{};
@@ -62,11 +68,15 @@ namespace GSL
 
         std::ifstream cells(root / "cell_manifest.csv");
         std::string line;
-        if (!std::getline(cells, line) || line != "stream_ordinal,native_cell_index,x,y")
+        if (!std::getline(cells, line))
+            throw std::runtime_error("CPIR_CELL_MANIFEST_HEADER");
+        stripTrailingCarriageReturn(line);
+        if (line != "stream_ordinal,native_cell_index,x,y")
             throw std::runtime_error("CPIR_CELL_MANIFEST_HEADER");
         size_t expectedOrdinal = 0;
         while (std::getline(cells, line))
         {
+            stripTrailingCarriageReturn(line);
             const auto fields = splitCsv(line);
             if (fields.size() != 4 || std::stoull(fields[0]) != expectedOrdinal)
                 throw std::runtime_error("CPIR_CELL_MANIFEST_ROW");
