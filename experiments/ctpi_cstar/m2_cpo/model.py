@@ -10,7 +10,8 @@ import torch.nn.functional as F
 class CPOOutput:
     hazards: torch.Tensor
     first_hit_prob: torch.Tensor
-    committor: torch.Tensor
+    encounter_cdf: torch.Tensor
+    route_committor: torch.Tensor
     logppm_mean: torch.Tensor
     logppm_scale: torch.Tensor
 
@@ -37,6 +38,9 @@ class CPOResidualOperator(nn.Module):
     do(route). They must not contain source truth, future gas or future wind.
     `prior_hazard_logit` and `prior_logppm_mean` come from a named causal prior
     such as local-persistence-broadcast + V2 Transport/FOPDT.
+
+    Terminology: encounter_cdf[:,h] is P(T<=h); route_committor is the scalar
+    probability of reaching the encounter set before route termination.
     """
 
     def __init__(self, feature_dim: int, d_model: int = 96,
@@ -89,10 +93,13 @@ class CPOResidualOperator(nn.Module):
         if valid_step is not None:
             hazards = torch.where(valid_step, hazards, torch.zeros_like(hazards))
         law = hazards_to_first_passage_torch(hazards)
-        committor = torch.cumsum(law[:, :-1], dim=1)
+        encounter_cdf = torch.cumsum(law[:, :-1], dim=1)
+        route_committor = encounter_cdf[:, -1]
         mean = prior_logppm_mean + self.mean_delta(x).squeeze(-1)
         scale = F.softplus(self.scale_head(x).squeeze(-1)) + 1e-4
-        return CPOOutput(hazards, law, committor, mean, scale)
+        return CPOOutput(
+            hazards, law, encounter_cdf, route_committor, mean, scale
+        )
 
 
 def cpo_first_passage_nll(out: CPOOutput,
