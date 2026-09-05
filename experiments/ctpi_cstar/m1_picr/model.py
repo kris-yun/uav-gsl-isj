@@ -67,9 +67,9 @@ class PICRModel(nn.Module):
         self.amplitude_head = nn.Sequential(
             nn.Linear(d_model, d_model // 2), nn.SiLU(), nn.Linear(d_model // 2, 2)
         )
-        # token state + candidate-relative causal geometry [dx,dy,dist,along,cross]
+        # Load-bearing source path: zS + known candidate-relative causal geometry.
         self.evidence = nn.Sequential(
-            nn.Linear(d_model + 5, d_model), nn.SiLU(),
+            nn.Linear(z_source_dim + 5, d_model), nn.SiLU(),
             nn.Linear(d_model, d_model // 2), nn.SiLU(), nn.Linear(d_model // 2, 1),
         )
 
@@ -107,7 +107,7 @@ class PICRModel(nn.Module):
         pooled = self._masked_mean(h, valid_time)
         z_s = self.source_proj(pooled)
         z_n = self.nuisance_proj(pooled)
-        # log-amplitude location + unconstrained scale parameter; trainer applies softplus to scale.
+        # log-amplitude location + unconstrained scale; trainer applies softplus to scale.
         amp = self.amplitude_head(pooled)
 
         pose = history[..., 4:6]
@@ -122,17 +122,21 @@ class PICRModel(nn.Module):
             - delta[..., 1:2] * unit[:, None, :, 0:1]
         ).abs()
         rel = torch.cat([delta, dist, along, cross], dim=-1)
-        ht = h[:, None, :, :].expand(-1, n, -1, -1)
-        ev = self.evidence(torch.cat([ht, rel], dim=-1)).squeeze(-1)
 
         support = valid_time[:, None, :].expand(-1, n, -1)
         if transport_support is not None:
             support = support & transport_support
         count = support.sum(dim=-1)
-        # Mean evidence avoids rewarding a candidate merely because it has more
-        # supported samples. Unsupported candidates get an explicit finite floor.
-        ev_sum = (ev * support.to(ev.dtype)).sum(dim=-1)
-        logits = ev_sum / count.clamp_min(1).to(ev.dtype)
+        w = support.to(rel.dtype).unsqueeze(-1)
+        rel_summary = (
+            (rel * w).sum(dim=2)
+            / count.clamp_min(1).to(rel.dtype).unsqueeze(-1)
+        )
+        zs = z_s[:, None, :].expand(-1, n, -1)
+        # Critical causal rule: posterior can only use nuisance-constrained zS
+        # plus known candidate-relative physical context. It cannot bypass zS
+        # through the unconstrained nuisance/temporal hidden state.
+        logits = self.evidence(torch.cat([zs, rel_summary], dim=-1)).squeeze(-1)
         logits = torch.where(count > 0, logits, torch.full_like(logits, -1.0e4))
         posterior = torch.softmax(logits, dim=-1)
         return PICROutput(logits, posterior, z_s, z_n, amp, count)
