@@ -1,0 +1,45 @@
+{
+  "contract": "CTPI_G2_M1_M2_SEED12_CROSSHOUSE_PREREGISTRATION_V1",
+  "date": "2026-09-05",
+  "trigger": "second post-H2 M3 candidate failed the idea-level hard gate",
+  "houses": ["H01", "H02", "H03"],
+  "seed": 12,
+  "horizon_s": 240.0,
+  "cadence": {
+    "steps_source_update": 3,
+    "max_warmup_iterations": 3,
+    "min_warmup_iterations": 1,
+    "measurement_settle_samples": 0,
+    "measurement_block_samples": 10,
+    "max_updates_per_stop": 8
+  },
+  "arms": {
+    "A0": "frozen native PMFS baseline; M1 off, M2 off, M3 off",
+    "F00": "frozen G2 M1; M2 off, M3 off",
+    "F01": "frozen G2 M1 plus frozen G2 M2 most-recent-wind transport; M3 off"
+  },
+  "comparisons": {
+    "M1": "F00 minus A0",
+    "M2": "F01 minus F00",
+    "M1_M2": "F01 minus A0"
+  },
+  "primary_metric": "240 s localization-error AUC in m*s; lower is better",
+  "secondary_metrics": ["final localization error in m", "time to 2 m in s"],
+  "module_screen_pass_each": [
+    "strict primary-metric wins in at least two of three Houses",
+    "mean paired primary-metric delta is negative",
+    "final-error losses are fewer than three of three Houses"
+  ],
+  "joint_screen_pass": "both M1 and M2 satisfy their module screen",
+  "interpretation": "a one-seed cross-House screen can establish cross-environment closed-loop activation and justify a multi-seed confirmation, but is not a final paper-level effectiveness proof",
+  "truth_boundary": "source coordinates are used only by the post-run evaluator and existing result logger; no outcome is read between arms and no parameter is changed after launch",
+  "forbidden": [
+    "M1 or M2 formula changes",
+    "M3 activation",
+    "per-House tuning",
+    "seed rescue",
+    "runtime parameter tuning",
+    "dropping completed losing Houses"
+  ],
+  "runtime_failure_rule": "report INVALID separately from scientific NO_GO; do not impute or silently rerun with changed settings"
+}

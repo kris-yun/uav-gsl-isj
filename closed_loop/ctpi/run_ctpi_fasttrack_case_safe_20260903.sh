@@ -11,7 +11,7 @@ set -Eeo pipefail
 
 HOUSE="${HOUSE:?set HOUSE=H01,H02,H03 (or House01,House02,House03)}"
 SEED="${SEED:?set SEED explicitly}"
-ARM="${ARM:?set ARM=A0,F00,F10,F11}"
+ARM="${ARM:?set ARM=A0,F00,F01,F10,F11}"
 RUN_ROOT="${RUN_ROOT:?set RUN_ROOT}"
 PFDI_INSTALL_ROOT="${PFDI_INSTALL_ROOT:?set PFDI_INSTALL_ROOT to the build of the current frozen commit}"
 STEPS_SOURCE_UPDATE="${STEPS_SOURCE_UPDATE:?recover STEPS_SOURCE_UPDATE from the authoritative paired PMFS manifest}"
@@ -30,6 +30,8 @@ REALTIME_FACTOR="${REALTIME_FACTOR:-1.0}"
 NAV_COMMAND_QUANTUM_S="${NAV_COMMAND_QUANTUM_S:-2.0}"
 FRAME_QUERY_WAIT_SEC="${FRAME_QUERY_WAIT_SEC:-120}"
 GMRF_UPDATE_ON_NEW_OBSERVATION_ONLY="${GMRF_UPDATE_ON_NEW_OBSERVATION_ONLY:-false}"
+METHOD="${METHOD:-CTPI_CREL_TSDC_PIP}"
+METHOD_FAMILY="${METHOD_FAMILY:-ctpi_three_module}"
 
 python3 - "${TIMEOUT_SEC}" <<'PY_HORIZON'
 import sys
@@ -78,6 +80,7 @@ esac
 case "${ARM}" in
   A0) PFDI_MODE="off" ;;
   F00) PFDI_MODE="ctpi_f00" ;;
+  F01) PFDI_MODE="ctpi_f01" ;;
   F10) PFDI_MODE="ctpi_f10" ;;
   F11) PFDI_MODE="ctpi_f11" ;;
   *) echo "CTPI_FASTTRACK_UNSUPPORTED_ARM=${ARM}" >&2; exit 2 ;;
@@ -137,6 +140,8 @@ cat >"${RUN_DIR}/formal_runtime_manifest.json" <<EOF
   "seed": ${SEED},
   "arm": "${ARM}",
   "pfdi_mode": "${PFDI_MODE}",
+  "method": "${METHOD}",
+  "method_family": "${METHOD_FAMILY}",
   "git_commit": "${GIT_COMMIT}",
   "algorithm_sha256": "${ALGORITHM_SHA256}",
   "bank_summary_sha256": "${BANK_SUMMARY_SHA}",
@@ -218,7 +223,7 @@ fi
 
 ARGS=(
   "vgr_data_path:=${VGR_DATA}" "config_id:=${CONFIG_ID}" "algorithm:=PMFS"
-  "method:=CTPI_CREL_TSDC_PIP" "method_family:=ctpi_three_module" "ablation_id:=${ARM}"
+  "method:=${METHOD}" "method_family:=${METHOD_FAMILY}" "ablation_id:=${ARM}"
   "run_id:=${RUN_ID}" "run_uuid:=${RUN_ID}" "run_dir:=${RUN_DIR}" "output_dir:=${RUN_ROOT}"
   "git_commit:=${GIT_COMMIT}" "code_manifest_sha256:=${ALGORITHM_SHA256}"
   "environment_id:=${ENV_ID}" "scenario_id:=${SCENARIO_ID}" "dataset:=${ENV_ID}"

@@ -78,15 +78,15 @@ namespace GSL
         tadmEnabled = getParam<bool>("tadm_enabled", false);
         pfdiMode = getParam<std::string>("pfdi_mode", tadmEnabled ? "joint" : "off");
         if (pfdiMode != "off" && pfdiMode != "cpir_m1" && pfdiMode != "cpir_a1" && pfdiMode != "cpir_a2" &&
-            pfdiMode != "cpir_a3" && pfdiMode != "cpir_m1_m3" && pfdiMode != "ctpi_f00" && pfdiMode != "ctpi_f10" &&
+            pfdiMode != "cpir_a3" && pfdiMode != "cpir_m1_m3" && pfdiMode != "ctpi_f00" && pfdiMode != "ctpi_f01" && pfdiMode != "ctpi_f10" &&
             pfdiMode != "ctpi_f11" && pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" &&
             pfdiMode != "al" && pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" &&
             pfdiMode != "ec_edcl" && pfdiMode != "ec_edcl_shadow")
-            throw std::invalid_argument("pfdi_mode must be off, cpir_m1, cpir_a1, cpir_a2, cpir_a3, cpir_m1_m3, ctpi_f00, ctpi_f10, ctpi_f11, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
+            throw std::invalid_argument("pfdi_mode must be off, cpir_m1, cpir_a1, cpir_a2, cpir_a3, cpir_m1_m3, ctpi_f00, ctpi_f01, ctpi_f10, ctpi_f11, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
         ctpiPlannerEnabled = pfdiMode == "ctpi_f10" || pfdiMode == "ctpi_f11";
-        ctpiTSDCEnabled = pfdiMode == "ctpi_f11";
+        ctpiTSDCEnabled = pfdiMode == "ctpi_f01" || pfdiMode == "ctpi_f11";
         cpirEnabled = pfdiMode == "cpir_m1" || pfdiMode == "cpir_a1" || pfdiMode == "cpir_a2" || pfdiMode == "cpir_a3" || pfdiMode == "cpir_m1_m3" ||
-                      pfdiMode == "ctpi_f00" || pfdiMode == "ctpi_f10" || pfdiMode == "ctpi_f11";
+                      pfdiMode == "ctpi_f00" || pfdiMode == "ctpi_f01" || pfdiMode == "ctpi_f10" || pfdiMode == "ctpi_f11";
         tadmEnabled = pfdiMode != "off" && !cpirEnabled;
         if (cpirEnabled)
         {

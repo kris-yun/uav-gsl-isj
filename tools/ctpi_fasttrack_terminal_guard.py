@@ -29,7 +29,7 @@ def csv_rows(path: Path) -> int:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--run-dir", type=Path, required=True)
-    ap.add_argument("--arm", choices=("A0", "F00", "F10", "F11"), required=True)
+    ap.add_argument("--arm", choices=("A0", "F00", "F01", "F10", "F11"), required=True)
     ap.add_argument("--output", type=Path, required=True)
     args = ap.parse_args()
     root = args.run_dir.resolve()

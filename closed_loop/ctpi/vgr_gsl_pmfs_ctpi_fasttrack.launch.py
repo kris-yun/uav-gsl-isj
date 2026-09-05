@@ -50,13 +50,20 @@ def _validate_ctpi_launch(context):
     """Fail closed before starting ROS nodes when the frozen contract drifts."""
     value = lambda name: LaunchConfiguration(name).perform(context)
     mode = value('pfdi_mode')
-    allowed = {'off', 'ctpi_f00', 'ctpi_f10', 'ctpi_f11'}
+    identity = (value('method'), value('method_family'))
+    if identity == ('CTPI_CREL_TSDC_PIP', 'ctpi_three_module'):
+        allowed = {'off', 'ctpi_f00', 'ctpi_f10', 'ctpi_f11'}
+    elif identity == ('CTPI_G2_M1_M2', 'ctpi_two_module'):
+        allowed = {'off', 'ctpi_f00', 'ctpi_f01'}
+    else:
+        raise RuntimeError('CTPI_METHOD_IDENTITY_MISMATCH')
     if mode not in allowed:
         raise RuntimeError(f'CPIR_MODE_NOT_EXPLICIT:{mode}')
     if value('algorithm') != 'PMFS':
         raise RuntimeError('CPIR_ALGORITHM_MUST_BE_PMFS')
     expected_ablation = {
-        'off': 'A0', 'ctpi_f00': 'F00', 'ctpi_f10': 'F10', 'ctpi_f11': 'F11',
+        'off': 'A0', 'ctpi_f00': 'F00', 'ctpi_f01': 'F01',
+        'ctpi_f10': 'F10', 'ctpi_f11': 'F11',
     }[mode]
     if value('ablation_id') != expected_ablation:
         raise RuntimeError(
@@ -80,9 +87,6 @@ def _validate_ctpi_launch(context):
         raise RuntimeError('CPIR_SENSOR_CONFIG_MUST_MATCH_FROZEN_FOPDT')
     if abs(float(value('ctpi_m3_horizontal_speed_mps')) - 0.4) > 1.0e-12:
         raise RuntimeError('CTPI_M3_HORIZONTAL_SPEED_MUST_BE_0P4')
-    if value('method') != 'CTPI_CREL_TSDC_PIP' or value('method_family') != 'ctpi_three_module':
-        raise RuntimeError('CTPI_METHOD_IDENTITY_MISMATCH')
-
     # Do not infer the authoritative source-update/warmup cadence from an old
     # development replay. The formal runner must recover these values from the
     # frozen paired PMFS parameter manifest and state them explicitly.
