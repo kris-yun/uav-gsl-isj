@@ -11,9 +11,6 @@ import math
 from typing import Sequence
 
 
-_TOL = 1e-12
-
-
 def _finite_nonnegative(values: Sequence[float], name: str) -> list[float]:
     out = [float(v) for v in values]
     if not out or any((not math.isfinite(v) or v < 0.0) for v in out):
@@ -44,19 +41,20 @@ def hazards_to_first_passage(hazards: Sequence[float]) -> list[float]:
     survive = 1.0
     law: list[float] = []
     for h in hs:
-        p = survive * h
-        law.append(p)
+        law.append(survive * h)
         survive *= 1.0 - h
     law.append(survive)
-    # Round-off only. Never clip a materially invalid law.
     if any(p < -1e-14 or not math.isfinite(p) for p in law):
         raise ValueError("CSTAR_FIRST_PASSAGE_NUMERIC")
-    law = [max(0.0, p) for p in law]
-    return normalize_probability(law)
+    return normalize_probability([max(0.0, p) for p in law])
 
 
-def first_passage_to_committor(first_passage: Sequence[float]) -> list[float]:
-    """Return q_h=P(T<=h), excluding the final no-hit category."""
+def first_passage_to_encounter_cdf(first_passage: Sequence[float]) -> list[float]:
+    """Return F_h=P(T<=h), excluding the terminal no-hit category.
+
+    This is a first-passage CDF. The scalar final value is the route committor:
+    probability of reaching the encounter set before the route/horizon terminates.
+    """
     law = normalize_probability(first_passage)
     if len(law) < 2:
         raise ValueError("CSTAR_FIRST_PASSAGE_NEEDS_HORIZON")
@@ -66,8 +64,13 @@ def first_passage_to_committor(first_passage: Sequence[float]) -> list[float]:
         cumulative += p
         result.append(cumulative)
     if any(result[i] > result[i + 1] + 1e-14 for i in range(len(result) - 1)):
-        raise ValueError("CSTAR_COMMITTOR_NONMONOTONE")
+        raise ValueError("CSTAR_ENCOUNTER_CDF_NONMONOTONE")
     return result
+
+
+def route_committor(first_passage: Sequence[float]) -> float:
+    cdf = first_passage_to_encounter_cdf(first_passage)
+    return cdf[-1]
 
 
 def bhattacharyya_coefficient(p: Sequence[float], q: Sequence[float]) -> float:
@@ -113,7 +116,6 @@ def prospective_resolution_scores(
     if route_count < 1 or any(len(s) != route_count for s in route_laws):
         raise ValueError("CSTAR_ROUTE_SHAPE")
 
-    # Validate support once and probabilities on every source/route.
     support = None
     normalized: list[list[list[float]]] = []
     for source in route_laws:
@@ -134,17 +136,22 @@ def prospective_resolution_scores(
                 pair_weights.append((i, j, w))
     z = math.fsum(w for _, _, w in pair_weights)
     if not math.isfinite(z) or z <= 0.0:
-        # Degenerate posterior: there is no unresolved pair to distinguish.
         return [RouteResolution(r, 0.0, 0.0, 0.0) for r in range(route_count)]
 
     result: list[RouteResolution] = []
     for r in range(route_count):
         confusion = 0.0
         for i, j, w in pair_weights:
-            confusion += w * bhattacharyya_coefficient(normalized[i][r], normalized[j][r])
+            confusion += w * bhattacharyya_coefficient(
+                normalized[i][r], normalized[j][r]
+            )
         normalized_confusion = confusion / z
         resolution = 1.0 - normalized_confusion
-        if resolution < -1e-12 or resolution > 1.0 + 1e-12 or not math.isfinite(resolution):
+        if (
+            resolution < -1e-12
+            or resolution > 1.0 + 1e-12
+            or not math.isfinite(resolution)
+        ):
             raise ValueError("CSTAR_RESOLUTION_RANGE")
         result.append(
             RouteResolution(
@@ -165,11 +172,15 @@ def select_route(
     """Choose max resolution; distance then index are deterministic tie-breaks."""
     scores = prospective_resolution_scores(posterior, route_laws)
     distances = [float(d) for d in travel_distance]
-    if len(distances) != len(scores) or any((not math.isfinite(d) or d < 0.0) for d in distances):
+    if len(distances) != len(scores) or any(
+        (not math.isfinite(d) or d < 0.0) for d in distances
+    ):
         raise ValueError("CSTAR_TRAVEL_SHAPE_OR_VALUE")
     return min(
         scores,
-        key=lambda item: (-item.resolution, distances[item.route_index], item.route_index),
+        key=lambda item: (
+            -item.resolution, distances[item.route_index], item.route_index
+        ),
     )
 
 
@@ -178,7 +189,8 @@ class CPORouteLaw:
     """Minimal versioned M2->M3 contract for one source and one future route."""
 
     first_hit_prob: tuple[float, ...]
-    committor: tuple[float, ...]
+    encounter_cdf: tuple[float, ...]
+    route_committor: float
     logppm_mean: tuple[float, ...]
     logppm_scale: tuple[float, ...]
 
@@ -189,13 +201,16 @@ class CPORouteLaw:
         logppm_scale: Sequence[float],
     ) -> "CPORouteLaw":
         law = hazards_to_first_passage(hazards)
-        q = first_passage_to_committor(law)
+        cdf = first_passage_to_encounter_cdf(law)
+        q_route = cdf[-1]
         mu = [float(v) for v in logppm_mean]
         scale = [float(v) for v in logppm_scale]
-        if len(mu) != len(q) or len(scale) != len(q):
+        if len(mu) != len(cdf) or len(scale) != len(cdf):
             raise ValueError("CSTAR_MARK_HORIZON")
         if any(not math.isfinite(v) for v in mu):
             raise ValueError("CSTAR_MARK_MEAN")
         if any((not math.isfinite(v) or v <= 0.0) for v in scale):
             raise ValueError("CSTAR_MARK_SCALE")
-        return CPORouteLaw(tuple(law), tuple(q), tuple(mu), tuple(scale))
+        return CPORouteLaw(
+            tuple(law), tuple(cdf), q_route, tuple(mu), tuple(scale)
+        )
