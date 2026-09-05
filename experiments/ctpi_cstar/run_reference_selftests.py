@@ -1,4 +1,4 @@
-"""Run all current pure-CPU CSTAR reference tests from one command.
+"""Run all current CSTAR reference/model-interface tests from one command.
 
 Usage from repository root:
     python experiments/ctpi_cstar/run_reference_selftests.py
@@ -13,12 +13,14 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import selftest_cstar_reference
+import selftest_models
 from m3_phs import selftest_phs
 
 
 def main():
     selftest_cstar_reference.main()
     selftest_phs.main()
+    selftest_models.main()
     print("CSTAR_ALL_REFERENCE_SELFTESTS PASS")
 
 
