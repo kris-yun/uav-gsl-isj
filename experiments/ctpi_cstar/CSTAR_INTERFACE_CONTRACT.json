@@ -1,0 +1,83 @@
+{
+  "version": "CSTAR_INTERFACE_V1_20260906",
+  "deployment_identity": {
+    "site_specific_predictive_bank": false,
+    "house_id_runtime_input": false,
+    "source_truth_runtime_input": false,
+    "future_gas_or_wind_runtime_input": false,
+    "required_inputs": ["geometry", "stamped_pose_history", "stamped_gas_history", "stamped_local_wind_history", "sensor_state", "feasible_source_domain", "feasible_routes"]
+  },
+  "M1_PICR": {
+    "responsibility": "infer source identity while separating transport, source-strength and sensor nuisance",
+    "inputs": {
+      "frames": "ordered list of {stamp_ns, pose_xy, gas_ppm, local_wind_uv} through current time only",
+      "geometry": "navigation-height occupancy/free-space geometry",
+      "sensor_state": "audited causal sensor memory state",
+      "candidates": "arbitrary current-map free source cells or regions"
+    },
+    "outputs": {
+      "source_posterior": "normalized probability over current candidates",
+      "source_representation": "nuisance-invariant representation used by candidate scorer",
+      "nuisance_representation": "transport/sensor context representation for diagnostics/reconstruction",
+      "amplitude_state": "source-strength/release nuisance estimate or distributional state",
+      "valid": "boolean",
+      "abstain_reason": "explicit reason when evidence contract is insufficient"
+    },
+    "forbidden": ["house_id", "transport_member_id", "source_truth", "future_frame", "predictive_bank_lookup"]
+  },
+  "M2_CPO": {
+    "responsibility": "predict action-intervention-conditioned future observation law for one source hypothesis",
+    "inputs": {
+      "source_hypothesis": "one candidate cell/region, marginalized over a frozen placement quadrature when region-valued",
+      "geometry": "navigation-height geometry",
+      "sparse_local_wind_history": "causally stamped wind observations at executed poses; no full field required",
+      "gas_sensor_state": "causal history summary and audited FOPDT state",
+      "future_route": "physically legal candidate route sampled at the frozen prediction cadence"
+    },
+    "outputs": {
+      "first_hit_prob": "length H+1 categorical law for T=1..H and T>H",
+      "committor": "length H monotone P(T<=h)",
+      "logppm_mean": "length H conditional/predictive log-ppm location",
+      "logppm_scale": "length H positive predictive scale",
+      "valid": "boolean",
+      "calibration_diagnostics": "versioned model validity/calibration metadata"
+    },
+    "forbidden": ["source_posterior_update", "source_truth", "future_wind", "future_gas", "heldout_house_bank", "mandatory_oracle_full_wind_field"]
+  },
+  "M3_PHS": {
+    "responsibility": "choose the future intervention that most separates currently competing source hypotheses",
+    "inputs": {
+      "source_posterior": "M1 normalized posterior",
+      "route_laws": "M2 categorical future law for every source x route",
+      "feasible_routes": "navigation-approved equal-horizon route set",
+      "travel_distance": "tie-break diagnostic only"
+    },
+    "outputs": {
+      "selected_route": "one feasible route/goal",
+      "resolution_score": "1 - normalized posterior-weighted Bhattacharyya confusion",
+      "pairwise_confusion": "audit matrix or reproducible equivalent",
+      "tie_break_metadata": "travel/index deterministic resolution of exact score ties"
+    },
+    "forbidden": ["source_truth", "future_observation", "posterior_multiplier", "explore_exploit_weight", "house_specific_coefficient", "carrier_centroid_as_physical_truth"]
+  },
+  "closed_loop_order": [
+    "ingress joins current pose/gas/local-wind",
+    "sensor causal state advances",
+    "M1 updates source posterior from executed observations",
+    "navigation constructs feasible future routes",
+    "M2 predicts source-conditioned law under do(route)",
+    "M3 selects route from M1 posterior and M2 laws",
+    "robot executes selected route",
+    "new actual observations return to M1"
+  ],
+  "incremental_arms": {
+    "A0": "Classic PMFS",
+    "F00": "PICR + native PMFS information planner via coefficient-free posterior-to-native-weight adapter",
+    "F10": "PICR + PHS + frozen baseline route-law provider",
+    "F11": "PICR + PHS + full CPO",
+    "M1_increment": "F00-A0",
+    "M3_increment": "F10-F00",
+    "M2_increment": "F11-F10",
+    "full_increment": "F11-A0"
+  }
+}
