@@ -268,6 +268,11 @@ namespace GSL::PMFS_internal
                                               double& variance)
     {
         // Updating Mean and Variance Estimates: An Improved Method D.H.D. West 1979
+        // A zero-posterior source hypothesis contributes no mass.  Skipping it
+        // is mathematically exact and avoids the undefined 0 / 0 update when
+        // it is the first hypothesis encountered for a prediction cell.
+        if (weight == 0.0)
+            return;
         weight_sum = weight_sum + weight;
         weight_squared_sum = weight_squared_sum + weight * weight;
         double mean_old = mean;
@@ -451,12 +456,26 @@ namespace GSL::PMFS_internal
         recordP2Candidates(scores);
 
 // update the variance thing (for the movement strategy)
-#pragma omp parallel for
+        size_t zeroWeightVarianceCells = 0;
+#pragma omp parallel for reduction(+ : zeroWeightVarianceCells)
         for (int cellI = 0; cellI < measuredHitProb.data.size(); cellI++)
         {
             if (measuredHitProb.occupancy[cellI] == Occupancy::Free)
-                varianceOfHitProb[cellI] = varianceCalculationData[cellI].variance / varianceCalculationData[cellI].weight_sum;
+            {
+                const auto& statistics = varianceCalculationData[cellI];
+                if (statistics.weight_sum > 0.0)
+                    varianceOfHitProb[cellI] = statistics.variance / statistics.weight_sum;
+                else
+                {
+                    // With no posterior mass, this cell has no
+                    // posterior-weighted predictive dispersion.
+                    varianceOfHitProb[cellI] = 0.0;
+                    ++zeroWeightVarianceCells;
+                }
+            }
         }
+        if (zeroWeightVarianceCells > 0)
+            GSL_INFO("[CTPI-DIAG] planner variance zero-mass cells={}", zeroWeightVarianceCells);
 
         GSL_TRACE("First simulation level done");
 
