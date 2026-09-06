@@ -1,10 +1,12 @@
 {
   "contract": "CSTAR_CONTROLLED_CAUSAL_ASSET_CONTRACT_V1",
-  "revision": "ENVIRONMENT_BOUND_REVISE_BEFORE_EXECUTION_20260906",
-  "purpose": "Typed identity required before formal M1/M2 training or gate production. Historical spent replay does not satisfy this contract by default. Controlled assets are invalid until the three-House environment-alignment audit passes.",
+  "revision": "ENVIRONMENT_PROVENANCE_BOUND_REVISE_BEFORE_EXECUTION_20260906",
+  "purpose": "Typed identity required before formal M1/M2 training or gate production. Historical spent replay does not satisfy this contract by default. Controlled assets are invalid until environment alignment, raw-realization provenance and the pre-payload realization split are all bound and pass.",
   "top_level_required": [
     "contract", "created_git_sha", "asset_root", "splits",
     "environment_alignment_audit_path", "environment_alignment_audit_sha256",
+    "raw_realization_provenance_audit_path", "raw_realization_provenance_audit_sha256",
+    "frozen_realization_split_path", "frozen_realization_split_sha256",
     "m1_episodes", "m2_route_cases", "model_input_fields",
     "evaluator_only_fields", "forbidden_model_inputs"
   ],
@@ -24,8 +26,10 @@
     "history_semantics", "runtime_feature_schema_version"
   ],
   "m1_hard_rules": [
+    "the parent realization_id must be provenance-qualified by CSTAR_RAW_REALIZATION_PROVENANCE_AUDIT_V1 before any history from it is used",
     "same-source nuisance pairs are grouped by house + geometry_identity + exact source_xyz_m, not source_id naming alone",
     "same-source nuisance pairs use exactly equal source_xyz_m and differ in at least one declared nuisance intervention/realization",
+    "a pure transport pair requires equal release/sensor fingerprints and different transport fingerprints in the provenance audit",
     "region/carrier identity never substitutes for exact-source identity when claiming exact-source invariance",
     "candidate_domain_truth_independent must be true",
     "formal sensor state is either audited_fopdt_internal_state under the frozen sensor model or the feature is explicitly absent; gas EMA may not be relabeled as FOPDT state",
@@ -46,6 +50,8 @@
     "controlled_open_loop_route"
   ],
   "m2_hard_rules": [
+    "the parent raw realization must first be provenance-qualified; raw field availability alone is not a do(route) case",
+    "route geometry is frozen using truth-blind geometry only before any gas outcome is queried or extracted",
     "route_locked_before_outcome must be true",
     "route_locked_time_s must be <= decision_time_s",
     "future_policy_dependent_path_used must be false",
@@ -53,14 +59,16 @@
     "planned route coordinates use the geometry identity already passed by CSTAR_ENVIRONMENT_ALIGNMENT_AUDIT_V1",
     "multiple distinct source_xyz_m values must appear in formal training/evaluation",
     "held-out outcome realizations are not used to construct the route law",
-    "execution deviation between planned and realized route is reported rather than silently ignored"
+    "execution deviation between planned and realized route is reported rather than silently ignored",
+    "offline extraction from existing raw GADEN realizations is allowed only after route freeze and remains training/evaluation data; deployment remains bank-free"
   ],
   "split_hard_rules": [
     "every declared split contains data before a formal gate is attempted",
-    "split membership is frozen before formal gate outcomes are inspected",
+    "CSTAR_RAW_REALIZATION_SPLITS_V1 was frozen while the prerequisite inventory still had payload_read=false",
+    "all prefixes, histories, route cases and outcomes inherit the role of their parent realization in the frozen outer fold",
     "no identical raw realization appears in both train and held-out evaluation",
     "all prefixes/windows from the same house + geometry_identity + realization_id remain in exactly one split even when their file SHA values differ",
-    "leave-one-House-out evaluation is reported where the available controlled asset supports it",
+    "leave-one-House-out evaluation uses the frozen H01/H02/H03 outer folds",
     "confirmation data are not reused for model selection"
   ]
 }
