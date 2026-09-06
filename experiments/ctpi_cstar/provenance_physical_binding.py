@@ -1,6 +1,7 @@
 """Recompute physical identities; free-form names/literal presence are not proof."""
 import hashlib
 import json
+import math
 from pathlib import Path
 import struct
 import sys
@@ -34,6 +35,16 @@ def derive_claims(generator_path, simulation_dir, wind_files):
         raise ValueError("GENERATOR_RESULT_PATH_MISMATCH")
     xyz = [float(params["source_position_"+axis]) for axis in "xyz"]
     release = {key: scalar(params[key]) for key in RELEASE_FIELDS}
+    # Bind actual stored release constants too: a matching launch template alone
+    # cannot rule out overridden filament amount or thermodynamic constants.
+    header, raw, _ = header_only(sim / "iteration_0")
+    if header.get("version") != 1:
+        raise ValueError("UNSUPPORTED_RELEASE_HEADER")
+    moles, carrier_density = struct.unpack_from("<2d", raw, 116)
+    if not all(math.isfinite(v) and v > 0 for v in (moles, carrier_density)):
+        raise ValueError("INVALID_RELEASE_HEADER_CONSTANTS")
+    release["stored_total_moles_per_filament"] = moles
+    release["stored_moles_all_gases_per_cm3"] = carrier_density
     transport = {key: scalar(params[key]) for key in TRANSPORT_FIELDS}
     # Paths/encoding cannot manufacture physical variation.
     transport["normalized_wind_sequence"] = [f["normalized_vector_sha256"] for f in wind_files]

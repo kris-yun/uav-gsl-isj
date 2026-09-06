@@ -7,7 +7,7 @@
     "matrix": "Require exactly 12 unique realizations, three Houses, and validate actual outer-fold train/heldout memberships; malformed folds cannot PASS.",
     "exposure_scope": "The frozen inventory recorded no payload reads during listing. This does not certify the underlying historical realizations were never observed before split freezing. Preserve the split but do not claim virgin confirmation.",
     "raw_sensor_stage": "No measurement sensor has been applied to the raw GADEN filament state; future FOPDT trajectory extraction is a separate gate.",
-    "release_scope": "Equality of generator release mechanism parameters is not equality of realized stochastic release draws or generator random seeds."
+    "release_scope": "Recompute from generator release parameters AND actual stored total moles per filament/carrier-gas molar density in the bounded header. Equality is not equality of realized stochastic release draws or generator random seeds."
   },
   "purpose": "Qualify existing GADEN raw realizations for controlled CSTAR data extraction without treating directory names as physical provenance.",
   "required_manifest_contract": "CSTAR_RAW_REALIZATION_PROVENANCE_V1",
