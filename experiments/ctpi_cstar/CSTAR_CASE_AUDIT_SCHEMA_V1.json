@@ -1,0 +1,55 @@
+{
+  "contract": "CSTAR_CASE_AUDIT_SCHEMA_V1",
+  "output_filename": "CSTAR_CASE_AUDIT.json",
+  "required_contract_value": "CSTAR_CASE_AUDIT_V1",
+  "case_runner_environment": [
+    "HOUSE in {H01,H02,H03}",
+    "SEED=12",
+    "ARM in {A0,F00,F10,F11}",
+    "TIMEOUT_SEC=240.0",
+    "DOMAIN_ID<=232",
+    "CASE_RUN_DIR fresh output directory",
+    "CSTAR_AUTH_JSON exact formal authorization artifact",
+    "REPO_ROOT repository root"
+  ],
+  "required_output_files": [
+    "source_estimate_trace.csv",
+    "sensor_trace.csv",
+    "sim_pose_trace.csv",
+    "wind_trace.csv",
+    "CSTAR_CASE_AUDIT.json"
+  ],
+  "required_audit_fields": [
+    "contract",
+    "house",
+    "seed",
+    "arm",
+    "git_sha",
+    "terminal_ok",
+    "future_read_violations",
+    "truth_or_house_runtime_reads",
+    "deployment_bank_queries",
+    "decision_count",
+    "fallback_count",
+    "fallback_reasons",
+    "invalid_route_count",
+    "native_route_missing_when_feasible",
+    "model_manifest_sha256",
+    "production_manifest_sha256",
+    "start_time_utc",
+    "end_time_utc"
+  ],
+  "arm_specific_required_audits": {
+    "A0": ["legacy_classic_pmfs=true", "cstar_model_calls=0"],
+    "F00": ["picr_calls>0", "phs_calls=0", "learned_cpo_calls=0", "map_chase_calls=0", "posterior_guidance_coefficient_used=false"],
+    "F10": ["picr_calls>0", "phs_calls>0", "baseline_route_provider_calls>0", "learned_cpo_calls=0"],
+    "F11": ["picr_calls>0", "phs_calls>0", "learned_cpo_calls>0", "baseline_route_provider_scientific_path=false"]
+  },
+  "hard_fail_values": {
+    "terminal_ok": false,
+    "future_read_violations": ">0",
+    "truth_or_house_runtime_reads": ">0",
+    "deployment_bank_queries": ">0",
+    "invalid_route_count": ">0"
+  }
+}
