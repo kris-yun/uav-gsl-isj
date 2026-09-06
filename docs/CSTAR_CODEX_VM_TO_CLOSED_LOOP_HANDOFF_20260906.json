@@ -1,0 +1,75 @@
+{
+  "contract": "CSTAR_CODEX_VM_TO_CLOSED_LOOP_HANDOFF_V1",
+  "branch": "g3-cstar-causal-redesign-20260906",
+  "authoritative_human_contract": "docs/CODEX_CSTAR_VM_TO_CLOSED_LOOP_20260906.md",
+  "scientific_method": "CSTAR",
+  "principal_innovation": "causal",
+  "deployment_bank_free": true,
+  "modules": {
+    "M1": "PICR perturbation-invariant causal source representation",
+    "M2": "CPO source/route-conditioned first-passage predictive operator",
+    "M3": "PHS prospective hypothesis sweeps"
+  },
+  "mandatory_order": [
+    "reference_selftests",
+    "vm_asset_preflight",
+    "bank_integrity_and_causal_pair_audit",
+    "spent_seed12_premise_replay",
+    "controlled_source_diverse_M1_M2_assets",
+    "M1_controlled_causal_gate",
+    "M2_source_diverse_predictive_gate",
+    "M3_counterfactual_gate",
+    "freeze_model_hashes",
+    "integrate_isolated_cstar_v1",
+    "runtime_smoke",
+    "machine_closed_loop_authorization",
+    "H01_H02_H03_seed12_A0_F00_F10_F11_12run_matrix",
+    "frozen_240s_AUC_analysis",
+    "stop"
+  ],
+  "formal_closed_loop_requires_contracts": [
+    "CSTAR_M1_CONTROLLED_CAUSAL_GATE_V1",
+    "CSTAR_M2_SOURCE_DIVERSE_PREDICTIVE_GATE_V1",
+    "CSTAR_M3_COUNTERFACTUAL_GATE_V1",
+    "CSTAR_FROZEN_MODEL_MANIFEST_V1",
+    "CSTAR_PRODUCTION_MODE_MANIFEST_V1",
+    "CSTAR_RUNTIME_SMOKE_V1"
+  ],
+  "authorization_tool": "experiments/ctpi_cstar/authorize_closed_loop.py",
+  "authorized_development_matrix": {
+    "houses": ["H01", "H02", "H03"],
+    "seed": 12,
+    "arms": ["A0", "F00", "F10", "F11"],
+    "horizon_s": 240,
+    "runs": 12
+  },
+  "analysis_tool": "tools/cstar_seed12_crosshouse_performance.py",
+  "increment_attribution": {
+    "M1": "F00-A0",
+    "M3": "F10-F00",
+    "M2": "F11-F10",
+    "full": "F11-A0"
+  },
+  "hard_bank_identity_rule": "Same carrier/member labels are not assumed to be same exact source. Exact-source nuisance pairs require identical source_xyz and distinct transport realization/seed, as audited from PF_DEI_V3_REGION_PLACEMENT_V1.",
+  "forbidden_runtime_inputs": [
+    "source_truth",
+    "house_id_as_model_feature",
+    "future_gas",
+    "future_wind",
+    "transport_member_identity",
+    "site_specific_predictive_bank",
+    "oracle_full_wind_field"
+  ],
+  "forbidden_scientific_drift": [
+    "peak_SSE_as_new_M1",
+    "ordinary_Bayes_marginalization_rebranded_as_causal",
+    "GMRF_as_main_innovation",
+    "MAP_chase",
+    "one_step_binary_EIG_as_new_M3",
+    "20x_posterior_multiplier",
+    "house_or_seed_specific_tuning",
+    "metric_switch_after_outcomes"
+  ],
+  "stop_on_any_gate_failure": true,
+  "multiseed_authorized": false
+}
