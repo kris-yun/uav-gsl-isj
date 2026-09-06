@@ -1,6 +1,17 @@
 {
   "contract": "CSTAR_ENVIRONMENT_ALIGNMENT_CONTRACT_V1",
   "status": "REQUIRED_BEFORE_CONTROLLED_SCIENTIFIC_VALIDATION",
+  "execution_hardening_revision": "V2.1_LIVE_MAP_AND_RAW_STAMPED_EVIDENCE",
+  "runtime_evidence_additional_requirements": [
+    "pass must be true and runtime git SHA must match the input manifest",
+    "runtime_map_parity must be true after comparing actual ROS /map frame, resolution, origin, orientation and every cell with frozen YAML/PGM",
+    "raw aligned JSONL and observed wind CSV must exist and match their SHA256 values",
+    "require bootstrap t=0 plus at least eight positive 0.2s aligned frames; t=0 wind is not an observation",
+    "recompute frame count, cadence, finite values, wind CSV stamps/pose/vectors and wind free-space probe identity",
+    "block YAML origins are supported; unsupported nonzero yaw is rejected, never silently ignored",
+    "shared arm token binds future arm input requirements; it is not evidence that four scientific arms executed",
+    "stationary endpoint+dwell proves point feasibility only, not general path-planning performance"
+  ],
   "purpose": "Bind the three Houses to auditable geometry, coordinate, local-wind, clock and route identities before formal M1/M2/M3 validation. This is an input-contract gate, not a GMRF accuracy gate.",
   "required_top_level_fields": [
     "contract",

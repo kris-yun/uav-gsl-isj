@@ -1,0 +1,27 @@
+[INFO] [1788690150.169407059] [vgr_uav_sim]: Loading VGR data from /mnt/hgfs/workspace/GADEN_files/scenarios/House02, config=3,5-1_fast
+[INFO] [1788690150.245249370] [vgr_uav_sim]: Occupancy: 83x119 slice z_idx=13 (z=0.3m), free=6811, obstacle=3066, input_sha256=9402690152be4568ced8f2256e9098d82691aaaa1f22a1887eeac55d0e5d098d
+[INFO] [1788690150.427908728] [vgr_uav_sim]: Gas backend=gaden_player service=/frame_query
+[INFO] [1788690150.428265080] [vgr_uav_sim]: GADEN realization=FilamentSimulation_gasType_10_sourcePosition_0.00_-1.00_0.20, max_iteration=1999
+[INFO] [1788690150.446658847] [vgr_uav_sim]: Sensor-safe occupancy intersection: 83x119 min=[-5.39273, -7.45088] max=[2.9072700000000005, 4.449120000000001]
+[INFO] [1788690150.449148382] [vgr_uav_sim]: Navigation grid: coarse 27x39 cell=0.3000 free=643 obstacle=410 (reduce_scale=3)
+[INFO] [1788690150.469229552] [vgr_uav_sim]: UAV Sim v3 ready. Start=(-0.5,-2.5), sim_dt=0.200s, realtime_factor=1.00, sensor=asymmetric, vertical_motion=False, open_loop_profile=hover
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/zyc/CTPI_G2_M12_SEED12_20260905/vgr_bridge_overlay_c8454d5/vgr_bridge/vgr_sim_node.py", line 1197, in <module>
+    main()
+  File "/home/zyc/CTPI_G2_M12_SEED12_20260905/vgr_bridge_overlay_c8454d5/vgr_bridge/vgr_sim_node.py", line 1188, in main
+    rclpy.spin(node)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 229, in spin
+    executor.spin_once()
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 751, in spin_once
+    self._spin_once_impl(timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 740, in _spin_once_impl
+    handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 723, in wait_for_ready_callbacks
+    return next(self._cb_iter)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 596, in _wait_for_ready_callbacks
+    wait_set = _rclpy.WaitSet(
+rclpy._rclpy_pybind11.RCLError: failed to initialize wait set: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/wait.c:130

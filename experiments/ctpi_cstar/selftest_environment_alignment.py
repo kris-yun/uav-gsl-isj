@@ -234,6 +234,15 @@ def main() -> None:
                 assert error in str(exc), str(exc)
             else:
                 raise AssertionError(f"forged runtime accepted: {change}")
+        runtime_path.write_text(json.dumps(original))
+        row["free_space_probe_csvs"][1]["sha256"] = "0"*64
+        try:
+            env.validate_runtime_audit(runtime_path, sha(runtime_path), "H01", row,
+                m["common_runtime_contract"], {**m["runtime_code_identity"], "git_sha": "synthetic"})
+        except RuntimeError as exc:
+            assert "WIND_SUBSTITUTED" in str(exc)
+        else:
+            raise AssertionError("substituted free-space wind CSV accepted")
 
     print("CSTAR_ENVIRONMENT_ALIGNMENT_SELFTEST PASS")
 
