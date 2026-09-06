@@ -1,0 +1,103 @@
+{
+  "contract": "CSTAR_ENVIRONMENT_ALIGNMENT_CONTRACT_V1",
+  "status": "REQUIRED_BEFORE_CONTROLLED_SCIENTIFIC_VALIDATION",
+  "purpose": "Bind the three Houses to auditable geometry, coordinate, local-wind, clock and route identities before formal M1/M2/M3 validation. This is an input-contract gate, not a GMRF accuracy gate.",
+  "required_top_level_fields": [
+    "contract",
+    "git_sha",
+    "repo_root",
+    "common_runtime_contract",
+    "houses",
+    "shared_arm_input_identity"
+  ],
+  "common_runtime_contract": {
+    "world_frame": "map",
+    "pose_units": "m",
+    "gas_units": "ppm",
+    "wind_vector_units": "m/s",
+    "wind_direction_convention": "downwind_vector_uv",
+    "stamp_units": "ns",
+    "expected_cadence_ns": 200000000,
+    "candidate_frame": "map",
+    "route_frame": "map",
+    "source_estimate_frame": "map",
+    "future_pose_or_wind_reads_forbidden": true,
+    "house_id_as_model_feature_forbidden": true,
+    "deployment_predictive_bank_forbidden": true,
+    "gmrf_required": false
+  },
+  "house_required_fields": [
+    "geometry_identity",
+    "map_yaml_path",
+    "map_yaml_sha256",
+    "map_image_path",
+    "map_image_sha256",
+    "navigation_height_m",
+    "resolution_m",
+    "origin_xy_m",
+    "expected_width_px",
+    "expected_height_px",
+    "free_space_probe_csvs",
+    "runtime_load_audit_path",
+    "runtime_load_audit_sha256"
+  ],
+  "free_space_probe_contract": {
+    "required_kinds": ["candidate", "wind_observation", "route"],
+    "csv_required_columns": ["x", "y"],
+    "rule": "Every audited candidate, local-wind observation and route probe point must map inside the declared navigation-height occupancy image and be free under that map YAML's negate/free_thresh semantics. The same geometry identity must be used by data generation, baselines and CSTAR."
+  },
+  "runtime_load_audit_contract": {
+    "contract": "CSTAR_RUNTIME_INPUT_LOAD_AUDIT_V1",
+    "required_fields": [
+      "contract",
+      "house",
+      "git_sha",
+      "geometry_identity",
+      "map_yaml_path",
+      "map_yaml_sha256",
+      "map_image_path",
+      "map_image_sha256",
+      "world_frame",
+      "pose_topic",
+      "gas_topic",
+      "wind_topic",
+      "wind_direction_convention",
+      "wind_vector_units",
+      "stamp_units",
+      "cadence_ns",
+      "candidate_frame",
+      "route_frame",
+      "source_estimate_frame",
+      "ingress_code_sha256",
+      "wind_adapter_code_sha256",
+      "loader_started_before_scientific_model",
+      "old_native_gmrf_anemometer_subscription_used"
+    ],
+    "hard_rules": [
+      "The runtime-loaded map YAML/image hashes must exactly equal the frozen House geometry hashes.",
+      "world/candidate/route/source-estimate frames must all be map.",
+      "wind must be represented as local stamped downwind u,v in m/s at the observation pose; no hidden upwind +pi conversion is allowed in the CSTAR input path.",
+      "cadence must equal the frozen input cadence.",
+      "loader_started_before_scientific_model must be true.",
+      "old_native_gmrf_anemometer_subscription_used must be false for the explicit CSTAR input path; GMRF may remain an optional named offline/baseline component only if independently audited."
+    ]
+  },
+  "shared_arm_input_identity": {
+    "arms": ["A0", "F00", "F10", "F11"],
+    "required_equalities": [
+      "same House geometry/map hashes",
+      "same pose/gas/local-wind topic semantics and cadence",
+      "same coordinate transform and navigation height",
+      "same source truth and simulator world identity within a paired comparison",
+      "same route feasibility/navigation stack unless the scientific arm explicitly changes route selection",
+      "no arm receives a corrected map/wind interface while another arm keeps the known legacy mismatch"
+    ]
+  },
+  "known_review_reference_only": {
+    "H01_navigation_slice_image_sha256": "7a0eb65e47428b898be7e24ac7f3519c4afdb7a6cdc861e59896955236ac49b4",
+    "H01_reviewed_resolution_m": 0.1,
+    "H01_reviewed_origin_xy_m": [-7.55, -7.88],
+    "H01_reviewed_navigation_height_m": 0.3,
+    "warning": "These H01 values came from an isolated diagnostic and do not themselves prove that a future runtime loaded them. H02/H03 have no equivalent frozen values in this contract until VM alignment is performed."
+  }
+}
