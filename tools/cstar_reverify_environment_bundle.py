@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main():
+    sys.dont_write_bytecode = True  # verification must not mutate the archive
     p = argparse.ArgumentParser()
     p.add_argument("--output", type=Path, required=True)
     args = p.parse_args()

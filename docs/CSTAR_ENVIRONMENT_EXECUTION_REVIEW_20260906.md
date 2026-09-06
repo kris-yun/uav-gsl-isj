@@ -31,3 +31,12 @@ this new isolated directory using persistent archived source/libraries.
 
 Selftest fixtures are synthetic implementation tests and never House evidence.
 Real House audit results are recorded separately in evidence/cstar_environment_20260906.
+
+## Packaging regression retained
+
+The first portable archive revalidated the environment PASS but its broad file
+inventory accidentally included a locally generated, git-ignored Python bytecode
+cache. Its path-dependent hash changed after extraction. The final R2 archive
+excludes that non-evidence cache, and the revalidator disables bytecode writes.
+All 66 tracked raw artifact hashes are checked after clean extraction. No map,
+observation, scientific result or runtime source bytes were modified to fix it.
