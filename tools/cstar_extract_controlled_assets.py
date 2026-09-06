@@ -16,6 +16,9 @@ import select
 import subprocess
 import sys
 import time
+import struct
+import numpy as np
+from cstar_collect_provenance_metadata import header_only
 
 from cstar_freeze_controlled_routes import ROOT, ENV, DT, STARTS, Grid, sha, dump
 
@@ -24,7 +27,6 @@ PROV = ROOT / 'evidence/cstar_raw_provenance_20260906/CSTAR_RAW_REALIZATION_PROV
 SPLIT = ROOT / 'experiments/ctpi_cstar/CSTAR_RAW_REALIZATION_SPLITS_FROZEN_20260906.json'
 ENV_AUDIT = ENV / 'CSTAR_ENVIRONMENT_ALIGNMENT_AUDIT_V1.json'
 FREEZE_COMMIT = 'd3fa825a2da06a308af6bb6398d5f5a43e5b701a'
-HELPER_SHA = '6797c938875c4d13021de56d214fefb6af4291ae4de3da9bb223e08127b4c333'
 
 
 def load_archived(name):
@@ -69,6 +71,9 @@ class Query:
     def __init__(self, helper, record, out):
         self.path = Path(record['resolved_realization_path'])
         self.hashes = {}
+        self.headers = {}
+        self.winds = {}
+        self.wind_max_error = 0.0
         self.log = (out / 'raw_query.stderr.log').open('x')
         self.proc = subprocess.Popen([str(helper), str(self.path.parents[2]), str(self.path)],
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=self.log, text=True, bufsize=1)
@@ -78,6 +83,7 @@ class Query:
         path = self.path / f'iteration_{it}'
         if it not in self.hashes:
             self.hashes[it] = sha(path)
+            self.headers[it] = header_only(path)
         self.proc.stdin.write(f"{it} {point['x']:.17g} {point['y']:.17g} {point['z']:.17g}\n")
         self.proc.stdin.flush()
         if not select.select([self.proc.stdout], [], [], 30)[0]:
@@ -88,6 +94,34 @@ class Query:
             raise RuntimeError(f'RAW_QUERY_BAD_RESPONSE:{line!r}')
         gas, u, v, w = map(float, parts[1:5])
         assert all(math.isfinite(v) for v in (gas, u, v, w)) and gas >= 0
+        # Independent file-index authority: the gas header's numeric wind index,
+        # not the helper's own selected vector or the historical lexical order.
+        header, header_raw, _ = self.headers[it]
+        wind_index = struct.unpack_from('<i', header_raw, 132)[0]
+        assert wind_index == int(parts[5]), 'GAS_HEADER_WIND_INDEX_MISMATCH'
+        if wind_index not in self.winds:
+            n = math.prod(header['dimensions'])
+            wind_path = self.path / 'wind' / f'wind_iteration_{wind_index}'
+            self.winds[wind_index] = np.fromfile(wind_path, dtype='<f8').reshape(3, n).astype('<f4')
+        meta = {}
+        # Header encoding was independently qualified; select coordinates by
+        # distance to the original occupancy rather than by magnitude guessing.
+        with (self.path.parents[2] / 'OccupancyGrid3D.csv').open() as f:
+            for _ in range(4):
+                tok = f.readline().split()
+                meta[tok[0].split('(')[0]] = tok[1:]
+        original = np.array(list(map(float, meta['#env_min']+meta['#env_max'])))
+        coordinates = min((header['environment_slots_native_double'], header['environment_slots_float_prefix']),
+                          key=lambda p: sum(abs(a-b) for a,b in zip(p,original)) if all(math.isfinite(x) for x in p) else math.inf)
+        loc = np.asarray([point['x'], point['y'], point['z']], dtype=np.float32)
+        index = np.floor((loc-np.asarray(coordinates[:3], dtype=np.float32))/np.float32(header['cell_size'])).astype(int)
+        nx, ny, nz = header['dimensions']
+        assert all(0 <= index[k] < header['dimensions'][k] for k in range(3))
+        flat = index[0]+nx*index[1]+nx*ny*index[2]
+        expected_wind = self.winds[wind_index][:, flat]
+        error = max(abs(a-float(b)) for a,b in zip((u,v,w), expected_wind))
+        self.wind_max_error = max(error, self.wind_max_error)
+        assert error < 1e-6, ('RAW_NUMERIC_WIND_IDENTITY', it, index.tolist(), error)
         return {'t_sim_s': round(step*DT, 9), 'stamp_ns': step*200000000,
             'step': step, 'iteration': it, 'pose_xy': [point['x'], point['y']], 'z': point['z'],
             'true_gas_ppm': gas, 'wind_uv': [u, v], 'wind_w': w, 'wind_index': int(parts[5])}
@@ -132,11 +166,19 @@ def parity(helper, records, out):
         finally:
             query.close()
         write_jsonl(target / 'raw_frames.jsonl', raw_frames)
-        result[house] = {'frames': len(differences), 'max_abs_gas_wind_error': max(differences),
-                         'pass': len(differences) == 8 and max(differences) < 1e-6}
+        # H01 archived helper is now a known lexical-order counterexample.
+        # Do not demand parity with its wrong wind or conceal the disagreement.
+        sensor = new_sensor()
+        gas_error = max(abs(observed(raw,sensor)['gas_ppm']-f['gas_ppm'])
+                        for raw,f in zip(raw_frames, [f for f in frames if f['stamp_ns'] > 0]))
+        result[house] = {'frames': len(differences), 'max_abs_archived_gas_wind_error': max(differences),
+            'max_abs_gas_error': gas_error, 'numeric_header_wind_max_error': query.wind_max_error,
+            'historical_wind_superseded': house == 'H01',
+            'pass': len(differences) == 8 and gas_error < 1e-6 and query.wind_max_error < 1e-6
+                    and (house == 'H01' or max(differences) < 1e-6)}
     dump(out / 'QUERY_ADAPTER_PARITY.json', result)
     assert all(r['pass'] for r in result.values()), ('ADAPTER_PARITY_FAILED', result)
-    print('CSTAR_RAW_QUERY_TO_ARCHIVED_ROS_PARITY=PASS', flush=True)
+    print('CSTAR_NUMERIC_WIND_AND_GAS_ADAPTER=PASS; H01 historical wind superseded', flush=True)
 
 
 def extract_one(helper, record, design, out):
@@ -174,6 +216,7 @@ def extract_one(helper, record, design, out):
         summary = {'realization_id': rid, 'house': house, 'history_frames': len(history),
             'route_cases': len(branches), 'future_frames': sum(len(b['outcome']) for b in branches),
             'query_pose_minus_command_pose_max_m': 0.0,
+            'numeric_header_wind_max_error': query.wind_max_error,
             'deviation_scope': 'offline query at exact frozen coordinates, not measured flight tracking',
             'wall_seconds': time.monotonic()-started, 'pass': True}
         dump(target / 'EXTRACTION_STATUS.json', summary)
@@ -242,7 +285,9 @@ def main():
     ap.add_argument('--out', type=Path, required=True)
     ap.add_argument('--helper', type=Path, required=True)
     args = ap.parse_args()
-    assert sha(args.helper) == HELPER_SHA, 'RAW_HELPER_IDENTITY'
+    build = json.loads((ROOT / 'tools/cstar_numeric_wind_query_build.json').read_text())
+    assert build['tools/cstar_numeric_wind_raw_query'] == sha(args.helper), 'RAW_HELPER_IDENTITY'
+    assert build['tools/cstar_numeric_wind_raw_query.cpp'] == sha(ROOT / 'tools/cstar_numeric_wind_raw_query.cpp')
     # A committed route lock is mandatory, not a Boolean supplied after extraction.
     subprocess.run(['git', 'merge-base', '--is-ancestor', FREEZE_COMMIT, 'HEAD'], cwd=ROOT, check=True)
     for path in [ROUTES / 'ROUTE_FREEZE.json', *ROUTES.glob('*/*.csv')]:
