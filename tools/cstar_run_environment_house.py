@@ -16,6 +16,7 @@ def main():
     p.add_argument("--house", choices=("H01", "H02", "H03"), required=True)
     p.add_argument("--geometry-manifest", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--raw-query-executable", type=Path, default=ROOT / "tools/house1_raw_query")
     args = p.parse_args()
     args.out.mkdir(parents=True, exist_ok=False)
     h = args.house
@@ -59,7 +60,7 @@ def main():
             "sensor_model_mode": "dynamic", "gaden_iteration_mode": "seeded_time_replay",
             "sim_dt_s": 0.2, "sim_stop_at_s": 1.6, "realtime_factor": 1.0,
             "gas_backend": "raw_house1_snapshot" if h == "H01" else "gaden_player",
-            "raw_query_executable": ROOT / "tools/house1_raw_query",
+            "raw_query_executable": args.raw_query_executable.resolve(),
             "raw_gas_results": realization, "sensor_manifest_file": args.out / "sensor_manifest.json",
             "wind_trace_file": args.out / "bridge_wind.csv", "pose_trace_file": args.out / "bridge_pose.csv"}
         for key, value in params.items():

@@ -114,9 +114,55 @@ def main() -> int:
         h: str(env_houses[h]["geometry_identity"]) for h in ("H01", "H02", "H03")
     }
 
+    # These references were previously required syntactically but not read.
+    def bound_json(path_key, sha_key):
+        check_file(manifest_path.parent, data, path_key, sha_key, path_key)
+        return json.loads(resolve(manifest_path.parent, data[path_key], path_key).read_text(encoding="utf-8"))
+
+    provenance = bound_json("raw_realization_provenance_audit_path", "raw_realization_provenance_audit_sha256")
+    frozen = bound_json("frozen_realization_split_path", "frozen_realization_split_sha256")
+    require(provenance.get("contract") == "CSTAR_RAW_REALIZATION_PROVENANCE_AUDIT_V1"
+            and provenance.get("pass") is True, "CSTAR_ASSET_PROVENANCE_NOT_PASS")
+    require(provenance.get("environment_alignment_audit_sha256") == actual_env_sha,
+            "CSTAR_ASSET_PROVENANCE_ENVIRONMENT_MISMATCH")
+    require(provenance.get("frozen_split_manifest_sha256") == data["frozen_realization_split_sha256"],
+            "CSTAR_ASSET_PROVENANCE_SPLIT_MISMATCH")
+    require(frozen.get("contract") == "CSTAR_RAW_REALIZATION_SPLITS_V1", "CSTAR_ASSET_SPLIT_CONTRACT")
+    held = data.get("outer_fold")
+    require(held in {"H01", "H02", "H03"}, "CSTAR_ASSET_OUTER_FOLD_MISSING")
+    fold = frozen["outer_folds"][held]
+    roles = {rid: "train" for rid in fold["train_realization_ids"]}
+    require(not set(roles) & set(fold["heldout_realization_ids"]), "CSTAR_ASSET_FROZEN_FOLD_LEAK")
+    roles.update({rid: "heldout" for rid in fold["heldout_realization_ids"]})
+    qualified = {e["realization_id"]: e for e in provenance["normalized_entries"] if e["entry_provenance_pass"]}
+    require(set(roles) == set(qualified) and len(roles) == 12, "CSTAR_ASSET_PARENT_COVERAGE")
+    for rid, entry in qualified.items():
+        require((entry["house"] == held) == (roles[rid] == "heldout"), "CSTAR_ASSET_LOHO_CONTRADICTION")
+
+    req_fields(data, ["route_freeze_path", "route_freeze_sha256", "route_freeze_git_sha"], "route_lock")
+    route_freeze = bound_json("route_freeze_path", "route_freeze_sha256")
+    require(data["route_freeze_sha256"] == "c3001aeb1a7b425e7b3354a55f0f17f47412dd7b45c1380de3b7ea7c186e199f"
+            and data["route_freeze_git_sha"] == "d3fa825a2da06a308af6bb6398d5f5a43e5b701a",
+            "CSTAR_ASSET_UNREGISTERED_ROUTE_FREEZE")
+    allowed_routes = {r["sha256"]: (h, r["decision_time_s"]) for h, d in route_freeze["houses"].items()
+                      for r in d["routes"]}
+    sensor_identity = sha256_file(env_path.parent / "probes_v1/H01/sensor_manifest.json")
+    geometry_manifest = json.loads((env_path.parent / "maps_v1/geometry_manifest.json").read_text())
+
+    def check_parent(row):
+        rid = row["realization_id"]
+        require(rid in qualified and row["split"] == roles[rid], "CSTAR_ASSET_PARENT_FROZEN_ROLE")
+        entry = qualified[rid]
+        physical = entry["physical_claims"]
+        require(row["house"] == entry["house"] and row["geometry_identity"] == entry["geometry_identity"]
+                and row["source_xyz_m"] == physical["source_xyz_m"], "CSTAR_ASSET_PARENT_SOURCE_IDENTITY")
+        require(row["transport_intervention_id"] == physical["transport_fingerprint"],
+                "CSTAR_ASSET_PARENT_TRANSPORT_IDENTITY")
+
     asset_root = resolve(manifest_path.parent, data["asset_root"], "asset_root")
     require(asset_root.is_dir(), f"CSTAR_ASSET_ROOT_MISSING:{asset_root}")
     splits = data["splits"]
+    require(set(splits) == {"train", "heldout"}, "CSTAR_ASSET_FROZEN_ROLE_NAMES")
     require(isinstance(splits, list) and len(splits) >= 2 and len(set(splits)) == len(splits),
             "CSTAR_ASSET_BAD_SPLITS")
     require(all(isinstance(s, str) and s.strip() for s in splits), "CSTAR_ASSET_EMPTY_SPLIT")
@@ -129,6 +175,7 @@ def main() -> int:
     forbidden_union = set(contract["forbidden_model_inputs"]) | set(forbidden)
     overlap = sorted(set(model_inputs) & forbidden_union)
     require(not overlap, f"CSTAR_ASSET_FORBIDDEN_MODEL_INPUTS:{','.join(overlap)}")
+    require(not set(model_inputs) & set(evaluator_only), "CSTAR_ASSET_EVALUATOR_INPUT_OVERLAP")
 
     # Shared split identity across M1 and M2.  Different prefixes/files from the
     # same physical realization cannot cross train/heldout merely because their
@@ -145,6 +192,12 @@ def main() -> int:
     for row in m1_rows:
         require(isinstance(row, dict), "CSTAR_ASSET_BAD_M1_ROW")
         req_fields(row, contract["m1_episode_required_fields"], f"m1:{row.get('episode_id')}")
+        check_parent(row)
+        require(row["release_intervention_id"] == qualified[row["realization_id"]]["physical_claims"]["release_fingerprint"],
+                "CSTAR_ASSET_PARENT_RELEASE_IDENTITY")
+        require(row["sensor_intervention_id"] == sensor_identity, "CSTAR_ASSET_SENSOR_IDENTITY")
+        require(row["candidate_domain_sha256"] == geometry_manifest[row["house"]]["free_space_probe_csvs"][0]["sha256"],
+                "CSTAR_ASSET_CANDIDATE_NOT_FROZEN_DOMAIN")
         eid = str(row["episode_id"])
         require(eid not in m1_ids, f"CSTAR_ASSET_DUP_M1_EPISODE:{eid}")
         m1_ids.add(eid)
@@ -183,7 +236,7 @@ def main() -> int:
             str(row["sensor_intervention_id"]),
         )
         # Do not trust source_id naming to define an exact source pair.
-        m1_by_source.setdefault(sk, set()).add(nuisance)
+        m1_by_source.setdefault((split, sk), set()).add(nuisance)
 
     underpaired = [key for key, nuis in m1_by_source.items() if len(nuis) < 2]
     require(not underpaired,
@@ -192,6 +245,8 @@ def main() -> int:
         require(m1_count_by_split[split] > 0, f"CSTAR_ASSET_M1_EMPTY_SPLIT:{split}")
         require(len(m1_source_by_split[split]) >= 2,
                 f"CSTAR_ASSET_M1_NOT_SOURCE_DIVERSE:{split}:{len(m1_source_by_split[split])}")
+    require({r["realization_id"] for r in m1_rows} == set(qualified), "CSTAR_ASSET_M1_MISSING_PARENT")
+    m1_lookup = {r["episode_id"]: r for r in m1_rows}
 
     m2_rows = data["m2_route_cases"]
     require(isinstance(m2_rows, list) and m2_rows, "CSTAR_ASSET_NO_M2_ROUTE_CASES")
@@ -203,6 +258,10 @@ def main() -> int:
     for row in m2_rows:
         require(isinstance(row, dict), "CSTAR_ASSET_BAD_M2_ROW")
         req_fields(row, contract["m2_route_case_required_fields"], f"m2:{row.get('decision_id')}")
+        check_parent(row)
+        require(row["episode_id"] in m1_lookup and
+                m1_lookup[row["episode_id"]]["realization_id"] == row["realization_id"],
+                "CSTAR_ASSET_M2_HISTORY_PARENT_MISMATCH")
         did = str(row["decision_id"])
         require(did not in m2_ids, f"CSTAR_ASSET_DUP_M2_DECISION:{did}")
         m2_ids.add(did)
@@ -220,6 +279,9 @@ def main() -> int:
                    "CSTAR_ASSET_REALIZATION_SPLIT_LEAK")
         outcome_rid = str(row["outcome_realization_id"])
         require(outcome_rid.strip() != "", f"CSTAR_ASSET_M2_EMPTY_OUTCOME_REALIZATION:{did}")
+        require(outcome_rid == row["realization_id"], "CSTAR_ASSET_M2_OUTCOME_PARENT_MISMATCH")
+        bind_split(realization_split, (house, geom, outcome_rid), split,
+                   "CSTAR_ASSET_REALIZATION_SPLIT_LEAK")
         bind_split(outcome_realization_split, (house, geom, outcome_rid), split,
                    "CSTAR_ASSET_M2_OUTCOME_REALIZATION_SPLIT_LEAK")
         require(row["route_kind"] in allowed,
@@ -238,8 +300,8 @@ def main() -> int:
                                f"m2_route:{did}")
         outcome_sha = check_file(asset_root, row, "outcome_trace_path", "outcome_trace_sha256",
                                  f"m2_outcome:{did}")
-        bind_split(raw_sha_split, ("route", route_sha), split,
-                   "CSTAR_ASSET_M2_ROUTE_SPLIT_LEAK")
+        # Geometry-only plans may be shared; outcomes and parent identities may not.
+        require(allowed_routes.get(route_sha) == (house, decision), "CSTAR_ASSET_ROUTE_NOT_FROZEN")
         bind_split(raw_sha_split, ("outcome", outcome_sha), split,
                    "CSTAR_ASSET_M2_OUTCOME_SPLIT_LEAK")
 
@@ -256,6 +318,9 @@ def main() -> int:
         "contract_sha256": sha256_file(CONTRACT_PATH),
         "environment_alignment_audit_path": str(env_path.resolve()),
         "environment_alignment_audit_sha256": actual_env_sha,
+        "raw_provenance_and_frozen_fold_verified": True,
+        "route_freeze_git_sha": data["route_freeze_git_sha"],
+        "outer_fold": held,
         "geometry_identity_by_house": geometry_by_house,
         "m1_episode_count": len(m1_rows),
         "m1_exact_source_count": len(m1_by_source),
