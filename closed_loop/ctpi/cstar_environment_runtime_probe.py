@@ -18,6 +18,7 @@ import json
 import math
 from pathlib import Path
 import sys
+import time
 
 HERE = Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
@@ -25,6 +26,8 @@ if str(HERE) not in sys.path:
 
 from ctpi_v2_ingress import StampedIngress
 from cstar_local_wind import decode_local_downwind, DIRECTION_CONVENTION, UNITS
+sys.path.insert(0, str(HERE.parents[1] / "experiments" / "ctpi_cstar"))
+from validate_environment_alignment_v2 import parse_map_yaml, read_pgm, p_occ
 
 CADENCE_NS = 200_000_000
 
@@ -64,9 +67,15 @@ def main() -> int:
     ap.add_argument("--gas-topic", default="/PID/Sensor_reading")
     ap.add_argument("--wind-topic", default="/Anemometer/WindSensor_reading")
     ap.add_argument("--required-aligned-frames", type=int, default=8)
+    ap.add_argument("--wall-timeout-s", type=float, default=40.0)
+    ap.add_argument("--start-simulation", action="store_true",
+                    help="Release this isolated simulator only after t=0 and map parity")
     args, ros_args = ap.parse_known_args()
-    if args.required_aligned_frames < 2:
-        ap.error("required-aligned-frames must be >=2")
+    if args.required_aligned_frames < 8 or not 0 < args.wall_timeout_s <= 60:
+        ap.error("need >=8 positive frames and 0 < wall timeout <=60 s")
+    for output in (args.output, args.wind_position_csv, args.frame_jsonl):
+        if output.exists():
+            raise FileExistsError(output)
 
     map_yaml = args.map_yaml.resolve()
     map_image = args.map_image.resolve()
@@ -76,6 +85,11 @@ def main() -> int:
         raise RuntimeError(
             f"CSTAR_ENV_PROBE_YAML_IMAGE_MISMATCH:{map_yaml_image(map_yaml)}:{map_image}"
         )
+    geometry = parse_map_yaml(map_yaml)
+    width, height, maxval, pixels = read_pgm(map_image)
+    expected_grid = [0 if p_occ(pixels[(height-1-r)*width+c], maxval, geometry["negate"])
+                     < geometry["free_thresh"] else 100
+                     for r in range(height) for c in range(width)]
 
     ingress_code = HERE / "ctpi_v2_ingress.py"
     wind_code = HERE / "cstar_local_wind.py"
@@ -87,6 +101,9 @@ def main() -> int:
     from rclpy.node import Node
     from geometry_msgs.msg import PoseWithCovarianceStamped
     from olfaction_msgs.msg import GasSensor, Anemometer
+    from nav_msgs.msg import OccupancyGrid
+    from rclpy.qos import QoSProfile, DurabilityPolicy
+    from std_srvs.srv import Trigger
 
     rclpy.init(args=ros_args)
 
@@ -98,6 +115,24 @@ def main() -> int:
                 self.create_subscription(GasSensor, args.gas_topic, self.gas, 100),
                 self.create_subscription(Anemometer, args.wind_topic, self.wind, 100),
             ]
+            self.map_parity = False
+            self.start_future = None
+            self.start_client = self.create_client(Trigger, "/start_simulation")
+            self.subs.append(self.create_subscription(OccupancyGrid, "/map", self.map,
+                QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)))
+
+        def map(self, msg):
+            origin = msg.info.origin
+            if not (msg.header.frame_id == "map" and msg.info.width == width
+                    and msg.info.height == height
+                    and abs(msg.info.resolution-geometry["resolution"]) < 1e-7
+                    and abs(origin.position.x-geometry["origin"][0]) < 1e-7
+                    and abs(origin.position.y-geometry["origin"][1]) < 1e-7
+                    and abs(origin.orientation.x) < 1e-7 and abs(origin.orientation.y) < 1e-7
+                    and abs(origin.orientation.z) < 1e-7 and abs(abs(origin.orientation.w)-1) < 1e-7
+                    and list(msg.data) == expected_grid):
+                raise RuntimeError("CSTAR_ENV_PROBE_RUNTIME_MAP_MISMATCH")
+            self.map_parity = True
 
         def accept(self, kind, msg, values):
             stamp = msg.header.stamp.sec * 1_000_000_000 + msg.header.stamp.nanosec
@@ -123,9 +158,24 @@ def main() -> int:
             self.accept("wind", msg, uv)
 
     node = Probe()
+    deadline = time.monotonic() + args.wall_timeout_s
     try:
-        while rclpy.ok() and len(aligned) < args.required_aligned_frames:
-            rclpy.spin_once(node, timeout_sec=1.0)
+        while rclpy.ok() and (len(aligned) < args.required_aligned_frames+1 or not node.map_parity):
+            if time.monotonic() >= deadline:
+                raise RuntimeError(f"CSTAR_ENV_PROBE_WALL_TIMEOUT:frames={len(aligned)}:map={node.map_parity}")
+            rclpy.spin_once(node, timeout_sec=0.1)
+            if (args.start_simulation and ingress.ready and node.map_parity
+                    and node.start_future is None and node.start_client.service_is_ready()):
+                node.start_future = node.start_client.call_async(Trigger.Request())
+            if node.start_future is not None and node.start_future.done():
+                if not node.start_future.result().success:
+                    raise RuntimeError("CSTAR_ENV_PROBE_START_REJECTED")
+    except Exception as exc:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps({"contract": "CSTAR_RUNTIME_INPUT_LOAD_AUDIT_V1",
+            "house": args.house, "pass": False, "error": str(exc),
+            "aligned_frame_count": len(aligned), "runtime_map_parity": node.map_parity})+"\n")
+        raise
     finally:
         node.destroy_node()
         rclpy.shutdown()
@@ -143,7 +193,7 @@ def main() -> int:
     with args.wind_position_csv.open("x", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["stamp_ns", "x", "y", "wind_u", "wind_v"])
-        for fr in aligned:
+        for fr in aligned[1:]:  # t=0 is bootstrap state, never an observed wind sample
             w.writerow([fr.stamp_ns, fr.pose_xy[0], fr.pose_xy[1], fr.wind_uv[0], fr.wind_uv[1]])
 
     args.frame_jsonl.parent.mkdir(parents=True, exist_ok=True)
@@ -182,6 +232,11 @@ def main() -> int:
         "loader_started_before_scientific_model": True,
         "old_native_gmrf_anemometer_subscription_used": False,
         "aligned_frame_count": len(aligned),
+        "positive_observation_count": len(aligned)-1,
+        "runtime_map_parity": node.map_parity,
+        "runtime_map_topic": "/map",
+        "runtime_map_data_sha256": hashlib.sha256(bytes(expected_grid)).hexdigest(),
+        "runtime_probe_code_sha256": sha256_file(Path(__file__)),
         "first_stamp_ns": aligned[0].stamp_ns,
         "last_stamp_ns": aligned[-1].stamp_ns,
         "wind_position_csv_path": str(args.wind_position_csv.resolve()),

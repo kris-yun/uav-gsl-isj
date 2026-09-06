@@ -13,6 +13,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import yaml
 
 HOUSES = ("H01", "H02", "H03")
 ARMS = ("A0", "F00", "F10", "F11")
@@ -59,17 +60,19 @@ def parse_scalar(text: str):
 
 
 def parse_map_yaml(path: Path) -> dict:
-    out = {}
-    for raw in path.read_text(encoding="utf-8").splitlines():
-        line = raw.split("#", 1)[0].strip()
-        if not line or ":" not in line:
-            continue
-        k, v = line.split(":", 1)
-        out[k.strip()] = parse_scalar(v)
+    out = yaml.safe_load(path.read_text(encoding="utf-8"))
+    require(isinstance(out, dict), f"CSTAR_ENV_MAP_YAML_MAPPING:{path}")
     for k in ("image", "resolution", "origin", "negate", "occupied_thresh", "free_thresh"):
         require(k in out, f"CSTAR_ENV_MAP_YAML_MISSING:{k}:{path}")
-    require(isinstance(out["origin"], list) and len(out["origin"]) >= 2,
+    require(isinstance(out["origin"], list) and len(out["origin"]) == 3,
             f"CSTAR_ENV_MAP_YAML_ORIGIN:{path}")
+    require(all(math.isfinite(float(v)) for v in out["origin"])
+            and float(out["origin"][2]) == 0.0,
+            f"CSTAR_ENV_MAP_YAW_OR_NONFINITE:{path}")
+    require(math.isfinite(float(out["resolution"])) and out["resolution"] > 0
+            and out["negate"] in (0, 1)
+            and 0 < out["free_thresh"] < out["occupied_thresh"] <= 1,
+            f"CSTAR_ENV_MAP_PARAMETERS:{path}")
     return out
 
 
@@ -110,6 +113,7 @@ def read_pgm(path: Path):
             pixels = [int(x) for x in tokens]
         else:
             raise RuntimeError(f"CSTAR_ENV_PGM_MAGIC:{path}:{magic!r}")
+    require(all(0 <= p <= maxval for p in pixels), f"CSTAR_ENV_PGM_PIXEL_RANGE:{path}")
     return width, height, maxval, pixels
 
 
@@ -156,6 +160,38 @@ def validate_runtime_audit(path: Path, expected_sha: str, house: str, row: dict,
                            common: dict, code: dict) -> dict:
     check_file(path, expected_sha, f"runtime_audit:{house}")
     a = json.loads(path.read_text(encoding="utf-8"))
+    require(a.get("pass") is True, f"CSTAR_ENV_RUNTIME_NOT_PASS:{house}")
+    require(a.get("git_sha") == code["git_sha"], f"CSTAR_ENV_RUNTIME_GIT:{house}")
+    require(a.get("runtime_map_parity") is True, f"CSTAR_ENV_RUNTIME_MAP_PARITY:{house}")
+    frame_path = resolve(path.parent, a["frame_jsonl_path"])
+    wind_path = resolve(path.parent, a["wind_position_csv_path"])
+    check_file(frame_path, a["frame_jsonl_sha256"], "runtime_frames")
+    check_file(wind_path, a["wind_position_csv_sha256"], "runtime_wind")
+    frames = [json.loads(line) for line in frame_path.read_text().splitlines()]
+    require(len(frames) >= 9 and a["aligned_frame_count"] == len(frames),
+            f"CSTAR_ENV_RUNTIME_FRAME_COUNT:{house}")
+    require(a["first_stamp_ns"] == 0 and
+            a["last_stamp_ns"] == (len(frames)-1)*200000000,
+            f"CSTAR_ENV_RUNTIME_ENDPOINTS:{house}")
+    with wind_path.open(newline="") as f:
+        wind_rows = list(csv.DictReader(f))
+    require(len(wind_rows) == len(frames)-1, f"CSTAR_ENV_RUNTIME_WIND_COUNT:{house}")
+    for i, fr in enumerate(frames):
+        require(type(fr["stamp_ns"]) is int and fr["stamp_ns"] == i*200000000,
+                f"CSTAR_ENV_RUNTIME_STAMP:{house}:{i}")
+        require(len(fr["pose_xy"]) == 2 and len(fr["wind_uv"]) == 2 and
+                all(math.isfinite(float(v)) for v in fr["pose_xy"]+fr["wind_uv"]+[fr["gas_ppm"]])
+                and fr["gas_ppm"] >= 0, f"CSTAR_ENV_RUNTIME_VALUES:{house}:{i}")
+        if i == 0:
+            require(fr["gas_ppm"] == 0, f"CSTAR_ENV_RUNTIME_INITIAL_SENSOR:{house}")
+            continue  # bootstrap wind is not an observed sample
+        wr = wind_rows[i-1]
+        require(int(wr["stamp_ns"]) == fr["stamp_ns"] and
+                [float(wr[k]) for k in ("x", "y", "wind_u", "wind_v")] ==
+                fr["pose_xy"] + fr["wind_uv"], f"CSTAR_ENV_RUNTIME_WIND_JOIN:{house}:{i}")
+    wind_probes = [p for p in row["free_space_probe_csvs"] if p["kind"] == "wind_observation"]
+    require(len(wind_probes) == 1 and wind_probes[0]["sha256"] == a["wind_position_csv_sha256"],
+            f"CSTAR_ENV_RUNTIME_WIND_SUBSTITUTED:{house}")
     required = (
         "contract", "house", "git_sha", "geometry_identity", "map_yaml_path",
         "map_yaml_sha256", "map_image_path", "map_image_sha256", "world_frame",
@@ -272,6 +308,7 @@ def main() -> int:
                 f"CSTAR_ENV_COMMON_CONTRACT:{k}:{common.get(k)!r}:{v!r}")
     base = mpath.parent
     code = m["runtime_code_identity"]
+    code = {**code, "git_sha": m["git_sha"]}
     for stem in ("ingress", "wind_adapter"):
         pkey, skey = f"{stem}_code_path", f"{stem}_code_sha256"
         require(pkey in code and skey in code, f"CSTAR_ENV_CODE_IDENTITY:{stem}")
@@ -285,11 +322,11 @@ def main() -> int:
             f"CSTAR_ENV_ARM_INPUT_IDENTITY_NOT_SHARED:{arm_id}")
     out = {"contract": "CSTAR_ENVIRONMENT_ALIGNMENT_AUDIT_V1",
            "input_manifest": str(mpath), "input_manifest_sha256": sha256_file(mpath),
-           "validator_version": "V2", "git_sha": m["git_sha"],
+           "validator_version": "V2.1", "git_sha": m["git_sha"],
            "repo_root": m["repo_root"], "houses": houses,
            "shared_arm_input_identity": arm_id, "pass": True,
            "verdict": "CSTAR_ENVIRONMENT_ALIGNMENT=PASS",
-           "scope": "geometry/frame/local-wind/clock/route input identity only; not GMRF accuracy and not M1/M2/M3 scientific effectiveness"}
+           "scope": "short shared-loader geometry/frame/local-wind/clock/point feasibility only; arm identity is a future binding contract, not four-arm execution evidence; not GMRF accuracy or M1/M2/M3 effectiveness"}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(out, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(out["verdict"])
