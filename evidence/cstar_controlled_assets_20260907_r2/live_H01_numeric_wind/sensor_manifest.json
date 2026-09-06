@@ -1,0 +1,55 @@
+{
+  "frame_query_service": null,
+  "gaden_iteration_mode": "seeded_time_replay",
+  "gas_backend": "raw_house1_snapshot",
+  "realtime_factor": 1.0,
+  "schema_version": "mcos-vgr-manifest-v1",
+  "sensor": {
+    "config": {
+      "baseline": 0.0,
+      "dead_time_s": 0.4,
+      "drift_rate_ppm_s": 0.0,
+      "gain": 1.0,
+      "initial_input_ppm": 0.0,
+      "initial_state_ppm": 0.0,
+      "mode": "asymmetric",
+      "noise_std_ppm": 0.0,
+      "saturation_max_ppm": 1000000.0,
+      "saturation_min_ppm": 0.0,
+      "tau_recovery_s": 1.2,
+      "tau_rise_s": 1.2
+    },
+    "delay_interpolation": "causal piecewise-linear sampled-input history",
+    "model_version": "mcos-sensor-v1",
+    "noise_location": "additive after dynamic state, before saturation",
+    "seed": 12,
+    "state_transition": "z[k]=exp(-dt/tau_branch)*z[k-1]+(1-exp(-dt/tau_branch))*u_delayed[k]"
+  },
+  "sim_dt_s": 0.2,
+  "spatial_domain": {
+    "cell_size": 0.1,
+    "frame_dimensions": null,
+    "frame_min": null,
+    "occupancy_original_dimensions": [
+      87,
+      114,
+      33
+    ],
+    "occupancy_original_min": [
+      -7.55,
+      -7.88
+    ],
+    "sensor_safe_map_dimensions": [
+      87,
+      114
+    ],
+    "sensor_safe_map_min": [
+      -7.55,
+      -7.88
+    ]
+  },
+  "truth_policy": {
+    "source_coordinates_published": false,
+    "true_gas_trace_is_offline_diagnostic_only": true
+  }
+}

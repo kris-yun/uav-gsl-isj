@@ -1,0 +1,198 @@
+{
+  "contract": "CSTAR_CONTROLLED_TRACE_AUDIT_V1",
+  "core_float32_position_quantization_max_m": 4.730496361024519e-07,
+  "destructive_tests": [
+    {
+      "code": "CSTAR_ASSET_PARENT_FROZEN_ROLE",
+      "rejected": true,
+      "test": "parent_role_override"
+    },
+    {
+      "code": "CSTAR_ASSET_PARENT_TRANSPORT_IDENTITY",
+      "rejected": true,
+      "test": "fabricated_transport"
+    },
+    {
+      "code": "CSTAR_ASSET_M2_OUTCOME_PARENT_MISMATCH",
+      "rejected": true,
+      "test": "cross_parent_outcome"
+    },
+    {
+      "code": "CSTAR_ASSET_FORBIDDEN_MODEL_INPUTS",
+      "rejected": true,
+      "test": "source_truth_model_input"
+    },
+    {
+      "code": "CSTAR_ASSET_UNREGISTERED_ROUTE_FREEZE",
+      "rejected": true,
+      "test": "forged_route_lock"
+    },
+    {
+      "code": "CSTAR_ASSET_HASH_MISMATCH",
+      "rejected": true,
+      "test": "wrong_provenance_hash"
+    },
+    {
+      "code": "CSTAR_ASSET_M1_",
+      "rejected": true,
+      "test": "missing_parent"
+    },
+    {
+      "code": "CSTAR_ASSET_M2_RETROSPECTIVE_ADAPTIVE_PATH",
+      "rejected": true,
+      "test": "retrospective_adaptive_route"
+    }
+  ],
+  "m1_prefix_count": 180,
+  "m2_route_case_count": 252,
+  "outer_fold_audits_pass": 3,
+  "pass": true,
+  "per_realization": [
+    {
+      "history_positive_frames": 266,
+      "house": "H01",
+      "independent_sensor_max_error": 5.329070518200751e-15,
+      "measured_history_max_ppm": 0.9051838882221108,
+      "prefixes_retained": 15,
+      "realization_id": "108d47c24eba6b3d9c0d",
+      "route_hit_cases": 21,
+      "route_no_hit_cases": 0,
+      "same_context_different_first_hit_groups": 0,
+      "same_context_different_gas_sequence_groups": 7
+    },
+    {
+      "history_positive_frames": 271,
+      "house": "H01",
+      "independent_sensor_max_error": 8.659739592076221e-15,
+      "measured_history_max_ppm": 2.4067233422096885,
+      "prefixes_retained": 15,
+      "realization_id": "8d6d0d8919cc86bf9866",
+      "route_hit_cases": 21,
+      "route_no_hit_cases": 0,
+      "same_context_different_first_hit_groups": 0,
+      "same_context_different_gas_sequence_groups": 7
+    },
+    {
+      "history_positive_frames": 102,
+      "house": "H01",
+      "independent_sensor_max_error": 1.2878587085651816e-14,
+      "measured_history_max_ppm": 0.6726335616828436,
+      "prefixes_retained": 15,
+      "realization_id": "34f408835e0345114692",
+      "route_hit_cases": 9,
+      "route_no_hit_cases": 12,
+      "same_context_different_first_hit_groups": 0,
+      "same_context_different_gas_sequence_groups": 4
+    },
+    {
+      "history_positive_frames": 123,
+      "house": "H01",
+      "independent_sensor_max_error": 4.618527782440651e-14,
+      "measured_history_max_ppm": 2.3067811072038062,
+      "prefixes_retained": 15,
+      "realization_id": "3f6f6f0c48fcee9f4420",
+      "route_hit_cases": 9,
+      "route_no_hit_cases": 12,
+      "same_context_different_first_hit_groups": 0,
+      "same_context_different_gas_sequence_groups": 4
+    },
+    {
+      "history_positive_frames": 173,
+      "house": "H02",
+      "independent_sensor_max_error": 8.881784197001252e-15,
+      "measured_history_max_ppm": 1.3795370042956205,
+      "prefixes_retained": 15,
+      "realization_id": "b5ddfde822a2c432a4ed",
+      "route_hit_cases": 12,
+      "route_no_hit_cases": 9,
+      "same_context_different_first_hit_groups": 0,
+      "same_context_different_gas_sequence_groups": 6
+    },
+    {
+      "history_positive_frames": 175,
+      "house": "H02",
+      "independent_sensor_max_error": 7.882583474838611e-15,
+      "measured_history_max_ppm": 1.6118930208183873,
+      "prefixes_retained": 15,
+      "realization_id": "a5fd74001116ec3bc836",
+      "route_hit_cases": 13,
+      "route_no_hit_cases": 8,
+      "same_context_different_first_hit_groups": 1,
+      "same_context_different_gas_sequence_groups": 6
+    },
+    {
+      "history_positive_frames": 244,
+      "house": "H02",
+      "independent_sensor_max_error": 3.552713678800501e-14,
+      "measured_history_max_ppm": 7.290319100838934,
+      "prefixes_retained": 15,
+      "realization_id": "dea2bcf6e1dc5e1d6d75",
+      "route_hit_cases": 18,
+      "route_no_hit_cases": 3,
+      "same_context_different_first_hit_groups": 0,
+      "same_context_different_gas_sequence_groups": 7
+    },
+    {
+      "history_positive_frames": 243,
+      "house": "H02",
+      "independent_sensor_max_error": 2.3092638912203256e-14,
+      "measured_history_max_ppm": 8.158693349159805,
+      "prefixes_retained": 15,
+      "realization_id": "e29f95c937aeb1722501",
+      "route_hit_cases": 18,
+      "route_no_hit_cases": 3,
+      "same_context_different_first_hit_groups": 0,
+      "same_context_different_gas_sequence_groups": 6
+    },
+    {
+      "history_positive_frames": 172,
+      "house": "H03",
+      "independent_sensor_max_error": 1.7763568394002505e-15,
+      "measured_history_max_ppm": 2.908308070146711,
+      "prefixes_retained": 15,
+      "realization_id": "5607631937ea368823a8",
+      "route_hit_cases": 13,
+      "route_no_hit_cases": 8,
+      "same_context_different_first_hit_groups": 1,
+      "same_context_different_gas_sequence_groups": 5
+    },
+    {
+      "history_positive_frames": 187,
+      "house": "H03",
+      "independent_sensor_max_error": 2.220446049250313e-15,
+      "measured_history_max_ppm": 3.8089956914133447,
+      "prefixes_retained": 15,
+      "realization_id": "264aac99e78afdd878cd",
+      "route_hit_cases": 13,
+      "route_no_hit_cases": 8,
+      "same_context_different_first_hit_groups": 1,
+      "same_context_different_gas_sequence_groups": 7
+    },
+    {
+      "history_positive_frames": 169,
+      "house": "H03",
+      "independent_sensor_max_error": 1.865174681370263e-14,
+      "measured_history_max_ppm": 7.453552766727547,
+      "prefixes_retained": 15,
+      "realization_id": "e94004ac61d615f40bf3",
+      "route_hit_cases": 13,
+      "route_no_hit_cases": 8,
+      "same_context_different_first_hit_groups": 1,
+      "same_context_different_gas_sequence_groups": 5
+    },
+    {
+      "history_positive_frames": 169,
+      "house": "H03",
+      "independent_sensor_max_error": 1.1324274851176597e-14,
+      "measured_history_max_ppm": 4.378176620616775,
+      "prefixes_retained": 15,
+      "realization_id": "aec5da10fe2ce62da8b5",
+      "route_hit_cases": 13,
+      "route_no_hit_cases": 8,
+      "same_context_different_first_hit_groups": 1,
+      "same_context_different_gas_sequence_groups": 5
+    }
+  ],
+  "scientific_module_effectiveness_evaluated": false,
+  "verdict": "CSTAR_CONTROLLED_DATA_QUALIFICATION=PASS_NOT_MODEL_UTILITY"
+}
