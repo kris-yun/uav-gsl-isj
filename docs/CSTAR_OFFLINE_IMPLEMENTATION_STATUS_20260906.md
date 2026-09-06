@@ -1,93 +1,87 @@
-# CSTAR offline implementation status — 2026-09-06
+# CSTAR offline implementation status — revised 2026-09-06
 
-Branch: `g3-cstar-causal-redesign-20260906`
+Branch: `g3-cstar-revise-before-exec-20260906`
+Status: **REVISE_BEFORE_EXECUTION**
 
-## Current status
+This file replaces the earlier status text that overstated the scientific
+meaning of the spent offline layer.
 
-The offline execution layer is now implemented. This document does **not** claim a real-House PASS because the historical raw R4/seed12 trace CSV bodies are not committed to GitHub; the repository contains their hashes/provenance, while the files themselves remain VM assets.
+## Current interpretation
 
-## Implemented
+The existing spent-data scripts are **premise/replay tools only**.
 
-- `experiments/ctpi_cstar/common/trace_io.py`
-  - causal latest-at-or-before join of gas, pose and local wind;
-  - flexible legacy trace header aliases;
-  - no future pose/wind binding;
-  - deterministic causal sensor-state summary for offline input.
-- `experiments/ctpi_cstar/build_spent_manifest.py`
-  - discovers the existing H01/H02/H03 seed12 A0/F00/F01 run directories without launching a simulator.
-- `experiments/ctpi_cstar/m1_picr/offline.py`
-  - trains PICR and a matched unconstrained ablation;
-  - leave-one-House-out evaluation;
-  - same-source nuisance/route invariance diagnostic;
-  - source localization proper loss/error;
-  - candidate domains are generated from the executed-route envelope, **not around ground-truth source coordinates**.
-- `experiments/ctpi_cstar/m2_cpo/offline.py`
-  - rolling fixed-trajectory future first-passage labels;
-  - decision-time local wind only;
-  - future route is the known action intervention; future measured gas is label only;
-  - compares learned CPO against a frozen causal plume prior using NLL and Brier score.
-- `experiments/ctpi_cstar/m3_phs/offline_panel.py`
-  - consumes a true counterfactual panel with multiple routes per identical decision context;
-  - refuses to reinterpret a single historical executed route as counterfactual evidence;
-  - reports `M3_REAL_GATE_BLOCKED_ASSET_MISSING` when the required panel is absent.
-- `experiments/ctpi_cstar/M3_COUNTERFACTUAL_PANEL_SCHEMA.json`
-  - freezes the real M3 evaluator asset contract.
-- `experiments/ctpi_cstar/run_offline_gates.py`
-  - one orchestrator for M1/M2/M3;
-  - formal closed-loop authorization is true only when all three module gates are true.
-- `experiments/ctpi_cstar/run_spent_seed12_offline.sh`
-  - one-command VM entry point for existing spent seed12 traces.
-- `experiments/ctpi_cstar/selftest_offline_contracts.py`
-  - verifies latest-at-or-before pose/wind binding;
-  - verifies M1 candidate coordinates do not change when only evaluator source truth changes;
-  - mutates post-decision future wind and verifies M2 decision features/prior remain unchanged.
+- M1 spent output: `CSTAR_M1_SPENT_REPLAY_PREMISE_V3`.
+- M2 spent output: `CSTAR_M2_SPENT_OBSERVATIONAL_REPLAY_V2`.
+- M3 is not required in the spent M1/M2 premise stage; a missing M3 panel there
+  is not a scientific M3 failure.
+- No spent replay result can authorize formal closed loop.
 
-The unified `run_reference_selftests.py` now includes these offline causal-contract tests.
+## Important corrections after review
 
-## Local execution evidence in the assistant work environment
+### Trace ingestion
 
-The new files were syntax-checked and the offline causal-contract selftest executed successfully:
+`common/trace_io.py` now rejects malformed, duplicate, out-of-order and stale
+causal context instead of sorting/deduplicating/skipping such evidence.
 
-`CSTAR_OFFLINE_CAUSAL_CONTRACT_SELFTEST PASS`
+The derived low-pass gas channel is named/treated as `gas_ema_aux`; it is **not**
+an audited FOPDT sensor internal state.
 
-A deliberately simple three-source/three-nuisance synthetic dataset was also run through the M1 and M2 gates. Both returned `NO_GO` rather than being automatically accepted. This synthetic result is only a gate/implementation stress test and is **not** evidence for or against real GSL performance.
+### M1
 
-## Real-data blocker verified
+The spent trainer is not the formal causal gate producer. It does not create a
+formal checkpoint or the required destructive controls.
 
-The archived failure diagnostics list SHA-256 identities for the historical files such as:
+The revised M1 architecture closes the reviewed history-context bypass: all
+history-dependent source evidence must enter `zS` before candidate scoring, and
+candidate-only evidence is subtracted by evaluating the score at `zS=0`.
 
-- `H01_seed12_F00/sensor_trace.csv`
-- `H01_seed12_F00/sim_pose_trace.csv`
-- `H01_seed12_F00/wind_trace.csv`
-- corresponding H02/H03 A0/F00/F01 files.
+This only closes an architectural shortcut; it does not prove causal
+identifiability. See:
 
-A direct GitHub contents lookup for the historical raw trace path returns 404, confirming that the CSV bodies are not available in this branch. They must be read from the VM/run archive to execute the real M1/M2 offline gates.
+`docs/CSTAR_M1_IDENTIFIABILITY_BOUNDARY_20260906.md`.
 
-This is an asset-location limitation, not permission to regenerate outcomes or substitute synthetic PASS evidence.
+### M2
 
-## Exact VM command
+Historical future executed trajectory segments are now explicitly labeled as
+retrospective path-conditioned replay. They are **not** `do(route)` evidence.
 
-```bash
-cd /home/zyc/gsl_ws/src/GasSourceLocalization
-git checkout g3-cstar-causal-redesign-20260906
-git pull
+A formal M2 route must be a decision-time locked planned route or a controlled
+open-loop route under the typed controlled-asset contract.
 
-RUN_ROOT=/path/to/the/spent/seed12/run/root \
-OUT_ROOT=/path/to/fresh/cstar_offline_20260906 \
-bash experiments/ctpi_cstar/run_spent_seed12_offline.sh
-```
+### Formal controlled assets
 
-If a valid independent M3 panel already exists, add:
+The active typed asset contract is:
 
-```bash
-M3_PANEL=/path/to/CSTAR_M3_COUNTERFACTUAL_PANEL_V1.json
-```
+`experiments/ctpi_cstar/CSTAR_CONTROLLED_CAUSAL_ASSET_CONTRACT_V1.json`.
 
-No GADEN House campaign is launched by these commands.
+Use:
 
-## Scientific stop line
+`experiments/ctpi_cstar/validate_controlled_assets.py`
 
-- A missing raw trace asset is `BLOCKED_ASSET_MISSING`, not PASS or NO-GO.
-- A failed M1/M2 metric is NO-GO; do not tune House/seed-specific weights until it passes.
-- A single executed trajectory cannot establish M3 action superiority.
-- Production ROS integration and formal A0/F00/F10/F11 closed loop remain unauthorized until real M1/M2/M3 evidence exists.
+before formal M1/M2 training.
+
+### Authorization / AUC / 12-run
+
+The authorization layer now requires real required fields, referenced raw
+artifacts, checkpoint files/hashes, gate-to-checkpoint consistency, production
+identity and full-stack smoke evidence.
+
+The performance evaluator no longer back-fills future estimates into the past;
+formal traces require explicit available estimates at t=0 and t=240 and use
+causal zero-order-hold AUC.
+
+The 12-run driver rechecks authorization input hashes and arm-specific module
+call identities. Missing fields do not default to zero. Formal attribution cases
+with fallback are invalid.
+
+## Current stop line
+
+Do **not** run the H01/H02/H03 × seed12 × A0/F00/F10/F11 matrix yet.
+
+The active Codex handoff is:
+
+`docs/CSTAR_REVISE_BEFORE_EXECUTION_CODEX_HANDOFF_20260906.md`.
+
+The next task is finite revision validation: mandatory regression tests,
+controlled-asset audit, formal M1/M2 producer completion, genuine M3
+counterfactual evaluation when available, and a reviewable evidence bundle.
