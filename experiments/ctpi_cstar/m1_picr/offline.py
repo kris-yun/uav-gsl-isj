@@ -1,98 +1,52 @@
 from __future__ import annotations
-
-import argparse, json, math, random, sys
+import argparse,json,math,random,sys
 from pathlib import Path
 import torch
 import torch.nn.functional as F
-
 ROOT=Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path: sys.path.insert(0,str(ROOT))
-from common.trace_io import load_manifest, load_episode
+from common.trace_io import load_manifest,load_episode
 from m1_picr.model import PICRModel
 
+def history_tensor(ep,max_steps=256):
+    lo=max(0,len(ep.time)-max_steps)
+    return torch.tensor([[math.log1p(ep.gas[i]),ep.sensor_state[i],ep.wind_u[i],ep.wind_v[i],ep.pose_x[i],ep.pose_y[i],ep.time[i],ep.measuring[i]] for i in range(lo,len(ep.time))],dtype=torch.float32)
 
-def candidate_pool(specs, radius=1.0):
-    base=sorted({tuple(map(float,s.source_xy)) for s in specs})
-    offsets=((0,0),(radius,0),(-radius,0),(0,radius),(0,-radius),(radius,radius),(radius,-radius),(-radius,radius),(-radius,-radius))
-    pool=[]
-    for s in base:
-        for dx,dy in offsets:
-            p=(round(s[0]+dx,6),round(s[1]+dy,6))
-            if p not in pool: pool.append(p)
-    return pool
+def candidate_grid(ep,side=9,margin=2.0):
+    # Candidate domain is derived only from the executed route envelope, not GT.
+    xmin,xmax=min(ep.pose_x)-margin,max(ep.pose_x)+margin; ymin,ymax=min(ep.pose_y)-margin,max(ep.pose_y)+margin
+    xs=[xmin+(xmax-xmin)*i/(side-1) for i in range(side)]; ys=[ymin+(ymax-ymin)*j/(side-1) for j in range(side)]
+    return [(x,y) for y in ys for x in xs]
 
+def batch_examples(episodes,device):
+    hs=[history_tensor(e) for e in episodes]; grids=[candidate_grid(e) for e in episodes]; T=max(x.shape[0] for x in hs); N=len(grids[0]); H=torch.zeros(len(hs),T,8,device=device);V=torch.zeros(len(hs),T,dtype=torch.bool,device=device);C=torch.zeros(len(hs),N,2,device=device);Y=[]
+    for b,(e,h,g) in enumerate(zip(episodes,hs,grids)):
+        H[b,-h.shape[0]:]=h.to(device);V[b,-h.shape[0]:]=True;C[b]=torch.tensor(g,dtype=torch.float32,device=device); sx,sy=e.spec.source_xy; Y.append(min(range(N),key=lambda k:(g[k][0]-sx)**2+(g[k][1]-sy)**2))
+    return H,C,V,torch.tensor(Y,dtype=torch.long,device=device)
 
-def history_tensor(ep, max_steps=256):
-    idx=list(range(max(0,len(ep.time)-max_steps),len(ep.time)))
-    rows=[]
-    for i in idx:
-        rows.append([math.log1p(ep.gas[i]),ep.sensor_state[i],ep.wind_u[i],ep.wind_v[i],ep.pose_x[i],ep.pose_y[i],ep.time[i],ep.measuring[i]])
-    return torch.tensor(rows,dtype=torch.float32)
-
-
-def batch_examples(episodes,pool,device):
-    hs=[history_tensor(e) for e in episodes]
-    T=max(x.shape[0] for x in hs)
-    H=torch.zeros(len(hs),T,8,device=device); V=torch.zeros(len(hs),T,dtype=torch.bool,device=device)
-    targets=[]
-    for b,(e,h) in enumerate(zip(episodes,hs)):
-        H[b,-h.shape[0]:]=h.to(device); V[b,-h.shape[0]:]=True
-        targets.append(pool.index(tuple(map(float,e.spec.source_xy))))
-    C=torch.tensor(pool,dtype=torch.float32,device=device)[None,:,:].expand(len(hs),-1,-1)
-    return H,C,V,torch.tensor(targets,dtype=torch.long,device=device)
-
-
-def train_model(episodes,pool,causal:bool,steps:int,seed:int,device):
-    torch.manual_seed(seed); random.seed(seed)
-    model=PICRModel(d_model=48,nhead=4,layers=2,z_source_dim=24,z_nuisance_dim=16).to(device)
-    opt=torch.optim.AdamW(model.parameters(),lr=2e-3,weight_decay=1e-4)
-    by_source={}
-    for e in episodes: by_source.setdefault(tuple(e.spec.source_xy),[]).append(e)
+def train_model(episodes,causal,steps,seed,device):
+    torch.manual_seed(seed);random.seed(seed);m=PICRModel(d_model=48,nhead=4,layers=2,z_source_dim=24,z_nuisance_dim=16).to(device);o=torch.optim.AdamW(m.parameters(),lr=2e-3,weight_decay=1e-4); by={}
+    for e in episodes:by.setdefault(tuple(e.spec.source_xy),[]).append(e)
     for _ in range(steps):
-        batch=random.sample(episodes,min(len(episodes),8))
-        H,C,V,y=batch_examples(batch,pool,device)
-        out=model(H,C,V)
-        loss=F.cross_entropy(out.source_logits,y)
+        batch=random.sample(episodes,min(8,len(episodes)));H,C,V,y=batch_examples(batch,device);out=m(H,C,V);loss=F.cross_entropy(out.source_logits,y)
         if causal:
-            keys=[k for k,v in by_source.items() if len(v)>=2]
+            keys=[k for k,v in by.items() if len(v)>=2]
             if keys:
-                k=random.choice(keys); a,b=random.sample(by_source[k],2)
-                H2,C2,V2,_=batch_examples([a,b],pool,device); po=model(H2,C2,V2)
-                loss=loss+0.25*(po.source_representation[0]-po.source_representation[1]).pow(2).mean()
-        opt.zero_grad(); loss.backward(); torch.nn.utils.clip_grad_norm_(model.parameters(),5.0); opt.step()
-    return model
-
+                a,b=random.sample(by[random.choice(keys)],2);H2,C2,V2,_=batch_examples([a,b],device);z=m(H2,C2,V2).source_representation;loss=loss+0.25*(z[0]-z[1]).pow(2).mean()
+        o.zero_grad();loss.backward();torch.nn.utils.clip_grad_norm_(m.parameters(),5);o.step()
+    return m
 @torch.no_grad()
-def evaluate(model,episodes,pool,device):
-    H,C,V,y=batch_examples(episodes,pool,device); out=model(H,C,V)
-    ce=float(F.cross_entropy(out.source_logits,y)); pred=out.source_posterior.argmax(-1)
-    acc=float((pred==y).float().mean())
-    xy=torch.tensor(pool,dtype=torch.float32,device=device); pxy=xy[pred]; txy=xy[y]
-    err=float(torch.linalg.vector_norm(pxy-txy,dim=-1).mean())
-    zs=out.source_representation.cpu(); same=[]; diff=[]
+def evaluate(m,episodes,device):
+    H,C,V,y=batch_examples(episodes,device);out=m(H,C,V);pred=out.source_posterior.argmax(-1);b=torch.arange(len(episodes),device=device);pxy=C[b,pred];true=torch.tensor([e.spec.source_xy for e in episodes],dtype=torch.float32,device=device);err=torch.linalg.vector_norm(pxy-true,dim=-1);zs=out.source_representation.cpu();same=[]
     for i in range(len(episodes)):
         for j in range(i+1,len(episodes)):
-            d=float(torch.linalg.vector_norm(zs[i]-zs[j]))
-            (same if episodes[i].spec.source_xy==episodes[j].spec.source_xy else diff).append(d)
-    return {"cross_entropy":ce,"top1_accuracy":acc,"mean_source_error_m":err,"same_source_z_distance":sum(same)/len(same) if same else None,"different_source_z_distance":sum(diff)/len(diff) if diff else None}
-
-
+            if episodes[i].spec.source_xy==episodes[j].spec.source_xy:same.append(float(torch.linalg.vector_norm(zs[i]-zs[j])))
+    return {'cross_entropy':float(F.cross_entropy(out.source_logits,y)),'mean_source_error_m':float(err.mean()),'median_source_error_m':float(err.median()),'same_source_z_distance':sum(same)/len(same) if same else None,'candidate_domain_source':'executed_route_envelope_plus_fixed_margin','candidate_count':C.shape[1]}
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument("--manifest",type=Path,required=True); ap.add_argument("--output",type=Path,required=True); ap.add_argument("--steps",type=int,default=400); ap.add_argument("--seed",type=int,default=7)
-    args=ap.parse_args(); specs=load_manifest(args.manifest); episodes=[load_episode(s) for s in specs]
-    if len(episodes)<3: raise RuntimeError("CSTAR_M1_NEED_AT_LEAST_3_EPISODES")
-    pool=candidate_pool(specs); device=torch.device("cpu")
-    houses=sorted({e.spec.house for e in episodes if e.spec.house}); folds=[]
-    for held in houses or [""]:
-        tr=[e for e in episodes if not held or e.spec.house!=held]; te=[e for e in episodes if not held or e.spec.house==held]
-        if not tr or not te: continue
-        causal=train_model(tr,pool,True,args.steps,args.seed,device); base=train_model(tr,pool,False,args.steps,args.seed,device)
-        cm=evaluate(causal,te,pool,device); bm=evaluate(base,te,pool,device)
-        folds.append({"heldout_house":held or "NONE","causal":cm,"unconstrained":bm,"directional":{"error_better":cm["mean_source_error_m"]<bm["mean_source_error_m"],"invariance_better":cm["same_source_z_distance"] is not None and bm["same_source_z_distance"] is not None and cm["same_source_z_distance"]<bm["same_source_z_distance"]}})
-    report={"contract":"CSTAR_M1_OFFLINE_GATE_V1","episodes":len(episodes),"candidate_count":len(pool),"folds":folds,"limitations":["Spent closed-loop traces test route/transport nuisance invariance but do not by themselves provide controlled source-strength interventions unless such episodes are added to the manifest."]}
-    report["pass"]=bool(folds) and all(f["directional"]["error_better"] and f["directional"]["invariance_better"] for f in folds)
-    report["verdict"]="M1_OFFLINE_PASS" if report["pass"] else "M1_OFFLINE_NO_GO"
-    args.output.parent.mkdir(parents=True,exist_ok=True); args.output.write_text(json.dumps(report,indent=2)+"\n")
-    print(report["verdict"]); return 0 if report["pass"] else 2
-
-if __name__=="__main__": raise SystemExit(main())
+    ap=argparse.ArgumentParser();ap.add_argument('--manifest',type=Path,required=True);ap.add_argument('--output',type=Path,required=True);ap.add_argument('--steps',type=int,default=400);ap.add_argument('--seed',type=int,default=7);a=ap.parse_args();eps=[load_episode(s) for s in load_manifest(a.manifest)];houses=sorted({e.spec.house for e in eps if e.spec.house});device=torch.device('cpu');folds=[]
+    for held in houses or ['']:
+        tr=[e for e in eps if not held or e.spec.house!=held];te=[e for e in eps if not held or e.spec.house==held]
+        if not tr or not te:continue
+        cm=evaluate(train_model(tr,True,a.steps,a.seed,device),te,device);bm=evaluate(train_model(tr,False,a.steps,a.seed,device),te,device);folds.append({'heldout_house':held or 'NONE','causal':cm,'unconstrained':bm,'directional':{'error_better':cm['mean_source_error_m']<bm['mean_source_error_m'],'invariance_better':cm['same_source_z_distance'] is not None and bm['same_source_z_distance'] is not None and cm['same_source_z_distance']<bm['same_source_z_distance']}})
+    r={'contract':'CSTAR_M1_OFFLINE_GATE_V2_NO_GT_CANDIDATE_LEAKAGE','episodes':len(eps),'folds':folds,'truth_usage':'source truth is used only for offline target/error; candidate coordinates are route-domain-derived','limitations':['controlled source-strength intervention requires explicit additional episodes; natural arm variation is not relabeled as do(strength)']};r['pass']=bool(folds) and all(f['directional']['error_better'] and f['directional']['invariance_better'] for f in folds);r['verdict']='M1_OFFLINE_PASS' if r['pass'] else 'M1_OFFLINE_NO_GO';a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(r,indent=2)+'\n');print(r['verdict']);return 0 if r['pass'] else 2
+if __name__=='__main__':raise SystemExit(main())
