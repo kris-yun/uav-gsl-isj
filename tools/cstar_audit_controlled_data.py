@@ -57,6 +57,7 @@ def compare(raw, observed, expected_points, offset_step=0, expected_sensor=None)
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--assets', type=Path, required=True)
+    ap.add_argument('--read-only', action='store_true')
     args = ap.parse_args()
     assets = args.assets.resolve()
     routes_root = ROOT / 'evidence/cstar_controlled_routes_20260907'
@@ -89,7 +90,11 @@ def main():
         'physical_raw_frame_sha256': sha(assets / 'adapter_parity/H01/raw_frames.jsonl'),
         'adapter_parity_sha256': sha(assets / 'QUERY_ADAPTER_PARITY.json'),
         'environment_audit_sha256': sha(ENV / 'CSTAR_ENVIRONMENT_ALIGNMENT_AUDIT_V1.json')}
-    dump(assets / 'WIND_INDEX_CORRECTION_AUDIT.json', correction)
+    if args.read_only:
+        stored = json.loads((assets / 'WIND_INDEX_CORRECTION_AUDIT.json').read_text())
+        assert stored == correction, 'STORED_WIND_CORRECTION_MISMATCH'
+    else:
+        dump(assets / 'WIND_INDEX_CORRECTION_AUDIT.json', correction)
     for record in frozen['records']:
         rid, house = record['realization_id'], record['house']
         target = assets / 'realizations' / rid
@@ -125,14 +130,19 @@ def main():
         for h in design['houses'].values() for plan in [h['history'], *h['routes']] for r in route_points(plan))
 
     validator = ROOT / 'experiments/ctpi_cstar/validate_controlled_assets.py'
+    temporary_audits = tempfile.TemporaryDirectory()
     for house in ['H01', 'H02', 'H03']:
         manifest = assets / 'manifests' / (house+'.json')
         data = json.loads(manifest.read_text())
         data['wind_index_correction_audit_path'] = '../WIND_INDEX_CORRECTION_AUDIT.json'
         data['wind_index_correction_audit_sha256'] = sha(assets / 'WIND_INDEX_CORRECTION_AUDIT.json')
-        dump(manifest, data)
-        subprocess.run([sys.executable, str(validator), '--manifest', str(assets / 'manifests' / (house+'.json')),
-                        '--output', str(assets / ('ASSET_AUDIT_'+house+'.json'))], check=True)
+        if args.read_only:
+            assert json.loads(manifest.read_text()) == data
+        else:
+            dump(manifest, data)
+        output_root = Path(temporary_audits.name) if args.read_only else assets
+        subprocess.run([sys.executable, '-B', str(validator), '--manifest', str(assets / 'manifests' / (house+'.json')),
+                        '--output', str(output_root / ('ASSET_AUDIT_'+house+'.json'))], check=True)
 
     # Destructive fixtures mutate copies only. Each must be rejected by the
     # actual validator, not a source-code string check.
@@ -163,7 +173,9 @@ def main():
     report.update({'pass': True, 'm1_prefix_count': 180, 'm2_route_case_count': 252,
                    'outer_fold_audits_pass': 3, 'destructive_tests': tests,
                    'verdict': 'CSTAR_CONTROLLED_DATA_QUALIFICATION=PASS_NOT_MODEL_UTILITY'})
-    dump(assets / 'CONTROLLED_TRACE_AUDIT.json', report)
+    if not args.read_only:
+        dump(assets / 'CONTROLLED_TRACE_AUDIT.json', report)
+    temporary_audits.cleanup()
     print(json.dumps(report), flush=True)
 
 
