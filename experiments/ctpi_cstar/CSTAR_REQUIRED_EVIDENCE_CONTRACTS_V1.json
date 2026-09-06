@@ -1,0 +1,63 @@
+{
+  "contract": "CSTAR_REQUIRED_EVIDENCE_CONTRACTS_V1",
+  "purpose": "Exact artifact identities consumed by authorize_closed_loop.py. These are evidence contracts, not permission to change CSTAR scientific formulas.",
+  "artifacts": {
+    "M1": {
+      "contract": "CSTAR_M1_CONTROLLED_CAUSAL_GATE_V1",
+      "required_top_level_fields": ["contract", "pass", "verdict", "training_asset_identity", "heldout_results", "causal_controls", "checkpoint_sha256"],
+      "pass_requirements": [
+        "source proper score and localization error improve over a matched unconstrained temporal encoder on controlled held-out data",
+        "same exact source under distinct transport/release/sensor nuisance interventions moves zS less than the unconstrained encoder",
+        "different-source separation does not collapse",
+        "source-label permutation removes the task gain",
+        "removing the intervention constraint measurably worsens invariance",
+        "candidate search domain is independent of evaluator source truth",
+        "leave-one-House-out direction is reported and is not carried by only one House"
+      ]
+    },
+    "M2": {
+      "contract": "CSTAR_M2_SOURCE_DIVERSE_PREDICTIVE_GATE_V1",
+      "required_top_level_fields": ["contract", "pass", "verdict", "training_asset_identity", "heldout_results", "baselines", "checkpoint_sha256"],
+      "pass_requirements": [
+        "training/evaluation contain multiple source hypotheses/placements rather than only the three historical House truths",
+        "held-out first-passage NLL and Brier improve over the frozen causal plume/FOPDT baseline and the uncorrected physics prior",
+        "encounter CDF / route committor are calibrated on held-out transport realizations",
+        "future wind/gas are never model inputs",
+        "held-out predictive bank is never queried by the deployable provider",
+        "cross-House/source-strength/wind perturbation results are reported"
+      ]
+    },
+    "M3": {
+      "contract": "CSTAR_M3_COUNTERFACTUAL_GATE_V1",
+      "required_top_level_fields": ["contract", "pass", "verdict", "cases", "real", "destructive_route_law_shuffle", "mechanism_destroyed_by_shuffle"],
+      "pass_requirements": [
+        "same decision context has at least two feasible route interventions",
+        "realized route outcomes are independent evaluator outcomes and were not used to construct route_laws",
+        "native PMFS route is included whenever feasible",
+        "PHS improves realized source risk relative to native route",
+        "deterministic route-law shuffle degrades/removes the gain"
+      ]
+    },
+    "MODELS": {
+      "contract": "CSTAR_FROZEN_MODEL_MANIFEST_V1",
+      "required_top_level_fields": ["contract", "pass", "verdict", "git_sha", "m1_checkpoint", "m1_checkpoint_sha256", "m2_checkpoint", "m2_checkpoint_sha256", "training_config_sha256"],
+      "hard_rule": "Checkpoints are frozen before closed-loop outcomes and are loaded without online fitting or House-specific adaptation."
+    },
+    "PRODUCTION": {
+      "contract": "CSTAR_PRODUCTION_MODE_MANIFEST_V1",
+      "required_top_level_fields": ["contract", "pass", "verdict", "git_sha", "mode", "model_manifest_sha256", "runtime_inputs", "forbidden_runtime_inputs", "fallback_policy", "route_contract"],
+      "hard_rules": [
+        "mode must be isolated cstar_v1; legacy CPIR/CTPI formulas remain reproducible",
+        "runtime reads no source truth, House ID, future gas/wind, simulator member identity, or deployment predictive bank",
+        "models are loaded once from frozen hashes",
+        "real navigation path is used when available; otherwise a preregistered endpoint+dwell fallback is used; no fake straight line through obstacles",
+        "invalid/timeout inference fails closed to native PMFS and logs the fallback"
+      ]
+    },
+    "SMOKE": {
+      "contract": "CSTAR_RUNTIME_SMOKE_V1",
+      "required_top_level_fields": ["contract", "pass", "verdict", "production_manifest_sha256", "future_read_violations", "truth_or_house_runtime_reads", "deployment_bank_queries", "invalid_route_count", "native_route_missing_when_feasible", "fallback_count", "decision_count", "timing_summary"],
+      "hard_rule": "Smoke validates wiring/timing/legality only. It is not a scientific performance PASS."
+    }
+  }
+}
