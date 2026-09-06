@@ -1,0 +1,59 @@
+{
+  "contract": "CSTAR_CONTROLLED_CAUSAL_ASSET_CONTRACT_V1",
+  "revision": "REVISE_BEFORE_EXECUTION_20260906",
+  "purpose": "Typed identity required before formal M1/M2 training or gate production. Historical spent replay does not satisfy this contract by default.",
+  "top_level_required": [
+    "contract", "created_git_sha", "asset_root", "splits",
+    "m1_episodes", "m2_route_cases", "model_input_fields",
+    "evaluator_only_fields", "forbidden_model_inputs"
+  ],
+  "forbidden_model_inputs": [
+    "source_truth", "source_xyz_m", "source_id", "house",
+    "transport_seed", "transport_member_id", "release_intervention_id",
+    "sensor_intervention_id", "future_gas", "future_wind",
+    "future_outcome", "heldout_predictive_bank"
+  ],
+  "m1_episode_required_fields": [
+    "episode_id", "split", "house", "source_id", "source_xyz_m",
+    "transport_intervention_id", "release_intervention_id",
+    "sensor_intervention_id", "history_trace_path", "history_trace_sha256",
+    "geometry_identity", "candidate_domain_path", "candidate_domain_sha256",
+    "candidate_domain_truth_independent", "sensor_state_kind",
+    "history_semantics", "runtime_feature_schema_version"
+  ],
+  "m1_hard_rules": [
+    "same-source nuisance pairs use exactly equal source_xyz_m and differ in at least one declared nuisance intervention/realization",
+    "region/carrier identity never substitutes for exact-source identity when claiming exact-source invariance",
+    "candidate_domain_truth_independent must be true",
+    "formal sensor state is either audited_fopdt_internal_state under the frozen sensor model or the feature is explicitly absent; gas EMA may not be relabeled as FOPDT state",
+    "training/evaluation use causal prefixes or a preregistered bounded causal history window; final-episode-only history is insufficient for the formal online gate",
+    "uninformative histories are retained for uncertainty/abstention diagnostics rather than removed post hoc"
+  ],
+  "m2_route_case_required_fields": [
+    "decision_id", "episode_id", "split", "house", "source_id",
+    "source_xyz_m", "decision_time_s", "route_kind", "route_locked_time_s",
+    "route_locked_before_outcome", "future_policy_dependent_path_used",
+    "planned_route_path", "planned_route_sha256", "outcome_trace_path",
+    "outcome_trace_sha256", "transport_intervention_id",
+    "outcome_realization_id", "execution_deviation_reported"
+  ],
+  "m2_allowed_route_kinds": [
+    "decision_locked_planned_route",
+    "controlled_open_loop_route"
+  ],
+  "m2_hard_rules": [
+    "route_locked_before_outcome must be true",
+    "route_locked_time_s must be <= decision_time_s",
+    "future_policy_dependent_path_used must be false",
+    "retrospective subsequently executed adaptive path is not do(route) evidence",
+    "multiple distinct source_xyz_m values must appear in formal training/evaluation",
+    "held-out outcome realizations are not used to construct the route law",
+    "execution deviation between planned and realized route is reported rather than silently ignored"
+  ],
+  "split_hard_rules": [
+    "split membership is frozen before formal gate outcomes are inspected",
+    "no identical raw realization appears in both train and held-out evaluation",
+    "leave-one-House-out evaluation is reported where the available controlled asset supports it",
+    "confirmation data are not reused for model selection"
+  ]
+}
