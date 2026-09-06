@@ -120,6 +120,12 @@ def main() -> int:
         return json.loads(resolve(manifest_path.parent, data[path_key], path_key).read_text(encoding="utf-8"))
 
     provenance = bound_json("raw_realization_provenance_audit_path", "raw_realization_provenance_audit_sha256")
+    req_fields(data, ["wind_index_correction_audit_path", "wind_index_correction_audit_sha256"], "wind_correction")
+    wind_correction = bound_json("wind_index_correction_audit_path", "wind_index_correction_audit_sha256")
+    require(wind_correction.get("contract") == "CSTAR_NUMERIC_WIND_RUNTIME_CORRECTION_V1"
+            and wind_correction.get("pass") is True
+            and wind_correction.get("environment_audit_sha256") == actual_env_sha,
+            "CSTAR_ASSET_WIND_CORRECTION_NOT_BOUND")
     frozen = bound_json("frozen_realization_split_path", "frozen_realization_split_sha256")
     require(provenance.get("contract") == "CSTAR_RAW_REALIZATION_PROVENANCE_AUDIT_V1"
             and provenance.get("pass") is True, "CSTAR_ASSET_PROVENANCE_NOT_PASS")
@@ -319,6 +325,7 @@ def main() -> int:
         "environment_alignment_audit_path": str(env_path.resolve()),
         "environment_alignment_audit_sha256": actual_env_sha,
         "raw_provenance_and_frozen_fold_verified": True,
+        "wind_index_correction_audit_sha256": data["wind_index_correction_audit_sha256"],
         "route_freeze_git_sha": data["route_freeze_git_sha"],
         "outer_fold": held,
         "geometry_identity_by_house": geometry_by_house,
