@@ -1,27 +1,55 @@
 {
   "contract": "CSTAR_REQUIRED_EVIDENCE_CONTRACTS_V1",
-  "purpose": "Exact artifact identities consumed by authorize_closed_loop.py. These are evidence contracts, not permission to change CSTAR scientific formulas.",
+  "revision": "REVISE_BEFORE_EXECUTION_20260906",
+  "purpose": "Exact artifacts consumed by authorize_closed_loop.py. Text labels are insufficient: required raw manifests, checkpoints, identities and destructive controls must be present and hash-verifiable.",
   "artifacts": {
     "M1": {
       "contract": "CSTAR_M1_CONTROLLED_CAUSAL_GATE_V1",
-      "required_top_level_fields": ["contract", "pass", "verdict", "training_asset_identity", "heldout_results", "causal_controls", "checkpoint_sha256"],
+      "required_top_level_fields": [
+        "contract", "pass", "verdict", "producer_version", "git_sha",
+        "training_asset_identity", "training_config_sha256",
+        "heldout_results", "causal_controls", "checkpoint_sha256",
+        "raw_result_manifest_path", "raw_result_manifest_sha256"
+      ],
+      "required_causal_control_fields": [
+        "zs_destructive_control_pass",
+        "context_only_baseline_beaten",
+        "label_permutation_destroyed_gain",
+        "intervention_ablation_worsens_invariance",
+        "candidate_domain_truth_independent",
+        "leave_one_house_out_directional_support",
+        "insufficient_information_behavior_reported"
+      ],
       "pass_requirements": [
         "source proper score and localization error improve over a matched unconstrained temporal encoder on controlled held-out data",
         "same exact source under distinct transport/release/sensor nuisance interventions moves zS less than the unconstrained encoder",
         "different-source separation does not collapse",
+        "zS masking/permutation destroys source discrimination while context-only does not recover the gain",
         "source-label permutation removes the task gain",
         "removing the intervention constraint measurably worsens invariance",
         "candidate search domain is independent of evaluator source truth",
-        "leave-one-House-out direction is reported and is not carried by only one House"
+        "leave-one-House-out direction is reported and is not carried by only one House",
+        "uninformative/unsupported observations preserve uncertainty or explicitly abstain rather than forcing a source"
       ]
     },
     "M2": {
       "contract": "CSTAR_M2_SOURCE_DIVERSE_PREDICTIVE_GATE_V1",
-      "required_top_level_fields": ["contract", "pass", "verdict", "training_asset_identity", "heldout_results", "baselines", "checkpoint_sha256"],
+      "required_top_level_fields": [
+        "contract", "pass", "verdict", "producer_version", "git_sha",
+        "training_asset_identity", "training_config_sha256",
+        "route_intervention_identity", "heldout_results", "baselines",
+        "checkpoint_sha256", "raw_result_manifest_path", "raw_result_manifest_sha256"
+      ],
+      "required_baselines": ["causal_plume_fopdt", "verified_physics_prior"],
+      "required_route_identity_fields": [
+        "kind", "decision_time_locked", "future_policy_dependent_path_used",
+        "execution_deviation_reported"
+      ],
       "pass_requirements": [
         "training/evaluation contain multiple source hypotheses/placements rather than only the three historical House truths",
-        "held-out first-passage NLL and Brier improve over the frozen causal plume/FOPDT baseline and the uncorrected physics prior",
-        "encounter CDF / route committor are calibrated on held-out transport realizations",
+        "route identity is either decision-time locked planned route or controlled open-loop route; retrospective adaptive future trajectory is forbidden as do(route) evidence",
+        "held-out first-passage NLL and Brier improve over the frozen causal plume/FOPDT baseline and the uncorrected verified-physics prior",
+        "encounter CDF / route committor calibration and event saturation diagnostics are reported on held-out transport realizations",
         "future wind/gas are never model inputs",
         "held-out predictive bank is never queried by the deployable provider",
         "cross-House/source-strength/wind perturbation results are reported"
@@ -29,7 +57,12 @@
     },
     "M3": {
       "contract": "CSTAR_M3_COUNTERFACTUAL_GATE_V1",
-      "required_top_level_fields": ["contract", "pass", "verdict", "cases", "real", "destructive_route_law_shuffle", "mechanism_destroyed_by_shuffle"],
+      "required_top_level_fields": [
+        "contract", "pass", "verdict", "producer_version", "git_sha",
+        "cases", "real", "destructive_route_law_shuffle",
+        "mechanism_destroyed_by_shuffle", "raw_result_manifest_path",
+        "raw_result_manifest_sha256"
+      ],
       "pass_requirements": [
         "same decision context has at least two feasible route interventions",
         "realized route outcomes are independent evaluator outcomes and were not used to construct route_laws",
@@ -40,12 +73,24 @@
     },
     "MODELS": {
       "contract": "CSTAR_FROZEN_MODEL_MANIFEST_V1",
-      "required_top_level_fields": ["contract", "pass", "verdict", "git_sha", "m1_checkpoint", "m1_checkpoint_sha256", "m2_checkpoint", "m2_checkpoint_sha256", "training_config_sha256"],
-      "hard_rule": "Checkpoints are frozen before closed-loop outcomes and are loaded without online fitting or House-specific adaptation."
+      "required_top_level_fields": [
+        "contract", "pass", "verdict", "git_sha",
+        "m1_checkpoint", "m1_checkpoint_sha256",
+        "m2_checkpoint", "m2_checkpoint_sha256",
+        "training_config_path", "training_config_sha256",
+        "input_schema_version", "normalization_manifest_path",
+        "normalization_manifest_sha256"
+      ],
+      "hard_rule": "Every referenced file must exist and match SHA-256 at authorization time. Checkpoints are frozen before closed-loop outcomes and loaded without online fitting or House-specific adaptation."
     },
     "PRODUCTION": {
       "contract": "CSTAR_PRODUCTION_MODE_MANIFEST_V1",
-      "required_top_level_fields": ["contract", "pass", "verdict", "git_sha", "mode", "model_manifest_sha256", "runtime_inputs", "forbidden_runtime_inputs", "fallback_policy", "route_contract"],
+      "required_top_level_fields": [
+        "contract", "pass", "verdict", "git_sha", "mode",
+        "model_manifest_sha256", "runtime_inputs", "forbidden_runtime_inputs",
+        "fallback_policy", "route_contract", "production_artifact_path",
+        "production_artifact_sha256"
+      ],
       "hard_rules": [
         "mode must be isolated cstar_v1; legacy CPIR/CTPI formulas remain reproducible",
         "runtime reads no source truth, House ID, future gas/wind, simulator member identity, or deployment predictive bank",
@@ -56,8 +101,16 @@
     },
     "SMOKE": {
       "contract": "CSTAR_RUNTIME_SMOKE_V1",
-      "required_top_level_fields": ["contract", "pass", "verdict", "production_manifest_sha256", "future_read_violations", "truth_or_house_runtime_reads", "deployment_bank_queries", "invalid_route_count", "native_route_missing_when_feasible", "fallback_count", "decision_count", "timing_summary"],
-      "hard_rule": "Smoke validates wiring/timing/legality only. It is not a scientific performance PASS."
+      "required_top_level_fields": [
+        "contract", "pass", "verdict", "git_sha",
+        "production_manifest_sha256", "future_read_violations",
+        "truth_or_house_runtime_reads", "deployment_bank_queries",
+        "invalid_route_count", "native_route_missing_when_feasible",
+        "fallback_count", "decision_count", "picr_calls", "phs_calls",
+        "learned_cpo_calls", "timing_summary", "raw_audit_path",
+        "raw_audit_sha256"
+      ],
+      "hard_rule": "Authorization requires a full-stack smoke with no forbidden reads, invalid routes or fallbacks, and positive PICR/PHS/learned-CPO call counts. Smoke validates wiring/timing/legality only; it is not scientific performance evidence."
     }
   }
 }
