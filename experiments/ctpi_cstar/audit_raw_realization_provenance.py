@@ -17,6 +17,7 @@ import math
 import re
 from pathlib import Path
 from typing import Any
+from provenance_physical_binding import verify_claims
 
 CONTRACT = "CSTAR_RAW_REALIZATION_PROVENANCE_V1"
 ENV_CONTRACT = "CSTAR_ENVIRONMENT_ALIGNMENT_AUDIT_V1"
@@ -28,6 +29,23 @@ ALLOWED_EVIDENCE_KINDS = {
     "release_config", "sensor_config",
 }
 FORBIDDEN_SOURCE_KINDS = {"directory_name_only", "inferred_from_result"}
+SOURCE_KINDS = {"generator_config", "generation_command", "frozen_run_manifest",
+                "simulation_metadata", "simulation_header"}
+
+
+def validate_fold_roles(split, records):
+    require(len(records) == 12 and len({r["realization_id"] for r in records}) == 12,
+            "CSTAR_PROV_REQUIRES_12_UNIQUE_REALIZATIONS")
+    require({r["house"] for r in records} == {"H01", "H02", "H03"},
+            "CSTAR_PROV_REQUIRES_THREE_HOUSES")
+    folds = split.get("outer_folds", {})
+    require(set(folds) == {"H01", "H02", "H03"}, "CSTAR_PROV_OUTER_FOLDS_MISSING")
+    for house in folds:
+        for role, target in (("heldout_realization_ids", house), ("train_realization_ids", None)):
+            expected = {r["realization_id"] for r in records if (r["house"] == house) == (target is not None)}
+            actual = folds[house].get(role, [])
+            require(len(actual) == len(set(actual)) and set(actual) == expected,
+                    f"CSTAR_PROV_FOLD_ROLE_LEAK:{house}:{role}")
 
 
 def fail(code: str) -> None:
@@ -155,6 +173,7 @@ def main() -> int:
     require(split.get("frozen_from_inventory_sha256") == inv_sha,
             "CSTAR_PROV_SPLIT_INVENTORY_HASH_MISMATCH")
     split_records = {r["realization_id"]: r for r in split.get("records", [])}
+    validate_fold_roles(split, split.get("records", []))
     require(split_records, "CSTAR_PROV_SPLIT_RECORDS_EMPTY")
     inv_key = {(str(e["house"]).replace("House", "H"), str(e["config"]), str(e["resolved_realization_path"]))
                for e in inv_entries}
@@ -207,10 +226,15 @@ def main() -> int:
         entry_block = []
         if authority in FORBIDDEN_SOURCE_KINDS:
             entry_block.append("SOURCE_AUTHORITY_NOT_PHYSICAL")
-        if authority not in ALLOWED_EVIDENCE_KINDS:
+        if authority not in SOURCE_KINDS:
             entry_block.append("SOURCE_AUTHORITY_KIND_UNSUPPORTED")
         if not any(e["kind"] == authority for e in checked):
             entry_block.append("SOURCE_AUTHORITY_NOT_BOUND_TO_EVIDENCE")
+        try:
+            physical_claims = verify_claims(row, base, checked)
+        except (ValueError, KeyError, IndexError, OSError, StopIteration, RuntimeError) as exc:
+            physical_claims = None
+            entry_block.append("PHYSICAL_BINDING:"+str(exc))
         rec = {
             "realization_id": rid, "house": house,
             "geometry_identity": row["geometry_identity"],
@@ -221,6 +245,7 @@ def main() -> int:
             "transport_fingerprint": transport,
             "sensor_mechanism_fingerprint": sensor,
             "evidence": checked, "blocked_reasons": entry_block,
+            "physical_claims": physical_claims,
             "entry_provenance_pass": not entry_block,
         }
         normalized.append(rec)
@@ -298,6 +323,7 @@ def main() -> int:
         "entry_count": len(normalized),
         "entry_provenance_pass_count": sum(r["entry_provenance_pass"] for r in normalized),
         "blocked_entries": blocked,
+        "normalized_entries": normalized,
         "pair_results": pair_results,
         "qualified_m1_transport_pair_count": qualified_transport_pairs,
         "qualified_m1_general_nuisance_pair_count": qualified_general_pairs,
@@ -308,7 +334,8 @@ def main() -> int:
         "all_exact_source_groups_qualified": all_groups_qualified,
         "each_house_source_diverse": house_source_diverse,
         "each_house_all_groups_qualified": house_groups_qualified,
-        "raw_realizations_eligible_for_future_truth_blind_route_extraction": raw_route_eligible,
+        "raw_realizations_eligible_for_future_truth_blind_route_extraction": raw_route_eligible if passed else [],
+        "split_scope_note": "Frozen before this qualification/route extraction, not a claim that historical realizations were never previously observed.",
         "qualified_m2_route_case_count": 0,
         "m2_status": "NOT_YET_ROUTE_CONTROLLED",
         "deployment_bank_free": True,

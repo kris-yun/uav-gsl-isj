@@ -1,5 +1,14 @@
 {
   "contract": "CSTAR_RAW_REALIZATION_PROVENANCE_CONTRACT_V1",
+  "implementation_hardening": {
+    "fingerprints": "Recompute from generator XML, corroborating bounded legacy header and normalized actual wind input content; free-form labels and unrelated literal presence are insufficient.",
+    "physical_binding": "generator_evidence_index, wind_evidence_index, header_sha256; compare source/gas/header geometry against the frozen occupancy identity and normalized row claims.",
+    "wind_identity": "Hash decoded float32 vector sequence, as consumed by GADEN. Path or binary encoding differences alone do not establish transport intervention.",
+    "matrix": "Require exactly 12 unique realizations, three Houses, and validate actual outer-fold train/heldout memberships; malformed folds cannot PASS.",
+    "exposure_scope": "The frozen inventory recorded no payload reads during listing. This does not certify the underlying historical realizations were never observed before split freezing. Preserve the split but do not claim virgin confirmation.",
+    "raw_sensor_stage": "No measurement sensor has been applied to the raw GADEN filament state; future FOPDT trajectory extraction is a separate gate.",
+    "release_scope": "Equality of generator release mechanism parameters is not equality of realized stochastic release draws or generator random seeds."
+  },
   "purpose": "Qualify existing GADEN raw realizations for controlled CSTAR data extraction without treating directory names as physical provenance.",
   "required_manifest_contract": "CSTAR_RAW_REALIZATION_PROVENANCE_V1",
   "required_top_level_fields": [
