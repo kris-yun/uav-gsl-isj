@@ -271,7 +271,23 @@ def main() -> int:
                 })
 
     raw_route_eligible = [r["realization_id"] for r in normalized if r["entry_provenance_pass"]]
-    passed = not blocked and qualified_transport_pairs + qualified_general_pairs >= 1
+    qualified_group_keys = {p["exact_source_key"] for p in pair_results
+                            if p.get("status") in {"QUALIFIED_M1_TRANSPORT_PAIR",
+                                                   "QUALIFIED_M1_GENERAL_NUISANCE_PAIR"}}
+    all_group_keys = {str(k) for k in groups}
+    source_groups_per_house = {}
+    qualified_groups_per_house = {}
+    for k in groups:
+        house = k[0]
+        source_groups_per_house[house] = source_groups_per_house.get(house, 0) + 1
+        if str(k) in qualified_group_keys:
+            qualified_groups_per_house[house] = qualified_groups_per_house.get(house, 0) + 1
+    houses = sorted(source_groups_per_house)
+    all_groups_qualified = qualified_group_keys == all_group_keys
+    house_source_diverse = all(source_groups_per_house[h] >= 2 for h in houses)
+    house_groups_qualified = all(qualified_groups_per_house.get(h, 0) == source_groups_per_house[h]
+                                 for h in houses)
+    passed = bool(houses) and not blocked and all_groups_qualified and house_source_diverse and house_groups_qualified
     report = {
         "contract": "CSTAR_RAW_REALIZATION_PROVENANCE_AUDIT_V1",
         "pass": passed,
@@ -285,6 +301,13 @@ def main() -> int:
         "pair_results": pair_results,
         "qualified_m1_transport_pair_count": qualified_transport_pairs,
         "qualified_m1_general_nuisance_pair_count": qualified_general_pairs,
+        "exact_source_group_count": len(all_group_keys),
+        "qualified_exact_source_group_count": len(qualified_group_keys),
+        "source_groups_per_house": source_groups_per_house,
+        "qualified_groups_per_house": qualified_groups_per_house,
+        "all_exact_source_groups_qualified": all_groups_qualified,
+        "each_house_source_diverse": house_source_diverse,
+        "each_house_all_groups_qualified": house_groups_qualified,
         "raw_realizations_eligible_for_future_truth_blind_route_extraction": raw_route_eligible,
         "qualified_m2_route_case_count": 0,
         "m2_status": "NOT_YET_ROUTE_CONTROLLED",
