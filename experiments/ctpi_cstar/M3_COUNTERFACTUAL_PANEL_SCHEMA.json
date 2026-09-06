@@ -1,0 +1,22 @@
+{
+  "contract": "CSTAR_M3_COUNTERFACTUAL_PANEL_V1",
+  "cases": [
+    {
+      "id": "decision_context_id",
+      "posterior": [0.5, 0.5],
+      "route_laws": [
+        [[0.5, 0.5], [0.9, 0.1]],
+        [[0.5, 0.5], [0.1, 0.9]]
+      ],
+      "native_route": 0,
+      "realized_source_risk": [1.2, 0.7]
+    }
+  ],
+  "notes": {
+    "posterior": "M1 source probabilities for the same decision context",
+    "route_laws": "route_laws[source][route][future-outcome-category], predicted without future truth",
+    "native_route": "index of native PMFS route included in the candidate set",
+    "realized_source_risk": "independently realized/evaluated downstream source risk for every compared route; these outcomes must not be used to construct route_laws",
+    "hard_rule": "A single historical executed route is not a counterfactual panel and cannot be duplicated or model-imputed as realized outcome evidence."
+  }
+}
