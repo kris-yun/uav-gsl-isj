@@ -1,4 +1,4 @@
-"""Run all CSTAR reference/model/offline/environment/review-regression tests.
+"""Run all CSTAR reference/model/offline/environment/provenance/review tests.
 
 Usage from repository root:
     python experiments/ctpi_cstar/run_reference_selftests.py
@@ -16,6 +16,7 @@ import selftest_cstar_reference
 import selftest_models
 import selftest_offline_contracts
 import selftest_environment_alignment
+import selftest_raw_realization_provenance
 import review_regression_tests
 from m3_phs import selftest_phs
 
@@ -26,8 +27,9 @@ def main():
     selftest_models.main()
     selftest_offline_contracts.main()
     selftest_environment_alignment.main()
+    selftest_raw_realization_provenance.main()
     review_regression_tests.main()
-    print("CSTAR_ALL_REFERENCE_ENVIRONMENT_AND_REVIEW_SELFTESTS PASS")
+    print("CSTAR_ALL_REFERENCE_ENVIRONMENT_PROVENANCE_AND_REVIEW_SELFTESTS PASS")
 
 
 if __name__ == "__main__":
