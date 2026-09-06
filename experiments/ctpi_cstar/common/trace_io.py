@@ -12,6 +12,8 @@ Y_ALIASES = ("pose_y","position_y","y","robot_y")
 U_ALIASES = ("wind_u","u_mps","u","wind_x","vx")
 V_ALIASES = ("wind_v","v_mps","v","wind_y","vy")
 MEASURE_ALIASES = ("in_measurement_block","measuring","is_measuring","measurement")
+TIME_TOL = 1.0e-9
+
 
 @dataclass(frozen=True)
 class EpisodeSpec:
@@ -24,17 +26,19 @@ class EpisodeSpec:
     arm: str = ""
     seed: int = -1
 
+
 @dataclass
 class Episode:
     spec: EpisodeSpec
     time: list[float]
     gas: list[float]
-    sensor_state: list[float]
+    gas_ema_aux: list[float]
     wind_u: list[float]
     wind_v: list[float]
     pose_x: list[float]
     pose_y: list[float]
     measuring: list[float]
+    sensor_aux_kind: str
 
 
 def _pick(header: Iterable[str], aliases: tuple[str,...], kind: str, required=True):
@@ -48,6 +52,12 @@ def _pick(header: Iterable[str], aliases: tuple[str,...], kind: str, required=Tr
 
 
 def _read_rows(path: Path, value_aliases: dict[str,tuple[str,...]], optional=()):
+    """Read a trace without silently repairing malformed temporal evidence.
+
+    Formal causal replay must not sort out-of-order rows, keep the last duplicate,
+    or silently skip malformed/non-finite records. Those operations can change
+    the causal history. We therefore reject such traces explicitly.
+    """
     with path.open(newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         if not reader.fieldnames:
@@ -56,29 +66,34 @@ def _read_rows(path: Path, value_aliases: dict[str,tuple[str,...]], optional=())
         for key,aliases in value_aliases.items():
             cols[key] = _pick(reader.fieldnames, aliases, key.upper(), required=key not in optional)
         out=[]
-        for row in reader:
+        last_t=None
+        for line_no,row in enumerate(reader,start=2):
             try:
                 t=float(row[cols["time"]])
                 values={}
                 for key,col in cols.items():
-                    if key=="time": continue
-                    if col is None: values[key]=None
-                    else: values[key]=float(row[col])
-            except (KeyError,TypeError,ValueError):
-                continue
-            if not math.isfinite(t): continue
-            if any(v is not None and not math.isfinite(v) for v in values.values()): continue
+                    if key=="time":
+                        continue
+                    if col is None:
+                        values[key]=None
+                    else:
+                        values[key]=float(row[col])
+            except (KeyError,TypeError,ValueError) as exc:
+                raise ValueError(f"CSTAR_TRACE_BAD_ROW:{path}:{line_no}") from exc
+            if not math.isfinite(t):
+                raise ValueError(f"CSTAR_TRACE_NONFINITE_TIME:{path}:{line_no}")
+            if any(v is not None and not math.isfinite(v) for v in values.values()):
+                raise ValueError(f"CSTAR_TRACE_NONFINITE_VALUE:{path}:{line_no}")
+            if last_t is not None:
+                if abs(t-last_t) <= TIME_TOL:
+                    raise ValueError(f"CSTAR_TRACE_DUPLICATE_TIME:{path}:{line_no}:{t}")
+                if t < last_t:
+                    raise ValueError(f"CSTAR_TRACE_OUT_OF_ORDER:{path}:{line_no}:{t}:{last_t}")
             out.append((t,values))
-    out.sort(key=lambda z:z[0])
-    dedup=[]
-    for item in out:
-        if dedup and abs(item[0]-dedup[-1][0]) <= 1e-9:
-            dedup[-1]=item
-        else:
-            dedup.append(item)
-    if not dedup:
+            last_t=t
+    if not out:
         raise ValueError(f"CSTAR_TRACE_NO_VALID_ROWS:{path}")
-    return dedup
+    return out
 
 
 def _latest(rows, t: float):
@@ -87,22 +102,34 @@ def _latest(rows, t: float):
     return None if i<0 else rows[i]
 
 
-def load_episode(spec: EpisodeSpec, max_context_age_s: float=5.0, sensor_tau_s: float=1.2) -> Episode:
-    sensor=_read_rows(spec.sensor_trace,{"gas":GAS_ALIASES,"measuring":MEASURE_ALIASES},optional=("measuring",))
+def load_episode(spec: EpisodeSpec, max_context_age_s: float=5.0,
+                 sensor_tau_s: float=1.2) -> Episode:
+    sensor=_read_rows(
+        spec.sensor_trace,{"gas":GAS_ALIASES,"measuring":MEASURE_ALIASES},
+        optional=("measuring",)
+    )
     pose=_read_rows(spec.pose_trace,{"x":X_ALIASES,"y":Y_ALIASES})
     wind=_read_rows(spec.wind_trace,{"u":U_ALIASES,"v":V_ALIASES})
-    T=[];G=[];SS=[];U=[];V=[];X=[];Y=[];M=[]
+    T=[];G=[];GA=[];U=[];V=[];X=[];Y=[];M=[]
     state=0.0; prev_t=None
     for t,sv in sensor:
         p=_latest(pose,t); w=_latest(wind,t)
-        if p is None or w is None: continue
-        if t-p[0] > max_context_age_s or t-w[0] > max_context_age_s: continue
+        if p is None:
+            raise ValueError(f"CSTAR_TRACE_POSE_CONTEXT_MISSING:{spec.episode_id}:{t}")
+        if w is None:
+            raise ValueError(f"CSTAR_TRACE_WIND_CONTEXT_MISSING:{spec.episode_id}:{t}")
+        if t-p[0] > max_context_age_s:
+            raise ValueError(f"CSTAR_TRACE_POSE_CONTEXT_STALE:{spec.episode_id}:{t-p[0]}")
+        if t-w[0] > max_context_age_s:
+            raise ValueError(f"CSTAR_TRACE_WIND_CONTEXT_STALE:{spec.episode_id}:{t-w[0]}")
         gas=max(0.0,float(sv["gas"]))
-        dt=0.2 if prev_t is None else max(1e-6,t-prev_t)
+        dt=0.2 if prev_t is None else t-prev_t
+        if dt <= 0.0:
+            raise ValueError(f"CSTAR_TRACE_SENSOR_DT_NONPOSITIVE:{spec.episode_id}:{dt}")
         alpha=math.exp(-dt/sensor_tau_s)
         state=alpha*state+(1-alpha)*gas
         prev_t=t
-        T.append(t);G.append(gas);SS.append(state)
+        T.append(t);G.append(gas);GA.append(state)
         X.append(float(p[1]["x"]));Y.append(float(p[1]["y"]))
         U.append(float(w[1]["u"]));V.append(float(w[1]["v"]))
         M.append(float(sv["measuring"]) if sv.get("measuring") is not None else 1.0)
@@ -110,7 +137,10 @@ def load_episode(spec: EpisodeSpec, max_context_age_s: float=5.0, sensor_tau_s: 
         raise ValueError(f"CSTAR_EPISODE_TOO_SHORT:{spec.episode_id}:{len(T)}")
     t0=T[0]
     T=[t-t0 for t in T]
-    return Episode(spec,T,G,SS,U,V,X,Y,M)
+    return Episode(
+        spec,T,G,GA,U,V,X,Y,M,
+        sensor_aux_kind=f"gas_ema_from_measured_ppm_tau_{sensor_tau_s:g}s_not_fopdt_state",
+    )
 
 
 def load_manifest(path: Path) -> list[EpisodeSpec]:
@@ -122,7 +152,11 @@ def load_manifest(path: Path) -> list[EpisodeSpec]:
         sx,sy=map(float,row["source_xy"])
         def p(name):
             q=Path(row[name]); return q if q.is_absolute() else base/q
-        out.append(EpisodeSpec(str(row["episode_id"]),str(row.get("house","")),(sx,sy),p("sensor_trace"),p("pose_trace"),p("wind_trace"),str(row.get("arm","")),int(row.get("seed",-1))))
+        out.append(EpisodeSpec(
+            str(row["episode_id"]),str(row.get("house","")),(sx,sy),
+            p("sensor_trace"),p("pose_trace"),p("wind_trace"),
+            str(row.get("arm","")),int(row.get("seed",-1))
+        ))
     return out
 
 
@@ -132,9 +166,22 @@ def discover_seed12_run_root(run_root: Path) -> dict:
     for house,source in gt.items():
         for arm in ("A0","F00","F01"):
             d=run_root/f"{house}_seed12_{arm}"
-            paths={k:d/f for k,f in {"sensor_trace":"sensor_trace.csv","pose_trace":"sim_pose_trace.csv","wind_trace":"wind_trace.csv"}.items()}
+            paths={k:d/f for k,f in {
+                "sensor_trace":"sensor_trace.csv",
+                "pose_trace":"sim_pose_trace.csv",
+                "wind_trace":"wind_trace.csv",
+            }.items()}
             if all(p.is_file() for p in paths.values()):
-                eps.append({"episode_id":f"{house}_seed12_{arm}","house":house,"source_xy":list(source),"arm":arm,"seed":12,**{k:str(v) for k,v in paths.items()}})
+                eps.append({
+                    "episode_id":f"{house}_seed12_{arm}","house":house,
+                    "source_xy":list(source),"arm":arm,"seed":12,
+                    **{k:str(v) for k,v in paths.items()},
+                })
             else:
                 missing.append(str(d))
-    return {"contract":"CSTAR_SPENT_EPISODE_MANIFEST_V1","episodes":eps,"missing_run_dirs":missing}
+    return {
+        "contract":"CSTAR_SPENT_EPISODE_MANIFEST_V1",
+        "episodes":eps,"missing_run_dirs":missing,
+        "trace_ingestion":"strict_no_sort_no_dedup_no_silent_bad_row_skip",
+        "sensor_aux_semantics":"derived gas EMA only; not an audited FOPDT sensor state",
+    }
