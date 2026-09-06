@@ -1,0 +1,40 @@
+{
+  "contract": "CSTAR_RAW_REALIZATION_PROVENANCE_CONTRACT_V1",
+  "implementation_hardening": {
+    "fingerprints": "Recompute from generator XML, corroborating bounded legacy header and normalized actual wind input content; free-form labels and unrelated literal presence are insufficient.",
+    "physical_binding": "generator_evidence_index, wind_evidence_index, header_sha256; compare source/gas/header geometry against the frozen occupancy identity and normalized row claims.",
+    "wind_identity": "Hash decoded float32 vector sequence, as consumed by GADEN. Path or binary encoding differences alone do not establish transport intervention.",
+    "matrix": "Require exactly 12 unique realizations, three Houses, and validate actual outer-fold train/heldout memberships; malformed folds cannot PASS.",
+    "exposure_scope": "The frozen inventory recorded no payload reads during listing. This does not certify the underlying historical realizations were never observed before split freezing. Preserve the split but do not claim virgin confirmation.",
+    "raw_sensor_stage": "No measurement sensor has been applied to the raw GADEN filament state; future FOPDT trajectory extraction is a separate gate.",
+    "release_scope": "Recompute from generator release parameters AND actual stored total moles per filament/carrier-gas molar density in the bounded header. Equality is not equality of realized stochastic release draws or generator random seeds."
+  },
+  "purpose": "Qualify existing GADEN raw realizations for controlled CSTAR data extraction without treating directory names as physical provenance.",
+  "required_manifest_contract": "CSTAR_RAW_REALIZATION_PROVENANCE_V1",
+  "required_top_level_fields": [
+    "contract", "created_git_sha", "environment_alignment_audit_path",
+    "environment_alignment_audit_sha256", "prerequisite_inventory_path",
+    "prerequisite_inventory_sha256", "frozen_split_manifest_path",
+    "frozen_split_manifest_sha256", "entries"
+  ],
+  "entry_required_fields": [
+    "realization_id", "house", "geometry_identity", "config_id",
+    "simulation_dir_path", "source_xyz_m", "gas_type_id",
+    "source_authority", "release_fingerprint", "transport_fingerprint",
+    "sensor_mechanism_fingerprint", "provenance_evidence"
+  ],
+  "allowed_source_authority_kinds": [
+    "generator_config", "generation_command", "frozen_run_manifest",
+    "simulation_metadata", "simulation_header"
+  ],
+  "forbidden_source_authority_kinds": ["directory_name_only", "inferred_from_result"],
+  "evidence_required_fields": ["kind", "path", "sha256", "required_literals"],
+  "pair_rules": {
+    "exact_source_key": "house + geometry_identity + exact source_xyz_m + gas_type_id",
+    "qualified_transport_pair": "same exact_source_key, same release_fingerprint, same sensor_mechanism_fingerprint, different transport_fingerprint, and every claim is bound to at least one checked provenance evidence file",
+    "qualified_general_nuisance_pair": "same exact_source_key and every changed non-source mechanism is explicitly declared and evidence-bound",
+    "blocked": "directory-name-only source identity, missing/unchecked evidence, source/geometry/gas-type mismatch, undeclared mechanism difference, or identical nuisance fingerprints"
+  },
+  "m2_rule": "A provenance-qualified raw realization is only eligible for later truth-blind geometry-frozen route outcome extraction. It is not itself a qualified M2 route case and may not be called do(route) until a route is frozen before outcome extraction.",
+  "deployment_rule": "Raw realizations may be used for offline training/evaluation only. Deployment remains bank-free and may not query these files."
+}
