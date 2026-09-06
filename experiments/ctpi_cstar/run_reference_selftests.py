@@ -1,4 +1,4 @@
-"""Run all current CSTAR reference/model/offline-interface tests from one command.
+"""Run all CSTAR reference/model/offline-interface/review-regression tests.
 
 Usage from repository root:
     python experiments/ctpi_cstar/run_reference_selftests.py
@@ -15,6 +15,7 @@ if str(ROOT) not in sys.path:
 import selftest_cstar_reference
 import selftest_models
 import selftest_offline_contracts
+import review_regression_tests
 from m3_phs import selftest_phs
 
 
@@ -23,7 +24,8 @@ def main():
     selftest_phs.main()
     selftest_models.main()
     selftest_offline_contracts.main()
-    print("CSTAR_ALL_REFERENCE_SELFTESTS PASS")
+    review_regression_tests.main()
+    print("CSTAR_ALL_REFERENCE_AND_REVIEW_SELFTESTS PASS")
 
 
 if __name__ == "__main__":
