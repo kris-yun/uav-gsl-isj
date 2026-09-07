@@ -146,6 +146,12 @@ horizon. Its `selftest_m2_online.py` is a state-machine/plumbing test only; it
 does not count as a CPO scientific result because the injected provider is a
 synthetic reference law.
 
+The first executable physical prior behind that boundary is
+`experiments/ctpi_cstar/m2_cpo/physical_prior.py`. It mirrors the declared V2
+finite-volume/FOPDT contracts and is covered by CPU integration checks, but is
+not yet a qualified House-data predictor: C++/Python parity, proper-score
+calibration, and the route-intervention gate are still open.
+
 The first M1 implementation candidate is
 `experiments/ctpi_cstar/m1_picr/conditional_evidence.py`. Its score is the
 candidate-conditioned observation log score minus a source/gas-masked context
