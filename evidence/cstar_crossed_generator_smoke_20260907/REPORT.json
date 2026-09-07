@@ -1,0 +1,44 @@
+{
+  "contract": "CSTAR_CROSSED_GENERATOR_SMOKE_V1",
+  "verdict": "GENERATOR_NOT_IDENTICAL_TO_FROZEN_RAW",
+  "qualification_authority": false,
+  "scope": "One-second non-qualification smoke in /dev/shm only; no House campaign and no source intervention data retained.",
+  "environment": {
+    "house": "H01",
+    "transport": "1,3-2,4_fast",
+    "modern_wind_converter": "rmfe_wind_converter_v4",
+    "wind_conversion": "PASS (11 files, 327294 cells)",
+    "simulator_build": "/home/zyc/PF_DEI_V3_GADEN_BUILD_REF/install",
+    "output_root": "/dev/shm/cstar_cross_smoke",
+    "rng_environment": "GADEN_RNG_SEED unset (default engine path)"
+  },
+  "smoke": {
+    "return_code": 0,
+    "sim_time_s": 1.0,
+    "source_xyz_m": [-0.4, -2.9, -0.3],
+    "gas_type": 10,
+    "raw_output_retained": false
+  },
+  "same_source_reproduction_check": {
+    "purpose": "Check whether the current generator can reproduce a frozen source under the same House and transport.",
+    "frozen_iteration_0": {
+      "bytes": 95,
+      "sha256": "562f85b21b06c529d0015de754e897ca4775f19ee583a96b79c8557d0f19ab51"
+    },
+    "current_iteration_0": {
+      "bytes": 119,
+      "sha256_prefix": "bc66b86db7bff610"
+    },
+    "frozen_iteration_1": {
+      "bytes": 128,
+      "sha256_prefix": "6883974e21df471e"
+    },
+    "current_iteration_1": {
+      "bytes": 187,
+      "sha256_prefix": "bb52726b90ec0416"
+    },
+    "identical": false
+  },
+  "interpretation": "The current VM simulator and converted-wind path can execute, but it is not byte-identical to the frozen raw realization. Therefore it must not be used to claim matched-release crossed interventions or to mix new trajectories into the frozen M1 gate.",
+  "next_requirement": "Recover or explicitly freeze the original raw-field generator/runtime and release RNG contract, then generate the six crossed cells under that contract before rerunning the M1 causal screen."
+}
