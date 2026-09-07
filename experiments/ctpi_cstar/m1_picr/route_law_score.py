@@ -80,13 +80,31 @@ def score_route_laws(candidate_laws, context_laws, observed_logppm: Sequence[flo
         if mean.shape != values.shape or scale.shape != values.shape:
             raise ValueError("PICR_ROUTE_LAW_HORIZON")
         return mean, scale
-    source_scores = []
-    context_scores = []
-    for candidate_law, context_law in zip(candidate_laws, context_laws):
-        candidate_mean, candidate_scale = law_tensors(candidate_law)
-        context_mean, context_scale = law_tensors(context_law)
-        source_scores.append(innovation_loglik(values, candidate_mean, candidate_scale, valid_t, rho))
-        context_scores.append(innovation_loglik(values, context_mean, context_scale, valid_t, rho))
+    def ensemble_score(item):
+        # A plain law is a one-component ensemble.  A ``(laws, weights)`` pair
+        # is marginalized in log space, preserving source-strength/transport
+        # nuisance uncertainty instead of selecting a best component.
+        if (isinstance(item, tuple) and len(item) == 2
+                and isinstance(item[1], (tuple, list))):
+            laws, weights = item
+        else:
+            laws, weights = (item,), (1.0,)
+        if len(laws) != len(weights) or not laws:
+            raise ValueError("PICR_ROUTE_ENSEMBLE_SHAPE")
+        scores = []
+        for law in laws:
+            mean, scale = law_tensors(law)
+            scores.append(innovation_loglik(values, mean, scale, valid_t, rho))
+        score_tensor = torch.stack(scores)
+        weight_tensor = torch.as_tensor(weights, dtype=values.dtype)
+        if (weight_tensor.ndim != 1 or len(weight_tensor) != len(scores)
+                or torch.any(weight_tensor <= 0) or not torch.isfinite(weight_tensor).all()):
+            raise ValueError("PICR_ROUTE_ENSEMBLE_WEIGHTS")
+        weight_tensor = weight_tensor / weight_tensor.sum()
+        return torch.logsumexp(score_tensor + torch.log(weight_tensor), dim=0)
+
+    source_scores = [ensemble_score(item) for item in candidate_laws]
+    context_scores = [ensemble_score(item) for item in context_laws]
     source_loglik = torch.stack(source_scores)
     context_loglik = torch.stack(context_scores)
     return estimate_conditional_evidence(

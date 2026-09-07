@@ -7,6 +7,11 @@ AR(1) innovation log score. Thus the M1 increment is a difference between two
 fully specified conditional laws rather than an unnormalized distance or a
 per-step hit product.
 
+Candidate or context laws may be fixed nuisance ensembles (for example the
+declared source-strength values in the physical prior). The scorer performs a
+fixed-weight log-sum-exp marginalization; it never selects a nuisance member
+using the held-out observation.
+
 The validity contract is explicit: an invalid frame contributes no likelihood
 factor and resets the local innovation chain; a valid zero-valued sensor sample
 is scored normally. Candidate masks and priors are passed to the existing

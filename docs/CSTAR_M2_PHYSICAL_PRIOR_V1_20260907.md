@@ -8,6 +8,12 @@ route-conditioned first-encounter law from the *past-only* local wind in the
 latest stamped frame. The source location is a hypothesis supplied by the
 caller, never simulator truth.
 
+Source strength is not silently fixed: the prior exposes a manifest-declared
+`source_rate_values` nuisance ensemble with fixed weights. `predict_ensemble`
+returns its components, while the online scalar law is moment-matched. M1's
+route-law scorer marginalizes these components in log space rather than
+choosing the best source-strength member after seeing the outcome.
+
 The implementation is `experiments/ctpi_cstar/m2_cpo/physical_prior.py` and the
 two CPU checks are:
 

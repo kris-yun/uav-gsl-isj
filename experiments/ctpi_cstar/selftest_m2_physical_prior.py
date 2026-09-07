@@ -40,12 +40,16 @@ def main():
     )
     provider = PhysicalCPOProvider(cfg)
     prefix = (Frame((1.0, 0.0)),)
-    req = Request((0.0, 1.0), ((1.0, 1.0), (2.0, 1.0), (3.0, 1.0)))
+    req = Request((0.0, 1.0), ((0.0, 1.0), (1.0, 1.0), (2.0, 1.0)))
     law = provider.predict(prefix, req)
     assert len(law.first_hit_prob) == 4
     assert all(0.0 <= p <= 1.0 for p in law.first_hit_prob)
     assert abs(sum(law.first_hit_prob) - 1.0) < 1e-12
     assert 0.0 <= law.route_committor <= 1.0
+    components, weights = provider.predict_ensemble(prefix, req)
+    assert len(components) == 3 and abs(sum(weights) - 1.0) < 1e-12
+    assert any(components[0].logppm_mean[i] != components[-1].logppm_mean[i]
+               for i in range(3))
     context_a = provider.predict_context(prefix, req.route_xy)
     context_b = provider.predict_context(prefix, req.route_xy)
     assert context_a == context_b  # source identity is absent from the context law

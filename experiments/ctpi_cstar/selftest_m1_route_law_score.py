@@ -24,6 +24,9 @@ def main():
     assert torch.isfinite(zero) and float(zero) != 0.0
     scored = score_route_laws([law, law], [law, law], values, valid)
     assert torch.allclose(scored.posterior, torch.tensor([0.5, 0.5]), atol=1e-6)
+    ensemble = score_route_laws([((law, law), (0.5, 0.5))],
+                                [law], values, valid)
+    assert torch.isfinite(ensemble.posterior).all()
     missing = torch.tensor([False, False, False])
     assert float(innovation_loglik(values, torch.tensor(law.logppm_mean),
                                    torch.tensor(law.logppm_scale), missing)) == 0.0
