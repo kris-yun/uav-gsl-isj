@@ -59,11 +59,17 @@ class PICRModel(nn.Module):
     """
 
     def __init__(self, d_model: int = 96, nhead: int = 4, layers: int = 3,
-                 z_source_dim: int = 48, z_nuisance_dim: int = 32):
+                 z_source_dim: int = 48, z_nuisance_dim: int = 32,
+                 coordinate_equivariant: bool = False,
+                 coordinate_sigma: float = 0.15):
         super().__init__()
         if d_model % nhead:
             raise ValueError("PICR_DMODEL_HEAD_MISMATCH")
         self.z_source_dim = int(z_source_dim)
+        self.coordinate_equivariant = bool(coordinate_equivariant)
+        self.coordinate_sigma = float(coordinate_sigma)
+        if self.coordinate_sigma <= 0:
+            raise ValueError("PICR_COORDINATE_SIGMA")
         self.response_encoder = nn.Sequential(
             nn.Linear(2, d_model), nn.SiLU(), nn.LayerNorm(d_model),
         )
@@ -91,6 +97,7 @@ class PICRModel(nn.Module):
             nn.Linear(z_source_dim + d_model // 2, d_model), nn.SiLU(),
             nn.Linear(d_model, d_model // 2), nn.SiLU(), nn.Linear(d_model // 2, 1),
         )
+        self.location_head = nn.Linear(z_source_dim, 2)
 
     @staticmethod
     def _causal_mask(t: int, device) -> torch.Tensor:
@@ -164,8 +171,19 @@ class PICRModel(nn.Module):
         # Exact subtraction removes any candidate-only score path. Candidate
         # coordinates remain necessary for localization, but they cannot react
         # to gas/wind/pose unless that information first changes zS.
-        raw = self.evidence(torch.cat([zs, cand], dim=-1)).squeeze(-1)
-        raw_zero = self.evidence(torch.cat([zeros, cand], dim=-1)).squeeze(-1)
+        if self.coordinate_equivariant:
+            # In normalized map coordinates, predict a source point and use a
+            # fixed radial compatibility kernel. This removes arbitrary
+            # House-specific coordinate memorization from the candidate path.
+            loc = torch.sigmoid(self.location_head(z_s))
+            loc_zero = torch.sigmoid(self.location_head(torch.zeros_like(z_s)))
+            raw = -((candidate_xy - loc[:, None, :]) ** 2).sum(-1) / (
+                2.0 * self.coordinate_sigma ** 2)
+            raw_zero = -((candidate_xy - loc_zero[:, None, :]) ** 2).sum(-1) / (
+                2.0 * self.coordinate_sigma ** 2)
+        else:
+            raw = self.evidence(torch.cat([zs, cand], dim=-1)).squeeze(-1)
+            raw_zero = self.evidence(torch.cat([zeros, cand], dim=-1)).squeeze(-1)
         logits = raw - raw_zero
 
         has_candidate = candidate_valid.any(dim=-1)

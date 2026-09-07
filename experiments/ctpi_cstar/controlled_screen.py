@@ -41,7 +41,7 @@ def lines(path):
     return [json.loads(s) for s in Path(path).read_text().splitlines()]
 
 
-def inputs(measured, end_s, context_only=False, null=False):
+def inputs(measured, end_s, context_only=False, null=False, geometry_bounds=None):
     # No metadata parameter and no future columns. EMA only uses earlier gas.
     ema, result = 0.0, []
     for r in measured:
@@ -49,17 +49,25 @@ def inputs(measured, end_s, context_only=False, null=False):
             break
         gas = r['gas_ppm']
         ema = math.exp(-0.2/1.2)*ema+(1-math.exp(-0.2/1.2))*gas
+        if geometry_bounds is None:
+            pose_xy = (r['pose_xy'][0] / 10, r['pose_xy'][1] / 10)
+        else:
+            ox, oy, sx, sy = geometry_bounds
+            pose_xy = ((r['pose_xy'][0] - ox) / sx,
+                       (r['pose_xy'][1] - oy) / sy)
         result.append([0.0 if context_only or null else math.log1p(gas),
                        0.0 if context_only or null else ema,
                        *(0.0 if null else v for v in r['wind_uv']),
-                       r['pose_xy'][0]/10, r['pose_xy'][1]/10, r['t_sim_s']/60, 1.0])
+                       pose_xy[0], pose_xy[1], r['t_sim_s']/60, 1.0])
     assert len(result) == round(end_s*5) and len(result[0]) == 8
     return torch.tensor(result, dtype=torch.float32)
 
 
-def load_data():
+def load_data(geometry_normalized=False):
     m = json.loads((ASSETS / 'manifests/H01.json').read_text())
     by = {}
+    geometry_manifest = json.loads(
+        (ROOT / 'evidence/cstar_environment_20260906/maps_v1/geometry_manifest.json').read_text())
     for row in m['m1_episodes']:
         house = row['house']
         candidates_path = (ASSETS / row['candidate_domain_path']).resolve()
@@ -69,8 +77,19 @@ def load_data():
         path = ASSETS / row['history_trace_path']
         assert sha(path) == row['history_trace_sha256']
         source = row['source_xyz_m'][:2]
+        if geometry_normalized:
+            gm = geometry_manifest[house]
+            ox, oy = map(float, gm['origin_xy_m'])
+            sx = float(gm['expected_width_px']) * float(gm['resolution_m'])
+            sy = float(gm['expected_height_px']) * float(gm['resolution_m'])
+            c_model = torch.stack(((c[:, 0] - ox) / sx, (c[:, 1] - oy) / sy), dim=1)
+            geometry_bounds = (ox, oy, sx, sy)
+        else:
+            c_model = c / 10
+            geometry_bounds = None
         target = int(((c-torch.tensor(source))**2).sum(-1).argmin())
-        by.setdefault(house, []).append({'row': row, 'measured': lines(path), 'candidates': c/10,
+        by.setdefault(house, []).append({'row': row, 'measured': lines(path), 'candidates': c_model,
+            'geometry_bounds': geometry_bounds,
             'source_xy': source, 'target': target, 'source_quantization_m': float(torch.linalg.vector_norm(c[target]-torch.tensor(source)))})
     for house, records in by.items():
         records.sort(key=lambda r: (r['row']['source_xyz_m'], r['row']['realization_id']))
@@ -83,7 +102,8 @@ def load_data():
 
 
 def tensors(records, end, variant='picr', null=False):
-    H = torch.stack([inputs(r['measured'], end, variant == 'context_only', null) for r in records])
+    H = torch.stack([inputs(r['measured'], end, variant == 'context_only', null,
+                             r.get('geometry_bounds')) for r in records])
     C = torch.stack([r['candidates'] for r in records])
     V = torch.ones(H.shape[:2], dtype=torch.bool)
     targets = [r['target'] for r in records]
@@ -268,8 +288,16 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--out',type=Path,required=True)
     ap.add_argument('--selftest',action='store_true')
+    ap.add_argument('--geometry-normalized', action='store_true',
+                    help='normalize pose/candidate coordinates by the frozen map extent')
+    ap.add_argument('--coordinate-equivariant', action='store_true',
+                    help='use the fixed radial source-coordinate scorer')
     args = ap.parse_args()
     cfg = json.loads(CONFIG.read_text())
+    if args.coordinate_equivariant:
+        cfg['model'] = dict(cfg['model'])
+        cfg['model']['coordinate_equivariant'] = True
+        cfg['model']['coordinate_sigma'] = 0.15
     torch.set_num_threads(1)
     if args.selftest:
         measured = [{'t_sim_s':(i+1)*.2,'gas_ppm':i*.01,'wind_uv':[.1,.2],'pose_xy':[1.,2.]} for i in range(300)]
@@ -294,11 +322,15 @@ def main():
     args.out.mkdir(parents=True,exist_ok=False)
     dump(args.out / 'RUN_START.json', {'git_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         'torch':torch.__version__,'python':sys.version,'config_sha256':sha(CONFIG),
+        'geometry_normalized': bool(args.geometry_normalized),
+        'coordinate_equivariant': bool(args.coordinate_equivariant),
         'asset_manifests':{h:sha(ASSETS/'manifests'/(h+'.json')) for h in ['H01','H02','H03']},
         'no_online_or_raw_queries':True})
     dump(args.out / 'FROZEN_CONFIG.json',cfg)
     m2_baselines(args.out)
-    report = m1_screen(load_data(),cfg,args.out)
+    report = m1_screen(load_data(args.geometry_normalized),cfg,args.out)
+    report['geometry_normalized'] = bool(args.geometry_normalized)
+    dump(args.out / 'M1_SCREEN.json', report)
     print(report['verdict'],flush=True)
 
 
