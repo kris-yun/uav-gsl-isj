@@ -22,6 +22,11 @@ nonuniform wind fields, walls, long horizons, sensor FOPDT history, or ROS
 runtime bindings. Those remain required before the physical prior can be used
 as a qualified House-data baseline.
 
+The same VM build also exercised the C++ `Fopdt(tau=1.2, dead=0.4)` against
+the Python `_Fopdt` implementation for five successive `dt=0.2` inputs
+`[1, 2, 0, 4, 5]`; `fopdt_cpp.out` and `fopdt_python.out` match exactly at
+the printed precision. Result: **FOPDT_PARITY_PASS**.
+
 Identities at capture:
 
 - `CTPIOnlineCoreV2.hpp` SHA-256:
