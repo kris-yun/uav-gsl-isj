@@ -22,6 +22,12 @@ wiring. They do **not** establish cross-language parity with the VM C++ core,
 calibration on House data, predictive superiority over the current-value or
 native-PMFS baselines, or closed-loop utility. Those remain mandatory gates.
 
+The C++ finite-volume and FOPDT fixtures now have an algebraic parity record in
+`evidence/cstar_python_cpp_parity_20260907/`. A real isolated ROS/DDS bridge
+probe is recorded in `evidence/cstar_m2_ros_bridge_probe_20260907/`; it joined
+three stamped frames and issued two prediction-before-observation calls. That
+probe is wiring evidence only, not a House or controller result.
+
 The prior intentionally has no learned residual, future wind, future gas,
 route outcome, House/member identity, or hidden bank. Its hazard scale and
 source rate are manifest parameters; changing them requires a new protocol
