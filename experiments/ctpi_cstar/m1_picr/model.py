@@ -63,7 +63,8 @@ class PICRModel(nn.Module):
                  coordinate_equivariant: bool = False,
                  coordinate_sigma: float = 0.15,
                  event_weighted_source_pool: bool = False,
-                 radial_source_score: bool = False):
+                 radial_source_score: bool = False,
+                 strict_source_stream: bool = False):
         super().__init__()
         if d_model % nhead:
             raise ValueError("PICR_DMODEL_HEAD_MISMATCH")
@@ -72,6 +73,7 @@ class PICRModel(nn.Module):
         self.coordinate_sigma = float(coordinate_sigma)
         self.event_weighted_source_pool = bool(event_weighted_source_pool)
         self.radial_source_score = bool(radial_source_score)
+        self.strict_source_stream = bool(strict_source_stream)
         if self.radial_source_score and not self.coordinate_equivariant:
             raise ValueError('PICR_RADIAL_REQUIRES_NORMALIZED_COORDINATE_HEAD')
         if self.coordinate_sigma <= 0:
@@ -81,6 +83,12 @@ class PICRModel(nn.Module):
         )
         self.context_encoder = nn.Sequential(
             nn.Linear(6, d_model), nn.SiLU(), nn.LayerNorm(d_model),
+        )
+        # In the strict causal variant, zS is formed only from the measured
+        # response and the sampling position. Wind/time/measurement-context
+        # remain nuisance variables and cannot enter the source stream.
+        self.source_context_encoder = nn.Sequential(
+            nn.Linear(2, d_model), nn.SiLU(), nn.LayerNorm(d_model),
         )
         block = nn.TransformerEncoderLayer(
             d_model=d_model, nhead=nhead, dim_feedforward=4 * d_model,
@@ -182,7 +190,11 @@ class PICRModel(nn.Module):
         if candidate_valid.shape != (b, n) or candidate_valid.dtype != torch.bool:
             raise ValueError("PICR_CANDIDATE_VALID_SHAPE")
 
-        h = self.response_encoder(history[..., :2]) + self.context_encoder(history[..., 2:])
+        if self.strict_source_stream:
+            h = (self.response_encoder(history[..., :2])
+                 + self.source_context_encoder(history[..., 4:6]))
+        else:
+            h = self.response_encoder(history[..., :2]) + self.context_encoder(history[..., 2:])
         h = self.temporal(
             h, mask=self._causal_mask(t, h.device),
             src_key_padding_mask=~valid_time,

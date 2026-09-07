@@ -1,0 +1,41 @@
+{
+  "batch": "four records: two exact-source fast/slow pairs in one training House at the same preregistered prefix",
+  "candidate_schema": "free-cell XY normalized by frozen map extent; metrics use physical XY",
+  "contract": "CSTAR_CONTROLLED_DEVELOPMENT_SCREEN_V1",
+  "directional_screen": "at least two of three Houses have lower NLL and MAP XY error, lower same-source zS distance and same/different distance ratio; different-source separation >=0.9 of unconstrained; context-only, label-permutation, zero and swapped zS must not recover the gain",
+  "feature_schema": "causal measured gas/EMA/wind/time; pose XY normalized by frozen map extent",
+  "invariance_formula": "mean squared coordinate distance for two same-source pairs",
+  "invariance_weight": 0.25,
+  "label_permutation": "swap two exact-source labels within each training House, consistently across all its prefixes and fast/slow realizations",
+  "learning_rate": 0.002,
+  "m2_baseline": "conditional first-hit histogram by current measured gas >0.1; fit only train parents; Dirichlet total pseudocount1 uniformly over21 outcomes; compare unconditional train histogram",
+  "model": {
+    "coordinate_equivariant": true,
+    "coordinate_sigma": 0.15,
+    "d_model": 48,
+    "layers": 2,
+    "nhead": 4,
+    "radial_source_score": true,
+    "strict_source_stream": true,
+    "z_nuisance_dim": 16,
+    "z_source_dim": 24
+  },
+  "no_rescue": "no additional seeds, steps, thresholds, route horizons, split changes or outcome-driven hyperparameter searches after results",
+  "normalization": "map origin and extent only; no heldout fitted moments",
+  "paired_posterior_consistency": true,
+  "posterior_invariance_weight": 0.25,
+  "scope": "bounded falsification screen, not formal authorization or virgin confirmation",
+  "seed": 12,
+  "separation_formula": "mean relu(1 - L2 distance)^2 for all four cross-source pairs",
+  "separation_weight": 0.25,
+  "steps": 200,
+  "uninformative_control": "zero measured gas and local wind, retain pose/time; require normalized entropy >=0.95 or abstention",
+  "variants": [
+    "picr",
+    "unconstrained",
+    "context_only",
+    "label_permutation"
+  ],
+  "weight_decay": 0.0001,
+  "zs_permutation": "swap zS across different sources within the same heldout House and prefix; fixed candidate geometry"
+}

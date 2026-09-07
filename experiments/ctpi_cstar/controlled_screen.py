@@ -336,6 +336,8 @@ def main():
                     help='weight source pooling by causal measured plume events')
     ap.add_argument('--radial-source-score', action='store_true',
                     help='retain radial curvature with zero-zS precision gating')
+    ap.add_argument('--strict-source-stream', action='store_true',
+                    help='form zS from measured response plus pose only; exclude wind/time nuisance')
     args = ap.parse_args()
     ASSETS = args.assets.resolve()
     HORIZON_S = args.horizon_s
@@ -358,6 +360,9 @@ def main():
         cfg['model']['event_weighted_source_pool'] = True
     if args.radial_source_score:
         cfg['model']['radial_source_score'] = True
+    if args.strict_source_stream:
+        cfg['model'] = dict(cfg['model'])
+        cfg['model']['strict_source_stream'] = True
     if args.geometry_normalized:
         cfg['feature_schema'] = 'causal measured gas/EMA/wind/time; pose XY normalized by frozen map extent'
         cfg['candidate_schema'] = 'free-cell XY normalized by frozen map extent; metrics use physical XY'
@@ -392,6 +397,7 @@ def main():
         'paired_posterior_consistency': bool(args.paired_posterior_consistency),
         'event_weighted_source_pool': bool(args.event_weighted_source_pool),
         'radial_source_score': bool(args.radial_source_score),
+        'strict_source_stream': bool(args.strict_source_stream),
         'effective_config_sha256': sha(args.out / 'FROZEN_CONFIG.json'),
         'metric_coordinate_contract': 'raw_candidate_xy_m_v2',
         'code_sha256': {str(p.relative_to(ROOT)):sha(p) for p in (Path(__file__), HERE/'m1_picr/model.py')},

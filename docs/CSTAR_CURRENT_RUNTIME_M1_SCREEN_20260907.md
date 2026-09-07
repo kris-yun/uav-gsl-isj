@@ -42,11 +42,32 @@ M2 was not inferred from this bundle: it contains M1 crossed source/transport
 histories but no route-outcome cases. `M2_BASELINE_SCREEN.json` is therefore
 explicitly marked `NOT_RUN`.
 
+## M1-v2 architecture audit
+
+The follow-up implementation added a strict source stream: `zS` receives only
+measured response, response EMA, and sampling position; wind, time, and the
+measurement flag are excluded from the source stream. A fixed event-weighted
+pooling variant was then evaluated to avoid diluting sparse plume responses in
+the 240 s history.
+
+This repaired the intended representation boundary and improved held-out
+NLL/XY error in H01/H02, but the full causal gate still failed:
+
+| variant | H01 | H02 | H03 | verdict |
+|---|---:|---:|---:|---|
+| strict source stream | fail | fail | fail | `M1_CONTROLLED_SCREEN_NO_GO` |
+| strict + event-weighted | fail | fail | fail | `M1_CONTROLLED_SCREEN_NO_GO` |
+
+The result is a useful negative mechanism finding: source-stream separation can
+improve prediction without establishing cross-House causal invariance. The
+implementation should not be promoted to a main-innovation PASS.
+
 ## Evidence
 
 - `evidence/cstar_crossed_generator_smoke_20260907/REPORT.json`
 - `evidence/cstar_current_runtime_screen_20260907_v3/M1_SCREEN.json`
 - `evidence/cstar_current_runtime_screen240_20260907/M1_SCREEN.json`
+- `evidence/cstar_current_runtime_screen240_strict_20260907/M1_SCREEN.json`
+- `evidence/cstar_current_runtime_screen240_strict_event_20260907/M1_SCREEN.json`
 - `evidence/cstar_current_runtime_assets240_20260907/MANIFEST.json`
 - `evidence/cstar_current_runtime_routes_cover240_20260907/ROUTE_RULE.json`
-
