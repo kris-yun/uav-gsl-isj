@@ -75,6 +75,8 @@ def main():
     ap.add_argument("--output", type=Path, required=True)
     ap.add_argument("--max-cases", type=int, default=3)
     ap.add_argument("--houses", default="H01,H02,H03")
+    ap.add_argument("--assimilate-prefix", action="store_true",
+                    help="use the causal prefix-only source-strength state")
     args = ap.parse_args()
     if args.max_cases < 1:
         raise ValueError("CSTAR_PRIOR_DIAGNOSTIC_CASE_LIMIT")
@@ -118,7 +120,8 @@ def main():
                     sensor_tau=1.2, sensor_dead=0.4, source_rate_values=(0.5, 1.0, 2.0)))
                 request = type("Request", (), {"source_xy": tuple(ep["source_xyz_m"][:2]),
                                                "route_xy": route})()
-                candidate = provider.predict_ensemble(prefix, request)
+                candidate = ((provider.predict_assimilated(prefix, request),), (1.0,)) \
+                    if args.assimilate_prefix else provider.predict_ensemble(prefix, request)
                 context = provider.predict_context(prefix, route)
             except ValueError as exc:
                 failures.append({"house": house, "decision_id": case["decision_id"],
@@ -151,6 +154,7 @@ def main():
         "source_truth_runtime_input": False,
         "source_truth_evaluator_conditioning": True,
         "source_rate_marginalization": [0.5, 1.0, 2.0],
+        "prefix_amplitude_assimilation": bool(args.assimilate_prefix),
         "diffusion": 0.01,
         "sensor": {"tau_s": 1.2, "dead_s": 0.4, "route_dt_s": 0.2},
         "cases": rows,

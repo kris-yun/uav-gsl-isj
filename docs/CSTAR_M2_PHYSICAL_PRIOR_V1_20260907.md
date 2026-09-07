@@ -20,6 +20,15 @@ returns its components, while the online scalar law is moment-matched. M1's
 route-law scorer marginalizes these components in log space rather than
 choosing the best source-strength member after seeing the outcome.
 
+There is also an explicitly separate `predict_assimilated` path. It replays a
+unit-rate candidate plume through the causal prefix, projects the measured
+prefix gas onto that response to obtain a clipped non-negative amplitude state,
+and carries that state through the proposed route. This is an observation-only
+source-strength nuisance update, not a post-outcome fit; it is opt-in until the
+forward observation bridge is qualified. The House-aware diagnostic currently
+shows a clear gain only in one of the three first cases, so this path is a
+mechanism candidate, not an M2 gate PASS.
+
 The implementation is `experiments/ctpi_cstar/m2_cpo/physical_prior.py` and the
 two CPU checks are:
 

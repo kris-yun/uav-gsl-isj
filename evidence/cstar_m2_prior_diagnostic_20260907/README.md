@@ -21,9 +21,16 @@ case by its authoritative `house`; all nine sampled cases now bind to the
 corresponding map. The larger pre-fix exploratory files remain preserved as
 negative evidence and are not used to authorize anything.
 
+An opt-in prefix-only amplitude experiment is recorded in
+`diagnostic_assimilated_h01_max3.json` plus one first case for H02/H03. It
+reduces H03's context-minus-source NLL gap by about `0.893` in that first case,
+while H01/H02 remain effectively null. This confirms that causal
+source-strength assimilation is wired, but it is not broad enough for a
+predictive M2 gate or a closed-loop run.
+
 Code identities at capture:
 
 - `physical_prior.py` SHA-256:
-  `eca38b755c247372a0bd7b5df40faa4eb3bc534b55a872831f15c2b30f7fa663`
+  `82827d6d0cace774a5373df8203eb7bea8d4683258c82ff4ac33d983ee421d7b`
 - diagnostic script SHA-256:
-  `ded99c06b26111ec5cc72e1670d8471ca7f3678ba3632f272532539efe11d272`
+  `20be8931456fa451f917898167c432fe75cd30cc5dc7d5676a39f8ee59e4397c`

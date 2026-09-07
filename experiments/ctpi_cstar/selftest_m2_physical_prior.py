@@ -15,6 +15,7 @@ from m2_cpo.physical_prior import PhysicalCPOProvider, PhysicalPriorConfig
 class Frame:
     wind_uv: tuple[float, float]
     pose_xy: tuple[float, float] = (0.0, 1.0)
+    gas_ppm: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -55,6 +56,23 @@ def main():
     context_b = provider.predict_context(prefix, req.route_xy)
     assert context_a == context_b  # source identity is absent from the context law
     assert provider.predict_context(prefix, req.route_xy) == context_a
+    # Prefix-only amplitude assimilation is causal and source-strength aware.
+    assimilated_prefix = (
+        Frame((1.0, 0.0), (0.0, 1.0), 0.0),
+        Frame((1.0, 0.0), (0.0, 1.0), 2.0),
+        Frame((1.0, 0.0), (1.0, 1.0), 1.0),
+        Frame((1.0, 0.0), (1.0, 1.0), 1.0),
+        Frame((1.0, 0.0), (1.0, 1.0), 1.0),
+        Frame((1.0, 0.0), (1.0, 1.0), 1.0),
+    )
+    assimilated = provider.predict_assimilated(assimilated_prefix, req)
+    assert len(assimilated.first_hit_prob) == 4
+    assert all(0.0 <= p <= 1.0 for p in assimilated.first_hit_prob)
+    assert abs(sum(assimilated.first_hit_prob) - 1.0) < 1e-12
+    zero_prefix = tuple(Frame(frame.wind_uv, frame.pose_xy, 0.0)
+                        for frame in assimilated_prefix)
+    zero_assimilated = provider.predict_assimilated(zero_prefix, req)
+    assert assimilated.logppm_mean != zero_assimilated.logppm_mean
     # The provider receives a decision-time prefix.  Mutating a caller-owned
     # list after prediction cannot alter the already returned law.
     mutable_prefix = [Frame((1.0, 0.0))]
