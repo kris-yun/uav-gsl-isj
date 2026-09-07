@@ -9,6 +9,8 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from experiments.ctpi_cstar.environment_runtime import verify_qualified_helper
 
 
 def main():
@@ -16,8 +18,14 @@ def main():
     p.add_argument("--house", choices=("H01", "H02", "H03"), required=True)
     p.add_argument("--geometry-manifest", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
-    p.add_argument("--raw-query-executable", type=Path, default=ROOT / "tools/house1_raw_query")
+    p.add_argument("--raw-query-executable", type=Path, required=True,
+                   help="Explicit live-qualified numeric helper; no historical H01 fallback")
     args = p.parse_args()
+    # Fail before making output directories or launching any process. Keep old
+    # commits available for historical reproduction, never as a silent default.
+    attestation = ROOT / "evidence/cstar_controlled_assets_20260907_r2/WIND_INDEX_CORRECTION_AUDIT.json"
+    verify_qualified_helper(args.raw_query_executable, ROOT / "tools/cstar_numeric_wind_raw_query.cpp",
+                            json.loads(attestation.read_text()))
     args.out.mkdir(parents=True, exist_ok=False)
     h = args.house
     geometry = json.loads(args.geometry_manifest.read_text())[h]

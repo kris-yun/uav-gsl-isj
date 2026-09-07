@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 # Build a new helper; preserve the historical executable and evidence untouched.
 set -e -o pipefail
-cd /home/zyc/CSTAR_CONTROLLED_ASSETS_20260907
-source tools/cstar_environment_vm_dependencies.sh
+# Resolve this checkout, not a date-stamped VM directory. An explicit dependency
+# setup may be supplied when moving hosts; the default is the frozen VM profile.
+CSTAR_BUILD_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$CSTAR_BUILD_ROOT"
+source "${1:-$CSTAR_BUILD_ROOT/tools/cstar_environment_vm_dependencies.sh}"
 test ! -e tools/cstar_numeric_wind_raw_query
 COMMON="$CSTAR_GADEN/gaden_common"
 g++ -std=c++20 -O2 tools/cstar_numeric_wind_raw_query.cpp \
