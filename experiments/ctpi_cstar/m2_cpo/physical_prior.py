@@ -201,10 +201,9 @@ class PhysicalCPOProvider:
         return self._predict_cells(prefix, route_cells, None)
 
     def _predict_cells(self, prefix, route_cells, source, source_rate=None):
-        # The latest wind is the only admissible wind for this causal prior.
+        field, sensor = self._replay_prefix(prefix, source, source_rate)
+        # The latest wind is the only admissible wind for the next route step.
         wind = tuple(float(v) for v in prefix[-1].wind_uv)
-        field = list(self.initial_field)
-        sensor = _Fopdt(self.config.sensor_tau, self.config.sensor_dead)
         hazards: list[float] = []
         means: list[float] = []
         scales: list[float] = []
@@ -218,6 +217,25 @@ class PhysicalCPOProvider:
             scales.append(max(1e-6, 1.0 / math.sqrt(1.0 + measured)))
             hazards.append(1.0 - math.exp(-self.config.hazard_scale * measured))
         return CPORouteLaw.from_hazards(hazards, means, scales)
+
+    def _replay_prefix(self, prefix, source, source_rate):
+        """Reconstruct candidate plume/sensor state from past frames only."""
+        field = list(self.initial_field)
+        sensor = _Fopdt(self.config.sensor_tau, self.config.sensor_dead)
+        # t=0 is bootstrap.  Every later frame is predicted with the wind
+        # available at the preceding stamp, then sampled at its current pose.
+        for previous, current in zip(prefix, prefix[1:]):
+            pose = getattr(current, "pose_xy", None)
+            if pose is None:
+                raise ValueError("CSTAR_M2_PRIOR_PREFIX_POSE_REQUIRED")
+            if source is not None:
+                source_cell = source
+            else:
+                source_cell = None
+            _advance(field, self.config, tuple(previous.wind_uv), source_cell,
+                     source_rate=source_rate, duration=self.config.route_dt)
+            sensor.step(field[_cell(self.config, tuple(pose))], self.config.route_dt)
+        return field, sensor
 
 
 def _moment_match(laws, weights):

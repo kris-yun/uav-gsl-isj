@@ -1,0 +1,32 @@
+{
+  "contract": "CSTAR_M2_PHYSICAL_PRIOR_TRUTH_CONDITIONED_DIAGNOSTIC_V1",
+  "verdict": "DIAGNOSTIC_ONLY_NOT_FORMAL_GATE",
+  "source_truth_runtime_input": false,
+  "source_truth_evaluator_conditioning": true,
+  "source_rate_marginalization": [
+    0.5,
+    1.0,
+    2.0
+  ],
+  "diffusion": 0.01,
+  "sensor": {
+    "tau_s": 1.2,
+    "dead_s": 0.4,
+    "route_dt_s": 0.2
+  },
+  "cases": [],
+  "failures": [
+    {
+      "house": "H02",
+      "decision_id": "108d47c24eba6b3d9c0d_t08_a0",
+      "error": "CSTAR_M2_PRIOR_POINT_IN_SOLID",
+      "interpretation": "map/route alignment must be repaired before a physical gate"
+    }
+  ],
+  "limitations": [
+    "source coordinate is supplied only for forward adequacy scoring",
+    "initial field is declared zero and no bank is queried",
+    "does not qualify candidate-support localization or controller utility",
+    "does not authorize House123 closed loop"
+  ]
+}

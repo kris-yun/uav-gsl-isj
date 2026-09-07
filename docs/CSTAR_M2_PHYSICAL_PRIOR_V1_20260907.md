@@ -8,6 +8,12 @@ route-conditioned first-encounter law from the *past-only* local wind in the
 latest stamped frame. The source location is a hypothesis supplied by the
 caller, never simulator truth.
 
+At every prediction the prior replays the supplied prefix from the declared
+initial field: each segment uses the previous frame's wind, samples the plume
+at the current pose, and carries the FOPDT state forward. It therefore does
+not reset transport or sensor history between route calls. A prefix without
+pose history is rejected by the scientific provider.
+
 Source strength is not silently fixed: the prior exposes a manifest-declared
 `source_rate_values` nuisance ensemble with fixed weights. `predict_ensemble`
 returns its components, while the online scalar law is moment-matched. M1's

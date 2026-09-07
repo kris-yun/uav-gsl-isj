@@ -26,4 +26,4 @@ Captured identities:
 - `cstar_m2_ros_bridge_probe.py` SHA-256:
   `d944a18e1f0b9f0cb14d508e862d51b2f4291fde62c4c2555b349735c3d08453`
 - `physical_prior.py` SHA-256:
-  `1d3f26db40ddd7d07b8f46c571301200b2b7a5e5cb69175879f866d04c08306b`
+  `eca38b755c247372a0bd7b5df40faa4eb3bc534b55a872831f15c2b30f7fa663`

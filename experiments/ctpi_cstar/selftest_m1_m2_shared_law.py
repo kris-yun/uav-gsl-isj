@@ -13,6 +13,7 @@ from m2_cpo.physical_prior import PhysicalCPOProvider, PhysicalPriorConfig
 
 class Frame:
     wind_uv = (1.0, 0.0)
+    pose_xy = (0.0, 1.0)
 
 
 def main():

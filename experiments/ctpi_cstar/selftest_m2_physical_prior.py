@@ -14,6 +14,7 @@ from m2_cpo.physical_prior import PhysicalCPOProvider, PhysicalPriorConfig
 @dataclass(frozen=True)
 class Frame:
     wind_uv: tuple[float, float]
+    pose_xy: tuple[float, float] = (0.0, 1.0)
 
 
 @dataclass(frozen=True)
