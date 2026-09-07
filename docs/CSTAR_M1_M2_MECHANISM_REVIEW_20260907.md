@@ -122,6 +122,12 @@ Investigate one candidate-conditioned **context + response-change** mechanism:
 This is an investigation direction, not an approved replacement formula. No new
 model was trained or substituted for PICR/CPO in this review.
 
+The online plumbing boundary now exists in
+`closed_loop/ctpi/cstar_m2_online.py`: it receives the same stamped pose/gas/wind
+frames as the ROS ingress, copies only the past prefix into an injected route-law
+provider and enforces prediction-before-observation. Its synthetic self-test is
+not a CPO performance or closed-loop result.
+
 ## 6. Small next gates and stopping rule
 
 1. Finish the focused mechanism/novelty and implementability review. Explicitly

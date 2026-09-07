@@ -138,6 +138,14 @@ falsification control may one House123 seed12 closed-loop pilot be launched.
 If that pilot fails the predeclared final-error gate, stop. Do not use additional
 seeds to average away the failure and do not change the protocol after seeing it.
 
+The first online boundary implementation is
+`closed_loop/ctpi/cstar_m2_online.py`. It wraps the existing stamped ROS ingress
+with an injected route-law provider, copies only the past prefix, requires a
+prediction token before each positive observation, and rejects an incomplete
+horizon. Its `selftest_m2_online.py` is a state-machine/plumbing test only; it
+does not count as a CPO scientific result because the injected provider is a
+synthetic reference law.
+
 ## 6. What would count as a real M1/M2 result
 
 **M1 useful:** source evidence improves held-out proper score and final error over
