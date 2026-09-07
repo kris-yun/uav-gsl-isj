@@ -146,6 +146,15 @@ horizon. Its `selftest_m2_online.py` is a state-machine/plumbing test only; it
 does not count as a CPO scientific result because the injected provider is a
 synthetic reference law.
 
+The first M1 implementation candidate is
+`experiments/ctpi_cstar/m1_picr/conditional_evidence.py`. Its score is the
+candidate-conditioned observation log score minus a source/gas-masked context
+log score. This is not claimed as a new posterior algebra by itself: the
+scientific contribution would be the identifiable nuisance intervention and
+the falsification result showing that candidate-only context shortcuts are
+removed without removing source contrast. Its synthetic self-test does not
+count as localization evidence.
+
 ## 6. What would count as a real M1/M2 result
 
 **M1 useful:** source evidence improves held-out proper score and final error over

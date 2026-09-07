@@ -128,6 +128,13 @@ frames as the ROS ingress, copies only the past prefix into an injected route-la
 provider and enforces prediction-before-observation. Its synthetic self-test is
 not a CPO performance or closed-loop result.
 
+The corresponding M1 score transform is now implemented as
+`m1_picr/conditional_evidence.py`: `Delta_s = log p(Y|S=s,N) - log p(Y|N)`.
+Because subtracting a common context constant would cancel in ordinary Bayes,
+the mechanism is only meaningful when the context law has candidate-varying
+shortcut bias and is itself produced without gas/source inputs. The code and
+tests make that distinction explicit; no performance claim is attached.
+
 ## 6. Small next gates and stopping rule
 
 1. Finish the focused mechanism/novelty and implementability review. Explicitly
