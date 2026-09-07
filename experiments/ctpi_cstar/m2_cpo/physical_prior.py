@@ -69,7 +69,8 @@ def _cell(config: PhysicalPriorConfig, xy: tuple[float, float]) -> int:
 
 
 def _advance(field: list[float], config: PhysicalPriorConfig, wind: tuple[float, float],
-             source: int | None, source_rate: float | None = None) -> None:
+             source: int | None, source_rate: float | None = None,
+             duration: float | None = None) -> None:
     """Advance one native field interval using the C++ V2 finite-volume law."""
     n = config.nx * config.ny
     if len(field) != n:
@@ -101,11 +102,14 @@ def _advance(field: list[float], config: PhysicalPriorConfig, wind: tuple[float,
                 faces.append((a, b, False))
                 outgoing[a] += max(rate, 0.0) + diffusion_rate
                 outgoing[b] += max(-rate, 0.0) + diffusion_rate
+    duration = config.field_dt if duration is None else float(duration)
+    if not math.isfinite(duration) or duration <= 0:
+        raise ValueError("CSTAR_M2_PRIOR_DURATION")
     max_rate = max(outgoing, default=0.0)
-    steps = max(1, int(math.ceil(config.field_dt * max_rate)))
+    steps = max(1, int(math.ceil(duration * max_rate)))
     if steps > 1_000_000:
         raise ValueError("CSTAR_M2_PRIOR_SUBSTEP_LIMIT")
-    dt = config.field_dt / steps
+    dt = duration / steps
     rates = [(u / config.dx if horizontal else v / config.dx) for _, _, horizontal in faces]
     for _ in range(steps):
         nxt = [(max(1.0 - dt * out, 0.0) * c) for out, c in zip(outgoing, field)]
@@ -184,7 +188,9 @@ class PhysicalCPOProvider:
         means: list[float] = []
         scales: list[float] = []
         for cell in route_cells:
-            _advance(field, self.config, wind, source)
+            # Sensor blocks arrive at route_dt; field_dt remains the native
+            # environment metadata and is not silently used as a 2.5x clock.
+            _advance(field, self.config, wind, source, duration=self.config.route_dt)
             measured = sensor.step(field[cell], self.config.route_dt)
             means.append(math.log1p(measured))
             scales.append(max(1e-6, 1.0 / math.sqrt(1.0 + measured)))
