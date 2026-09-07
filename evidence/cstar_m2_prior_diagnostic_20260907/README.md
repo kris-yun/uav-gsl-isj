@@ -31,6 +31,6 @@ predictive M2 gate or a closed-loop run.
 Code identities at capture:
 
 - `physical_prior.py` SHA-256:
-  `82827d6d0cace774a5373df8203eb7bea8d4683258c82ff4ac33d983ee421d7b`
+  `a0828c0b8da960989bf36fb71f088ae62d3358c1034a44da34a8439292832df1`
 - diagnostic script SHA-256:
   `20be8931456fa451f917898167c432fe75cd30cc5dc7d5676a39f8ee59e4397c`

@@ -41,10 +41,6 @@ class PhysicalPriorConfig:
     sensor_tau: float = 1.2
     sensor_dead: float = 0.4
     hazard_scale: float = 0.2
-    # Prefix-only source-strength assimilation.  It is opt-in while the
-    # physical observation bridge is being qualified; no future route sample
-    # is ever used to estimate this nuisance state.
-    assimilate_prefix_amplitude: bool = False
     amplitude_min: float = 1.0e-3
     amplitude_max: float = 1.0e6
 
