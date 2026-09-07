@@ -46,6 +46,10 @@ def main():
     assert all(0.0 <= p <= 1.0 for p in law.first_hit_prob)
     assert abs(sum(law.first_hit_prob) - 1.0) < 1e-12
     assert 0.0 <= law.route_committor <= 1.0
+    context_a = provider.predict_context(prefix, req.route_xy)
+    context_b = provider.predict_context(prefix, req.route_xy)
+    assert context_a == context_b  # source identity is absent from the context law
+    assert provider.predict_context(prefix, req.route_xy) == context_a
     # The provider receives a decision-time prefix.  Mutating a caller-owned
     # list after prediction cannot alter the already returned law.
     mutable_prefix = [Frame((1.0, 0.0))]

@@ -69,7 +69,7 @@ def _cell(config: PhysicalPriorConfig, xy: tuple[float, float]) -> int:
 
 
 def _advance(field: list[float], config: PhysicalPriorConfig, wind: tuple[float, float],
-             source: int) -> None:
+             source: int | None, source_rate: float | None = None) -> None:
     """Advance one native field interval using the C++ V2 finite-volume law."""
     n = config.nx * config.ny
     if len(field) != n:
@@ -112,7 +112,9 @@ def _advance(field: list[float], config: PhysicalPriorConfig, wind: tuple[float,
         for (a, b, _), rate in zip(faces, rates):
             nxt[b] += dt * (max(rate, 0.0) + diffusion_rate) * field[a]
             nxt[a] += dt * (max(-rate, 0.0) + diffusion_rate) * field[b]
-        nxt[source] += config.source_rate_per_field_second * dt
+        if source is not None:
+            rate = config.source_rate_per_field_second if source_rate is None else source_rate
+            nxt[source] += rate * dt
         field[:] = nxt
     if any((not math.isfinite(v) or v < -1e-12) for v in field):
         raise ValueError("CSTAR_M2_PRIOR_NUMERIC_STATE")
@@ -164,6 +166,16 @@ class PhysicalCPOProvider:
             raise ValueError("CSTAR_M2_PRIOR_EMPTY_ROUTE")
         source = _cell(self.config, tuple(request.source_xy))
         route_cells = [_cell(self.config, tuple(point)) for point in route]
+        return self._predict_cells(prefix, route_cells, source)
+
+    def predict_context(self, prefix, route_xy):
+        """Source/gas-masked law used as M1's context denominator."""
+        if not prefix:
+            raise ValueError("CSTAR_M2_PRIOR_EMPTY_PREFIX")
+        route_cells = [_cell(self.config, tuple(point)) for point in route_xy]
+        return self._predict_cells(prefix, route_cells, None)
+
+    def _predict_cells(self, prefix, route_cells, source):
         # The latest wind is the only admissible wind for this causal prior.
         wind = tuple(float(v) for v in prefix[-1].wind_uv)
         field = list(self.initial_field)
