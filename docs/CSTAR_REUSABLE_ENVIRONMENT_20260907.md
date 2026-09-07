@@ -105,6 +105,17 @@ verifier bound to this execution commit, not a general scientific gate).
 - Header samples and wind verification do not establish integrity of all gas
   payload bodies. Existing provenance/evidence contracts remain required.
 
+### Additional trajectory/map binding audit
+
+The reusable preflight's map/candidate checks do not prove that every archived
+history and frozen route pose is in that map frame. The new
+`tools/cstar_audit_route_map_binding.py` performs that stricter check. Its first
+run on the current controlled bundle is preserved as
+`evidence/cstar_route_map_binding_20260907/AUDIT.json` and is **NO-GO** (H01,
+H02 and H03 all contain solid or out-of-grid poses). This blocks any physical
+prior or House closed-loop gate until the asset identity is repaired; no point
+is silently snapped or translated.
+
 ## VM storage incident (preserved, not hidden)
 
 The system volume reported 100% usage and zero ordinary-user free space when
