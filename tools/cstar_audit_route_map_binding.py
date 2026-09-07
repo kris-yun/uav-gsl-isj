@@ -80,10 +80,19 @@ def main():
         info = map_info(args.maps / house)
         points = []
         for ep in manifest["m1_episodes"]:
+            # The frozen LOHO manifests are deliberately complete: each file
+            # contains all three Houses, with only the outer-fold role changed.
+            # Bind a trajectory to the map named by its own physical House;
+            # otherwise a complete manifest would be (incorrectly) replayed
+            # against H01/H02/H03 maps in turn and manufacture false failures.
+            if ep["house"] != house:
+                continue
             for row in (json.loads(line) for line in
                         (args.assets / ep["history_trace_path"]).read_text(encoding="utf-8").splitlines() if line.strip()):
                 points.append((*row["pose_xy"], f"history:{ep['episode_id']}:{row['t_sim_s']}"))
         for case in manifest["m2_route_cases"]:
+            if case["house"] != house:
+                continue
             route_name = Path(case["planned_route_path"]).name
             with (args.routes / house / route_name).open(newline="", encoding="utf-8") as handle:
                 for row in csv.DictReader(handle):

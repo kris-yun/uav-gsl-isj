@@ -93,6 +93,11 @@ def main():
         episodes = {r["episode_id"]: r for r in manifest["m1_episodes"]}
         attempted = 0
         for case in manifest["m2_route_cases"]:
+            # Each LOHO manifest is complete and contains cases for all three
+            # physical Houses.  The diagnostic map/route pair must follow the
+            # case's authoritative House, not the outer-fold filename.
+            if case["house"] != house:
+                continue
             if attempted >= args.max_cases:
                 break
             attempted += 1
