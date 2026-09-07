@@ -10,7 +10,7 @@ import zlib
 import numpy as np
 
 from experiments.ctpi_cstar.environment_runtime import (
-    Grid3D, NumericWindReader, decode_wind, legacy_header, numeric_sequence,
+    Grid3D, NumericWindReader, decode_wind, legacy_header, load_runtime_preflight, numeric_sequence,
     sha256, validate_clock_sensor, verify_bindings, verify_qualified_helper,
 )
 
@@ -187,6 +187,42 @@ class EnvironmentRuntimeTest(unittest.TestCase):
         binary.write_bytes(b"lexical")
         with self.assertRaisesRegex(ValueError, "UNQUALIFIED_HELPER_BINARY"):
             verify_qualified_helper(binary, source, attestation)
+
+    def preflight_fixture(self):
+        from experiments.ctpi_cstar import environment_runtime
+        helper, geometry, profile = self.root / "helper", self.root / "geometry", self.root / "profile.json"
+        helper.write_bytes(b"qualified")
+        geometry.write_bytes(b"geometry")
+        code = Path(environment_runtime.__file__).resolve()
+        report = {"schema": "CSTAR_REUSABLE_ENVIRONMENT_PREFLIGHT_V1", "pass": True,
+                  "scientific_gate_authority": False, "maps": {"H01": {}},
+                  "inputs": {"helper": str(helper.resolve()), "geometry": str(geometry.resolve())},
+                  "entries": [{"house": "H01", "realization_path": str(self.root.resolve())}],
+                  "bindings": [{"path": str(p.resolve()), "sha256": sha256(p)} for p in (helper, geometry, code)]}
+        profile.write_text(json.dumps(report))
+        return helper, geometry, profile, report
+
+    def test_launch_certificate_accepts_exact_inputs(self):
+        helper, geometry, profile, _ = self.preflight_fixture()
+        self.assertTrue(load_runtime_preflight(profile, helper, geometry, "H01", self.root)["pass"])
+
+    def test_launch_certificate_rejects_other_realization(self):
+        helper, geometry, profile, _ = self.preflight_fixture()
+        with self.assertRaisesRegex(ValueError, "PREFLIGHT_REALIZATION"):
+            load_runtime_preflight(profile, helper, geometry, "H02", self.root)
+
+    def test_launch_certificate_requires_loader_code_binding(self):
+        helper, geometry, profile, report = self.preflight_fixture()
+        report["bindings"].pop()
+        profile.write_text(json.dumps(report))
+        with self.assertRaisesRegex(ValueError, "MISSING_LAUNCH_BINDING"):
+            load_runtime_preflight(profile, helper, geometry, "H01", self.root)
+
+    def test_launch_certificate_rejects_stale_map(self):
+        helper, geometry, profile, _ = self.preflight_fixture()
+        geometry.write_bytes(b"changed")
+        with self.assertRaisesRegex(ValueError, "STALE_BINDING"):
+            load_runtime_preflight(profile, helper, geometry, "H01", self.root)
 
 
 if __name__ == "__main__":

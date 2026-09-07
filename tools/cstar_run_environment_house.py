@@ -10,7 +10,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from experiments.ctpi_cstar.environment_runtime import verify_qualified_helper
+from experiments.ctpi_cstar.environment_runtime import load_runtime_preflight, verify_qualified_helper, require
 
 
 def main():
@@ -18,6 +18,8 @@ def main():
     p.add_argument("--house", choices=("H01", "H02", "H03"), required=True)
     p.add_argument("--geometry-manifest", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--environment-preflight", type=Path, required=True,
+                   help="Current reusable preflight bound to these launch inputs")
     p.add_argument("--raw-query-executable", type=Path, required=True,
                    help="Explicit live-qualified numeric helper; no historical H01 fallback")
     args = p.parse_args()
@@ -26,7 +28,6 @@ def main():
     attestation = ROOT / "evidence/cstar_controlled_assets_20260907_r2/WIND_INDEX_CORRECTION_AUDIT.json"
     verify_qualified_helper(args.raw_query_executable, ROOT / "tools/cstar_numeric_wind_raw_query.cpp",
                             json.loads(attestation.read_text()))
-    args.out.mkdir(parents=True, exist_ok=False)
     h = args.house
     geometry = json.loads(args.geometry_manifest.read_text())[h]
     config, start = {"H01": ("2,4-1_fast", (-3.17, -1.75)),
@@ -37,6 +38,11 @@ def main():
     if len(realizations) != 1:
         raise RuntimeError(f"AMBIGUOUS_REALIZATION:{realizations}")
     realization = realizations[0]
+    preflight = load_runtime_preflight(args.environment_preflight, args.raw_query_executable,
+                                       args.geometry_manifest, h, realization)
+    clock = preflight["clock_sensor"]["clock"]
+    require(clock["seed"] == 12 and clock["sensor_dt_s"] == 0.2, "HOVER_PROFILE_CLOCK")
+    args.out.mkdir(parents=True, exist_ok=False)
     env = {**os.environ, "ROS_DOMAIN_ID": str(201+int(h[-1])), "ROS_LOCALHOST_ONLY": "1"}
     procs, handles, commands = [], [], []
 
@@ -83,7 +89,12 @@ def main():
             "--required-aligned-frames", "8", "--wall-timeout-s", "40", "--start-simulation"])
         status["probe_exit_code"] = probe.wait(timeout=50)
         status["pass"] = status["probe_exit_code"] == 0
+        if status["pass"]:
+            actual_sensor = json.loads((args.out / "sensor_manifest.json").read_text())["sensor"]
+            require(actual_sensor == preflight["clock_sensor"]["resolved_sensor"], "LIVE_SENSOR_PARAMETER_DRIFT")
+            status["environment_preflight_sha256"] = hashlib.sha256(args.environment_preflight.read_bytes()).hexdigest()
     except Exception as exc:
+        status["pass"] = False
         status["error"] = str(exc)
     finally:
         # Only process groups created by this invocation; no broad pgrep/pkill.

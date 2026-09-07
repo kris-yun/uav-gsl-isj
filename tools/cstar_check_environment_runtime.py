@@ -23,6 +23,8 @@ def main():
     p.add_argument("--clock", type=Path, required=True)
     p.add_argument("--helper", type=Path, required=True)
     p.add_argument("--helper-attestation", type=Path, required=True)
+    p.add_argument("--controlled-data", type=Path,
+                   help="Optionally reverify existing evaluator raw frames against numeric wind files; never re-extract gas")
     p.add_argument("--out", type=Path, required=True)
     args = p.parse_args()
     runtime.require(not args.out.exists(), "OUTPUT_ALREADY_EXISTS")
@@ -88,7 +90,27 @@ def main():
             _, identity = reader.vectors(index)
             bind(path, identity["sha256"])
             wind_rows.append(identity | {"index": index})
+        raw_check = {"frames": 0, "max_abs_wind_error": 0.0, "files": []}
+        if args.controlled_data:
+            directory = args.controlled_data / "realizations" / record["realization_id"]
+            files = [directory / "evaluator_raw_history.jsonl"] + sorted(directory.glob("*_evaluator_raw.jsonl"))
+            runtime.require(len(files) > 1, "NO_CONTROLLED_ROUTES")
+            for path in files:
+                bind(path)
+                count = 0
+                with path.open(encoding="utf-8") as stream:
+                    for line in stream:
+                        frame = json.loads(line)
+                        reply = "OK " + " ".join(map(str, [frame["true_gas_ppm"], *frame["wind_uv"],
+                                                           frame["wind_w"], frame["wind_index"]]))
+                        error = reader.verify_reply(frame["iteration"], [*frame["pose_xy"], frame["z"]], reply)
+                        raw_check["max_abs_wind_error"] = max(raw_check["max_abs_wind_error"], error)
+                        count += 1
+                runtime.require(count > 0, "EMPTY_RAW_FRAMES")
+                raw_check["frames"] += count
+                raw_check["files"].append({"path": str(path.resolve()), "frames": count})
         entries.append({"realization_id": record["realization_id"], "house": record["house"],
+                        "realization_path": str(reader.realization.resolve()), "raw_wind_reverification": raw_check,
                         "iterations": len(iterations), "header_samples": headers, "winds": wind_rows})
         print(record["house"], record["realization_id"], len(wind_rows), "numeric winds PASS", flush=True)
     result = {"schema": "CSTAR_REUSABLE_ENVIRONMENT_PREFLIGHT_V1", "pass": True,
@@ -97,6 +119,8 @@ def main():
               "limits": ["not a live ROS/navigation test", "not all gas headers", "not gas payload integrity",
                          "runtime dependency closure is not attested", "raw wind cache is immutable within one read session"],
               "gas_body_bytes_decoded": 0, "new_routes_or_seeds": 0,
+              "inputs": {name: str(getattr(args, name).resolve()) for name in
+                         ("split", "geometry", "sensor_manifest", "clock", "helper", "helper_attestation")},
               "clock_sensor": clock, "maps": map_results, "entries": entries,
               "bindings": list(bindings.values())}
     # Revalidate at the end too, to catch ordinary concurrent edits during scan.

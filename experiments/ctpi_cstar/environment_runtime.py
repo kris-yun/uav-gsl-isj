@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
+import json
 import math
 from pathlib import Path
 import re
@@ -148,6 +149,7 @@ class NumericWindReader:
         self.grid = Grid3D.from_occupancy(occupancy)
         self.files = numeric_sequence(self.realization / "wind", "wind_iteration_")
         self._cache = {}
+        self._headers = {}
 
     def vectors(self, index):
         require(isinstance(index, int) and 0 <= index < len(self.files), "WIND_INDEX_RANGE")
@@ -157,7 +159,9 @@ class NumericWindReader:
 
     def expected(self, iteration, point):
         require(isinstance(iteration, int) and iteration >= 0, "ITERATION_INVALID")
-        header = legacy_header(self.realization / f"iteration_{iteration}", self.grid)
+        if iteration not in self._headers:
+            self._headers[iteration] = legacy_header(self.realization / f"iteration_{iteration}", self.grid)
+        header = self._headers[iteration]
         vectors, _ = self.vectors(header["wind_index"])
         return vectors[header["sample_grid"].flat_index(point)], header
 
@@ -214,3 +218,25 @@ def verify_qualified_helper(executable, source, attestation):
             "HELPER_NOT_LIVE_QUALIFIED")
     require(sha256(executable) == attestation["corrected_helper_sha256"], "UNQUALIFIED_HELPER_BINARY")
     require(sha256(source) == attestation["corrected_helper_source_sha256"], "UNQUALIFIED_HELPER_SOURCE")
+
+
+def load_runtime_preflight(path, helper, geometry, house, realization):
+    """Check the current launch against the explicit offline input certificate.
+
+    The certificate is a trusted experiment artifact, not a security signature.
+    It grants no model/closed-loop authorization and no live navigation claim.
+    """
+    report = json.loads(Path(path).read_text(encoding="utf-8"))
+    require(report.get("schema") == "CSTAR_REUSABLE_ENVIRONMENT_PREFLIGHT_V1" and
+            report.get("pass") is True and report.get("scientific_gate_authority") is False,
+            "PREFLIGHT_SCHEMA")
+    verify_bindings(report["bindings"])
+    bound = {str(Path(b["path"]).resolve()): b["sha256"] for b in report["bindings"]}
+    for file in (Path(__file__), Path(helper), Path(geometry)):
+        require(str(file.resolve()) in bound, "PREFLIGHT_MISSING_LAUNCH_BINDING:" + str(file))
+    require(str(Path(helper).resolve()) == report["inputs"]["helper"], "PREFLIGHT_HELPER_PATH")
+    require(str(Path(geometry).resolve()) == report["inputs"]["geometry"], "PREFLIGHT_GEOMETRY_PATH")
+    require(house in report["maps"] and any(r["house"] == house and
+            r["realization_path"] == str(Path(realization).resolve()) for r in report["entries"]),
+            "PREFLIGHT_REALIZATION")
+    return report
