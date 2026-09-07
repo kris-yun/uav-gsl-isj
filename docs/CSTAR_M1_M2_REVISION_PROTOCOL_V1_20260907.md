@@ -161,6 +161,13 @@ the falsification result showing that candidate-only context shortcuts are
 removed without removing source contrast. Its synthetic self-test does not
 count as localization evidence.
 
+`experiments/ctpi_cstar/m1_picr/route_law_score.py` now supplies the missing
+normalization boundary for this candidate: a declared AR(1) innovation
+factorization over M2's route-law mean/scale, with invalid frames omitted and
+valid zero readings retained. It is an auditable scoring primitive, not a
+qualified M1 result; its physical-prior parity, held-out proper scores and
+causal controls remain open.
+
 ## 6. What would count as a real M1/M2 result
 
 **M1 useful:** source evidence improves held-out proper score and final error over
