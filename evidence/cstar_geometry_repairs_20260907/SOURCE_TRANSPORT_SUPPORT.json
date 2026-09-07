@@ -1,0 +1,124 @@
+{
+  "contract": "CSTAR_SOURCE_TRANSPORT_CROSSING_AUDIT_V1",
+  "houses": [
+    {
+      "house": "H01",
+      "realizations": 4,
+      "exact_source_count": 2,
+      "same_source_transport_pairs": [
+        [
+          "108d47c24eba6b3d9c0d",
+          "8d6d0d8919cc86bf9866"
+        ],
+        [
+          "34f408835e0345114692",
+          "3f6f6f0c48fcee9f4420"
+        ]
+      ],
+      "matched_context_source_pairs": [],
+      "release_setting_count": 1,
+      "sensor_setting_count": 1,
+      "missing_crossed_cells": [
+        {
+          "source_xyz_m": [
+            -0.4,
+            -2.9,
+            -0.3
+          ],
+          "transport_from_realization": "108d47c24eba6b3d9c0d",
+          "transport_fingerprint": "3879ddacca5da597f220d500a85c981e75a420c590e292cb63184f1db7c6af21"
+        },
+        {
+          "source_xyz_m": [
+            -0.4,
+            -2.9,
+            -0.3
+          ],
+          "transport_from_realization": "8d6d0d8919cc86bf9866",
+          "transport_fingerprint": "5a0c0c24a6d1bc6ad553f10c6f4f6f7860ec7b9f5ebc156ea83539a78c74f26e"
+        }
+      ]
+    },
+    {
+      "house": "H02",
+      "realizations": 4,
+      "exact_source_count": 2,
+      "same_source_transport_pairs": [
+        [
+          "b5ddfde822a2c432a4ed",
+          "a5fd74001116ec3bc836"
+        ],
+        [
+          "dea2bcf6e1dc5e1d6d75",
+          "e29f95c937aeb1722501"
+        ]
+      ],
+      "matched_context_source_pairs": [],
+      "release_setting_count": 1,
+      "sensor_setting_count": 1,
+      "missing_crossed_cells": [
+        {
+          "source_xyz_m": [
+            1.0,
+            -2.3,
+            -0.1
+          ],
+          "transport_from_realization": "b5ddfde822a2c432a4ed",
+          "transport_fingerprint": "43fb351093431215451f08e05bebf812ff5b1d9c983e3a0a6527b4d8b9fa3581"
+        },
+        {
+          "source_xyz_m": [
+            1.0,
+            -2.3,
+            -0.1
+          ],
+          "transport_from_realization": "a5fd74001116ec3bc836",
+          "transport_fingerprint": "c2b0beadff9b792e417f3bc53614773a33db3065537f24f65b7175432f87212d"
+        }
+      ]
+    },
+    {
+      "house": "H03",
+      "realizations": 4,
+      "exact_source_count": 2,
+      "same_source_transport_pairs": [
+        [
+          "5607631937ea368823a8",
+          "264aac99e78afdd878cd"
+        ],
+        [
+          "e94004ac61d615f40bf3",
+          "aec5da10fe2ce62da8b5"
+        ]
+      ],
+      "matched_context_source_pairs": [],
+      "release_setting_count": 1,
+      "sensor_setting_count": 1,
+      "missing_crossed_cells": [
+        {
+          "source_xyz_m": [
+            8.2,
+            5.0,
+            -0.2
+          ],
+          "transport_from_realization": "5607631937ea368823a8",
+          "transport_fingerprint": "87cc546112723b401d0035385cea21fc6766aa6c092db21d61d3430abc578020"
+        },
+        {
+          "source_xyz_m": [
+            8.2,
+            5.0,
+            -0.2
+          ],
+          "transport_from_realization": "264aac99e78afdd878cd",
+          "transport_fingerprint": "4b36179ee725ba6cf13a43efb5de3b33a7e1f41a364465ea65d2acc758a075a4"
+        }
+      ]
+    }
+  ],
+  "provenance_sha256": "e3c5ce945d0b1b0fb899a65bc0931b09488635bca54fe8d16534d27becf76eb1",
+  "verdict": "CROSSED_SOURCE_INTERVENTIONS_MISSING",
+  "formal_gate_authority": false,
+  "interpretation": "Same-source nuisance variation exists. Different-source pairs change transport too; latent separation alone cannot attribute their difference to source. This is a coverage limit, not a proof that gas is uninformative.",
+  "next_data_requirement": "Preserve current sources/Houses. Add the listed crossed transport settings only under a preregistered generator/release-state contract. No new seeds assigned or simulator jobs started by this audit."
+}

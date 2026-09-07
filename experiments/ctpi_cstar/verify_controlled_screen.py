@@ -33,9 +33,16 @@ def main():
     result = args.results.resolve()
     m1, m2 = read(result/'M1_SCREEN.json'), read(result/'M2_BASELINE_SCREEN.json')
     cfg_path = HERE/'CSTAR_CONTROLLED_SCREEN_CONFIG_20260907.json'
-    cfg, start = read(cfg_path), read(result/'RUN_START.json')
+    cfg, start = read(result/'FROZEN_CONFIG.json'), read(result/'RUN_START.json')
     assert start['config_sha256'] == m1['config_sha256'] == sha(cfg_path)
-    assert read(result/'FROZEN_CONFIG.json') == cfg
+    if 'effective_config_sha256' in start:
+        assert start['effective_config_sha256'] == m1['effective_config_sha256'] == sha(result/'FROZEN_CONFIG.json')
+        assert start['metric_coordinate_contract'] == m1['metric_coordinate_contract'] == 'raw_candidate_xy_m_v2'
+        for path,digest in start['code_sha256'].items():
+            snapshot=result/'source_snapshot'/path
+            assert sha(snapshot if snapshot.is_file() else ROOT/path) == digest, 'PRODUCER_CODE_CHANGED'
+    else:
+        assert cfg == read(cfg_path), 'LEGACY_VARIANT_NEEDS_SEPARATE_RECOMPUTATION'
     records, candidates, label_candidates = {}, {}, {}
     for row in read(ASSETS/'manifests/H01.json')['m1_episodes']:
         records[row['realization_id']] = row
@@ -43,7 +50,7 @@ def main():
         assert sha(path) == row['candidate_domain_sha256']
         with path.open() as f:
             xy = np.array([[float(r['x']),float(r['y'])] for r in csv.DictReader(f)],dtype=np.float32)
-        candidates[row['house']] = (xy / np.float32(10))*np.float32(10)
+        candidates[row['house']] = xy if start.get('metric_coordinate_contract') == 'raw_candidate_xy_m_v2' else (xy / np.float32(10))*np.float32(10)
         label_candidates[row['house']] = xy
     verified_rows, fold_checks = 0, []
     for fold in m1['folds']:
@@ -75,6 +82,8 @@ def main():
                     assert row['nll'] > 80, 'UNDERFLOW_NLL_CONTRADICTION'
                 error = float(np.linalg.norm(xy[p[t,i].argmax()]-truth))
                 assert abs(error-row['source_error_m']) < 2e-5, 'LOCALIZATION_MISMATCH'
+                entropy = float(-(p[t,i]*np.log(np.maximum(p[t,i],1e-30))).sum()/math.log(p.shape[-1]))
+                assert abs(entropy-row['normalized_entropy']) < 2e-6, 'ENTROPY_MISMATCH'
                 same = float(np.linalg.norm(z[t,[0,2]]-z[t,[1,3]],axis=-1).mean())
                 different = float(np.linalg.norm(z[t,[0,0,1,1]]-z[t,[2,3,2,3]],axis=-1).mean())
                 assert abs(same-row['same_z']) < 2e-5 and abs(different-row['different_z']) < 2e-5

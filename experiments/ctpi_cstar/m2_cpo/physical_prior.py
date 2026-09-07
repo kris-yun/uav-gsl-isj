@@ -13,6 +13,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import math
+from functools import lru_cache
 from typing import Sequence
 
 try:  # package import when used from a test/module
@@ -43,8 +44,13 @@ class PhysicalPriorConfig:
     hazard_scale: float = 0.2
     amplitude_min: float = 1.0e-3
     amplitude_max: float = 1.0e6
+    transport_time_scale: float = 1.0
+    condition_noise_free_sensor: bool = False
+    transport_backend: str = 'reference'
 
     def validate(self) -> None:
+        if self.transport_backend not in ('reference','numpy'):
+            raise ValueError('CSTAR_M2_PRIOR_BACKEND')
         if type(self.nx) is not int or type(self.ny) is not int or self.nx < 1 or self.ny < 1:
             raise ValueError("CSTAR_M2_PRIOR_GRID")
         if len(self.free) != self.nx * self.ny or not any(self.free):
@@ -55,7 +61,8 @@ class PhysicalPriorConfig:
                             (self.sensor_tau, "SENSOR_TAU"), (self.sensor_dead, "SENSOR_DEAD"),
                             (self.hazard_scale, "HAZARD_SCALE"),
                             (self.amplitude_min, "AMPLITUDE_MIN"),
-                            (self.amplitude_max, "AMPLITUDE_MAX")):
+                            (self.amplitude_max, "AMPLITUDE_MAX"),
+                            (self.transport_time_scale, "TRANSPORT_TIME_SCALE")):
             if not math.isfinite(float(value)) or (value <= 0 and code not in {"DIFFUSION", "SENSOR_DEAD"}):
                 raise ValueError("CSTAR_M2_PRIOR_" + code)
         if self.diffusion < 0 or self.sensor_dead < 0 or self.hazard_scale <= 0:
@@ -68,8 +75,9 @@ class PhysicalPriorConfig:
 
 
 def _cell(config: PhysicalPriorConfig, xy: tuple[float, float]) -> int:
-    x = int(round((float(xy[0]) - config.origin_xy[0]) / config.dx))
-    y = int(round((float(xy[1]) - config.origin_xy[1]) / config.dx))
+    # ROS YAML origin is the lower corner, not the centre of cell zero.
+    x = math.floor((float(xy[0]) - config.origin_xy[0]) / config.dx)
+    y = math.floor((float(xy[1]) - config.origin_xy[1]) / config.dx)
     if x < 0 or x >= config.nx or y < 0 or y >= config.ny:
         raise ValueError("CSTAR_M2_PRIOR_POINT_OUTSIDE_GRID")
     idx = x + y * config.nx
@@ -82,6 +90,8 @@ def _advance(field: list[float], config: PhysicalPriorConfig, wind: tuple[float,
              source: int | None, source_rate: float | None = None,
              duration: float | None = None) -> None:
     """Advance one native field interval using the C++ V2 finite-volume law."""
+    if config.transport_backend == 'numpy':
+        return _advance_numpy(field,config,wind,source,source_rate,duration)
     n = config.nx * config.ny
     if len(field) != n:
         raise ValueError("CSTAR_M2_PRIOR_FIELD_SIZE")
@@ -132,6 +142,50 @@ def _advance(field: list[float], config: PhysicalPriorConfig, wind: tuple[float,
         field[:] = nxt
     if any((not math.isfinite(v) or v < -1e-12) for v in field):
         raise ValueError("CSTAR_M2_PRIOR_NUMERIC_STATE")
+
+
+@lru_cache(maxsize=8)
+def _numpy_faces(nx,ny,free):
+    import numpy as np
+    mask=np.asarray(free,dtype=bool).reshape(ny,nx)
+    grid=np.arange(nx*ny).reshape(ny,nx)
+    horizontal=mask[:,:-1]&mask[:,1:]
+    vertical=mask[:-1,:]&mask[1:,:]
+    a=np.concatenate((grid[:,:-1][horizontal],grid[:-1,:][vertical]))
+    b=np.concatenate((grid[:,1:][horizontal],grid[1:,:][vertical]))
+    return a,b,int(horizontal.sum()),mask.flatten()
+
+
+def _advance_numpy(field,config,wind,source,source_rate,duration):
+    """Same edge fluxes/CFL substeps as the scalar reference, batched in NumPy."""
+    import numpy as np
+    c=np.asarray(field,dtype=np.float64)
+    n=config.nx*config.ny
+    if c.shape!=(n,): raise ValueError('CSTAR_M2_PRIOR_FIELD_SIZE')
+    if not np.isfinite(c).all() or (c<0).any(): raise ValueError('CSTAR_M2_PRIOR_FIELD_INVALID')
+    u,v=map(float,wind)
+    if not math.isfinite(u) or not math.isfinite(v): raise ValueError('CSTAR_M2_PRIOR_WIND_INVALID')
+    a,b,nh,free=_numpy_faces(config.nx,config.ny,config.free)
+    if (c[~free]!=0).any(): raise ValueError('CSTAR_M2_PRIOR_SOLID_MASS')
+    rates=np.empty(len(a)); rates[:nh]=u/config.dx; rates[nh:]=v/config.dx
+    forward=np.maximum(rates,0)+config.diffusion/config.dx**2
+    reverse=np.maximum(-rates,0)+config.diffusion/config.dx**2
+    outgoing=np.bincount(a,weights=forward,minlength=n)+np.bincount(b,weights=reverse,minlength=n)
+    duration=config.field_dt if duration is None else float(duration)
+    if not math.isfinite(duration) or duration<=0: raise ValueError('CSTAR_M2_PRIOR_DURATION')
+    steps=max(1,math.ceil(duration*float(outgoing.max())))
+    if steps>1_000_000: raise ValueError('CSTAR_M2_PRIOR_SUBSTEP_LIMIT')
+    dt=duration/steps
+    retention=np.maximum(1-dt*outgoing,0)
+    for _ in range(steps):
+        nxt=retention*c
+        nxt+=np.bincount(b,weights=dt*forward*c[a],minlength=n)
+        nxt+=np.bincount(a,weights=dt*reverse*c[b],minlength=n)
+        if source is not None:
+            nxt[source]+=(config.source_rate_per_field_second if source_rate is None else source_rate)*dt
+        c=nxt
+    if not np.isfinite(c).all() or (c < -1e-12).any(): raise ValueError('CSTAR_M2_PRIOR_NUMERIC_STATE')
+    field[:]=c.tolist()
 
 
 class _Fopdt:
@@ -227,10 +281,10 @@ class PhysicalCPOProvider:
         if not prefix:
             raise ValueError("CSTAR_M2_PRIOR_EMPTY_PREFIX")
         route_cells = [_cell(self.config, tuple(point)) for point in route_xy]
-        return self._predict_cells(prefix, route_cells, None)
+        return self._predict_cells(prefix, route_cells, None, condition_sensor=False)
 
     def _predict_cells(self, prefix, route_cells, source, source_rate=None,
-                       assimilate_amplitude=False):
+                       assimilate_amplitude=False, condition_sensor=True):
         if assimilate_amplitude:
             field, sensor, prefix_response = self._replay_prefix(
                 prefix, source, 1.0, record_response=True)
@@ -241,16 +295,25 @@ class PhysicalCPOProvider:
             source_rate = amplitude
         else:
             field, sensor = self._replay_prefix(prefix, source, source_rate)
+        if self.config.condition_noise_free_sensor and condition_sensor:
+            # In the explicitly noise-free, unit-gain FOPDT contract, measured
+            # output is the sensor state. Carry it at the decision boundary;
+            # a misfit source plume must not reset an observed state to zero.
+            # The unobserved delay queue remains the model prediction.
+            measured_state = float(prefix[-1].gas_ppm)
+            if not math.isfinite(measured_state) or not 0 <= measured_state < 1e6:
+                raise ValueError('CSTAR_M2_SENSOR_STATE_UNOBSERVABLE_OR_SATURATED')
+            sensor.state = measured_state
         # The latest wind is the only admissible wind for the next route step.
         wind = tuple(float(v) for v in prefix[-1].wind_uv)
         hazards: list[float] = []
         means: list[float] = []
         scales: list[float] = []
         for cell in route_cells:
-            # Sensor blocks arrive at route_dt; field_dt remains the native
-            # environment metadata and is not silently used as a 2.5x clock.
+            # Sensor and field clocks differ in seeded GADEN replay. The
+            # explicit scale is bound to the environment, not fitted to gas.
             _advance(field, self.config, wind, source, source_rate=source_rate,
-                     duration=self.config.route_dt)
+                     duration=self.config.route_dt * self.config.transport_time_scale)
             measured = sensor.step(field[cell], self.config.route_dt)
             means.append(math.log1p(measured))
             scales.append(max(1e-6, 1.0 / math.sqrt(1.0 + measured)))
@@ -259,6 +322,13 @@ class PhysicalCPOProvider:
 
     def _replay_prefix(self, prefix, source, source_rate, record_response=False):
         """Reconstruct candidate plume/sensor state from past frames only."""
+        stamps = [getattr(frame,'stamp_ns',None) for frame in prefix]
+        if any(stamp is not None for stamp in stamps):
+            if stamps[0] != 0 or any(stamp is None for stamp in stamps):
+                raise ValueError('CSTAR_M2_PRIOR_MISSING_BOOTSTRAP_STATE')
+            dt_ns=round(self.config.route_dt*1e9)
+            if any(b-a != dt_ns for a,b in zip(stamps,stamps[1:])):
+                raise ValueError('CSTAR_M2_PRIOR_PREFIX_CADENCE')
         field = list(self.initial_field)
         sensor = _Fopdt(self.config.sensor_tau, self.config.sensor_dead)
         responses: list[float] = []
@@ -273,7 +343,8 @@ class PhysicalCPOProvider:
             else:
                 source_cell = None
             _advance(field, self.config, tuple(previous.wind_uv), source_cell,
-                     source_rate=source_rate, duration=self.config.route_dt)
+                     source_rate=source_rate,
+                     duration=self.config.route_dt * self.config.transport_time_scale)
             responses.append(sensor.step(
                 field[_cell(self.config, tuple(pose))], self.config.route_dt
             ))

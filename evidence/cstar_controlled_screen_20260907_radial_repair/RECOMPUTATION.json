@@ -1,0 +1,43 @@
+{
+  "contract": "CSTAR_CONTROLLED_SCREEN_RECOMPUTATION_V1",
+  "pass": true,
+  "verified_m1_prediction_rows": 2700,
+  "verified_m2_cases": 252,
+  "m1_result": "M1_CONTROLLED_SCREEN_NO_GO",
+  "m1_diagnostics": [
+    {
+      "house": "H01",
+      "failed_checks": [
+        "relative_invariance_better",
+        "context_only_beaten",
+        "zs_swap_destroys_gain",
+        "uninformative_uncertainty"
+      ],
+      "picr_worse_than_uniform_nll": false,
+      "uninformative_mean_entropy": 0.9076870322227478
+    },
+    {
+      "house": "H02",
+      "failed_checks": [
+        "context_only_beaten",
+        "label_permutation_destroyed_gain",
+        "uninformative_uncertainty"
+      ],
+      "picr_worse_than_uniform_nll": false,
+      "uninformative_mean_entropy": 0.8190025786558787
+    },
+    {
+      "house": "H03",
+      "failed_checks": [
+        "proper_score_better",
+        "localization_better",
+        "zs_zero_destroys_gain",
+        "zs_swap_destroys_gain",
+        "uninformative_uncertainty"
+      ],
+      "picr_worse_than_uniform_nll": true,
+      "uninformative_mean_entropy": 0.9292401591936748
+    }
+  ],
+  "interpretation": "verification PASS is not scientific gate PASS; no closed-loop authorization"
+}

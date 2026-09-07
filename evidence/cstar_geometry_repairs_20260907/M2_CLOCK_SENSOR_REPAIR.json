@@ -1,0 +1,144 @@
+{
+  "contract": "CSTAR_M2_PHYSICAL_PRIOR_TRUTH_CONDITIONED_DIAGNOSTIC_V1",
+  "verdict": "DIAGNOSTIC_ONLY_NOT_FORMAL_GATE",
+  "source_truth_runtime_input": false,
+  "source_truth_evaluator_conditioning": true,
+  "source_rate_marginalization": [
+    0.5,
+    1.0,
+    2.0
+  ],
+  "prefix_amplitude_assimilation": true,
+  "transport_time_scale": 2.5,
+  "condition_noise_free_sensor": true,
+  "clock_sha256": "8f0564c9e589e41b7419eb459f741f54716719ab5fbe17ad4c1623794568dd63",
+  "sensor_manifest_sha256": "03b5f96bf4e5192964181e3bfbf6e9caf241e3894b8217e51a635930a0cb4351",
+  "source_code_sha256": {
+    "diagnose_physical_prior_assets.py": "a5038c9d2b91e114c33fc2907d2cf5a841ea67d2ebd1c6c975c7a0e1633202f3",
+    "physical_prior.py": "568416c7ffc7058aa49cc9f04bf3a6f48eb8d384f014551ec2434dfd93e9ce38",
+    "map_geometry.py": "0866f2f771810eca5e073a410199902d791cdc762b899b33f5c0006c984b082e"
+  },
+  "diffusion": 0.01,
+  "sensor": {
+    "tau_s": 1.2,
+    "dead_s": 0.4,
+    "route_dt_s": 0.2
+  },
+  "cases": [
+    {
+      "house": "H01",
+      "decision_id": "108d47c24eba6b3d9c0d_t08_a0",
+      "source_conditioned_nll": 20.774194717407227,
+      "context_nll": 20.776575088500977,
+      "increment_context_minus_source": 0.00238037109375,
+      "persistence_nll": 19.76235580444336,
+      "increment_persistence_minus_source": -1.0118389129638672,
+      "latest_observed_ppm": 0.4904603755761965,
+      "observed_first_hit": 0,
+      "route_steps": 20
+    },
+    {
+      "house": "H01",
+      "decision_id": "108d47c24eba6b3d9c0d_t08_a1",
+      "source_conditioned_nll": 18.091821670532227,
+      "context_nll": 18.093517303466797,
+      "increment_context_minus_source": 0.0016956329345703125,
+      "persistence_nll": 18.53871726989746,
+      "increment_persistence_minus_source": 0.4468955993652344,
+      "latest_observed_ppm": 0.4904603755761965,
+      "observed_first_hit": 0,
+      "route_steps": 20
+    },
+    {
+      "house": "H01",
+      "decision_id": "108d47c24eba6b3d9c0d_t08_a2",
+      "source_conditioned_nll": 17.5696964263916,
+      "context_nll": 17.570302963256836,
+      "increment_context_minus_source": 0.000606536865234375,
+      "persistence_nll": 18.42080307006836,
+      "increment_persistence_minus_source": 0.8511066436767578,
+      "latest_observed_ppm": 0.4904603755761965,
+      "observed_first_hit": 0,
+      "route_steps": 20
+    },
+    {
+      "house": "H02",
+      "decision_id": "b5ddfde822a2c432a4ed_t08_a0",
+      "source_conditioned_nll": 29.610998153686523,
+      "context_nll": 29.610998153686523,
+      "increment_context_minus_source": 0.0,
+      "persistence_nll": 23.344717025756836,
+      "increment_persistence_minus_source": -6.2662811279296875,
+      "latest_observed_ppm": 1.351493170267157,
+      "observed_first_hit": 0,
+      "route_steps": 20
+    },
+    {
+      "house": "H02",
+      "decision_id": "b5ddfde822a2c432a4ed_t08_a1",
+      "source_conditioned_nll": 15.852215766906738,
+      "context_nll": 15.852215766906738,
+      "increment_context_minus_source": 0.0,
+      "persistence_nll": 19.4560604095459,
+      "increment_persistence_minus_source": 3.60384464263916,
+      "latest_observed_ppm": 1.351493170267157,
+      "observed_first_hit": 0,
+      "route_steps": 20
+    },
+    {
+      "house": "H02",
+      "decision_id": "b5ddfde822a2c432a4ed_t08_a2",
+      "source_conditioned_nll": 17.671167373657227,
+      "context_nll": 17.671167373657227,
+      "increment_context_minus_source": 0.0,
+      "persistence_nll": 18.4470157623291,
+      "increment_persistence_minus_source": 0.775848388671875,
+      "latest_observed_ppm": 1.351493170267157,
+      "observed_first_hit": 0,
+      "route_steps": 20
+    },
+    {
+      "house": "H03",
+      "decision_id": "5607631937ea368823a8_t08_a0",
+      "source_conditioned_nll": 12.853214263916016,
+      "context_nll": 18.43045997619629,
+      "increment_context_minus_source": 5.577245712280273,
+      "persistence_nll": 18.493629455566406,
+      "increment_persistence_minus_source": 5.640415191650391,
+      "latest_observed_ppm": 0.7347914268652166,
+      "observed_first_hit": 0,
+      "route_steps": 20
+    },
+    {
+      "house": "H03",
+      "decision_id": "5607631937ea368823a8_t08_a1",
+      "source_conditioned_nll": 18.861326217651367,
+      "context_nll": 20.25309181213379,
+      "increment_context_minus_source": 1.3917655944824219,
+      "persistence_nll": 19.189889907836914,
+      "increment_persistence_minus_source": 0.3285636901855469,
+      "latest_observed_ppm": 0.7347914268652166,
+      "observed_first_hit": 0,
+      "route_steps": 20
+    },
+    {
+      "house": "H03",
+      "decision_id": "5607631937ea368823a8_t08_a2",
+      "source_conditioned_nll": 12.505073547363281,
+      "context_nll": 17.603363037109375,
+      "increment_context_minus_source": 5.098289489746094,
+      "persistence_nll": 18.458707809448242,
+      "increment_persistence_minus_source": 5.953634262084961,
+      "latest_observed_ppm": 0.7347914268652166,
+      "observed_first_hit": 0,
+      "route_steps": 20
+    }
+  ],
+  "failures": [],
+  "limitations": [
+    "source coordinate is supplied only for forward adequacy scoring",
+    "initial field is declared zero and no bank is queried",
+    "does not qualify candidate-support localization or controller utility",
+    "does not authorize House123 closed loop"
+  ]
+}

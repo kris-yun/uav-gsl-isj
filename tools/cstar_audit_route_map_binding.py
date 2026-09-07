@@ -11,46 +11,19 @@ import argparse
 import csv
 import json
 from pathlib import Path
+import sys
 
-
-def read_pgm(path: Path):
-    raw = path.read_bytes()
-    if not raw.startswith(b"P5"):
-        raise ValueError("CSTAR_MAP_BINDING_PGM")
-    parts, i = [], 2
-    while len(parts) < 3:
-        while i < len(raw) and raw[i] in b" \t\r\n": i += 1
-        if raw[i:i + 1] == b"#":
-            i = raw.find(b"\n", i) + 1
-            continue
-        j = i
-        while j < len(raw) and raw[j] not in b" \t\r\n": j += 1
-        parts.append(int(raw[i:j])); i = j
-    width, height, maximum = parts
-    pixels = raw[i:i + width * height]
-    if maximum != 255 or len(pixels) != width * height:
-        raise ValueError("CSTAR_MAP_BINDING_PGM_SIZE")
-    free = [False] * (width * height)
-    for row in range(height):
-        for x in range(width):
-            y = height - 1 - row
-            free[x + y * width] = pixels[row * width + x] > 0
-    return width, height, tuple(free)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'experiments/ctpi_cstar'))
+from common.map_geometry import load_map_info, world_cell
 
 
 def map_info(path: Path):
-    lines = (path / "navigation_slice.yaml").read_text(encoding="utf-8").splitlines()
-    oi = next(i for i, line in enumerate(lines) if line.startswith("origin:"))
-    ox = float(lines[oi + 1].split("-", 1)[1])
-    oy = float(lines[oi + 2].split("-", 1)[1])
-    resolution = float(next(line.split(":", 1)[1] for line in lines if line.startswith("resolution:")))
-    width, height, free = read_pgm(path / "navigation_slice.pgm")
-    return width, height, free, ox, oy, resolution
+    return load_map_info(path)
 
 
 def cell(x, y, info):
     width, height, free, ox, oy, resolution = info
-    ix, iy = round((float(x) - ox) / resolution), round((float(y) - oy) / resolution)
+    ix, iy = world_cell(float(x), float(y), ox, oy, resolution)
     if ix < 0 or iy < 0 or ix >= width or iy >= height:
         return "OUTSIDE_GRID"
     return "FREE" if free[ix + iy * width] else "SOLID"
@@ -104,7 +77,8 @@ def main():
                          "point_counts": counts, "bad_examples": examples,
                          "pass": counts["SOLID"] == 0 and counts["OUTSIDE_GRID"] == 0}
     passed = all(item["pass"] for item in houses.values())
-    report = {"contract": "CSTAR_ROUTE_MAP_BINDING_AUDIT_V1", "pass": passed,
+    report = {"contract": "CSTAR_ROUTE_MAP_BINDING_AUDIT_V2", "pass": passed,
+              "geometry_semantics": "byte-exact PGM; YAML strict free threshold; floor from cell-corner origin",
               "verdict": "CSTAR_ROUTE_MAP_BINDING_PASS" if passed else "CSTAR_ROUTE_MAP_BINDING_NO_GO",
               "houses": houses,
               "policy": "no snapping, translation, or House-specific repair is allowed after route freeze"}
