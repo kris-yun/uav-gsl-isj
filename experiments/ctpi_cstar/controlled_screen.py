@@ -129,15 +129,31 @@ def train(by, held, variant, cfg, out):
         inv = ((z[[0,2]]-z[[1,3]])**2).mean()
         diff = torch.linalg.vector_norm(z[[0,0,1,1]]-z[[2,3,2,3]], dim=-1)
         sep = F.relu(1-diff).square().mean()
+        posterior_inv = torch.zeros((), dtype=ce.dtype)
+        if cfg.get('paired_posterior_consistency', False):
+            # Exact-source transport pairs are the same physical source under
+            # different transport realizations.  Match the final posterior,
+            # not just zS, so a nonlinear candidate head cannot reintroduce
+            # transport-specific variation after the latent invariance loss.
+            p = pred.source_posterior.clamp_min(1.0e-8)
+            p_same = p[[0, 2]]
+            p_pair = p[[1, 3]].clamp_min(1.0e-8)
+            posterior_inv = 0.5 * (
+                (p_same * (p_same.log() - p_pair.log())).sum(dim=-1)
+                + (p_pair * (p_pair.log() - p_same.log())).sum(dim=-1)
+            ).mean()
         loss = ce
         if variant != 'unconstrained':
             loss = loss + cfg['invariance_weight']*inv + cfg['separation_weight']*sep
+            if cfg.get('paired_posterior_consistency', False):
+                loss = loss + cfg['posterior_invariance_weight'] * posterior_inv
         opt.zero_grad()
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
         opt.step()
         losses.append({'step':step+1, 'house':house, 'prefix_s':end, 'ce':float(ce.detach()),
-                       'invariance':float(inv.detach()), 'separation_penalty':float(sep.detach())})
+                       'invariance':float(inv.detach()), 'separation_penalty':float(sep.detach()),
+                       'posterior_invariance':float(posterior_inv.detach())})
         if (step+1) % 50 == 0:
             print(json.dumps({'stage':'M1_TRAIN', 'held':held, 'variant':variant, 'step':step+1,
                               'seconds':round(time.monotonic()-start,2), 'ce':losses[-1]['ce']}),flush=True)
@@ -292,12 +308,22 @@ def main():
                     help='normalize pose/candidate coordinates by the frozen map extent')
     ap.add_argument('--coordinate-equivariant', action='store_true',
                     help='use the fixed radial source-coordinate scorer')
+    ap.add_argument('--paired-posterior-consistency', action='store_true',
+                    help='match posteriors for exact-source transport pairs')
+    ap.add_argument('--event-weighted-source-pool', action='store_true',
+                    help='weight source pooling by causal measured plume events')
     args = ap.parse_args()
     cfg = json.loads(CONFIG.read_text())
     if args.coordinate_equivariant:
         cfg['model'] = dict(cfg['model'])
         cfg['model']['coordinate_equivariant'] = True
         cfg['model']['coordinate_sigma'] = 0.15
+    if args.paired_posterior_consistency:
+        cfg['paired_posterior_consistency'] = True
+        cfg['posterior_invariance_weight'] = 0.25
+    if args.event_weighted_source_pool:
+        cfg['model'] = dict(cfg['model'])
+        cfg['model']['event_weighted_source_pool'] = True
     torch.set_num_threads(1)
     if args.selftest:
         measured = [{'t_sim_s':(i+1)*.2,'gas_ppm':i*.01,'wind_uv':[.1,.2],'pose_xy':[1.,2.]} for i in range(300)]
@@ -324,6 +350,8 @@ def main():
         'torch':torch.__version__,'python':sys.version,'config_sha256':sha(CONFIG),
         'geometry_normalized': bool(args.geometry_normalized),
         'coordinate_equivariant': bool(args.coordinate_equivariant),
+        'paired_posterior_consistency': bool(args.paired_posterior_consistency),
+        'event_weighted_source_pool': bool(args.event_weighted_source_pool),
         'asset_manifests':{h:sha(ASSETS/'manifests'/(h+'.json')) for h in ['H01','H02','H03']},
         'no_online_or_raw_queries':True})
     dump(args.out / 'FROZEN_CONFIG.json',cfg)

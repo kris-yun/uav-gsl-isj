@@ -61,13 +61,15 @@ class PICRModel(nn.Module):
     def __init__(self, d_model: int = 96, nhead: int = 4, layers: int = 3,
                  z_source_dim: int = 48, z_nuisance_dim: int = 32,
                  coordinate_equivariant: bool = False,
-                 coordinate_sigma: float = 0.15):
+                 coordinate_sigma: float = 0.15,
+                 event_weighted_source_pool: bool = False):
         super().__init__()
         if d_model % nhead:
             raise ValueError("PICR_DMODEL_HEAD_MISMATCH")
         self.z_source_dim = int(z_source_dim)
         self.coordinate_equivariant = bool(coordinate_equivariant)
         self.coordinate_sigma = float(coordinate_sigma)
+        self.event_weighted_source_pool = bool(event_weighted_source_pool)
         if self.coordinate_sigma <= 0:
             raise ValueError("PICR_COORDINATE_SIGMA")
         self.response_encoder = nn.Sequential(
@@ -159,6 +161,19 @@ class PICRModel(nn.Module):
         if not bool(torch.isfinite(h[valid_time]).all()):
             raise RuntimeError("PICR_NONFINITE_TEMPORAL_STATE")
         pooled = self._masked_mean(h, valid_time)
+        if self.event_weighted_source_pool:
+            # Plume observations are sparse events: a long causal prefix can
+            # contain many zero-gas frames that should not dilute the
+            # source-bearing response.  Use measured log-gas only as a fixed,
+            # non-learned attention weight; context remains in h and no future
+            # frame is consulted.  Uniform weights are recovered for an all-
+            # zero prefix.
+            event_loggas = history[..., 0].clamp_min(0.0)
+            masked_event = torch.where(
+                valid_time, event_loggas, torch.full_like(event_loggas, -1.0e9)
+            )
+            event_weights = torch.softmax(masked_event, dim=1).unsqueeze(-1)
+            pooled = (h * event_weights).sum(dim=1)
         z_s = self.source_proj(pooled)
         z_n = self.nuisance_proj(pooled)
         amp = self.amplitude_head(pooled)
