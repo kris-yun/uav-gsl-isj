@@ -38,7 +38,8 @@ def main():
         return digest
 
     for path in (args.split, args.geometry, args.sensor_manifest, args.clock,
-                 args.helper, args.helper_attestation, Path(__file__), Path(runtime.__file__), Path(maps.__file__)):
+                 args.helper, args.helper_attestation, Path(__file__), Path(runtime.__file__), Path(maps.__file__),
+                 ROOT / "tools/cstar_run_environment_house.py"):
         bind(path)
     source = ROOT / "tools/cstar_numeric_wind_raw_query.cpp"
     bind(source)

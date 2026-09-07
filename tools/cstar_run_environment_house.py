@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import signal
 import subprocess
 import sys
@@ -55,8 +56,12 @@ def main():
         procs.append(proc)
         return proc
 
+    archive_commit = os.environ.get("CSTAR_RUNTIME_ARCHIVE_COMMIT")
+    if archive_commit:
+        require(bool(re.fullmatch(r"[0-9a-f]{40}", archive_commit)), "ARCHIVE_COMMIT_FORMAT")
+    code_commit = archive_commit or subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     status = {"house": h, "pass": False, "scope": "real VGR stationary endpoint dwell, seed12, eight positive 0.2s frames",
-              "git_sha": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+              "git_sha": code_commit, "source_is_git_archive": bool(archive_commit),
               "scenario": str(scenario), "realization": str(realization),
               "ros_domain_id": env["ROS_DOMAIN_ID"], "scientific_models_loaded": False,
               "gmrf_loaded": False, "commands": commands}
