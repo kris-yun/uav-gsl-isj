@@ -26,6 +26,7 @@ from m1_picr.model import PICRModel
 
 CONFIG = HERE / 'CSTAR_CONTROLLED_SCREEN_CONFIG_20260907.json'
 ASSETS = ROOT / 'evidence/cstar_controlled_assets_20260907_r2'
+HORIZON_S = 60
 
 
 def sha(path):
@@ -64,11 +65,14 @@ def inputs(measured, end_s, context_only=False, null=False, geometry_bounds=None
 
 
 def load_data(geometry_normalized=False):
-    m = json.loads((ASSETS / 'manifests/H01.json').read_text())
+    rows = []
+    for house_id in ('H01', 'H02', 'H03'):
+        manifest = json.loads((ASSETS / 'manifests' / f'{house_id}.json').read_text())
+        rows.extend(manifest['m1_episodes'])
     by = {}
     geometry_manifest = json.loads(
         (ROOT / 'evidence/cstar_environment_20260906/maps_v1/geometry_manifest.json').read_text())
-    for row in m['m1_episodes']:
+    for row in rows:
         house = row['house']
         candidates_path = (ASSETS / row['candidate_domain_path']).resolve()
         assert sha(candidates_path) == row['candidate_domain_sha256']
@@ -121,7 +125,7 @@ def train(by, held, variant, cfg, out):
     losses = []
     start = time.monotonic()
     for step in range(cfg['steps']):
-        house, end = rng.choice(houses), rng.choice(list(range(4,61,4)))
+        house, end = rng.choice(houses), rng.choice(list(range(4, HORIZON_S + 1, 4)))
         H,C,V,Y = tensors(by[house], end, variant)
         pred = model(H,C,V)
         ce = F.cross_entropy(pred.source_logits, Y)
@@ -171,7 +175,7 @@ def train(by, held, variant, cfg, out):
 def evaluate(model, records, variant, out, stem):
     result = []
     posts, representations = [], []
-    for end in range(4,61,4):
+    for end in range(4, HORIZON_S + 1, 4):
         H,C,V,Y = tensors(records, end, variant if variant == 'context_only' else 'picr')
         normal = model(H,C,V)
         hook = None
@@ -259,6 +263,17 @@ def m1_screen(by, cfg, out):
 
 
 def m2_baselines(out):
+    probe = json.loads((ASSETS / 'manifests' / 'H01.json').read_text())
+    if 'm2_route_cases' not in probe:
+        report = {
+            'contract': 'CSTAR_M2_CAUSAL_PERSISTENCE_BASELINE_SCREEN_V1',
+            'status': 'NOT_RUN', 'formal_gate_authority': False,
+            'reason': 'current-runtime asset bundle contains M1 crossed source/transport cases only; no route-outcome cases were supplied',
+            'interpretation': 'M2 is intentionally not inferred from an M1 source screen'
+        }
+        dump(out / 'M2_BASELINE_SCREEN.json', report)
+        print(json.dumps({'stage': 'M2_BASELINES_SKIPPED', 'reason': report['reason']}), flush=True)
+        return
     folds = []
     for held in ['H01','H02','H03']:
         manifest = json.loads((ASSETS / 'manifests' / (held+'.json')).read_text())
@@ -303,8 +318,13 @@ def m2_baselines(out):
 
 
 def main():
+    global ASSETS, HORIZON_S
     ap = argparse.ArgumentParser()
     ap.add_argument('--out',type=Path,required=True)
+    ap.add_argument('--assets', type=Path, default=ASSETS,
+                    help='controlled asset bundle; default is the frozen bundle')
+    ap.add_argument('--horizon-s', type=int, default=60,
+                    help='causal history horizon; must match the asset bundle')
     ap.add_argument('--selftest',action='store_true')
     ap.add_argument('--geometry-normalized', action='store_true',
                     help='normalize pose/candidate coordinates by the frozen map extent')
@@ -317,6 +337,10 @@ def main():
     ap.add_argument('--radial-source-score', action='store_true',
                     help='retain radial curvature with zero-zS precision gating')
     args = ap.parse_args()
+    ASSETS = args.assets.resolve()
+    HORIZON_S = args.horizon_s
+    if HORIZON_S < 4 or HORIZON_S % 4:
+        ap.error('--horizon-s must be a positive multiple of 4')
     if args.coordinate_equivariant and not args.geometry_normalized:
         ap.error('--coordinate-equivariant requires --geometry-normalized')
     if args.radial_source_score and not args.coordinate_equivariant:
