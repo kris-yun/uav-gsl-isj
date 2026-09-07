@@ -1,0 +1,80 @@
+# Off-topic papers removed from the gap corpus (Phase 0.4 host partition)
+
+These were retrieved by a connector but the host judged them outside the research direction (cross-domain "memory-augmented" false positives, surveys, unrelated fields). They are archived here for transparency but do NOT feed Phase 1 or the deep-read pool.
+
+- **Ion-Channel-Mediated Drug Repurposing Opportunities Validated by Single-Cell Perturbation in Colorec** (`semanticscholar:d45eebd6317bb81d2b001bc456975341152ae9cc`)
+  - Colorectal-cancer target validation and ion-channel biology; no transferable response-correction method is established in the abstract.
+- **A tunable Cas12a platform for single-cell perturbation screening and CRISPRi** (`semanticscholar:8d0c75cad68bd3930a39cca2db5df802fc64e464`)
+  - Experimental Cas12a guide-capture and repression platform, outside computational response disentanglement and transition inference.
+- **Virtual single‐cell perturbation and genetic causal inference reveal CSF1R‐dependent immunometabolic** (`semanticscholar:6e736ecd92e25fce489ca1c93443c1f273edfd62`)
+  - Osteoarthritis gene prioritization and immunometabolic validation are biomedical applications, outside the requested transferable modeling mechanism.
+- **Single cell multiomic analysis of the impact of Delta-9-tetrahydrocannabinol on HIV infected CD4 T c** (`semanticscholar:a7aa9e81153f259cf445c9621ae91e6c1f83831a`)
+  - Experimental THC effects on HIV-infected T cells, without a transferable generalization or response-repair algorithm.
+- **Splice isoform-perturbation coupled to single cell transcriptome profiling reveals functions of micr** (`semanticscholar:cb119a7731f22fe443298eff8832d1203354e50b`)
+  - Microexon deletion technology and neurogenesis findings concern experimental biology rather than transferable response repair.
+- **Single-cell transcriptomic resources for tracing neurogenesis and cell fate specification in sea urc** (`semanticscholar:f9e9a00a97bb2484f504196fc0e3188289ac6ab5`)
+  - Sea-urchin atlas and neurogenesis resource lack a central context-general response modeling mechanism.
+- **Single-cell analysis reveals immune remodeling of monocytes, NK cells, T cell exhaustion, and Galect** (`semanticscholar:0b9f6e312ba4634cdb251312a314eb669e308c28`)
+  - Disease-specific immune profiling of Long COVID and ME/CFS, outside the computational mechanism direction.
+- **Single-cell analysis of Plasmodium falciparum transcripts after drug perturbation identifies feedbac** (`semanticscholar:1a79d9f5ed845cb74e44d395468242653228460a`)
+  - Malaria drug-response profiling and lifecycle biology do not establish a general environment-correction method.
+- **Dissection of Mitochondrial Function via Chemical Perturbation and Single‐Cell Profiling** (`semanticscholar:c6d1d784331519248e8c7cb199d57beaaf494429`)
+  - Chemical perturbation experiments dissect mitochondrial biology; the contribution is not a transferable inference mechanism.
+- **How to build the virtual cell with artificial intelligence: Priorities and opportunities** (`openalex:W4403405969`)
+  - Virtual-cell perspective presents broad priorities, not an original response-repair or transition-inference method.
+- **Machine learning prediction of tau‐PET in Alzheimer's disease using plasma, MRI, and clinical data** (`openalex:W4407851922`)
+  - Tau-PET clinical prediction is unrelated to perturbation-specific evidence or molecular transition mechanisms.
+- **Ferroptosis: when metabolism meets cell death** (`openalex:W4405288108`)
+  - Comprehensive ferroptosis review is outside the original-method corpus and requested mechanism.
+- **Single-cell transcriptomic and proteomic analysis of Parkinson’s disease brains** (`openalex:W4403917815`)
+  - Parkinson brain profiling reports disease-associated cell changes rather than a transferable correction mechanism.
+- **Computational whole-body-exposome models for global precision brain health** (`openalex:W4417214674`)
+  - Broad brain-health metamodel is a conceptual perspective without a concrete response-repair mechanism.
+- **Parallel measurement of transcriptomes and proteomes from same single cells using nanodroplet splitt** (`openalex:W4405075565`)
+  - Nanodroplet assay for joint transcriptome/proteome measurement is experimental technology outside scope.
+- **Advances and Challenges in Milestoning Simulations for Drug–Target Kinetics** (`openalex:W4404142486`)
+  - Milestoning perspective surveys prior methods and challenges; excluded as a pure review despite relevant topic.
+- **Single-cell transcriptomics reveal distinctive patterns of fibroblast activation in heart failure wi** (`openalex:W4402754851`)
+  - Heart-failure fibroblast biology and therapeutic validation do not propose transferable response modeling.
+- **Practical guide to SHAP analysis: Explaining supervised machine learning model predictions in drug d** (`openalex:W4403845965`)
+  - SHAP tutorial reviews interpretability practice rather than an original causal response or transition mechanism.
+- **Early developmental origins of cortical disorders modeled in human neural stem cells** (`openalex:W4412178014`)
+  - Cortical-disorder developmental biology uses perturbation analysis but does not introduce the requested general modeling mechanism.
+- **Single-cell landscape of innate and acquired drug resistance in acute myeloid leukemia** (`openalex:W4403908292`)
+  - Leukemia drug-resistance profiling is a biomedical application rather than response-correction methodology.
+- **A multiplex single-cell RNA-Seq pharmacotranscriptomics pipeline for drug discovery** (`openalex:W4403948750`)
+  - Multiplex assay and ovarian-cancer drug-screening pipeline primarily contribute experimental measurement and disease findings.
+- **Single-cell analysis reveals immune cell abnormalities underlying the clinical heterogeneity of pati** (`openalex:W4411382257`)
+  - Systemic-sclerosis immune profiling is disease-specific discovery, outside computational response repair.
+- **Single-cell sequencing to multi-omics: technologies and applications** (`openalex:W4402912319`)
+  - Review of single-cell multiomics technologies; pure surveys are excluded by the rubric.
+- **NADPH oxidases: redox regulation of cell homeostasis and disease** (`openalex:W4406409797`)
+  - Review of NADPH oxidase biology, outside the original computational mechanism corpus.
+- **Reaction Coordinates Are Optimal Channels of Energy Flow** (`openalex:W4407126788`)
+  - Review of reaction-coordinate research; excluded as a pure review even though the underlying topic is relevant.
+- **Cell walls: a comparative view of the composition of cell surfaces of plants, algae, and microorgani** (`openalex:W4405637937`)
+  - Comparative cell-wall composition review is unrelated to the transferable inference mechanisms.
+- **MALDI MSI Protocol for Spatial Bottom-Up Proteomics at Single-Cell Resolution** (`openalex:W4403715716`)
+  - Mass-spectrometry sample preparation and imaging protocol, outside computational response correction.
+- **Lysosomes in the immunometabolic reprogramming of immune cells in atherosclerosis** (`openalex:W4402664767`)
+  - Lysosomal immunometabolic disease topic has no stated transferable computational response mechanism; abstract unavailable.
+- **NMDA receptors regulate the firing rate set point of hippocampal circuits without altering single-ce** (`openalex:W4404138312`)
+  - Experimental hippocampal receptor regulation and firing-rate biology, not a general response-repair algorithm.
+- **Innovative Pathways in Carbon Capture: Advancements and Strategic Approaches for Effective Carbon Ca** (`openalex:W4404535704`)
+  - Carbon-capture technology review is outside the distant-field computational mechanism direction.
+- **AI-driven multi-omics integration for multi-scale predictive modeling of genotype-environment-phenot** (`openalex:W4406074275`)
+  - Broad proposed multiomics framework discusses opportunities and challenges without a demonstrated concrete correction method.
+- **The Effect of Gut Microbiome Perturbation on the Bioavailability of Glycyrrhizic Acid in Rats** (`openalex:W4409111256`)
+  - Rat pharmacokinetics and microbiome intervention experiment, outside transferable computational response modeling.
+- **Promoting regulatory acceptance of combined ion and neutron irradiation testing of nuclear reactor m** (`openalex:W4404358292`)
+  - Nuclear-reactor testing and regulatory software considerations are outside response disentanglement and transition inference.
+- **AI-driven virtual cell models in preclinical research: technical pathways, validation mechanisms, an** (`openalex:W4417240226`)
+  - Review of virtual-cell pathways and clinical translation; excluded as a pure review.
+- **Single-cell RNA sequencing reveals sex differences in the subcellular composition and associated gen** (`openalex:W4409340468`)
+  - Sex-specific carotid-plaque profiling and biological validation, outside the computational mechanism direction.
+- **Advances in single-cell perturbation modeling** (`openalex:W4414257997`)
+  - Comprehensive review of perturbation modeling is excluded from the original-method pool.
+- **From Omics to Multi-Omics: A Review of Advantages and Tradeoffs** (`openalex:W4404860874`)
+  - General omics review is outside the original-method relevance pool.
+- **Transformative advances in single-cell omics: a comprehensive review of foundation models, multimoda** (`openalex:W4415584437`)
+  - Comprehensive single-cell omics review; excluded as a pure survey under the rubric.

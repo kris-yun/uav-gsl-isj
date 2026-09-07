@@ -1,0 +1,2367 @@
+[
+  {
+    "title": "A Systematic Comparison of Single-Cell Perturbation Response Prediction Models",
+    "title_norm": "a systematic comparison of single cell perturbation response prediction models",
+    "abstract": "Predicting single-cell transcriptional responses to perturbations is central to dissecting gene regulation and accelerating therapeutic design, yet the field lacks a rigorous, task-spanning assessment of model behavior. We present a large-scale benchmark of 13 representative methods and baselines across 25 datasets spanning diverse perturbation modalities and species, including two primary immune-cell drug-response resources. We evaluated three core tasks—generalization to unseen single-gene perturbations, prediction of combinatorial interactions, and transfer across cell types—using 24 metrics covering expression-level accuracy, relative changes, differential expression recovery, and distributional similarity. Across tasks, performance depended strongly on perturbation effect size and evaluation perspective: expression-level agreement was highest for small-effect perturbations resembling controls, whereas delta- and DE-based metrics improved with larger effects, providing clearer signals. Models shared a conservative bias, with fine-tuned foundation models compressing variance and underestimating synergistic effects in combinations. PerturbNet showed superior recovery of DE signatures in Tasks 1 and 2, while no method consistently generalized across cell types in Task 3, where biological consistency dominated outcomes. This benchmark establishes current methodological limits, clarifies that different metrics probe distinct biological signals rather than redundant summaries of the same prediction problem, and provides a foundation for developing virtual-cell models that more faithfully capture heterogeneous perturbation responses. Teaser: A large-scale benchmark reveals strengths and limits of models predicting single-cell perturbation responses.",
+    "tldr": "A large-scale benchmark is presented that establishes current methodological limits, clarifies that different metrics probe distinct biological signals rather than redundant summaries of the same prediction problem, and provides a foundation for developing virtual-cell models that more faithfully capture heterogeneous perturbation responses.",
+    "year": 2026,
+    "venue": "bioRxiv",
+    "publication_types": [],
+    "authors": [
+      "Lanxiang Li",
+      "Yue You",
+      "Yunlin Fu",
+      "Wenyu Liao",
+      "Xueying Fan",
+      "Shihong Lu"
+    ],
+    "citations": 32,
+    "source": "semanticscholar",
+    "source_id": "64a721c92217d3eb5732aabc954584b21239692c",
+    "paper_id": "semanticscholar:64a721c92217d3eb5732aabc954584b21239692c",
+    "doi": "10.1101/2024.12.23.630036",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://doi.org/10.1101/2024.12.23.630036",
+    "published_iso": "2026-08-03",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-08",
+    "retrieved_via": "semanticscholar",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Elucidating the Design Space of Generative Models for Single-Cell Perturbation Prediction",
+    "title_norm": "elucidating the design space of generative models for single cell perturbation p",
+    "abstract": "Next-token prediction has produced predictable scaling in language, but the recipe presumes a sequence of tokens with a meaningful order. Single-cell RNA-seq counts have no natural gene ordering, so applying the recipe directly to raw expression fails under an ill-suited left-to-right bias. We instead ask whether a learned latent can supply the structure the recipe needs. We introduce ExpressionVAE (eVAE), a discrete-latent perturbation model that compresses each cell into a short sequence of discrete codes through a finite-scalar-quantization (FSQ) bottleneck and trains a perturbation-conditioned discrete prior over those codes. On Replogle and Parse 1M, eVAE sets a new state of the art on every distributional metric and leads on most cell-eval perturbation metrics, with Fréchet distance and MMD2 roughly 3 to 20× lower than the strongest continuous-latent baseline. Swapping the prior between autoregressive and masked discrete diffusion leaves performance near-identical, isolating the gain to the discrete latent itself rather than the prior family. A decoder-head ablation then exposes a single design axis, the richness of the predictive distribution at inference, that splits the standard metrics into two groups, variance-sensitive and mean-sensitive, which move in opposite directions along the axis. Finally, on a held-out CRISPRi reversion benchmark of 1,732 perturbations under inflammatory cytokine stress, the frozen eVAE encoder outperforms UMAP and differential expression and matches scGPT on perturbation ranking at a fraction of the data.1 We release our code.2",
+    "tldr": null,
+    "year": 2026,
+    "venue": "bioRxiv",
+    "publication_types": [],
+    "authors": [
+      "S. Bhattacharya",
+      "Christian Gensbigler",
+      "Shaamil Karim",
+      "Jon Lees"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "5573d28412b169259383a6ae585bc9abe8e3ecd3",
+    "paper_id": "semanticscholar:5573d28412b169259383a6ae585bc9abe8e3ecd3",
+    "doi": "10.64898/2026.06.15.732063",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://doi.org/10.64898/2026.06.15.732063",
+    "published_iso": "2026-06-18",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-06",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "PerturbLDM: conditional latent diffusion for modelling single-cell perturbation responses",
+    "title_norm": "perturbldm conditional latent diffusion for modelling single cell perturbation r",
+    "abstract": "Single-cell perturbation profiling maps intervention-induced phenotypes, yet experiments measure only a fraction of the perturbation-context space. Learning context-dependent perturbation effects could enable response prediction beyond measured conditions. Here we introduce PerturbLDM, a latent-diffusion framework for conditional generation of single-cell transcriptional responses. Following Tahoe-100M pretraining, it predicted 13,942 held-out combinations of observed drugs, doses and cell lines more accurately than existing methods, with higher matched-control effect correlation than an additive marginal baseline in 95.2% of conditions. The Tahoe-100M-pretrained model was further used to rank PANACEA compounds by pathway similarity, placing shared-mechanism pairs among nearest neighbours. In smaller datasets, Per-turbLDM generated a mid-gestational fetal-colon state with 67% lower gene-wise error than Squidiff, retaining the balance between absorptive and BEST4/OTOP2-like epithelial programmes. In PBMCs, it captured six of seven interferon and antiviral programmes and the interferon-associated FAO–OXPHOS programme more accurately than scGen. Together, these results support conditional response generation across data scales and biological settings.",
+    "tldr": "PerturbLDM, a latent-diffusion framework for conditional generation of single-cell transcriptional responses, is introduced, showing support for conditional response generation across data scales and biological settings.",
+    "year": 2026,
+    "venue": "bioRxiv",
+    "publication_types": [],
+    "authors": [
+      "Lishan Yu",
+      "Kanglin Hsieh",
+      "Yan Chu",
+      "Qizhen Lan",
+      "Xingzhong Zhao",
+      "Yu-Chun Hsu"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "20c2d7a1479174c2944b9485580dcf863cdd8551",
+    "paper_id": "semanticscholar:20c2d7a1479174c2944b9485580dcf863cdd8551",
+    "doi": "10.64898/2026.08.07.743610",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://doi.org/10.64898/2026.08.07.743610",
+    "published_iso": "2026-08-16",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-08",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "PertDiffBench: Benchmarking Diffusion Models for Single-Cell Perturbation Response Prediction",
+    "title_norm": "pertdiffbench benchmarking diffusion models for single cell perturbation respons",
+    "abstract": "Diffusion models are increasingly used to predict transcriptional responses to perturbations, but whether they improve on simpler generative and representation-based baselines remains unclear. Existing evaluations often do not separate the effects of model architecture, input representation, biological context and metric choice, making it difficult to determine where diffusion-based methods are useful. Here we introduce PertDiffBench, a standardized benchmark for diffusion-based transcriptomic perturbation prediction across single-cell and bulk RNA-seq datasets. PertDiffBench evaluates diffusion-based models across three complementary evaluation settings: standard prediction in known single-cell contexts and bulk perturbation conditions, generalization to unseen cell types, species, drugs and intermediate time points, and stress tests of feature dimensionality, input representation, noise type and gene ordering. Across these settings, diffusion models did not show a consistent advantage. scGen remained a strong baseline in common prediction tasks, whereas scDiffusion was the most competitive diffusion-based method in several generalization settings. Temporal imputation showed a different pattern, with a simple DDPM operating directly in expression space outperforming more specialized models. Stress tests showed that performance was model dependent and sensitive to feature dimensionality, encoder choice, noise type and gene ordering. Pretrained encoders did not consistently improve performance, with the classical scVI representation slightly exceeding STATE in seen-condition and unseen-cell-type settings. These results indicate that diffusion-model performance in perturbation response prediction depends strongly on task design and representation choice. PertDiffBench provides a practical framework for evaluating these models under biologically varied and stress-tested conditions.",
+    "tldr": "Results indicate that diffusion-model performance in perturbation response prediction depends strongly on task design and representation choice, and PertDiffBench provides a practical framework for evaluating these models under biologically varied and stress-tested conditions.",
+    "year": 2026,
+    "venue": "bioRxiv",
+    "publication_types": [],
+    "authors": [
+      "Zijun Song",
+      "Yujia Xiang",
+      "Zhi-yi Song",
+      "Wenyi Jin",
+      "Jiangmeng Li",
+      "Chuxiong Sun"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "c29b1bbee68b9eec9217565c2ffd57cf1e58e900",
+    "paper_id": "semanticscholar:c29b1bbee68b9eec9217565c2ffd57cf1e58e900",
+    "doi": "10.64898/2026.06.13.732013",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://www.biorxiv.org/content/biorxiv/early/2026/06/13/2026.06.13.732013.full.pdf",
+    "published_iso": "2026-06-13",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-06",
+    "retrieved_via": "semanticscholar",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "A Neural-Network-Free Calibration Matches or Beats Deep Single-Cell Perturbation Response Models Across Four Datasets",
+    "title_norm": "a neural network free calibration matches or beats deep single cell perturbation",
+    "abstract": "Background/Objectives: Deep generative models such as scGen are the standard for predicting how an unseen cell type or species responds to a perturbation under leave-one-group-out (LOCO). We ask whether the deep model’s advantage over a one-line linear baseline is learnable without any neural network. Methods: We decompose scGen’s edge into two leakage-free analytic pieces (per-type response magnitude and per-gene response direction) and add a per-gene affine moment-matching step. The resulting calibration, AMM-SimWMag, uses no neural network and is CPU-only. We evaluate it on a nine-metric panel across 4 datasets spanning 3 biologies and 2 LOCO axes (cell type and species), using a dataset-stratified test (a Stouffer combination of per-dataset signed-rank tests, Holm-adjusted). Results: AMM-SimWMag is competitive-or-best (within 0.003 of scGen) on 8–9 of 9 metrics on each of 4 datasets. It significantly improves on scGen on eight of nine metrics, favoured in all four datasets on seven; the lone exception, the per-gene log-fold-change correlation, is a tie-or-better everywhere. Against three modern baselines (scPRAM, biolord and CPA) on the same protocol, it beats biolord and CPA on 9/9 metrics and scPRAM on 7/9 (pooled). The affine moment-matching step improves distribution distances (MMD, energy, sliced-Wasserstein), though C2ST stays near 1.0 for all methods. Conclusions: AMM-SimWMag recovers the deep model’s advantage over a linear baseline without any neural network. No single deep model is robust across all four biologies, whereas AMM-SimWMag matches or beats them across 4 datasets, CPU-only and reproducibly.",
+    "tldr": "No single deep model is robust across all four biologies, whereas AMM-SimWMag matches or beats them across 4 datasets, CPU-only and reproducibly.",
+    "year": 2026,
+    "venue": "Genes",
+    "publication_types": [
+      "JournalArticle"
+    ],
+    "authors": [
+      "Bingchi Sun",
+      "Haibin Zheng",
+      "Jinyin Chen",
+      "Jingjing Jin"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "3c263d40547d5a5a12ec7234c7e5c11fcab15374",
+    "paper_id": "semanticscholar:3c263d40547d5a5a12ec7234c7e5c11fcab15374",
+    "doi": "10.3390/genes17070816",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://doi.org/10.3390/genes17070816",
+    "published_iso": "2026-07-01",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-07",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "What Makes a Representation Good for Single-Cell Perturbation Prediction?",
+    "title_norm": "what makes a representation good for single cell perturbation prediction",
+    "abstract": "Single-cell perturbation modeling is fundamental for understanding and predicting cellular responses to genetic perturbations. However, existing approaches, from causal representation learning to foundation models, often struggle with an overlooked challenge: gene expression is dominated by perturbation-invariant information, while perturbation-specific signals are intrinsically sparse. As a result, learned representations either entangle invariant and perturbation-specific information, leading to spurious and non-generalizable predictors, or suppress perturbation-specific signals altogether, rendering them ineffective for prediction. To address this, we propose PerturbedVAE, a general framework designed to resolve this signal imbalance. The framework explicitly separates perturbation-specific information from dominant invariant structure and recovers causal representations to effectively utilize such information for prediction. We further provide an identifiability analysis that characterizes the conditions under which sparse perturbation effects can be reliably recovered, thereby clarifying how the framework can be concretely specified under such conditions. Empirically, PerturbedVAE achieves state-of-the-art performance on a widely used benchmark across multiple evaluation settings, yielding significant gains on out-of-distribution combinatorial predictions and uncovering interpretable perturbation-response programs.",
+    "tldr": "The proposed PerturbedVAE framework explicitly separates perturbation-specific information from dominant invariant structure and recovers causal representations to effectively utilize such information for prediction, and provides an identifiability analysis that characterizes the conditions under which sparse perturbation effects can be reliably recovered.",
+    "year": 2026,
+    "venue": "arXiv.org",
+    "publication_types": [
+      "JournalArticle"
+    ],
+    "authors": [
+      "Wenkang Jiang",
+      "Yuhang Liu",
+      "Yichao Cai",
+      "Erdun Gao",
+      "Jiayi Dong",
+      "Ehsan Abbasnejad"
+    ],
+    "citations": 2,
+    "source": "semanticscholar",
+    "source_id": "318289b5583b0d8f48439452ebff0e88d3b8823e",
+    "paper_id": "semanticscholar:318289b5583b0d8f48439452ebff0e88d3b8823e",
+    "doi": "10.48550/arXiv.2605.19343",
+    "arxiv_id": "2605.19343",
+    "dblp_key": "journals/corr/abs-2605-19343",
+    "paper_url": "https://www.semanticscholar.org/paper/318289b5583b0d8f48439452ebff0e88d3b8823e",
+    "published_iso": "2026-05-19",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-05",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "CisTransCell: Single-Cell Perturbation Prediction via Gene Function, Regulatory Control, and Cellular Context",
+    "title_norm": "cistranscell single cell perturbation prediction via gene function regulatory co",
+    "abstract": "Predicting cellular transcriptional responses to genetic perturbations is a central problem in single-cell biology, especially in the zero-shot setting where the perturbed gene or gene combination is unseen during training. A major difficulty is that perturbation effects are not determined by expression state alone: they depend on how the perturbed gene product influences other genes and proteins, how those downstream factors act on cis-regulatory elements, and which regulatory programs are active in the current cell state. To better capture this biological complexity, we propose CisTransCell, a cell-conditioned multi-modal framework for single-cell perturbation prediction that augments each gene with two complementary priors: a regulatory-sequence prior that captures how the gene is controlled, and a coding-sequence prior that captures what the gene product does. By integrating these priors with cellular expression state, CisTransCell models perturbation response as a cascade from gene function to regulatory control to downstream transcriptional change. Experiments on benchmark single-cell perturbation datasets show that CisTransCell achieves strong performance in zero-shot perturbation prediction.",
+    "tldr": "CisTransCell is proposed, a cell-conditioned multi-modal framework for single-cell perturbation prediction that augments each gene with two complementary priors: a regulatory-sequence prior that captures how the gene is controlled, and a coding-sequence prior that captures what the gene product does.",
+    "year": 2026,
+    "venue": "arXiv.org",
+    "publication_types": [
+      "JournalArticle"
+    ],
+    "authors": [
+      "Wei Zhang",
+      "Xun Jiang",
+      "Yuesi Xi",
+      "Ming Tang"
+    ],
+    "citations": 1,
+    "source": "semanticscholar",
+    "source_id": "18453ee9e28f9256b0f9de7916a47dc1c5604574",
+    "paper_id": "semanticscholar:18453ee9e28f9256b0f9de7916a47dc1c5604574",
+    "doi": "10.48550/arXiv.2606.13713",
+    "arxiv_id": "2606.13713",
+    "dblp_key": "journals/corr/abs-2606-13713",
+    "paper_url": "https://www.semanticscholar.org/paper/18453ee9e28f9256b0f9de7916a47dc1c5604574",
+    "published_iso": "2026-06-10",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-06",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "Learning Latent Dynamical Causal Processes for Single-Cell Perturbation Prediction",
+    "title_norm": "learning latent dynamical causal processes for single cell perturbation predicti",
+    "abstract": "Single-cell perturbation prediction aims to predict how cells would respond to unseen perturbations and achieve out-of-distribution (OOD) generalization, with the goal of understanding how perturbations reshape underlying cellular programs over time. While recent machine learning methods have made progress on this task, most existing approaches focus on only one aspect of perturbation responses. Some methods emphasize learning latent causal mechanisms for generalization, but treat responses as static outcomes and ignore how gene expression evolves over time. Other methods focus on modeling temporal changes in gene expression, but do not explicitly capture the underlying causal generative mechanisms that drive these changes. In reality, however, perturbation effects exhibit two inseparable characteristics: they are latent, in that perturbations act through unobserved cellular programs, and dynamical, in that the states of these programs evolve over time to generate the observed gene expression profiles. Motivated by this observation, we propose a latent dynamical causal generative model for single-cell perturbation data that jointly captures latent cellular programs and their temporal evolution. We further provide a theoretical analysis showing that, under suitable conditions, the latent causal variables are recoverable up to a trivial equivalence class. Guided by this identifiability analysis, we develop a learning framework for recovering latent cellular programs and their dynamical evolution from single-cell sequencing data. Experiments on Causal3DIdent, a widely adopted benchmark in causal representation learning, validate the theoretical results and the effectiveness of the proposed method. Additional experiments on real-world CRISPR-based single-cell sequencing perturbation data show that CITE-VAE achieves competitive genome-wide prediction accuracy and improved perturbation-sensitive performance relative to strong representative baselines, highlighting the practical utility of the proposed method.",
+    "tldr": "A latent dynamical causal generative model for single-cell perturbation data that jointly captures latent cellular programs and their temporal evolution and a learning framework for recovering latent cellular programs and their dynamical evolution from single-cell sequencing data is developed.",
+    "year": 2026,
+    "venue": "Proceedings of the 32nd ACM SIGKDD Conference on Knowledge Discovery and Data Mining V.2",
+    "publication_types": [
+      "Book",
+      "JournalArticle",
+      "Conference"
+    ],
+    "authors": [
+      "Wenkang Jiang",
+      "Yuhang Liu",
+      "Erdun Gao",
+      "Ehsan Abbasnejad",
+      "Lina Yao",
+      "J. Shi"
+    ],
+    "citations": 1,
+    "source": "semanticscholar",
+    "source_id": "c7a51dc83dfaa7d7061d34060532878fea1d5693",
+    "paper_id": "semanticscholar:c7a51dc83dfaa7d7061d34060532878fea1d5693",
+    "doi": "10.1145/3770855.3818868",
+    "arxiv_id": "2605.25581",
+    "dblp_key": "journals/corr/abs-2605-25581",
+    "paper_url": "https://doi.org/10.1145/3770855.3818868",
+    "published_iso": "2026-05-25",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-05",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "scVAEAT: An Integrative Attention-Augmented Variational Autoencoder for Predicting Single-Cell Perturbation Responses.",
+    "title_norm": "scvaeat an integrative attention augmented variational autoencoder for predictin",
+    "abstract": "Understanding how individual cells respond to genetic or environmental perturbations is crucial for deciphering disease mechanisms and advancing precision medicine. However, predicting single-cell perturbation responses from standard single-cell RNA sequencing (scRNA-seq) data remains challenging because of cellular heterogeneity and the lack of paired pre- and post-perturbation samples in the dataset. Here, we present scVAEAT, a novel deep learning framework that integrates variational autoencoders with attention-enhanced optimal transport to accurately predict gene expression variations following perturbations, such as interferon-β stimulation or parasitic infection. scVAEAT introduces two key innovations: (1) an attention-augmented encoding module that captures multiscale feature representations through combined global and local attention mechanisms, and (2) an attention-based optimal transport (OTA) strategy that aligns unperturbed and perturbed cell states without requiring paired data. Evaluated on benchmark human datasets, including peripheral blood mononuclear cells (PBMC) and intestinal epithelial cells, scVAEAT consistently outperformed existing methods in predicting perturbation-induced expression changes, achieving mean R2 scores of up to 0.97 across diverse cell types. Ablation studies confirmed the contribution of each module to model performance, whereas robustness analyses demonstrated stability across hyperparameter settings. Notably, scVAEAT accurately recapitulated known interferon-stimulated gene responses and infection-associated markers, underscoring its high biological fidelity. By in silico perturbation modeling and validation experiments using unpaired scRNA-seq data, scVAEAT offers a powerful tool for dissecting the regulatory mechanisms underlying human genetic and environmental responses, with broad implications for functional genomics and drug development.",
+    "tldr": "A novel deep learning framework that integrates variational autoencoders with attention-enhanced optimal transport to accurately predict gene expression variations following perturbations, such as interferon-β stimulation or parasitic infection is presented.",
+    "year": 2026,
+    "venue": "IEEE transactions on computational biology and bioinformatics",
+    "publication_types": [
+      "JournalArticle"
+    ],
+    "authors": [
+      "Binhua Tang",
+      "Yujia Zhang",
+      "Yiyao Chen",
+      "Xinyu Gao",
+      "Mengyao Mao"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "d21d59a74ffd17fd83baf404351025d69d4cbb85",
+    "paper_id": "semanticscholar:d21d59a74ffd17fd83baf404351025d69d4cbb85",
+    "doi": "10.1109/TCBBIO.2026.3710792",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://www.semanticscholar.org/paper/d21d59a74ffd17fd83baf404351025d69d4cbb85",
+    "published_iso": "2026-07-07",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-07",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "DeMixPert: Decomposed Response Modeling with Gaussian Mixtures for OOD Single-Cell Perturbation Prediction",
+    "title_norm": "demixpert decomposed response modeling with gaussian mixtures for ood single cel",
+    "abstract": "Predicting transcriptome-wide responses to unseen genetic perturbations remains a major computational challenge because accurate prediction requires recovering both perturbation-specific transcriptional shifts and heterogeneous cellular responses. Existing methods often entangle deterministic response structure with stochastic population-level variation, causing dominant shared patterns to mask weaker perturbation-specific signals and impair distributional modeling. To address these challenges, we propose \\textbf{DeMixPert}, an approach for Decomposed response Modeling with Gaussian Mixtures for Out-Of-Distribution (OOD) single-cell Perturbation prediction. DeMixPert decomposes perturbation-induced changes into a basal-state-dependent systematic response, a perturbation-specific response, and population-level variation. The systematic component is derived from the basal state encoded from control-cell expression, whereas the perturbation-specific component is inferred from pretrained target embeddings for unseen-target generalization. DeMixPert models population-level variation using a Gaussian prototype Invertible Network and adaptively combines reusable Gaussian prototypes according to the basal state and perturbation condition. The resulting mixture is mapped to a condition-specific variation distribution. Sampled variations are integrated with the systematic and perturbation-specific components, followed by joint decoding with the basal state to reconstruct perturbed-cell gene expression. Experimental results show that DeMixPert effectively captures heterogeneous single-cell perturbation responses and achieves superior performance across unseen-perturbation settings. The source code is made publicly available upon publication.",
+    "tldr": "Experimental results show that DeMixPert effectively captures heterogeneous single-cell perturbation responses and achieves superior performance across unseen-perturbation settings.",
+    "year": 2026,
+    "venue": "",
+    "publication_types": [],
+    "authors": [
+      "Jiawen Liu",
+      "Xu Cao",
+      "Yutong Li",
+      "Bing Liu",
+      "Jiaming Liang",
+      "Tinghe Zhang"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "9df4e1698daccce329595d9067da9288b729965a",
+    "paper_id": "semanticscholar:9df4e1698daccce329595d9067da9288b729965a",
+    "doi": "",
+    "arxiv_id": "2608.23114",
+    "dblp_key": "",
+    "paper_url": "https://www.semanticscholar.org/paper/9df4e1698daccce329595d9067da9288b729965a",
+    "published_iso": "2026-08-24",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-08",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "scDFM: Distributional Flow Matching Model for Robust Single-Cell Perturbation Prediction",
+    "title_norm": "scdfm distributional flow matching model for robust single cell perturbation pre",
+    "abstract": "A central goal in systems biology and drug discovery is to predict the transcriptional response of cells to perturbations. This task is challenging due to the noisy and sparse nature of single-cell measurements, as well as the fact that perturbations often induce population-level shifts rather than changes in individual cells. Existing deep learning methods typically assume cell-level correspondences, limiting their ability to capture such global effects. We present scDFM, a generative framework based on conditional flow matching that models the full distribution of perturbed cells conditioned on control states. By incorporating a maximum mean discrepancy (MMD) objective, our method aligns perturbed and control populations beyond cell-level correspondences. To further improve robustness to sparsity and noise, we introduce the Perturbation-Aware Differential Transformer (PAD-Transformer), a backbone architecture that leverages gene interaction graphs and differential attention to capture context-specific expression changes. Across multiple genetic and drug perturbation benchmarks, scDFM consistently outperforms prior methods, demonstrating strong generalization in both unseen and combinatorial settings. In the combinatorial setting, it reduces mean squared error by 19.6% relative to the strongest baseline. These results highlight the importance of distribution-level generative modeling for robust in silico perturbation prediction. The code is available at https://github.com/AI4Science-WestlakeU/scDFM",
+    "tldr": "This work presents scDFM, a generative framework based on conditional flow matching that models the full distribution of perturbed cells conditioned on control states and introduces the Perturbation-Aware Differential Transformer, a backbone architecture that leverages gene interaction graphs and differential attention to capture context-specific expression changes.",
+    "year": 2026,
+    "venue": "arXiv.org",
+    "publication_types": [
+      "JournalArticle"
+    ],
+    "authors": [
+      "Chenglei Yu",
+      "Chuanrui Wang",
+      "Bangyan Liao",
+      "Tailin Wu"
+    ],
+    "citations": 12,
+    "source": "semanticscholar",
+    "source_id": "86a721946ce5487a8ea180351c26191dab602560",
+    "paper_id": "semanticscholar:86a721946ce5487a8ea180351c26191dab602560",
+    "doi": "10.48550/arXiv.2602.07103",
+    "arxiv_id": "2602.07103",
+    "dblp_key": "journals/corr/abs-2602-07103",
+    "paper_url": "https://www.semanticscholar.org/paper/86a721946ce5487a8ea180351c26191dab602560",
+    "published_iso": "2026-02-06",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-02",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "Latent Causal Diffusions for Single-Cell Perturbation Modeling",
+    "title_norm": "latent causal diffusions for single cell perturbation modeling",
+    "abstract": "Perturbation screens hold the potential to systematically map regulatory processes at single-cell resolution, yet modeling and predicting transcriptome-wide responses to perturbations remains a major computational challenge. Existing methods often underperform simple baselines, fail to disentangle measurement noise from biological signal, and provide limited insight into the causal structure governing cellular responses. Here, we present the latent causal diffusion (LCD), a generative model that frames single-cell gene expression as a stationary diffusion process observed under measurement noise. LCD outperforms established approaches in predicting the distributional shifts of unseen perturbation combinations in single-cell RNA-sequencing screens while simultaneously learning a mechanistic dynamical system of gene regulation. To interpret these learned dynamics, we develop an approach we call causal linearization via perturbation responses (CLIPR), which yields an approximation of the direct causal effects between all genes modeled by the diffusion. CLIPR provably identifies causal effects under a linear drift assumption and recovers causal structure in both simulated systems and a genome-wide perturbation screen, where it clusters genes into coherent functional modules and resolves causal relationships that standard differential expression analysis cannot. The LCD-CLIPR framework bridges generative modeling with causal inference to predict unseen perturbation effects and map the underlying regulatory mechanisms of the transcriptome.",
+    "tldr": "The latent causal diffusion (LCD), a generative model that frames single-cell gene expression as a stationary diffusion process observed under measurement noise, and bridges generative modeling with causal inference to predict unseen perturbation effects and map the underlying regulatory mechanisms of the transcriptome.",
+    "year": 2026,
+    "venue": "arXiv.org",
+    "publication_types": [
+      "JournalArticle"
+    ],
+    "authors": [
+      "Lars Lorch",
+      "Jiaqi Zhang",
+      "Charlotte Bunne",
+      "Andreas Krause",
+      "Bernhard Schölkopf",
+      "Caroline Uhler"
+    ],
+    "citations": 5,
+    "source": "semanticscholar",
+    "source_id": "cda188c5218ccdfc44dafb312d4f638037355120",
+    "paper_id": "semanticscholar:cda188c5218ccdfc44dafb312d4f638037355120",
+    "doi": "10.48550/arXiv.2601.15341",
+    "arxiv_id": "2601.15341",
+    "dblp_key": "journals/corr/abs-2601-15341",
+    "paper_url": "https://www.semanticscholar.org/paper/cda188c5218ccdfc44dafb312d4f638037355120",
+    "published_iso": "2026-01-20",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-01",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "Evaluating Single-Cell Perturbation Response Models Is Far from Straightforward",
+    "title_norm": "evaluating single cell perturbation response models is far from straightforward",
+    "abstract": "Predicting cellular responses to genetic and chemical perturbations remains a central challenge in single-cell biology and a key step toward building in silico virtual cells. The rapid growth of perturbation datasets and advances in deep-learning models have raised expectations for accurate and generalizable prediction. We show that these expectations are overly optimistic, largely due to the failure modes of existing evaluation metrics. In this study, using cross-splitting, controlled noise experiments, and synthetic data, we systematically evaluate both prediction models and evaluation metrics. We demonstrate that widely used metrics, including correlation-based measures and common distributional distances, are strongly influenced by scale, sparsity, and dimensionality, often misrepresenting model performance. In particular, the Wasserstein distance fails in high-dimensional gene expression spaces under variance scaling, while the Energy distance can overlook disruptions in gene-gene dependencies. Our analyses further reveal that complex deep learning models often underperform simple baselines and remain far from empirical performance bounds across multiple chemical perturbation datasets. Together, our framework exposes critical pitfalls, establishes robust evaluation guidelines, and provides a foundation for trustworthy benchmarking toward reliable virtual-cell models.",
+    "tldr": "This study systematically evaluates both prediction models and evaluation metrics, demonstrating that widely used metrics, including correlation-based measures and common distributional distances, are strongly influenced by scale, sparsity, and dimensionality, often misrepresenting model performance.",
+    "year": 2026,
+    "venue": "bioRxiv",
+    "publication_types": [],
+    "authors": [
+      "Mahshid Heidari",
+      "M. Karimpour",
+      "Sumana Srivatsa",
+      "H. Montazeri"
+    ],
+    "citations": 1,
+    "source": "semanticscholar",
+    "source_id": "9d352bcb314696d7c14c0d2713656f3c66d08fd4",
+    "paper_id": "semanticscholar:9d352bcb314696d7c14c0d2713656f3c66d08fd4",
+    "doi": "10.64898/2026.02.14.705879",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://doi.org/10.64898/2026.02.14.705879",
+    "published_iso": "2026-02-17",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-02",
+    "retrieved_via": "semanticscholar",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Robust causal gene network estimation for large-scale single-cell perturbation screens using reduced control function",
+    "title_norm": "robust causal gene network estimation for large scale single cell perturbation s",
+    "abstract": "",
+    "tldr": "RICE is established as a robust and scalable framework for causal discovery in single-cell perturbation genomics, which consistently outperforms existing methods and remains stable under strong confounding, exclusion violations, and high-MOI conditions.",
+    "year": 2026,
+    "venue": "bioRxiv",
+    "publication_types": [
+      "JournalArticle"
+    ],
+    "authors": [
+      "Changhao Ge",
+      "Hongzhe Li"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "c99ca71068824a0017a300bd7d48eab69bd2c76b",
+    "paper_id": "semanticscholar:c99ca71068824a0017a300bd7d48eab69bd2c76b",
+    "doi": "10.64898/2026.04.20.719759",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13308001/",
+    "published_iso": "2026-06-16",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-06",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "CellTarNet: Robust Single-Cell Perturbation Prediction using Transformer Generative Model",
+    "title_norm": "celltarnet robust single cell perturbation prediction using transformer generati",
+    "abstract": "Predicting transcriptional responses to perturbations is challenging because single-cell datasets contain population-level shifts that are difficult to separate from context-specific expression changes. We present CellTarNet, a generative framework based on transformer normalizing flows that learns a transport map from control cells to perturbed cells. A transformer encoder summarizes control-cell states into a context representation, while a normalizing flow learns a distribution over perturbed transcriptional profiles conditioned on that context. We use contrastive matching to pull predicted samples toward the true perturbed distribution and separate them from mismatched perturbation-context pairs. We further incorporate gene-interaction priors to guide attention toward biologically plausible dependencies. Across perturbation benchmarks, CellTarNet improves distributional recovery while retaining competitive reconstruction accuracy.",
+    "tldr": "CellTarNet is presented, a generative framework based on transformer normalizing flows that learns a transport map from control cells to perturbed cells that improves distributional recovery while retaining competitive reconstruction accuracy.",
+    "year": 2026,
+    "venue": "ACM International Conference on Bioinformatics, Computational Biology and Biomedicine",
+    "publication_types": [
+      "Book",
+      "JournalArticle"
+    ],
+    "authors": [
+      "Shiv Shankar"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "4696d7541066526f95df03532afc23479accb075",
+    "paper_id": "semanticscholar:4696d7541066526f95df03532afc23479accb075",
+    "doi": "10.1145/3807503.3819992",
+    "arxiv_id": "",
+    "dblp_key": "conf/bcb/Shankar26a",
+    "paper_url": "https://doi.org/10.1145/3807503.3819992",
+    "published_iso": "2026-06-30",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-06",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "A mechanism-annotated benchmark reveals limited fidelity to drug-response signatures in single-cell perturbation models",
+    "title_norm": "a mechanism annotated benchmark reveals limited fidelity to drug response signat",
+    "abstract": "Single-cell drug perturbation models are increasingly used to predict how compounds remodel cellular states, but they are still largely assessed by expression reconstruction. Whether high expression similarity reflects preservation of drug-response signatures remains unclear. Here we present scDrugPerturb-Bench, a mechanism-annotated benchmark that links matched control and drug-treated single-cell RNA-sequencing profiles to literature-curated directional key-gene evidence. The resource covers 181 datasets, 423 annotated response cases, 717 unique key genes and 2.5 million cells. We introduce the Mechanism Fidelity Score (MFS) to evaluate key-gene direction, effect-size recovery, gene-set co-herence, mechanism specificity and pathway-level response polarity. Across 12 perturbation-prediction models, 3 baselines and 10 data splits, expression-similarity metrics were weakly aligned with MFS and selected different model configurations. Mechanism-aware selection improved early drug retrieval in a transcriptome-based drug design evaluation, indicating that MFS provides practical information beyond benchmark reporting. Systematic benchmarking revealed limited fidelity to drug-response signatures across cell-line and source-integrated settings. Frozen single-cell foundation model embeddings produced local, metric-dependent gains rather than universal improvements, and source context substantially reshaped model assessment. Hard-negative tests further showed that plausible perturbation responses can arise from non-specific transcriptional shortcuts. These results show that expression reconstruction is an insufficient proxy for preserving drug-response signatures and establish scDrugPerturb-Bench as a benchmark for mechanism-aware evaluation of single-cell drug perturbation models.",
+    "tldr": "Results show that expression reconstruction is an insufficient proxy for preserving drug-response signatures and establish scDrugPerturb-Bench as a benchmark for mechanism-aware evaluation of single-cell drug perturbation models.",
+    "year": 2026,
+    "venue": "bioRxiv",
+    "publication_types": [],
+    "authors": [
+      "Letian Li",
+      "Shaoming Duan",
+      "Xin-Yu Zha",
+      "Ye Fang",
+      "Yu-Hao Zhang",
+      "Xin-Yi Zhang"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "e67f5f19830c1d5256d256f2b0bee2dc4e76ced6",
+    "paper_id": "semanticscholar:e67f5f19830c1d5256d256f2b0bee2dc4e76ced6",
+    "doi": "10.64898/2026.08.19.745729",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://doi.org/10.64898/2026.08.19.745729",
+    "published_iso": "2026-08-26",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-08",
+    "retrieved_via": "semanticscholar",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "PopPert: Population-level Joint-Distribution Modeling for Single-Cell Perturbation Prediction",
+    "title_norm": "poppert population level joint distribution modeling for single cell perturbatio",
+    "abstract": "Predicting transcriptional responses to specific perturbations is critical for understanding cellular regulatory mechanisms and accelerating drug discovery. Single-cell RNA sequencing destroys each measured cell, yielding only unpaired populations of control and perturbed cells. However, existing methods typically model perturbation prediction at the single-cell level and assume cell-to-cell correspondence, which conflicts with the unpaired nature of the observed data. To address this challenge, we propose PopPert, a framework that explicitly parameterizes population-level joint gene expression distributions for collective transcriptional state modeling. Given a control population distribution and a perturbation condition, PopPert predicts perturbation-induced changes in distribution parameters, eliminating the need for cell-level correspondence and reducing sensitivity to single-cell noise. To effectively capture gene co-expression patterns, PopPert leverages a low-rank Gaussian Copula to model cross-gene statistical dependencies and construct the joint gene expression distribution, additionally allowing sampling of synthetic perturbed single-cell profiles. Across multiple single-cell benchmarks spanning both genetic and chemical perturbations, PopPert achieves superior overall performance in differential expression recovery, perturbation effect estimation, and population-level distribution matching. These results establish population-level joint distribution learning as an effective paradigm for predicting transcriptional responses from unpaired single-cell populations. Code for PopPert is publicly available at https://github.com/whd1125/PopPert.",
+    "tldr": "PopPert predicts perturbation-induced changes in distribution parameters, eliminating the need for cell-level correspondence and reducing sensitivity to single-cell noise, establishing population-level joint distribution learning as an effective paradigm for predicting transcriptional responses from unpaired single-cell populations.",
+    "year": 2026,
+    "venue": "",
+    "publication_types": [],
+    "authors": [
+      "Han-Dong Wang",
+      "Jiaxin Qi",
+      "Hao-Chen Feng",
+      "Baisheng Lai"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "a9fee85887435d8d9b7571969eb9a2f6d4aaebba",
+    "paper_id": "semanticscholar:a9fee85887435d8d9b7571969eb9a2f6d4aaebba",
+    "doi": "",
+    "arxiv_id": "2609.01357",
+    "dblp_key": "",
+    "paper_url": "https://www.semanticscholar.org/paper/a9fee85887435d8d9b7571969eb9a2f6d4aaebba",
+    "published_iso": "2026-09-01",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-09",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "$D^{2}R^{2}$: Discrete Diffusion with Regulation Reinforcement for Single-Cell Perturbation Prediction",
+    "title_norm": "d 2 r 2 discrete diffusion with regulation reinforcement for single cell perturb",
+    "abstract": "Predicting single-cell transcriptomic responses to genetic perturbations is central to functional genomics and virtual-cell modeling. Existing approaches, however, typically predict an entire expression profile as a whole, leaving the order in which individual gene responses are generated unmodeled. To address this problem, we introduce \\textbf{$D^{2}R^{2}$} (\\textbf{D}iscrete \\textbf{D}iffusion with \\textbf{R}egulation \\textbf{R}einforcement), which reformulates perturbation prediction as regulation-guided gene-wise progressive generation. A Masked Discrete Diffusion Model represents expression as ordinal tokens and reconstructs a fully masked profile step by step, allowing generated gene responses to condition those that remain masked. A Regulatory Policy Module initializes the generation policy from a gene regulatory network inferred from control cells and adapts it to the perturbation and current partially generated state. Then, group-relative policy optimization refines only the ordering policy using final perturbation-effect agreement as reward. Across Norman19 and VCC-H1, $D^{2}R^{2}$ achieves the best performance on all five metrics on Norman19 and remains competitive on H1. Controlled ablations holding the generator and generation budget fixed show that biological-prior ordering improves over random ordering and is more reliable than uncertainty-based heuristics, whereas reversing the biological-prior ordering degrades every metric. Biological analyses further show that the refined policy prioritizes regulatory genes early while promoting perturbation-specific transcription factors and responsive genes. These results establish gene generation order as an effective, controllable, and biologically interpretable dimension of single-cell perturbation prediction.",
+    "tldr": "Gene generation order is established as an effective, controllable, and biologically interpretable dimension of single-cell perturbation prediction.",
+    "year": 2026,
+    "venue": "",
+    "publication_types": [],
+    "authors": [
+      "Ning Fan",
+      "Qi Liu",
+      "Xunuo Zhu",
+      "Yukai Sun",
+      "Luyuan Chen",
+      "Xuheng Zhou"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "490e5fd5a35ec18dccc84b60330e02e8ddace300",
+    "paper_id": "semanticscholar:490e5fd5a35ec18dccc84b60330e02e8ddace300",
+    "doi": "",
+    "arxiv_id": "2608.15288",
+    "dblp_key": "",
+    "paper_url": "https://www.semanticscholar.org/paper/490e5fd5a35ec18dccc84b60330e02e8ddace300",
+    "published_iso": "2026-08-15",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-08",
+    "retrieved_via": "semanticscholar",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Beyond Expression Prediction: Benchmarking Differential Expression Classification in Single-Cell Perturbation Models",
+    "title_norm": "beyond expression prediction benchmarking differential expression classification",
+    "abstract": "Accurate predictions of transcriptomic responses to genetic perturbations could unlock our understanding of gene functions and regulatory networks. While a growing number of methods and benchmarks target this task, existing evaluations focus on mean expression accuracy alone. This overlooks differential expression (DE), which captures both mean and variance and forms the basis for biological interpretation and experimental follow-up. Here, we systematically evaluate a diverse set of deep learning and non-deep-learning methods for their ability to predict DE outcomes under two generalization regimes: unseen perturbations within the same cell line, and unseen cellular contexts across cell lines. We find that simple baselines, such as embedding-based nearest neighbors, are competitive and often outperform specialized deep learning models for DE classification across datasets and evaluation metrics. We further show that sparsity calibration, motivated by the structure of single-cell data, substantially improves DE classification for deep learning models that do not explicitly account for sparsity. Together, our findings establish practical baselines and evaluation principles for benchmarking perturbation models on DE prediction.",
+    "tldr": "This work systematically evaluates a diverse set of deep learning and non-deep-learning methods for their ability to predict differential expression outcomes under two generalization regimes: unseen perturbations within the same cell line, and unseen cellular contexts across cell lines.",
+    "year": 2026,
+    "venue": "bioRxiv",
+    "publication_types": [],
+    "authors": [
+      "Junwei Sun",
+      "Yuxun He",
+      "Ouyang Zhu",
+      "Yiqun T. Chen"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "e291d410410842fee8df0e0aaa8c970453b34c49",
+    "paper_id": "semanticscholar:e291d410410842fee8df0e0aaa8c970453b34c49",
+    "doi": "10.64898/2026.07.20.739620",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://www.biorxiv.org/content/biorxiv/early/2026/07/24/2026.07.20.739620.full.pdf",
+    "published_iso": "2026-07-24",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-07",
+    "retrieved_via": "semanticscholar",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Spurious correlation inflates performance in single-cell perturbation prediction",
+    "title_norm": "spurious correlation inflates performance in single cell perturbation prediction",
+    "abstract": "The increasing number of computational methods designed to predict the effects of genetic perturbations on cellular gene expression profiles has led to a need for rigorous evaluation metrics. Recent benchmarking studies rely on correlation or cosine similarity of differential expression relative to a shared population of control cells. We show that these metrics are systematically inflated by statistical bias induced by reusing the same control population to define both quantities being compared. As a result, even non-informative methods can appear to perform well, particularly in datasets with limited numbers of control cells. Reanalysis of published datasets using a simple control-splitting procedure that removes this bias leads to a substantial reduction in performance previously attributed to biological signal.",
+    "tldr": "It is shown that benchmarking studies based on correlation or cosine similarity of differential expression relative to a shared population of control cells are systematically inflated by statistical bias induced by reusing the same control population to define both quantities being compared.",
+    "year": 2026,
+    "venue": "bioRxiv",
+    "publication_types": [
+      "JournalArticle"
+    ],
+    "authors": [
+      "Phillip B. Nicol",
+      "Shriya Shivakumar",
+      "Rafael A. Irizarry"
+    ],
+    "citations": 4,
+    "source": "semanticscholar",
+    "source_id": "1cd941aadd31ac1ec13fae3ce09941c24eac9367",
+    "paper_id": "semanticscholar:1cd941aadd31ac1ec13fae3ce09941c24eac9367",
+    "doi": "10.64898/2026.05.07.723486",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://doi.org/10.64898/2026.05.07.723486",
+    "published_iso": "2026-05-12",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-05",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "GRN-GEARS: Interpretable Gene Regulatory Modelling for Single-Cell Perturbation Response Prediction in Precision Oncology",
+    "title_norm": "grn gears interpretable gene regulatory modelling for single cell perturbation r",
+    "abstract": "In precision oncology, understanding cellular responses to genetic perturbations is essential for uncovering cancer-driving mechanisms and identifying actionable drug targets. Although recent computational models achieve strong accuracy in predicting post-perturbation gene expression, they often behave as “black boxes” and provide limited mechanistic insight. In particular, they do not explicitly reconstruct gene regulatory networks (GRNs) during prediction, making it difficult to recover the regulatory logic needed for clinical decision-making. To address this limitation, we developed a GRN encoder on top of a recent method named GEARS, resulting in an interpretable and trustworthy framework named GRN-GEARS. The GRN encoder uses learnable importance gates over a regulatory scaffold derived from curated Transcription Factor (TF) - target gene priors and data-driven gene embeddings. This enables edge-level attribution while maintaining predictive performance. Across three Perturb-seq benchmarks, Adamson, Norman, and Dixit, GRN-GEARS outperformed existing approaches in overall predictive performance. Compared with GEARS, it reduced MSE by $\\mathbf{1 0. 4 \\%}$, $\\mathbf{2 5. 6 \\%}$, and $\\mathbf{8 0. 0 \\%}$, respectively, while also improving Pearson correlation from 0.9897 to 0.9905 on Adamson, from 0.9876 to 0.9903 on Norman, and from 0.9905 to 0.9973 on Dixit. We further evaluate graph quality using interventionbased metrics: the mean Wasserstein distance $(\\mu \\text{WD})$, which measures whether predicted edges capture perturbation-induced distributional shifts, and the false omission rate (FOR), which assesses whether omitted or unsupported edges are consistent with the observed intervention effects. The recovered regulatory programs, centred on MYC, JUN, and CREB1, yield ranked and exportable hypotheses for preclinical drug target prioritisation.",
+    "tldr": "",
+    "year": 2026,
+    "venue": "International Conference on Digital Health",
+    "publication_types": [
+      "Conference"
+    ],
+    "authors": [
+      "Marjan Baghgolshani",
+      "Amin Beheshti",
+      "Hakim Newton",
+      "Hamid Alinejad-Rokny"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "910b20d1c149eb6d7f42d3aa54e9a55e313e952a",
+    "paper_id": "semanticscholar:910b20d1c149eb6d7f42d3aa54e9a55e313e952a",
+    "doi": "10.1109/ICDH72779.2026.00041",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://www.semanticscholar.org/paper/910b20d1c149eb6d7f42d3aa54e9a55e313e952a",
+    "published_iso": "2026-07-01",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-07",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "Drug Response Prediction using Deep Learning Models and Single-Cell Perturbation Data across Pan Cancer Cell Lines",
+    "title_norm": "drug response prediction using deep learning models and single cell perturbation",
+    "abstract": "Cancer remains a leading cause of death. Effective treatments remain limited, because of complications during therapies that contribute to poor survival outcomes. Developing new drugs can be expensive and time-consuming. One promising approach is drug repurposing by identifying potent treatments from existing drugs. This study aims at developing an efficient and effective framework for drug efficacy prediction. To achieve this goal, this study first processed publicly available drug perturbation cancer cell line datasets to enhance their usefulness for drug repurposing to cancer, in which this paper integrated perturbed pan cancer cell line gene expression data with their drug responses. This study integrated 10 selected cancer cell line data covering 8 cancers from public databases including CMAP, CTRP, CCLE, and GDSC. Secondly, this study applied advanced machine learning methods, particularly deep learning to learn useful features from these data, and transfer learning to make the predictive models generalized and interpretable. With deep learning and these datasets, this study developed a highly accurate deep neural network framework (DeepDrugCancer) that combines the drug molecular structures and gene expression data of cancer cell lines to predict the drug responsiveness. DeepDrugCancer achieved excellent performance with over 90% AUC test score across multiple cell lines. By integration with scRNA-seq data of breast cancer, predicted drugs such as aminocaproic acid, pancuronium bromide, and pseudopelletierine showed high cell-type specificity. Finally, this study conducted in-vitro (wet lab) experiments to validate the viability of DeepDrugCancer. The model predicted Mifanertinib to be sensitive on breast cancer cell lines and the in-vitro experiments confirmed the trend of such effects. The experiments have demonstrated that this framework efficiently utilizes drug-induced molecular signatures to predict therapeutic responses across certain cancers. By linking transcriptomic perturbations to drug responses, this study advances drug repurposing to expanded therapeutic options for cancer treatments as well as to precision oncology.",
+    "tldr": "A highly accurate deep neural network framework (DeepDrugCancer) that combines the drug molecular structures and gene expression data of cancer cell lines to predict the drug responsiveness and achieved excellent performance with over 90% AUC test score across multiple cell lines is developed.",
+    "year": 2026,
+    "venue": "Highlights in Science Engineering and Technology",
+    "publication_types": [
+      "JournalArticle"
+    ],
+    "authors": [
+      "Phil Yao"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "4a83649e941619535e4d8c94a025a195adb0473c",
+    "paper_id": "semanticscholar:4a83649e941619535e4d8c94a025a195adb0473c",
+    "doi": "10.54097/rj7r3r25",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://datahset.net/index.php/ojs/article/download/48/40",
+    "published_iso": "2026-04-17",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-04",
+    "retrieved_via": "semanticscholar",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "HarmonyCell: Automating Single-Cell Perturbation Modeling under Semantic and Distribution Shifts",
+    "title_norm": "harmonycell automating single cell perturbation modeling under semantic and dist",
+    "abstract": "Single-cell perturbation studies face dual heterogeneity bottlenecks: (i) semantic heterogeneity--identical biological concepts encoded under incompatible metadata schemas across datasets; and (ii) statistical heterogeneity--distribution shifts from biological variation demanding dataset-specific inductive biases. We propose HarmonyCell, an end-to-end agent framework resolving each challenge through a dedicated mechanism: an LLM-driven Semantic Unifier autonomously maps disparate metadata into a canonical interface without manual intervention; and an adaptive Monte Carlo Tree Search engine operates over a hierarchical action space to synthesize architectures with optimal statistical inductive biases for distribution shifts. Evaluated across diverse perturbation tasks under both semantic and distribution shifts, HarmonyCell achieves a 95% valid execution rate on heterogeneous input datasets (versus 0% for general agents) while matching or even exceeding expert-designed baselines in rigorous out-of-distribution evaluations. This dual-track orchestration enables scalable automatic virtual cell modeling without dataset-specific engineering.",
+    "tldr": "HarmonyCell is proposed, an end-to-end agent framework resolving each challenge through a dedicated mechanism: an LLM-driven Semantic Unifier autonomously maps disparate metadata into a canonical interface without manual intervention; and an adaptive Monte Carlo Tree Search engine operates over a hierarchical action space to synthesize architectures with optimal statistical inductive biases for distribution shifts.",
+    "year": 2026,
+    "venue": "arXiv.org",
+    "publication_types": [
+      "JournalArticle"
+    ],
+    "authors": [
+      "Wenxuan Huang",
+      "Mingyu Tsoi",
+      "Yan Huang",
+      "Xin-Jie Mao",
+      "Xue Xia",
+      "Hao Wu"
+    ],
+    "citations": 2,
+    "source": "semanticscholar",
+    "source_id": "88c2b363a767a60c8e2ee290650d8ed543575784",
+    "paper_id": "semanticscholar:88c2b363a767a60c8e2ee290650d8ed543575784",
+    "doi": "10.48550/arXiv.2603.01396",
+    "arxiv_id": "2603.01396",
+    "dblp_key": "journals/corr/abs-2603-01396",
+    "paper_url": "https://www.semanticscholar.org/paper/88c2b363a767a60c8e2ee290650d8ed543575784",
+    "published_iso": "2026-03-02",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-03",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "PerturbCellRL: Verifier-Guided Reinforcement Learning for Single-Cell Perturbation Prediction",
+    "title_norm": "perturbcellrl verifier guided reinforcement learning for single cell perturbatio",
+    "abstract": "Single-cell perturbation models can reduce costly wet-lab screening by predicting how cells respond transcriptionally to interventions. While recent generative models improve population-level prediction, individual generated cells are not explicitly checked for biological consistency. We introduce PerturbCellRL, a reinforcement learning (RL) framework that post-trains a pretrained single-cell transcriptomic generator using a suite of cell-level verifiers as rewards. These verifiers define four rewards: Pearson top-k similarity, RMSE top-k proximity, DE Spearman, and Pathway activity. The Pathway activity verifier rewards cells whose pathway responses match known perturbation biology. We evaluate PerturbCellRL on multiple genetic and chemical perturbation benchmarks. Across these benchmarks, PerturbCellRL improves over the pretrained flow-matching generator on reward-aligned evaluation metrics and a held-out evaluation metric. Moreover, PerturbCellRL remains competitive with state-of-the-art methods on population-level metrics. Together, these results frame trustworthy single-cell prediction as verifier-guided generative alignment, moving beyond matching expression distributions toward predictions whose single-cell perturbation effects are explicitly checked for biological consistency.",
+    "tldr": "PerturbCellRL, a reinforcement learning (RL) framework that post-trains a pretrained single-cell transcriptomic generator using a suite of cell-level verifiers as rewards, improves over the pretrained flow-matching generator on reward-aligned evaluation metrics and a held-out evaluation metric.",
+    "year": 2026,
+    "venue": "arXiv.org",
+    "publication_types": [
+      "JournalArticle"
+    ],
+    "authors": [
+      "D. Wu",
+      "Mingyu Li",
+      "Yuhui Zhang",
+      "Anurendra Kumar",
+      "Emma Lundberg",
+      "S. Yeung-Levy"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "fd00adfdbad869a1a914d51c25da229e658be2b9",
+    "paper_id": "semanticscholar:fd00adfdbad869a1a914d51c25da229e658be2b9",
+    "doi": "10.48550/arXiv.2606.27752",
+    "arxiv_id": "2606.27752",
+    "dblp_key": "journals/corr/abs-2606-27752",
+    "paper_url": "https://www.semanticscholar.org/paper/fd00adfdbad869a1a914d51c25da229e658be2b9",
+    "published_iso": "2026-06-26",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-06",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "scArchon: a scalable benchmarking framework for assessing single-cell perturbation models",
+    "title_norm": "scarchon a scalable benchmarking framework for assessing single cell perturbatio",
+    "abstract": "The accurate prediction of cellular responses to perturbations, such as drug treatments, remains a pivotal challenge in single-cell transcriptomics. While numerous deep learning tools have been developed for this task, their systematic benchmarking across diverse datasets and performance metrics has been limited. Here, we present scArchon, a reproducible, modular benchmarking platform built on Snakemake. It is designed to evaluate perturbation response prediction tools in an unbiased and extensible manner. Employing six representative single-cell RNA-seq datasets, we compare leading methods such as scGen, CPA, trVAE, scPRAM, scVIDR, scDisInFact, SCREEN, scPreGAN, and CellOT against baselines. We assess model performance using a composite of statistical and biological metrics. Our analysis reveals heterogeneous performance. While methods like trVAE, scGen, scPRAM, and scVIDR achieve robust results across multiple datasets, other tools occasionally underperform even compared to linear or control baselines. Notably, models with favorable quantitative scores may fail to retain key biological perturbation signatures, underscoring the need for gene-level evaluation. scArchon provides a unified, extensible foundation for large-scale, standardized benchmarking of perturbation prediction tools, facilitating methodological transparency and accelerating development in this rapidly evolving field. We encourage adoption of scArchon and sharing of containerized tools to drive progress in single-cell perturbation modeling.",
+    "tldr": null,
+    "year": 2026,
+    "venue": "Genome Biology",
+    "publication_types": [
+      "JournalArticle"
+    ],
+    "authors": [
+      "Jean Radig",
+      "Robin Droit",
+      "D. Doncevic",
+      "Albert Li",
+      "Duc-Thien Bui",
+      "Luis Herfurth"
+    ],
+    "citations": 4,
+    "source": "semanticscholar",
+    "source_id": "5ccbe8864f9c989866883f47f8b9f30b9a2406cb",
+    "paper_id": "semanticscholar:5ccbe8864f9c989866883f47f8b9f30b9a2406cb",
+    "doi": "10.1186/s13059-026-04104-z",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://link.springer.com/content/pdf/10.1186/s13059-026-04104-z.pdf",
+    "published_iso": "2026-05-12",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-05",
+    "retrieved_via": "semanticscholar",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Discrete Diffusion for Single-Cell Gene Expression Modeling",
+    "title_norm": "discrete diffusion for single cell gene expression modeling",
+    "abstract": "Current generative modeling of single-cell transcriptomics relies on continuous latent representations, transforming inherently discrete and sparse gene counts into continuous space. We propose Discrete Cell Models (DCM), a diffusion-based framework that learns cellular representations directly in the discrete domain. Our framework supports both unconditional and conditional generation, allowing for precise modeling of complex biological scenarios such as cell-type-specific transcriptional responses to genetic perturbations. We demonstrate that DCM scales effectively and achieves strong performance against current state-of-the-art methods, including scVI, CPA, STATE, scGPT, and scLDM. On the Dentate Gyrus benchmark, DCM achieves a 5-fold improvement in MMD2RBF and a nearly 2-fold improvement in W2 distance, over the leading continuous diffusion baseline (scLDM). On the conditional Replogle perturbation benchmark, DCM sets a new state of the art on W2 distance while remaining competitive on MMD2RBF. Together, these results establish discrete diffusion as a promising direction for foundational models of cellular biology.",
+    "tldr": "Discrete Cell Models is proposed, a diffusion-based framework that learns cellular representations directly in the discrete domain that supports both unconditional and conditional generation, allowing for precise modeling of complex biological scenarios such as cell-type-specific transcriptional responses to genetic perturbations.",
+    "year": 2026,
+    "venue": "bioRxiv",
+    "publication_types": [],
+    "authors": [
+      "S. Bhattacharya",
+      "Christian Gensbigler",
+      "Shaamil Karim",
+      "Jon Lees"
+    ],
+    "citations": 4,
+    "source": "semanticscholar",
+    "source_id": "73c60f577512ed63520e6c72932ad3844afa6006",
+    "paper_id": "semanticscholar:73c60f577512ed63520e6c72932ad3844afa6006",
+    "doi": "10.64898/2026.02.19.705033",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://www.biorxiv.org/content/biorxiv/early/2026/02/20/2026.02.19.705033.1.full.pdf",
+    "published_iso": "2026-02-20",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-02",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "A confound-diagnostic toolkit for in silico perturbation with single-cell foundation models",
+    "title_norm": "a confound diagnostic toolkit for in silico perturbation with single cell founda",
+    "abstract": "Deleting a gene token from a cell’s input sequence offers a convenient native strategy for in silico perturbation, but the resulting embedding delta may not represent a biological knockout response. Apparent effects can instead reflect gene identity, universal responsiveness, limited tokenization coverage, library-size contamination, or circular state scoring. Here, we present a confound-diagnostic framework combining held-out increment testing, responsiveness adjustment, coverage gating, library-size diagnostics, and de-circularized state-shift analysis, together with a numerically matched reimplementation of frozen Geneformer’s perturbation engine. Across Frangieh and Replogle datasets and linear and nonlinear readouts, the native embedding delta provided no reproducible held-out improvement beyond gene identity. Signal-injection calibration showed that the test detected injected residual signal, whereas native increments remained below its detection floor. Matched controls traced apparent positives to raw-count library-size structure, broad responsiveness, and self-referential scoring, while coverage constrained perturbation applicability and estimate stability without establishing biological specificity. This model-adaptable framework helps determine when foundation-model perturbation readouts warrant biological interpretation. Motivation Foundation-model in silico perturbation could predict perturbation effects when matched experimental data are unavailable. However, in zero-shot settings, embedding-derived responses may reflect gene identity, universal responsiveness, tokenization limits, library-size artifacts, or circular state scoring rather than biological knockout effects. We therefore developed a reusable confound-diagnostic framework that applies matched controls to test whether native perturbation readouts contain information beyond these confounds and warrant biological interpretation.",
+    "tldr": "A reusable confound-diagnostic framework is developed that applies matched controls to test whether native perturbation readouts contain information beyond these confounds and warrant biological interpretation, and helps determine when foundation-model perturbation readouts warrant biological interpretation.",
+    "year": 2026,
+    "venue": "bioRxiv",
+    "publication_types": [],
+    "authors": [
+      "Ru Qiu",
+      "Max Mingqian Zhao"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "1d684aa4833b28af4a8c665eb0dd1020be00b04c",
+    "paper_id": "semanticscholar:1d684aa4833b28af4a8c665eb0dd1020be00b04c",
+    "doi": "10.64898/2026.08.04.732812",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://doi.org/10.64898/2026.08.04.732812",
+    "published_iso": "2026-08-07",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-08",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "Decoding Single-Cell Omics of Perturbation Responses Using DeSCOPE",
+    "title_norm": "decoding single cell omics of perturbation responses using descope",
+    "abstract": "Deciphering cellular responses to genetic perturbations is fundamental to modeling gene regulatory networks and understanding mechanisms that change cellular phenotypes. However, current computational approaches often fail to outperform simple baseline models, highlighting a critical bottleneck in their generalizability and robustness. Here, we present DeSCOPE, a lightweight conditional variational autoencoder framework for predicting genetic perturbation responses spanning transcriptomic, epigenomic, and broader multi-modal landscapes. We systematically benchmarked DeSCOPE across diverse datasets under two challenging out-of-distribution settings: unseen genes and unseen cell types. DeSCOPE uniquely surpasses simple baselines in the unseen gene scenario, and achieves substantially improved performance for unseen cell types while requiring fine-tuning with far fewer perturbed genes. Finally, DeSCOPE demonstrates superior performance in predicting combinatorial multi-gene perturbations. Overall, DeSCOPE serves as a versatile multi-modal virtual cell model that can effectively guide the design of therapeutic targets that change cellular phenotypes. DeSCOPE is available at https://github.com/wanglabtongji/DeSCOPE.",
+    "tldr": "DeSCOPE is presented, a lightweight conditional variational autoencoder framework for predicting genetic perturbation responses spanning transcriptomic, epigenomic, and broader multi-modal landscapes and demonstrates superior performance in predicting combinatorial multi-gene perturbations.",
+    "year": 2026,
+    "venue": "bioRxiv",
+    "publication_types": [],
+    "authors": [
+      "Pengpeng Wu",
+      "Hailin Wei",
+      "Yazi Li",
+      "Xinwei Zheng",
+      "Cai Zhou",
+      "Xihao Hu"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "3eb797808efd32754bc934a6ccc2173f50e632f8",
+    "paper_id": "semanticscholar:3eb797808efd32754bc934a6ccc2173f50e632f8",
+    "doi": "10.64898/2026.04.13.718147",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://www.biorxiv.org/content/biorxiv/early/2026/04/15/2026.04.13.718147.full.pdf",
+    "published_iso": "2026-04-15",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-04",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "MultiFlow: coupled flow matching for predicting single-cell multiomic perturbation responses in unseen cellular contexts",
+    "title_norm": "multiflow coupled flow matching for predicting single cell multiomic perturbatio",
+    "abstract": "Predicting cellular responses to perturbation requires resolving coordinated changes across molecular layers, yet most single-cell perturbation models focus on transcriptional responses alone. Here we present MultiFlow, a coupled flow-matching framework that unifies generation and perturbation prediction of paired gene expression and chromatin accessibility. By learning coupled RNA-ATAC flows conditioned on perturbation and control-derived cellular-state representation, MultiFlow enables prediction of coordinated multiomic responses in unseen cellular contexts. Across multiomic generation benchmarks, MultiFlow accurately reproduced paired RNA-ATAC states and their population distributions. In multiomic perturbation benchmarks, MultiFlow achieved the strongest overall performance in predicting both gene-expression and chromatin-accessibility responses, outperforming competing modality-specific perturbation-prediction methods. Joint multiomic modeling further preserved perturbation-induced RNA-ATAC coordination, including concordant peak-gene effects and cross-modal cellular neighborhood structure. These results establish coupled flow matching as a unified generative framework for modeling paired multiomic states and predicting coordinated perturbation responses across cellular contexts. Code and tutorial of MultiFlow are available at https://github.com/liuq-lab/MultiFlow.",
+    "tldr": "Coupled flow matching is presented as a unified generative framework for modeling paired multiomic states and predicting coordinated perturbation responses across cellular contexts, and results establish coupled flow matching as a unified generative framework for modeling paired multiomic states and predicting coordinated perturbation responses across cellular contexts.",
+    "year": 2026,
+    "venue": "bioRxiv",
+    "publication_types": [
+      "Review"
+    ],
+    "authors": [
+      "Haochen Wang",
+      "Charming Zhang",
+      "Mengran Zhang",
+      "Xiao-Ming Nie",
+      "Qiao Liu"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "b887d5eba7afe7ebeb4b1fcf238bdde2bc98889c",
+    "paper_id": "semanticscholar:b887d5eba7afe7ebeb4b1fcf238bdde2bc98889c",
+    "doi": "10.64898/2026.08.20.746112",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://www.biorxiv.org/content/biorxiv/early/2026/08/25/2026.08.20.746112.full.pdf",
+    "published_iso": "2026-08-25",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-08",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "MultiPert: An adversarial alignment and dual attention framework for single-cell multi-omics perturbation prediction",
+    "title_norm": "multipert an adversarial alignment and dual attention framework for single cell ",
+    "abstract": "Precise prediction of perturbation responses is essential in systems biology research, as it plays a pivotal role in characterizing cellular identities and elucidating the regulatory mechanisms of biological pathways. Existing perturbation-responses prediction approaches are predominantly confined to single-modality transcriptomic data, limiting their capacity to capture cross-layer molecular effects. Here, we present MultiPert, a deep learning framework specifically designed for predicting perturbation responses in single-cell multi-omics data. MultiPert employs modality-specific encoders with dedicated pretraining, integrates perturbation through a dual-attention mechanism, and achieves cross-modal alignment via adversarial training. Benchmarking on human THP-1 and kidney multi-omics datasets demonstrates that MultiPert reliably predicts both perturbed gene expression and protein abundance profiles, achieving superior accuracy and stability compared to state-of-the-art strategies. MultiPert generalizes to unseen perturbations and uncovers regulatory mechanisms of immune checkpoint molecules based on perturbed proteomic predictions. In addition, enrichment analyses of perturbed transcriptomic predictions reveal immune-related pathways. By providing an integrated and interpretable framework, MultiPert expands the scope of perturbation modeling at the multi-omics level, thereby offering a robust methodological foundation for comprehensive research into pathogenesis and drug discovery.",
+    "tldr": "By providing an integrated and interpretable framework, MultiPert expands the scope of perturbation modeling at the multi-omics level, thereby offering a robust methodological foundation for comprehensive research into pathogenesis and drug discovery.",
+    "year": 2026,
+    "venue": "PLoS Comput. Biol.",
+    "publication_types": [
+      "JournalArticle"
+    ],
+    "authors": [
+      "Mengyuan Zhao",
+      "Xinyu Tang",
+      "Jiawei Li",
+      "Cheng Liang",
+      "Jijun Tang",
+      "Fei Guo"
+    ],
+    "citations": 1,
+    "source": "semanticscholar",
+    "source_id": "6bdfbb8414f254c185888df100a505000a194bfb",
+    "paper_id": "semanticscholar:6bdfbb8414f254c185888df100a505000a194bfb",
+    "doi": "10.1371/journal.pcbi.1014054",
+    "arxiv_id": "",
+    "dblp_key": "journals/ploscb/ZhaoTLLTG26",
+    "paper_url": "https://journals.plos.org/ploscompbiol/article/file?id=10.1371/journal.pcbi.1014054&type=printable",
+    "published_iso": "2026-03-01",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-03",
+    "retrieved_via": "semanticscholar",
+    "relevance": "core"
+  },
+  {
+    "title": "Abstract 4187: scOncoNet: Dual-graph attention network for program-aware\n in-silico\n gene perturbation in single-cell cancer data",
+    "title_norm": "abstract 4187 sconconet dual graph attention network for program aware in silico",
+    "abstract": "\n Identifying genes that functionally drive malignant programs in single-cell tumors remains difficult, particularly when CRISPR or Perturb-seq data are unavailable. Co-expression alone cannot separate correlation from regulatory influence, and existing analyses lack a framework that connects global molecular networks with patient-specific cellular programs. Current single-cell foundation models largely rely on gene-gene relationships while making limited use of the cell-cell structure intrinsic to tumor ecosystems. To address these gaps, we developed scOncoNet, a lightweight dual-graph attention network that integrates gene-gene and cell-cell structure, malignant meta-program supervision, and gene-to-program attribution to enable program-aware estimation of gene influence directly from patient scRNA-seq data. The model incorporates PPI networks to provide global molecular context for the gene encoder and constructs a program-aware cell graph blending local transcriptomic similarity with malignant program similarity. A two-layer architecture jointly learns gene and cell embeddings, with an attention mechanism that adaptively reweights cell-cell edges to highlight biologically meaningful transitions such as EMT or hypoxia. A program-prediction module anchors the cell embedding space to malignant programs, and gene impact scores combine PPI-informed gene embeddings with gradients that quantify each gene’s influence on these programs, generating a mechanistic estimate of its potential effect on malignant states. Using an esophageal squamous-cell carcinoma (ESCC) single-cell dataset restricted to epithelial cells, we defined ESCC-specific malignant programs, including proliferation (MKI67), EMT (VIM), hypoxia (CA9), and immune evasion, and applied scOncoNet to prioritize candidate targets. Top-ranked genes were dominated by ESCRT and proteasome components, including multiple CHMP family members along with VPS25, TSG101, PSMD14, and PSMC2, reflecting core survival and vesicle-trafficking functions consistent with their pan-cancer essentiality. Compared with existing scRNA-seq-based approaches, scOncoNet shows stronger alignment between gene embeddings and malignant programs, enabling precise recovery of functional gene-program relationships. Across additional single-cell datasets, the model consistently preserved malignant program structure and generated stable target rankings. In summary, scOncoNet integrates global molecular networks with patient-specific cellular programs to identify functional gene drivers directly from tumor single-cell data. Its ability to reveal core cancer progression machinery and prioritize candidate CRISPR targets without perturbation experiments suggests utility for mechanistic studies and therapeutic target discovery in tumor types lacking perturbation datasets.\n \n \n Tingyi Li, Yuanyuan Shen, Bin Baek, Xiaoqing Yu, Xuefeng Wang, . scOncoNet: Dual-graph attention network for program-aware in-silico gene perturbation in single-cell cancer data [abstract]. In: Proceedings of the American Association for Cancer Research Annual Meeting 2026; Part 1 (Regular Abstracts); 2026 Apr 17-22; San Diego, CA. Philadelphia (PA): AACR; Cancer Res 2026;86(7 Suppl):Abstract nr 4187.\n",
+    "tldr": "Its ability to reveal core cancer progression machinery and prioritize candidate CRISPR targets without perturbation experiments suggests utility for mechanistic studies and therapeutic target discovery in tumor types lacking perturbation datasets.",
+    "year": 2026,
+    "venue": "Cancer Research",
+    "publication_types": [
+      "JournalArticle"
+    ],
+    "authors": [
+      "Tingyi Li",
+      "Yuanyuan Shen",
+      "Bin Baek",
+      "Xiaoqing Yu",
+      "Xuefeng Wang"
+    ],
+    "citations": 0,
+    "source": "semanticscholar",
+    "source_id": "f280df6dce6d58c347abceb1b449edde5ffd834d",
+    "paper_id": "semanticscholar:f280df6dce6d58c347abceb1b449edde5ffd834d",
+    "doi": "10.1158/1538-7445.am2026-4187",
+    "arxiv_id": "",
+    "dblp_key": "",
+    "paper_url": "https://www.semanticscholar.org/paper/f280df6dce6d58c347abceb1b449edde5ffd834d",
+    "published_iso": "2026-04-03",
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "year_month": "2026-04",
+    "retrieved_via": "semanticscholar",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Benchmarking algorithms for generalizable single-cell perturbation response prediction",
+    "title_norm": "benchmarking algorithms for generalizable single cell perturbation response pred",
+    "abstract": "",
+    "year": 2025,
+    "venue": "Nature Methods",
+    "authors": [
+      "Zhiting Wei",
+      "Yiheng Wang",
+      "Yicheng Gao",
+      "Shu-Guang Wang",
+      "Pu Li",
+      "Duanmiao Si"
+    ],
+    "citations": 31,
+    "source": "openalex",
+    "source_id": "W4417297892",
+    "doi": "10.1038/s41592-025-02980-0",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4417297892",
+    "published_iso": "2025-12-11",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4417297892",
+    "year_month": "2025-12",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "A Systematic Comparison of Single-Cell Perturbation Response Prediction Models",
+    "title_norm": "a systematic comparison of single cell perturbation response prediction models",
+    "abstract": "Abstract Predicting single-cell transcriptional responses to perturbations is central to dissecting gene regulation and accelerating therapeutic design, yet the field lacks a rigorous, task-spanning assessment of model behavior. We present a large-scale benchmark of 13 representative methods and baselines across 25 datasets spanning diverse perturbation modalities and species, including two primary immune-cell drug-response resources. We evaluated three core tasks—generalization to unseen single-gene perturbations, prediction of combinatorial interactions, and transfer across cell types—using 24 metrics covering expression-level accuracy, relative changes, differential expression recovery, and distributional similarity. Across tasks, performance depended strongly on perturbation effect size and evaluation perspective: expression-level agreement was highest for small-effect perturbations resembling controls, whereas delta- and DE-based metrics improved with larger effects, providing clearer signals. Models shared a conservative bias, with fine-tuned foundation models compressing variance and underestimating synergistic effects in combinations. PerturbNet showed superior recovery of DE signatures in Tasks 1 and 2, while no method consistently generalized across cell types in Task 3, where biological consistency dominated outcomes. This benchmark establishes current methodological limits, clarifies that different metrics probe distinct biological signals rather than redundant summaries of the same prediction problem, and provides a foundation for developing virtual-cell models that more faithfully capture heterogeneous perturbation responses. Teaser: A large-scale benchmark reveals strengths and limits of models predicting single-cell perturbation responses.",
+    "year": 2024,
+    "venue": "bioRxiv (Cold Spring Harbor Laboratory)",
+    "authors": [
+      "Lanxiang Li",
+      "Yue You",
+      "Yang-chih Fu",
+      "Wenyu Liao",
+      "Xueying Fan",
+      "Shihong Lu"
+    ],
+    "citations": 24,
+    "source": "openalex",
+    "source_id": "W4405719251",
+    "doi": "10.1101/2024.12.23.630036",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4405719251",
+    "published_iso": "2024-12-23",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation delta expression baseline",
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4405719251",
+    "year_month": "2024-12",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Markov State Models with Weighted Ensemble Simulation: How to Eliminate the Trajectory Merging Bias",
+    "title_norm": "markov state models with weighted ensemble simulation how to eliminate the traje",
+    "abstract": "High Resolution Image Download MS PowerPoint Slide The weighted ensemble (WE) algorithm is gaining popularity as a rare event method for studying long timescale processes with molecular dynamics. WE is particularly useful for determining kinetic properties, such as rates of protein (un)folding and ligand (un)binding, where transition rates can be calculated from the flux of trajectories into a target basin of interest. However, this flux depends exponentially on the number of splitting events that a given trajectory experiences before reaching the target state and can vary by orders of magnitude between WE replicates. Markov state models (MSMs) are helpful tools to aggregate information across multiple WE simulations and have previously been shown to provide more accurate transition rates than WE alone. Discrete-time MSMs are models that coarsely describe the evolution of the system from one discrete state to the next using a discrete lag time, τ. When an MSM is built using conventional MD data, longer values of τ typically provide more accurate results. Combining WE simulations with Markov state modeling presents some additional challenges, especially when using a value of τ that exceeds the lag time between resampling steps in the WE algorithm, τ WE . Here, we identify a source of bias that occurs when τ > τ WE, which we refer to as “merging bias”. We also propose an algorithm to eliminate the merging bias, which results in merging bias-corrected MSMs, or “MBC-MSMs”. Using a simple model system, as well as a complex biomolecular example, we show that MBC-MSMs significantly outperform both τ = τ WE MSMs and uncorrected MSMs at longer lag times.",
+    "year": 2025,
+    "venue": "Journal of Chemical Theory and Computation",
+    "authors": [
+      "Samik Bose",
+      "Ceren Kılınç",
+      "Alex Dickson"
+    ],
+    "citations": 7,
+    "source": "openalex",
+    "source_id": "W4407368565",
+    "doi": "10.1021/acs.jctc.4c01141",
+    "arxiv_id": null,
+    "paper_url": "https://pubs.acs.org/doi/pdf/10.1021/acs.jctc.4c01141?ref=article_openPDF",
+    "published_iso": "2025-02-11",
+    "oa_field": "Computer Science",
+    "semantic_recall": false,
+    "from_query": [
+      "molecular trajectory committor first passage prediction"
+    ],
+    "paper_id": "openalex:W4407368565",
+    "year_month": "2025-02",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Benchmarking foundation cell models for post-perturbation RNA-seq prediction",
+    "title_norm": "benchmarking foundation cell models for post perturbation rna seq prediction",
+    "abstract": "Accurately predicting cellular responses to perturbations is essential for understanding cell behaviour in both healthy and diseased states. While perturbation data is ideal for building such predictive models, its availability is considerably lower than baseline (non-perturbed) cellular data. To address this limitation, several foundation cell models have been developed using large-scale single-cell gene expression data. These models are fine-tuned after pre-training for specific tasks, such as predicting post-perturbation gene expression profiles, and are considered state-of-the-art for these problems. However, proper benchmarking of these models remains an unsolved challenge. In this study, we benchmarked two recently published foundation models, scGPT and scFoundation, against baseline models. Surprisingly, we found that even the simplest baseline model-taking the mean of training examples-outperformed scGPT and scFoundation. Furthermore, basic machine learning models that incorporate biologically meaningful features outperformed scGPT by a large margin. Additionally, we identified that the current Perturb-Seq benchmark datasets exhibit low perturbation-specific variance, making them suboptimal for evaluating such models. Our results highlight important limitations in current benchmarking approaches and provide insights into more effectively evaluating post-perturbation gene expression prediction models.",
+    "year": 2025,
+    "venue": "BMC Genomics",
+    "authors": [
+      "Gerold Csendes",
+      "Gema Sanz",
+      "Kristóf Z. Szalay",
+      "Bence Szalai"
+    ],
+    "citations": 42,
+    "source": "openalex",
+    "source_id": "W4409705874",
+    "doi": "10.1186/s12864-025-11600-2",
+    "arxiv_id": null,
+    "paper_url": "https://bmcgenomics.biomedcentral.com/counter/pdf/10.1186/s12864-025-11600-2",
+    "published_iso": "2025-04-23",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation delta expression baseline",
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4409705874",
+    "year_month": "2025-04",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "PertEval-scFM: Benchmarking Single-Cell Foundation Models for Perturbation Effect Prediction",
+    "title_norm": "perteval scfm benchmarking single cell foundation models for perturbation effect",
+    "abstract": "Abstract In silico modeling of transcriptional responses to perturbations is crucial for advancing our understanding of cellular processes and disease mechanisms. We present PertEval-scFM, a standardized framework designed to evaluate models for perturbation effect prediction. We apply PertEval-scFM to benchmark zero-shot single-cell foundation model (scFM) embeddings against base-line models to assess whether these contextualized representations enhance perturbation effect prediction. Our results show that scFM embeddings do not provide consistent improvements over baseline models, especially under distribution shift. Overall, this study provides a systematic evaluation of zero-shot scFM embeddings for perturbation effect prediction, highlighting the challenges of this task and revealing the limitations of current-generation scFMs. Our findings underscore the need for specialized models and high-quality datasets that capture a broader range of cellular states. Source code and documentation can be found at: https://github.com/aaronwtr/PertEval .",
+    "year": 2024,
+    "venue": "bioRxiv (Cold Spring Harbor Laboratory)",
+    "authors": [
+      "Aaron Wenteler",
+      "Martina Occhetta",
+      "Nikhil Branson",
+      "Victor Curean",
+      "Magdalena Huebner",
+      "William Dee"
+    ],
+    "citations": 38,
+    "source": "openalex",
+    "source_id": "W4403090726",
+    "doi": "10.1101/2024.10.02.616248",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4403090726",
+    "published_iso": "2024-10-03",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4403090726",
+    "year_month": "2024-10",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Non-Markovian dynamics in ice nucleation",
+    "title_norm": "non markovian dynamics in ice nucleation",
+    "abstract": "In simulation studies of crystallization, the size of the largest crystalline nucleus is often used as a reaction coordinate to monitor the progress of the nucleation process. Here, we investigate, for the case of homogeneous ice nucleation, whether the nucleus size exhibits Markovian dynamics, as assumed in classical nucleation theory. Using 300 independent nucleation trajectories generated by molecular dynamics, we evaluate the mean recurrence time required to reach selected values of the largest nucleus size. Early recurrences consistently take longer than later ones, revealing a clear history dependence and thus non-Markovian dynamics. To identify the slow modes underlying this behavior, we analyze several structural descriptors of the nucleus, observing subtle but systematic differences between nuclei at early and late recurrences. By training a neural network on 2700 short trajectories to learn the committor, we identify relevant collective variables. Based on these features, symbolic regression provides a compact approximation of the committor, that is, an improved reaction coordinate, which we subsequently test for Markovian dynamics.",
+    "year": 2026,
+    "venue": "The Journal of Chemical Physics",
+    "authors": [
+      "Pablo Montero de Hijes",
+      "Sebastian Falkner",
+      "Christoph Dellago"
+    ],
+    "citations": 4,
+    "source": "openalex",
+    "source_id": "W7133225163",
+    "doi": "10.1063/5.0314412",
+    "arxiv_id": null,
+    "paper_url": "https://pubs.aip.org/aip/jcp/article-pdf/doi/10.1063/5.0314412/20922121/094501_1_5.0314412.pdf",
+    "published_iso": "2026-03-02",
+    "oa_field": "Earth and Planetary Sciences",
+    "semantic_recall": false,
+    "from_query": [
+      "molecular trajectory committor first passage prediction"
+    ],
+    "paper_id": "openalex:W7133225163",
+    "year_month": "2026-03",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Mapping cells through time and space with moscot",
+    "title_norm": "mapping cells through time and space with moscot",
+    "abstract": "Abstract Single-cell genomic technologies enable the multimodal profiling of millions of cells across temporal and spatial dimensions. However, experimental limitations hinder the comprehensive measurement of cells under native temporal dynamics and in their native spatial tissue niche. Optimal transport has emerged as a powerful tool to address these constraints and has facilitated the recovery of the original cellular context 1–4 . Yet, most optimal transport applications are unable to incorporate multimodal information or scale to single-cell atlases. Here we introduce multi-omics single-cell optimal transport (moscot), a scalable framework for optimal transport in single-cell genomics that supports multimodality across all applications. We demonstrate the capability of moscot to efficiently reconstruct developmental trajectories of 1.7 million cells from mouse embryos across 20 time points. To illustrate the capability of moscot in space, we enrich spatial transcriptomic datasets by mapping multimodal information from single-cell profiles in a mouse liver sample and align multiple coronal sections of the mouse brain. We present moscot.spatiotemporal, an approach that leverages gene-expression data across both spatial and temporal dimensions to uncover the spatiotemporal dynamics of mouse embryogenesis. We also resolve endocrine-lineage relationships of delta and epsilon cells in a previously unpublished mouse, time-resolved pancreas development dataset using paired measurements of gene expression and chromatin accessibility. Our findings are confirmed through experimental validation of NEUROD2 as a regulator of epsilon progenitor cells in a model of human induced pluripotent stem cell islet cell differentiation. Moscot is available as open-source software, accompanied by extensive documentation.",
+    "year": 2025,
+    "venue": "Nature",
+    "authors": [
+      "Dominik Klein",
+      "Giovanni Palla",
+      "Marius Lange",
+      "Michal Klein",
+      "Zoe Piran",
+      "Manuel Gander"
+    ],
+    "citations": 143,
+    "source": "openalex",
+    "source_id": "W4406715779",
+    "doi": "10.1038/s41586-024-08453-2",
+    "arxiv_id": null,
+    "paper_url": "https://www.nature.com/articles/s41586-024-08453-2.pdf",
+    "published_iso": "2025-01-22",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "paper_id": "openalex:W4406715779",
+    "year_month": "2025-01",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Modeling and predicting single-cell multi-gene perturbation responses with scLAMBDA",
+    "title_norm": "modeling and predicting single cell multi gene perturbation responses with sclam",
+    "abstract": "Understanding cellular responses to genetic perturbations is essential for understanding gene regulation and phenotype formation. While high-throughput single-cell RNA-sequencing has facilitated detailed profiling of heterogeneous transcriptional responses to perturbations at the single-cell level, there remains a pressing need for computational models that can decode the mechanisms driving these responses and accurately predict outcomes to prioritize target genes for experimental design. Here, we present scLAMBDA, a deep generative learning framework designed to model and predict single-cell transcriptional responses to genetic perturbations, including single-gene and combinatorial multi-gene perturbations. By leveraging gene embeddings derived from large language models, scLAMBDA effectively integrates prior biological knowledge and disentangles basal cell states from perturbation-specific salient representations. Through comprehensive evaluations on multiple single-cell CRISPR Perturb-seq datasets, scLAMBDA consistently outperformed state-of-the-art methods in predicting perturbation outcomes, achieving higher prediction accuracy. Notably, scLAMBDA demonstrated robust generalization to unseen target genes and perturbations, and its predictions captured both average expression changes and the heterogeneity of single-cell responses. Furthermore, its predictions enable diverse downstream analyses, including the identification of differentially expressed genes and the exploration of genetic interactions, demonstrating its utility and versatility.",
+    "year": 2024,
+    "venue": "bioRxiv (Cold Spring Harbor Laboratory)",
+    "authors": [
+      "Gefei Wang",
+      "Tianyu Liu",
+      "Jia Zhao",
+      "Youshu Cheng",
+      "Hongyu Zhao"
+    ],
+    "citations": 16,
+    "source": "openalex",
+    "source_id": "W4405166050",
+    "doi": "10.1101/2024.12.04.626878",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4405166050",
+    "published_iso": "2024-12-08",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell conditional transport perturbation effect",
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4405166050",
+    "year_month": "2024-12",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "CZ CELLxGENE Discover: a single-cell data platform for scalable exploration, analysis and modeling of aggregated data",
+    "title_norm": "cz cellxgene discover a single cell data platform for scalable exploration analy",
+    "abstract": "Hundreds of millions of single cells have been analyzed using high-throughput transcriptomic methods. The cumulative knowledge within these datasets provides an exciting opportunity for unlocking insights into health and disease at the level of single cells. Meta-analyses that span diverse datasets building on recent advances in large language models and other machine-learning approaches pose exciting new directions to model and extract insight from single-cell data. Despite the promise of these and emerging analytical tools for analyzing large amounts of data, the sheer number of datasets, data models and accessibility remains a challenge. Here, we present CZ CELLxGENE Discover (cellxgene.cziscience.com), a data platform that provides curated and interoperable single-cell data. Available via a free-to-use online data portal, CZ CELLxGENE hosts a growing corpus of community-contributed data of over 93 million unique cells. Curated, standardized and associated with consistent cell-level metadata, this collection of single-cell transcriptomic data is the largest of its kind and growing rapidly via community contributions. A suite of tools and features enables accessibility and reusability of the data via both computational and visual interfaces to allow researchers to explore individual datasets, perform cross-corpus analysis, and run meta-analyses of tens of millions of cells across studies and tissues at the resolution of single cells.",
+    "year": 2024,
+    "venue": "Nucleic Acids Research",
+    "authors": [
+      "CZI Cell Science Program",
+      "Shibla Abdulla",
+      "Brian D. Aevermann",
+      "Pedro Assis",
+      "Seve Badajoz",
+      "Sidney M. Bell"
+    ],
+    "citations": 367,
+    "source": "openalex",
+    "source_id": "W4404793799",
+    "doi": "10.1093/nar/gkae1142",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4404793799",
+    "published_iso": "2024-11-01",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4404793799",
+    "year_month": "2024-11",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Predicting cell morphological responses to perturbations using generative modeling",
+    "title_norm": "predicting cell morphological responses to perturbations using generative modeli",
+    "abstract": "Advancements in high-throughput screenings enable the exploration of rich phenotypic readouts through high-content microscopy, expediting the development of phenotype-based drug discovery. However, analyzing large and complex high-content imaging screenings remains challenging due to incomplete sampling of perturbations and the presence of technical variations between experiments. To tackle these shortcomings, we present IMage Perturbation Autoencoder (IMPA), a generative style-transfer model predicting morphological changes of perturbations across genetic and chemical interventions. We show that IMPA accurately captures morphological and population-level changes of both seen and unseen perturbations on breast cancer and osteosarcoma cells. Additionally, IMPA accounts for batch effects and can model perturbations across various sources of technical variation, further enhancing its robustness in diverse experimental conditions. With the increasing availability of large-scale high-content imaging screens generated by academic and industrial consortia, we envision that IMPA will facilitate the analysis of microscopy data and enable efficient experimental design via in-silico perturbation prediction.",
+    "year": 2025,
+    "venue": "Nature Communications",
+    "authors": [
+      "Alessandro Palma",
+      "Fabian J. Theis",
+      "Mohammad Lotfollahi"
+    ],
+    "citations": 22,
+    "source": "openalex",
+    "source_id": "W4406170632",
+    "doi": "10.1038/s41467-024-55707-8",
+    "arxiv_id": null,
+    "paper_url": "https://www.nature.com/articles/s41467-024-55707-8.pdf",
+    "published_iso": "2025-01-08",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell conditional transport perturbation effect",
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4406170632",
+    "year_month": "2025-01",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Fast and scalable Wasserstein-1 neural optimal transport solver for single-cell perturbation prediction",
+    "title_norm": "fast and scalable wasserstein 1 neural optimal transport solver for single cell ",
+    "abstract": "MOTIVATION: Predicting single-cell perturbation responses requires mapping between two unpaired single-cell data distributions. Optimal transport (OT) theory provides a principled framework for constructing such mappings by minimizing transport cost. Recently, Wasserstein-2 (W2) neural optimal transport solvers (e.g. CellOT) have been used for this prediction task. However, W2 OT relies on the general Kantorovich dual formulation, which involves optimizing over two conjugate functions, leading to a complex min-max optimization problem that converges slowly. RESULTS: To address these challenges, we propose a novel solver based on the Wasserstein-1 (W1) dual formulation. Unlike W2, the W1 dual simplifies the optimization to a maximization problem over a single 1-Lipschitz function, thus eliminating the need for time-consuming min-max optimization. While solving the W1 dual only reveals the transport direction and does not directly provide a unique optimal transport map, we incorporate an additional step using adversarial training to determine an appropriate transport step size, effectively recovering the transport map. Our experiments demonstrate that the proposed W1 neural optimal transport solver can mimic the W2 OT solvers in finding a unique and \"monotonic\" map on 2D datasets. Moreover, the W1 OT solver achieves performance on par with or surpasses W2 OT solvers on real single-cell perturbation datasets. Furthermore, we show that W1 OT solver achieves 25∼45× speedup, scales better on high dimensional transportation task, and can be directly applied on single-cell RNA-seq dataset with highly variable genes. AVAILABILITY AND IMPLEMENTATION: Our implementation and experiments are open-sourced at https://github.com/poseidonchan/w1ot.",
+    "year": 2025,
+    "venue": "Bioinformatics",
+    "authors": [
+      "Yanshuo Chen",
+      "Zhengmian Hu",
+      "Wei Chen",
+      "Heng Huang"
+    ],
+    "citations": 6,
+    "source": "openalex",
+    "source_id": "W4412454251",
+    "doi": "10.1093/bioinformatics/btaf253",
+    "arxiv_id": null,
+    "paper_url": "https://academic.oup.com/bioinformatics/article-pdf/41/Supplement_1/i513/63745275/btaf253.pdf",
+    "published_iso": "2025-04-30",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell conditional transport perturbation effect",
+      "single cell perturbation delta expression baseline"
+    ],
+    "paper_id": "openalex:W4412454251",
+    "year_month": "2025-04",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Engineering immunogens that select for specific mutations in HIV broadly neutralizing antibodies",
+    "title_norm": "engineering immunogens that select for specific mutations in hiv broadly neutral",
+    "abstract": "Vaccine development targeting rapidly evolving pathogens such as HIV-1 requires induction of broadly neutralizing antibodies (bnAbs) with conserved paratopes and mutations, and in some cases, the same Ig-heavy chains. The current trial-and-error search for immunogen modifications that improve selection for specific bnAb mutations is imprecise. Here, to precisely engineer bnAb boosting immunogens, we use molecular dynamics simulations to examine encounter states that form when antibodies collide with the HIV-1 Envelope (Env). By mapping how bnAbs use encounter states to find their bound states, we identify Env mutations predicted to select for specific antibody mutations in two HIV-1 bnAb B cell lineages. The Env mutations encode antibody affinity gains and select for desired antibody mutations in vivo. These results demonstrate proof-of-concept that Env immunogens can be designed to directly select for specific antibody mutations at residue-level precision by vaccination, thus demonstrating the feasibility of sequential bnAb-inducing HIV-1 vaccine design. In this work, researchers engineer HIV-1 immunogens using molecular dynamics simulations to enhance vaccine designs that select for specific antibody mutations. Their approach improved the selection of mutations crucial for broadly neutralizing antibody responses, offering a promising strategy for HIV vaccine development.",
+    "year": 2024,
+    "venue": "Nature Communications",
+    "authors": [
+      "Rory Henderson",
+      "Kara Anasti",
+      "Kartik Manne",
+      "Victoria Stalls",
+      "Carrie Saunders",
+      "Yishak Bililign"
+    ],
+    "citations": 17,
+    "source": "openalex",
+    "source_id": "W4404010273",
+    "doi": "10.1038/s41467-024-53120-9",
+    "arxiv_id": null,
+    "paper_url": "https://www.nature.com/articles/s41467-024-53120-9.pdf",
+    "published_iso": "2024-11-03",
+    "oa_field": "Immunology and Microbiology",
+    "semantic_recall": false,
+    "from_query": [
+      "molecular trajectory committor first passage prediction"
+    ],
+    "paper_id": "openalex:W4404010273",
+    "year_month": "2024-11",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "PerturBench: Benchmarking Machine Learning Models for Cellular Perturbation Analysis",
+    "title_norm": "perturbench benchmarking machine learning models for cellular perturbation analy",
+    "abstract": "We introduce a comprehensive framework for modeling single cell transcriptomic responses to perturbations, aimed at standardizing benchmarking in this rapidly evolving field. Our approach includes a modular and user-friendly model development and evaluation platform, a collection of diverse perturbational datasets, and a set of metrics designed to fairly compare models and dissect their performance. Through extensive evaluation of both published and baseline models across diverse datasets, we highlight the limitations of widely used models, such as mode collapse. We also demonstrate the importance of rank metrics which complement traditional model fit measures, such as RMSE, for validating model effectiveness. Notably, our results show that while no single model architecture clearly outperforms others, simpler architectures are generally competitive and scale well with larger datasets. Overall, this benchmarking exercise sets new standards for model evaluation, supports robust model development, and furthers the use of these models to simulate genetic and chemical screens for therapeutic discovery.",
+    "year": 2025,
+    "venue": "",
+    "authors": [
+      "Yan Wu",
+      "Esther Wershof",
+      "Sebastian M. Schmon",
+      "Marcel Nassar",
+      "Błażej Osiński",
+      "Ridvan Eksi"
+    ],
+    "citations": 14,
+    "source": "openalex",
+    "source_id": "W4403007117",
+    "doi": "10.52202/085713-3225",
+    "arxiv_id": null,
+    "paper_url": "https://arxiv.org/pdf/2408.10609",
+    "published_iso": "2025-01-01",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation delta expression baseline",
+      "single cell conditional transport perturbation effect"
+    ],
+    "paper_id": "openalex:W4403007117",
+    "year_month": "2025-01",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Systema: a framework for evaluating genetic perturbation response prediction beyond systematic variation",
+    "title_norm": "systema a framework for evaluating genetic perturbation response prediction beyo",
+    "abstract": "Predicting transcriptional responses to genetic perturbations is challenging in functional genomics. While recent methods aim to infer effects of untested perturbations, their true predictive power remains unclear. Here, we show that current methods struggle to generalize beyond systematic variation, the consistent transcriptional differences between perturbed and control cells arising from selection biases or confounders. We quantify this variation in ten datasets, spanning three technologies and five cell lines, and show that common metrics are susceptible to these biases, leading to overestimated performance. To address this, we introduce Systema, an evaluation framework that emphasizes perturbation-specific effects and identifies predictions that correctly reconstruct the perturbation landscape. Using this framework, we uncover insights into the predictive capabilities of existing methods and show that predicting responses to unseen perturbations is substantially harder than standard metrics suggest. Our work highlights the importance of heterogeneous gene panels and disentangles predictive performance from systematic effects, enabling biologically meaningful developments in perturbation response modeling.",
+    "year": 2025,
+    "venue": "Nature Biotechnology",
+    "authors": [
+      "Ramón Viñas",
+      "Maciej Wiatrak",
+      "Zoe Piran",
+      "Shuyang Fan",
+      "Liangze Jiang",
+      "Sarah A. Teichmann"
+    ],
+    "citations": 44,
+    "source": "openalex",
+    "source_id": "W4413495491",
+    "doi": "10.1038/s41587-025-02777-8",
+    "arxiv_id": null,
+    "paper_url": "https://www.nature.com/articles/s41587-025-02777-8.pdf",
+    "published_iso": "2025-08-25",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4413495491",
+    "year_month": "2025-08",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "GPerturb: Gaussian process modelling of single-cell perturbation data",
+    "title_norm": "gperturb gaussian process modelling of single cell perturbation data",
+    "abstract": "Single-cell RNA sequencing and CRISPR screening enable high-throughput analysis of genetic perturbations at single-cell resolution. Understanding combinatorial perturbation effects is essential but challenging due to data sparsity and complex biological mechanisms. We present GPerturb, a Gaussian process-based sparse perturbation regression model designed to estimate gene-level perturbation effects. GPerturb employs an additive structure to separate signal from noise and captures sparse, interpretable effects from both discrete and continuous responses. It also provides uncertainty estimates for the presence and strength of perturbation effects on individual genes. We demonstrate the use GPerturb on both simulated and real-world datasets, characterising its competitive performance with current state-of-the-art methods. Furthermore, the model reveals meaningful gene-perturbation interactions and identifies effects consistent with known biology. GPerturb offers a novel approach for uncovering complex dependencies between gene expression and perturbations and advancing our understanding of gene regulation at the single-cell level.",
+    "year": 2025,
+    "venue": "Nature Communications",
+    "authors": [
+      "Hanwen Xing",
+      "Christopher Yau"
+    ],
+    "citations": 6,
+    "source": "openalex",
+    "source_id": "W4411910961",
+    "doi": "10.1038/s41467-025-61165-7",
+    "arxiv_id": null,
+    "paper_url": "https://www.nature.com/articles/s41467-025-61165-7.pdf",
+    "published_iso": "2025-07-01",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell conditional transport perturbation effect"
+    ],
+    "paper_id": "openalex:W4411910961",
+    "year_month": "2025-07",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Extracellular vesicle-derived miRNA-mediated cell–cell communication inference for single-cell transcriptomic data with miRTalk",
+    "title_norm": "extracellular vesicle derived mirna mediated cell cell communication inference f",
+    "abstract": "MicroRNAs are released from cells in extracellular vesicles (EVs), representing an essential mode of cell-cell communication (CCC) via a regulatory effect on gene expression. Single-cell RNA-sequencing technologies have ushered in an era of elucidating CCC at single-cell resolution. Herein, we present miRTalk, a pioneering approach for inferring CCC mediated by EV-derived miRNA-target interactions (MiTIs). The benchmarking against simulated and real-world datasets demonstrates the superior performance of miRTalk, and the application to four disease scenarios reveals the in-depth MiTI-mediated CCC mechanisms. Collectively, miRTalk can infer EV-derived MiTI-mediated CCC with scRNA-seq data, providing new insights into the intercellular dynamics of biological processes.",
+    "year": 2025,
+    "venue": "Genome biology",
+    "authors": [
+      "Xin Shao",
+      "Lingqi Yu",
+      "Chengyu Li",
+      "Jingyang Qian",
+      "Xinyu Yang",
+      "Haihong Yang"
+    ],
+    "citations": 15,
+    "source": "openalex",
+    "source_id": "W4409411670",
+    "doi": "10.1186/s13059-025-03566-x",
+    "arxiv_id": null,
+    "paper_url": "https://genomebiology.biomedcentral.com/counter/pdf/10.1186/s13059-025-03566-x",
+    "published_iso": "2025-04-14",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "paper_id": "openalex:W4409411670",
+    "year_month": "2025-04",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Squidiff: predicting cellular development and responses to perturbations using a diffusion model",
+    "title_norm": "squidiff predicting cellular development and responses to perturbations using a ",
+    "abstract": "",
+    "year": 2025,
+    "venue": "Nature Methods",
+    "authors": [
+      "Siyu He",
+      "Yuefei Zhu",
+      "Daniel Naveed Tavakol",
+      "Haotian Ye",
+      "Yeh‐Hsing Lao",
+      "Zixian Zhu"
+    ],
+    "citations": 30,
+    "source": "openalex",
+    "source_id": "W4415790290",
+    "doi": "10.1038/s41592-025-02877-y",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4415790290",
+    "published_iso": "2025-11-03",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4415790290",
+    "year_month": "2025-11",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Weighted active space protocol for multireference machine-learned potentials",
+    "title_norm": "weighted active space protocol for multireference machine learned potentials",
+    "abstract": "Multireference methods such as multiconfiguration pair-density functional theory accurately capture electronic correlation in systems with strong multiconfigurational character, but their cost precludes direct use in molecular dynamics. Combining these methods with machine-learned interatomic potentials (MLPs) can extend their reach. However, the sensitivity of multireference calculations to the choice of the active space complicates the consistent evaluation of energies and gradients across structurally diverse nuclear configurations. To overcome this limitation, we introduce the weighted active space protocol (WASP), a systematic approach to assign a consistent active space for a given system across uncorrelated configurations. By integrating WASP with MLPs and enhanced sampling techniques, we propose a data-efficient active learning cycle that enables the training of an MLP on multireference data. We demonstrated the approach on the TiC + -catalyzed C–H activation of methane, a reaction that poses challenges for Kohn–Sham density functional theory due to its significant multireference character. This framework enables accurate and efficient modeling of catalytic dynamics, establishing a paradigm for simulating complex reactive processes beyond the limits of conventional electronic-structure methods.",
+    "year": 2025,
+    "venue": "Proceedings of the National Academy of Sciences",
+    "authors": [
+      "Aniruddha Seal",
+      "Simone Perego",
+      "Matthew R. Hennefarth",
+      "Umberto Raucci",
+      "Luigi Bonati",
+      "Andrew L. Ferguson"
+    ],
+    "citations": 8,
+    "source": "openalex",
+    "source_id": "W4414195114",
+    "doi": "10.1073/pnas.2513693122",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4414195114",
+    "published_iso": "2025-09-15",
+    "oa_field": "Materials Science",
+    "semantic_recall": false,
+    "from_query": [
+      "molecular trajectory committor first passage prediction"
+    ],
+    "paper_id": "openalex:W4414195114",
+    "year_month": "2025-09",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Prediction of Single-Cell perturbation response based on Direction-Constrained diffusion Schrödinger Bridge",
+    "title_norm": "prediction of single cell perturbation response based on direction constrained d",
+    "abstract": "",
+    "year": 2025,
+    "venue": "Journal of Biomedical Informatics",
+    "authors": [
+      "Yiqing Luo",
+      "Lin Liu",
+      "Yuchen Fu",
+      "Yi Deng",
+      "Lin Tang"
+    ],
+    "citations": 1,
+    "source": "openalex",
+    "source_id": "W4414413579",
+    "doi": "10.1016/j.jbi.2025.104915",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4414413579",
+    "published_iso": "2025-09-23",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4414413579",
+    "year_month": "2025-09",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Leveraging Transformer Models to Capture Multi-Scale Dynamics in Biomolecules by Nano-GPT",
+    "title_norm": "leveraging transformer models to capture multi scale dynamics in biomolecules by",
+    "abstract": "Long-term biomolecular dynamics is critical for understanding key evolutionary transformations in molecular systems. However, capturing these processes requires extended simulation timescales that often exceed the practical limits of conventional models. To address this, shorter simulations, initialized with diverse perturbations, are commonly used to sample the phase space and explore a wide range of behaviors. Recent advances have leveraged language models to infer long-term behavior from short trajectories, but methods such as long short-term memory (LSTM) networks are constrained to low-dimensional reaction coordinates, limiting their applicability to complex systems. In this work, we present nano-GPT, a novel deep learning model inspired by the GPT architecture specifically designed to capture long-term dynamics in molecular systems with fine-grained conformational states and complex transitions. The model employs a two-pass training mechanism that incrementally replaces molecular dynamics (MD) tokens with model-generated predictions, effectively mitigating the accumulation errors inherent in the training window. We validate nano-GPT on three distinct systems: a four-state model potential, the alanine dipeptide, a well-studied simple molecule, and the Fip35 WW domain, a complex biomolecular system. Our results show that nano-GPT effectively captures long-time scale dynamics by learning high-order dependencies through an attention mechanism, offering a novel perspective for interpreting biomolecular processes.",
+    "year": 2025,
+    "venue": "Journal of Chemical Theory and Computation",
+    "authors": [
+      "Weiya Zeng",
+      "Lu Zhang",
+      "Yuan Yao"
+    ],
+    "citations": 1,
+    "source": "openalex",
+    "source_id": "W4414289507",
+    "doi": "10.1021/acs.jctc.5c00180",
+    "arxiv_id": null,
+    "paper_url": "https://pubs.acs.org/doi/pdf/10.1021/acs.jctc.5c00180?ref=article_openPDF",
+    "published_iso": "2025-09-17",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "molecular trajectory committor first passage prediction"
+    ],
+    "paper_id": "openalex:W4414289507",
+    "year_month": "2025-09",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Scaling Large Language Models for Next-Generation Single-Cell Analysis",
+    "title_norm": "scaling large language models for next generation single cell analysis",
+    "abstract": "Single-cell RNA sequencing has transformed our understanding of cellular diversity, yet current single-cell foundation models (scFMs) remain limited in their scalability, flexibility across diverse tasks, and ability to natively integrate textual information. In this work, we build upon the Cell2Sentence (C2S) framework, which represents scRNA-seq profiles as textual \"cell sentences,\" to train Large Language Models (LLMs) on a corpus comprising over one billion tokens of transcriptomic data, biological text, and metadata. Scaling the model to 27 billion parameters yields consistent improvements in predictive and generative capabilities and supports advanced downstream tasks that require synthesis of information across multi-cellular contexts. Targeted fine-tuning with modern reinforcement learning techniques produces strong performance in perturbation response prediction, natural language interpretation, and complex biological reasoning. This predictive strength enabled a dual-context virtual screen that nominated the kinase inhibitor silmitasertib (CX-4945) as a candidate for context-selective upregulation of antigen presentation. Experimental assessment in human cell models unseen during training supported this prediction, demonstrating that C2S-Scale can effectively guide the discovery of context-conditioned biology. C2S-Scale unifies transcriptomic and textual data at unprecedented scales, surpassing both specialized single-cell models and general-purpose LLMs to provide a platform for next-generation single-cell analysis and the development of \"virtual cells.\"",
+    "year": 2025,
+    "venue": "bioRxiv (Cold Spring Harbor Laboratory)",
+    "authors": [
+      "Syed Asad Rizvi",
+      "Daniel Lévine",
+      "Aakash Patel",
+      "Shiyang Zhang",
+      "Eric W. Wang",
+      "Curtis Jamison Perry"
+    ],
+    "citations": 35,
+    "source": "openalex",
+    "source_id": "W4409624394",
+    "doi": "10.1101/2025.04.14.648850",
+    "arxiv_id": null,
+    "paper_url": "https://www.biorxiv.org/content/biorxiv/early/2025/04/17/2025.04.14.648850.full.pdf",
+    "published_iso": "2025-04-17",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4409624394",
+    "year_month": "2025-04",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Combinatorial prediction of therapeutic perturbations using causally inspired neural networks",
+    "title_norm": "combinatorial prediction of therapeutic perturbations using causally inspired ne",
+    "abstract": "Phenotype-driven approaches identify disease-counteracting compounds by analysing the phenotypic signatures that distinguish diseased from healthy states. Here we introduce PDGrapher, a causally inspired graph neural network model that predicts combinatorial perturbagens (sets of therapeutic targets) capable of reversing disease phenotypes. Unlike methods that learn how perturbations alter phenotypes, PDGrapher solves the inverse problem and predicts the perturbagens needed to achieve a desired response by embedding disease cell states into networks, learning a latent representation of these states, and identifying optimal combinatorial perturbations. In experiments in nine cell lines with chemical perturbations, PDGrapher identifies effective perturbagens in more testing samples than competing methods. It also shows competitive performance on ten genetic perturbation datasets. An advantage of PDGrapher is its direct prediction, in contrast to the indirect and computationally intensive approach common in phenotype-driven models. It trains up to 25× faster than existing methods, providing a fast approach for identifying therapeutic perturbations and advancing phenotype-driven drug discovery.",
+    "year": 2025,
+    "venue": "Nature Biomedical Engineering",
+    "authors": [
+      "Guadalupe Gonzalez",
+      "Xiang Lin",
+      "Isuru S. Herath",
+      "Kirill Veselkov",
+      "Michael M. Bronstein",
+      "Marinka Žitnik"
+    ],
+    "citations": 21,
+    "source": "openalex",
+    "source_id": "W4414084489",
+    "doi": "10.1038/s41551-025-01481-x",
+    "arxiv_id": null,
+    "paper_url": "https://www.nature.com/articles/s41551-025-01481-x.pdf",
+    "published_iso": "2025-09-09",
+    "oa_field": "Computer Science",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell conditional transport perturbation effect"
+    ],
+    "paper_id": "openalex:W4414084489",
+    "year_month": "2025-09",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "AI-guided transition path sampling of lipid flip-flop and membrane nanoporation",
+    "title_norm": "ai guided transition path sampling of lipid flip flop and membrane nanoporation",
+    "abstract": "We study lipid translocation (\"flip-flop\") between the leaflets of planar lipid bilayers with artificial intelligence (AI) guided transition path sampling (TPS). Rare flip-flops compete with biological machineries that actively establish asymmetric lipid compositions. By initializing molecular dynamics simulations near transition states, AI for molecular mechanism discovery (AIMMD) captures lipid flip-flop without biasing the dynamics. Four distinct mechanisms of flip-flop emerge, as encoded in neural networks trained on the fly to predict the commitment probability (or \"committor\") for a lipid to proceed to one or the other leaflet. Whereas coarse-grained DMPC lipids \"tunnel\" through the hydrophobic bilayer, unaided by water, atomistic DMPC lipids cross the membrane through spontaneously formed water nanopores. In an atomistic plasma membrane mimetic, cholesterol tunnels unaided by water, whereas PLPC lipids exploit both transient water threads and nanodroplets to cross a locally thinned membrane, as seen also in an atomistic bilayer of DSPC lipids. Remarkably, in the high (~660) dimensional feature space of the deep neural networks in AIMMD, the reaction coordinate becomes effectively linear, in line with Cover's theorem and consistent with the idea of dominant reaction tubes.",
+    "year": 2025,
+    "venue": "Nature Communications",
+    "authors": [
+      "Matthias Post",
+      "Gerhard Hummer"
+    ],
+    "citations": 1,
+    "source": "openalex",
+    "source_id": "W7116727588",
+    "doi": "10.1038/s41467-025-67599-3",
+    "arxiv_id": null,
+    "paper_url": "https://www.nature.com/articles/s41467-025-67599-3_reference.pdf",
+    "published_iso": "2025-12-22",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "molecular trajectory committor first passage prediction"
+    ],
+    "paper_id": "openalex:W7116727588",
+    "year_month": "2025-12",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "scHiClassifier: a deep learning framework for cell type prediction by fusing multiple feature sets from single-cell Hi-C data",
+    "title_norm": "schiclassifier a deep learning framework for cell type prediction by fusing mult",
+    "abstract": "Single-cell high-throughput chromosome conformation capture (Hi-C) technology enables capturing chromosomal spatial structure information at the cellular level. However, to effectively investigate changes in chromosomal structure across different cell types, there is a requisite for methods that can identify cell types utilizing single-cell Hi-C data. Current frameworks for cell type prediction based on single-cell Hi-C data are limited, often struggling with features interpretability and biological significance, and lacking convincing and robust classification performance validation. In this study, we propose four new feature sets based on the contact matrix with clear interpretability and biological significance. Furthermore, we develop a novel deep learning framework named scHiClassifier based on multi-head self-attention encoder, 1D convolution and feature fusion, which integrates information from these four feature sets to predict cell types accurately. Through comprehensive comparison experiments with benchmark frameworks on six datasets, we demonstrate the superior classification performance and the universality of the scHiClassifier framework. We further assess the robustness of scHiClassifier through data perturbation experiments and data dropout experiments. Moreover, we demonstrate that using all feature sets in the scHiClassifier framework yields optimal performance, supported by comparisons of different feature set combinations. The effectiveness and the superiority of the multiple feature set extraction are proven by comparison with four unsupervised dimensionality reduction methods. Additionally, we analyze the importance of different feature sets and chromosomes using the \"SHapley Additive exPlanations\" method. Furthermore, the accuracy and reliability of the scHiClassifier framework in cell classification for single-cell Hi-C data are supported through enrichment analysis. The source code of scHiClassifier is freely available at https://github.com/HaoWuLab-Bioinformatics/scHiClassifier.",
+    "year": 2024,
+    "venue": "Briefings in Bioinformatics",
+    "authors": [
+      "Xiangfei Zhou",
+      "Hao Wu"
+    ],
+    "citations": 58,
+    "source": "openalex",
+    "source_id": "W4406632986",
+    "doi": "10.1093/bib/bbaf009",
+    "arxiv_id": null,
+    "paper_url": "https://academic.oup.com/bib/article-pdf/26/1/bbaf009/61517670/bbaf009.pdf",
+    "published_iso": "2024-11-22",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4406632986",
+    "year_month": "2024-11",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "AI-powered simulation-based inference of a genuinely spatial-stochastic gene regulation model of early mouse embryogenesis",
+    "title_norm": "ai powered simulation based inference of a genuinely spatial stochastic gene reg",
+    "abstract": "Understanding how multicellular organisms reliably orchestrate cell-fate decisions is a central challenge in developmental biology, particularly in early mammalian development, where tissue-level differentiation arises from seemingly cell-autonomous mechanisms. In this study, we present a multi-scale, spatial-stochastic simulation framework for mouse embryogenesis, focusing on inner cell mass (ICM) differentiation into epiblast (EPI) and primitive endoderm (PRE) at the blastocyst stage. Our framework models key regulatory and tissue-scale interactions in a biophysically realistic fashion, capturing the inherent stochasticity of intracellular gene expression and intercellular signaling, while efficiently simulating these processes by advancing event-driven simulation techniques. Leveraging the power of Simulation-Based Inference (SBI) through the AI-driven Sequential Neural Posterior Estimation (SNPE) algorithm, we conduct a large-scale Bayesian inferential analysis to identify parameter sets that faithfully reproduce experimentally observed features of ICM specification. Our results reveal mechanistic insights into how the combined action of autocrine and paracrine FGF4 signaling coordinates stochastic gene expression at the cellular scale to achieve robust and reproducible ICM patterning at the tissue scale. We further demonstrate that the ICM exhibits a specific time window of sensitivity to exogenous FGF4, enabling lineage proportions to be adjusted based on timing and dosage, thereby extending current experimental findings and providing quantitative predictions for both mutant and wild-type ICM systems. Notably, FGF4 signaling not only ensures correct EPI-PRE lineage proportions but also enhances ICM resilience to perturbations, reducing fate-proportioning errors by 10-20% compared to a purely cell-autonomous system. Additionally, we uncover a surprising role for variability in intracellular initial conditions, showing that high gene-expression heterogeneity can improve both the accuracy and precision of cell-fate proportioning, which remains robust when fewer than 25% of the ICM population experiences perturbed initial conditions. Our work offers a comprehensive, spatial-stochastic description of the biochemical processes driving ICM differentiation and identifies the necessary conditions for its robust unfolding. It also provides a framework for future exploration of similar spatial-stochastic systems in developmental biology.",
+    "year": 2024,
+    "venue": "PLoS Computational Biology",
+    "authors": [
+      "Magdalena Sierra",
+      "Thomas R. Sokolowski"
+    ],
+    "citations": 8,
+    "source": "openalex",
+    "source_id": "W4404370798",
+    "doi": "10.1371/journal.pcbi.1012473",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4404370798",
+    "published_iso": "2024-11-14",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "molecular trajectory committor first passage prediction"
+    ],
+    "paper_id": "openalex:W4404370798",
+    "year_month": "2024-11",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "GeneCompass: deciphering universal gene regulatory mechanisms with a knowledge-informed cross-species foundation model",
+    "title_norm": "genecompass deciphering universal gene regulatory mechanisms with a knowledge in",
+    "abstract": "Deciphering universal gene regulatory mechanisms in diverse organisms holds great potential for advancing our knowledge of fundamental life processes and facilitating clinical applications. However, the traditional research paradigm primarily focuses on individual model organisms and does not integrate various cell types across species. Recent breakthroughs in single-cell sequencing and deep learning techniques present an unprecedented opportunity to address this challenge. In this study, we built an extensive dataset of over 120 million human and mouse single-cell transcriptomes. After data preprocessing, we obtained 101,768,420 single-cell transcriptomes and developed a knowledge-informed cross-species foundation model, named GeneCompass. During pre-training, GeneCompass effectively integrated four types of prior biological knowledge to enhance our understanding of gene regulatory mechanisms in a self-supervised manner. By fine-tuning for multiple downstream tasks, GeneCompass outperformed state-of-the-art models in diverse applications for a single species and unlocked new realms of cross-species biological investigations. We also employed GeneCompass to search for key factors associated with cell fate transition and showed that the predicted candidate genes could successfully induce the differentiation of human embryonic stem cells into the gonadal fate. Overall, GeneCompass demonstrates the advantages of using artificial intelligence technology to decipher universal gene regulatory mechanisms and shows tremendous potential for accelerating the discovery of critical cell fate regulators and candidate drug targets.",
+    "year": 2024,
+    "venue": "Cell Research",
+    "authors": [
+      "Xiaodong Yang",
+      "Guole Liu",
+      "Guihai Feng",
+      "Dechao Bu",
+      "Pengfei Wang",
+      "Jie Jiang"
+    ],
+    "citations": 122,
+    "source": "openalex",
+    "source_id": "W4403174218",
+    "doi": "10.1038/s41422-024-01034-y",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4403174218",
+    "published_iso": "2024-10-07",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "paper_id": "openalex:W4403174218",
+    "year_month": "2024-10",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "PerturbNet predicts single-cell responses to unseen chemical and genetic perturbations",
+    "title_norm": "perturbnet predicts single cell responses to unseen chemical and genetic perturb",
+    "abstract": "Chemical and genetic perturbations, such as those induced by small molecules and CRISPR, effect complex changes in the molecular states of cells. Despite advances in high-throughput single-cell perturbation screening technology, the space of possible perturbations is far too large to measure exhaustively. Here, we introduce PerturbNet, a flexible deep generative model designed to predict the distribution of cell states induced by unseen chemical or genetic perturbations. PerturbNet accurately predicts gene expression changes in response to unseen small molecules based on their chemical structures while also accounting for key covariates such as dosage and cell type. Moreover, PerturbNet accurately predicts the distribution of single-cell gene expression states following CRISPR activation or CRISPR interference by leveraging gene functional annotations. Our approach significantly outperforms previous methods, particularly for predicting the effects of perturbing completely unseen genes. Finally, we demonstrate for the first time that amino acid sequence embeddings can be used to predict gene expression changes induced by missense mutations. We use PerturbNet to predict the effects of all point mutations in GATA1 and nominate variants that significantly impact the cell state distribution of human hematopoietic stem cells. Using a crystal structure of GATA1 bound to DNA, we validate that these large-effect variants occur in the core DNA-contact region of GATA1 and tend to involve large changes in amino acid side-chain volume.",
+    "year": 2025,
+    "venue": "Molecular Systems Biology",
+    "authors": [
+      "Hengshi Yu",
+      "Weizhou Qian",
+      "Yuxuan Song",
+      "Joshua D. Welch"
+    ],
+    "citations": 22,
+    "source": "openalex",
+    "source_id": "W4412160990",
+    "doi": "10.1038/s44320-025-00131-3",
+    "arxiv_id": null,
+    "paper_url": "https://www.embopress.org/action/downloadSupplement?doi=10.1038/s44320-025-00131-3&file=44320_2025_131_MOESM2_ESM.pdf",
+    "published_iso": "2025-07-10",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4412160990",
+    "year_month": "2025-07",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Human interpretable grammar encodes multicellular systems biology models to democratize virtual cell laboratories",
+    "title_norm": "human interpretable grammar encodes multicellular systems biology models to demo",
+    "abstract": "Cells interact as dynamically evolving ecosystems. While recent single-cell and spatial multi-omics technologies quantify individual cell characteristics, predicting their evolution requires mathematical modeling. We propose a conceptual framework-a cell behavior hypothesis grammar-that uses natural language statements (cell rules) to create mathematical models. This enables systematic integration of biological knowledge and multi-omics data to generate in silico models, enabling virtual \"thought experiments\" that test and expand our understanding of multicellular systems and generate new testable hypotheses. This paper motivates and describes the grammar, offers a reference implementation, and demonstrates its use in developing both de novo mechanistic models and those informed by multi-omics data. We show its potential through examples in cancer and its broader applicability in simulating brain development. This approach bridges biological, clinical, and systems biology research for mathematical modeling at scale, allowing the community to predict emergent multicellular behavior.",
+    "year": 2025,
+    "venue": "Cell",
+    "authors": [
+      "Jeanette Johnson",
+      "Daniel Bergman",
+      "Heber L. Rocha",
+      "David Zhou",
+      "Eric Cramer",
+      "Ian C. McLean"
+    ],
+    "citations": 50,
+    "source": "openalex",
+    "source_id": "W4412671504",
+    "doi": "10.1016/j.cell.2025.06.048",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4412671504",
+    "published_iso": "2025-07-26",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "paper_id": "openalex:W4412671504",
+    "year_month": "2025-07",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Markov-bridge generation of transition paths and its application to cell-fate choice",
+    "title_norm": "markov bridge generation of transition paths and its application to cell fate ch",
+    "abstract": "We present a method to sample Markov-chain trajectories constrained to both the initial and final conditions, which we term Markov bridges. The trajectories are conditioned to end in a specific state at a given time. We derive the master equation for Markov bridges, which exhibits the original transition rates scaled by a time-dependent factor. Trajectories can then be generated using a refined version of the Gillespie algorithm. We illustrate the benefits of our method by sampling trajectories in the Müller-Brown potential. This allows us to generate transition paths which would otherwise be obtained at a high computational cost with standard kinetic Monte Carlo methods because commitment to a transition path is essentially a rare event. We then apply our method to a single-cell RNA sequencing dataset from mouse pancreatic cells to investigate the cell differentiation pathways of endocrine-cell precursors. By sampling Markov bridges for a specific differentiation pathway, we obtain a time-resolved dynamics that can reveal features such as cell types which behave as bottlenecks. The ensemble of trajectories also gives information about the fluctuations around the most likely path. For example, we quantify the statistical weights of different branches in the differentiation pathway to alpha cells.",
+    "year": 2025,
+    "venue": "Physical Review Research",
+    "authors": [
+      "Guillaume Le Treut",
+      "Sarah Ancheta",
+      "Greg Huber",
+      "Henri Orland",
+      "David Yllanes"
+    ],
+    "citations": 1,
+    "source": "openalex",
+    "source_id": "W4406099043",
+    "doi": "10.1103/physrevresearch.7.013010",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4406099043",
+    "published_iso": "2025-01-06",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "molecular trajectory committor first passage prediction"
+    ],
+    "paper_id": "openalex:W4406099043",
+    "year_month": "2025-01",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Integrating single-cell RNA-seq datasets with substantial batch effects",
+    "title_norm": "integrating single cell rna seq datasets with substantial batch effects",
+    "abstract": "Integration of single-cell RNA-sequencing (scRNA-seq) datasets is standard in scRNA-seq analysis. Nevertheless, current computational methods struggle to harmonize datasets across systems such as species, organoids and primary tissue, or different scRNA-seq protocols, including single-cell and single-nuclei. Conditional variational autoencoders (cVAE) are a popular integration method, however, existing strategies for stronger batch correction have limitations. Increasing the Kullback-Leibler divergence regularization does not improve integration and adversarial learning removes biological signals. Here, we propose sysVI, a cVAE-based method employing VampPrior and cycle-consistency constraints. We show that sysVI integrates across systems and improves biological signals for downstream interpretation of cell states and conditions.",
+    "year": 2025,
+    "venue": "BMC Genomics",
+    "authors": [
+      "Karin Hrovatin",
+      "Amir Ali Moinfar",
+      "Luke Zappia",
+      "Shrey Parikh",
+      "Alejandro Tejada-Lapuerta",
+      "Benjamin J. Lengerich"
+    ],
+    "citations": 14,
+    "source": "openalex",
+    "source_id": "W4415696493",
+    "doi": "10.1186/s12864-025-12126-3",
+    "arxiv_id": null,
+    "paper_url": "https://bmcgenomics.biomedcentral.com/counter/pdf/10.1186/s12864-025-12126-3",
+    "published_iso": "2025-10-30",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation delta expression baseline"
+    ],
+    "paper_id": "openalex:W4415696493",
+    "year_month": "2025-10",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Using Time Dependent Rate Analysis to Evaluate the Quality of Machine Learned Reaction Coordinates for Biasing and Computing Kinetics",
+    "title_norm": "using time dependent rate analysis to evaluate the quality of machine learned re",
+    "abstract": "High Resolution Image Download MS PowerPoint Slide Having an accurate reaction coordinate (RC) is essential for reliable kinetic characterization of molecular processes, but there are few quantitative metrics to evaluate RC quality. In this study, we consider the dimensionless γ metric from the Exponential Average Time-dependent Rate (EATR) method, which represents the fraction of a biasing potential along the RC that contributes to increasing the rate constant. We demonstrate that γ can be used to test whether the utility of a RC for predicting kinetics with a Metadynamics bias improves as the coordinate is iteratively updated to include new data. We evaluate RCs approximated via the iterative State Predictive Information Bottleneck (SPIB) approach, which was previously shown to be accurate across six protein–ligand dissociation systems. For these same systems, we compute γ values and mean accelerated times τ̅ accel . After systematically scanning over fitting parameters, the results show that γ increases closer to 1, while τ̅ accel decreases, revealing a consistent inverse correlation. These results demonstrate that γ serves as a practical criterion for RC evaluation and offers guidance for selecting SPIB–derived coordinates yielding quantitative kinetic predictions.",
+    "year": 2025,
+    "venue": "The Journal of Physical Chemistry B",
+    "authors": [
+      "Nicodemo Mazzaferro",
+      "Suemin Lee",
+      "Pilar Cossio",
+      "Pratyush Tiwary",
+      "Glen M. Hocky"
+    ],
+    "citations": 1,
+    "source": "openalex",
+    "source_id": "W4414962227",
+    "doi": "10.1021/acs.jpcb.5c04626",
+    "arxiv_id": null,
+    "paper_url": "https://pubs.acs.org/doi/pdf/10.1021/acs.jpcb.5c04626?ref=article_openPDF",
+    "published_iso": "2025-10-08",
+    "oa_field": "Materials Science",
+    "semantic_recall": false,
+    "from_query": [
+      "molecular trajectory committor first passage prediction"
+    ],
+    "paper_id": "openalex:W4414962227",
+    "year_month": "2025-10",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Virtual Cell Challenge: Toward a Turing test for the virtual cell",
+    "title_norm": "virtual cell challenge toward a turing test for the virtual cell",
+    "abstract": "",
+    "year": 2025,
+    "venue": "Cell",
+    "authors": [
+      "Yusuf Roohani",
+      "Tony J. Hua",
+      "Po‐Yuan Tung",
+      "Lexi R. Bounds",
+      "Feiqiao Brian Yu",
+      "Alexander Dobin"
+    ],
+    "citations": 82,
+    "source": "openalex",
+    "source_id": "W4411690475",
+    "doi": "10.1016/j.cell.2025.06.008",
+    "arxiv_id": null,
+    "paper_url": "https://www.cell.com/action/showPdf?pii=S0092867425006750",
+    "published_iso": "2025-06-01",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": false,
+    "from_query": [
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4411690475",
+    "year_month": "2025-06",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "PerturBase: a comprehensive database for single-cell perturbation data analysis and visualization",
+    "title_norm": "perturbase a comprehensive database for single cell perturbation data analysis a",
+    "abstract": "Single-cell perturbation (scPerturbation) sequencing techniques, represented by single-cell genetic perturbation (e.g. Perturb-seq) and single-cell chemical perturbation (e.g. sci-Plex), result from the integration of single-cell toolkits with conventional bulk screening methods. These innovative sequencing techniques empower researchers to dissect perturbation effects in biological systems at an unprecedented resolution. Despite these advancements, a notable gap exists in the availability of a dedicated database for exploring scPerturbation data. To address this gap, we present PerturBase, the most comprehensive database designed for the analysis and visualization of scPerturbation data (http://www.perturbase.cn/). PerturBase curates 122 datasets from 46 publicly available studies, covering 115 single-modal and 7 multi-modal datasets that include 24 254 genetic and 230 chemical perturbations from approximately 5 million cells. The database, comprising the 'Dataset' and 'Perturbation' modules, provides insights into various results, encompassing quality control, denoising, differential gene expression analysis, functional analysis of perturbation effects and characterization of relationships between perturbations. All the datasets and results are presented on user-friendly, easy-to-browse web pages and can be visualized through intuitive and interactive plot and table formats. In summary, PerturBase stands as a pioneering, high-content database intended for searching, visualizing and analyzing scPerturbation datasets, contributing to a deeper understanding of perturbation effects.",
+    "year": 2024,
+    "venue": "Nucleic Acids Research",
+    "authors": [
+      "Zhiting Wei",
+      "Duanmiao Si",
+      "Bin Duan",
+      "Yicheng Gao",
+      "Qian Yu",
+      "Zhenbo Zhang"
+    ],
+    "citations": 24,
+    "source": "openalex",
+    "source_id": "W4403216706",
+    "doi": "10.1093/nar/gkae858",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4403216706",
+    "published_iso": "2024-09-19",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": true,
+    "from_query": [
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4403216706",
+    "year_month": "2024-09",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Explainable modeling of single-cell perturbation data using attention and sparse dictionary learning",
+    "title_norm": "explainable modeling of single cell perturbation data using attention and sparse",
+    "abstract": "Single-cell transcriptomics, in conjunction with genetic and compound perturbations, offers a robust approach for exploring cellular behaviors in diverse contexts. Such experiments allow uncovering cell-state-specific responses to perturbations and unraveling the intricate molecular mechanisms governing cellular behavior. However, prevailing computational methods predominantly focus on predicting average cellular responses, disregarding inherent response heterogeneity associated with cell state diversity and model explainability. In this study, we present CellCap, a deep generative model designed for the end-to-end analysis of single-cell perturbation experiments. CellCap employs sparse dictionary learning in a latent space to deconstruct cell-state-specific perturbation responses into a set of transcriptional response programs and utilizes an attention mechanism to capture correspondence between cell state and perturbation response. We thoroughly evaluate CellCap's interpretability using multiple simulated scenarios as well as two real single-cell perturbation datasets. Our results demonstrate that CellCap successfully uncovers the relationship between cell state and perturbation response, unveiling insights overlooked in previous analyses.",
+    "year": 2025,
+    "venue": "Cell Systems",
+    "authors": [
+      "Yang Xu",
+      "Stephen M. Fleming",
+      "Matthew Tegtmeyer",
+      "Steven A. McCarroll",
+      "Mehrtash Babadi"
+    ],
+    "citations": 8,
+    "source": "openalex",
+    "source_id": "W4409199145",
+    "doi": "10.1016/j.cels.2025.101245",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4409199145",
+    "published_iso": "2025-04-01",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": true,
+    "from_query": [
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4409199145",
+    "year_month": "2025-04",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Toward automated and explainable high-throughput perturbation analysis in single cells",
+    "title_norm": "toward automated and explainable high throughput perturbation analysis in single",
+    "abstract": "Perturbation analysis in single-cell RNA sequencing (scRNA-seq) data is challenging due to the complexity of cellular responses. To address this, Xu and Fleming et al. developed CellCap, a generative deep-learning model that decodes the perturbation effect on a particular cell state. CellCap extracts interpretable latent representations of perturbation response modules, identifying key cellular pathways activated under various conditions. This allows for a deeper understanding of cell-state-specific responses to genetic, chemical, or biological perturbations.",
+    "year": 2025,
+    "venue": "Patterns",
+    "authors": [
+      "Jesus Gonzalez-Ferrer",
+      "Mohammed A. Mostajo-Radji"
+    ],
+    "citations": 2,
+    "source": "openalex",
+    "source_id": "W4409348663",
+    "doi": "10.1016/j.patter.2025.101228",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4409348663",
+    "published_iso": "2025-04-01",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": true,
+    "from_query": [
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4409348663",
+    "year_month": "2025-04",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Benchmarking a foundational cell model for post-perturbation RNAseq prediction",
+    "title_norm": "benchmarking a foundational cell model for post perturbation rnaseq prediction",
+    "abstract": "Abstract Accurately predicting cellular responses to perturbations is essential for understanding cell behaviour in both healthy and diseased states. While perturbation data is ideal for building such predictive models, it is considerably sparser than baseline (non-perturbed) cellular data. To address this limitation, several foundational cell models have been developed using large-scale single-cell gene expression data. These models are fine-tuned after pre-training for specific tasks, such as predicting post-perturbation gene expression profiles, and are considered state-of-the-art for these problems. However, proper benchmarking of these models remains an unsolved challenge. In this study, we benchmarked a recently published foundational model, scGPT, against baseline models. Surprisingly, we found that even the simplest baseline model - taking the mean of training examples - outperformed scGPT. Furthermore, machine learning models that incorporate biologically meaningful features outperformed scGPT by a large margin. Additionally, we identified that the current Perturb-Seq benchmark datasets exhibit low perturbation-specific variance, making them suboptimal for evaluating such models. Our results highlight important limitations in current benchmarking approaches and provide insights into more effectively evaluating post-perturbation gene expression prediction models.",
+    "year": 2024,
+    "venue": "bioRxiv (Cold Spring Harbor Laboratory)",
+    "authors": [
+      "Gerold Csendes",
+      "Kristóf Z. Szalay",
+      "Bence Szalai"
+    ],
+    "citations": 7,
+    "source": "openalex",
+    "source_id": "W4403013259",
+    "doi": "10.1101/2024.09.30.615843",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4403013259",
+    "published_iso": "2024-10-01",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": true,
+    "from_query": [
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4403013259",
+    "year_month": "2024-10",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Multimodal foundation model predicts zero-shot functional perturbations and cell fate dynamics",
+    "title_norm": "multimodal foundation model predicts zero shot functional perturbations and cell",
+    "abstract": "Deciphering cell type-specific perturbation effects on genes and cellular states demands considerable experimental resources. To overcome this challenge, we propose Perturbation Transformer (PertFormer), a foundation model to uncover functional and regulatory mechanisms through interpretable in silico perturbation process. PertFormer comprises 3 billion parameters pretrained on both bulk and single-cell datasets covering 9 types of multiomics (55 billion bp bulk multiomics and the largest-to-date 1.5 billion paired multiomic samples from 1 million single cells), capturing regulation of 300 kb around every genic region. PertFormer enables zero-shot prediction of functional perturbations and cell fate dynamics, outperforming existing methods by 20.9%-480.2%. PertFormer identifies novel tumor treatment targets, validated experimentally. The generalization capabilities of PertFormer have the potential to accelerate the discovery of biological and clinical targets.",
+    "year": 2024,
+    "venue": "bioRxiv (Cold Spring Harbor Laboratory)",
+    "authors": [
+      "Zikun Yang",
+      "Xueying Fan",
+      "Lan Meng",
+      "Xubo Tang",
+      "Zhijie Zheng",
+      "Binghao Liu"
+    ],
+    "citations": 5,
+    "source": "openalex",
+    "source_id": "W4405711503",
+    "doi": "10.1101/2024.12.19.629561",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4405711503",
+    "published_iso": "2024-12-22",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": true,
+    "from_query": [
+      "single cell perturbation response prediction"
+    ],
+    "paper_id": "openalex:W4405711503",
+    "year_month": "2024-12",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Predicting single-cell responses to novel genetic perturbations with optimal transport",
+    "title_norm": "predicting single cell responses to novel genetic perturbations with optimal tra",
+    "abstract": "Abstract The combination of pooled genetic perturbation screening with single-cell RNA-sequencing has allowed for large-scale profiling of single-cell transcriptional responses, providing valuable insights into gene function and cellular behavior. There is a need for computational methods capable of predicting single-cell responses to novel genetic perturbations, thereby allowing for the efficient exploration of the vast combinatorial space of potential multi-gene perturbations. Optimal transport (OT) presents a compelling framework to model this type of data given the lack of true control-perturbed cell pairings. However, existing neural OT models are generally constrained to the perturbations already seen in training, while the use of OT theory in methods capable of modeling novel genetic perturbations remains limited. To bridge this gap, we present an OT-based method to predict single-cell transcriptional responses to novel genetic perturbations. Leveraging a flexible attention-based aggregation approach, our method integrates gene representations from multiple sources of prior knowledge, spanning from functional descriptions of genes to gene-gene relationships, producing a biologically informed representation of the perturbation. Moreover, we utilize an OT-based loss to align predicted and observed perturbed cell populations, avoiding the need to assign random control-perturbed cell pairings. Experiments on three benchmark datasets demonstrate the highly competitive performance of our model compared to state-of-the-art methods. Further evaluations on differential expression analysis and genetic interaction modeling demonstrate the biological relevance and potential utility of our model across diverse applications.",
+    "year": 2026,
+    "venue": "bioRxiv (Cold Spring Harbor Laboratory)",
+    "authors": [
+      "Chau Do",
+      "H Lähdesmäki"
+    ],
+    "citations": 0,
+    "source": "openalex",
+    "source_id": "W7119524784",
+    "doi": "10.64898/2026.01.08.698172",
+    "arxiv_id": null,
+    "paper_url": "https://www.biorxiv.org/content/biorxiv/early/2026/01/08/2026.01.08.698172.full.pdf",
+    "published_iso": "2026-01-08",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": true,
+    "from_query": [
+      "single cell conditional transport perturbation effect"
+    ],
+    "paper_id": "openalex:W7119524784",
+    "year_month": "2026-01",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Departures: Distributional Transport for Single-Cell Perturbation Prediction with Neural Schrödinger Bridges",
+    "title_norm": "departures distributional transport for single cell perturbation prediction with",
+    "abstract": "Predicting single-cell perturbation outcomes directly advances gene function analysis and facilitates drug candidate selection, making it a key driver of both basic and translational biomedical research. However, a major bottleneck in this task is the unpaired nature of single-cell data, as the same cell cannot be observed both before and after perturbation due to the destructive nature of sequencing. Although some neural generative transport models attempt to tackle unpaired single-cell perturbation data, they either lack explicit conditioning or depend on prior spaces for indirect distribution alignment, limiting precise perturbation modeling. In this work, we approximate Schrödinger Bridge (SB), which defines stochastic dynamic mappings recovering the entropy-regularized optimal transport (OT), to directly align the distributions of control and perturbed single-cell populations across different perturbation conditions. Unlike prior SB approximations that rely on bidirectional modeling to infer optimal source-target sample coupling, we leverage Minibatch-OT based pairing to avoid such bidirectional inference and the associated ill-posedness of defining the reverse process. This pairing directly guides bridge learning, yielding a scalable approximation to the SB. We approximate two SB models, one modeling discrete gene activation states and the other continuous expression distributions. Joint training enables accurate perturbation modeling and captures single-cell heterogeneity. Experiments on public genetic and drug perturbation datasets show that our model effectively captures heterogeneous single-cell responses and achieves state-of-the-art performance.",
+    "year": 2025,
+    "venue": "arXiv (Cornell University)",
+    "authors": [
+      "Changxi Chi",
+      "Yufei Huang",
+      "Junshi Xia",
+      "Jiangbin Zheng",
+      "Yunfan Liu",
+      "Zelin Zang"
+    ],
+    "citations": 0,
+    "source": "openalex",
+    "source_id": "W4416361412",
+    "doi": "10.48550/arxiv.2511.13124",
+    "arxiv_id": null,
+    "paper_url": "https://arxiv.org/pdf/2511.13124",
+    "published_iso": "2025-11-17",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": true,
+    "from_query": [
+      "single cell conditional transport perturbation effect"
+    ],
+    "paper_id": "openalex:W4416361412",
+    "year_month": "2025-11",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Metabolic coordination and phase transitions in spatially distributed multi-cellular systems",
+    "title_norm": "metabolic coordination and phase transitions in spatially distributed multi cell",
+    "abstract": "During overflow metabolism, cells excrete glycolytic byproducts when growing under aerobic conditions in a seemingly wasteful fashion. While potentially advantageous for microbes with finite oxidative capacity, its role in higher organisms is harder to assess. Recent single-cell experiments suggest overflow metabolism arises due to imbalances in inter-cellular exchange networks. We quantitatively characterize this scenario by integrating spatial metabolic modeling with tools from statistical physics and experimental single-cell flux data. Our results provide a theoretical demonstration of how diffusion-limited exchanges shape the space of accessible multi-cellular metabolic states. Specifically, a phase transition from a balanced network of exchanges to an unbalanced, overflow regime occurs as mean glucose and oxygen uptake rates vary. Heterogeneous single-cell metabolic phenotypes occur near this transition. Time-resolved tumor-stroma co-culture data support the idea that overflow metabolism stems from failure of inter-cellular metabolic coordination. In summary, environmental control is an emergent multi-cellular property, rather than a cell-autonomous effect. Using metabolic modeling and experimental data, the authors uncover a phase transition driven by diffusion-limited exchanges revealing that overflow metabolism stems from a breakdown in intercellular coordination rather than isolated cellular behavior.",
+    "year": 2025,
+    "venue": "Communications Physics",
+    "authors": [
+      "Krishnadev Narayanankutty",
+      "José Antonio Pereiro-Morejón",
+      "Arián Ferrero-Fernández",
+      "Valentina Onesto",
+      "Stefania Forciniti",
+      "Loretta L. del Mercato"
+    ],
+    "citations": 7,
+    "source": "openalex",
+    "source_id": "W4410486011",
+    "doi": "10.1038/s42005-025-02133-x",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4410486011",
+    "published_iso": "2025-05-19",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": true,
+    "from_query": [
+      "single cell conditional transport perturbation effect"
+    ],
+    "paper_id": "openalex:W4410486011",
+    "year_month": "2025-05",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "A cross-species foundation model for single cells",
+    "title_norm": "a cross species foundation model for single cells",
+    "abstract": "",
+    "year": 2024,
+    "venue": "Cell Research",
+    "authors": [
+      "Korbinian Traeuble",
+      "Matthias Heinig"
+    ],
+    "citations": 1,
+    "source": "openalex",
+    "source_id": "W4403951021",
+    "doi": "10.1038/s41422-024-01045-9",
+    "arxiv_id": null,
+    "paper_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11614854/pdf/41422_2024_Article_1045.pdf",
+    "published_iso": "2024-10-31",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": true,
+    "from_query": [
+      "single cell conditional transport perturbation effect"
+    ],
+    "paper_id": "openalex:W4403951021",
+    "year_month": "2024-10",
+    "retrieved_via": "openalex",
+    "relevance": "adjacent"
+  },
+  {
+    "title": "Sloppiness and Action Constraint in Cell State Transitions: Are Single Cells Sloppy?",
+    "title_norm": "sloppiness and action constraint in cell state transitions are single cells slop",
+    "abstract": "Abstract Single-cell dynamics during cell state transitions (CST) are highly constrained, enabling precise control. However, there are challenges in achieving a system-level understanding or extracting general principles for CST dynamics due to the complexity of gene-gene interactions. Here, we introduce a new perspective to deal with these challenges using Fisher information. We found that, during CST, single cells exhibit pronounced sloppiness: cell states are sensitive only to a few “stiff” parameters while remaining robust to changes in numerous “sloppy” parameters. Critical transitions coincided with changes in stiff parameters. Moreover, stiff parameters typically exhibited minimal fluctuations and low velocities, whereas sloppy parameters allowed greater flexibility. Together, these findings can be summarized by stating that transition paths approximately adhere to a principle of least action. By characterizing the low dimensionality and constraints of CST through sloppiness and action, our work thus introduces a new conceptual and computational framework for analyzing single-cell dynamics. Teaser Except when transitions occur, single-cell dynamics exhibit sloppiness, adhering approximately to a least action principle.",
+    "year": 2025,
+    "venue": "bioRxiv (Cold Spring Harbor Laboratory)",
+    "authors": [
+      "Yuxuan Wang",
+      "Junda Ying",
+      "He Xiao",
+      "M W Huang",
+      "Lei Zhang",
+      "Weikang Wang"
+    ],
+    "citations": 0,
+    "source": "openalex",
+    "source_id": "W7117714269",
+    "doi": "10.64898/2025.12.31.697145",
+    "arxiv_id": null,
+    "paper_url": "https://www.biorxiv.org/content/biorxiv/early/2025/12/31/2025.12.31.697145.full.pdf",
+    "published_iso": "2025-12-31",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": true,
+    "from_query": [
+      "single cell conditional transport perturbation effect"
+    ],
+    "paper_id": "openalex:W7117714269",
+    "year_month": "2025-12",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Dynamic gene regulatory network inference from single-cell data using optimal transport",
+    "title_norm": "dynamic gene regulatory network inference from single cell data using optimal tr",
+    "abstract": "MOTIVATION: Modelling gene expression is a central problem in systems biology. Single-cell technologies have revolutionized the field by enabling sequencing at the resolution of individual cells. This results in a much richer data compared to what is obtained by bulk technologies, offering new possibilities and challenges for gene regulatory network inference. RESULTS: In this work, we introduce GRIT (gene regulation inference by transport)-a method to fit a differential equation model and to infer gene regulatory networks from single-cell data using the theory of optimal transport. The idea consists in tracking the evolution of the cell distribution over time and finding the system whose temporal marginals minimize the transport cost with the observations. GRIT is finally used to identify genes and pathways affected by two Parkinson's disease associated mutations. AVAILABILITY AND IMPLEMENTATION: Matlab implementation of the method and code for data generation are at gitlab.com/uniluxembourg/lcsb/systems-control/grit together with a user guide. A snapshot of the code used for the results of this article is at doi: 10.5281/zenodo.15582432.",
+    "year": 2025,
+    "venue": "Bioinformatics",
+    "authors": [
+      "François Lamoline",
+      "Isabel Haasler",
+      "Johan Karlsson",
+      "Jorge Gonçalves",
+      "Atte Aalto"
+    ],
+    "citations": 4,
+    "source": "openalex",
+    "source_id": "W4412366532",
+    "doi": "10.1093/bioinformatics/btaf394",
+    "arxiv_id": null,
+    "paper_url": "https://academic.oup.com/bioinformatics/advance-article-pdf/doi/10.1093/bioinformatics/btaf394/63735734/btaf394.pdf",
+    "published_iso": "2025-07-12",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": true,
+    "from_query": [
+      "single cell conditional transport perturbation effect"
+    ],
+    "paper_id": "openalex:W4412366532",
+    "year_month": "2025-07",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Iterative variational learning of committor-consistent transition pathways using artificial neural networks",
+    "title_norm": "iterative variational learning of committor consistent transition pathways using",
+    "abstract": "",
+    "year": 2025,
+    "venue": "Nature Computational Science",
+    "authors": [
+      "Alberto Megías",
+      "Sergio Contreras Arredondo",
+      "Cheng Giuseppe Chen",
+      "Chenyu Tang",
+      "Benoı̂t Roux",
+      "Christophe Chipot"
+    ],
+    "citations": 20,
+    "source": "openalex",
+    "source_id": "W4411829263",
+    "doi": "10.1038/s43588-025-00828-3",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W4411829263",
+    "published_iso": "2025-06-30",
+    "oa_field": "Computer Science",
+    "semantic_recall": true,
+    "from_query": [
+      "molecular trajectory committor first passage prediction"
+    ],
+    "paper_id": "openalex:W4411829263",
+    "year_month": "2025-06",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Identifying the Most Probable Transition Path with Constant Advance Replicas",
+    "title_norm": "identifying the most probable transition path with constant advance replicas",
+    "abstract": "Locating plausible transition paths and enhanced sampling of rare events are fundamental to understanding the functional dynamics of biomolecules. Here, a constraint-based constant advance replicas (CAR) formalism of reaction paths is reported for identifying the most probable transition path (MPTP) between two given states. We derive the temporal-integrated effective dynamics governing the projected subsystem under the holonomic CAR path constraints and show that a dynamical action functional can be defined and used for optimizing the MPTP. We further demonstrate how the CAR MPTP can be located by asymptotically minimizing an upper bound of the CAR action functional using a variational expectation–maximization framework. Essential thermodynamics and kinetic observables are retrieved by integrating the boxed molecular dynamics on the CAR MPTP using a newly proposed adaptive reflecting boundary condition. The efficiency of the proposed method is demonstrated for the Müller potential, the alanine dipeptide isomerization, and the DNA base pairing transition (Watson–Crick to Hoogsteen) in explicit solvent. The CAR representation of transition paths constitutes a robust and extensible platform that can be combined with diverse enhanced sampling methods to aid future flexible and reliable biomolecular simulations.",
+    "year": 2024,
+    "venue": "Figshare",
+    "authors": [
+      "Zilin Song (426426)",
+      "You Xu (177889)",
+      "He Zhang (130319)",
+      "Ye Ding (40594)",
+      "Jing Huang (41604)"
+    ],
+    "citations": 0,
+    "source": "openalex",
+    "source_id": "W6959246472",
+    "doi": "10.1021/acs.jctc.4c01032.s001",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W6959246472",
+    "published_iso": "2024-11-11",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": true,
+    "from_query": [
+      "molecular trajectory committor first passage prediction"
+    ],
+    "paper_id": "openalex:W6959246472",
+    "year_month": "2024-11",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  },
+  {
+    "title": "Following the Committor Flow: A Data-Driven Discovery of Transition Pathways",
+    "title_norm": "following the committor flow a data driven discovery of transition pathways",
+    "abstract": "The discovery of transition pathways to unravel distinct reaction mechanisms and, in general, rare events that occur in molecular systems is still a challenge. Recent advances have focused on analyzing the transition-path ensemble using the committor probability, widely regarded as the most informative one-dimensional reaction coordinate. Consistency between transition pathways and the committor function is essential for accurate mechanistic insight. In this work, we propose an iterative framework to infer the committor and, subsequently, to identify the most relevant transition pathways. Starting from an initial guess for the transition path, we generate biased sampling, from which we train a neural network to approximate the committor probability. From this learned committor, we extract dominant transition channels as discretized strings lying on isocommittor surfaces. These pathways are then used to enhance sampling and iteratively refine both the committor and transition paths until convergence. The resulting committor enables accurate estimation of the reaction rate constant. We demonstrate the effectiveness of our approach on benchmark systems, including a two-dimensional model potential, peptide conformational transitions, a Diels-Alder reaction, and the reversible folding of the Trp-cage.",
+    "year": 2026,
+    "venue": "Journal of Chemical Theory and Computation",
+    "authors": [
+      "Cheng Giuseppe Chen",
+      "Chenyu Tang",
+      "Alberto Megías",
+      "Radu A. Talmazan",
+      "Sergio Contreras Arredondo",
+      "Benoît Roux"
+    ],
+    "citations": 6,
+    "source": "openalex",
+    "source_id": "W7124417173",
+    "doi": "10.1021/acs.jctc.6c00007",
+    "arxiv_id": null,
+    "paper_url": "https://openalex.org/W7124417173",
+    "published_iso": "2026-01-16",
+    "oa_field": "Biochemistry, Genetics and Molecular Biology",
+    "semantic_recall": true,
+    "from_query": [
+      "molecular trajectory committor first passage prediction"
+    ],
+    "paper_id": "openalex:W7124417173",
+    "year_month": "2026-01",
+    "retrieved_via": "openalex",
+    "relevance": "core"
+  }
+]
