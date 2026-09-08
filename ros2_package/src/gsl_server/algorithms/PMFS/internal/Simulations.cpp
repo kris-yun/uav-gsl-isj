@@ -6407,7 +6407,7 @@ namespace GSL::PMFS_internal
 
     void Simulations::initializeContrastiveEventContext(const std::vector<SimulationResult>& results)
     {
-        eventEvidenceContextProbability.assign(eventEvidence.size(), 0.0L);
+        eventEvidenceContextProbability.clear();
         if (eventEvidence.empty())
             return;
         std::vector<const SimulationResult*> ordered;
@@ -6423,24 +6423,30 @@ namespace GSL::PMFS_internal
             return std::tie(a->origin.x, a->origin.y, a->size.x, a->size.y) <
                    std::tie(b->origin.x, b->origin.y, b->size.x, b->size.y);
         });
-        size_t members = 0;
+        if (ordered.empty() || ordered.front()->transportMemberHitMaps.empty())
+            throw std::runtime_error("CER_RATIO_CONTEXT_EMPTY");
+        const size_t memberCount = ordered.front()->transportMemberHitMaps.size();
+        eventEvidenceContextProbability.assign(
+            memberCount, std::vector<long double>(eventEvidence.size(), 0.0L));
         for (const SimulationResult* result : ordered)
         {
-            for (const auto& memberMap : result->transportMemberHitMaps)
+            if (result->transportMemberHitMaps.size() != memberCount)
+                throw std::runtime_error("CER_RATIO_MEMBER_COUNT_MISMATCH");
+            for (size_t memberIndex = 0; memberIndex < memberCount; ++memberIndex)
             {
+                const auto& memberMap = result->transportMemberHitMaps[memberIndex];
                 if (memberMap.size() != measuredHitProb.data.size())
                     throw std::runtime_error("CER_RATIO_MEMBER_MAP_SIZE");
                 for (size_t eventIndex = 0; eventIndex < eventEvidence.size(); ++eventIndex)
-                    eventEvidenceContextProbability[eventIndex] += memberMap[eventEvidence[eventIndex].cell];
-                ++members;
+                    eventEvidenceContextProbability[memberIndex][eventIndex] +=
+                        memberMap[eventEvidence[eventIndex].cell];
             }
         }
-        if (members == 0)
-            throw std::runtime_error("CER_RATIO_CONTEXT_EMPTY");
-        for (long double& probability : eventEvidenceContextProbability)
-            probability /= static_cast<long double>(members);
-        GSL_INFO("CER contrastive context initialized: events={}, members={}, fixed_ratio_weight=1",
-                 eventEvidence.size(), members);
+        for (auto& memberContext : eventEvidenceContextProbability)
+            for (long double& probability : memberContext)
+                probability /= static_cast<long double>(ordered.size());
+        GSL_INFO("CER contrastive context initialized: events={}, candidates={}, transport_members={}, fixed_ratio_weight=1, context_within_member=true",
+                 eventEvidence.size(), ordered.size(), memberCount);
     }
 
     long double Simulations::sourceProbFromContrastiveEvents(
@@ -6448,8 +6454,8 @@ namespace GSL::PMFS_internal
     {
         if (eventEvidence.empty())
             return 1.0L;
-        if (eventEvidenceContextProbability.size() != eventEvidence.size() ||
-            transportMemberHitMaps.empty())
+        if (transportMemberHitMaps.empty() ||
+            eventEvidenceContextProbability.size() != transportMemberHitMaps.size())
             throw std::runtime_error("CER_RATIO_CONTEXT_NOT_READY");
         const auto clipped = [](long double probability)
         {
@@ -6472,8 +6478,12 @@ namespace GSL::PMFS_internal
         };
 
         long double mixtureLikelihood = 0.0L;
-        for (const auto& memberMap : transportMemberHitMaps)
+        for (size_t memberIndex = 0; memberIndex < transportMemberHitMaps.size(); ++memberIndex)
         {
+            const auto& memberMap = transportMemberHitMaps[memberIndex];
+            const auto& memberContext = eventEvidenceContextProbability[memberIndex];
+            if (memberContext.size() != eventEvidence.size())
+                throw std::runtime_error("CER_RATIO_CONTEXT_EVENT_COUNT");
             long double logLikelihood = 0.0L;
             double previousConcentration = 0.0;
             for (size_t eventIndex = 0; eventIndex < eventEvidence.size(); ++eventIndex)
@@ -6488,7 +6498,7 @@ namespace GSL::PMFS_internal
                 const long double persistence = 0.5L * std::erfc(
                     (thresholdLog - previousLog) / std::sqrt(2.0L));
                 const long double sourceProbability = clipped(memberMap[event.cell]);
-                const long double contextProbability = clipped(eventEvidenceContextProbability[eventIndex]);
+                const long double contextProbability = clipped(memberContext[eventIndex]);
                 // Fixed unit source/context odds ratio. Candidate-independent
                 // persistence handles shared temporal dynamics; only the
                 // source-specific forward contrast changes posterior odds.

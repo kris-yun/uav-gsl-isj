@@ -156,7 +156,9 @@ namespace GSL::PMFS_internal
         bool eventEvidenceContrastiveRatio = false;
         int eventEvidenceTransportReplicas = 1;
         std::vector<EventEvidence> eventEvidence;
-        std::vector<long double> eventEvidenceContextProbability;
+        // Member-specific source-agnostic context.  Pooling transport members
+        // here would relabel regime-wide scale changes as source evidence.
+        std::vector<std::vector<long double>> eventEvidenceContextProbability;
         cv::Mat freeSpaceMask;
 
         bool readOnlyForwardExportEnabled = false;

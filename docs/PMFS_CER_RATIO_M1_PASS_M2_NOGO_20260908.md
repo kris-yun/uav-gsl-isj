@@ -88,6 +88,24 @@ aggregation improves calibration without letting a single member dominate.
 House-specific activation, planner rescue tuning and extra seeds are not
 authorized by this result.
 
+### Immediate M2 failure probe
+
+One additional H01-only probe corrected a plausible decomposition error: the
+source-agnostic context was recomputed separately inside each transport member
+before marginalization, preventing regime-wide response scale from becoming
+source evidence.  The probe used binary SHA-256
+`4a9b22384f48fcf6217ea3264402e6de09181314b0e2656e5e2b6892739b9131`.
+
+It did not repair M2.  H01 final error remained `7.6934 m` (increment versus
+M1R `-4.8423 m`) and AUC was `1805.7092 m s` (increment `-523.8846 m s`).
+The run therefore stopped at H01; H02/H03 and further seeds were not launched.
+This falsifies context pooling as the main M2 failure.  The three members are
+Monte-Carlo realizations around one fixed estimated wind field, not distinct
+structural transport regimes.  The next M2 must change the physical member
+definition (for example, persistent measured-wind regimes with an explicit
+online regime posterior), and pass an offline predictive-ratio gate before any
+additional closed loop.
+
 ## Evidence
 
 - Formal gate: `evidence/cstar_cer_ratio_house123_seed12_20260908/CSTAR_CER_RATIO_HOUSE123_SEED12_GATE.json`
@@ -95,4 +113,4 @@ authorized by this result.
 - Predictive screen: `evidence/cstar_sensor_hit_screen_20260908/SENSOR_HIT_GATE.json`
 - Frozen screen producer: `experiments/ctpi_cstar/screen_sensor_hit_probability.py`
 - Closed-loop evaluator: `tools/cstar_evaluate_cer_house123.py`
-
+- H01 member-context negative probe: `evidence/cstar_cer_ratio_memberctx_h01_seed12_20260908`
