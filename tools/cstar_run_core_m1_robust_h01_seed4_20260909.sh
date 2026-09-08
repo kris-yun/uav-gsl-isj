@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO_ROOT=/dev/shm/cstar_joint_development_20260908
-RUN_ROOT=${CSTAR_CORE_RUN_ROOT:-/mnt/hgfs/workspace/CSTAR_CORE_M1H_H01_SEED4_20260909_R3}
+RUN_ROOT=${CSTAR_CORE_RUN_ROOT:-/mnt/hgfs/workspace/CSTAR_CORE_M1H_H01_SEED4_20260909_R4}
 BUILD_ROOT=/dev/shm/cstar_pmfs_core_m1_invariant_build_20260909
 ENV_PREFLIGHT=$REPO_ROOT/evidence/cstar_joint_environment_20260908/PREFLIGHT.json
 GEOMETRY_MANIFEST=$REPO_ROOT/evidence/cstar_environment_20260906/maps_v1/geometry_manifest.json
