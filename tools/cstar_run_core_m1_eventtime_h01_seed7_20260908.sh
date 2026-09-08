@@ -8,7 +8,7 @@ ENV_PREFLIGHT=$REPO_ROOT/evidence/cstar_joint_environment_20260908/PREFLIGHT.jso
 GEOMETRY_MANIFEST=$REPO_ROOT/evidence/cstar_environment_20260906/maps_v1/geometry_manifest.json
 QUALIFIED_HELPER=/home/zyc/CSTAR_CONTROLLED_ASSETS_20260907/tools/cstar_numeric_wind_raw_query
 VGR_BRIDGE_SOURCE_ROOT=/home/zyc/CTPI_G2_M12_SEED12_20260905/vgr_bridge_overlay_c8454d5
-GIT_COMMIT=$(git -C "$REPO_ROOT" rev-parse HEAD)
+GIT_COMMIT=e5e898470cbb6cac02817300c3578da800006f09
 
 test ! -e "$RUN_ROOT"
 test -f "$ENV_PREFLIGHT"
