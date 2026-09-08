@@ -49,12 +49,23 @@ def _required_int(value, name: str) -> int:
 def _validate_ctpi_launch(context):
     """Fail closed before starting ROS nodes when the frozen contract drifts."""
     value = lambda name: LaunchConfiguration(name).perform(context)
+    if value('cstar_environment_preflight'):
+        # Opt-in prospective runs must bind the corrected map and numeric-wind
+        # reader. Historical launch defaults remain unchanged for reproduction.
+        import sys
+        root = str(Path(__file__).resolve().parents[2])
+        if root not in sys.path:
+            sys.path.insert(0, root)
+        from closed_loop.ctpi.cstar_launch_binding import validate_launch_binding
+        validate_launch_binding(value)
     mode = value('pfdi_mode')
     identity = (value('method'), value('method_family'))
     if identity == ('CTPI_CREL_TSDC_PIP', 'ctpi_three_module'):
         allowed = {'off', 'ctpi_f00', 'ctpi_f10', 'ctpi_f11'}
     elif identity == ('CTPI_G2_M1_M2', 'ctpi_two_module'):
-        allowed = {'off', 'ctpi_f00', 'ctpi_f01'}
+        allowed = {'off', 'ctpi_f00', 'ctpi_f01', 'cer_m1', 'cer_m1_m2'}
+    elif identity == ('PMFS_CER_M1_M2', 'causal_event_transport'):
+        allowed = {'off', 'cer_m1', 'cer_m1_m2'}
     else:
         raise RuntimeError('CTPI_METHOD_IDENTITY_MISMATCH')
     if mode not in allowed:
@@ -64,6 +75,7 @@ def _validate_ctpi_launch(context):
     expected_ablation = {
         'off': 'A0', 'ctpi_f00': 'F00', 'ctpi_f01': 'F01',
         'ctpi_f10': 'F10', 'ctpi_f11': 'F11',
+        'cer_m1': 'M1', 'cer_m1_m2': 'M1M2',
     }[mode]
     if value('ablation_id') != expected_ablation:
         raise RuntimeError(
@@ -100,7 +112,7 @@ def _validate_ctpi_launch(context):
     if int(value('minWarmupIterations')) != expected_min_warmup:
         raise RuntimeError('CPIR_MIN_WARMUP_EXPECTED_MISMATCH')
 
-    if mode != 'off':
+    if mode not in {'off', 'cer_m1', 'cer_m1_m2'}:
         required = {
             'cpir_lookup_root': value('cpir_lookup_root'),
             'cpir_audit_directory': value('cpir_audit_directory'),
@@ -183,6 +195,11 @@ def _validate_ctpi_launch(context):
 def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument('vgr_data_path', default_value=''),
+        DeclareLaunchArgument('cstar_environment_preflight', default_value=''),
+        DeclareLaunchArgument('cstar_geometry_manifest', default_value=''),
+        DeclareLaunchArgument('cstar_house', default_value=''),
+        DeclareLaunchArgument('gmrf_map_yaml_file', default_value=PathJoinSubstitution(
+            [LaunchConfiguration('vgr_data_path'), 'occupancy.yaml'])),
         DeclareLaunchArgument('config_id', default_value='2,4-1_fast'),
         DeclareLaunchArgument('algorithm', default_value='PMFS'),
         DeclareLaunchArgument('method', default_value='CTPI_CREL_TSDC_PIP'),
@@ -469,7 +486,7 @@ def generate_launch_description():
             parameters=[{
                 'frame_id': 'map',
                 'sensor_topic': '/Anemometer/WindSensor_reading',
-                'map_yaml_file': PathJoinSubstitution([LaunchConfiguration('vgr_data_path'), 'occupancy.yaml']),
+                'map_yaml_file': LaunchConfiguration('gmrf_map_yaml_file'),
                 'map_topic': 'map',
                 'exec_freq': 10.0,
                 'update_on_new_observation_only': _bool('gmrf_update_on_new_observation_only'),

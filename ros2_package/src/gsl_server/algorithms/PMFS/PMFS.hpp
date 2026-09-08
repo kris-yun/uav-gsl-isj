@@ -46,6 +46,10 @@ namespace GSL
         float gasCallback(olfaction_msgs::msg::GasSensor::SharedPtr msg) override;
 
         void initializeCPIR();
+        void requestJointPosterior(uint64_t update);
+        void applyJointPosterior(uint64_t update);
+        std::string jointSourceExchangeDir, jointRunId;
+        uint64_t jointLatestStampNs = 0, jointRequestedStampNs = 0;
         void recordCPIRRawSample(float measuredPpm, double simTime);
         void finalizeCPIRPhysicalStop();
         void applyCPIRPosterior(uint64_t sourceUpdateId, double simTime);
@@ -92,6 +96,8 @@ namespace GSL
         // PC-ACI/A9 event carrier.  It does not alter the native PMFS path.
         uint64_t completedMeasurementBlockId = 0;
         bool tadmEnabled = false;
+        bool eventEvidenceEnabled = false;
+        int eventEvidenceTransportReplicas = 1;
         std::string pfdiMode = "off";
         // Optional inference-to-control coupling.  The frozen OFF path keeps
         // this at zero; the protected ON path can use the PFDI posterior when

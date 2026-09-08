@@ -1,0 +1,39 @@
+{
+  "status": "PARTIAL_IMPLEMENTATION_NOT_CLOSED_LOOP",
+  "joint_regression_tests": 7,
+  "joint_regression_returncode": 0,
+  "source_sha256": {
+    "experiments/ctpi_cstar/m1_picr/sequential_joint.py": "cf7848ef67a8903463c7af3cbe704b6361a72c5bcaba291dbfebf1d234462216",
+    "experiments/ctpi_cstar/m2_cpo/physical_prior.py": "ac5931ea70acc7ee8cc7a8580160e18c48e05e3c2be05d678784144e52156e05",
+    "experiments/ctpi_cstar/selftest_sequential_joint.py": "cb61f3e1a442aff25c4fd74a5b7508d43d6d4a8bde74b74e29d140c710775aba",
+    "closed_loop/ctpi/cstar_joint_source_online.py": "58fb834b1efb7d7f0069370acab4eaaf0ab71cc21508839b75aab75762df4a66",
+    "closed_loop/ctpi/cstar_launch_binding.py": "ed7a156fe4607a0ae570e3b5e5e20b40db25347ec045b47a5587579b39f2c5ef",
+    "closed_loop/ctpi/vgr_gsl_pmfs_ctpi_fasttrack.launch.py": "92b6eca6fddad455b59d4ac7f21a5a4c435c1df13d637fa34253f127f8489998",
+    "tools/cstar_verify_joint_launch_vm.py": "43f54def2d3a79a39aa871b4fe8ac92ddc2affc5494dd5172e78bef7d8f44e51",
+    "tools/cstar_finalize_joint_development.py": "3290f59f46c2eca4893e98a58a197a756c0174ebba1ed6fa0f3ecf121f311674",
+    "tools/cstar_verify_reusable_live.py": "a3304f82a1a0ff067ced857f7ac06a37aab19558dc35f464b3f66bf0b750c279"
+  },
+  "baseline_executable": {
+    "path": "/home/zyc/ros2_ws/install/gsl_server/lib/gsl_server/gsl_actionserver_node",
+    "exists": false,
+    "is_symlink": true,
+    "resolved_path": "/home/zyc/ros2_ws/build/gsl_server/gsl_actionserver_node"
+  },
+  "closed_loop_ran": false,
+  "causal_identifiability_proved": false,
+  "m1_utility_proved": false,
+  "m2_utility_proved": false,
+  "remaining": [
+    "Bind joint posterior to actual PMFS grid and source-update consumer.",
+    "Establish a matched native-law M1 arm; existing wrapper uses the physical M2 prior.",
+    "Remove full-prefix replay cost before full-grid online deployment.",
+    "Recover and hash a current-source PMFS executable; do not substitute an old binary.",
+    "Audit live GMRF and planner geometry, then run House123 seed12 240s development arms."
+  ],
+  "LAUNCH_BINDING.json": {
+    "sha256": "2dc0a6e25cf1318323d92c743cd527ef0b21165ed83470bd36d802771f18f628"
+  },
+  "INDEPENDENT_LIVE_VERIFICATION.json": {
+    "sha256": "b1d98e378ab5c1de0d935cb7eaeda64f44a991addbf741ecd1356e467b7aa5e5"
+  }
+}

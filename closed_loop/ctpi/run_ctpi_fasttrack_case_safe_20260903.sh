@@ -19,6 +19,9 @@ MAX_WARMUP_ITERATIONS="${MAX_WARMUP_ITERATIONS:?recover MAX_WARMUP_ITERATIONS fr
 MIN_WARMUP_ITERATIONS="${MIN_WARMUP_ITERATIONS:?recover MIN_WARMUP_ITERATIONS from the authoritative paired PMFS manifest}"
 INTEGRITY_REPORT="${INTEGRITY_REPORT:?set INTEGRITY_REPORT for this House bank}"
 VGR_BRIDGE_SOURCE_ROOT="${VGR_BRIDGE_SOURCE_ROOT:?set VGR_BRIDGE_SOURCE_ROOT to an audited vgr_bridge source overlay}"
+ENV_PREFLIGHT="${ENV_PREFLIGHT:-}"
+GEOMETRY_MANIFEST="${GEOMETRY_MANIFEST:-}"
+QUALIFIED_HELPER="${QUALIFIED_HELPER:-}"
 
 REPO_ROOT="${REPO_ROOT:-/home/zyc/gsl_ws/src/GasSourceLocalization}"
 BANK_ROOT_BASE="${BANK_ROOT_BASE:-/mnt/hgfs/workspace/CPIR_M1_FULLGRID_LOOKUP_20260831_R1}"
@@ -50,8 +53,8 @@ case "${HOUSE}" in
     START_X="-3.17"; START_Y="-1.75"
     ENV_ID="VGR_House01"; SCENARIO_ID="H01_cfg_2_4_1_fast"
     GAS_BACKEND="raw_house1_snapshot"
-    RAW_QUERY="/dev/shm/house1_raw_query"
-    REALIZATION=""
+    RAW_QUERY="${QUALIFIED_HELPER:-/dev/shm/house1_raw_query}"
+    REALIZATION="${VGR_DATA}/gas_simulations/${CONFIG_ID}/FilamentSimulation_gasType_10_sourcePosition_-0.40_-2.90_-0.30"
     ;;
   H02|House02)
     HSHORT="H02"; HOUSE_LONG="House02"
@@ -61,7 +64,7 @@ case "${HOUSE}" in
     START_X="-0.50"; START_Y="-2.50"
     ENV_ID="VGR_House02"; SCENARIO_ID="H02_cfg_3_5_1_fast"
     GAS_BACKEND="gaden_player"
-    RAW_QUERY="/bin/true"
+    RAW_QUERY="${QUALIFIED_HELPER:-/bin/true}"
     REALIZATION="${VGR_DATA}/gas_simulations/${CONFIG_ID}/FilamentSimulation_gasType_10_sourcePosition_0.00_-1.00_0.20"
     ;;
   H03|House03)
@@ -72,7 +75,7 @@ case "${HOUSE}" in
     START_X="2.00"; START_Y="0.00"
     ENV_ID="VGR_House03"; SCENARIO_ID="H03_cfg_1-2_5_fast"
     GAS_BACKEND="gaden_player"
-    RAW_QUERY="/bin/true"
+    RAW_QUERY="${QUALIFIED_HELPER:-/bin/true}"
     REALIZATION="${VGR_DATA}/gas_simulations/${CONFIG_ID}/FilamentSimulation_gasType_10_sourcePosition_-0.45_1.90_-0.10"
     ;;
   *) echo "CPIR_FORMAL_UNSUPPORTED_HOUSE=${HOUSE}" >&2; exit 2 ;;
@@ -84,6 +87,8 @@ case "${ARM}" in
   F01) PFDI_MODE="ctpi_f01" ;;
   F10) PFDI_MODE="ctpi_f10" ;;
   F11) PFDI_MODE="ctpi_f11" ;;
+  M1) PFDI_MODE="cer_m1" ;;
+  M1M2) PFDI_MODE="cer_m1_m2" ;;
   *) echo "CTPI_FASTTRACK_UNSUPPORTED_ARM=${ARM}" >&2; exit 2 ;;
 esac
 
@@ -95,20 +100,29 @@ PREFLIGHT_JSON="${RUN_DIR}/ctpi_formal_preflight.json"
 ALGORITHM_BINARY="${PFDI_INSTALL_ROOT}/install/gsl_server/lib/gsl_server/gsl_actionserver_node"
 VGR_BRIDGE_CONTRACT="${VGR_BRIDGE_SOURCE_ROOT}/vgr_bridge/result_contract.py"
 
-for path in "${CTPI_LAUNCH_FILE}" "${CTPI_PREFLIGHT_SCRIPT}" "${ALGORITHM_BINARY}" "${INTEGRITY_REPORT}" "${VGR_BRIDGE_CONTRACT}"; do
+for path in "${CTPI_LAUNCH_FILE}" "${ALGORITHM_BINARY}" "${VGR_BRIDGE_CONTRACT}"; do
   [[ -e "${path}" ]] || { echo "CPIR_FORMAL_REQUIRED_PATH_MISSING=${path}" >&2; exit 3; }
 done
-[[ -d "${BANK_ROOT}" ]] || { echo "CPIR_FORMAL_BANK_ROOT_MISSING=${BANK_ROOT}" >&2; exit 3; }
-[[ ! -e "${BANK_ROOT}/IN_PROGRESS" ]] || { echo "CPIR_FORMAL_BANK_STILL_IN_PROGRESS=${BANK_ROOT}" >&2; exit 3; }
+if [[ -n "${ENV_PREFLIGHT}" ]]; then
+  for path in "${ENV_PREFLIGHT}" "${GEOMETRY_MANIFEST}" "${QUALIFIED_HELPER}"; do
+    [[ -e "${path}" ]] || { echo "CER_ENVIRONMENT_BINDING_MISSING=${path}" >&2; exit 3; }
+  done
+else
+  for path in "${CTPI_PREFLIGHT_SCRIPT}" "${INTEGRITY_REPORT}"; do
+    [[ -e "${path}" ]] || { echo "CPIR_FORMAL_REQUIRED_PATH_MISSING=${path}" >&2; exit 3; }
+  done
+  [[ -d "${BANK_ROOT}" ]] || { echo "CPIR_FORMAL_BANK_ROOT_MISSING=${BANK_ROOT}" >&2; exit 3; }
+  [[ ! -e "${BANK_ROOT}/IN_PROGRESS" ]] || { echo "CPIR_FORMAL_BANK_STILL_IN_PROGRESS=${BANK_ROOT}" >&2; exit 3; }
+fi
 [[ -d "${VGR_DATA}" ]] || { echo "CPIR_FORMAL_VGR_DATA_MISSING=${VGR_DATA}" >&2; exit 3; }
 if [[ "${HSHORT}" == "H01" ]]; then
   [[ -x "${RAW_QUERY}" ]] || { echo "CPIR_FORMAL_RAW_QUERY_MISSING=${RAW_QUERY}" >&2; exit 3; }
-else
-  [[ -d "${REALIZATION}" ]] || { echo "CPIR_FORMAL_REALIZATION_MISSING=${REALIZATION}" >&2; exit 3; }
 fi
+[[ -d "${REALIZATION}" ]] || { echo "CPIR_FORMAL_REALIZATION_MISSING=${REALIZATION}" >&2; exit 3; }
 
 [[ ! -e "${RUN_DIR}" ]] || { echo "CTPI_FASTTRACK_REFUSE_STALE_RUN_DIR=${RUN_DIR}" >&2; exit 70; }
 mkdir -p "${RUN_DIR}" "${CPIR_AUDIT_DIR}"
+if [[ -z "${ENV_PREFLIGHT}" ]]; then
 python3 "${CTPI_PREFLIGHT_SCRIPT}" \
   --house "${HSHORT}" \
   --bank-root "${BANK_ROOT}" \
@@ -130,6 +144,10 @@ PY
 )
 BANK_SUMMARY_SHA="${PREFLIGHT_VALUES[0]}"
 CELL_MANIFEST_SHA="${PREFLIGHT_VALUES[1]}"
+else
+  BANK_SUMMARY_SHA=NOT_USED_EVENT_EVIDENCE
+  CELL_MANIFEST_SHA=NOT_USED_EVENT_EVIDENCE
+fi
 
 mkdir -p "${RUN_DIR}"
 ALGORITHM_SHA256="$(sha256sum "${ALGORITHM_BINARY}" | awk '{print $1}')"
@@ -151,12 +169,15 @@ cat >"${RUN_DIR}/formal_runtime_manifest.json" <<EOF
   "vgr_bridge_contract_sha256": "${VGR_BRIDGE_CONTRACT_SHA256}",
   "bank_summary_sha256": "${BANK_SUMMARY_SHA}",
   "cell_manifest_sha256": "${CELL_MANIFEST_SHA}",
+  "environment_preflight": "${ENV_PREFLIGHT}",
+  "geometry_manifest": "${GEOMETRY_MANIFEST}",
   "steps_source_update": ${STEPS_SOURCE_UPDATE},
   "max_warmup_iterations": ${MAX_WARMUP_ITERATIONS},
   "min_warmup_iterations": ${MIN_WARMUP_ITERATIONS},
   "start_x": ${START_X},
   "start_y": ${START_Y},
   "gas_backend": "${GAS_BACKEND}",
+  "realization": "${REALIZATION}",
   "config_id": "${CONFIG_ID}",
   "timeout_sec": ${TIMEOUT_SEC},
   "realtime_factor": ${REALTIME_FACTOR}
@@ -175,20 +196,20 @@ source /opt/ros/humble/setup.bash
 
 if [[ "${HSHORT}" == "H02" || "${HSHORT}" == "H03" ]]; then
   for setup in \
-    /dev/shm/house2_gaden_install/gaden_msgs/share/gaden_msgs/local_setup.bash \
-    /dev/shm/house2_gaden_install/gaden_common/share/gaden_common/local_setup.bash \
-    /dev/shm/house2_gaden_install/gaden_player/share/gaden_player/local_setup.bash; do
+    /home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_msgs/share/gaden_msgs/local_setup.bash \
+    /home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_common/share/gaden_common/local_setup.bash \
+    /home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_player/share/gaden_player/local_setup.bash; do
     [[ -f "${setup}" ]] || { echo "CPIR_FORMAL_GADEN_SETUP_MISSING=${setup}" >&2; exit 4; }
     source "${setup}"
   done
 fi
 
 # Preserve the known working GADEN/VGR loader order from the frozen paired runner.
-export AMENT_PREFIX_PATH="${PFDI_INSTALL_ROOT}/install/gsl_server:/dev/shm/house2_gaden_install/gaden_player:/dev/shm/house2_gaden_install/gaden_common:/dev/shm/house2_gaden_install/gaden_msgs:/dev/shm/house1_vgr_install:/dev/shm/house1_msgs_install:/home/zyc/ros2_ws/install/gmrf_wind_mapping:/home/zyc/ros2_ws/install:/opt/ros/humble:${AMENT_PREFIX_PATH:-}"
+export AMENT_PREFIX_PATH="${PFDI_INSTALL_ROOT}/install/gsl_server:${PFDI_INSTALL_ROOT}/deps/install/vgr_bridge:${PFDI_INSTALL_ROOT}/deps/install/gmrf_msgs:${PFDI_INSTALL_ROOT}/deps/install/gsl_actions:${PFDI_INSTALL_ROOT}/deps/install/olfaction_msgs:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_player:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_common:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_msgs:/dev/shm/house1_vgr_install:/home/zyc/ros2_ws/install/gmrf_wind_mapping:/opt/ros/humble:${AMENT_PREFIX_PATH:-}"
 export CMAKE_PREFIX_PATH="${AMENT_PREFIX_PATH}"
 export PATH="${PFDI_INSTALL_ROOT}/install/gsl_server:/dev/shm/house1_vgr_install/lib/vgr_bridge:${PATH}"
 export PYTHONPATH="${VGR_BRIDGE_SOURCE_ROOT}:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/dev/shm/house1_msgs_install/local/lib/python3.10/dist-packages:/dev/shm/house2_gaden_install/gaden_msgs/local/lib/python3.10/dist-packages:/dev/shm/house1_vgr_bridge:/home/zyc/ros2_ws/src/vgr_bridge:${PYTHONPATH:-}"
-export LD_LIBRARY_PATH="${PFDI_INSTALL_ROOT}/install/gsl_server:/dev/shm/house2_gaden_install/gaden_player/lib:/dev/shm/house2_gaden_install/gaden_common/lib:/dev/shm/house2_gaden_install/gaden_msgs/lib:/dev/shm/house2_gaden_build/gaden_common/third_party/gaden_core/third_party/libbsc:/dev/shm/house1_msgs_install/lib:/dev/shm/house1_vgr_install/lib:/home/zyc/ros2_ws/install/gmrf_msgs/lib:/home/zyc/ros2_ws/install/gmrf_wind_mapping/lib:/home/zyc/ros2_ws/install/lib:/opt/ros/humble/lib:${LD_LIBRARY_PATH:-}"
+export LD_LIBRARY_PATH="${PFDI_INSTALL_ROOT}/install/gsl_server/lib:${PFDI_INSTALL_ROOT}/deps/install/gmrf_msgs/lib:${PFDI_INSTALL_ROOT}/deps/install/gsl_actions/lib:${PFDI_INSTALL_ROOT}/deps/install/olfaction_msgs/lib:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_player/lib:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_common/lib:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_msgs/lib:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_build/gaden_common/third_party/gaden_core/third_party/libbsc:/dev/shm/house1_vgr_install/lib:/home/zyc/ros2_ws/install/gmrf_wind_mapping/lib:/opt/ros/humble/lib:${LD_LIBRARY_PATH:-}"
 
 python3 - "${RUN_DIR}/vgr_bridge_runtime_preflight.json" "${METHOD}" "${VGR_BRIDGE_SOURCE_ROOT}" <<'PY_VGR_BRIDGE'
 import hashlib
@@ -231,7 +252,7 @@ cleanup_children() {
 trap cleanup_children EXIT INT TERM
 
 if [[ "${HSHORT}" == "H02" || "${HSHORT}" == "H03" ]]; then
-  PLAYER=/dev/shm/house2_gaden_install/gaden_player/lib/gaden_player/player
+  PLAYER=/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_player/lib/gaden_player/player
   [[ -x "${PLAYER}" ]] || { echo "CPIR_FORMAL_GADEN_PLAYER_MISSING=${PLAYER}" >&2; exit 4; }
   "${PLAYER}" --ros-args -r __node:=gaden_player \
     -p num_simulators:=1 -p simulation_data_0:="${REALIZATION}" \
@@ -281,6 +302,13 @@ ARGS=(
   "sensor_model_mode:=dynamic" "gaden_iteration_mode:=seeded_time_replay" "realtime_factor:=${REALTIME_FACTOR}"
   "sim_stop_at_s:=-1.0" "nav_command_quantum_s:=${NAV_COMMAND_QUANTUM_S}"
   "gas_backend:=${GAS_BACKEND}" "raw_query_executable:=${RAW_QUERY}"
+  "raw_gas_results:=${REALIZATION}"
+  "cstar_environment_preflight:=${ENV_PREFLIGHT}" "cstar_geometry_manifest:=${GEOMETRY_MANIFEST}"
+  "cstar_house:=${HSHORT}" "gmrf_map_yaml_file:=$(python3 - "${GEOMETRY_MANIFEST}" "${HSHORT}" <<'PY_MAP'
+import json,sys
+print(json.load(open(sys.argv[1]))[sys.argv[2]]['map_yaml_path'])
+PY_MAP
+)"
   "gmrf_update_on_new_observation_only:=${GMRF_UPDATE_ON_NEW_OBSERVATION_ONLY}"
   "p2_shadow_enabled:=false" "tadm_enabled:=false" "pfdi_mode:=${PFDI_MODE}"
   "cpir_lookup_root:=${BANK_ROOT}" "cpir_audit_directory:=${CPIR_AUDIT_DIR}"

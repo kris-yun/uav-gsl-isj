@@ -1,5 +1,11 @@
 # Reusable CSTAR environment preflight and verified launch path
 
+2026-09-08 reuse note: the independent live verifier now requires
+`--expected-code-commit <full-sha-from-run-manifest>` instead of a hard-coded
+2026-09-07 revision. Historical artifacts retain their original verifier hash.
+Prospective PMFS launch binding and its remaining live-navigation limitations
+are recorded in `PMFS_JOINT_DEVELOPMENT_20260908.md`.
+
 2026-09-07. Current scope: existing House123, seed12; no algorithm training,
 no new scenario/source/seed, no model or GMRF launch. This is infrastructure,
 not M1/M2 scientific validation and not an unrestricted 'environment forever PASS'.

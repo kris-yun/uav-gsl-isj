@@ -2,6 +2,7 @@
 import argparse
 import json
 from pathlib import Path
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -14,7 +15,10 @@ def main():
     parser.add_argument("--preflight", type=Path, required=True)
     parser.add_argument("--live", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--expected-code-commit", required=True,
+                        help="Full commit from the independently supplied run manifest, not inferred from probe output")
     args = parser.parse_args()
+    require(re.fullmatch(r'[0-9a-f]{40}', args.expected_code_commit) is not None, "EXPECTED_CODE_COMMIT")
     require(not args.out.exists(), "OUTPUT_ALREADY_EXISTS")
     report = json.loads(args.preflight.read_text())
     require(report["pass"] is True, "PREFLIGHT_NOT_PASS")
@@ -23,7 +27,7 @@ def main():
     clock = report["clock_sensor"]["clock"]
     result = {"scope": "real stationary ROS frames vs numeric physical wind files; not navigation or model utility",
               "preflight_sha256": sha256(args.preflight), "verifier_sha256": sha256(Path(__file__)),
-              "source_code_commit": "a16ffa346a0d643c73c21591d4694f4e4413a106",
+              "source_code_commit": args.expected_code_commit,
               "maps": {}, "pass": False}
     for house in report["maps"]:
         target = args.live / house

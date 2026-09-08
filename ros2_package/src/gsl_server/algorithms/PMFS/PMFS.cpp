@@ -77,17 +77,30 @@ namespace GSL
         p2ShadowTransportSubstream = getParam<int64_t>("p2_transport_substream", 0x5053465354524E53LL);
         tadmEnabled = getParam<bool>("tadm_enabled", false);
         pfdiMode = getParam<std::string>("pfdi_mode", tadmEnabled ? "joint" : "off");
-        if (pfdiMode != "off" && pfdiMode != "cpir_m1" && pfdiMode != "cpir_a1" && pfdiMode != "cpir_a2" &&
+        jointSourceExchangeDir = getParam<std::string>("joint_source_exchange_dir", "");
+        if (!jointSourceExchangeDir.empty())
+        {
+            jointRunId = getParam<std::string>("run_uuid", "unknown");
+            if (pfdiMode != "off" || tadmEnabled || jointRunId == "unknown" || jointRunId.empty() ||
+                jointRunId.find_first_of(" \t\r\n") != std::string::npos ||
+                !std::filesystem::path(jointSourceExchangeDir).is_absolute() ||
+                !std::filesystem::is_directory(jointSourceExchangeDir) ||
+                !std::filesystem::is_empty(jointSourceExchangeDir))
+                throw std::invalid_argument("JOINT_REQUIRES_EXCLUSIVE_OFF_MODE_AND_FRESH_ABSOLUTE_EXCHANGE");
+        }
+        if (pfdiMode != "off" && pfdiMode != "cer_m1" && pfdiMode != "cer_m1_m2" && pfdiMode != "cpir_m1" && pfdiMode != "cpir_a1" && pfdiMode != "cpir_a2" &&
             pfdiMode != "cpir_a3" && pfdiMode != "cpir_m1_m3" && pfdiMode != "ctpi_f00" && pfdiMode != "ctpi_f01" && pfdiMode != "ctpi_f10" &&
             pfdiMode != "ctpi_f11" && pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" &&
             pfdiMode != "al" && pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" &&
             pfdiMode != "ec_edcl" && pfdiMode != "ec_edcl_shadow")
-            throw std::invalid_argument("pfdi_mode must be off, cpir_m1, cpir_a1, cpir_a2, cpir_a3, cpir_m1_m3, ctpi_f00, ctpi_f01, ctpi_f10, ctpi_f11, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
+            throw std::invalid_argument("pfdi_mode must be off, cer_m1, cer_m1_m2, cpir_m1, cpir_a1, cpir_a2, cpir_a3, cpir_m1_m3, ctpi_f00, ctpi_f01, ctpi_f10, ctpi_f11, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
+        eventEvidenceEnabled = pfdiMode == "cer_m1" || pfdiMode == "cer_m1_m2";
+        eventEvidenceTransportReplicas = pfdiMode == "cer_m1_m2" ? 3 : 1;
         ctpiPlannerEnabled = pfdiMode == "ctpi_f10" || pfdiMode == "ctpi_f11";
         ctpiTSDCEnabled = pfdiMode == "ctpi_f01" || pfdiMode == "ctpi_f11";
         cpirEnabled = pfdiMode == "cpir_m1" || pfdiMode == "cpir_a1" || pfdiMode == "cpir_a2" || pfdiMode == "cpir_a3" || pfdiMode == "cpir_m1_m3" ||
                       pfdiMode == "ctpi_f00" || pfdiMode == "ctpi_f01" || pfdiMode == "ctpi_f10" || pfdiMode == "ctpi_f11";
-        tadmEnabled = pfdiMode != "off" && !cpirEnabled;
+        tadmEnabled = pfdiMode != "off" && !cpirEnabled && !eventEvidenceEnabled;
         if (cpirEnabled)
         {
             const int settleSamples = getParam<int>("measurement_settle_samples", -1);
@@ -233,6 +246,7 @@ namespace GSL
         simulations.configureNativeDeterminism(
             static_cast<uint64_t>(getParam<int64_t>("seed", 0)),
             0x4E4154495645504DULL);
+        simulations.configureEventEvidence(eventEvidenceEnabled, eventEvidenceTransportReplicas);
 
         if (cpirEnabled)
             initializeCPIR();
@@ -342,6 +356,14 @@ namespace GSL
         if (hoverForwardExportEnabled && hoverForwardExportEveryMeasurement)
             simulations.exportCompletePointCandidateGrid(hoverForwardExportContinuousExposure);
 
+        // One completed StopAndMeasure block is one causal observation. Record
+        // it before the slower source-update cadence; never count its spatial
+        // PMFS propagation as additional observations.
+        if (eventEvidenceEnabled)
+            simulations.recordEventEvidence(Vector2(currentRobotPosition.x, currentRobotPosition.y),
+                                            concentration > thresholdGas,
+                                            ++completedMeasurementBlockId);
+
         // If we have already taken enough measurements in this position, process them and get ready to move to the next location
         // ------------------------------
         number_of_updates++;
@@ -361,6 +383,8 @@ namespace GSL
                 // simulations.compareRefineFractions();
                 ++p2SourceUpdateId;
                 const double sourceUpdateSimTime = (node->now() - startTime).seconds();
+                if (!jointSourceExchangeDir.empty())
+                    requestJointPosterior(p2SourceUpdateId);
                 simulations.setNativeSourceUpdateId(p2SourceUpdateId);
                 if (tadmEnabled)
                     simulations.beginTADMUpdate(p2SourceUpdateId, sourceUpdateSimTime);
@@ -399,6 +423,10 @@ namespace GSL
                 }
                 else
                     simulations.updateSourceProbability(settings.simulation.refineFraction);
+                // Keep native forward products for the existing controller,
+                // but do not multiply native compatibility into joint evidence.
+                if (!jointSourceExchangeDir.empty())
+                    applyJointPosterior(p2SourceUpdateId);
                 if (contextBankExportEnabled)
                 {
                     simulations.exportContextBankState(
@@ -522,6 +550,15 @@ namespace GSL
     float PMFS::gasCallback(olfaction_msgs::msg::GasSensor::SharedPtr msg)
     {
         float ppm = Algorithm::gasCallback(msg);
+        if (!jointSourceExchangeDir.empty())
+        {
+            if (msg->header.stamp.sec < 0 || msg->header.stamp.nanosec >= 1000000000U)
+                throw std::runtime_error("JOINT_INVALID_GAS_STAMP");
+            const uint64_t stamp = static_cast<uint64_t>(msg->header.stamp.sec) * 1000000000ULL + msg->header.stamp.nanosec;
+            if (stamp < jointLatestStampNs)
+                throw std::runtime_error("JOINT_NONMONOTONE_GAS_STAMP");
+            jointLatestStampNs = stamp;
+        }
         if (ctpiPlannerEnabled)
             ctpiLatestMeasuredPpm = ppm;
         if (cpirEnabled)

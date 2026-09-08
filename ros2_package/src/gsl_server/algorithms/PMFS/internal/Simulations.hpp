@@ -84,6 +84,8 @@ namespace GSL::PMFS_internal
         void initializeMap(const std::vector<std::vector<uint8_t>>& occupancyMap);
         void configureNativeDeterminism(uint64_t globalSeed, uint64_t transportSubstream);
         void setNativeSourceUpdateId(uint64_t sourceUpdateId);
+        void configureEventEvidence(bool enabled, int transportReplicas);
+        void recordEventEvidence(const Vector2& position, bool hit, uint64_t blockId);
         void updateSourceProbability(float refineFraction);
         void makeSimulationImage(const SimulationSource& source);
         // Read-only HOVER export: uses the unmodified PMFS filament simulator.
@@ -112,6 +114,7 @@ namespace GSL::PMFS_internal
         double probabilitySingleFrequency(double measured, double simulated) const;
         double probabilityFromSingleCell(HitProbability measured, double simulated) const;
         long double sourceProbFromMaps(const Grid2D<HitProbability>& hitRandomVariable, const std::vector<float>& hitMap) const;
+        long double sourceProbFromEvents(const std::vector<float>& hitMap) const;
         // Isolated fixed-context replay entrypoint. This exposes only the
         // existing PMFS forward kernel; it cannot read or modify a posterior.
         void runPointForwardReplay(const Vector2& point, std::vector<float>& hitMap,
@@ -138,6 +141,10 @@ namespace GSL::PMFS_internal
         Grid2D<HitProbability> measuredHitProb;
         Grid2D<double> sourceProb;
         Grid2D<Vector2> wind;
+        struct EventEvidence { size_t cell; bool hit; uint64_t blockId; };
+        bool eventEvidenceEnabled = false;
+        int eventEvidenceTransportReplicas = 1;
+        std::vector<EventEvidence> eventEvidence;
         cv::Mat freeSpaceMask;
 
         bool readOnlyForwardExportEnabled = false;

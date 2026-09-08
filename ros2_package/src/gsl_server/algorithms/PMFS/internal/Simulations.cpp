@@ -355,6 +355,27 @@ namespace GSL::PMFS_internal
         nativeSourceUpdateId = sourceUpdateId;
     }
 
+    void Simulations::configureEventEvidence(bool enabled, int transportReplicas)
+    {
+        if (transportReplicas < 1 || transportReplicas > 8)
+            throw std::invalid_argument("CER_TRANSPORT_REPLICA_RANGE");
+        eventEvidenceEnabled = enabled;
+        eventEvidenceTransportReplicas = transportReplicas;
+        eventEvidence.clear();
+    }
+
+    void Simulations::recordEventEvidence(const Vector2& position, bool hit, uint64_t blockId)
+    {
+        if (!eventEvidenceEnabled)
+            return;
+        const Vector2Int indices = measuredHitProb.metadata.coordinatesToIndices(position);
+        if (!measuredHitProb.metadata.indicesInBounds(indices) || !measuredHitProb.freeAt(indices))
+            throw std::runtime_error("CER_EVENT_OUTSIDE_FREE_SUPPORT");
+        if (blockId == 0 || (!eventEvidence.empty() && blockId <= eventEvidence.back().blockId))
+            throw std::runtime_error("CER_EVENT_BLOCK_NOT_MONOTONE");
+        eventEvidence.push_back(EventEvidence{measuredHitProb.metadata.indexOf(indices), hit, blockId});
+    }
+
     void Simulations::updateSourceProbability(float refineFraction)
     {
         ZoneScoped;
@@ -655,10 +676,26 @@ namespace GSL::PMFS_internal
         result.valid = true;
         result.hitMap.resize(measuredHitProb.data.size(), 0.0);
 
-        EventKeyedTransportRng nativeRng(EventKey{nativeRandomSeed, nativeSourceUpdateId, 0, nativeTransportSubstream});
-        SimulationSource source(node, measuredHitProb.metadata, nativeDeterministicRng ? &nativeRng : nullptr);
-        simulateSourceInPosition(source, result.hitMap, true, settings.iterationsToRecord, settings.deltaTime,
-                                 settings.noiseSTDev, nullptr, nativeDeterministicRng ? &nativeRng : nullptr);
+        long double mixtureScore = 0.0L;
+        const int replicas = eventEvidenceEnabled ? eventEvidenceTransportReplicas : 1;
+        std::vector<float> memberMap(result.hitMap.size(), 0.0f);
+        Vector2 firstSampledSourcePoint(0.0f, 0.0f);
+        for (int replica = 0; replica < replicas; ++replica)
+        {
+            std::fill(memberMap.begin(), memberMap.end(), 0.0f);
+            EventKeyedTransportRng nativeRng(EventKey{nativeRandomSeed, nativeSourceUpdateId,
+                static_cast<uint64_t>(replica), nativeTransportSubstream});
+            SimulationSource memberSource(node, measuredHitProb.metadata, nativeDeterministicRng ? &nativeRng : nullptr);
+            simulateSourceInPosition(memberSource, memberMap, true, settings.iterationsToRecord, settings.deltaTime,
+                                     settings.noiseSTDev, nullptr, nativeDeterministicRng ? &nativeRng : nullptr);
+            for (size_t i = 0; i < memberMap.size(); ++i)
+                result.hitMap[i] += memberMap[i] / static_cast<float>(replicas);
+            mixtureScore += (eventEvidenceEnabled ? sourceProbFromEvents(memberMap)
+                                                   : sourceProbFromMaps(measuredHitProb, memberMap)) /
+                            static_cast<long double>(replicas);
+            if (replica == 0)
+                firstSampledSourcePoint = memberSource.firstSampledSourcePoint();
+        }
 
         if (settings.blurSigmaX > 0 || settings.blurSigmaY > 0)
         {
@@ -680,8 +717,8 @@ namespace GSL::PMFS_internal
         }
         exportCandidateHitMap(stableID, candidatePoint, result.hitMap);
 
-        result.sourceProb = sourceProbFromMaps(measuredHitProb, result.hitMap);
-        exportNativeCandidateRecord(stableID, candidatePoint, source.firstSampledSourcePoint(), result.sourceProb, result.hitMap);
+        result.sourceProb = mixtureScore;
+        exportNativeCandidateRecord(stableID, candidatePoint, firstSampledSourcePoint, result.sourceProb, result.hitMap);
 
         scores[index].score = result.sourceProb;
 
@@ -6345,6 +6382,25 @@ namespace GSL::PMFS_internal
             GSL_ASSERT(!std::isnan(total));
         }
         return total;
+    }
+
+    long double Simulations::sourceProbFromEvents(const std::vector<float>& hitMap) const
+    {
+        if (eventEvidence.empty())
+            return 1.0L;
+        long double logLikelihood = 0.0L;
+        for (const auto& event : eventEvidence)
+        {
+            if (event.cell >= hitMap.size())
+                throw std::runtime_error("CER_EVENT_CELL_RANGE");
+            const long double probability = std::clamp(static_cast<long double>(hitMap[event.cell]),
+                                                       1.0e-4L, 1.0L - 1.0e-4L);
+            logLikelihood += std::log(event.hit ? probability : 1.0L - probability);
+        }
+        const long double result = std::exp(logLikelihood);
+        if (!(std::isfinite(static_cast<double>(result)) && result > 0.0L))
+            throw std::runtime_error("CER_EVENT_LIKELIHOOD_UNDERFLOW");
+        return result;
     }
 
     double Simulations::probabilityFromSingleCell(HitProbability hitProb, double simulated) const
