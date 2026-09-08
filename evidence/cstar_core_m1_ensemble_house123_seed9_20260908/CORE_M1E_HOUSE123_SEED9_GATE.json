@@ -1,0 +1,96 @@
+{
+  "contract": "CSTAR_CORE_M1_PAIRED_CLOSED_LOOP_V1",
+  "houses": [
+    "H01",
+    "H02",
+    "H03"
+  ],
+  "seeds": [
+    9
+  ],
+  "m1_arm": "M1E",
+  "pairs": [
+    {
+      "house": "H01",
+      "seed": 9,
+      "A0": {
+        "final_error_m": 6.902093885191652,
+        "distance_auc_m_s": 1726.363884785987,
+        "last_estimate_time_s": 239.901,
+        "trace_rows_to_240": 113,
+        "status_sha256": "c74042e7f17af7513f3612f6820c1dc103cd38a8dcfdba40d49deb18c96af714",
+        "trace_sha256": "ea66c6ce44a2ec25e99123bbf7421278bb96e16a313a3bfc94ddf12d3905588c"
+      },
+      "M1E": {
+        "final_error_m": 6.42206353129584,
+        "distance_auc_m_s": 1644.0845176301125,
+        "last_estimate_time_s": 239.301,
+        "trace_rows_to_240": 110,
+        "status_sha256": "333df17227f1142b3c6ea6827b80581fac515ed329c214dcee2e9f41f9c628b6",
+        "trace_sha256": "fb1edf0490b0b0391bb03ef31c614200614bf4ca1361f18090d027ba140f4272"
+      },
+      "final_improvement_m": 0.4800303538958124,
+      "auc_improvement_m_s": 82.27936715587452
+    },
+    {
+      "house": "H02",
+      "seed": 9,
+      "A0": {
+        "final_error_m": 2.454962449264754,
+        "distance_auc_m_s": 944.0557529023555,
+        "last_estimate_time_s": 238.542,
+        "trace_rows_to_240": 112,
+        "status_sha256": "d0084d14e3142a1609711b6dbd9f77cd59f6740a299c9b576898e6877f7b6323",
+        "trace_sha256": "619f02e3df3ffcc1072bab3aa9e73eea6665d55e2323d6f13d3caafc5092bd45"
+      },
+      "M1E": {
+        "final_error_m": 3.957890679048627,
+        "distance_auc_m_s": 943.6154176276946,
+        "last_estimate_time_s": 238.501,
+        "trace_rows_to_240": 110,
+        "status_sha256": "dbae26fcd24357cf26ab96e500cc4a32206115cc9ca1df8bd36131f765bf5057",
+        "trace_sha256": "fa31699c51a6fa298402185105a3d2682f0ef94b34d4da933bcc28f263b92bff"
+      },
+      "final_improvement_m": -1.502928229783873,
+      "auc_improvement_m_s": 0.44033527466092437
+    },
+    {
+      "house": "H03",
+      "seed": 9,
+      "A0": {
+        "final_error_m": 7.64682084267704,
+        "distance_auc_m_s": 1541.6278089765224,
+        "last_estimate_time_s": 239.301,
+        "trace_rows_to_240": 110,
+        "status_sha256": "96ced2232dffb7e27660b6d72ac91a12c732b790ccfc49fe78d67f6ebd6db685",
+        "trace_sha256": "6258be03201ecb820e6b8744213d3f4c1a6c33ef9d6a3ebb76f8204446454987"
+      },
+      "M1E": {
+        "final_error_m": 5.367650230780691,
+        "distance_auc_m_s": 1436.1587594623477,
+        "last_estimate_time_s": 239.9,
+        "trace_rows_to_240": 110,
+        "status_sha256": "1a5b86ddf0449d78e0cafff0249bd997753ac32cd1aa1c3f122d5aa28a524e5f",
+        "trace_sha256": "1d4e3c5638dd74e329da0710a5e227b8c4b97681900b5a2664971418cc90122e"
+      },
+      "final_improvement_m": 2.2791706118963493,
+      "auc_improvement_m_s": 105.46904951417469
+    }
+  ],
+  "gate": {
+    "paired_worlds": 3,
+    "final_improved_worlds": 2,
+    "auc_improved_worlds": 3,
+    "both_improved_worlds": 2,
+    "all_pairs_improved": false,
+    "mean_final_improvement_m": 0.41875757866942953,
+    "mean_auc_improvement_m_s": 62.729583981570045,
+    "pass": true
+  },
+  "verdict": "PASS",
+  "limits": [
+    "a one-world pilot is only an early-stop screen",
+    "seed12 is exposed development evidence and must remain labelled as such",
+    "closed-loop benefit does not by itself prove the structural identification assumptions"
+  ]
+}
