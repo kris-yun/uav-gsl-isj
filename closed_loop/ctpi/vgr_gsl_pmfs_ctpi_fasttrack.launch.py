@@ -65,10 +65,10 @@ def _validate_ctpi_launch(context):
     elif identity == ('CTPI_G2_M1_M2', 'ctpi_two_module'):
         allowed = {'off', 'ctpi_f00', 'ctpi_f01', 'cer_m1', 'cer_m1_m2',
                    'cer_ratio_m1', 'cer_ratio_m1_m2', 'cer_core_m1', 'cer_core_seq_m1',
-                   'cer_core_stop_m1'}
+                   'cer_core_stop_m1', 'cer_core_ensemble_m1'}
     elif identity == ('PMFS_CER_M1_M2', 'causal_event_transport'):
         allowed = {'off', 'cer_m1', 'cer_m1_m2', 'cer_ratio_m1', 'cer_ratio_m1_m2',
-                   'cer_core_m1', 'cer_core_seq_m1', 'cer_core_stop_m1'}
+                   'cer_core_m1', 'cer_core_seq_m1', 'cer_core_stop_m1', 'cer_core_ensemble_m1'}
     else:
         raise RuntimeError('CTPI_METHOD_IDENTITY_MISMATCH')
     if mode not in allowed:
@@ -83,6 +83,7 @@ def _validate_ctpi_launch(context):
         'cer_core_m1': 'M1C',
         'cer_core_seq_m1': 'M1S',
         'cer_core_stop_m1': 'M1P',
+        'cer_core_ensemble_m1': 'M1E',
     }[mode]
     if value('ablation_id') != expected_ablation:
         raise RuntimeError(
@@ -120,7 +121,8 @@ def _validate_ctpi_launch(context):
         raise RuntimeError('CPIR_MIN_WARMUP_EXPECTED_MISMATCH')
 
     if mode not in {'off', 'cer_m1', 'cer_m1_m2', 'cer_ratio_m1', 'cer_ratio_m1_m2',
-                    'cer_core_m1', 'cer_core_seq_m1', 'cer_core_stop_m1'}:
+                    'cer_core_m1', 'cer_core_seq_m1', 'cer_core_stop_m1',
+                    'cer_core_ensemble_m1'}:
         required = {
             'cpir_lookup_root': value('cpir_lookup_root'),
             'cpir_audit_directory': value('cpir_audit_directory'),
