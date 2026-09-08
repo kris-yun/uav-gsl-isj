@@ -103,6 +103,7 @@ namespace GSL
         bool eventEvidencePhysicalStopOnly = false;
         bool eventEvidenceAfterWarmupOnly = false;
         bool eventEvidenceTransportLogPool = false;
+        bool eventEvidenceTransportRobustPool = false;
         int eventEvidenceTransportReplicas = 1;
         std::string pfdiMode = "off";
         // Optional inference-to-control coupling.  The frozen OFF path keeps

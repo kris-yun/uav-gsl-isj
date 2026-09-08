@@ -66,11 +66,11 @@ def _validate_ctpi_launch(context):
         allowed = {'off', 'ctpi_f00', 'ctpi_f01', 'cer_m1', 'cer_m1_m2',
                    'cer_ratio_m1', 'cer_ratio_m1_m2', 'cer_core_m1', 'cer_core_seq_m1',
                    'cer_core_stop_m1', 'cer_core_ensemble_m1', 'cer_core_eventtime_m1',
-                   'cer_core_invariant_m1'}
+                   'cer_core_invariant_m1', 'cer_core_robust_m1'}
     elif identity == ('PMFS_CER_M1_M2', 'causal_event_transport'):
         allowed = {'off', 'cer_m1', 'cer_m1_m2', 'cer_ratio_m1', 'cer_ratio_m1_m2',
                    'cer_core_m1', 'cer_core_seq_m1', 'cer_core_stop_m1', 'cer_core_ensemble_m1',
-                   'cer_core_eventtime_m1', 'cer_core_invariant_m1'}
+                   'cer_core_eventtime_m1', 'cer_core_invariant_m1', 'cer_core_robust_m1'}
     else:
         raise RuntimeError('CTPI_METHOD_IDENTITY_MISMATCH')
     if mode not in allowed:
@@ -88,6 +88,7 @@ def _validate_ctpi_launch(context):
         'cer_core_ensemble_m1': 'M1E',
         'cer_core_eventtime_m1': 'M1F',
         'cer_core_invariant_m1': 'M1G',
+        'cer_core_robust_m1': 'M1H',
     }[mode]
     if value('ablation_id') != expected_ablation:
         raise RuntimeError(
@@ -119,7 +120,7 @@ def _validate_ctpi_launch(context):
     expected_min_warmup = _required_int(value, 'cpir_expected_min_warmup_iterations')
     if int(value('stepsSourceUpdate')) != expected_steps:
         raise RuntimeError('CPIR_STEPS_SOURCE_UPDATE_EXPECTED_MISMATCH')
-    if mode in {'cer_core_eventtime_m1', 'cer_core_invariant_m1'} and expected_steps != 1:
+    if mode in {'cer_core_eventtime_m1', 'cer_core_invariant_m1', 'cer_core_robust_m1'} and expected_steps != 1:
         raise RuntimeError('CER_CORE_EVENTTIME_REQUIRES_STEPS_SOURCE_UPDATE_1')
     if int(value('maxWarmupIterations')) != expected_max_warmup:
         raise RuntimeError('CPIR_MAX_WARMUP_EXPECTED_MISMATCH')
@@ -129,7 +130,7 @@ def _validate_ctpi_launch(context):
     if mode not in {'off', 'cer_m1', 'cer_m1_m2', 'cer_ratio_m1', 'cer_ratio_m1_m2',
                     'cer_core_m1', 'cer_core_seq_m1', 'cer_core_stop_m1',
                     'cer_core_ensemble_m1', 'cer_core_eventtime_m1',
-                    'cer_core_invariant_m1'}:
+                    'cer_core_invariant_m1', 'cer_core_robust_m1'}:
         required = {
             'cpir_lookup_root': value('cpir_lookup_root'),
             'cpir_audit_directory': value('cpir_audit_directory'),
