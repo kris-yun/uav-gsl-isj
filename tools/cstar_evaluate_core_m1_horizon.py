@@ -96,15 +96,15 @@ def main() -> None:
 
     final = [pair["final_improvement_m"] for pair in pairs]
     auc = [pair["auc_improvement_m_s"] for pair in pairs]
+    both = [
+        pair["final_improvement_m"] > 0.0 and pair["auc_improvement_m_s"] > 0.0
+        for pair in pairs
+    ]
     gate = {
         "paired_worlds": len(pairs),
         "final_improved_worlds": sum(value > 0.0 for value in final),
         "auc_improved_worlds": sum(value > 0.0 for value in auc),
-        "both_improved_worlds": sum(
-            pair["final_improvement_m"] > 0.0
-            and pair["auc_improvement_m_s"] > 0.0
-            for pair in pairs
-        ),
+        "both_improved_worlds": sum(both),
         "all_pairs_improved": all(
             pair["final_improvement_m"] > 0.0
             and pair["auc_improvement_m_s"] > 0.0
@@ -113,14 +113,13 @@ def main() -> None:
         "mean_final_improvement_m": sum(final) / len(final),
         "mean_auc_improvement_m_s": sum(auc) / len(auc),
         "pass": (
-            sum(value > 0.0 for value in final) * 2 >= len(final)
-            and sum(value > 0.0 for value in auc) * 2 >= len(auc)
+            sum(both) * 2 >= len(both)
             and sum(final) > 0.0
             and sum(auc) > 0.0
         ),
     }
     report = {
-        "contract": "CSTAR_CORE_M1_PAIRED_CLOSED_LOOP_HORIZON_V2",
+        "contract": "CSTAR_CORE_M1_PAIRED_CLOSED_LOOP_HORIZON_V3",
         "horizon_s": HORIZON_S,
         "posterior_between_updates": "zero_order_hold",
         "houses": args.houses,
