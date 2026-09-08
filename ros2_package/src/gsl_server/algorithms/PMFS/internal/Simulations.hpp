@@ -86,7 +86,8 @@ namespace GSL::PMFS_internal
         void initializeMap(const std::vector<std::vector<uint8_t>>& occupancyMap);
         void configureNativeDeterminism(uint64_t globalSeed, uint64_t transportSubstream);
         void setNativeSourceUpdateId(uint64_t sourceUpdateId);
-        void configureEventEvidence(bool enabled, int transportReplicas, bool contrastiveRatio = false);
+        void configureEventEvidence(bool enabled, int transportReplicas, bool contrastiveRatio = false,
+                                    bool centeredLogOdds = false);
         void recordEventEvidence(const Vector2& position, bool hit, double concentration,
                                  double threshold, uint64_t blockId);
         void updateSourceProbability(float refineFraction);
@@ -154,11 +155,13 @@ namespace GSL::PMFS_internal
         };
         bool eventEvidenceEnabled = false;
         bool eventEvidenceContrastiveRatio = false;
+        bool eventEvidenceCenteredLogOdds = false;
         int eventEvidenceTransportReplicas = 1;
         std::vector<EventEvidence> eventEvidence;
-        // Member-specific source-agnostic context.  Pooling transport members
-        // here would relabel regime-wide scale changes as source evidence.
-        std::vector<std::vector<long double>> eventEvidenceContextProbability;
+        // Member-specific, candidate-invariant context.  Legacy M1R stores an
+        // arithmetic probability mean; CORE M1C stores a mean log-odds so a
+        // candidate-common additive nuisance cancels exactly.
+        std::vector<std::vector<long double>> eventEvidenceContext;
         cv::Mat freeSpaceMask;
 
         bool readOnlyForwardExportEnabled = false;

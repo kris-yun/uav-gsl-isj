@@ -357,15 +357,17 @@ namespace GSL::PMFS_internal
         nativeSourceUpdateId = sourceUpdateId;
     }
 
-    void Simulations::configureEventEvidence(bool enabled, int transportReplicas, bool contrastiveRatio)
+    void Simulations::configureEventEvidence(bool enabled, int transportReplicas, bool contrastiveRatio,
+                                             bool centeredLogOdds)
     {
         if (transportReplicas < 1 || transportReplicas > 8)
             throw std::invalid_argument("CER_TRANSPORT_REPLICA_RANGE");
         eventEvidenceEnabled = enabled;
         eventEvidenceContrastiveRatio = enabled && contrastiveRatio;
+        eventEvidenceCenteredLogOdds = eventEvidenceContrastiveRatio && centeredLogOdds;
         eventEvidenceTransportReplicas = transportReplicas;
         eventEvidence.clear();
-        eventEvidenceContextProbability.clear();
+        eventEvidenceContext.clear();
     }
 
     void Simulations::recordEventEvidence(const Vector2& position, bool hit, double concentration,
@@ -6407,7 +6409,7 @@ namespace GSL::PMFS_internal
 
     void Simulations::initializeContrastiveEventContext(const std::vector<SimulationResult>& results)
     {
-        eventEvidenceContextProbability.clear();
+        eventEvidenceContext.clear();
         if (eventEvidence.empty())
             return;
         std::vector<const SimulationResult*> ordered;
@@ -6426,8 +6428,17 @@ namespace GSL::PMFS_internal
         if (ordered.empty() || ordered.front()->transportMemberHitMaps.empty())
             throw std::runtime_error("CER_RATIO_CONTEXT_EMPTY");
         const size_t memberCount = ordered.front()->transportMemberHitMaps.size();
-        eventEvidenceContextProbability.assign(
+        eventEvidenceContext.assign(
             memberCount, std::vector<long double>(eventEvidence.size(), 0.0L));
+        const auto clipped = [](long double probability)
+        {
+            return std::clamp(probability, 1.0e-4L, 1.0L - 1.0e-4L);
+        };
+        const auto logit = [&](long double probability)
+        {
+            const long double p = clipped(probability);
+            return std::log(p) - std::log1p(-p);
+        };
         for (const SimulationResult* result : ordered)
         {
             if (result->transportMemberHitMaps.size() != memberCount)
@@ -6438,15 +6449,18 @@ namespace GSL::PMFS_internal
                 if (memberMap.size() != measuredHitProb.data.size())
                     throw std::runtime_error("CER_RATIO_MEMBER_MAP_SIZE");
                 for (size_t eventIndex = 0; eventIndex < eventEvidence.size(); ++eventIndex)
-                    eventEvidenceContextProbability[memberIndex][eventIndex] +=
-                        memberMap[eventEvidence[eventIndex].cell];
+                {
+                    const long double probability = memberMap[eventEvidence[eventIndex].cell];
+                    eventEvidenceContext[memberIndex][eventIndex] +=
+                        eventEvidenceCenteredLogOdds ? logit(probability) : probability;
+                }
             }
         }
-        for (auto& memberContext : eventEvidenceContextProbability)
-            for (long double& probability : memberContext)
-                probability /= static_cast<long double>(ordered.size());
-        GSL_INFO("CER contrastive context initialized: events={}, candidates={}, transport_members={}, fixed_ratio_weight=1, context_within_member=true",
-                 eventEvidence.size(), ordered.size(), memberCount);
+        for (auto& memberContext : eventEvidenceContext)
+            for (long double& value : memberContext)
+                value /= static_cast<long double>(ordered.size());
+        GSL_INFO("CER contrastive context initialized: events={}, candidates={}, transport_members={}, fixed_ratio_weight=1, context_within_member=true, centered_log_odds={}",
+                 eventEvidence.size(), ordered.size(), memberCount, eventEvidenceCenteredLogOdds);
     }
 
     long double Simulations::sourceProbFromContrastiveEvents(
@@ -6455,7 +6469,7 @@ namespace GSL::PMFS_internal
         if (eventEvidence.empty())
             return 1.0L;
         if (transportMemberHitMaps.empty() ||
-            eventEvidenceContextProbability.size() != transportMemberHitMaps.size())
+            eventEvidenceContext.size() != transportMemberHitMaps.size())
             throw std::runtime_error("CER_RATIO_CONTEXT_NOT_READY");
         const auto clipped = [](long double probability)
         {
@@ -6481,7 +6495,7 @@ namespace GSL::PMFS_internal
         for (size_t memberIndex = 0; memberIndex < transportMemberHitMaps.size(); ++memberIndex)
         {
             const auto& memberMap = transportMemberHitMaps[memberIndex];
-            const auto& memberContext = eventEvidenceContextProbability[memberIndex];
+            const auto& memberContext = eventEvidenceContext[memberIndex];
             if (memberContext.size() != eventEvidence.size())
                 throw std::runtime_error("CER_RATIO_CONTEXT_EVENT_COUNT");
             long double logLikelihood = 0.0L;
@@ -6498,12 +6512,15 @@ namespace GSL::PMFS_internal
                 const long double persistence = 0.5L * std::erfc(
                     (thresholdLog - previousLog) / std::sqrt(2.0L));
                 const long double sourceProbability = clipped(memberMap[event.cell]);
-                const long double contextProbability = clipped(memberContext[eventIndex]);
-                // Fixed unit source/context odds ratio. Candidate-independent
-                // persistence handles shared temporal dynamics; only the
-                // source-specific forward contrast changes posterior odds.
+                const long double contextLogOdds = eventEvidenceCenteredLogOdds
+                    ? memberContext[eventIndex]
+                    : logit(clipped(memberContext[eventIndex]));
+                // Fixed unit source/context odds residual. Candidate-independent
+                // persistence handles shared temporal dynamics. In CORE mode,
+                // centering predicted log-odds across candidates exactly removes
+                // any additive candidate-common nuisance term.
                 const long double corrected = clipped(expit(
-                    logit(persistence) + logit(sourceProbability) - logit(contextProbability)));
+                    logit(persistence) + logit(sourceProbability) - contextLogOdds));
                 logLikelihood += std::log(event.hit ? corrected : 1.0L - corrected);
                 previousConcentration = event.concentration;
             }
