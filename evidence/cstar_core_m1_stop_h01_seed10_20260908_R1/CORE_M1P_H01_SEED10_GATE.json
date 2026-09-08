@@ -1,0 +1,50 @@
+{
+  "contract": "CSTAR_CORE_M1_PAIRED_CLOSED_LOOP_V1",
+  "houses": [
+    "H01"
+  ],
+  "seeds": [
+    10
+  ],
+  "m1_arm": "M1P",
+  "pairs": [
+    {
+      "house": "H01",
+      "seed": 10,
+      "A0": {
+        "final_error_m": 2.6718720029222958,
+        "distance_auc_m_s": 1247.0961091288998,
+        "last_estimate_time_s": 238.498,
+        "trace_rows_to_240": 110,
+        "status_sha256": "ab98ed8c2872044b0efd90aaa74ded640ca919abfa59c9ddc8c4f86358161269",
+        "trace_sha256": "5f60488df659360ee8fdea31ec97e35cc2128bd263d88ed77b380e877ffd3ed2"
+      },
+      "M1P": {
+        "final_error_m": 2.2988910370002316,
+        "distance_auc_m_s": 1587.0688884525373,
+        "last_estimate_time_s": 239.101,
+        "trace_rows_to_240": 105,
+        "status_sha256": "85c24e7285df4801c489927169df3e03926d159657b628bb6680065596201ad6",
+        "trace_sha256": "0c6703fdaf1d8e4e386a2f6305d31dcfbdb1fa171701d44dbfee2f6352cc8a1d"
+      },
+      "final_improvement_m": 0.3729809659220642,
+      "auc_improvement_m_s": -339.9727793236375
+    }
+  ],
+  "gate": {
+    "paired_worlds": 1,
+    "final_improved_worlds": 1,
+    "auc_improved_worlds": 0,
+    "both_improved_worlds": 0,
+    "all_pairs_improved": false,
+    "mean_final_improvement_m": 0.3729809659220642,
+    "mean_auc_improvement_m_s": -339.9727793236375,
+    "pass": false
+  },
+  "verdict": "NO_GO",
+  "limits": [
+    "a one-world pilot is only an early-stop screen",
+    "seed12 is exposed development evidence and must remain labelled as such",
+    "closed-loop benefit does not by itself prove the structural identification assumptions"
+  ]
+}
