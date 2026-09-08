@@ -96,6 +96,7 @@ case "${ARM}" in
   M1S) PFDI_MODE="cer_core_seq_m1" ;;
   M1P) PFDI_MODE="cer_core_stop_m1" ;;
   M1E) PFDI_MODE="cer_core_ensemble_m1" ;;
+  M1F) PFDI_MODE="cer_core_eventtime_m1" ;;
   *) echo "CTPI_FASTTRACK_UNSUPPORTED_ARM=${ARM}" >&2; exit 2 ;;
 esac
 
