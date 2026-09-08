@@ -88,7 +88,8 @@ namespace GSL::PMFS_internal
         void setNativeSourceUpdateId(uint64_t sourceUpdateId);
         void configureEventEvidence(bool enabled, int transportReplicas, bool contrastiveRatio = false,
                                     bool centeredLogOdds = false,
-                                    bool sequentialAssimilation = false);
+                                    bool sequentialAssimilation = false,
+                                    bool transportLogPool = false);
         void recordEventEvidence(const Vector2& position, bool hit, double concentration,
                                  double threshold, uint64_t blockId);
         void updateSourceProbability(float refineFraction);
@@ -158,6 +159,7 @@ namespace GSL::PMFS_internal
         bool eventEvidenceContrastiveRatio = false;
         bool eventEvidenceCenteredLogOdds = false;
         bool eventEvidenceSequentialAssimilation = false;
+        bool eventEvidenceTransportLogPool = false;
         int eventEvidenceTransportReplicas = 1;
         std::vector<EventEvidence> eventEvidence;
         // Member-specific, candidate-invariant context.  Legacy M1R stores an

@@ -358,7 +358,8 @@ namespace GSL::PMFS_internal
     }
 
     void Simulations::configureEventEvidence(bool enabled, int transportReplicas, bool contrastiveRatio,
-                                             bool centeredLogOdds, bool sequentialAssimilation)
+                                             bool centeredLogOdds, bool sequentialAssimilation,
+                                             bool transportLogPool)
     {
         if (transportReplicas < 1 || transportReplicas > 8)
             throw std::invalid_argument("CER_TRANSPORT_REPLICA_RANGE");
@@ -366,6 +367,7 @@ namespace GSL::PMFS_internal
         eventEvidenceContrastiveRatio = enabled && contrastiveRatio;
         eventEvidenceCenteredLogOdds = eventEvidenceContrastiveRatio && centeredLogOdds;
         eventEvidenceSequentialAssimilation = eventEvidenceCenteredLogOdds && sequentialAssimilation;
+        eventEvidenceTransportLogPool = eventEvidenceSequentialAssimilation && transportLogPool;
         eventEvidenceTransportReplicas = transportReplicas;
         eventEvidence.clear();
         eventEvidenceContext.clear();
@@ -6487,8 +6489,9 @@ namespace GSL::PMFS_internal
         for (auto& memberContext : eventEvidenceContext)
             for (long double& value : memberContext)
                 value /= static_cast<long double>(ordered.size());
-        GSL_INFO("CER contrastive context initialized: events={}, candidates={}, transport_members={}, fixed_ratio_weight=1, context_within_member=true, centered_log_odds={}",
-                 eventEvidence.size(), ordered.size(), memberCount, eventEvidenceCenteredLogOdds);
+        GSL_INFO("CER contrastive context initialized: events={}, candidates={}, transport_members={}, fixed_ratio_weight=1, context_within_member=true, centered_log_odds={}, transport_pool={}",
+                 eventEvidence.size(), ordered.size(), memberCount, eventEvidenceCenteredLogOdds,
+                 eventEvidenceTransportLogPool ? "geometric_log" : "arithmetic_mixture");
     }
 
     long double Simulations::sourceProbFromContrastiveEvents(
@@ -6520,6 +6523,7 @@ namespace GSL::PMFS_internal
         };
 
         long double mixtureLikelihood = 0.0L;
+        long double meanLogLikelihood = 0.0L;
         for (size_t memberIndex = 0; memberIndex < transportMemberHitMaps.size(); ++memberIndex)
         {
             const auto& memberMap = transportMemberHitMaps[memberIndex];
@@ -6553,9 +6557,15 @@ namespace GSL::PMFS_internal
                 logLikelihood += std::log(event.hit ? corrected : 1.0L - corrected);
                 previousConcentration = event.concentration;
             }
-            mixtureLikelihood += std::exp(logLikelihood) /
-                                 static_cast<long double>(transportMemberHitMaps.size());
+            if (eventEvidenceTransportLogPool)
+                meanLogLikelihood += logLikelihood /
+                                     static_cast<long double>(transportMemberHitMaps.size());
+            else
+                mixtureLikelihood += std::exp(logLikelihood) /
+                                     static_cast<long double>(transportMemberHitMaps.size());
         }
+        if (eventEvidenceTransportLogPool)
+            mixtureLikelihood = std::exp(meanLogLikelihood);
         if (!(std::isfinite(static_cast<double>(mixtureLikelihood)) && mixtureLikelihood > 0.0L))
             throw std::runtime_error("CER_RATIO_LIKELIHOOD_INVALID");
         return mixtureLikelihood;
