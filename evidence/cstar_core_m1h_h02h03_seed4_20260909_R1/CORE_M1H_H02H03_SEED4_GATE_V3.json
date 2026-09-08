@@ -1,0 +1,88 @@
+{
+  "contract": "CSTAR_CORE_M1_PAIRED_CLOSED_LOOP_HORIZON_V3",
+  "horizon_s": 240.0,
+  "posterior_between_updates": "zero_order_hold",
+  "houses": [
+    "H02",
+    "H03"
+  ],
+  "seeds": [
+    4
+  ],
+  "m1_arm": "M1H",
+  "pairs": [
+    {
+      "house": "H02",
+      "seed": 4,
+      "A0": {
+        "final_error_m": 2.9526456995887607,
+        "distance_auc_0_240_m_s": 940.9319141608678,
+        "first_estimate_time_s": 2.0393,
+        "last_estimate_time_s": 238.137,
+        "initial_hold_s": 2.0393,
+        "terminal_hold_s": 1.8629999999999995,
+        "trace_rows_to_240": 110,
+        "status_sha256": "f2420e8b2c40cf6c7c34f7acc4441a9ae0d21463aa2fd7e9d54b1fe18c766f9c",
+        "trace_sha256": "7b673fdc0cdd3364e75c134c9ec7a44ac4e6e057232be7cfcecca654dc06c53c"
+      },
+      "M1H": {
+        "final_error_m": 1.9427301993071504,
+        "distance_auc_0_240_m_s": 985.4806751833822,
+        "first_estimate_time_s": 2.00483,
+        "last_estimate_time_s": 238.028,
+        "initial_hold_s": 2.00483,
+        "terminal_hold_s": 1.9720000000000084,
+        "trace_rows_to_240": 104,
+        "status_sha256": "6352f7564921fda34b242e603c0fea81f1aee5ba451b2181490ae2e3f9be5208",
+        "trace_sha256": "98074dc5a2fb92ebccd01a7332472363064b836030b9bc04a49c165108846422"
+      },
+      "final_improvement_m": 1.0099155002816103,
+      "auc_improvement_m_s": -44.54876102251444
+    },
+    {
+      "house": "H03",
+      "seed": 4,
+      "A0": {
+        "final_error_m": 8.056641297712094,
+        "distance_auc_0_240_m_s": 1525.778552279697,
+        "first_estimate_time_s": 1.90171,
+        "last_estimate_time_s": 239.7,
+        "initial_hold_s": 1.90171,
+        "terminal_hold_s": 0.30000000000001137,
+        "trace_rows_to_240": 107,
+        "status_sha256": "7b9d32b7b6e861a38c20aa40dd2862893733b8b4c5852100055105b6e895fcf9",
+        "trace_sha256": "30612721979cfa4c0c8779601fb6491092b1bdbc5b4cbfbd308887b57b31d3d9"
+      },
+      "M1H": {
+        "final_error_m": 10.064376235018242,
+        "distance_auc_0_240_m_s": 1593.454996871757,
+        "first_estimate_time_s": 2.0065,
+        "last_estimate_time_s": 239.497,
+        "initial_hold_s": 2.0065,
+        "terminal_hold_s": 0.5029999999999859,
+        "trace_rows_to_240": 104,
+        "status_sha256": "cd526313b9d51ae27b7b6c4611a2aab0a3d13314394eff0afd1c3f2598f6912f",
+        "trace_sha256": "71baa6b32bdbd843a6b0d36041e6d7bb6235d057c30d122e035a1619b111a34f"
+      },
+      "final_improvement_m": -2.0077349373061484,
+      "auc_improvement_m_s": -67.67644459206008
+    }
+  ],
+  "gate": {
+    "paired_worlds": 2,
+    "final_improved_worlds": 1,
+    "auc_improved_worlds": 0,
+    "both_improved_worlds": 0,
+    "all_pairs_improved": false,
+    "mean_final_improvement_m": -0.49890971851226906,
+    "mean_auc_improvement_m_s": -56.11260280728726,
+    "pass": false
+  },
+  "verdict": "NO_GO",
+  "limits": [
+    "terminal status must independently certify the 240 s time budget",
+    "endpoint holding does not invent an unlogged posterior update",
+    "algorithm seeds under fixed sensor seed12 are not independent plume realizations",
+    "closed-loop utility does not by itself prove structural identification assumptions"
+  ]
+}
