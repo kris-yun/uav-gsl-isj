@@ -81,6 +81,14 @@ def main() -> None:
         "paired_worlds": len(pairs),
         "final_improved_worlds": sum(value > 0.0 for value in final),
         "auc_improved_worlds": sum(value > 0.0 for value in auc),
+        "both_improved_worlds": sum(
+            pair["final_improvement_m"] > 0.0 and pair["auc_improvement_m_s"] > 0.0
+            for pair in pairs
+        ),
+        "all_pairs_improved": all(
+            pair["final_improvement_m"] > 0.0 and pair["auc_improvement_m_s"] > 0.0
+            for pair in pairs
+        ),
         "mean_final_improvement_m": sum(final) / len(final),
         "mean_auc_improvement_m_s": sum(auc) / len(auc),
         "pass": (
