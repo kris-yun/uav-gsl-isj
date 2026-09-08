@@ -27,7 +27,7 @@ def main():
                       cstar_geometry_manifest=str(geometry_path), cstar_house=house,
                       raw_gas_results=realization, raw_query_executable=report['inputs']['helper'],
                       gmrf_map_yaml_file=g['map_yaml_path'], vgr_data_path=str(Path(g['occupancy_path']).parent),
-                      flight_height='0.3', seed='12', deltaTime='0.2',
+                      flight_height='0.3', seed='11', sensor_seed='12', deltaTime='0.2',
                       gaden_iteration_mode='seeded_time_replay', sensor_model_mode='dynamic',
                       start_x=str(start[0]), start_y=str(start[1]))
         accepted = validate_launch_binding(values.__getitem__)
@@ -40,6 +40,8 @@ def main():
             rejected = str(exc)
         else:
             raise AssertionError('LEGACY_GMRF_MAP_NOT_REJECTED')
+        if accepted['algorithm_seed'] != 11 or accepted['sensor_seed'] != 12:
+            raise AssertionError('DECOUPLED_SEED_BINDING_FAILED')
         rows.append(dict(house=house, corrected_map_pass=accepted, legacy_map_rejection=rejected))
     args.out.write_text(json.dumps(dict(pass_=True, tests=6, rows=rows,
                          closed_loop_ran=False, scope='launch input guard only'), indent=2) + '\n')

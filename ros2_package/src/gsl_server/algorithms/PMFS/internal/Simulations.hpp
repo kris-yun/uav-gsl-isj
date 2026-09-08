@@ -87,7 +87,8 @@ namespace GSL::PMFS_internal
         void configureNativeDeterminism(uint64_t globalSeed, uint64_t transportSubstream);
         void setNativeSourceUpdateId(uint64_t sourceUpdateId);
         void configureEventEvidence(bool enabled, int transportReplicas, bool contrastiveRatio = false,
-                                    bool centeredLogOdds = false);
+                                    bool centeredLogOdds = false,
+                                    bool sequentialAssimilation = false);
         void recordEventEvidence(const Vector2& position, bool hit, double concentration,
                                  double threshold, uint64_t blockId);
         void updateSourceProbability(float refineFraction);
@@ -156,12 +157,17 @@ namespace GSL::PMFS_internal
         bool eventEvidenceEnabled = false;
         bool eventEvidenceContrastiveRatio = false;
         bool eventEvidenceCenteredLogOdds = false;
+        bool eventEvidenceSequentialAssimilation = false;
         int eventEvidenceTransportReplicas = 1;
         std::vector<EventEvidence> eventEvidence;
         // Member-specific, candidate-invariant context.  Legacy M1R stores an
         // arithmetic probability mean; CORE M1C stores a mean log-odds so a
         // candidate-common additive nuisance cancels exactly.
         std::vector<std::vector<long double>> eventEvidenceContext;
+        size_t eventEvidenceCommittedCount = 0;
+        size_t eventEvidenceWindowStart = 0;
+        std::vector<long double> eventEvidenceSequentialPosterior;
+        bool eventEvidenceSequentialPosteriorValid = false;
         cv::Mat freeSpaceMask;
 
         bool readOnlyForwardExportEnabled = false;

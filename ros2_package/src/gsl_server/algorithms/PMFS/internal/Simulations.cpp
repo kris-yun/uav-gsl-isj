@@ -358,16 +358,21 @@ namespace GSL::PMFS_internal
     }
 
     void Simulations::configureEventEvidence(bool enabled, int transportReplicas, bool contrastiveRatio,
-                                             bool centeredLogOdds)
+                                             bool centeredLogOdds, bool sequentialAssimilation)
     {
         if (transportReplicas < 1 || transportReplicas > 8)
             throw std::invalid_argument("CER_TRANSPORT_REPLICA_RANGE");
         eventEvidenceEnabled = enabled;
         eventEvidenceContrastiveRatio = enabled && contrastiveRatio;
         eventEvidenceCenteredLogOdds = eventEvidenceContrastiveRatio && centeredLogOdds;
+        eventEvidenceSequentialAssimilation = eventEvidenceCenteredLogOdds && sequentialAssimilation;
         eventEvidenceTransportReplicas = transportReplicas;
         eventEvidence.clear();
         eventEvidenceContext.clear();
+        eventEvidenceCommittedCount = 0;
+        eventEvidenceWindowStart = 0;
+        eventEvidenceSequentialPosterior.clear();
+        eventEvidenceSequentialPosteriorValid = false;
     }
 
     void Simulations::recordEventEvidence(const Vector2& position, bool hit, double concentration,
@@ -394,6 +399,10 @@ namespace GSL::PMFS_internal
         // after scoring, so the post-commit update id cannot identify that
         // the likelihood just computed was a first difference.
         sdTemporalDifferenceActive = false;
+        eventEvidenceWindowStart = eventEvidenceSequentialAssimilation
+            ? eventEvidenceCommittedCount : 0;
+        if (eventEvidenceWindowStart > eventEvidence.size())
+            throw std::runtime_error("CER_SEQUENTIAL_EVENT_WINDOW_RANGE");
         GSL_INFO_COLOR(fmt::terminal_color::yellow, "Started simulations. Might take a while!");
         Utils::Time::Stopwatch stopwatch;
         if (contextBankExportEnabled)
@@ -665,12 +674,31 @@ namespace GSL::PMFS_internal
         if (tadmEnabled && !applyTADMPosterior())
             throw std::runtime_error("TADM online scoring failed; refusing native fallback");
 
+        if (eventEvidenceSequentialAssimilation && eventEvidenceSequentialPosteriorValid)
+        {
+            if (eventEvidenceSequentialPosterior.size() != sourceProbInternal.size())
+                throw std::runtime_error("CER_SEQUENTIAL_POSTERIOR_SIZE");
+            for (size_t cell = 0; cell < sourceProbInternal.size(); ++cell)
+                if (measuredHitProb.occupancy[cell] == Occupancy::Free)
+                    sourceProbInternal[cell] *= eventEvidenceSequentialPosterior[cell];
+        }
+
         Utils::NormalizeDistributionLong(
             sourceProbInternal,
             sourceProb.occupancy);
 
         for (size_t i = 0; i < sourceProb.data.size(); i++)
             sourceProb.data[i] = (double)sourceProbInternal[i];
+
+        if (eventEvidenceSequentialAssimilation)
+        {
+            eventEvidenceSequentialPosterior = sourceProbInternal;
+            eventEvidenceSequentialPosteriorValid = true;
+            const size_t assimilated = eventEvidence.size() - eventEvidenceWindowStart;
+            eventEvidenceCommittedCount = eventEvidence.size();
+            GSL_INFO("CORE sequential event-time commit: window_start={}, new_events={}, committed_total={}",
+                     eventEvidenceWindowStart, assimilated, eventEvidenceCommittedCount);
+        }
 
         size_t finiteNormalized = 0;
         long double normalizedSum = 0.0L;
@@ -6499,8 +6527,9 @@ namespace GSL::PMFS_internal
             if (memberContext.size() != eventEvidence.size())
                 throw std::runtime_error("CER_RATIO_CONTEXT_EVENT_COUNT");
             long double logLikelihood = 0.0L;
-            double previousConcentration = 0.0;
-            for (size_t eventIndex = 0; eventIndex < eventEvidence.size(); ++eventIndex)
+            double previousConcentration = eventEvidenceWindowStart > 0
+                ? eventEvidence[eventEvidenceWindowStart - 1].concentration : 0.0;
+            for (size_t eventIndex = eventEvidenceWindowStart; eventIndex < eventEvidence.size(); ++eventIndex)
             {
                 const EventEvidence& event = eventEvidence[eventIndex];
                 if (event.cell >= memberMap.size())
@@ -6540,12 +6569,31 @@ namespace GSL::PMFS_internal
         {
             if (!result.valid || result.leaf == nullptr)
                 continue;
-            result.sourceProb = sourceProbFromContrastiveEvents(result.transportMemberHitMaps);
+            const long double eventLikelihood = sourceProbFromContrastiveEvents(result.transportMemberHitMaps);
+            result.sourceProb = eventLikelihood;
+            if (eventEvidenceSequentialAssimilation && eventEvidenceSequentialPosteriorValid)
+            {
+                long double priorMass = 0.0L;
+                for (int cellI = result.leaf->origin.x;
+                     cellI < result.leaf->origin.x + result.leaf->size.x; ++cellI)
+                    for (int cellJ = result.leaf->origin.y;
+                         cellJ < result.leaf->origin.y + result.leaf->size.y; ++cellJ)
+                    {
+                        const Vector2Int indices{cellI, cellJ};
+                        if (!sourceProb.metadata.indicesInBounds(indices))
+                            continue;
+                        const size_t cell = sourceProb.metadata.indexOf(indices);
+                        if (measuredHitProb.occupancy[cell] == Occupancy::Free)
+                            priorMass += std::max(eventEvidenceSequentialPosterior[cell], 0.0L);
+                    }
+                result.sourceProb *= priorMass;
+            }
             scoreByLeaf[result.leaf] = result.sourceProb;
             NQA::Node* node = result.leaf;
             for (int cellI = node->origin.x; cellI < node->origin.x + node->size.x; ++cellI)
                 for (int cellJ = node->origin.y; cellJ < node->origin.y + node->size.y; ++cellJ)
-                    sourceProbInternal[sourceProb.metadata.indexOf({cellI, cellJ})] = result.sourceProb;
+                    sourceProbInternal[sourceProb.metadata.indexOf({cellI, cellJ})] =
+                        eventEvidenceSequentialAssimilation ? eventLikelihood : result.sourceProb;
         }
         for (LeafScore& score : scores)
         {

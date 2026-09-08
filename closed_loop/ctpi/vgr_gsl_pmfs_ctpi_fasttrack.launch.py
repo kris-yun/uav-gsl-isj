@@ -64,10 +64,10 @@ def _validate_ctpi_launch(context):
         allowed = {'off', 'ctpi_f00', 'ctpi_f10', 'ctpi_f11'}
     elif identity == ('CTPI_G2_M1_M2', 'ctpi_two_module'):
         allowed = {'off', 'ctpi_f00', 'ctpi_f01', 'cer_m1', 'cer_m1_m2',
-                   'cer_ratio_m1', 'cer_ratio_m1_m2', 'cer_core_m1'}
+                   'cer_ratio_m1', 'cer_ratio_m1_m2', 'cer_core_m1', 'cer_core_seq_m1'}
     elif identity == ('PMFS_CER_M1_M2', 'causal_event_transport'):
         allowed = {'off', 'cer_m1', 'cer_m1_m2', 'cer_ratio_m1', 'cer_ratio_m1_m2',
-                   'cer_core_m1'}
+                   'cer_core_m1', 'cer_core_seq_m1'}
     else:
         raise RuntimeError('CTPI_METHOD_IDENTITY_MISMATCH')
     if mode not in allowed:
@@ -80,6 +80,7 @@ def _validate_ctpi_launch(context):
         'cer_m1': 'M1', 'cer_m1_m2': 'M1M2',
         'cer_ratio_m1': 'M1R', 'cer_ratio_m1_m2': 'M1M2R',
         'cer_core_m1': 'M1C',
+        'cer_core_seq_m1': 'M1S',
     }[mode]
     if value('ablation_id') != expected_ablation:
         raise RuntimeError(
@@ -117,7 +118,7 @@ def _validate_ctpi_launch(context):
         raise RuntimeError('CPIR_MIN_WARMUP_EXPECTED_MISMATCH')
 
     if mode not in {'off', 'cer_m1', 'cer_m1_m2', 'cer_ratio_m1', 'cer_ratio_m1_m2',
-                    'cer_core_m1'}:
+                    'cer_core_m1', 'cer_core_seq_m1'}:
         required = {
             'cpir_lookup_root': value('cpir_lookup_root'),
             'cpir_audit_directory': value('cpir_audit_directory'),
@@ -235,6 +236,7 @@ def generate_launch_description():
         DeclareLaunchArgument('start_x', default_value='-5.0'),
         DeclareLaunchArgument('start_y', default_value='-5.0'),
         DeclareLaunchArgument('seed', default_value='0'),
+        DeclareLaunchArgument('sensor_seed', default_value='12'),
         DeclareLaunchArgument('flight_height', default_value='0.3'),
         DeclareLaunchArgument('timeout_sec', default_value='300.0'),
         DeclareLaunchArgument('path_budget_m', default_value='-1.0'),
@@ -357,7 +359,7 @@ def generate_launch_description():
                 'flight_height': _float('flight_height'),
                 'start_x': _float('start_x'),
                 'start_y': _float('start_y'),
-                'seed': _int('seed'),
+                'seed': _int('sensor_seed'),
                 'sensor_model_mode': LaunchConfiguration('sensor_model_mode'),
                 'gaden_iteration_mode': LaunchConfiguration('gaden_iteration_mode'),
                 'realtime_factor': _float('realtime_factor'),

@@ -11,6 +11,7 @@ set -Eeo pipefail
 
 HOUSE="${HOUSE:?set HOUSE=H01,H02,H03 (or House01,House02,House03)}"
 SEED="${SEED:?set SEED explicitly}"
+SENSOR_SEED="${SENSOR_SEED:-12}"
 ARM="${ARM:?set ARM=A0,F00,F01,F10,F11}"
 RUN_ROOT="${RUN_ROOT:?set RUN_ROOT}"
 PFDI_INSTALL_ROOT="${PFDI_INSTALL_ROOT:?set PFDI_INSTALL_ROOT to the build of the current frozen commit}"
@@ -92,6 +93,7 @@ case "${ARM}" in
   M1R) PFDI_MODE="cer_ratio_m1" ;;
   M1M2R) PFDI_MODE="cer_ratio_m1_m2" ;;
   M1C) PFDI_MODE="cer_core_m1" ;;
+  M1S) PFDI_MODE="cer_core_seq_m1" ;;
   *) echo "CTPI_FASTTRACK_UNSUPPORTED_ARM=${ARM}" >&2; exit 2 ;;
 esac
 
@@ -162,6 +164,8 @@ cat >"${RUN_DIR}/formal_runtime_manifest.json" <<EOF
   "run_id": "${RUN_ID}",
   "house": "${HSHORT}",
   "seed": ${SEED},
+  "algorithm_seed": ${SEED},
+  "sensor_seed": ${SENSOR_SEED},
   "arm": "${ARM}",
   "pfdi_mode": "${PFDI_MODE}",
   "method": "${METHOD}",
@@ -291,7 +295,7 @@ ARGS=(
   "source_config:=official_gaden_source" "wind_config:=official_gaden_wind"
   "sensor_config:=fopdt_tau1p2_dead0p4_noise0" "start_config:=frozen_native_start"
   "source_x:=${SOURCE_X}" "source_y:=${SOURCE_Y}" "source_z:=${SOURCE_Z}"
-  "start_x:=${START_X}" "start_y:=${START_Y}" "seed:=${SEED}" "flight_height:=0.3"
+  "start_x:=${START_X}" "start_y:=${START_Y}" "seed:=${SEED}" "sensor_seed:=${SENSOR_SEED}" "flight_height:=0.3"
   "timeout_sec:=${TIMEOUT_SEC}" "path_budget_m:=-1.0" "scale:=3" "useWindGroundTruth:=false"
   "convergence_thr:=-1.0" "sourceDiscriminationPower:=1.0" "refineFraction:=0.25"
   "stepsSourceUpdate:=${STEPS_SOURCE_UPDATE}" "maxRegionSize:=5" "deltaTime:=0.2" "noiseSTDev:=0.5"

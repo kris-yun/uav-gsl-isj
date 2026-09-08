@@ -24,7 +24,7 @@ def validate_launch_binding(value):
     require(sha256(occupancy) == geometry['occupancy_sha256'], 'LAUNCH_BRIDGE_OCCUPANCY')
     require(float(value('flight_height')) == geometry['navigation_height_m'], 'LAUNCH_HEIGHT')
     clock = report['clock_sensor']['clock']
-    require(int(value('seed')) == clock['seed'] and float(value('deltaTime')) == clock['sensor_dt_s'],
+    require(int(value('sensor_seed')) == clock['seed'] and float(value('deltaTime')) == clock['sensor_dt_s'],
             'LAUNCH_CLOCK_SEED')
     require(value('gaden_iteration_mode') == 'seeded_time_replay', 'LAUNCH_REPLAY_MODE')
     require(value('sensor_model_mode') == 'dynamic', 'LAUNCH_SENSOR_MODE')
@@ -32,5 +32,6 @@ def validate_launch_binding(value):
     x, y = world_cell(float(value('start_x')), float(value('start_y')), ox, oy, resolution)
     require(0 <= x < width and 0 <= y < height and free[x + y * width], 'LAUNCH_START_NOT_FREE')
     return {'house': house, 'map_yaml_sha256': geometry['map_yaml_sha256'],
+            'algorithm_seed': int(value('seed')), 'sensor_seed': int(value('sensor_seed')),
             'environment_preflight_sha256': sha256(certificate),
             'scope': 'launch input binding only; actual GMRF grid and PMFS candidate grid still require live audit'}

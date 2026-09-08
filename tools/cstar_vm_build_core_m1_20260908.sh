@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BUILD_ROOT=/dev/shm/cstar_pmfs_core_m1_build_20260908
+BUILD_ROOT=${CSTAR_BUILD_ROOT:-/dev/shm/cstar_pmfs_core_m1_build_20260908}
 SOURCE_ROOT="$BUILD_ROOT/src/gsl_server"
 DEPS_ROOT="$BUILD_ROOT/deps/install"
 

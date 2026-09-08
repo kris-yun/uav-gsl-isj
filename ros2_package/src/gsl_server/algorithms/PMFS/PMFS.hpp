@@ -99,6 +99,7 @@ namespace GSL
         bool eventEvidenceEnabled = false;
         bool eventEvidenceContrastiveRatio = false;
         bool eventEvidenceCenteredLogOdds = false;
+        bool eventEvidenceSequentialAssimilation = false;
         int eventEvidenceTransportReplicas = 1;
         std::string pfdiMode = "off";
         // Optional inference-to-control coupling.  The frozen OFF path keeps
