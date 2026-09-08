@@ -97,6 +97,7 @@ namespace GSL
         uint64_t completedMeasurementBlockId = 0;
         bool tadmEnabled = false;
         bool eventEvidenceEnabled = false;
+        bool eventEvidenceContrastiveRatio = false;
         int eventEvidenceTransportReplicas = 1;
         std::string pfdiMode = "off";
         // Optional inference-to-control coupling.  The frozen OFF path keeps

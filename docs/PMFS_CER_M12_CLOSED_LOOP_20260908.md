@@ -2,6 +2,10 @@
 
 Status: **REAL_CLOSED_LOOP_NO_GO_NO_MULTISEED**.
 
+Follow-up: the contrastive event-evidence repair subsequently passed the M1
+House123 seed12 development gate while M2 remained NO-GO.  See
+`PMFS_CER_RATIO_M1_PASS_M2_NOGO_20260908.md`.
+
 This document supersedes the `PARTIAL_IMPLEMENTATION_NOT_CLOSED_LOOP` status in
 `PMFS_JOINT_DEVELOPMENT_20260908.md`.  The code path was built from the current
 development checkout, entered the real PMFS/GMRF/navigation loop, and completed
@@ -133,4 +137,3 @@ innovation.
 - Environment preflight: `evidence/cstar_joint_environment_20260908/PREFLIGHT.json`
 - Live environment evidence: `evidence/cstar_joint_live_20260908`
 - Evaluator: `tools/cstar_evaluate_cer_house123.py`
-

@@ -88,14 +88,18 @@ namespace GSL
                 !std::filesystem::is_empty(jointSourceExchangeDir))
                 throw std::invalid_argument("JOINT_REQUIRES_EXCLUSIVE_OFF_MODE_AND_FRESH_ABSOLUTE_EXCHANGE");
         }
-        if (pfdiMode != "off" && pfdiMode != "cer_m1" && pfdiMode != "cer_m1_m2" && pfdiMode != "cpir_m1" && pfdiMode != "cpir_a1" && pfdiMode != "cpir_a2" &&
+        if (pfdiMode != "off" && pfdiMode != "cer_m1" && pfdiMode != "cer_m1_m2" &&
+            pfdiMode != "cer_ratio_m1" && pfdiMode != "cer_ratio_m1_m2" &&
+            pfdiMode != "cpir_m1" && pfdiMode != "cpir_a1" && pfdiMode != "cpir_a2" &&
             pfdiMode != "cpir_a3" && pfdiMode != "cpir_m1_m3" && pfdiMode != "ctpi_f00" && pfdiMode != "ctpi_f01" && pfdiMode != "ctpi_f10" &&
             pfdiMode != "ctpi_f11" && pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" &&
             pfdiMode != "al" && pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" &&
             pfdiMode != "ec_edcl" && pfdiMode != "ec_edcl_shadow")
-            throw std::invalid_argument("pfdi_mode must be off, cer_m1, cer_m1_m2, cpir_m1, cpir_a1, cpir_a2, cpir_a3, cpir_m1_m3, ctpi_f00, ctpi_f01, ctpi_f10, ctpi_f11, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
-        eventEvidenceEnabled = pfdiMode == "cer_m1" || pfdiMode == "cer_m1_m2";
-        eventEvidenceTransportReplicas = pfdiMode == "cer_m1_m2" ? 3 : 1;
+            throw std::invalid_argument("pfdi_mode must be off, cer_m1, cer_m1_m2, cer_ratio_m1, cer_ratio_m1_m2, cpir_m1, cpir_a1, cpir_a2, cpir_a3, cpir_m1_m3, ctpi_f00, ctpi_f01, ctpi_f10, ctpi_f11, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
+        eventEvidenceEnabled = pfdiMode == "cer_m1" || pfdiMode == "cer_m1_m2" ||
+                               pfdiMode == "cer_ratio_m1" || pfdiMode == "cer_ratio_m1_m2";
+        eventEvidenceContrastiveRatio = pfdiMode == "cer_ratio_m1" || pfdiMode == "cer_ratio_m1_m2";
+        eventEvidenceTransportReplicas = (pfdiMode == "cer_m1_m2" || pfdiMode == "cer_ratio_m1_m2") ? 3 : 1;
         ctpiPlannerEnabled = pfdiMode == "ctpi_f10" || pfdiMode == "ctpi_f11";
         ctpiTSDCEnabled = pfdiMode == "ctpi_f01" || pfdiMode == "ctpi_f11";
         cpirEnabled = pfdiMode == "cpir_m1" || pfdiMode == "cpir_a1" || pfdiMode == "cpir_a2" || pfdiMode == "cpir_a3" || pfdiMode == "cpir_m1_m3" ||
@@ -246,7 +250,8 @@ namespace GSL
         simulations.configureNativeDeterminism(
             static_cast<uint64_t>(getParam<int64_t>("seed", 0)),
             0x4E4154495645504DULL);
-        simulations.configureEventEvidence(eventEvidenceEnabled, eventEvidenceTransportReplicas);
+        simulations.configureEventEvidence(eventEvidenceEnabled, eventEvidenceTransportReplicas,
+                                           eventEvidenceContrastiveRatio);
 
         if (cpirEnabled)
             initializeCPIR();
@@ -362,6 +367,7 @@ namespace GSL
         if (eventEvidenceEnabled)
             simulations.recordEventEvidence(Vector2(currentRobotPosition.x, currentRobotPosition.y),
                                             concentration > thresholdGas,
+                                            concentration, thresholdGas,
                                             ++completedMeasurementBlockId);
 
         // If we have already taken enough measurements in this position, process them and get ready to move to the next location

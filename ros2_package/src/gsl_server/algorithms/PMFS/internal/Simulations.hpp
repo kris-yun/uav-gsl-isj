@@ -72,7 +72,9 @@ namespace GSL::PMFS_internal
         {
             bool valid = false;
             std::vector<float> hitMap;
-            long double sourceProb;
+            std::vector<std::vector<float>> transportMemberHitMaps;
+            long double sourceProb = 0.0L;
+            Utils::NQA::Node* leaf = nullptr;
         };
 
     public:
@@ -84,8 +86,9 @@ namespace GSL::PMFS_internal
         void initializeMap(const std::vector<std::vector<uint8_t>>& occupancyMap);
         void configureNativeDeterminism(uint64_t globalSeed, uint64_t transportSubstream);
         void setNativeSourceUpdateId(uint64_t sourceUpdateId);
-        void configureEventEvidence(bool enabled, int transportReplicas);
-        void recordEventEvidence(const Vector2& position, bool hit, uint64_t blockId);
+        void configureEventEvidence(bool enabled, int transportReplicas, bool contrastiveRatio = false);
+        void recordEventEvidence(const Vector2& position, bool hit, double concentration,
+                                 double threshold, uint64_t blockId);
         void updateSourceProbability(float refineFraction);
         void makeSimulationImage(const SimulationSource& source);
         // Read-only HOVER export: uses the unmodified PMFS filament simulator.
@@ -141,10 +144,19 @@ namespace GSL::PMFS_internal
         Grid2D<HitProbability> measuredHitProb;
         Grid2D<double> sourceProb;
         Grid2D<Vector2> wind;
-        struct EventEvidence { size_t cell; bool hit; uint64_t blockId; };
+        struct EventEvidence
+        {
+            size_t cell;
+            bool hit;
+            double concentration;
+            double threshold;
+            uint64_t blockId;
+        };
         bool eventEvidenceEnabled = false;
+        bool eventEvidenceContrastiveRatio = false;
         int eventEvidenceTransportReplicas = 1;
         std::vector<EventEvidence> eventEvidence;
+        std::vector<long double> eventEvidenceContextProbability;
         cv::Mat freeSpaceMask;
 
         bool readOnlyForwardExportEnabled = false;
@@ -306,6 +318,11 @@ namespace GSL::PMFS_internal
         bool applyTADMPosterior();
 
         SimulationResult runSimulation(std::vector<LeafScore>& nodes, size_t index);
+        void initializeContrastiveEventContext(const std::vector<SimulationResult>& results);
+        void applyContrastiveEventEvidence(std::vector<SimulationResult>& results,
+                                           std::vector<LeafScore>& scores);
+        long double sourceProbFromContrastiveEvents(
+            const std::vector<std::vector<float>>& transportMemberHitMaps) const;
         void moveFilament(Filament& filament, Vector2Int& indices, float deltaTime, float noiseSTDev,
                           EventKeyedTransportRng* transportRng, uint64_t& drawIndex) const;
         void simulateSourceInPosition(const SimulationSource& source, std::vector<float>& hitMap, bool warmup,

@@ -24,7 +24,9 @@
 #include <chrono>
 #include <filesystem>
 #include <unordered_set>
+#include <unordered_map>
 #include <numeric>
+#include <tuple>
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
@@ -355,16 +357,19 @@ namespace GSL::PMFS_internal
         nativeSourceUpdateId = sourceUpdateId;
     }
 
-    void Simulations::configureEventEvidence(bool enabled, int transportReplicas)
+    void Simulations::configureEventEvidence(bool enabled, int transportReplicas, bool contrastiveRatio)
     {
         if (transportReplicas < 1 || transportReplicas > 8)
             throw std::invalid_argument("CER_TRANSPORT_REPLICA_RANGE");
         eventEvidenceEnabled = enabled;
+        eventEvidenceContrastiveRatio = enabled && contrastiveRatio;
         eventEvidenceTransportReplicas = transportReplicas;
         eventEvidence.clear();
+        eventEvidenceContextProbability.clear();
     }
 
-    void Simulations::recordEventEvidence(const Vector2& position, bool hit, uint64_t blockId)
+    void Simulations::recordEventEvidence(const Vector2& position, bool hit, double concentration,
+                                          double threshold, uint64_t blockId)
     {
         if (!eventEvidenceEnabled)
             return;
@@ -373,7 +378,11 @@ namespace GSL::PMFS_internal
             throw std::runtime_error("CER_EVENT_OUTSIDE_FREE_SUPPORT");
         if (blockId == 0 || (!eventEvidence.empty() && blockId <= eventEvidence.back().blockId))
             throw std::runtime_error("CER_EVENT_BLOCK_NOT_MONOTONE");
-        eventEvidence.push_back(EventEvidence{measuredHitProb.metadata.indexOf(indices), hit, blockId});
+        if (!(std::isfinite(concentration) && concentration >= 0.0 &&
+              std::isfinite(threshold) && threshold > 0.0))
+            throw std::runtime_error("CER_EVENT_SENSOR_VALUE_INVALID");
+        eventEvidence.push_back(EventEvidence{measuredHitProb.metadata.indexOf(indices), hit,
+                                              concentration, threshold, blockId});
     }
 
     void Simulations::updateSourceProbability(float refineFraction)
@@ -461,15 +470,36 @@ namespace GSL::PMFS_internal
             {
                 resultsFirstLevel.push_back(result);
                 numberOfSimulations++;
-                for (int cell = 0; cell < result.hitMap.size(); cell++)
+                if (!eventEvidenceContrastiveRatio)
+                {
+                    for (int cell = 0; cell < result.hitMap.size(); cell++)
+                    {
+                        auto& var = varianceCalculationData[cell];
+                        weighted_incremental_variance(result.hitMap[cell],
+                                                      result.sourceProb,
+                                                      var.mean,
+                                                      var.weight_sum,
+                                                      var.weight_squared_sum,
+                                                      var.variance);
+                    }
+                }
+            }
+        }
+
+        if (eventEvidenceContrastiveRatio)
+        {
+            initializeContrastiveEventContext(resultsFirstLevel);
+            applyContrastiveEventEvidence(resultsFirstLevel, scores);
+            for (const SimulationResult& result : resultsFirstLevel)
+            {
+                if (!result.valid)
+                    continue;
+                for (size_t cell = 0; cell < result.hitMap.size(); ++cell)
                 {
                     auto& var = varianceCalculationData[cell];
-                    weighted_incremental_variance(result.hitMap[cell],
-                                                  result.sourceProb,
-                                                  var.mean,
-                                                  var.weight_sum,
-                                                  var.weight_squared_sum,
-                                                  var.variance);
+                    weighted_incremental_variance(result.hitMap[cell], result.sourceProb,
+                                                  var.mean, var.weight_sum,
+                                                  var.weight_squared_sum, var.variance);
                 }
             }
         }
@@ -560,9 +590,13 @@ namespace GSL::PMFS_internal
             numberOfSimulations += scores.size();
 
 // run the simulations of the new level and get scores for each node
+            std::vector<SimulationResult> levelResults(scores.size());
 #pragma omp parallel for schedule(dynamic)
             for (int leafIndex = 0; leafIndex < scores.size(); leafIndex++)
-                SimulationResult result = runSimulation(scores, leafIndex);
+                levelResults[leafIndex] = runSimulation(scores, leafIndex);
+
+            if (eventEvidenceContrastiveRatio)
+                applyContrastiveEventEvidence(levelResults, scores);
 
             recordP2Candidates(scores);
 
@@ -674,6 +708,7 @@ namespace GSL::PMFS_internal
             return result;
 
         result.valid = true;
+        result.leaf = node;
         result.hitMap.resize(measuredHitProb.data.size(), 0.0);
 
         long double mixtureScore = 0.0L;
@@ -690,9 +725,12 @@ namespace GSL::PMFS_internal
                                      settings.noiseSTDev, nullptr, nativeDeterministicRng ? &nativeRng : nullptr);
             for (size_t i = 0; i < memberMap.size(); ++i)
                 result.hitMap[i] += memberMap[i] / static_cast<float>(replicas);
-            mixtureScore += (eventEvidenceEnabled ? sourceProbFromEvents(memberMap)
-                                                   : sourceProbFromMaps(measuredHitProb, memberMap)) /
-                            static_cast<long double>(replicas);
+            if (eventEvidenceContrastiveRatio)
+                result.transportMemberHitMaps.push_back(memberMap);
+            else
+                mixtureScore += (eventEvidenceEnabled ? sourceProbFromEvents(memberMap)
+                                                       : sourceProbFromMaps(measuredHitProb, memberMap)) /
+                                static_cast<long double>(replicas);
             if (replica == 0)
                 firstSampledSourcePoint = memberSource.firstSampledSourcePoint();
         }
@@ -717,7 +755,7 @@ namespace GSL::PMFS_internal
         }
         exportCandidateHitMap(stableID, candidatePoint, result.hitMap);
 
-        result.sourceProb = mixtureScore;
+        result.sourceProb = eventEvidenceContrastiveRatio ? 1.0L : mixtureScore;
         exportNativeCandidateRecord(stableID, candidatePoint, firstSampledSourcePoint, result.sourceProb, result.hitMap);
 
         scores[index].score = result.sourceProb;
@@ -6365,6 +6403,129 @@ namespace GSL::PMFS_internal
         GSL_INFO("Read-only PMFS forward export snapshot {}: {} complete point candidates", readOnlyForwardExportSnapshot, exported);
         ++readOnlyForwardExportSnapshot;
         return exported > 0;
+    }
+
+    void Simulations::initializeContrastiveEventContext(const std::vector<SimulationResult>& results)
+    {
+        eventEvidenceContextProbability.assign(eventEvidence.size(), 0.0L);
+        if (eventEvidence.empty())
+            return;
+        std::vector<const SimulationResult*> ordered;
+        ordered.reserve(results.size());
+        for (const SimulationResult& result : results)
+            if (result.valid && result.leaf != nullptr)
+                ordered.push_back(&result);
+        std::sort(ordered.begin(), ordered.end(), [](const SimulationResult* left,
+                                                     const SimulationResult* right)
+        {
+            const NQA::Node* a = left->leaf;
+            const NQA::Node* b = right->leaf;
+            return std::tie(a->origin.x, a->origin.y, a->size.x, a->size.y) <
+                   std::tie(b->origin.x, b->origin.y, b->size.x, b->size.y);
+        });
+        size_t members = 0;
+        for (const SimulationResult* result : ordered)
+        {
+            for (const auto& memberMap : result->transportMemberHitMaps)
+            {
+                if (memberMap.size() != measuredHitProb.data.size())
+                    throw std::runtime_error("CER_RATIO_MEMBER_MAP_SIZE");
+                for (size_t eventIndex = 0; eventIndex < eventEvidence.size(); ++eventIndex)
+                    eventEvidenceContextProbability[eventIndex] += memberMap[eventEvidence[eventIndex].cell];
+                ++members;
+            }
+        }
+        if (members == 0)
+            throw std::runtime_error("CER_RATIO_CONTEXT_EMPTY");
+        for (long double& probability : eventEvidenceContextProbability)
+            probability /= static_cast<long double>(members);
+        GSL_INFO("CER contrastive context initialized: events={}, members={}, fixed_ratio_weight=1",
+                 eventEvidence.size(), members);
+    }
+
+    long double Simulations::sourceProbFromContrastiveEvents(
+        const std::vector<std::vector<float>>& transportMemberHitMaps) const
+    {
+        if (eventEvidence.empty())
+            return 1.0L;
+        if (eventEvidenceContextProbability.size() != eventEvidence.size() ||
+            transportMemberHitMaps.empty())
+            throw std::runtime_error("CER_RATIO_CONTEXT_NOT_READY");
+        const auto clipped = [](long double probability)
+        {
+            return std::clamp(probability, 1.0e-4L, 1.0L - 1.0e-4L);
+        };
+        const auto logit = [&](long double probability)
+        {
+            const long double p = clipped(probability);
+            return std::log(p) - std::log1p(-p);
+        };
+        const auto expit = [](long double value)
+        {
+            if (value >= 0.0L)
+            {
+                const long double z = std::exp(-value);
+                return 1.0L / (1.0L + z);
+            }
+            const long double z = std::exp(value);
+            return z / (1.0L + z);
+        };
+
+        long double mixtureLikelihood = 0.0L;
+        for (const auto& memberMap : transportMemberHitMaps)
+        {
+            long double logLikelihood = 0.0L;
+            double previousConcentration = 0.0;
+            for (size_t eventIndex = 0; eventIndex < eventEvidence.size(); ++eventIndex)
+            {
+                const EventEvidence& event = eventEvidence[eventIndex];
+                if (event.cell >= memberMap.size())
+                    throw std::runtime_error("CER_RATIO_EVENT_CELL_RANGE");
+                // Same fixed persistence law as the passed cross-House screen:
+                // Normal(log1p(previous block concentration), unit scale).
+                const long double thresholdLog = std::log1p(event.threshold);
+                const long double previousLog = std::log1p(previousConcentration);
+                const long double persistence = 0.5L * std::erfc(
+                    (thresholdLog - previousLog) / std::sqrt(2.0L));
+                const long double sourceProbability = clipped(memberMap[event.cell]);
+                const long double contextProbability = clipped(eventEvidenceContextProbability[eventIndex]);
+                // Fixed unit source/context odds ratio. Candidate-independent
+                // persistence handles shared temporal dynamics; only the
+                // source-specific forward contrast changes posterior odds.
+                const long double corrected = clipped(expit(
+                    logit(persistence) + logit(sourceProbability) - logit(contextProbability)));
+                logLikelihood += std::log(event.hit ? corrected : 1.0L - corrected);
+                previousConcentration = event.concentration;
+            }
+            mixtureLikelihood += std::exp(logLikelihood) /
+                                 static_cast<long double>(transportMemberHitMaps.size());
+        }
+        if (!(std::isfinite(static_cast<double>(mixtureLikelihood)) && mixtureLikelihood > 0.0L))
+            throw std::runtime_error("CER_RATIO_LIKELIHOOD_INVALID");
+        return mixtureLikelihood;
+    }
+
+    void Simulations::applyContrastiveEventEvidence(std::vector<SimulationResult>& results,
+                                                     std::vector<LeafScore>& scores)
+    {
+        std::unordered_map<NQA::Node*, long double> scoreByLeaf;
+        for (SimulationResult& result : results)
+        {
+            if (!result.valid || result.leaf == nullptr)
+                continue;
+            result.sourceProb = sourceProbFromContrastiveEvents(result.transportMemberHitMaps);
+            scoreByLeaf[result.leaf] = result.sourceProb;
+            NQA::Node* node = result.leaf;
+            for (int cellI = node->origin.x; cellI < node->origin.x + node->size.x; ++cellI)
+                for (int cellJ = node->origin.y; cellJ < node->origin.y + node->size.y; ++cellJ)
+                    sourceProbInternal[sourceProb.metadata.indexOf({cellI, cellJ})] = result.sourceProb;
+        }
+        for (LeafScore& score : scores)
+        {
+            const auto it = scoreByLeaf.find(score.leaf);
+            if (it != scoreByLeaf.end())
+                score.score = it->second;
+        }
     }
 
     long double Simulations::sourceProbFromMaps(const Grid2D<HitProbability>& measuredHitProb, const std::vector<float>& hitMap) const

@@ -1,4 +1,4 @@
-"""Frozen single-seed development evaluator for A0/M1/M1M2."""
+"""Frozen single-seed development evaluator for nested PMFS arms."""
 import argparse
 import csv
 import hashlib
@@ -7,7 +7,6 @@ import math
 from pathlib import Path
 
 TRUTH = {'H01': (-.4, -2.9), 'H02': (0., -1.), 'H03': (-.45, 1.9)}
-ARMS = ('A0', 'M1', 'M1M2')
 
 
 def evaluate(path, truth):
@@ -34,13 +33,19 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--run-root', type=Path, required=True)
     ap.add_argument('--output', type=Path, required=True)
+    ap.add_argument('--m1-arm', default='M1')
+    ap.add_argument('--m1m2-arm', default='M1M2')
+    ap.add_argument('--contract', default='CSTAR_CER_HOUSE123_SEED12_DEVELOPMENT_V1')
     args = ap.parse_args()
     if args.output.exists():
         raise FileExistsError(args.output)
+    arms = ('A0', args.m1_arm, args.m1m2_arm)
+    if len(set(arms)) != 3 or any(not arm.replace('_', '').isalnum() for arm in arms):
+        raise ValueError('CSTAR_EVALUATOR_ARM_IDS')
     houses = {}
     for house, truth in TRUTH.items():
-        houses[house] = {arm: evaluate(args.run_root/f'{house}_seed12_{arm}', truth) for arm in ARMS}
-        a0, m1, both = (houses[house][arm] for arm in ARMS)
+        houses[house] = {arm: evaluate(args.run_root/f'{house}_seed12_{arm}', truth) for arm in arms}
+        a0, m1, both = (houses[house][arm] for arm in arms)
         houses[house]['contrasts'] = {
           'm1_final_improvement_m': a0['final_error_m']-m1['final_error_m'],
           'm1_auc_improvement_m_s': a0['distance_auc_m_s']-m1['distance_auc_m_s'],
@@ -56,7 +61,7 @@ def main():
                 'pass': sum(x > 0 for x in final) >= 2 and sum(x > 0 for x in auc) >= 2 and
                         sum(final) > 0 and sum(auc) > 0}
     gates = {'m1_vs_a0': gate('m1'), 'm2_increment_vs_m1': gate('m2_increment')}
-    report = {'contract': 'CSTAR_CER_HOUSE123_SEED12_DEVELOPMENT_V1', 'seed': 12,
+    report = {'contract': args.contract, 'seed': 12, 'arms': list(arms),
               'houses': houses, 'gates': gates,
               'verdict': 'DEVELOPMENT_GO' if all(g['pass'] for g in gates.values()) else 'NO_GO_NO_MULTISEED',
               'limits': ['seed12 exposed development screen','not independent confirmation','not causal identifiability proof']}
