@@ -1,0 +1,59 @@
+{
+  "contract": "CSTAR_CORE_M1_PAIRED_CLOSED_LOOP_HORIZON_V2",
+  "horizon_s": 240.0,
+  "posterior_between_updates": "zero_order_hold",
+  "houses": [
+    "H01"
+  ],
+  "seeds": [
+    6
+  ],
+  "m1_arm": "M1F",
+  "pairs": [
+    {
+      "house": "H01",
+      "seed": 6,
+      "A0": {
+        "final_error_m": 6.725094794870924,
+        "distance_auc_0_240_m_s": 1699.9857229749982,
+        "first_estimate_time_s": 1.90955,
+        "last_estimate_time_s": 238.897,
+        "initial_hold_s": 1.90955,
+        "terminal_hold_s": 1.1030000000000086,
+        "trace_rows_to_240": 108,
+        "status_sha256": "165cc16b46fab1022a3d7e1682334a5dbee1800bd4419158b0ce05afa9273c99",
+        "trace_sha256": "ed96e319a0a94905d3dcb9cde55238c8480bfaa42392cf0d18cb9fce68da304b"
+      },
+      "M1F": {
+        "final_error_m": 2.6718720029222958,
+        "distance_auc_0_240_m_s": 1363.2295209294236,
+        "first_estimate_time_s": 2.00592,
+        "last_estimate_time_s": 239.799,
+        "initial_hold_s": 2.00592,
+        "terminal_hold_s": 0.2009999999999934,
+        "trace_rows_to_240": 98,
+        "status_sha256": "fec59f4efbd42c01de53debd2bf3cdcb25acf180a52923036cb418f194ead956",
+        "trace_sha256": "c191ff9f403dd1a77a294cc4c7ad4b52d4d8ac33949c6d3231313030a186322b"
+      },
+      "final_improvement_m": 4.053222791948628,
+      "auc_improvement_m_s": 336.7562020455746
+    }
+  ],
+  "gate": {
+    "paired_worlds": 1,
+    "final_improved_worlds": 1,
+    "auc_improved_worlds": 1,
+    "both_improved_worlds": 1,
+    "all_pairs_improved": true,
+    "mean_final_improvement_m": 4.053222791948628,
+    "mean_auc_improvement_m_s": 336.7562020455746,
+    "pass": true
+  },
+  "verdict": "PASS",
+  "limits": [
+    "terminal status must independently certify the 240 s time budget",
+    "endpoint holding does not invent an unlogged posterior update",
+    "algorithm seeds under fixed sensor seed12 are not independent plume realizations",
+    "closed-loop utility does not by itself prove structural identification assumptions"
+  ]
+}

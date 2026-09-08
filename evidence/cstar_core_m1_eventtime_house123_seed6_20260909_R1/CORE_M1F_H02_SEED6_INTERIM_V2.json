@@ -1,0 +1,59 @@
+{
+  "contract": "CSTAR_CORE_M1_PAIRED_CLOSED_LOOP_HORIZON_V2",
+  "horizon_s": 240.0,
+  "posterior_between_updates": "zero_order_hold",
+  "houses": [
+    "H02"
+  ],
+  "seeds": [
+    6
+  ],
+  "m1_arm": "M1F",
+  "pairs": [
+    {
+      "house": "H02",
+      "seed": 6,
+      "A0": {
+        "final_error_m": 2.9820628141103938,
+        "distance_auc_0_240_m_s": 932.6818720924427,
+        "first_estimate_time_s": 2.08413,
+        "last_estimate_time_s": 238.883,
+        "initial_hold_s": 2.08413,
+        "terminal_hold_s": 1.1169999999999902,
+        "trace_rows_to_240": 108,
+        "status_sha256": "33865b07f2440706d139bad80270f1f2bdbb252fedb256472fdaf5d3a9a1da34",
+        "trace_sha256": "d75fd36621af0033b88445c9f56e636dccc6e18065f21c0b899ba7cab0b019c0"
+      },
+      "M1F": {
+        "final_error_m": 1.6159643026069603,
+        "distance_auc_0_240_m_s": 1023.566691506014,
+        "first_estimate_time_s": 1.90333,
+        "last_estimate_time_s": 239.7,
+        "initial_hold_s": 1.90333,
+        "terminal_hold_s": 0.30000000000001137,
+        "trace_rows_to_240": 105,
+        "status_sha256": "c6a0eef8463ee1f4468fc9d8560ff1915e2f6aac3634e10bf7a48bd2194db007",
+        "trace_sha256": "a0f65acea1049b899d9bacfc15701f77cf378a4f375930e879c28a6fc6d7e75f"
+      },
+      "final_improvement_m": 1.3660985115034334,
+      "auc_improvement_m_s": -90.88481941357122
+    }
+  ],
+  "gate": {
+    "paired_worlds": 1,
+    "final_improved_worlds": 1,
+    "auc_improved_worlds": 0,
+    "both_improved_worlds": 0,
+    "all_pairs_improved": false,
+    "mean_final_improvement_m": 1.3660985115034334,
+    "mean_auc_improvement_m_s": -90.88481941357122,
+    "pass": false
+  },
+  "verdict": "NO_GO",
+  "limits": [
+    "terminal status must independently certify the 240 s time budget",
+    "endpoint holding does not invent an unlogged posterior update",
+    "algorithm seeds under fixed sensor seed12 are not independent plume realizations",
+    "closed-loop utility does not by itself prove structural identification assumptions"
+  ]
+}

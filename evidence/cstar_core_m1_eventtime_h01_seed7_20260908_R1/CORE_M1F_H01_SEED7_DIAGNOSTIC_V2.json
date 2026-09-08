@@ -1,0 +1,59 @@
+{
+  "contract": "CSTAR_CORE_M1_PAIRED_CLOSED_LOOP_HORIZON_V2",
+  "horizon_s": 240.0,
+  "posterior_between_updates": "zero_order_hold",
+  "houses": [
+    "H01"
+  ],
+  "seeds": [
+    7
+  ],
+  "m1_arm": "M1F",
+  "pairs": [
+    {
+      "house": "H01",
+      "seed": 7,
+      "A0": {
+        "final_error_m": 6.307527249247521,
+        "distance_auc_0_240_m_s": 1672.555708814284,
+        "first_estimate_time_s": 2.10724,
+        "last_estimate_time_s": 238.101,
+        "initial_hold_s": 2.10724,
+        "terminal_hold_s": 1.899000000000001,
+        "trace_rows_to_240": 109,
+        "status_sha256": "9ad53c92f413d1ea419c725dc56e350ee82fac314771c095f8996114a435fc12",
+        "trace_sha256": "67a988732ea3496d5b95322e590f34abc7726e913869f2d511b1aefc070fade6"
+      },
+      "M1F": {
+        "final_error_m": 3.167159798305106,
+        "distance_auc_0_240_m_s": 1350.8425480189403,
+        "first_estimate_time_s": 1.90342,
+        "last_estimate_time_s": 232.329,
+        "initial_hold_s": 1.90342,
+        "terminal_hold_s": 7.670999999999992,
+        "trace_rows_to_240": 96,
+        "status_sha256": "bf7a2cbeac60e257de898c1895eb2db16836d1751f2a61a79580a496450dbeed",
+        "trace_sha256": "90523d544d4007d926ef9041d3cf5c192167507cd1bd1bc5a63bdfb1a27abd35"
+      },
+      "final_improvement_m": 3.140367450942415,
+      "auc_improvement_m_s": 321.7131607953436
+    }
+  ],
+  "gate": {
+    "paired_worlds": 1,
+    "final_improved_worlds": 1,
+    "auc_improved_worlds": 1,
+    "both_improved_worlds": 1,
+    "all_pairs_improved": true,
+    "mean_final_improvement_m": 3.140367450942415,
+    "mean_auc_improvement_m_s": 321.7131607953436,
+    "pass": true
+  },
+  "verdict": "PASS",
+  "limits": [
+    "terminal status must independently certify the 240 s time budget",
+    "endpoint holding does not invent an unlogged posterior update",
+    "algorithm seeds under fixed sensor seed12 are not independent plume realizations",
+    "closed-loop utility does not by itself prove structural identification assumptions"
+  ]
+}
