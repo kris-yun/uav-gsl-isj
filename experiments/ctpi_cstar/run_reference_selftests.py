@@ -18,6 +18,7 @@ import selftest_offline_contracts
 import selftest_environment_alignment
 import selftest_raw_realization_provenance
 import review_regression_tests
+import replay_m1_phic_attribution
 from m3_phs import selftest_phs
 
 
@@ -29,6 +30,10 @@ def main():
     selftest_environment_alignment.main()
     selftest_raw_realization_provenance.main()
     review_regression_tests.main()
+    replay_report = replay_m1_phic_attribution.selftest()
+    if not replay_report["pass"]:
+        raise SystemExit("CSTAR_M1_PHIC_ATTRIBUTION_REPLAY_SELFTEST FAIL")
+    print("CSTAR_M1_PHIC_ATTRIBUTION_REPLAY_SELFTEST PASS")
     print("CSTAR_ALL_REFERENCE_ENVIRONMENT_PROVENANCE_AND_REVIEW_SELFTESTS PASS")
 
 

@@ -6433,7 +6433,7 @@ namespace GSL::PMFS_internal
         if (!output)
             throw std::runtime_error("CER_ATTRIBUTION_EXPORT_OPEN_FAILED");
         if (!existed || std::filesystem::file_size(path) == 0)
-            output << "run_uuid,source_update_id,candidate_id,candidate_x,candidate_y,member_index,event_index,block_id,sim_time_s,cell_index,observed_hit,concentration,threshold,legacy_hit_probability,aggregate_raw_exposure,context_value,context_centered_log_odds,observation_operator\n";
+            output << "run_uuid,source_update_id,candidate_id,candidate_x,candidate_y,member_index,event_index,block_id,sim_time_s,cell_index,observed_hit,concentration,threshold,legacy_hit_probability,aggregate_raw_exposure,iterations_to_record,delta_time_s,context_value,context_centered_log_odds,observation_operator\n";
         for (size_t memberIndex = 0; memberIndex < memberMaps.size(); ++memberIndex)
         {
             const auto& memberMap = memberMaps[memberIndex];
@@ -6453,7 +6453,7 @@ namespace GSL::PMFS_internal
                        << eventIndex << ',' << event.blockId << ',' << event.simTime << ',' << event.cell << ','
                        << (event.hit ? 1 : 0) << ',' << event.concentration << ',' << event.threshold << ','
                        << memberMap[event.cell] << ',' << (exposure != nullptr ? (*exposure)[event.cell] : 0.0f) << ','
-                       << context << ','
+                       << settings.iterationsToRecord << ',' << settings.deltaTime << ',' << context << ','
                        << (eventEvidenceCenteredLogOdds ? 1 : 0) << ",hit_map_probability\n";
             }
         }
