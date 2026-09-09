@@ -1,0 +1,362 @@
+{
+  "by_house": {
+    "H01": {
+      "cases": 4,
+      "commit_cases": 4,
+      "pass": true,
+      "rank1_cases": 4
+    },
+    "H02": {
+      "cases": 4,
+      "commit_cases": 4,
+      "pass": true,
+      "rank1_cases": 4
+    },
+    "H03": {
+      "cases": 4,
+      "commit_cases": 4,
+      "pass": true,
+      "rank1_cases": 4
+    }
+  },
+  "contract": "CSTAR_M1_EXACT_COUNTERFACTUAL_TRANSFER_V1",
+  "limits": [
+    "only two candidate source positions per House",
+    "candidate-forward traces are evaluator/development assets, not yet an online full-map provider",
+    "does not establish closed-loop utility or cross-dataset localization gain"
+  ],
+  "rows": [
+    {
+      "candidate_forward_sha256": {
+        "SA": "8fc34ffd0d8c5456eb25bf01b88ad2811629335e43bbf59e355c61ae93e6ff8f",
+        "SB": "dfe4f57a32f716a4a389853dbe5475ad829be8b25f553fe0e23a1485c9f0e0e3"
+      },
+      "candidate_scores": [
+        {
+          "candidate_id": "SA",
+          "marginal_log_likelihood": 3076.3071009128403
+        },
+        {
+          "candidate_id": "SB",
+          "marginal_log_likelihood": 1887.4412108336821
+        }
+      ],
+      "counterfactual_wind": "slow",
+      "decision": "COMMIT",
+      "discrepancy_bound": 0.018638465725700857,
+      "house": "H01",
+      "likelihood_contrast": 1188.8658900791581,
+      "observation_sigma_from_candidate_bank": 0.018638465725700857,
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_history_sha256": "a92b6c4f2ef8718a3de0b382726a2f3430566b52280cf4191dfbe99f54a96b56",
+      "target_wind": "fast",
+      "true_source_evaluator_only": "SA",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_forward_sha256": {
+        "SA": "1a5a7a5ec7b64b50faf3530851339c29e1e7d8ac255857736fbfd485f48e418d",
+        "SB": "c3562cd9f22ae938fd6814de4ef7aa01c2fe812bef2ac2d428d718706c3a979e"
+      },
+      "candidate_scores": [
+        {
+          "candidate_id": "SA",
+          "marginal_log_likelihood": 3076.3071009128294
+        },
+        {
+          "candidate_id": "SB",
+          "marginal_log_likelihood": 2239.30529707967
+        }
+      ],
+      "counterfactual_wind": "fast",
+      "decision": "COMMIT",
+      "discrepancy_bound": 0.018638465725700857,
+      "house": "H01",
+      "likelihood_contrast": 837.0018038331596,
+      "observation_sigma_from_candidate_bank": 0.018638465725700857,
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_history_sha256": "d15dfea8e8e3c62ed19cb50a3aa4479f40874fc28ba0d4614956ebb73eba2084",
+      "target_wind": "slow",
+      "true_source_evaluator_only": "SA",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_forward_sha256": {
+        "SA": "8fc34ffd0d8c5456eb25bf01b88ad2811629335e43bbf59e355c61ae93e6ff8f",
+        "SB": "dfe4f57a32f716a4a389853dbe5475ad829be8b25f553fe0e23a1485c9f0e0e3"
+      },
+      "candidate_scores": [
+        {
+          "candidate_id": "SB",
+          "marginal_log_likelihood": 3675.9462078766346
+        },
+        {
+          "candidate_id": "SA",
+          "marginal_log_likelihood": 2239.3052970796834
+        }
+      ],
+      "counterfactual_wind": "slow",
+      "decision": "COMMIT",
+      "discrepancy_bound": 0.018638465725700857,
+      "house": "H01",
+      "likelihood_contrast": 1436.6409107969512,
+      "observation_sigma_from_candidate_bank": 0.018638465725700857,
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_history_sha256": "8c807936699b9a1dd7dcfb6bc9eb71db8a68497b13fb3033a7e87cb1346a7c6b",
+      "target_wind": "fast",
+      "true_source_evaluator_only": "SB",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_forward_sha256": {
+        "SA": "1a5a7a5ec7b64b50faf3530851339c29e1e7d8ac255857736fbfd485f48e418d",
+        "SB": "c3562cd9f22ae938fd6814de4ef7aa01c2fe812bef2ac2d428d718706c3a979e"
+      },
+      "candidate_scores": [
+        {
+          "candidate_id": "SB",
+          "marginal_log_likelihood": 3675.9462078766346
+        },
+        {
+          "candidate_id": "SA",
+          "marginal_log_likelihood": 1887.4412108336821
+        }
+      ],
+      "counterfactual_wind": "fast",
+      "decision": "COMMIT",
+      "discrepancy_bound": 0.018638465725700857,
+      "house": "H01",
+      "likelihood_contrast": 1788.5049970429525,
+      "observation_sigma_from_candidate_bank": 0.018638465725700857,
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_history_sha256": "44f5e8ce10281240e0dcea1d46d67a14cd060274b5965a053fe9510bb6c81c8f",
+      "target_wind": "slow",
+      "true_source_evaluator_only": "SB",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_forward_sha256": {
+        "SA": "a331ccede653fd2de6a2d150be64f494973a768dc78cebcb24e181f25cf37628",
+        "SB": "65423a4a6e4dd9bf39e037cbaf4af547c687dbb51972a8ece601eb19fe8a429e"
+      },
+      "candidate_scores": [
+        {
+          "candidate_id": "SA",
+          "marginal_log_likelihood": -620.0010656254389
+        },
+        {
+          "candidate_id": "SB",
+          "marginal_log_likelihood": -6203.818202642048
+        }
+      ],
+      "counterfactual_wind": "slow",
+      "decision": "COMMIT",
+      "discrepancy_bound": 0.6687989304877661,
+      "house": "H02",
+      "likelihood_contrast": 5583.817137016609,
+      "observation_sigma_from_candidate_bank": 0.6687989304877661,
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_history_sha256": "15e8bd616296990bd384ad219ce536c335a784759bb4620f06d805546f19a142",
+      "target_wind": "fast",
+      "true_source_evaluator_only": "SA",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_forward_sha256": {
+        "SA": "d141f88e8862e1639a579e3566db3e57ca6509320bf8d40b0bcd2241c21b6344",
+        "SB": "55515a7f4df232d14efc7f4d3a8faf17a93db5b9366168994c7e04b1bc2f6b46"
+      },
+      "candidate_scores": [
+        {
+          "candidate_id": "SA",
+          "marginal_log_likelihood": -620.0010656254389
+        },
+        {
+          "candidate_id": "SB",
+          "marginal_log_likelihood": -9399.474396614838
+        }
+      ],
+      "counterfactual_wind": "fast",
+      "decision": "COMMIT",
+      "discrepancy_bound": 0.6687989304877661,
+      "house": "H02",
+      "likelihood_contrast": 8779.4733309894,
+      "observation_sigma_from_candidate_bank": 0.6687989304877661,
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_history_sha256": "08c444897f01bc1ed6bf271e1beb937b4792605a95c4308e0ec1f6c4bd178582",
+      "target_wind": "slow",
+      "true_source_evaluator_only": "SA",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_forward_sha256": {
+        "SA": "a331ccede653fd2de6a2d150be64f494973a768dc78cebcb24e181f25cf37628",
+        "SB": "65423a4a6e4dd9bf39e037cbaf4af547c687dbb51972a8ece601eb19fe8a429e"
+      },
+      "candidate_scores": [
+        {
+          "candidate_id": "SB",
+          "marginal_log_likelihood": -1220.0000602088217
+        },
+        {
+          "candidate_id": "SA",
+          "marginal_log_likelihood": -9399.474396614834
+        }
+      ],
+      "counterfactual_wind": "slow",
+      "decision": "COMMIT",
+      "discrepancy_bound": 0.6687989304877661,
+      "house": "H02",
+      "likelihood_contrast": 8179.474336406012,
+      "observation_sigma_from_candidate_bank": 0.6687989304877661,
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_history_sha256": "c0f398d31c99a918f5fca85a4ff59c7e2dc18317923b5262b9b23f0137839d67",
+      "target_wind": "fast",
+      "true_source_evaluator_only": "SB",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_forward_sha256": {
+        "SA": "d141f88e8862e1639a579e3566db3e57ca6509320bf8d40b0bcd2241c21b6344",
+        "SB": "55515a7f4df232d14efc7f4d3a8faf17a93db5b9366168994c7e04b1bc2f6b46"
+      },
+      "candidate_scores": [
+        {
+          "candidate_id": "SB",
+          "marginal_log_likelihood": -1220.000060208812
+        },
+        {
+          "candidate_id": "SA",
+          "marginal_log_likelihood": -6203.818202642048
+        }
+      ],
+      "counterfactual_wind": "fast",
+      "decision": "COMMIT",
+      "discrepancy_bound": 0.6687989304877661,
+      "house": "H02",
+      "likelihood_contrast": 4983.818142433236,
+      "observation_sigma_from_candidate_bank": 0.6687989304877661,
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_history_sha256": "d7d335a183c04a8af3b37981b019650d4a85a1b01ccaea4dc65f360a2516e4c9",
+      "target_wind": "slow",
+      "true_source_evaluator_only": "SB",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_forward_sha256": {
+        "SA": "63b7fde7acf89ec864dde38f03c5867ff8301b034e71d19c7cf9039a511612be",
+        "SB": "8df9ce6bed832a5d81efbbdaaf24e16f254b7e2246373fbeb616080b73169c9e"
+      },
+      "candidate_scores": [
+        {
+          "candidate_id": "SA",
+          "marginal_log_likelihood": -939.4065890589771
+        },
+        {
+          "candidate_id": "SB",
+          "marginal_log_likelihood": -1474.0253967093613
+        }
+      ],
+      "counterfactual_wind": "slow",
+      "decision": "COMMIT",
+      "discrepancy_bound": 0.559747694261055,
+      "house": "H03",
+      "likelihood_contrast": 534.6188076503842,
+      "observation_sigma_from_candidate_bank": 0.559747694261055,
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_history_sha256": "667295ce0689bff467d78431932ba814af83968e13fe5e426328a867f9d9af62",
+      "target_wind": "fast",
+      "true_source_evaluator_only": "SA",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_forward_sha256": {
+        "SA": "4d7b60ba455ff54a629b6995f9c4f5a4a01439f581da92ca431ef0229367e324",
+        "SB": "9f8b73b38fec067bbc7d22fe6c879e589bc29e3eeabe71badd63021f2f82264d"
+      },
+      "candidate_scores": [
+        {
+          "candidate_id": "SA",
+          "marginal_log_likelihood": -939.4065890589798
+        },
+        {
+          "candidate_id": "SB",
+          "marginal_log_likelihood": -3126.8229811241627
+        }
+      ],
+      "counterfactual_wind": "fast",
+      "decision": "COMMIT",
+      "discrepancy_bound": 0.559747694261055,
+      "house": "H03",
+      "likelihood_contrast": 2187.4163920651827,
+      "observation_sigma_from_candidate_bank": 0.559747694261055,
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_history_sha256": "096c51f26bc817421e7c52ddc05405747a2de798555cde12edd766b703900b6b",
+      "target_wind": "slow",
+      "true_source_evaluator_only": "SA",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_forward_sha256": {
+        "SA": "63b7fde7acf89ec864dde38f03c5867ff8301b034e71d19c7cf9039a511612be",
+        "SB": "8df9ce6bed832a5d81efbbdaaf24e16f254b7e2246373fbeb616080b73169c9e"
+      },
+      "candidate_scores": [
+        {
+          "candidate_id": "SB",
+          "marginal_log_likelihood": -1006.4032685556004
+        },
+        {
+          "candidate_id": "SA",
+          "marginal_log_likelihood": -3126.8229811241627
+        }
+      ],
+      "counterfactual_wind": "slow",
+      "decision": "COMMIT",
+      "discrepancy_bound": 0.559747694261055,
+      "house": "H03",
+      "likelihood_contrast": 2120.4197125685623,
+      "observation_sigma_from_candidate_bank": 0.559747694261055,
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_history_sha256": "53966a7f3d11d12906518f9be7befb5536980344d1baa931d971ead98f645c81",
+      "target_wind": "fast",
+      "true_source_evaluator_only": "SB",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_forward_sha256": {
+        "SA": "4d7b60ba455ff54a629b6995f9c4f5a4a01439f581da92ca431ef0229367e324",
+        "SB": "9f8b73b38fec067bbc7d22fe6c879e589bc29e3eeabe71badd63021f2f82264d"
+      },
+      "candidate_scores": [
+        {
+          "candidate_id": "SB",
+          "marginal_log_likelihood": -1006.4032685556007
+        },
+        {
+          "candidate_id": "SA",
+          "marginal_log_likelihood": -1474.0253967093604
+        }
+      ],
+      "counterfactual_wind": "fast",
+      "decision": "COMMIT",
+      "discrepancy_bound": 0.559747694261055,
+      "house": "H03",
+      "likelihood_contrast": 467.6221281537597,
+      "observation_sigma_from_candidate_bank": 0.559747694261055,
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_history_sha256": "eb144b904d5ab185c067f500b082f8f7d3eb2443f313f8b1bfcc1104df92dc79",
+      "target_wind": "slow",
+      "true_source_evaluator_only": "SB",
+      "true_source_rank": 1
+    }
+  ],
+  "sensor": {
+    "dead_time_s": 0.4,
+    "implementation": "m1_causal.counterfactual_likelihood",
+    "tau_s": 1.2
+  },
+  "sigma_rule": "per-House median same-candidate fast/slow FOPDT RMS, computed before target scoring",
+  "target_rule": "target source/wind never scored with its same-source same-wind candidate-forward trace",
+  "verdict": "M1_EXACT_COUNTERFACTUAL_CROSS_TRANSPORT_PREMISE_PASS"
+}
