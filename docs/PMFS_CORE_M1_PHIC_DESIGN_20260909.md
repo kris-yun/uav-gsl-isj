@@ -1,4 +1,10 @@
-# CORE-M1-PHIC: proxy-calibrated hierarchical partial-invariance causal evidence
+# CORE-M1-PHIC: superseded offline-attribution design
+
+> **Superseded for causal claims.** This historical PHIC design remains an
+> audit record only.  The binding definition is
+> `PMFS_M1_CAUSAL_THEORY_FREEZE_20260909.md`.  In particular, a deterministic
+> FOPDT output is not a bias-independent proxy, so no proxy-calibration or
+> proxy-identification claim may be made from this design.
 
 ## Decision
 
@@ -7,8 +13,9 @@ It is a sensor-consistent, hierarchical partial-invariance estimator that
 separates stable source evidence from transport/sensor-shift evidence and
 keeps an explicit sensitivity interval when the separation is not identified.
 
-The working name is **PHIC**: Proxy-calibrated Hierarchical Invariant Causal
-evidence.
+The historical working name was **PHIC**.  It must not be expanded as
+"Proxy-calibrated" unless a separately observed, bias-independent proxy is
+introduced and its identifying assumptions are tested.
 
 This document is a design freeze for the offline attribution replay only. It
 does not authorize a new closed-loop run or a new seed.
@@ -20,21 +27,12 @@ does not authorize a new closed-loop run or a new seed.
    tests causal-mechanism invariance under heterogeneous data. This is the
    primary basis for replacing the false global-invariance assumption with a
    partial-invariance model over transport contexts.
-2. **Causal Fine-Tuning under Latent Confounded Shift, ICML 2026.** The paper
-   derives identification conditions for decomposing stable and
-   environment-specific components under latent confounded shift. This maps to
-   separating source-responsive evidence from transport/sensor artifacts.
-3. **Proxy-Guided Measurement Calibration, CLeaR 2026.** The method models
+2. **Proxy-Guided Measurement Calibration, CLeaR 2026.** The method models
    systematic measurement error with latent content and bias variables and
-   uses bias-independent proxies to calibrate the observation. This motivates
-   using the continuous concentration/FOPDT state as an observation proxy
-   instead of treating filament-visit frequency as the event law.
-4. **Disentangling Dynamical Systems: Causal Representation Learning Meets
-   Local Sparse Attention, CLeaR 2026.** Its identifiability result shows that
-   local state-dependent causal structure can be necessary in dynamical
-   systems. This supports keeping M1 event-time windows local rather than
-   forcing one global transport-invariance relation.
-5. **Sharp Bounds for Treatment Effect Generalization under Outcome
+   uses bias-independent proxies to calibrate the observation. It supports
+   explicitly modelling the sensor law, but the continuous concentration/FOPDT
+   state is not such a proxy here and supplies no identification result.
+3. **Sharp Bounds for Treatment Effect Generalization under Outcome
    Distribution Shift, CLeaR 2026.** The sensitivity parameter `Lambda` gives a
    principled bound when transportability is violated. PHIC uses this as a
    falsification/safety interval, not as a post-hoc performance knob.
