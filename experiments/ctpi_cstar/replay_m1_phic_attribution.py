@@ -62,14 +62,18 @@ def replay(rows: list[dict[str, str]], tau_s: float, gain: float, lambda_ratio: 
     if lambda_ratio < 1.0 or not math.isfinite(lambda_ratio):
         raise ValueError("lambda_ratio must be >= 1")
 
-    grouped: dict[tuple[str, int], list[dict[str, str]]] = defaultdict(list)
+    # The runtime appends one CSV across source updates.  block_id/event_index
+    # are local to an update, so the immutable run/update identity must be part
+    # of the replay key; otherwise the second update falsely looks non-monotone.
+    grouped: dict[tuple[str, int, str, int], list[dict[str, str]]] = defaultdict(list)
     for row in rows:
-        key = (row["candidate_id"], int(row["member_index"]))
+        key = (row["run_uuid"], int(row["source_update_id"]),
+               row["candidate_id"], int(row["member_index"]))
         grouped[key].append(row)
 
     member_summaries = []
     event_rows = []
-    for (candidate, member), sequence in sorted(grouped.items()):
+    for (run_uuid, source_update_id, candidate, member), sequence in sorted(grouped.items()):
         sequence.sort(key=lambda row: (int(row["event_index"]), int(row["block_id"])))
         previous_time: float | None = None
         state = 0.0
@@ -107,6 +111,8 @@ def replay(rows: list[dict[str, str]], tau_s: float, gain: float, lambda_ratio: 
                 residual = logit(q) - logit(context)
             residuals.append(residual)
             event_rows.append({
+                "run_uuid": run_uuid,
+                "source_update_id": source_update_id,
                 "candidate_id": candidate,
                 "member_index": member,
                 "event_index": event_index,

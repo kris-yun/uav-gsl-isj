@@ -93,7 +93,8 @@ namespace GSL::PMFS_internal
                                     bool centeredLogOdds = false,
                                     bool sequentialAssimilation = false,
                                     bool transportLogPool = false,
-                                    bool transportRobustPool = false);
+                                    bool transportRobustPool = false,
+                                    bool sensorFopdt = false);
         void recordEventEvidence(const Vector2& position, bool hit, double concentration,
                                  double threshold, uint64_t blockId, double simTime = 0.0);
         void updateSourceProbability(float refineFraction);
@@ -166,6 +167,7 @@ namespace GSL::PMFS_internal
         bool eventEvidenceSequentialAssimilation = false;
         bool eventEvidenceTransportLogPool = false;
         bool eventEvidenceTransportRobustPool = false;
+        bool eventEvidenceSensorFopdt = false;
         int eventEvidenceTransportReplicas = 1;
         std::vector<EventEvidence> eventEvidence;
         // Member-specific, candidate-invariant context.  Legacy M1R stores an
@@ -348,7 +350,8 @@ namespace GSL::PMFS_internal
         void applyContrastiveEventEvidence(std::vector<SimulationResult>& results,
                                            std::vector<LeafScore>& scores);
         long double sourceProbFromContrastiveEvents(
-            const std::vector<std::vector<float>>& transportMemberHitMaps) const;
+            const std::vector<std::vector<float>>& transportMemberHitMaps,
+            const std::vector<std::vector<float>>& transportMemberExposureMaps) const;
         void moveFilament(Filament& filament, Vector2Int& indices, float deltaTime, float noiseSTDev,
                           EventKeyedTransportRng* transportRng, uint64_t& drawIndex) const;
         void simulateSourceInPosition(const SimulationSource& source, std::vector<float>& hitMap, bool warmup,

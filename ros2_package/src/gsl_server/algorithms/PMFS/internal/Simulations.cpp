@@ -359,16 +359,18 @@ namespace GSL::PMFS_internal
 
     void Simulations::configureEventEvidence(bool enabled, int transportReplicas, bool contrastiveRatio,
                                              bool centeredLogOdds, bool sequentialAssimilation,
-                                             bool transportLogPool, bool transportRobustPool)
+                                             bool transportLogPool, bool transportRobustPool,
+                                             bool sensorFopdt)
     {
         if (transportReplicas < 1 || transportReplicas > 8)
             throw std::invalid_argument("CER_TRANSPORT_REPLICA_RANGE");
         eventEvidenceEnabled = enabled;
         eventEvidenceContrastiveRatio = enabled && contrastiveRatio;
         eventEvidenceCenteredLogOdds = eventEvidenceContrastiveRatio && centeredLogOdds;
-        eventEvidenceSequentialAssimilation = eventEvidenceCenteredLogOdds && sequentialAssimilation;
+        eventEvidenceSequentialAssimilation = eventEvidenceContrastiveRatio && sequentialAssimilation;
         eventEvidenceTransportLogPool = eventEvidenceSequentialAssimilation && transportLogPool;
         eventEvidenceTransportRobustPool = eventEvidenceSequentialAssimilation && transportRobustPool;
+        eventEvidenceSensorFopdt = eventEvidenceContrastiveRatio && sensorFopdt;
         eventEvidenceTransportReplicas = transportReplicas;
         eventEvidence.clear();
         eventEvidenceContext.clear();
@@ -6454,7 +6456,8 @@ namespace GSL::PMFS_internal
                        << (event.hit ? 1 : 0) << ',' << event.concentration << ',' << event.threshold << ','
                        << memberMap[event.cell] << ',' << (exposure != nullptr ? (*exposure)[event.cell] : 0.0f) << ','
                        << settings.iterationsToRecord << ',' << settings.deltaTime << ',' << context << ','
-                       << (eventEvidenceCenteredLogOdds ? 1 : 0) << ",hit_map_probability\n";
+                       << (eventEvidenceCenteredLogOdds ? 1 : 0) << ','
+                       << (eventEvidenceSensorFopdt ? "fopdt_exposure_rate" : "hit_map_probability") << '\n';
             }
         }
     }
@@ -6535,9 +6538,19 @@ namespace GSL::PMFS_internal
                 const auto& memberMap = result->transportMemberHitMaps[memberIndex];
                 if (memberMap.size() != measuredHitProb.data.size())
                     throw std::runtime_error("CER_RATIO_MEMBER_MAP_SIZE");
+                const std::vector<float>* contextMap = &memberMap;
+                if (eventEvidenceSensorFopdt)
+                {
+                    if (memberIndex >= result->transportMemberExposureMaps.size() ||
+                        result->transportMemberExposureMaps[memberIndex].size() != measuredHitProb.data.size())
+                        throw std::runtime_error("PHIC_EXPOSURE_CONTEXT_MISSING");
+                    contextMap = &result->transportMemberExposureMaps[memberIndex];
+                }
                 for (size_t eventIndex = 0; eventIndex < eventEvidence.size(); ++eventIndex)
                 {
-                    const long double probability = memberMap[eventEvidence[eventIndex].cell];
+                    long double probability = (*contextMap)[eventEvidence[eventIndex].cell];
+                    if (eventEvidenceSensorFopdt)
+                        probability /= static_cast<long double>(std::max(1, settings.iterationsToRecord));
                     eventEvidenceContext[memberIndex][eventIndex] +=
                         eventEvidenceCenteredLogOdds ? logit(probability) : probability;
                 }
@@ -6553,7 +6566,8 @@ namespace GSL::PMFS_internal
     }
 
     long double Simulations::sourceProbFromContrastiveEvents(
-        const std::vector<std::vector<float>>& transportMemberHitMaps) const
+        const std::vector<std::vector<float>>& transportMemberHitMaps,
+        const std::vector<std::vector<float>>& transportMemberExposureMaps) const
     {
         if (eventEvidence.empty())
             return 1.0L;
@@ -6590,31 +6604,54 @@ namespace GSL::PMFS_internal
             if (memberContext.size() != eventEvidence.size())
                 throw std::runtime_error("CER_RATIO_CONTEXT_EVENT_COUNT");
             long double logLikelihood = 0.0L;
-            double previousConcentration = eventEvidenceWindowStart > 0
-                ? eventEvidence[eventEvidenceWindowStart - 1].concentration : 0.0;
+            long double fopdtState = 0.0L;
+            double previousTime = eventEvidenceWindowStart > 0
+                ? eventEvidence[eventEvidenceWindowStart - 1].simTime
+                : (eventEvidence.empty() ? 0.0 : eventEvidence[eventEvidenceWindowStart].simTime -
+                   std::max(settings.deltaTime, settings.deltaTime * settings.iterationsToRecord));
             for (size_t eventIndex = eventEvidenceWindowStart; eventIndex < eventEvidence.size(); ++eventIndex)
             {
                 const EventEvidence& event = eventEvidence[eventIndex];
                 if (event.cell >= memberMap.size())
                     throw std::runtime_error("CER_RATIO_EVENT_CELL_RANGE");
-                // Same fixed persistence law as the passed cross-House screen:
-                // Normal(log1p(previous block concentration), unit scale).
-                const long double thresholdLog = std::log1p(event.threshold);
-                const long double previousLog = std::log1p(previousConcentration);
-                const long double persistence = 0.5L * std::erfc(
-                    (thresholdLog - previousLog) / std::sqrt(2.0L));
-                const long double sourceProbability = clipped(memberMap[event.cell]);
-                const long double contextLogOdds = eventEvidenceCenteredLogOdds
-                    ? memberContext[eventIndex]
-                    : logit(clipped(memberContext[eventIndex]));
-                // Fixed unit source/context odds residual. Candidate-independent
-                // persistence handles shared temporal dynamics. In CORE mode,
-                // centering predicted log-odds across candidates exactly removes
-                // any additive candidate-common nuisance term.
-                const long double corrected = clipped(expit(
-                    logit(persistence) + logit(sourceProbability) - contextLogOdds));
+                long double corrected = 0.0L;
+                if (eventEvidenceSensorFopdt)
+                {
+                    if (memberIndex >= transportMemberExposureMaps.size() ||
+                        transportMemberExposureMaps[memberIndex].size() != measuredHitProb.data.size())
+                        throw std::runtime_error("PHIC_EXPOSURE_SCORE_MISSING");
+                    const double dt = eventIndex == eventEvidenceWindowStart
+                        ? std::max(settings.deltaTime, settings.deltaTime * settings.iterationsToRecord)
+                        : std::max(0.0, event.simTime - previousTime);
+                    const long double exposure = std::clamp(
+                        static_cast<long double>(transportMemberExposureMaps[memberIndex][event.cell]) /
+                        static_cast<long double>(std::max(1, settings.iterationsToRecord)),
+                        0.0L, 1.0L);
+                    const long double alpha = 1.0L - std::exp(-static_cast<long double>(dt) / 1.2L);
+                    fopdtState += alpha * (exposure - fopdtState);
+                    const long double contextExposure = std::clamp(
+                        memberContext[eventIndex], 1.0e-6L, 1.0L - 1.0e-6L);
+                    // Partial invariance: compare candidate response with the
+                    // same-member context after the identical sensor memory.
+                    corrected = clipped(expit(logit(clipped(fopdtState)) -
+                                               logit(contextExposure)));
+                }
+                else
+                {
+                    // Same fixed persistence law as the frozen CORE modes.
+                    const long double thresholdLog = std::log1p(event.threshold);
+                    const long double previousLog = std::log1p(
+                        eventEvidenceWindowStart > 0 ? eventEvidence[eventEvidenceWindowStart - 1].concentration : 0.0);
+                    const long double persistence = 0.5L * std::erfc(
+                        (thresholdLog - previousLog) / std::sqrt(2.0L));
+                    const long double sourceProbability = clipped(memberMap[event.cell]);
+                    const long double contextLogOdds = eventEvidenceCenteredLogOdds
+                        ? memberContext[eventIndex] : logit(clipped(memberContext[eventIndex]));
+                    corrected = clipped(expit(
+                        logit(persistence) + logit(sourceProbability) - contextLogOdds));
+                }
                 logLikelihood += std::log(event.hit ? corrected : 1.0L - corrected);
-                previousConcentration = event.concentration;
+                previousTime = event.simTime;
             }
             if (eventEvidenceTransportLogPool)
                 meanLogLikelihood += logLikelihood /
@@ -6652,7 +6689,8 @@ namespace GSL::PMFS_internal
         {
             if (!result.valid || result.leaf == nullptr)
                 continue;
-            const long double eventLikelihood = sourceProbFromContrastiveEvents(result.transportMemberHitMaps);
+            const long double eventLikelihood = sourceProbFromContrastiveEvents(
+                result.transportMemberHitMaps, result.transportMemberExposureMaps);
             result.sourceProb = eventLikelihood;
             if (eventEvidenceSequentialAssimilation && eventEvidenceSequentialPosteriorValid)
             {
