@@ -2,6 +2,17 @@
 
 ## Current state
 
+The raw-realization provenance gate was re-run on the original VM checkout
+(`/home/zyc/CSTAR_RAW_PROVENANCE_20260906`) because the manifest intentionally
+stores VM-absolute evidence paths.  The VM audit is **PASS**: 12/12 entries
+are provenance-bound, all six exact-source groups are qualified, each House
+contains at least two source groups, and six pairs are pure transport-only
+nuisance pairs.  The immutable copied report is
+`evidence/cstar_raw_provenance_20260906/CSTAR_RAW_REALIZATION_PROVENANCE_AUDIT_VM_20260909.json`.
+
+This qualifies the realizations for a future truth-blind route extraction; it
+does not qualify M2 routes or establish a closed-loop gain.
+
 The PHIC redesign is now represented in the repository by:
 
 - the theory/data package in `docs/PMFS_M1_THEORY_DATA_REVIEW_PACKAGE_20260909.md`;
