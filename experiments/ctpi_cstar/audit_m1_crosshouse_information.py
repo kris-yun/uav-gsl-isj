@@ -65,6 +65,9 @@ def main():
         house: json.loads((assets / "manifests" / f"{house}.json").read_text(encoding="utf-8"))
         for house in ("H01", "H02", "H03")
     }
+    provenance_path = assets.parent / "cstar_raw_provenance_20260906" / "CSTAR_RAW_REALIZATION_PROVENANCE_AUDIT_V1.json"
+    provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
+    provenance_by_id = {entry["realization_id"]: entry for entry in provenance["normalized_entries"]}
     episodes = {e["realization_id"]: e for e in manifests["H01"]["m1_episodes"]}
     if len(episodes) != 12:
         raise RuntimeError("EXPECTED_12_UNIQUE_M1_PARENTS")
@@ -78,14 +81,27 @@ def main():
         by_house[episode["house"]].append(episode)
 
     houses = {}
-    all_transport_ids = defaultdict(set)
+    all_wind_interventions = defaultdict(set)
     for house, group in sorted(by_house.items()):
         if len(group) != 4:
             raise RuntimeError(f"EXPECTED_FOUR_PARENTS:{house}")
         by_source = defaultdict(list)
         for episode in group:
             by_source[episode["source_id"]].append(episode)
-            all_transport_ids[episode["transport_intervention_id"]].add(episode["source_id"])
+            physical = provenance_by_id[episode["realization_id"]]["physical_claims"]
+            transport = physical["transport_parameters"]
+            # The full transport fingerprint is realization-specific because it
+            # binds the source-specific raw realization.  The causal wind
+            # intervention is the normalized wind sequence plus its replay
+            # semantics, which is the field held fixed across source arms.
+            wind_key = json.dumps({
+                "normalized_wind_sequence": transport["normalized_wind_sequence"],
+                "wind_time_step": transport["wind_time_step"],
+                "allow_looping": transport["allow_looping"],
+                "loop_from_step": transport["loop_from_step"],
+                "loop_to_step": transport["loop_to_step"],
+            }, sort_keys=True, separators=(",", ":"))
+            all_wind_interventions[hashlib.sha256(wind_key.encode()).hexdigest()].add(episode["source_id"])
         if sorted(map(len, by_source.values())) != [2, 2]:
             raise RuntimeError(f"EXPECTED_TWO_EXACT_SOURCE_PAIRS:{house}")
 
@@ -111,6 +127,13 @@ def main():
                 "source_id": episode["source_id"],
                 "source_xyz_m": episode["source_xyz_m"],
                 "transport_intervention_id": episode["transport_intervention_id"],
+                "wind_intervention_id": hashlib.sha256(json.dumps({
+                    "normalized_wind_sequence": provenance_by_id[episode["realization_id"]]["physical_claims"]["transport_parameters"]["normalized_wind_sequence"],
+                    "wind_time_step": provenance_by_id[episode["realization_id"]]["physical_claims"]["transport_parameters"]["wind_time_step"],
+                    "allow_looping": provenance_by_id[episode["realization_id"]]["physical_claims"]["transport_parameters"]["allow_looping"],
+                    "loop_from_step": provenance_by_id[episode["realization_id"]]["physical_claims"]["transport_parameters"]["loop_from_step"],
+                    "loop_to_step": provenance_by_id[episode["realization_id"]]["physical_claims"]["transport_parameters"]["loop_to_step"],
+                }, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
                 "sensor_fopdt_max_abs_error": float(np.max(np.abs(observed - recomputed))),
                 "gas_sum": float(observed.sum()),
                 "hit_count_at_0_1ppm": int((observed > 0.1).sum()),
@@ -142,12 +165,13 @@ def main():
                         for rid, data in records.items()},
         }
 
-    shared_transport = {transport: sorted(sources) for transport, sources in all_transport_ids.items()
+    shared_transport = {transport: sorted(sources) for transport, sources in all_wind_interventions.items()
                         if len(sources) > 1}
     report = {
         "contract": "CSTAR_M1_CROSSHOUSE_INFORMATION_AUDIT_V1",
         "assets": str(assets),
         "asset_manifest_sha256": sha256(assets / "manifests" / "H01.json"),
+        "raw_provenance_audit_sha256": sha256(provenance_path),
         "evaluator_only_fields_used": ["source_id", "source_xyz_m", "true_gas_ppm"],
         "model_inputs_unchanged": ["stamp_ns", "pose_xy", "gas_ppm", "wind_uv", "candidate_geometry"],
         "common_information_verified": [
@@ -157,17 +181,18 @@ def main():
             "candidate support aligned to the House map",
         ],
         "not_identified_from_this_bundle_alone": [
-            "a source effect at a fixed transport intervention",
-            "a transport-invariant source representation learned from raw histories alone",
+            "a source effect at a fixed complete wind intervention",
+            "a source posterior over every unobserved map candidate",
+            "a transport-invariant source representation learned from raw histories without a candidate-conditioned forward bridge",
             "a cross-House source posterior from coordinate or gas pattern classification",
         ],
-        "shared_transport_interventions_across_distinct_sources": shared_transport,
+        "shared_wind_interventions_across_distinct_sources": shared_transport,
         "source_transport_factorial_crossing_present": bool(shared_transport),
         "required_m1_bridge": "candidate-conditioned do(source) forward exposure under the observed route/wind history, composed with the fixed FOPDT sensor law, plus an observability abstention gate",
         "sensor_manifest": sensor_manifest,
         "houses": houses,
-        "verdict": "M1_RAW_HISTORY_ONLY_CAUSAL_IDENTIFICATION_NOT_SUPPORTED"
-                   if not shared_transport else "M1_FACTORIAL_SOURCE_TRANSPORT_IDENTIFICATION_POSSIBLE",
+        "verdict": "M1_FACTORIAL_SOURCE_WIND_IDENTIFICATION_AVAILABLE_BUT_CANDIDATE_FORWARD_BRIDGE_REQUIRED"
+                   if shared_transport else "M1_SOURCE_WIND_FACTORIAL_IDENTIFICATION_NOT_SUPPORTED",
     }
     args.out.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(report["verdict"])

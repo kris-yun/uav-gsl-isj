@@ -3,8 +3,8 @@
 ## Decision
 
 Do not try to make M1 cross-House effective by further training or tuning a
-source classifier.  The qualified controlled data do contain a common causal
-measurement chain, but do **not** contain a factorial source--transport
+source classifier.  The qualified controlled data contain a common causal
+measurement chain, but they do **not** contain a factorial source--wind
 intervention that identifies a source effect from raw histories alone.
 
 The reproducible evaluator-only audit is:
@@ -14,7 +14,7 @@ D:\Anaconda\python.exe -X utf8 experiments/ctpi_cstar/audit_m1_crosshouse_inform
   --out evidence/cstar_m1_crosshouse_information_audit_20260909.json
 ```
 
-Its verdict is `M1_RAW_HISTORY_ONLY_CAUSAL_IDENTIFICATION_NOT_SUPPORTED`.
+Its verdict is `M1_SOURCE_WIND_FACTORIAL_IDENTIFICATION_NOT_SUPPORTED`.
 It does not alter a model input, route, source posterior, or simulator field.
 
 ## What is genuinely shared across H01--H03
@@ -35,10 +35,13 @@ shortcut of treating the sensor as a delay-free `tau=1.2` exponential filter.
 ## What the data do *not* identify
 
 Every House has two exact physical sources and two observed transport
-realizations per source, but no transport-intervention fingerprint occurs for
-two distinct sources.  Hence the bundle supports source-paired robustness
-diagnostics, not the causal comparison `do(S=s)` versus `do(S=s')` at fixed
-transport.
+realizations per source, but no complete normalized wind-file sequence occurs
+for two distinct sources.  The complete realization `transport_fingerprint`
+is source-specific, so it is not a valid wind-intervention identity; the audit
+therefore compares the actual normalized wind sequence and replay semantics.
+That stricter comparison still finds no shared wind intervention.  Hence the
+bundle supports same-source robustness diagnostics, not the causal comparison
+`do(S=s)` versus `do(S=s')` at fixed wind.
 
 The observed concentration histories show why a history-only representation
 cannot repair this by itself.  The ratio of mean within-source (different
@@ -94,6 +97,11 @@ items together:
 3. a source-by-transport factorial microbank (two admissible sources under
    the same two transport realizations per House), generated independently of
    M1 scores.
+
+`tools/cstar_generate_current_runtime_dataset.sh` specifies such a microbank,
+but it is a generator, not evidence: it has not been qualified as part of the
+current immutable asset bundle and must not be treated as if it had already
+supplied the needed intervention pairs.
 
 Only if this M1 premise gate improves true-source compatibility over the
 native likelihood in held-out source--transport cells is a single-seed
