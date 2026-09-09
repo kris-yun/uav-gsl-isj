@@ -36,6 +36,8 @@ def main() -> int:
     ap.add_argument("--raw-dt", type=float, default=0.1,
                     help="Current-runtime raw snapshot interval in seconds")
     ap.add_argument("--output", type=Path, required=True)
+    ap.add_argument("--candidate-forward-output", type=Path,
+                    help="isolated evaluator/development export of the candidate simulator input before sensor dynamics")
     args = ap.parse_args()
 
     rows = list(csv.DictReader(args.route.open(encoding="utf-8", newline="")))
@@ -56,6 +58,7 @@ def main() -> int:
         text=True, bufsize=1,
     )
     measured = []
+    candidate_forward = []
     try:
         for step, row in enumerate(rows[1:], start=1):
             # The runtime saves at raw_dt; the frozen route is sampled every 0.2 s.
@@ -79,6 +82,17 @@ def main() -> int:
                 "wind_w": w,
                 "gas_ppm": sensor.process(gas, 0.2),
             })
+            # This is not appended to the controller-visible history.  It is
+            # the physical forward input generated under the declared source
+            # hypothesis and is only meaningful as an offline candidate trace
+            # or a future auditable forward-provider cache.
+            candidate_forward.append({
+                "t_sim_s": round(step * 0.2, 9),
+                "stamp_ns": step * 200000000,
+                "step": step,
+                "pose_xy": [float(row["x"]), float(row["y"])],
+                "candidate_forward_input_ppm": gas,
+            })
     finally:
         if proc.stdin:
             proc.stdin.close()
@@ -90,9 +104,15 @@ def main() -> int:
     with args.output.open("w", encoding="utf-8", newline="\n") as f:
         for row in measured:
             f.write(json.dumps(row, sort_keys=True) + "\n")
+    if args.candidate_forward_output is not None:
+        args.candidate_forward_output.parent.mkdir(parents=True, exist_ok=True)
+        with args.candidate_forward_output.open("w", encoding="utf-8", newline="\n") as f:
+            for row in candidate_forward:
+                f.write(json.dumps(row, sort_keys=True) + "\n")
     print(json.dumps({"contract": "CSTAR_CURRENT_RUNTIME_HISTORY_V1",
                       "frames": len(measured), "output": str(args.output),
-                      "truth_blind_output": True}, sort_keys=True))
+                      "truth_blind_output": True,
+                      "candidate_forward_output": str(args.candidate_forward_output) if args.candidate_forward_output else None}, sort_keys=True))
     return 0
 
 

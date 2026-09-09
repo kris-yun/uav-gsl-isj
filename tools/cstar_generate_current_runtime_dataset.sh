@@ -4,6 +4,7 @@ set -eo pipefail
 OUT_ROOT=${1:?output root}
 ROUTE_ROOT=${2:?local route root on VM}
 SENSOR_ROOT=${3:?sensor probe root on VM}
+FORWARD_ROOT=${FORWARD_ROOT:-}
 SIM_BIN=/home/zyc/PF_DEI_V3_GADEN_BUILD_REF/install/lib/gaden_filament_simulator/filament_simulator
 ENV_BASE=/mnt/hgfs/workspace/GADEN_files/scenarios
 RAW_BASE=/mnt/hgfs/workspace/GADEN_files/scenarios
@@ -27,6 +28,13 @@ run_case() {
   # being passed here by accident.  The generator is only valid when every A/B
   # pair reuses the same canonical wind directory byte-for-byte.
   local id=$1 house=$2 wind_config=$3 sx=$4 sy=$5 sz=$6
+  local route_house
+  case "$house" in
+    House01) route_house=H01 ;;
+    House02) route_house=H02 ;;
+    House03) route_house=H03 ;;
+    *) echo "CSTAR_UNKNOWN_HOUSE_FOR_ROUTE:$house" >&2; return 2 ;;
+  esac
   if [ -n "$CASE_FILTER" ] && [ "$id" != "$CASE_FILTER" ]; then return 0; fi
   local work="/dev/shm/cstar_current_${id}"
   local input="$work/input"
@@ -72,12 +80,17 @@ run_case() {
     -p writeConcentrations:=false -p results_location:="$output" \
     >"$work/sim.log" 2>&1
   test "$(find "$output" -maxdepth 1 -type f -name 'iteration_*' | wc -l)" -ge "$EXPECTED_FRAMES"
+  local forward_args=()
+  if [ -n "$FORWARD_ROOT" ]; then
+    mkdir -p "$FORWARD_ROOT/$id"
+    forward_args=(--candidate-forward-output "$FORWARD_ROOT/$id/candidate_forward_input.jsonl")
+  fi
   "$PY" /dev/shm/cstar_extract_current_runtime_history.py \
     --env-root "$ENV_BASE/$house" --gas-results "$output" \
-    --route "$ROUTE_ROOT/$house/history_route.csv" --helper "$HELPER" \
-    --sensor-module "$SENSOR_ROOT/$house/sensor_model.py" \
-    --sensor-manifest "$SENSOR_ROOT/$house/sensor_manifest.json" --raw-dt 0.1 \
-    --output "$OUT_ROOT/$id/measured_history.jsonl"
+    --route "$ROUTE_ROOT/$route_house/history_route.csv" --helper "$HELPER" \
+    --sensor-module "$SENSOR_ROOT/$route_house/sensor_model.py" \
+    --sensor-manifest "$SENSOR_ROOT/$route_house/sensor_manifest.json" --raw-dt 0.1 \
+    --output "$OUT_ROOT/$id/measured_history.jsonl" "${forward_args[@]}"
   cp "$work/sim.log" "$OUT_ROOT/$id/sim.log"
   sha256sum "$OUT_ROOT/$id/measured_history.jsonl" | tee "$OUT_ROOT/$id/HISTORY_SHA256"
   rm -rf "$work"
