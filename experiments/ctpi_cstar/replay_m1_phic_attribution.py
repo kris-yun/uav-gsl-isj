@@ -189,6 +189,8 @@ def selftest() -> dict:
         for member in (0, 1):
             for index in range(1, 4):
                 rows.append({
+                    "run_uuid": "selftest",
+                    "source_update_id": "1",
                     "candidate_id": candidate,
                     "member_index": str(member), "event_index": str(index), "block_id": str(index),
                     "sim_time_s": str(index * 2.0), "observed_hit": "1",
