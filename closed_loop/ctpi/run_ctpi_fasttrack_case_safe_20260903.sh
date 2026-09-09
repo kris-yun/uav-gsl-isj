@@ -23,6 +23,8 @@ VGR_BRIDGE_SOURCE_ROOT="${VGR_BRIDGE_SOURCE_ROOT:?set VGR_BRIDGE_SOURCE_ROOT to 
 ENV_PREFLIGHT="${ENV_PREFLIGHT:-}"
 GEOMETRY_MANIFEST="${GEOMETRY_MANIFEST:-}"
 QUALIFIED_HELPER="${QUALIFIED_HELPER:-}"
+CONTEXT_BANK_EXPORT_ENABLED="${CONTEXT_BANK_EXPORT_ENABLED:-false}"
+CONTEXT_BANK_EXPORT_DIRECTORY="${CONTEXT_BANK_EXPORT_DIRECTORY:-}"
 
 REPO_ROOT="${REPO_ROOT:-/home/zyc/gsl_ws/src/GasSourceLocalization}"
 BANK_ROOT_BASE="${BANK_ROOT_BASE:-/mnt/hgfs/workspace/CPIR_M1_FULLGRID_LOOKUP_20260831_R1}"
@@ -329,7 +331,8 @@ PY_MAP
   "cpir_expected_steps_source_update:=${STEPS_SOURCE_UPDATE}"
   "cpir_expected_max_warmup_iterations:=${MAX_WARMUP_ITERATIONS}"
   "cpir_expected_min_warmup_iterations:=${MIN_WARMUP_ITERATIONS}"
-  "context_bank_export_enabled:=false"
+  "context_bank_export_enabled:=${CONTEXT_BANK_EXPORT_ENABLED}"
+  "context_bank_export_directory:=${CONTEXT_BANK_EXPORT_DIRECTORY}"
   "ctpi_m3_horizontal_speed_mps:=0.4"
   "navigation_trace_file:=${RUN_DIR}/navigation_trace.csv"
   "source_estimate_trace_file:=${RUN_DIR}/source_estimate_trace.csv"
