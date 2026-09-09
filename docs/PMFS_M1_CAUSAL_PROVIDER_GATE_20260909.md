@@ -58,3 +58,18 @@ baseline controller and a new M1-only arm.  It must report, per House:
 Failure of C2 prevents C3.  Failure of C3 is a causal-M1 NO-GO unless a
 reproducible formula--code contradiction is demonstrated.  Passing C3 is a
 pilot result, not multi-seed cross-dataset proof.
+
+## C2 attempt A: rejected local-wind continuum surrogate
+
+`CSTAR_M1_TEMPORAL_PROVIDER_ALIGNMENT_DIAGNOSTIC_V1` tested a causal,
+prefix-only finite-volume provider against the exact 12-case GADEN forward
+bank.  It is rejected before score integration: its mean log-concentration
+shape correlations were H01 `0.234`, H02 `0.183`, and H03 `0.159`; it also
+predicted nonzero exposure through most frames where the filament simulator
+produced sparse intermittent support.  This is a structural response-family
+mismatch, not a parameter to tune.
+
+The next C2 implementation must therefore retain filament transport state and
+replay a timestamped wind-field history.  It may not replace sparse filaments
+with a local-wind continuum surrogate or rescue this attempt with diffusion,
+amplitude, duration, or House-specific parameters.
