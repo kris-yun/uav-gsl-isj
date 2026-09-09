@@ -751,15 +751,22 @@ namespace GSL::PMFS_internal
         for (int replica = 0; replica < replicas; ++replica)
         {
             std::fill(memberMap.begin(), memberMap.end(), 0.0f);
+            std::vector<float> memberExposure;
+            if (eventEvidenceContrastiveRatio)
+                memberExposure.resize(result.hitMap.size(), 0.0f);
             EventKeyedTransportRng nativeRng(EventKey{nativeRandomSeed, nativeSourceUpdateId,
                 static_cast<uint64_t>(replica), nativeTransportSubstream});
             SimulationSource memberSource(node, measuredHitProb.metadata, nativeDeterministicRng ? &nativeRng : nullptr);
             simulateSourceInPosition(memberSource, memberMap, true, settings.iterationsToRecord, settings.deltaTime,
-                                     settings.noiseSTDev, nullptr, nativeDeterministicRng ? &nativeRng : nullptr);
+                                     settings.noiseSTDev, eventEvidenceContrastiveRatio ? &memberExposure : nullptr,
+                                     nativeDeterministicRng ? &nativeRng : nullptr);
             for (size_t i = 0; i < memberMap.size(); ++i)
                 result.hitMap[i] += memberMap[i] / static_cast<float>(replicas);
             if (eventEvidenceContrastiveRatio)
+            {
                 result.transportMemberHitMaps.push_back(memberMap);
+                result.transportMemberExposureMaps.push_back(std::move(memberExposure));
+            }
             else
                 mixtureScore += (eventEvidenceEnabled ? sourceProbFromEvents(memberMap)
                                                        : sourceProbFromMaps(measuredHitProb, memberMap)) /
@@ -790,7 +797,8 @@ namespace GSL::PMFS_internal
         // Keep the current legacy event inputs auditable.  This export is
         // write-only and does not affect sourceProb or planner state; PHIC
         // replay uses it to replace the hit-map observation law offline.
-        exportContrastiveEventAttribution(stableID, candidatePoint, result.transportMemberHitMaps);
+        exportContrastiveEventAttribution(stableID, candidatePoint, result.transportMemberHitMaps,
+                                          result.transportMemberExposureMaps);
 
         result.sourceProb = eventEvidenceContrastiveRatio ? 1.0L : mixtureScore;
         exportNativeCandidateRecord(stableID, candidatePoint, firstSampledSourcePoint, result.sourceProb, result.hitMap);
@@ -6409,7 +6417,8 @@ namespace GSL::PMFS_internal
 
     void Simulations::exportContrastiveEventAttribution(
         const std::string& stableID, const Vector2& source,
-        const std::vector<std::vector<float>>& memberMaps)
+        const std::vector<std::vector<float>>& memberMaps,
+        const std::vector<std::vector<float>>& exposureMaps)
     {
         if (!contextBankExportEnabled || contextBankExportDirectory.empty() ||
             eventEvidence.empty() || memberMaps.empty())
@@ -6422,12 +6431,15 @@ namespace GSL::PMFS_internal
         if (!output)
             throw std::runtime_error("CER_ATTRIBUTION_EXPORT_OPEN_FAILED");
         if (!existed || std::filesystem::file_size(path) == 0)
-            output << "run_uuid,source_update_id,candidate_id,candidate_x,candidate_y,member_index,event_index,block_id,cell_index,observed_hit,concentration,threshold,legacy_hit_probability,context_value,context_centered_log_odds,observation_operator\n";
+            output << "run_uuid,source_update_id,candidate_id,candidate_x,candidate_y,member_index,event_index,block_id,cell_index,observed_hit,concentration,threshold,legacy_hit_probability,aggregate_raw_exposure,context_value,context_centered_log_odds,observation_operator\n";
         for (size_t memberIndex = 0; memberIndex < memberMaps.size(); ++memberIndex)
         {
             const auto& memberMap = memberMaps[memberIndex];
             if (memberMap.size() != measuredHitProb.data.size())
                 throw std::runtime_error("CER_ATTRIBUTION_MEMBER_MAP_SIZE");
+            const std::vector<float>* exposure = memberIndex < exposureMaps.size() ? &exposureMaps[memberIndex] : nullptr;
+            if (exposure != nullptr && exposure->size() != measuredHitProb.data.size())
+                throw std::runtime_error("CER_ATTRIBUTION_EXPOSURE_MAP_SIZE");
             for (size_t eventIndex = 0; eventIndex < eventEvidence.size(); ++eventIndex)
             {
                 const EventEvidence& event = eventEvidence[eventIndex];
@@ -6438,7 +6450,8 @@ namespace GSL::PMFS_internal
                        << std::setprecision(9) << source.x << ',' << source.y << ',' << memberIndex << ','
                        << eventIndex << ',' << event.blockId << ',' << event.cell << ','
                        << (event.hit ? 1 : 0) << ',' << event.concentration << ',' << event.threshold << ','
-                       << memberMap[event.cell] << ',' << context << ','
+                       << memberMap[event.cell] << ',' << (exposure != nullptr ? (*exposure)[event.cell] : 0.0f) << ','
+                       << context << ','
                        << (eventEvidenceCenteredLogOdds ? 1 : 0) << ",hit_map_probability\n";
             }
         }

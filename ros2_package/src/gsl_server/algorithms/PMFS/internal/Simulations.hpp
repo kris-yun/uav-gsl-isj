@@ -73,6 +73,9 @@ namespace GSL::PMFS_internal
             bool valid = false;
             std::vector<float> hitMap;
             std::vector<std::vector<float>> transportMemberHitMaps;
+            // Optional raw exposure maps retained only for contrastive
+            // attribution replay; never used by the online score.
+            std::vector<std::vector<float>> transportMemberExposureMaps;
             long double sourceProb = 0.0L;
             Utils::NQA::Node* leaf = nullptr;
         };
@@ -328,7 +331,8 @@ namespace GSL::PMFS_internal
         // event quantities used by the current CER scorer. This exposes the
         // legacy hit-map observation law so PHIC replay can measure the gap.
         void exportContrastiveEventAttribution(const std::string& stableID, const Vector2& source,
-                                               const std::vector<std::vector<float>>& memberMaps);
+                                               const std::vector<std::vector<float>>& memberMaps,
+                                               const std::vector<std::vector<float>>& exposureMaps);
         void exportNativeCandidateRecord(const std::string& stableID, const Vector2& source,
                                          const Vector2& nativeSourcePoint, long double sourceProb,
                                          const std::vector<float>& hitMap);

@@ -103,11 +103,14 @@ an already available result.
 The runtime now has a diagnostic-only `contrastive_event_attribution.csv`
 export (enabled through the existing context-bank export directory).  It
 records the exact candidate x transport-member x event rows, including the
-observed event, threshold, legacy hit-map probability, and member context.
+observed event, threshold, legacy hit-map probability, aggregate forward
+exposure, and member context.
 This is intentionally an audit surface for the operator mismatch; it does
 not change scoring, posterior, navigation, or stopping state.  The exported
 `observation_operator=hit_map_probability` label prevents these rows from
-being misreported as sensor-consistent evidence.
+being misreported as sensor-consistent evidence.  The exposure is currently
+the full forward-run hit count, not a block-level FOPDT input; a true L2
+replay still requires block-level exposure logging.
 
 For each candidate/member/event, the replay will store:
 
