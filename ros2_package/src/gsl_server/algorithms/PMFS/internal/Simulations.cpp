@@ -399,6 +399,57 @@ namespace GSL::PMFS_internal
                                               concentration, threshold, blockId, simTime});
     }
 
+    void Simulations::configureCausalWindHistoryExport(bool enabled, const std::string& directory,
+                                                        const std::string& runUUID, const std::string& mapHash)
+    {
+        std::lock_guard<std::mutex> lock(causalWindHistoryExportMutex);
+        causalWindHistoryManifest.close();
+        causalWindHistoryExportEnabled = enabled;
+        causalWindHistoryExportDirectory = directory;
+        causalWindHistoryExportRunUUID = runUUID;
+        causalWindHistoryExportMapHash = mapHash;
+        if (!enabled)
+            return;
+        if (directory.empty() || runUUID.empty() || runUUID == "unknown" ||
+            mapHash.empty() || mapHash == "UNSET" || !std::filesystem::path(directory).is_absolute())
+            throw std::invalid_argument("CAUSAL_WIND_HISTORY_EXPORT_IDENTITY");
+        std::filesystem::create_directories(directory);
+        causalWindHistoryManifest.open(std::filesystem::path(directory) / "gmrf_wind_history_manifest.csv",
+                                       std::ios::out | std::ios::trunc);
+        if (!causalWindHistoryManifest)
+            throw std::runtime_error("CAUSAL_WIND_HISTORY_EXPORT_OPEN");
+        causalWindHistoryManifest << "run_uuid,snapshot_id,sim_time,pose_x,pose_y,map_hash,cell_count,file\n";
+    }
+
+    void Simulations::exportCausalWindHistorySnapshot(const Vector2& position, uint64_t snapshotId, double simTime)
+    {
+        if (!causalWindHistoryExportEnabled)
+            return;
+        if (!std::isfinite(position.x) || !std::isfinite(position.y) || !std::isfinite(simTime) || simTime < 0.0 ||
+            wind.data.size() != measuredHitProb.metadata.dimensions.x * measuredHitProb.metadata.dimensions.y)
+            throw std::runtime_error("CAUSAL_WIND_HISTORY_SNAPSHOT_INPUT");
+        std::lock_guard<std::mutex> lock(causalWindHistoryExportMutex);
+        const std::string filename = fmt::format("gmrf_wind_{:06}.f32le", snapshotId);
+        std::ofstream output(std::filesystem::path(causalWindHistoryExportDirectory) / filename,
+                             std::ios::out | std::ios::binary | std::ios::trunc);
+        if (!output)
+            throw std::runtime_error("CAUSAL_WIND_HISTORY_SNAPSHOT_OPEN");
+        for (const Vector2& vector : wind.data)
+        {
+            if (!std::isfinite(vector.x) || !std::isfinite(vector.y))
+                throw std::runtime_error("CAUSAL_WIND_HISTORY_NONFINITE");
+            const float values[2] = {vector.x, vector.y};
+            output.write(reinterpret_cast<const char*>(values), sizeof(values));
+        }
+        output.close();
+        if (!output)
+            throw std::runtime_error("CAUSAL_WIND_HISTORY_SNAPSHOT_WRITE");
+        causalWindHistoryManifest << causalWindHistoryExportRunUUID << ',' << snapshotId << ','
+                                  << std::setprecision(17) << simTime << ',' << position.x << ',' << position.y << ','
+                                  << causalWindHistoryExportMapHash << ',' << wind.data.size() << ',' << filename << '\n';
+        causalWindHistoryManifest.flush();
+    }
+
     void Simulations::updateSourceProbability(float refineFraction)
     {
         ZoneScoped;

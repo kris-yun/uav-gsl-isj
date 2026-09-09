@@ -70,6 +70,8 @@ namespace GSL
         hoverForwardExportEveryMeasurement = getParam<bool>("hover_forward_export_every_measurement", false);
         hoverForwardExportContinuousExposure = getParam<bool>("hover_forward_export_continuous_exposure", false);
         hoverForwardExportDirectory = getParam<std::string>("hover_forward_export_directory", "");
+        causalWindHistoryExportEnabled = getParam<bool>("causal_wind_history_export_enabled", false);
+        causalWindHistoryExportDirectory = getParam<std::string>("causal_wind_history_export_directory", "");
         p2ShadowEnabled = getParam<bool>("p2_shadow_enabled", false);
         p2ShadowDirectory = getParam<std::string>("p2_shadow_directory", "");
         p2ShadowGlobalSeed = getParam<int64_t>("p2_global_seed", 0);
@@ -266,6 +268,11 @@ namespace GSL
             getParam<std::string>("hover_forward_map_hash", "UNSET"),
             getParam<std::string>("hover_forward_wind_hash", "UNSET"),
              getParam<std::string>("hover_forward_code_hash", "UNSET"));
+        simulations.configureCausalWindHistoryExport(
+            causalWindHistoryExportEnabled,
+            causalWindHistoryExportDirectory,
+            getParam<std::string>("run_uuid", "unknown"),
+            getParam<std::string>("causal_wind_history_map_hash", "UNSET"));
         simulations.configureP2Shadow(
             p2ShadowEnabled,
             p2ShadowDirectory,
@@ -401,6 +408,14 @@ namespace GSL
                               node,
                               pubs.gmrfWind
                                   IF_GADEN(, pubs.groundTruthWind));
+
+        // C2 capture is deliberately after the ordinary GMRF update and
+        // before any source score. It serializes only the field available to
+        // PMFS at this block; gas, posterior and future wind are excluded.
+        if (causalWindHistoryExportEnabled)
+            simulations.exportCausalWindHistorySnapshot(
+                Vector2(currentRobotPosition.x, currentRobotPosition.y),
+                ++causalWindHistorySnapshotId, (node->now() - startTime).seconds());
 
         // Read-only HOVER basis export: exactly the existing PMFS point-source simulator
         // over the frozen free-space grid for this completed measurement block.  It is

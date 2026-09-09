@@ -86,6 +86,9 @@ namespace GSL
         bool hoverForwardExportContinuousExposure = false;
         bool hoverForwardExportCompleteGridDone = false;
         std::string hoverForwardExportDirectory;
+        bool causalWindHistoryExportEnabled = false;
+        std::string causalWindHistoryExportDirectory;
+        uint64_t causalWindHistorySnapshotId = 0;
         bool p2ShadowEnabled = false;
         std::string p2ShadowDirectory;
         uint64_t p2ShadowGlobalSeed = 0;

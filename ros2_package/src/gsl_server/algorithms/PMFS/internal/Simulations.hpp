@@ -7,6 +7,7 @@
 #include <geometry_msgs/msg/pose.hpp>
 #include <array>
 #include <string>
+#include <fstream>
 #include <mutex>
 #include <memory>
 #include <cstdint>
@@ -104,6 +105,12 @@ namespace GSL::PMFS_internal
         void configureReadOnlyForwardExport(bool enabled, const std::string& directory, const std::string& runUUID,
                                             const std::string& pmfsParametersHash, const std::string& mapHash,
                                             const std::string& windHash, const std::string& codeHash);
+        // C2 ingress only: export the deployment-visible GMRF field after a
+        // completed measurement.  This path is read-only and does not alter a
+        // PMFS posterior, source simulation, or navigation decision.
+        void configureCausalWindHistoryExport(bool enabled, const std::string& directory,
+                                               const std::string& runUUID, const std::string& mapHash);
+        void exportCausalWindHistorySnapshot(const Vector2& position, uint64_t snapshotId, double simTime);
         bool exportCompletePointCandidateGrid(bool exportContinuousExposure = false);
         void configureP2Shadow(bool enabled, const std::string& directory, const std::string& runUUID,
                                uint64_t globalSeed, int replicas, uint64_t transportSubstream);
@@ -190,6 +197,13 @@ namespace GSL::PMFS_internal
         size_t readOnlyForwardExportSnapshot = 0;
         std::string readOnlyForwardExportCurrentDirectory;
         std::mutex readOnlyForwardExportMutex;
+
+        bool causalWindHistoryExportEnabled = false;
+        std::string causalWindHistoryExportDirectory;
+        std::string causalWindHistoryExportRunUUID;
+        std::string causalWindHistoryExportMapHash;
+        std::ofstream causalWindHistoryManifest;
+        std::mutex causalWindHistoryExportMutex;
 
         bool contextBankExportEnabled = false;
         std::string contextBankExportDirectory;

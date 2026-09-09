@@ -28,7 +28,10 @@ performs the only allowed conversion to a likelihood:
 Required invariants:
 
 1. Store each wind/route observation with its timestamp before source scoring;
-   a current wind snapshot or accumulated exposure map is rejected.
+   a current wind snapshot or accumulated exposure map is rejected.  In the
+   deployed PMFS path, a wind observation is the **GMRF-estimated full 2-D
+   field** available after each completed measurement block, not an
+   interpolation of the local anemometer reading.
 2. The provider starts from a declared physical initial condition and carries
    source-specific transport state and FOPDT state through the whole prefix.
 3. Source coordinates are generated exclusively from the frozen geometry-only
@@ -40,6 +43,19 @@ Required invariants:
 5. When predicted candidate contrast is bounded by member plus sensor
    discrepancy, the C++ integration records `ABSTAIN`; it may not fall back to
    an old centered-logit, duration, posterior-mass, or distance rule.
+
+### Wind-information boundary
+
+The raw GADEN `wind_iteration_*` volumes are evaluator-side environmental
+authority only. They may verify map/time alignment and score a held-out
+simulator response, but must never be read by the online M1 provider. Treating
+them as a runtime wind field would leak a simulator-hidden state.
+
+The online provider may instead consume PMFS GMRF fields. PMFS obtains those
+through its ordinary `/WindEstimation` service with `useWindGroundTruth=false`
+(the formal launch default). Each history item must bind `(block_id, sim_time,
+pose, GMRF-grid hash)`. Transport members represent uncertainty in that
+estimated field; they are not post-hoc, per-House adjustments.
 
 The current `cer_core_phic_m1` violates C2 because its `wind` is a single
 current grid and its input is an aggregate exposure map.  It remains a
