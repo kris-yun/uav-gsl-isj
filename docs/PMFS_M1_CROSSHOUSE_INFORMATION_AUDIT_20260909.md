@@ -103,6 +103,29 @@ but it is a generator, not evidence: it has not been qualified as part of the
 current immutable asset bundle and must not be treated as if it had already
 supplied the needed intervention pairs.
 
+## Independent current-runtime factorial development evidence
+
+There is a separate, self-consistent current-runtime development bundle:
+`evidence/cstar_current_runtime_assets240_20260907`.  It must not be mixed
+with the immutable raw bundle above, but it does contain a true two-source by
+two-transport design per House.  The companion audit
+`audit_m1_factorial_signal.py` verifies its hashes and computes orthogonal
+source, wind, and source-by-wind interaction contrasts from the evaluator-only
+arm labels.
+
+At 180 s, the source-main-effect / source-by-wind-interaction RMS ratios are
+H01 `2.76`, H02 `6.85`, and H03 `2.67`.  At 60 s, H02 has no source-main
+effect and H03 is near the interaction scale.  Hence the shared empirical
+condition is not an early gas-pattern classifier; it is **conditional
+observability**: only assimilate a candidate likelihood after the visited
+route makes predicted source contrast exceed transport interaction.
+
+This explains why a time-local, candidate-conditioned observability gate is a
+scientific M1 repair, whereas another global invariance loss or early-posterior
+tuning is not.  The current-runtime PICR screen remains a NO-GO, because it
+does not provide the candidate-forward sensor-consistent likelihood required
+to use this condition in a real PMFS posterior.
+
 Only if this M1 premise gate improves true-source compatibility over the
 native likelihood in held-out source--transport cells is a single-seed
 House123 M1 closed-loop screen justified.  M2 is deliberately out of scope
