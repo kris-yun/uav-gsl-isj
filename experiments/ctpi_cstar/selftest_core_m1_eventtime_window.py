@@ -41,6 +41,7 @@ checks = {
     "warmup_events_are_excluded": "eventEvidenceAfterWarmupOnly" in pmfs,
     "launch_identity_is_explicit": "'cer_core_eventtime_m1': 'M1F'" in launch,
     "runner_identity_is_explicit": 'M1F) PFDI_MODE="cer_core_eventtime_m1"' in runner,
+    "event_time_is_recorded": "double simTime = 0.0" in pmfs or "double simTime = 0.0" in (repo / "ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.hpp").read_text(encoding="utf-8"),
     "every_scored_window_is_one_stop": windows == [blocks_per_stop] * len(windows),
 }
 report = {

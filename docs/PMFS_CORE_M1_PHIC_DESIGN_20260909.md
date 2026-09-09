@@ -103,8 +103,8 @@ an already available result.
 The runtime now has a diagnostic-only `contrastive_event_attribution.csv`
 export (enabled through the existing context-bank export directory).  It
 records the exact candidate x transport-member x event rows, including the
-observed event, threshold, legacy hit-map probability, aggregate forward
-exposure, and member context.
+observed event, threshold, event simulation time, legacy hit-map probability,
+aggregate forward exposure, and member context.
 This is intentionally an audit surface for the operator mismatch; it does
 not change scoring, posterior, navigation, or stopping state.  The exported
 `observation_operator=hit_map_probability` label prevents these rows from

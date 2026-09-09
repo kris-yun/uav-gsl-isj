@@ -406,7 +406,8 @@ namespace GSL
             simulations.recordEventEvidence(Vector2(currentRobotPosition.x, currentRobotPosition.y),
                                             concentration > thresholdGas,
                                             concentration, thresholdGas,
-                                            ++completedMeasurementBlockId);
+                                            ++completedMeasurementBlockId,
+                                            (node->now() - startTime).seconds());
 
         // If we have already taken enough measurements in this position, process them and get ready to move to the next location
         // ------------------------------

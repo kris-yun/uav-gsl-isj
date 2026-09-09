@@ -95,7 +95,7 @@ namespace GSL::PMFS_internal
                                     bool transportLogPool = false,
                                     bool transportRobustPool = false);
         void recordEventEvidence(const Vector2& position, bool hit, double concentration,
-                                 double threshold, uint64_t blockId);
+                                 double threshold, uint64_t blockId, double simTime = 0.0);
         void updateSourceProbability(float refineFraction);
         void makeSimulationImage(const SimulationSource& source);
         // Read-only HOVER export: uses the unmodified PMFS filament simulator.
@@ -158,6 +158,7 @@ namespace GSL::PMFS_internal
             double concentration;
             double threshold;
             uint64_t blockId;
+            double simTime = 0.0;
         };
         bool eventEvidenceEnabled = false;
         bool eventEvidenceContrastiveRatio = false;

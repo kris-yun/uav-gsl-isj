@@ -379,7 +379,7 @@ namespace GSL::PMFS_internal
     }
 
     void Simulations::recordEventEvidence(const Vector2& position, bool hit, double concentration,
-                                          double threshold, uint64_t blockId)
+                                          double threshold, uint64_t blockId, double simTime)
     {
         if (!eventEvidenceEnabled)
             return;
@@ -391,8 +391,10 @@ namespace GSL::PMFS_internal
         if (!(std::isfinite(concentration) && concentration >= 0.0 &&
               std::isfinite(threshold) && threshold > 0.0))
             throw std::runtime_error("CER_EVENT_SENSOR_VALUE_INVALID");
+        if (!(std::isfinite(simTime) && simTime >= 0.0))
+            throw std::runtime_error("CER_EVENT_SIM_TIME_INVALID");
         eventEvidence.push_back(EventEvidence{measuredHitProb.metadata.indexOf(indices), hit,
-                                              concentration, threshold, blockId});
+                                              concentration, threshold, blockId, simTime});
     }
 
     void Simulations::updateSourceProbability(float refineFraction)
@@ -6431,7 +6433,7 @@ namespace GSL::PMFS_internal
         if (!output)
             throw std::runtime_error("CER_ATTRIBUTION_EXPORT_OPEN_FAILED");
         if (!existed || std::filesystem::file_size(path) == 0)
-            output << "run_uuid,source_update_id,candidate_id,candidate_x,candidate_y,member_index,event_index,block_id,cell_index,observed_hit,concentration,threshold,legacy_hit_probability,aggregate_raw_exposure,context_value,context_centered_log_odds,observation_operator\n";
+            output << "run_uuid,source_update_id,candidate_id,candidate_x,candidate_y,member_index,event_index,block_id,sim_time_s,cell_index,observed_hit,concentration,threshold,legacy_hit_probability,aggregate_raw_exposure,context_value,context_centered_log_odds,observation_operator\n";
         for (size_t memberIndex = 0; memberIndex < memberMaps.size(); ++memberIndex)
         {
             const auto& memberMap = memberMaps[memberIndex];
@@ -6448,7 +6450,7 @@ namespace GSL::PMFS_internal
                     ? eventEvidenceContext[memberIndex][eventIndex] : 0.0L;
                 output << contextBankExportRunUUID << ',' << contextBankSourceUpdateId << ',' << stableID << ','
                        << std::setprecision(9) << source.x << ',' << source.y << ',' << memberIndex << ','
-                       << eventIndex << ',' << event.blockId << ',' << event.cell << ','
+                       << eventIndex << ',' << event.blockId << ',' << event.simTime << ',' << event.cell << ','
                        << (event.hit ? 1 : 0) << ',' << event.concentration << ',' << event.threshold << ','
                        << memberMap[event.cell] << ',' << (exposure != nullptr ? (*exposure)[event.cell] : 0.0f) << ','
                        << context << ','
