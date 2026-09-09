@@ -100,6 +100,15 @@ filament hit-map value at the event cell directly into the event likelihood.
 Therefore L2 in the attribution plan is a required implementation step, not
 an already available result.
 
+The runtime now has a diagnostic-only `contrastive_event_attribution.csv`
+export (enabled through the existing context-bank export directory).  It
+records the exact candidate x transport-member x event rows, including the
+observed event, threshold, legacy hit-map probability, and member context.
+This is intentionally an audit surface for the operator mismatch; it does
+not change scoring, posterior, navigation, or stopping state.  The exported
+`observation_operator=hit_map_probability` label prevents these rows from
+being misreported as sensor-consistent evidence.
+
 For each candidate/member/event, the replay will store:
 
 ```text
@@ -158,4 +167,3 @@ unidentified and the causal claim must be narrowed.
   bias can still have low variance.
 - No new seed or closed-loop claim is authorized before the attribution replay.
 - M1H remains a preserved negative result and is not retroactively relabeled.
-

@@ -787,6 +787,10 @@ namespace GSL::PMFS_internal
             nativeCandidateHitMaps[stableID] = std::move(nativeHitMap);
         }
         exportCandidateHitMap(stableID, candidatePoint, result.hitMap);
+        // Keep the current legacy event inputs auditable.  This export is
+        // write-only and does not affect sourceProb or planner state; PHIC
+        // replay uses it to replace the hit-map observation law offline.
+        exportContrastiveEventAttribution(stableID, candidatePoint, result.transportMemberHitMaps);
 
         result.sourceProb = eventEvidenceContrastiveRatio ? 1.0L : mixtureScore;
         exportNativeCandidateRecord(stableID, candidatePoint, firstSampledSourcePoint, result.sourceProb, result.hitMap);
@@ -6401,6 +6405,43 @@ namespace GSL::PMFS_internal
                  << measuredHitProb.metadata.dimensions.x << ',' << measuredHitProb.metadata.dimensions.y << ',' << measuredHitProb.metadata.cellSize << ','
                  << measuredHitProb.metadata.origin.x << ',' << measuredHitProb.metadata.origin.y << ',' << readOnlyForwardExportPMFSParametersHash << ','
                  << readOnlyForwardExportMapHash << ',' << readOnlyForwardExportWindHash << ',' << readOnlyForwardExportCodeHash << '\n';
+    }
+
+    void Simulations::exportContrastiveEventAttribution(
+        const std::string& stableID, const Vector2& source,
+        const std::vector<std::vector<float>>& memberMaps)
+    {
+        if (!contextBankExportEnabled || contextBankExportDirectory.empty() ||
+            eventEvidence.empty() || memberMaps.empty())
+            return;
+        std::lock_guard<std::mutex> lock(contextBankExportMutex);
+        std::filesystem::create_directories(contextBankExportDirectory);
+        const std::string path = contextBankExportDirectory + "/contrastive_event_attribution.csv";
+        const bool existed = std::filesystem::exists(path);
+        std::ofstream output(path, std::ios::out | std::ios::app);
+        if (!output)
+            throw std::runtime_error("CER_ATTRIBUTION_EXPORT_OPEN_FAILED");
+        if (!existed || std::filesystem::file_size(path) == 0)
+            output << "run_uuid,source_update_id,candidate_id,candidate_x,candidate_y,member_index,event_index,block_id,cell_index,observed_hit,concentration,threshold,legacy_hit_probability,context_value,context_centered_log_odds,observation_operator\n";
+        for (size_t memberIndex = 0; memberIndex < memberMaps.size(); ++memberIndex)
+        {
+            const auto& memberMap = memberMaps[memberIndex];
+            if (memberMap.size() != measuredHitProb.data.size())
+                throw std::runtime_error("CER_ATTRIBUTION_MEMBER_MAP_SIZE");
+            for (size_t eventIndex = 0; eventIndex < eventEvidence.size(); ++eventIndex)
+            {
+                const EventEvidence& event = eventEvidence[eventIndex];
+                const long double context =
+                    memberIndex < eventEvidenceContext.size() && eventIndex < eventEvidenceContext[memberIndex].size()
+                    ? eventEvidenceContext[memberIndex][eventIndex] : 0.0L;
+                output << contextBankExportRunUUID << ',' << contextBankSourceUpdateId << ',' << stableID << ','
+                       << std::setprecision(9) << source.x << ',' << source.y << ',' << memberIndex << ','
+                       << eventIndex << ',' << event.blockId << ',' << event.cell << ','
+                       << (event.hit ? 1 : 0) << ',' << event.concentration << ',' << event.threshold << ','
+                       << memberMap[event.cell] << ',' << context << ','
+                       << (eventEvidenceCenteredLogOdds ? 1 : 0) << ",hit_map_probability\n";
+            }
+        }
     }
 
     bool Simulations::exportCompletePointCandidateGrid(bool exportContinuousExposure)

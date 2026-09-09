@@ -193,6 +193,7 @@ namespace GSL::PMFS_internal
         size_t contextBankNativeSimulationCount = 0;
         double contextBankWallStartEpoch = 0.0;
         double contextBankWallEndEpoch = 0.0;
+        std::mutex contextBankExportMutex;
 
         struct P2ShadowCandidate
         {
@@ -323,6 +324,11 @@ namespace GSL::PMFS_internal
         std::mutex tadmMutex;
 
         void exportCandidateHitMap(const std::string& stableID, const Vector2& source, const std::vector<float>& hitMap);
+        // Diagnostic-only export of the exact candidate x transport-member x
+        // event quantities used by the current CER scorer. This exposes the
+        // legacy hit-map observation law so PHIC replay can measure the gap.
+        void exportContrastiveEventAttribution(const std::string& stableID, const Vector2& source,
+                                               const std::vector<std::vector<float>>& memberMaps);
         void exportNativeCandidateRecord(const std::string& stableID, const Vector2& source,
                                          const Vector2& nativeSourcePoint, long double sourceProb,
                                          const std::vector<float>& hitMap);
