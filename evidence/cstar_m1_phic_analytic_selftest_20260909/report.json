@@ -1,0 +1,46 @@
+{
+  "contract": "CSTAR_M1_PHIC_ANALYTIC_SELFTEST_V1",
+  "formula": "eta_u_i(c)=tau_i(c)+a_i(z_i)+gamma_i(c)^T z_u_i+epsilon_u_i(c)",
+  "observation_operator": "exposure -> FOPDT state -> physical-stop block mean -> Bernoulli event",
+  "lambda": 1.5,
+  "candidate_log_likelihood": {
+    "0": -2.258686476860549,
+    "1": -2.3099474335797914,
+    "2": -2.3463767364885193
+  },
+  "ranked_candidates": [
+    0,
+    1,
+    2
+  ],
+  "sensitivity_intervals": {
+    "0": [
+      -2.664151584968713,
+      -1.8532213687523844
+    ],
+    "1": [
+      -2.7154125416879555,
+      -1.904482325471627
+    ],
+    "2": [
+      -2.751841844596684,
+      -1.940911628380355
+    ]
+  },
+  "checks": {
+    "one_state_per_physical_stop": true,
+    "state_is_persistent": true,
+    "state_is_not_raw_exposure": true,
+    "source_component_ranks_first": true,
+    "candidate_interaction_retained": true,
+    "lambda_fixed_and_valid": true,
+    "overlap_detected_for_ambiguous_pair": true,
+    "overlap_forces_abstention": true
+  },
+  "pass": true,
+  "limits": [
+    "synthetic algebraic contract only",
+    "does not establish real PMFS identifiability or closed-loop utility",
+    "real replay must export candidate x member x event quantities from the runtime"
+  ]
+}
