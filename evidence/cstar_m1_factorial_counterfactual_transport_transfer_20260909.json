@@ -1,0 +1,240 @@
+{
+  "asset_manifest_sha256": "8380856f8d593bbeb25521b7edcd390194f2792006e52ab07397036916f31339",
+  "by_house": {
+    "H01": {
+      "cases": 4,
+      "pass": true,
+      "rank1_cases": 4
+    },
+    "H02": {
+      "cases": 4,
+      "pass": true,
+      "rank1_cases": 4
+    },
+    "H03": {
+      "cases": 4,
+      "pass": true,
+      "rank1_cases": 4
+    }
+  },
+  "contract": "CSTAR_M1_FACTORIAL_COUNTERFACTUAL_TRANSPORT_TRANSFER_V1",
+  "counterfactual": "target (source, wind) is scored only against candidate traces under the opposite wind",
+  "estimator": "fixed mean squared error of log1p measured FOPDT outputs",
+  "forbidden": [
+    "same source and same wind trace as its own candidate prediction",
+    "true source, House identifier, future gas, or source label in candidate score",
+    "fitted calibration, threshold selection, or closed-loop interpretation"
+  ],
+  "limits": [
+    "two source candidates per House do not establish full-map source localization",
+    "this is an offline physical-response premise gate, not an online forward provider",
+    "a pass does not establish cross-House closed-loop utility"
+  ],
+  "rows": [
+    {
+      "candidate_scores": {
+        "SA": 0.0002692178483563195,
+        "SB": 0.00080801840106219
+      },
+      "counterfactual_wind": "slow",
+      "house": "H01",
+      "ranked_candidates": [
+        "SA",
+        "SB"
+      ],
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_wind": "fast",
+      "true_minus_decoy_score": -0.0005388005527058705,
+      "true_source_evaluator_only": "SA",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_scores": {
+        "SA": 0.0002692178483563195,
+        "SB": 0.0007032530869917088
+      },
+      "counterfactual_wind": "fast",
+      "house": "H01",
+      "ranked_candidates": [
+        "SA",
+        "SB"
+      ],
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_wind": "slow",
+      "true_minus_decoy_score": -0.0004340352386353893,
+      "true_source_evaluator_only": "SA",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_scores": {
+        "SA": 0.0007032530869917088,
+        "SB": 2.043048223510406e-07
+      },
+      "counterfactual_wind": "slow",
+      "house": "H01",
+      "ranked_candidates": [
+        "SB",
+        "SA"
+      ],
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_wind": "fast",
+      "true_minus_decoy_score": -0.0007030487821693578,
+      "true_source_evaluator_only": "SB",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_scores": {
+        "SA": 0.00080801840106219,
+        "SB": 2.043048223510406e-07
+      },
+      "counterfactual_wind": "fast",
+      "house": "H01",
+      "ranked_candidates": [
+        "SB",
+        "SA"
+      ],
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_wind": "slow",
+      "true_minus_decoy_score": -0.000807814096239839,
+      "true_source_evaluator_only": "SB",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_scores": {
+        "SA": 7.443979670561269e-07,
+        "SB": 0.2653479814995858
+      },
+      "counterfactual_wind": "slow",
+      "house": "H02",
+      "ranked_candidates": [
+        "SA",
+        "SB"
+      ],
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_wind": "fast",
+      "true_minus_decoy_score": -0.2653472371016188,
+      "true_source_evaluator_only": "SA",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_scores": {
+        "SA": 7.443979670561269e-07,
+        "SB": 0.2940726370918225
+      },
+      "counterfactual_wind": "fast",
+      "house": "H02",
+      "ranked_candidates": [
+        "SA",
+        "SB"
+      ],
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_wind": "slow",
+      "true_minus_decoy_score": -0.2940718926938555,
+      "true_source_evaluator_only": "SA",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_scores": {
+        "SA": 0.2940726370918225,
+        "SB": 0.006887352797224606
+      },
+      "counterfactual_wind": "slow",
+      "house": "H02",
+      "ranked_candidates": [
+        "SB",
+        "SA"
+      ],
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_wind": "fast",
+      "true_minus_decoy_score": -0.2871852842945979,
+      "true_source_evaluator_only": "SB",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_scores": {
+        "SA": 0.2653479814995858,
+        "SB": 0.006887352797224606
+      },
+      "counterfactual_wind": "fast",
+      "house": "H02",
+      "ranked_candidates": [
+        "SB",
+        "SA"
+      ],
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_wind": "slow",
+      "true_minus_decoy_score": -0.2584606287023612,
+      "true_source_evaluator_only": "SB",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_scores": {
+        "SA": 0.06188160063039441,
+        "SB": 0.1787481630568214
+      },
+      "counterfactual_wind": "slow",
+      "house": "H03",
+      "ranked_candidates": [
+        "SA",
+        "SB"
+      ],
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_wind": "fast",
+      "true_minus_decoy_score": -0.11686656242642698,
+      "true_source_evaluator_only": "SA",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_scores": {
+        "SA": 0.06188160063039441,
+        "SB": 0.3287471929543296
+      },
+      "counterfactual_wind": "fast",
+      "house": "H03",
+      "ranked_candidates": [
+        "SA",
+        "SB"
+      ],
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_wind": "slow",
+      "true_minus_decoy_score": -0.26686559232393514,
+      "true_source_evaluator_only": "SA",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_scores": {
+        "SA": 0.3287471929543296,
+        "SB": 0.05453219883613544
+      },
+      "counterfactual_wind": "slow",
+      "house": "H03",
+      "ranked_candidates": [
+        "SB",
+        "SA"
+      ],
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_wind": "fast",
+      "true_minus_decoy_score": -0.27421499411819417,
+      "true_source_evaluator_only": "SB",
+      "true_source_rank": 1
+    },
+    {
+      "candidate_scores": {
+        "SA": 0.1787481630568214,
+        "SB": 0.05453219883613544
+      },
+      "counterfactual_wind": "fast",
+      "house": "H03",
+      "ranked_candidates": [
+        "SB",
+        "SA"
+      ],
+      "same_source_same_wind_prediction_forbidden": true,
+      "target_wind": "slow",
+      "true_minus_decoy_score": -0.12421596422068595,
+      "true_source_evaluator_only": "SB",
+      "true_source_rank": 1
+    }
+  ],
+  "verdict": "M1_FACTORIAL_CROSS_TRANSPORT_PREMISE_PASS"
+}
