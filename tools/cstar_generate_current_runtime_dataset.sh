@@ -22,7 +22,11 @@ CASE_FILTER=${CASE_FILTER:-}
 mkdir -p "$OUT_ROOT"
 
 run_case() {
-  local id=$1 house=$2 sim=$3 sx=$4 sy=$5 sz=$6
+  # ``wind_config`` is deliberately independent of the source coordinates.
+  # This explicit name prevents a future source-specific realization path from
+  # being passed here by accident.  The generator is only valid when every A/B
+  # pair reuses the same canonical wind directory byte-for-byte.
+  local id=$1 house=$2 wind_config=$3 sx=$4 sy=$5 sz=$6
   if [ -n "$CASE_FILTER" ] && [ "$id" != "$CASE_FILTER" ]; then return 0; fi
   local work="/dev/shm/cstar_current_${id}"
   local input="$work/input"
@@ -30,13 +34,31 @@ run_case() {
   local raw_wind
   rm -rf "$work"
   mkdir -p "$input" "$output"
-  raw_wind=$(find "$RAW_BASE/$house/gas_simulations/$sim" -maxdepth 4 -type d -name wind | sort | head -1)
+  mkdir -p "$OUT_ROOT/$id"
+  raw_wind=$(find "$RAW_BASE/$house/gas_simulations/$wind_config" -maxdepth 4 -type d -name wind | sort | head -1)
   test -n "$raw_wind"
   test "$(find "$raw_wind" -maxdepth 1 -type f -name 'wind_iteration_*' | wc -l)" -eq 11
   for f in "$raw_wind"/wind_iteration_*; do
     local n=${f##*_}
     cp "$f" "$input/wind_iteration_${n}.csv_gaden"
   done
+  {
+    printf '{\n'
+    printf '  "case_id": "%s",\n' "$id"
+    printf '  "house": "%s",\n' "$house"
+    printf '  "canonical_wind_config": "%s",\n' "$wind_config"
+    printf '  "source_xyz_m": [%s, %s, %s],\n' "$sx" "$sy" "$sz"
+    printf '  "gaden_rng_seed": %s,\n' "$GADEN_RNG_SEED"
+    printf '  "wind_directory": "%s",\n' "$raw_wind"
+    printf '  "wind_iteration_sha256": {\n'
+    first=1
+    for f in "$input"/wind_iteration_*.csv_gaden; do
+      [ "$first" = 1 ] || printf ',\n'
+      first=0
+      printf '    "%s": "%s"' "$(basename "$f")" "$(sha256sum "$f" | awk '{print $1}')"
+    done
+    printf '\n  }\n}\n'
+  } >"$OUT_ROOT/$id/CASE_MANIFEST.json"
   timeout 180s "$SIM_BIN" --ros-args \
     -p sim_time:="$SIM_TIME_S" -p time_step:=0.1 -p num_filaments_sec:=7 \
     -p variable_rate:=true -p filament_stop_steps:=0 -p ppm_filament_center:=10.0 \
