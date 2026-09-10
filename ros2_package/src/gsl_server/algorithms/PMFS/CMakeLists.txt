@@ -1,5 +1,9 @@
 
-file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_LIST_DIR}/*.cpp") 
+file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_LIST_DIR}/*.cpp")
+# Some older VM checkouts contain an untracked duplicate at PMFS/Simulations.cpp.
+# The maintained implementation is internal/Simulations.cpp; compiling both
+# creates an ABI/signature conflict and makes a build depend on local debris.
+list(FILTER SOURCES EXCLUDE REGEX ".*/PMFS/Simulations\\.cpp$")
 
 find_package(gmrf_msgs REQUIRED)
 
