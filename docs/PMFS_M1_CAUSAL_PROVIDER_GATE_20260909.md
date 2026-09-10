@@ -54,7 +54,7 @@ them as a runtime wind field would leak a simulator-hidden state.
 The online provider may instead consume PMFS GMRF fields. PMFS obtains those
 through its ordinary `/WindEstimation` service with `useWindGroundTruth=false`
 (the formal launch default). Each history item must bind `(block_id, sim_time,
-pose, GMRF-grid hash)`. Transport members represent uncertainty in that
+pose, map hash, GMRF-grid content fingerprint)`. Transport members represent uncertainty in that
 estimated field; they are not post-hoc, per-House adjustments.
 
 The current `cer_core_phic_m1` violates C2 because its `wind` is a single

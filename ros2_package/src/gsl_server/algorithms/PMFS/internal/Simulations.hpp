@@ -110,7 +110,7 @@ namespace GSL::PMFS_internal
         // PMFS posterior, source simulation, or navigation decision.
         void configureCausalWindHistoryExport(bool enabled, const std::string& directory,
                                                const std::string& runUUID, const std::string& mapHash);
-        void exportCausalWindHistorySnapshot(const Vector2& position, uint64_t snapshotId, double simTime);
+        void exportCausalWindHistorySnapshot(const Vector2& position, uint64_t measurementBlockId, double simTime);
         bool exportCompletePointCandidateGrid(bool exportContinuousExposure = false);
         void configureP2Shadow(bool enabled, const std::string& directory, const std::string& runUUID,
                                uint64_t globalSeed, int replicas, uint64_t transportSubstream);

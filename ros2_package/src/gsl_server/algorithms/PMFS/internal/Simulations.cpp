@@ -418,10 +418,10 @@ namespace GSL::PMFS_internal
                                        std::ios::out | std::ios::trunc);
         if (!causalWindHistoryManifest)
             throw std::runtime_error("CAUSAL_WIND_HISTORY_EXPORT_OPEN");
-        causalWindHistoryManifest << "run_uuid,snapshot_id,sim_time,pose_x,pose_y,map_hash,cell_count,file\n";
+        causalWindHistoryManifest << "run_uuid,measurement_block_id,sim_time,pose_x,pose_y,map_hash,wind_grid_fnv1a64,cell_count,file\n";
     }
 
-    void Simulations::exportCausalWindHistorySnapshot(const Vector2& position, uint64_t snapshotId, double simTime)
+    void Simulations::exportCausalWindHistorySnapshot(const Vector2& position, uint64_t measurementBlockId, double simTime)
     {
         if (!causalWindHistoryExportEnabled)
             return;
@@ -429,24 +429,38 @@ namespace GSL::PMFS_internal
             wind.data.size() != measuredHitProb.metadata.dimensions.x * measuredHitProb.metadata.dimensions.y)
             throw std::runtime_error("CAUSAL_WIND_HISTORY_SNAPSHOT_INPUT");
         std::lock_guard<std::mutex> lock(causalWindHistoryExportMutex);
-        const std::string filename = fmt::format("gmrf_wind_{:06}.f32le", snapshotId);
+        const std::string filename = fmt::format("gmrf_wind_{:06}.f32le", measurementBlockId);
         std::ofstream output(std::filesystem::path(causalWindHistoryExportDirectory) / filename,
                              std::ios::out | std::ios::binary | std::ios::trunc);
         if (!output)
             throw std::runtime_error("CAUSAL_WIND_HISTORY_SNAPSHOT_OPEN");
+        uint64_t fingerprint = 1469598103934665603ULL;
+        const auto updateFingerprint = [&fingerprint](const float* values)
+        {
+            const auto* bytes = reinterpret_cast<const unsigned char*>(values);
+            for (size_t index = 0; index < 2 * sizeof(float); ++index)
+            {
+                fingerprint ^= static_cast<uint64_t>(bytes[index]);
+                fingerprint *= 1099511628211ULL;
+            }
+        };
         for (const Vector2& vector : wind.data)
         {
             if (!std::isfinite(vector.x) || !std::isfinite(vector.y))
                 throw std::runtime_error("CAUSAL_WIND_HISTORY_NONFINITE");
             const float values[2] = {vector.x, vector.y};
             output.write(reinterpret_cast<const char*>(values), sizeof(values));
+            updateFingerprint(values);
         }
         output.close();
         if (!output)
             throw std::runtime_error("CAUSAL_WIND_HISTORY_SNAPSHOT_WRITE");
-        causalWindHistoryManifest << causalWindHistoryExportRunUUID << ',' << snapshotId << ','
+        std::ostringstream fingerprintHex;
+        fingerprintHex << std::hex << std::setw(16) << std::setfill('0') << fingerprint;
+        causalWindHistoryManifest << causalWindHistoryExportRunUUID << ',' << measurementBlockId << ','
                                   << std::setprecision(17) << simTime << ',' << position.x << ',' << position.y << ','
-                                  << causalWindHistoryExportMapHash << ',' << wind.data.size() << ',' << filename << '\n';
+                                  << causalWindHistoryExportMapHash << ',' << fingerprintHex.str() << ','
+                                  << wind.data.size() << ',' << filename << '\n';
         causalWindHistoryManifest.flush();
     }
 

@@ -415,7 +415,7 @@ namespace GSL
         if (causalWindHistoryExportEnabled)
             simulations.exportCausalWindHistorySnapshot(
                 Vector2(currentRobotPosition.x, currentRobotPosition.y),
-                ++causalWindHistorySnapshotId, (node->now() - startTime).seconds());
+                ++causalWindHistoryMeasurementBlockId, (node->now() - startTime).seconds());
 
         // Read-only HOVER basis export: exactly the existing PMFS point-source simulator
         // over the frozen free-space grid for this completed measurement block.  It is
