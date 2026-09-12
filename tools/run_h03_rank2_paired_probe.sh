@@ -122,8 +122,8 @@ PY
   }
   "$PY" "$EXTRACTOR" \
     --env-root "$ENV_BASE/House03" --gas-results "$output" --route "$ROUTE" --helper "$HELPER" \
-    --sensor-module "$SENSOR_ROOT/H03/sensor_model.py" \
-    --sensor-manifest "$SENSOR_ROOT/H03/sensor_manifest.json" --raw-dt 0.1 \
+    --sensor-module "$SENSOR_ROOT/source_snapshot/sensor_model.py" \
+    --sensor-manifest "$SENSOR_ROOT/probes_v1/H03/sensor_manifest.json" --raw-dt 0.1 \
     --output "$OUT_ROOT/$id/measured_history.jsonl" \
     --candidate-forward-output "$OUT_ROOT/$id/candidate_forward_input.jsonl"
   sha256sum "$OUT_ROOT/$id/CASE_MANIFEST.json" "$OUT_ROOT/$id/measured_history.jsonl" \
