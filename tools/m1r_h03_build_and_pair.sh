@@ -19,11 +19,40 @@ OLD_BINARY=$OLD_BUILD/install/gsl_server/lib/gsl_server/gsl_actionserver_node
 OLD_BINARY_SHA=006fd79a950f48bb76308174573048b26e37c3815466cf69ba22bcbddf1e2a52
 FREEZE_REPO=$BUILD_ROOT/freeze_repo
 NEW_BINARY=$BUILD_ROOT/install/gsl_server/lib/gsl_server/gsl_actionserver_node
+SOURCE_ARCHIVE=${SOURCE_ARCHIVE:-}
+REMOTE_RECEIPT=${REMOTE_RECEIPT:-}
 export FREEZE_COMMIT RUN_TAG REMOTE_URL REMOTE_REF BUILD_ROOT RESULT_ROOT OLD_BUILD OLD_REPO
 export OLD_PREFLIGHT OLD_BINARY OLD_BINARY_SHA FREEZE_REPO NEW_BINARY
+export SOURCE_ARCHIVE REMOTE_RECEIPT
 export PYTHONDONTWRITEBYTECODE=1 GIT_TERMINAL_PROMPT=0 GIT_LFS_SKIP_SMUDGE=1
 
 verify_remote() {
+  if [[ -n "$SOURCE_ARCHIVE" || -n "$REMOTE_RECEIPT" ]]; then
+    [[ -n "$SOURCE_ARCHIVE" && -n "$REMOTE_RECEIPT" ]] || { echo ARCHIVE_AND_RECEIPT_BOTH_REQUIRED >&2; exit 3; }
+    export VERIFICATION_ORIGIN=authenticated_host
+    python3 - <<'PY'
+import datetime,hashlib,json,os,pathlib,tarfile
+e=os.environ; archive=pathlib.Path(e['SOURCE_ARCHIVE']); receipt=pathlib.Path(e['REMOTE_RECEIPT'])
+r=json.loads(receipt.read_text()); digest=hashlib.sha256(archive.read_bytes()).hexdigest()
+expected={'schema':'M1R_AUTHENTICATED_HOST_REMOTE_RECEIPT_V1','verification_origin':'authenticated_host',
+          'remote_url':e['REMOTE_URL'],'remote_ref':e['REMOTE_REF'],'resolved_commit':e['FREEZE_COMMIT'],
+          'source_archive_sha256':digest}
+for key,value in expected.items():
+    if r.get(key)!=value: raise SystemExit('HOST_REMOTE_RECEIPT_MISMATCH:'+key)
+stamp=datetime.datetime.fromisoformat(r['verified_utc'].replace('Z','+00:00'))
+if stamp.tzinfo is None or stamp.utcoffset()!=datetime.timedelta(0): raise SystemExit('RECEIPT_UTC_REQUIRED')
+if e.get('REMOTE_RECEIPT_SHA256') and hashlib.sha256(receipt.read_bytes()).hexdigest()!=e['REMOTE_RECEIPT_SHA256']:
+    raise SystemExit('REMOTE_RECEIPT_BYTES_MISMATCH')
+with tarfile.open(archive,'r:gz') as t:
+    if t.pax_headers.get('comment','').strip()!=e['FREEZE_COMMIT']: raise SystemExit('ARCHIVE_PAX_COMMIT_MISMATCH')
+    for m in t.getmembers():
+        p=pathlib.PurePosixPath(m.name)
+        if p.is_absolute() or '..' in p.parts or not (m.isdir() or m.isfile()):
+            raise SystemExit('UNSAFE_ARCHIVE_MEMBER:'+m.name)
+PY
+    return
+  fi
+  export VERIFICATION_ORIGIN=vm_direct_git_remote
   local resolved
   resolved=$(git ls-remote --exit-code "$REMOTE_URL" "$REMOTE_REF" | awk 'NR==1 {print $1}')
   [[ "$resolved" == "$FREEZE_COMMIT" ]] || {
@@ -67,17 +96,28 @@ for p,n in [('/dev/shm',512*1024**2),('/mnt/hgfs/workspace',256*1024**2)]:
 PY
   mkdir -p "$BUILD_ROOT/tmp" "$BUILD_ROOT/deps" "$RESULT_ROOT/provenance"
   export TMPDIR=$BUILD_ROOT/tmp
-  git -c core.autocrlf=false -c core.eol=lf clone --filter=blob:none --no-checkout --single-branch --depth=1 \
-    --branch "${REMOTE_REF#refs/heads/}" "$REMOTE_URL" "$FREEZE_REPO" \
-    >"$RESULT_ROOT/provenance/clone.log" 2>&1
-  [[ $(git -C "$FREEZE_REPO" rev-parse HEAD) == "$FREEZE_COMMIT" ]] || { echo CLONE_FREEZE_MISMATCH >&2; exit 6; }
-  git -C "$FREEZE_REPO" config core.autocrlf false
-  git -C "$FREEZE_REPO" config core.eol lf
-  git -C "$FREEZE_REPO" sparse-checkout init --cone
-  git -C "$FREEZE_REPO" sparse-checkout set ros2_package closed_loop/ctpi tools \
-    experiments/ctpi_cstar docs evidence/m1r_crossdomain_20260912
-  git -C "$FREEZE_REPO" checkout --detach "$FREEZE_COMMIT"
-  [[ -z $(git -C "$FREEZE_REPO" status --porcelain) ]] || { echo DIRTY_FROZEN_SOURCE >&2; exit 6; }
+  if [[ "$VERIFICATION_ORIGIN" == authenticated_host ]]; then
+    mkdir "$FREEZE_REPO"
+    tar -xzf "$SOURCE_ARCHIVE" -C "$FREEZE_REPO" --no-same-owner
+    cp -- "$SOURCE_ARCHIVE" "$RESULT_ROOT/provenance/HOST_VERIFIED_SOURCE_ARCHIVE.tar.gz"
+    cp -- "$REMOTE_RECEIPT" "$RESULT_ROOT/provenance/HOST_REMOTE_RECEIPT.json"
+    if [[ -f /mnt/hgfs/workspace/M1R_H03_SEED12_PAIR_20260912_R1_build_driver.log ]]; then
+      cp -- /mnt/hgfs/workspace/M1R_H03_SEED12_PAIR_20260912_R1_build_driver.log \
+        "$RESULT_ROOT/provenance/INITIAL_VM_AUTH_FAILURE.log"
+    fi
+  else
+    git -c core.autocrlf=false -c core.eol=lf clone --filter=blob:none --no-checkout --single-branch --depth=1 \
+      --branch "${REMOTE_REF#refs/heads/}" "$REMOTE_URL" "$FREEZE_REPO" \
+      >"$RESULT_ROOT/provenance/clone.log" 2>&1
+    [[ $(git -C "$FREEZE_REPO" rev-parse HEAD) == "$FREEZE_COMMIT" ]] || { echo CLONE_FREEZE_MISMATCH >&2; exit 6; }
+    git -C "$FREEZE_REPO" config core.autocrlf false
+    git -C "$FREEZE_REPO" config core.eol lf
+    git -C "$FREEZE_REPO" sparse-checkout init --cone
+    git -C "$FREEZE_REPO" sparse-checkout set ros2_package closed_loop/ctpi tools \
+      experiments/ctpi_cstar docs evidence/m1r_crossdomain_20260912
+    git -C "$FREEZE_REPO" checkout --detach "$FREEZE_COMMIT"
+    [[ -z $(git -C "$FREEZE_REPO" status --porcelain) ]] || { echo DIRTY_FROZEN_SOURCE >&2; exit 6; }
+  fi
   # This script must itself come from that exact published freeze, not an ad-hoc wrapper.
   cmp -- "${BASH_SOURCE[0]}" "$FREEZE_REPO/tools/m1r_h03_build_and_pair.sh"
   test -s "$FREEZE_REPO/evidence/m1r_crossdomain_20260912/GEOSCIENCE_2026.md"
@@ -106,9 +146,14 @@ files={str(p.relative_to(repo)):sha(p) for p in repo.rglob('*')
        if p.is_file() and '.git' not in p.relative_to(repo).parts}
 m={'schema':'M1R_H03_PUSHED_FREEZE_V1','created_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
    'freeze_commit':e['FREEZE_COMMIT'],'remote_url':e['REMOTE_URL'],'remote_ref':e['REMOTE_REF'],
+   'verification_origin':e['VERIFICATION_ORIGIN'],
    'scope':{'house':'H03','algorithm_seed':12,'sensor_seed':12,'arms':['BASELINE','FIXED_SOURCE'],'horizon_s_each':240},
    'old_binary':e['OLD_BINARY'],'old_binary_sha256':sha(e['OLD_BINARY']),
    'source_files_sha256':files,'derived_preflight_sha256':sha(derived)}
+if e['VERIFICATION_ORIGIN']=='authenticated_host':
+    m.update({'source_archive_sha256':sha(e['SOURCE_ARCHIVE']),'remote_receipt_sha256':sha(e['REMOTE_RECEIPT']),
+              'remote_receipt':json.loads(pathlib.Path(e['REMOTE_RECEIPT']).read_text()),
+              'vm_independent_github_verification':False})
 (out/'FREEZE_MANIFEST.json').write_text(json.dumps(m,indent=2)+'\n')
 PY
   # Preserve the exact checked-out code/theory/scripts before any build or run.
@@ -155,6 +200,7 @@ fi
 # run-pair only: requires the previous build artifacts, with remote freeze still exact.
 export TMPDIR=$BUILD_ROOT/tmp
 test -s "$RESULT_ROOT/provenance/BUILD_MANIFEST.json"
+cmp -- "${BASH_SOURCE[0]}" "$FREEZE_REPO/tools/m1r_h03_build_and_pair.sh"
 exec 9>"$BUILD_ROOT/pair.lock"
 flock -n 9 || { echo PAIR_ALREADY_LOCKED >&2; exit 8; }
 [[ ! -e "$RESULT_ROOT/BASELINE" && ! -e "$RESULT_ROOT/FIXED_SOURCE" ]] || { echo REFUSE_PARTIAL_OR_EXISTING_PAIR >&2; exit 8; }
@@ -165,6 +211,10 @@ sha=lambda p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()
 b=json.loads((out/'BUILD_MANIFEST.json').read_text()); f=json.loads((out/'FREEZE_MANIFEST.json').read_text())
 if b['freeze_commit']!=e['FREEZE_COMMIT'] or f['freeze_commit']!=e['FREEZE_COMMIT']: raise SystemExit('MANIFEST_FREEZE_MISMATCH')
 if sha(out/'FREEZE_MANIFEST.json')!=b['freeze_manifest_sha256']: raise SystemExit('FREEZE_MANIFEST_BYTES_CHANGED')
+if f['verification_origin']!=e['VERIFICATION_ORIGIN']: raise SystemExit('VERIFICATION_ORIGIN_CHANGED')
+if e['VERIFICATION_ORIGIN']=='authenticated_host':
+    if sha(e['REMOTE_RECEIPT'])!=f['remote_receipt_sha256']: raise SystemExit('HOST_RECEIPT_CHANGED_SINCE_BUILD')
+    if sha(e['SOURCE_ARCHIVE'])!=f['source_archive_sha256']: raise SystemExit('HOST_ARCHIVE_CHANGED_SINCE_BUILD')
 if sha(e['NEW_BINARY'])!=b['new_binary_sha256']: raise SystemExit('NEW_BINARY_BYTES_CHANGED')
 for rel,digest in f['source_files_sha256'].items():
     if sha(repo/rel)!=digest: raise SystemExit('FROZEN_SOURCE_BYTES_CHANGED:'+rel)

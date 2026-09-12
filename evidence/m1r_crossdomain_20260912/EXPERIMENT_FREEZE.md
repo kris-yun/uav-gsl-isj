@@ -41,7 +41,7 @@
 ## 上传与追溯顺序
 
 1. 冻结此文件、文献索引及检索原始记录、数学推导、核心代码、开关接线、运行和评价脚本；生成 `PRE_RUN_MANIFEST.json` 列出文件 SHA256。
-2. 提交到独立 `codex/m1r-causal-repair-20260912` 分支并 push 到 origin。VM 用 `git ls-remote` 检查完整冻结 commit 确实已上传，才可开始实验。
+2. 提交到独立 `codex/m1r-causal-repair-20260912` 分支并 push 到 origin，实际执行 `git ls-remote` 核验完整冻结 commit 已上传，才可开始实验。VM 若没有 GitHub 认证，由已认证本机完成远端核验、`git archive` 和 receipt；VM 核验 receipt、源码包 SHA256、归档 commit 标头和逐文件哈希。此路径明确是本机提供上传证据，不声称 VM 独立登录验证；不传输账户凭据。
 3. 在新的 `/dev/shm` build 中构建，保存源码、编译和二进制哈希、派生 preflight 与每臂启动 manifest；两臂共用同一二进制。若遇到构建/接线错误，修复、重新冻结并上传，再重新验证运行身份。
 4. 实验后保留两臂原始日志、评价结果及失败原因，另一次提交并上传。上传实验前规格不是实验成功；运行后的真实判决写入独立结果文件。
 

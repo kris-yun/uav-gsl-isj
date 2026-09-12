@@ -1,7 +1,7 @@
 {
   "contract": "M1R_H03_EXPERIMENT_PRE_RUN_FREEZE_20260912",
-  "created_utc": "2026-09-12T16:03:50.284715+00:00",
-  "parent_commit": "5bbdba64266283e6a8392237c34948c49a32a508",
+  "created_utc": "2026-09-12T16:07:55.677788+00:00",
+  "parent_commit": "26ff5ed081bd5852418facbdd25ee7322fea781d",
   "experiment_started": false,
   "publication_binding": "The containing Git commit, verified remotely before build/run, binds this manifest. No self-referential commit hash.",
   "files": [
@@ -22,8 +22,8 @@
     },
     {
       "path": "evidence/m1r_crossdomain_20260912/EXPERIMENT_FREEZE.md",
-      "sha256": "112c11c73d257b4fb7aa08a36371afa94bd4b580bb61ef733ca64e35cb469b74",
-      "bytes": 5419
+      "sha256": "3445b22145698d6d12f4d8d74950a7b18723c767d7afef76a89c4213f897e471",
+      "bytes": 5698
     },
     {
       "path": "evidence/m1r_crossdomain_20260912/GEOSCIENCE_2026.md",
@@ -97,13 +97,18 @@
     },
     {
       "path": "tools/evaluate_m1r_h03_source_quadrature_pair.py",
-      "sha256": "7a2da64c098cf93f328c899c484fcd919c141c859aa96025a1bf074be2f40646",
-      "bytes": 8409
+      "sha256": "fa688f207afbeafd91436eec71dbc0ece76acde7de73e2a56e278777871807c4",
+      "bytes": 9302
     },
     {
       "path": "tools/m1r_h03_build_and_pair.sh",
-      "sha256": "4ae54c56b116ef6b8ad3174cc25d16797c29946d4bdedb1f67b55b009ed7bcfa",
-      "bytes": 16114
+      "sha256": "9452e690381cfb62ce01fa6e2f1fc73138ecb37b10b99e802d965bdbb2253706",
+      "bytes": 19288
+    },
+    {
+      "path": "tools/stage_m1r_verified_freeze.py",
+      "sha256": "bd55a6a1537ff8c314ccaf1bc792aebdab2d9db4d855376370babca50bf0744d",
+      "bytes": 2347
     }
   ],
   "checks": {
@@ -116,7 +121,9 @@
     "auc_reference_analytic_triangle": "PASS",
     "historical_trace_parser": "PASS",
     "native_build": "PENDING isolated VM",
-    "closed_loop": "NOT_STARTED"
+    "closed_loop": "NOT_STARTED",
+    "shell_syntax_and_9_heredocs": "PASS by runtime agent",
+    "evaluator_invalid_pair_handling": "Missing identity cannot pass; failures serialize INVALID_PAIR; metric definition unchanged"
   },
   "scope": {
     "house": "H03",
@@ -129,5 +136,6 @@
     ],
     "new_seeds_or_houses": false,
     "protected_bank_generation": false
-  }
+  },
+  "infrastructure_revision": "VM has no GitHub authentication. Authenticated host verifies actual remote commit, archives exact Git source, and provides receipt. VM checks archive and receipt; no credentials transferred. No scientific configuration or criterion changed."
 }

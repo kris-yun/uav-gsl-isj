@@ -120,8 +120,14 @@ def evaluate(baseline, fixed):
         checks[name+'_terminal_status'] = arm['status']['status']=='time_budget_timeout'
         checks[name+'_source_trace_coverage'] = (arm['first_source_trace_time_s'] <= 10
                                                 and arm['last_source_trace_time_s'] >= 230)
-    checks['bridge_code_equal'] = all(a['bridge_preflight'].get(k)==b['bridge_preflight'].get(k)
+    checks['bridge_code_equal'] = all(a['bridge_preflight'].get(k) and
+                                      a['bridge_preflight'].get(k)==b['bridge_preflight'].get(k)
                                       for k in ('contract_sha256','runner_sha256','method'))
+    checks['bridge_preflight_pass'] = all(
+        arm['bridge_preflight'].get('verdict')=='CTPI_G2_M12_VGR_BRIDGE_PREFLIGHT_PASS'
+        and arm['bridge_preflight'].get('method')==arm['manifest']['method']
+        and all(len(arm['bridge_preflight'].get(k,''))==64
+                for k in ('contract_sha256','runner_sha256')) for arm in (a,b))
     start, end = max(ta[0][0],tb[0][0]), min(ta[-1][0],tb[-1][0])
     if end <= start:
         raise ValueError('NO_COMMON_INTERVAL')
@@ -158,10 +164,17 @@ def main():
     parser.add_argument('--fixed-source',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
     args = parser.parse_args()
-    result = evaluate(args.baseline,args.fixed_source)
+    try:
+        result = evaluate(args.baseline,args.fixed_source)
+    except (ValueError, OSError, KeyError, StopIteration, csv.Error) as error:
+        result = {'contract':'M1R_H03_SOURCE_QUADRATURE_SCREEN_V1_20260912',
+                  'verdict':'INVALID_PAIR','valid_paired_run':False,
+                  'reason':f'{type(error).__name__}: {error}',
+                  'causal_effect_identified':False,'cross_house_validated':False}
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-    print(json.dumps({'verdict':result['verdict'],**result['comparison']},ensure_ascii=False))
+    print(json.dumps({'verdict':result['verdict'],**result.get('comparison',{}),
+                      **({'reason':result['reason']} if 'reason' in result else {})},ensure_ascii=False))
 
 if __name__=='__main__':
     main()
