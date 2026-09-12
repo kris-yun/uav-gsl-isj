@@ -1,0 +1,199 @@
+{
+  "contract": "M1R_H03_RANK2_PAIRED_ROUTE_V1_20260913",
+  "status": "PRE_EXPERIMENT_SOURCE_GAS_BLIND_FREEZE",
+  "house": "H03",
+  "source_or_gas_values_used_for_design": false,
+  "design_inputs": "shared route geometry and source-independent free-space candidate map only",
+  "dt_s": 0.2,
+  "z_m": 0.3,
+  "prefix_source": "shared H03 source-blind map-cover route",
+  "prefix_end_original_history_index_zero_based": 516,
+  "frames_including_t0": 658,
+  "end_time_s": 131.4,
+  "maximum_step_m": 0.05887600490799505,
+  "maximum_average_speed_m_s": 0.29438002453997525,
+  "pairs": [
+    {
+      "cycle_id": 1,
+      "a_xy": [
+        0.7000000000000001,
+        1.6870000000000003
+      ],
+      "b_xy": [
+        1.4,
+        2.187
+      ],
+      "endpoint_route_indices_zero_based": [
+        523,
+        539,
+        555,
+        571
+      ],
+      "endpoint_times_s": [
+        104.60000000000001,
+        107.80000000000001,
+        111.0,
+        114.2
+      ],
+      "contrast_weights": [
+        0.5,
+        -0.5,
+        -0.5,
+        0.5
+      ],
+      "gap_steps": 16,
+      "gap_s": 3.2,
+      "cycle_duration_s": 9.600000000000001,
+      "astar_a_to_b_length_m": 0.9071067811865471,
+      "maximum_segment_average_speed_m_s": 0.28347086912079594,
+      "pre_cycle_transition_steps": 6,
+      "pre_cycle_transition_length_m": 0.019583557229069064,
+      "target_rotation_degrees": 0.0,
+      "geometry_origin": "longest pre-existing admissible route motif",
+      "selection_reads_gas_or_source": false
+    },
+    {
+      "cycle_id": 2,
+      "a_xy": [
+        1.1,
+        1.7870000000000004
+      ],
+      "b_xy": [
+        1.0,
+        2.2870000000000004
+      ],
+      "endpoint_route_indices_zero_based": [
+        579,
+        589,
+        599,
+        609
+      ],
+      "endpoint_times_s": [
+        115.80000000000001,
+        117.80000000000001,
+        119.80000000000001,
+        121.80000000000001
+      ],
+      "contrast_weights": [
+        0.5,
+        -0.5,
+        -0.5,
+        0.5
+      ],
+      "gap_steps": 10,
+      "gap_s": 2.0,
+      "cycle_duration_s": 6.0,
+      "astar_a_to_b_length_m": 0.5414213562373094,
+      "maximum_segment_average_speed_m_s": 0.2707106781186547,
+      "pre_cycle_transition_steps": 8,
+      "pre_cycle_transition_length_m": 0.4414213562373096,
+      "target_rotation_degrees": 60.0,
+      "alignment_loss": 0.005070471596616666,
+      "midpoint_distance_from_primary_m": 0.10000000000000031,
+      "euclidean_length_m": 0.5099019513592785,
+      "astar_length_m": 0.5414213562373094,
+      "selection_reads_gas_or_source": false
+    },
+    {
+      "cycle_id": 3,
+      "a_xy": [
+        1.4,
+        1.7870000000000004
+      ],
+      "b_xy": [
+        0.7000000000000001,
+        2.087
+      ],
+      "endpoint_route_indices_zero_based": [
+        615,
+        629,
+        643,
+        657
+      ],
+      "endpoint_times_s": [
+        123.0,
+        125.80000000000001,
+        128.6,
+        131.4
+      ],
+      "contrast_weights": [
+        0.5,
+        -0.5,
+        -0.5,
+        0.5
+      ],
+      "gap_steps": 14,
+      "gap_s": 2.8000000000000003,
+      "cycle_duration_s": 8.4,
+      "astar_a_to_b_length_m": 0.8242640687119281,
+      "maximum_segment_average_speed_m_s": 0.2943800245399743,
+      "pre_cycle_transition_steps": 6,
+      "pre_cycle_transition_length_m": 0.2999999999999998,
+      "target_rotation_degrees": 120.0,
+      "alignment_loss": 0.00024322985932312413,
+      "midpoint_distance_from_primary_m": 2.220446049250313e-16,
+      "euclidean_length_m": 0.7615773105863906,
+      "astar_length_m": 0.8242640687119281,
+      "selection_reads_gas_or_source": false
+    }
+  ],
+  "direction_matrix": [
+    [
+      0.8137334712067351,
+      0.5812381937190961
+    ],
+    [
+      -0.19611613513818418,
+      0.9805806756909201
+    ],
+    [
+      -0.919145030018058,
+      0.3939192985791676
+    ]
+  ],
+  "direction_singular_values": [
+    1.2622333107556254,
+    1.1860721180513827
+  ],
+  "direction_condition_number": 1.064212952606431,
+  "measurement_operator_rank": 2,
+  "selection_rule": "retain the longest existing geometry-admissible line; add map-feasible lines at 60 and 120 degrees using fixed alignment+midpoint+length+detour objective",
+  "inputs": [
+    {
+      "path": "evidence\\cstar_current_runtime_assets240_20260907\\manifests\\H03.json",
+      "sha256": "bf9b15a9d2287bb3302f1565b5101d37fee119b1e919e923ec7d9cb47cc18bd6",
+      "bytes": 8155
+    },
+    {
+      "path": "evidence\\cstar_current_runtime_assets240_20260907\\maps\\H03\\candidate.csv",
+      "sha256": "b527de42392ef61d4c4ce23c7628e4388ba5b7dbd48b023af819476df87c37f1",
+      "bytes": 195270
+    },
+    {
+      "path": "evidence\\cstar_current_runtime_assets240_20260907\\realizations\\H03_SA_fast\\measured_history.jsonl",
+      "sha256": "667295ce0689bff467d78431932ba814af83968e13fe5e426328a867f9d9af62",
+      "bytes": 290112
+    },
+    {
+      "path": "evidence\\cstar_current_runtime_assets240_20260907\\realizations\\H03_SA_slow\\measured_history.jsonl",
+      "sha256": "096c51f26bc817421e7c52ddc05405747a2de798555cde12edd766b703900b6b",
+      "bytes": 288988
+    },
+    {
+      "path": "evidence\\cstar_current_runtime_assets240_20260907\\realizations\\H03_SB_fast\\measured_history.jsonl",
+      "sha256": "53966a7f3d11d12906518f9be7befb5536980344d1baa931d971ead98f645c81",
+      "bytes": 278165
+    },
+    {
+      "path": "evidence\\cstar_current_runtime_assets240_20260907\\realizations\\H03_SB_slow\\measured_history.jsonl",
+      "sha256": "eb144b904d5ab185c067f500b082f8f7d3eb2443f313f8b1bfcc1104df92dc79",
+      "bytes": 279633
+    }
+  ],
+  "route": {
+    "path": "H03\\history_route.csv",
+    "sha256": "42ea23f4d1753d489eba24455a5dc993f428f652c3ba3b4415dae2b43869489b",
+    "bytes": 28033
+  },
+  "code_sha256": "5ad329e0e629624fbf76fcaccf341fce29470397e2712c6f2da07b72f84ced69"
+}

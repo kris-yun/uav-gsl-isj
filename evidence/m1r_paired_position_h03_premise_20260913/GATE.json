@@ -1,0 +1,515 @@
+{
+  "contract": "M1R_H03_PAIRED_POSITION_PREMISE_V1_20260913",
+  "status": "H03_EXISTING_ROUTE_EVALUATOR_ONLY",
+  "parameter_search": false,
+  "source_truth_runtime_input": false,
+  "geometry_motif_selection_reads_gas_or_source": false,
+  "source_labels_used_only_for_capacity_and_rank_evaluation": true,
+  "same_route_all_four_worlds": true,
+  "same_wind_within_each_crossed_source_pair": true,
+  "provider_parameter_source": "H03-held-out LOHO selection using H01+H02 labels",
+  "provider_parameter": {
+    "sigma0": 0.25,
+    "spread": 0.6,
+    "wind_window_s": 15,
+    "tau_s": 3.0,
+    "distance_power": 1.0,
+    "direction_sign": 1.0
+  },
+  "cadence_correction": {
+    "manifest_raw_simulator_dt_s": 0.1,
+    "stored_history_dt_s": 0.2,
+    "stored_history_is_decimated_from_raw": true,
+    "wind_window_samples": 75,
+    "sensor_alpha": 0.06449301496838222
+  },
+  "measurement_operator": {
+    "weights": [
+      0.5,
+      -0.5,
+      -0.5,
+      0.5
+    ],
+    "property": "sum(weights)=0 and equal spacing gives sum(weights*time)=0",
+    "spatial_bin_m": 0.1,
+    "minimum_a_to_b_distance_m": 0.3,
+    "cycle_duration_s": [
+      3.6,
+      12.0
+    ],
+    "motif_count": 4
+  },
+  "motif_capacity": [
+    {
+      "indices_zero_based": [
+        532,
+        538,
+        544,
+        550
+      ],
+      "times_s": [
+        106.6,
+        107.8,
+        109.0,
+        110.2
+      ],
+      "gap_samples": 6,
+      "cycle_duration_s": 3.6,
+      "a_bin": [
+        14,
+        22
+      ],
+      "b_bin": [
+        16,
+        24
+      ],
+      "a_to_b_distance_m": 0.3165988744589947,
+      "pose_xy": [
+        [
+          1.3878650390884617,
+          2.187
+        ],
+        [
+          1.6332929252560735,
+          2.387
+        ],
+        [
+          1.6384364761017043,
+          2.387
+        ],
+        [
+          1.3950563265323457,
+          2.182056326532346
+        ]
+      ],
+      "observed_contrast_ppm": {
+        "SA_fast": 0.0032300783092997737,
+        "SA_slow": 0.016167267484754944,
+        "SB_fast": 0.0,
+        "SB_slow": 0.0
+      },
+      "observed_source_difference": {
+        "fast": 0.0032300783092997737,
+        "slow": 0.016167267484754944
+      },
+      "observed_source_main_effect": 0.009698672897027359,
+      "observed_source_by_transport_interaction": -0.006468594587727585,
+      "observed_same_sign_across_transport": true,
+      "observed_source_dominates_interaction": true,
+      "provider_source_difference": {
+        "fast": 0.006973436513622872,
+        "slow": 0.011222596005981168
+      },
+      "provider_matches_observed_sign": true
+    },
+    {
+      "indices_zero_based": [
+        517,
+        533,
+        549,
+        565
+      ],
+      "times_s": [
+        103.6,
+        106.8,
+        110.0,
+        113.2
+      ],
+      "gap_samples": 16,
+      "cycle_duration_s": 9.600000000000001,
+      "a_bin": [
+        8,
+        17
+      ],
+      "b_bin": [
+        14,
+        22
+      ],
+      "a_to_b_distance_m": 0.8289619738888152,
+      "pose_xy": [
+        [
+          0.7525347271771125,
+          1.7395347271771127
+        ],
+        [
+          1.4301063479106977,
+          2.217106347910698
+        ],
+        [
+          1.4337433875930237,
+          2.2207433875930236
+        ],
+        [
+          0.7561717668594358,
+          1.743171766859436
+        ]
+      ],
+      "observed_contrast_ppm": {
+        "SA_fast": 0.05213980133796696,
+        "SA_slow": 0.20109333756487313,
+        "SB_fast": 0.0,
+        "SB_slow": 0.0
+      },
+      "observed_source_difference": {
+        "fast": 0.05213980133796696,
+        "slow": 0.20109333756487313
+      },
+      "observed_source_main_effect": 0.12661656945142005,
+      "observed_source_by_transport_interaction": -0.07447676811345308,
+      "observed_same_sign_across_transport": true,
+      "observed_source_dominates_interaction": true,
+      "provider_source_difference": {
+        "fast": 0.06407950407320306,
+        "slow": 0.0886066606507054
+      },
+      "provider_matches_observed_sign": true
+    },
+    {
+      "indices_zero_based": [
+        515,
+        532,
+        549,
+        566
+      ],
+      "times_s": [
+        103.2,
+        106.6,
+        110.0,
+        113.4
+      ],
+      "gap_samples": 17,
+      "cycle_duration_s": 10.200000000000001,
+      "a_bin": [
+        7,
+        17
+      ],
+      "b_bin": [
+        14,
+        22
+      ],
+      "a_to_b_distance_m": 0.8715047402589752,
+      "pose_xy": [
+        [
+          0.7000000000000001,
+          1.6518717907886997
+        ],
+        [
+          1.3878650390884617,
+          2.187
+        ],
+        [
+          1.4337433875930237,
+          2.2207433875930236
+        ],
+        [
+          0.7174847057987555,
+          1.7044847057987558
+        ]
+      ],
+      "observed_contrast_ppm": {
+        "SA_fast": 0.04892703625686811,
+        "SA_slow": 0.19255076192209333,
+        "SB_fast": 0.0,
+        "SB_slow": 0.0
+      },
+      "observed_source_difference": {
+        "fast": 0.04892703625686811,
+        "slow": 0.19255076192209333
+      },
+      "observed_source_main_effect": 0.12073889908948073,
+      "observed_source_by_transport_interaction": -0.07181186283261261,
+      "observed_same_sign_across_transport": true,
+      "observed_source_dominates_interaction": true,
+      "provider_source_difference": {
+        "fast": 0.07577733471023057,
+        "slow": 0.09920788402529271
+      },
+      "provider_matches_observed_sign": true
+    },
+    {
+      "indices_zero_based": [
+        516,
+        533,
+        550,
+        567
+      ],
+      "times_s": [
+        103.4,
+        106.8,
+        110.2,
+        113.6
+      ],
+      "gap_samples": 17,
+      "cycle_duration_s": 10.200000000000001,
+      "a_bin": [
+        7,
+        17
+      ],
+      "b_bin": [
+        14,
+        22
+      ],
+      "a_to_b_distance_m": 0.8829210189895911,
+      "pose_xy": [
+        [
+          0.7138476661164297,
+          1.7008476661164298
+        ],
+        [
+          1.4301063479106977,
+          2.217106347910698
+        ],
+        [
+          1.3950563265323457,
+          2.182056326532346
+        ],
+        [
+          0.6787976447380727,
+          1.665797644738073
+        ]
+      ],
+      "observed_contrast_ppm": {
+        "SA_fast": 0.05626199567961279,
+        "SA_slow": 0.22017067031690102,
+        "SB_fast": 0.0,
+        "SB_slow": 0.0
+      },
+      "observed_source_difference": {
+        "fast": 0.05626199567961279,
+        "slow": 0.22017067031690102
+      },
+      "observed_source_main_effect": 0.13821633299825692,
+      "observed_source_by_transport_interaction": -0.08195433731864411,
+      "observed_same_sign_across_transport": true,
+      "observed_source_dominates_interaction": true,
+      "provider_source_difference": {
+        "fast": 0.07277189716350072,
+        "slow": 0.09758316042347102
+      },
+      "provider_matches_observed_sign": true
+    }
+  ],
+  "directional_observability": {
+    "unit_a_to_b_directions": [
+      [
+        0.7700747299475383,
+        0.6379536897739725
+      ],
+      [
+        0.8173735853708344,
+        0.5761079950304691
+      ],
+      [
+        0.8004665596999294,
+        0.5993774159927612
+      ],
+      [
+        0.8112375471748869,
+        0.5847167194921599
+      ]
+    ],
+    "singular_values": [
+      1.9991079762681527,
+      0.059726871850554385
+    ],
+    "condition_number": 33.47083003560309,
+    "second_direction_energy_fraction": 0.0008918248052631361,
+    "interpretation": "descriptive only; geometry-admissible motifs are almost one-dimensional"
+  },
+  "complete_candidate_count": 820,
+  "complete_support_evaluation": [
+    {
+      "actual_source": "SA",
+      "transport": "fast",
+      "truth_nearest_candidate_xy": [
+        -0.39999999999999997,
+        1.887
+      ],
+      "truth_rank_interval_paired": [
+        177,
+        177
+      ],
+      "truth_rank_interval_raw_16_samples": [
+        213,
+        213
+      ],
+      "truth_loss_paired": 8.407859257734608e-05,
+      "truth_profiled_amplitude": 0.6406796165481612,
+      "best_candidate_xy": [
+        1.1,
+        1.887
+      ],
+      "best_loss_paired": 7.668535419843991e-06,
+      "historical_h03_false_xy_evaluator_only": [
+        8.15,
+        -1.413
+      ],
+      "historical_false_nearest_candidate_xy": [
+        8.0,
+        -1.413
+      ],
+      "historical_false_rank_interval_paired": [
+        309,
+        309
+      ],
+      "historical_false_loss_paired": 9.976286054395766e-05
+    },
+    {
+      "actual_source": "SB",
+      "transport": "fast",
+      "truth_nearest_candidate_xy": [
+        8.3,
+        4.8870000000000005
+      ],
+      "truth_rank_interval_paired": [
+        1,
+        820
+      ],
+      "truth_rank_interval_raw_16_samples": [
+        1,
+        820
+      ],
+      "truth_loss_paired": 0.0,
+      "truth_profiled_amplitude": 0.0,
+      "best_candidate_xy": [
+        -0.7,
+        -0.5129999999999999
+      ],
+      "best_loss_paired": 0.0,
+      "historical_h03_false_xy_evaluator_only": [
+        8.15,
+        -1.413
+      ],
+      "historical_false_nearest_candidate_xy": [
+        8.0,
+        -1.413
+      ],
+      "historical_false_rank_interval_paired": [
+        1,
+        820
+      ],
+      "historical_false_loss_paired": 0.0
+    },
+    {
+      "actual_source": "SA",
+      "transport": "slow",
+      "truth_nearest_candidate_xy": [
+        -0.39999999999999997,
+        1.887
+      ],
+      "truth_rank_interval_paired": [
+        20,
+        20
+      ],
+      "truth_rank_interval_raw_16_samples": [
+        284,
+        284
+      ],
+      "truth_loss_paired": 0.0007592886486777323,
+      "truth_profiled_amplitude": 1.9912660327425198,
+      "best_candidate_xy": [
+        0.8000000000000002,
+        1.887
+      ],
+      "best_loss_paired": 8.324625232410246e-05,
+      "historical_h03_false_xy_evaluator_only": [
+        8.15,
+        -1.413
+      ],
+      "historical_false_nearest_candidate_xy": [
+        8.0,
+        -1.413
+      ],
+      "historical_false_rank_interval_paired": [
+        204,
+        204
+      ],
+      "historical_false_loss_paired": 0.0013059501842620253
+    },
+    {
+      "actual_source": "SB",
+      "transport": "slow",
+      "truth_nearest_candidate_xy": [
+        8.3,
+        4.8870000000000005
+      ],
+      "truth_rank_interval_paired": [
+        1,
+        820
+      ],
+      "truth_rank_interval_raw_16_samples": [
+        1,
+        820
+      ],
+      "truth_loss_paired": 0.0,
+      "truth_profiled_amplitude": 0.0,
+      "best_candidate_xy": [
+        -0.7,
+        -0.5129999999999999
+      ],
+      "best_loss_paired": 0.0,
+      "historical_h03_false_xy_evaluator_only": [
+        8.15,
+        -1.413
+      ],
+      "historical_false_nearest_candidate_xy": [
+        8.0,
+        -1.413
+      ],
+      "historical_false_rank_interval_paired": [
+        1,
+        820
+      ],
+      "historical_false_loss_paired": 0.0
+    }
+  ],
+  "gates": {
+    "physical_contrast_capacity": "PASS",
+    "failed_h03_sa_full_support_identification": "FAIL",
+    "verdict": "NO_GO_CURRENT_PAIRED_OPERATOR_INSUFFICIENT_FULL_SUPPORT_SEPARATION"
+  },
+  "claim_boundary": "A capacity PASS only shows that the crossed H03 asset contains a paired contrast. The full-support gate requires unique truth ranking in both transports before any active ROS run.",
+  "inputs": [
+    {
+      "path": "evidence\\cstar_current_runtime_assets240_20260907\\manifests\\H03.json",
+      "bytes": 8155,
+      "sha256": "bf9b15a9d2287bb3302f1565b5101d37fee119b1e919e923ec7d9cb47cc18bd6"
+    },
+    {
+      "path": "evidence\\cstar_current_runtime_assets240_20260907\\maps\\H03\\candidate.csv",
+      "bytes": 195270,
+      "sha256": "b527de42392ef61d4c4ce23c7628e4388ba5b7dbd48b023af819476df87c37f1"
+    },
+    {
+      "path": "evidence\\cstar_joint_development_20260908\\CROSSED_PLUME_LOHO_SIGN.json",
+      "bytes": 5480,
+      "sha256": "b9838552bf0793c4cc413d8701bbd0ca6494a1e668694ed61d1605355a772be4"
+    },
+    {
+      "path": "experiments\\ctpi_cstar\\screen_crossed_plume_evidence.py",
+      "bytes": 6823,
+      "sha256": "566d7c7baf1d835414d837bea7c75f81534c700e35d69f7c494b169b81c37cf7"
+    },
+    {
+      "path": "evidence\\cstar_current_runtime_assets240_20260907\\realizations\\H03_SA_fast\\measured_history.jsonl",
+      "bytes": 290112,
+      "sha256": "667295ce0689bff467d78431932ba814af83968e13fe5e426328a867f9d9af62"
+    },
+    {
+      "path": "evidence\\cstar_current_runtime_assets240_20260907\\realizations\\H03_SA_slow\\measured_history.jsonl",
+      "bytes": 288988,
+      "sha256": "096c51f26bc817421e7c52ddc05405747a2de798555cde12edd766b703900b6b"
+    },
+    {
+      "path": "evidence\\cstar_current_runtime_assets240_20260907\\realizations\\H03_SB_fast\\measured_history.jsonl",
+      "bytes": 278165,
+      "sha256": "53966a7f3d11d12906518f9be7befb5536980344d1baa931d971ead98f645c81"
+    },
+    {
+      "path": "evidence\\cstar_current_runtime_assets240_20260907\\realizations\\H03_SB_slow\\measured_history.jsonl",
+      "bytes": 279633,
+      "sha256": "eb144b904d5ab185c067f500b082f8f7d3eb2443f313f8b1bfcc1104df92dc79"
+    }
+  ],
+  "code_sha256": "8ef59678c4a71c87a5fde1e12e9b2adf4e37630b67c370906a7e0e1ed49fd312"
+}
