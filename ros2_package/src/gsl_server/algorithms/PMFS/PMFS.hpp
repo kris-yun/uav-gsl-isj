@@ -105,6 +105,7 @@ namespace GSL
         bool eventEvidenceSequentialAssimilation = false;
         bool eventEvidencePhysicalStopOnly = false;
         bool eventEvidenceHistoricalRollingPersistence = false;
+        bool m1rSourceQuadratureEnabled = false;
         bool eventEvidenceAfterWarmupOnly = false;
         bool eventEvidenceTransportLogPool = false;
         bool eventEvidenceTransportRobustPool = false;

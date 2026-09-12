@@ -1,0 +1,42 @@
+{
+  "status": "SYNTHETIC_VERIFIER_SELFTEST_PASS",
+  "cases": [
+    {
+      "tiny": false,
+      "window": 0,
+      "persistence": "historical_rolling",
+      "status": "LOGGED_SCORING_ARITHMETIC_PASS",
+      "log10_likelihood": "-1.045757490560675125409944"
+    },
+    {
+      "tiny": false,
+      "window": 1,
+      "persistence": "window_constant",
+      "status": "LOGGED_SCORING_ARITHMETIC_PASS",
+      "log10_likelihood": "-1.045757490560675125409944"
+    },
+    {
+      "tiny": true,
+      "window": 0,
+      "persistence": "historical_rolling",
+      "status": "LOGGED_SCORING_ARITHMETIC_PASS",
+      "log10_likelihood": "-1600.0"
+    },
+    {
+      "mutation": "wrong_component",
+      "status": "REJECTED",
+      "reason": "SCORE_MISMATCH:('synthetic', 1, 'leaf'):U0:component_likelihood:log_error=1.02165124753198:budget=2.85494650060196e-10"
+    },
+    {
+      "mutation": "missing_row",
+      "status": "REJECTED",
+      "reason": "U_K_EVENT_DIMENSION_MISMATCH"
+    },
+    {
+      "mutation": "unshared_context",
+      "status": "REJECTED",
+      "reason": "CONTEXT_NOT_SHARED_ACROSS_U_AND_CANDIDATES"
+    }
+  ],
+  "limits": "synthetic arithmetic and rejection checks only; no C++ runtime/physical/utility PASS"
+}

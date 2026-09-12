@@ -27,6 +27,7 @@ CONTEXT_BANK_EXPORT_ENABLED="${CONTEXT_BANK_EXPORT_ENABLED:-false}"
 CONTEXT_BANK_EXPORT_DIRECTORY="${CONTEXT_BANK_EXPORT_DIRECTORY:-}"
 M1R_V41_HISTORICAL_ROLLING_PERSISTENCE="${M1R_V41_HISTORICAL_ROLLING_PERSISTENCE:-false}"
 M1R_V41_LIGHTWEIGHT_AUDIT="${M1R_V41_LIGHTWEIGHT_AUDIT:-false}"
+M1R_SOURCE_QUADRATURE_ENABLED="${M1R_SOURCE_QUADRATURE_ENABLED:-false}"
 
 REPO_ROOT="${REPO_ROOT:-/home/zyc/gsl_ws/src/GasSourceLocalization}"
 BANK_ROOT_BASE="${BANK_ROOT_BASE:-/mnt/hgfs/workspace/CPIR_M1_FULLGRID_LOOKUP_20260831_R1}"
@@ -181,6 +182,8 @@ cat >"${RUN_DIR}/formal_runtime_manifest.json" <<EOF
   "sensor_seed": ${SENSOR_SEED},
   "arm": "${ARM}",
   "pfdi_mode": "${PFDI_MODE}",
+  "m1r_historical_rolling_persistence": ${M1R_V41_HISTORICAL_ROLLING_PERSISTENCE},
+  "m1r_source_quadrature_enabled": ${M1R_SOURCE_QUADRATURE_ENABLED},
   "method": "${METHOD}",
   "method_family": "${METHOD_FAMILY}",
   "git_commit": "${GIT_COMMIT}",
@@ -341,6 +344,7 @@ PY_MAP
   "context_bank_export_directory:=${CONTEXT_BANK_EXPORT_DIRECTORY}"
   "m1r_v41_historical_rolling_persistence:=${M1R_V41_HISTORICAL_ROLLING_PERSISTENCE}"
   "m1r_v41_lightweight_audit:=${M1R_V41_LIGHTWEIGHT_AUDIT}"
+  "m1r_source_quadrature_enabled:=${M1R_SOURCE_QUADRATURE_ENABLED}"
   "ctpi_m3_horizontal_speed_mps:=0.4"
   "navigation_trace_file:=${RUN_DIR}/navigation_trace.csv"
   "source_estimate_trace_file:=${RUN_DIR}/source_estimate_trace.csv"

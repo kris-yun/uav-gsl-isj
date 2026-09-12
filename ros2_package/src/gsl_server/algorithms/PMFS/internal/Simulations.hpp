@@ -69,6 +69,15 @@ namespace GSL::PMFS_internal
         using HashSet = std::unordered_set<Vector2Int>;
 
     public:
+        struct SourcePointComponent
+        {
+            Vector2 point = Vector2(0, 0);
+            long double weight = 0.25L;
+            std::vector<std::vector<float>> transportMemberHitMaps;
+            std::vector<std::vector<float>> transportMemberExposureMaps;
+            long double sourceProb = 0.0L;
+        };
+
         struct SimulationResult
         {
             bool valid = false;
@@ -77,6 +86,8 @@ namespace GSL::PMFS_internal
             // Optional raw exposure maps retained only for contrastive
             // attribution replay; never used by the online score.
             std::vector<std::vector<float>> transportMemberExposureMaps;
+            // U is separate from the unchanged transport-member dimension K.
+            std::vector<SourcePointComponent> sourcePointComponents;
             long double sourceProb = 0.0L;
             Utils::NQA::Node* leaf = nullptr;
         };
@@ -97,6 +108,9 @@ namespace GSL::PMFS_internal
                                     bool transportRobustPool = false,
                                     bool sensorFopdt = false,
                                     bool historicalRollingPersistence = false);
+        // Finite four-point rectangular quadrature, not exact regional
+        // integration. The original two-dimensional source assumption stays.
+        void configureM1RSourceQuadrature(bool enabled);
         void recordEventEvidence(const Vector2& position, bool hit, double concentration,
                                  double threshold, uint64_t blockId, double simTime = 0.0);
         void updateSourceProbability(float refineFraction);
@@ -178,6 +192,7 @@ namespace GSL::PMFS_internal
         bool eventEvidenceTransportRobustPool = false;
         bool eventEvidenceSensorFopdt = false;
         bool eventEvidenceHistoricalRollingPersistence = false;
+        bool m1rSourceQuadratureEnabled = false;
         int eventEvidenceTransportReplicas = 1;
         std::vector<EventEvidence> eventEvidence;
         // Member-specific, candidate-invariant context.  Legacy M1R stores an
@@ -354,7 +369,9 @@ namespace GSL::PMFS_internal
         // legacy hit-map observation law so PHIC replay can measure the gap.
         void exportContrastiveEventAttribution(const std::string& stableID, const Vector2& source,
                                                const std::vector<std::vector<float>>& memberMaps,
-                                               const std::vector<std::vector<float>>& exposureMaps);
+                                               const std::vector<std::vector<float>>& exposureMaps,
+                                               int sourcePointIndex = -1, long double sourcePointWeight = 1.0L);
+        void exportM1RSourcePointScores(const SimulationResult& result);
         void exportNativeCandidateRecord(const std::string& stableID, const Vector2& source,
                                          const Vector2& nativeSourcePoint, long double sourceProb,
                                          const std::vector<float>& hitMap);

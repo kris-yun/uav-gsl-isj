@@ -323,6 +323,7 @@ def generate_launch_description():
         DeclareLaunchArgument('context_bank_export_directory', default_value=''),
         DeclareLaunchArgument('m1r_v41_historical_rolling_persistence', default_value='false'),
         DeclareLaunchArgument('m1r_v41_lightweight_audit', default_value='false'),
+        DeclareLaunchArgument('m1r_source_quadrature_enabled', default_value='false'),
 
         DeclareLaunchArgument('use_sdbe', default_value='1'),
         DeclareLaunchArgument('use_kb_tme', default_value='0'),
@@ -473,6 +474,7 @@ def generate_launch_description():
                         'context_bank_export_directory': LaunchConfiguration('context_bank_export_directory'),
                         'm1r_v41_historical_rolling_persistence': _bool('m1r_v41_historical_rolling_persistence'),
                         'm1r_v41_lightweight_audit': _bool('m1r_v41_lightweight_audit'),
+                        'm1r_source_quadrature_enabled': _bool('m1r_source_quadrature_enabled'),
                         'saisc.use_sdbe': _int('use_sdbe'),
                         'saisc.use_kb_tme': _int('use_kb_tme'),
                         'saisc.use_av_rise': _int('use_av_rise'),

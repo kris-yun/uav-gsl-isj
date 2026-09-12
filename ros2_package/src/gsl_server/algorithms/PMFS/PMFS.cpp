@@ -126,6 +126,10 @@ namespace GSL
             getParam<bool>("m1r_v41_historical_rolling_persistence", false);
         if (eventEvidenceHistoricalRollingPersistence && pfdiMode != "cer_ratio_m1")
             throw std::invalid_argument("M1R_V41_HISTORICAL_PERSISTENCE_REQUIRES_CER_RATIO_M1");
+        m1rSourceQuadratureEnabled = getParam<bool>("m1r_source_quadrature_enabled", false);
+        if (m1rSourceQuadratureEnabled &&
+            (pfdiMode != "cer_ratio_m1" || !eventEvidenceHistoricalRollingPersistence))
+            throw std::invalid_argument("M1R_SOURCE_QUADRATURE_REQUIRES_HISTORICAL_CER_RATIO_M1");
         eventEvidenceAfterWarmupOnly = pfdiMode == "cer_core_eventtime_m1" ||
                                        pfdiMode == "cer_core_invariant_m1" || pfdiMode == "cer_core_robust_m1";
         eventEvidenceTransportLogPool = pfdiMode == "cer_core_invariant_m1";
@@ -317,6 +321,7 @@ namespace GSL
                                            eventEvidenceTransportRobustPool,
                                            pfdiMode == "cer_core_phic_m1",
                                            eventEvidenceHistoricalRollingPersistence);
+        simulations.configureM1RSourceQuadrature(m1rSourceQuadratureEnabled);
 
         if (cpirEnabled)
             initializeCPIR();
