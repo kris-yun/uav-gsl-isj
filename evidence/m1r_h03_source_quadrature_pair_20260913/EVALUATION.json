@@ -1,0 +1,246 @@
+{
+  "contract": "M1R_H03_SOURCE_QUADRATURE_SCREEN_V1_20260912",
+  "evidence_class": "ONE_EXISTING_HOUSE_ONE_EXISTING_SEED_DEVELOPMENT_SCREEN",
+  "truth_evaluator_only": [
+    -0.45,
+    1.9
+  ],
+  "checks": {
+    "shared_house": true,
+    "shared_seed": true,
+    "shared_algorithm_seed": true,
+    "shared_sensor_seed": true,
+    "shared_arm": true,
+    "shared_pfdi_mode": true,
+    "shared_method": true,
+    "shared_method_family": true,
+    "shared_git_commit": true,
+    "shared_algorithm_sha256": true,
+    "shared_vgr_bridge_source_root": true,
+    "shared_vgr_bridge_contract_sha256": true,
+    "shared_bank_summary_sha256": true,
+    "shared_cell_manifest_sha256": true,
+    "shared_environment_preflight": true,
+    "shared_geometry_manifest": true,
+    "shared_steps_source_update": true,
+    "shared_max_warmup_iterations": true,
+    "shared_min_warmup_iterations": true,
+    "shared_start_x": true,
+    "shared_start_y": true,
+    "shared_gas_backend": true,
+    "shared_realization": true,
+    "shared_config_id": true,
+    "shared_timeout_sec": true,
+    "shared_realtime_factor": true,
+    "shared_m1r_historical_rolling_persistence": true,
+    "baseline_configuration": true,
+    "baseline_terminal_status": true,
+    "baseline_source_trace_coverage": true,
+    "fixed_source_configuration": true,
+    "fixed_source_terminal_status": true,
+    "fixed_source_source_trace_coverage": true,
+    "bridge_code_equal": true,
+    "bridge_preflight_pass": true
+  },
+  "valid_paired_run": true,
+  "utility_both_improved": false,
+  "verdict": "NO_GO_NO_WEIGHT_TUNING_NO_HOUSE_SWEEP",
+  "baseline": {
+    "run_directory": "D:\\ZYC\\A-gas\\_staging\\M1R_H03_RESULTS_20260913_R1\\M1R_H03_SEED12_PAIR_20260912_R1\\BASELINE\\H03_seed12_M1R",
+    "manifest": {
+      "contract": "CTPI_FASTTRACK_PAIRED_RUN_V0",
+      "run_id": "CTPI_H03_S12_M1R_20260912T161429Z",
+      "house": "H03",
+      "seed": 12,
+      "algorithm_seed": 12,
+      "sensor_seed": 12,
+      "arm": "M1R",
+      "pfdi_mode": "cer_ratio_m1",
+      "m1r_historical_rolling_persistence": true,
+      "m1r_source_quadrature_enabled": false,
+      "method": "CTPI_G2_M1_M2",
+      "method_family": "ctpi_two_module",
+      "git_commit": "3564bf805d4c9f3656a7bf96cf5117b9a604d5d3",
+      "algorithm_sha256": "419e475b1b8ba483010a088fba2e24c0b4b13ddc8704f3506566513a9b412aa0",
+      "vgr_bridge_source_root": "/home/zyc/CTPI_G2_M12_SEED12_20260905/vgr_bridge_overlay_c8454d5",
+      "vgr_bridge_contract_sha256": "924d4afbf6de52b59d6215316b8ee086440ddabe47b4b8451612ba0bb1012a62",
+      "bank_summary_sha256": "NOT_USED_EVENT_EVIDENCE",
+      "cell_manifest_sha256": "NOT_USED_EVENT_EVIDENCE",
+      "environment_preflight": "/dev/shm/m1r_h03_3564bf805d4c_R1/environment_preflight.json",
+      "geometry_manifest": "/dev/shm/cstar_joint_development_20260908/evidence/cstar_environment_20260906/maps_v1/geometry_manifest.json",
+      "steps_source_update": 3,
+      "max_warmup_iterations": 3,
+      "min_warmup_iterations": 1,
+      "start_x": 2.0,
+      "start_y": 0.0,
+      "gas_backend": "gaden_player",
+      "realization": "/mnt/hgfs/workspace/GADEN_files/scenarios/House03/gas_simulations/1-2,5_fast/FilamentSimulation_gasType_10_sourcePosition_-0.45_1.90_-0.10",
+      "config_id": "1-2,5_fast",
+      "timeout_sec": 240.0,
+      "realtime_factor": 1.0
+    },
+    "status": {
+      "status": "time_budget_timeout",
+      "run_id": "CTPI_H03_S12_M1R_20260912T161429Z",
+      "method": "CTPI_G2_M1_M2",
+      "seed": 12,
+      "gsl_result_code": "runner_time_budget_timeout",
+      "gsl_action_status": "timeout"
+    },
+    "bridge_preflight": {
+      "contract_path": "/home/zyc/CTPI_G2_M12_SEED12_20260905/vgr_bridge_overlay_c8454d5/vgr_bridge/result_contract.py",
+      "contract_sha256": "924d4afbf6de52b59d6215316b8ee086440ddabe47b4b8451612ba0bb1012a62",
+      "method": "CTPI_G2_M1_M2",
+      "runner_path": "/home/zyc/CTPI_G2_M12_SEED12_20260905/vgr_bridge_overlay_c8454d5/vgr_bridge/gsl_benchmark_runner.py",
+      "runner_sha256": "db753abf78a18b51b13c64f40ff66082c68cb37093465e4ee35f5d2d3ab6d8f5",
+      "verdict": "CTPI_G2_M12_VGR_BRIDGE_PREFLIGHT_PASS"
+    },
+    "first_source_trace_time_s": 2.10601,
+    "last_source_trace_time_s": 238.199,
+    "source_trace_rows": 109,
+    "final_source_map_error_m": 7.162294953434968,
+    "individual_trace_auc_m_s": 1450.7389114587836,
+    "source_updates": 4,
+    "source_update_wall_s": 2.367478132247925,
+    "legacy_counted_forward_calls": 834,
+    "last_update": {
+      "id": 4,
+      "sim_time_s": 225.398774425,
+      "true_cell_mass": 2.2469160017337414e-173,
+      "posterior_sum": 1.0,
+      "true_cell_rank_best": 535,
+      "cell_count": 626
+    },
+    "inputs": [
+      {
+        "path": "formal_runtime_manifest.json",
+        "sha256": "b33edcad2b235c19cdb1e721dc66a395dce4a9a36f1904d06f0dcf254be4fbb4"
+      },
+      {
+        "path": "run_status.json",
+        "sha256": "ce07b9eee2695d7758f9cde33ee5a3043a37d314624eeb8e3cbff532272697b4"
+      },
+      {
+        "path": "source_estimate_trace.csv",
+        "sha256": "d7bf399b7ebc4358934bf91fee67d67428dcad22547c1871f943415300d4c03c"
+      },
+      {
+        "path": "context_bank/source_update_timing.csv",
+        "sha256": "597f5115968d5205047d5c3e4b5ef8727c7c634466d6b6bfeecc0cd07e781a42"
+      },
+      {
+        "path": "context_bank\\source_update_0004\\source_posterior.csv",
+        "sha256": "7688402cdaacb26761f6fffab8b98a00ac31f37d09563d3cb8473d88fcea4091"
+      }
+    ]
+  },
+  "fixed_source": {
+    "run_directory": "D:\\ZYC\\A-gas\\_staging\\M1R_H03_RESULTS_20260913_R1\\M1R_H03_SEED12_PAIR_20260912_R1\\FIXED_SOURCE\\H03_seed12_M1R",
+    "manifest": {
+      "contract": "CTPI_FASTTRACK_PAIRED_RUN_V0",
+      "run_id": "CTPI_H03_S12_M1R_20260912T161931Z",
+      "house": "H03",
+      "seed": 12,
+      "algorithm_seed": 12,
+      "sensor_seed": 12,
+      "arm": "M1R",
+      "pfdi_mode": "cer_ratio_m1",
+      "m1r_historical_rolling_persistence": true,
+      "m1r_source_quadrature_enabled": true,
+      "method": "CTPI_G2_M1_M2",
+      "method_family": "ctpi_two_module",
+      "git_commit": "3564bf805d4c9f3656a7bf96cf5117b9a604d5d3",
+      "algorithm_sha256": "419e475b1b8ba483010a088fba2e24c0b4b13ddc8704f3506566513a9b412aa0",
+      "vgr_bridge_source_root": "/home/zyc/CTPI_G2_M12_SEED12_20260905/vgr_bridge_overlay_c8454d5",
+      "vgr_bridge_contract_sha256": "924d4afbf6de52b59d6215316b8ee086440ddabe47b4b8451612ba0bb1012a62",
+      "bank_summary_sha256": "NOT_USED_EVENT_EVIDENCE",
+      "cell_manifest_sha256": "NOT_USED_EVENT_EVIDENCE",
+      "environment_preflight": "/dev/shm/m1r_h03_3564bf805d4c_R1/environment_preflight.json",
+      "geometry_manifest": "/dev/shm/cstar_joint_development_20260908/evidence/cstar_environment_20260906/maps_v1/geometry_manifest.json",
+      "steps_source_update": 3,
+      "max_warmup_iterations": 3,
+      "min_warmup_iterations": 1,
+      "start_x": 2.0,
+      "start_y": 0.0,
+      "gas_backend": "gaden_player",
+      "realization": "/mnt/hgfs/workspace/GADEN_files/scenarios/House03/gas_simulations/1-2,5_fast/FilamentSimulation_gasType_10_sourcePosition_-0.45_1.90_-0.10",
+      "config_id": "1-2,5_fast",
+      "timeout_sec": 240.0,
+      "realtime_factor": 1.0
+    },
+    "status": {
+      "status": "time_budget_timeout",
+      "run_id": "CTPI_H03_S12_M1R_20260912T161931Z",
+      "method": "CTPI_G2_M1_M2",
+      "seed": 12,
+      "gsl_result_code": "runner_time_budget_timeout",
+      "gsl_action_status": "timeout"
+    },
+    "bridge_preflight": {
+      "contract_path": "/home/zyc/CTPI_G2_M12_SEED12_20260905/vgr_bridge_overlay_c8454d5/vgr_bridge/result_contract.py",
+      "contract_sha256": "924d4afbf6de52b59d6215316b8ee086440ddabe47b4b8451612ba0bb1012a62",
+      "method": "CTPI_G2_M1_M2",
+      "runner_path": "/home/zyc/CTPI_G2_M12_SEED12_20260905/vgr_bridge_overlay_c8454d5/vgr_bridge/gsl_benchmark_runner.py",
+      "runner_sha256": "db753abf78a18b51b13c64f40ff66082c68cb37093465e4ee35f5d2d3ab6d8f5",
+      "verdict": "CTPI_G2_M12_VGR_BRIDGE_PREFLIGHT_PASS"
+    },
+    "first_source_trace_time_s": 2.00292,
+    "last_source_trace_time_s": 234.429,
+    "source_trace_rows": 103,
+    "final_source_map_error_m": 8.129407665998796,
+    "individual_trace_auc_m_s": 1442.7553895085173,
+    "source_updates": 4,
+    "source_update_wall_s": 18.284883975982666,
+    "legacy_counted_forward_calls": 830,
+    "last_update": {
+      "id": 4,
+      "sim_time_s": 236.428976281,
+      "true_cell_mass": 8.632849442922186e-152,
+      "posterior_sum": 1.0,
+      "true_cell_rank_best": 274,
+      "cell_count": 626
+    },
+    "inputs": [
+      {
+        "path": "formal_runtime_manifest.json",
+        "sha256": "ad6829e96a5c415babb1fce5cc014f715f9b02df3a81558c17d11e3ef9322869"
+      },
+      {
+        "path": "run_status.json",
+        "sha256": "915c73e7377ba421e7fd9c3802d987125f685709b716ca1c29dea592ce33b119"
+      },
+      {
+        "path": "source_estimate_trace.csv",
+        "sha256": "7314cce8aca5e4d0ba6d024f9f2be968e32febff8180fb475d4a0f640bef5029"
+      },
+      {
+        "path": "context_bank/source_update_timing.csv",
+        "sha256": "427f8ff880ce404e41f642f387365ce5b715df8f0d71ff70ba78b8f4dce121a3"
+      },
+      {
+        "path": "context_bank\\source_update_0004\\source_posterior.csv",
+        "sha256": "d49d245cb386c19b7fc4b1dc12416eec109b42efedc06fe9f0b6342d049bdac6"
+      }
+    ]
+  },
+  "comparison": {
+    "endpoint_delta_m_fixed_minus_baseline": 0.9671127125638286,
+    "common_interval_s": [
+      2.10601,
+      234.429
+    ],
+    "common_auc_baseline_m_s": 1423.7370594843337,
+    "common_auc_fixed_m_s": 1442.3306078046248,
+    "common_auc_delta_m_s_fixed_minus_baseline": 18.59354832029112,
+    "integration": "piecewise linear, union timestamps, no extrapolation or 0/240 padding"
+  },
+  "causal_effect_identified": false,
+  "cross_house_validated": false,
+  "novelty_validated": false,
+  "limitations": [
+    "5 forward calls per leaf versus 1; no compute matching",
+    "location geometry, finite quadrature, source identity and context changes not separately isolated",
+    "same seed is not exact continuous-time trajectory replay",
+    "native true-cell posterior mass is diagnostic, not calibration"
+  ]
+}

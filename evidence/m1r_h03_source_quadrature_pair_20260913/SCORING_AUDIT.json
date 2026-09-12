@@ -1,0 +1,68 @@
+{
+  "status": "LOGGED_SCORING_ARITHMETIC_PASS",
+  "schema": "M1R_SOURCE_QUADRATURE_RECOMPUTE_V1",
+  "input_sha256": {
+    "contrastive_source_point_event_attribution.csv": "453fb454d0afc142877938ee8e21c2df8c4d42f3ee4b8ace4e91476cf7defaff",
+    "source_point_component_scores.csv": "2caa21bcd9ebf88012ca268df6d537ed77de2b43cf626529c4d6e650b06b2916"
+  },
+  "verifier_sha256": "b2eef932d7bfdff5e3579eddd9eae4b7750b900f9c4efe51eed229e3cd143d5b",
+  "persistence": "historical_rolling",
+  "native_mantissa_bits_assumed": 64,
+  "mpmath_version": "1.3.0",
+  "decimal_precision": 80,
+  "epsilon": "0.0001",
+  "candidate_updates": 830,
+  "source_updates": 4,
+  "event_rows_read": 224320,
+  "U_K_full_prefix_series": 3320,
+  "score_comparisons": 9960,
+  "dimensions_K_events_window": [
+    [
+      1,
+      32,
+      0
+    ],
+    [
+      1,
+      56,
+      0
+    ],
+    [
+      1,
+      80,
+      0
+    ],
+    [
+      1,
+      104,
+      0
+    ]
+  ],
+  "max_absolute_log_score_error": "1.961154318549189167442837e-15",
+  "max_log_error_budget": "1.479472180313021090114489e-8",
+  "minimum_region_log10_likelihood": "-203.9463175891658975126095",
+  "numerical_policy": {
+    "comparison": "abs(log(reported)-log(recomputed)) <= budget; zero never accepted",
+    "budget": "1e-12 + scored_events * (64*2^-52 + 256*2^-native_mantissa_bits) / 1e-4",
+    "scope": "declared roundoff audit tolerance including double log1p and long-double operations; not a proven bound for libc",
+    "native_range": "sub-double positive values are preserved; native underflow to zero is a failure"
+  },
+  "checked": [
+    "all U=4 and independent K/event dimensions",
+    "complete logged event prefixes and window",
+    "shared context across U and candidate IDs within update/K/event",
+    "identical deployed observations across candidates",
+    "2x2 source topology and weights",
+    "source-point coordinates agree across both logs",
+    "unchanged persistence/clip/logit scorer",
+    "arithmetic K mixture followed by complete-prefix U mixture",
+    "forward cost metadata is K plus 4K"
+  ],
+  "not_established": [
+    "correctness of PF response maps or transport physics",
+    "initial-candidate context construction (no refinement-level field)",
+    "absolute .25/.75 rectangle fractions (world grid metadata absent from these CSVs)",
+    "native ABI mantissa width (declared command-line assumption)",
+    "posterior normalization, closed-loop utility, source identification, causal novelty"
+  ]
+}
