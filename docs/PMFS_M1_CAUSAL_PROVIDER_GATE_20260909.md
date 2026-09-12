@@ -1,5 +1,13 @@
 # M1 causal provider gate: from factorial response to full-map PMFS
 
+> 2026-09-10 correction: C1 below remains historical ranking evidence only.
+> Its confidence PASS is withdrawn (nats were compared to concentration-unit
+> error). The V2 calibration audit reports all decisions UNCALIBRATED.
+> PHIC `aggregate_raw_exposure` is a cell-occupancy timestep count, NOT
+> concentration. C2 must provide chronological concentration with audited
+> units; relabeling occupancy or adding FOPDT memory does not meet C2.
+> See PMFS_M1_OBSERVATION_CONTRACT_FINDING_20260910.md.
+
 ## Current completed gate: C1
 
 `CSTAR_M1_EXACT_COUNTERFACTUAL_TRANSFER_V1` is a **necessary premise gate**.

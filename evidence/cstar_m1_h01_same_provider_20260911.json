@@ -1,0 +1,53 @@
+{
+  "status": "SAME_PROVIDER_DIAGNOSTIC_NOT_DEPLOYABLE_M1_PASS",
+  "reference_error_radii": {
+    "SA": 2.9673281285317756,
+    "SB": 0.061497620516084275
+  },
+  "radius_scope": "observed exact-reference discrepancy; NOT held-out coverage",
+  "identity_working_metric": "not estimated sensor noise or a calibrated probability",
+  "input_hashes": {
+    "cstar_m1_estimated_transport_h01_screen_240s_SA_trace_v3_20260910.json": "75bd2860d8b13e38eb54404708de74a2ed39e4a525eda9151f2d8cd5107a7119",
+    "D:/ZYC/CSTAR_ENV_ALIGN_20260906/evidence/cstar_current_runtime_assets240_20260907/realizations/H01_SA_fast/measured_history.jsonl": "a92b6c4f2ef8718a3de0b382726a2f3430566b52280cf4191dfbe99f54a96b56",
+    "cstar_m1_estimated_transport_h01_screen_240s_SB_trace_v3_20260910.json": "dccd076d9fe404812fa630a1ee9884d34e89c3edad502af4abf73dd044899a6d",
+    "D:/ZYC/CSTAR_ENV_ALIGN_20260906/evidence/cstar_current_runtime_assets240_20260907/realizations/H01_SB_fast/measured_history.jsonl": "8c807936699b9a1dd7dcfb6bc9eb71db8a68497b13fb3033a7e87cb1346a7c6b"
+  },
+  "cases": [
+    {
+      "actual": "SA",
+      "log1p_mse": {
+        "SA": 0.007337530185313241,
+        "SB": 0.0008060542341775312
+      },
+      "ordinary_rank1": "SB",
+      "ordinary_correct": false,
+      "conditional_bound": {
+        "nominal": -3.918885570681426,
+        "error_bound": 13.269927997869493,
+        "lower": -17.18881356855092,
+        "upper": 9.351042427188066,
+        "conditional_separation_lower": 0.10287437581735197
+      },
+      "reference_contrast": 0.48552236382606107,
+      "reference_ball_decision": "ABSTAIN"
+    },
+    {
+      "actual": "SB",
+      "log1p_mse": {
+        "SA": 0.008173039674656126,
+        "SB": 3.1516311076169245e-06
+      },
+      "ordinary_rank1": "SB",
+      "ordinary_correct": true,
+      "conditional_bound": {
+        "nominal": -4.901932826129105,
+        "error_bound": 13.701021211276709,
+        "lower": -18.602954037405816,
+        "upper": 8.799088385147604,
+        "conditional_separation_lower": 0.10287437581735197
+      },
+      "reference_contrast": -0.48552236382606107,
+      "reference_ball_decision": "ABSTAIN"
+    }
+  ]
+}

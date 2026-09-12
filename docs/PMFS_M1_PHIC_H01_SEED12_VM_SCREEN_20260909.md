@@ -1,5 +1,12 @@
 # PHIC M1 H01 seed12 VM screen (2026-09-09)
 
+> 2026-09-10 attribution correction: the historical result below is preserved,
+> but zero predicted exposure does NOT establish route non-identifiability.
+> The raw export contains 41 distinct positive timestamp/cell records with zero
+> exposure in all three members for the documented truth-region candidate.
+> The proposed switch to M2 is therefore not justified by this evidence alone.
+> See PMFS_M1_FAILURE_FIRST_CORRECTION_20260910.md and the support-audit R2 JSON.
+
 ## Scope
 
 One real VM run was executed after the provenance gate passed, using the new

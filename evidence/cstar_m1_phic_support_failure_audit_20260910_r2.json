@@ -1,0 +1,35 @@
+{
+  "contract": "M1_PHIC_MODEL_SUPPORT_DIAGNOSTIC_V1",
+  "input_sha256": "0c20fc4691885ba3156a2a9228d87713678edc7d0dd71d3b01751ef624115e27",
+  "candidate_evaluator_only": "quadtree_23_16_1_1",
+  "candidate_xy": [
+    -0.5,
+    -2.92999983
+  ],
+  "candidates_in_export": 274,
+  "selected_rows": 1584,
+  "selected_exported_events": 528,
+  "distinct_time_cell_records": 88,
+  "distinct_positive_time_cell_records": 41,
+  "selected_positive_events": 299,
+  "selected_nonzero_exposure_rows": 0,
+  "all_candidates_nonzero_exposure_rows": 145464,
+  "all_member_zero_positive_events": 299,
+  "first_conflict": {
+    "update_id": 1,
+    "block_id": 6,
+    "cell_index": 675,
+    "time_s": 45.5969597,
+    "concentration": 0.113416292,
+    "threshold": 0.1,
+    "member_count": 3
+  },
+  "verdict": "MODEL_ZERO_WITH_OBSERVED_HITS",
+  "limits": [
+    "Zero surrogate exposure is not evidence that the physical route contains no source information.",
+    "Exports include historical events across updates; counts are not independent samples or counts of actual likelihood applications.",
+    "Cannot distinguish transport mismatch, source discretization, sensor memory, or event alignment from this export alone.",
+    "No per-candidate posterior recorded here: time of truth exclusion remains unknown.",
+    "Positive hits alone do not establish distinguishability among all candidate sources."
+  ]
+}

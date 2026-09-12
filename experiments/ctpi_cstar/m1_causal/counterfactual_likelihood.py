@@ -81,7 +81,7 @@ class CandidateScore:
 class M1Decision:
     ranked: tuple[CandidateScore, ...]
     lower_contrast_bound: float
-    discrepancy_bound: float
+    discrepancy_bound: float | None
     decision: str
 
 
@@ -100,8 +100,17 @@ def _gaussian_log_likelihood(observed: Sequence[float], predicted: Sequence[floa
 
 def score_candidates(*, timestamps_s: Sequence[float], observed_sensor: Sequence[float],
                      candidate_member_exposure: Mapping[str, Sequence[Sequence[float]]],
-                     sensor: FopdtConfig, observation_sigma: float) -> tuple[CandidateScore, ...]:
-    """Marginalise member likelihoods without candidate-independent centering."""
+                     sensor: FopdtConfig, observation_sigma: float,
+                     input_semantics: str) -> tuple[CandidateScore, ...]:
+    """Marginalise time-resolved concentration member likelihoods.
+
+    Inputs, observed_sensor, initial sensor values and sigma must use the same
+    concentration unit. The producer must establish this contract; a caller's
+    label alone does not verify physics. Aggregated occupancy count/frequency
+    is NOT concentration and cannot recover a missing chronological history.
+    """
+    if input_semantics != "time_resolved_concentration":
+        raise ValueError("M1_CAUSAL_REQUIRES_TIME_RESOLVED_CONCENTRATION")
     if len(timestamps_s) != len(observed_sensor) or not observed_sensor:
         raise ValueError("M1_CAUSAL_OBSERVATION_SHAPE")
     observed = tuple(float(value) for value in observed_sensor)
@@ -126,16 +135,24 @@ def score_candidates(*, timestamps_s: Sequence[float], observed_sensor: Sequence
     return tuple(sorted(scores, key=lambda item: (-item.marginal_log_likelihood, item.candidate_id)))
 
 
-def decide_with_observability(scores: Sequence[CandidateScore], *, sensor_discrepancy_bound: float) -> M1Decision:
-    """Commit only when source contrast exceeds member plus sensor discrepancy."""
-    if len(scores) < 2 or not math.isfinite(sensor_discrepancy_bound) or sensor_discrepancy_bound < 0:
+def decide_with_observability(scores: Sequence[CandidateScore], *,
+                             contrast_error_bound_nats: float | None = None) -> M1Decision:
+    """Conditional robustness check, NOT a statistical calibration procedure.
+
+    The caller must independently justify a bound on the error of the entire
+    top-two log-likelihood contrast, in nats. Concentration spread, member
+    agreement and observation sigma do not supply that bound. No calibration
+    is available yet for the offline two-candidate experiment; fail closed.
+    """
+    if len(scores) < 2 or any(not math.isfinite(s.marginal_log_likelihood) for s in scores):
         raise ValueError("M1_CAUSAL_OBSERVABILITY_INPUT")
+    if any(a.marginal_log_likelihood < b.marginal_log_likelihood for a, b in zip(scores, scores[1:])):
+        raise ValueError("M1_CAUSAL_OBSERVABILITY_ORDER")
     first, second = scores[0], scores[1]
     contrast = first.marginal_log_likelihood - second.marginal_log_likelihood
-    member_bound = sum(a + b for a, b in zip(first.member_response_std, second.member_response_std))
-    # A conservative conversion is intentional: a member-disagreement bound is
-    # measured in response units while likelihood contrast is dimensionless.
-    # The required caller-supplied sensor discrepancy remains explicit.
-    discrepancy = sensor_discrepancy_bound + member_bound
-    return M1Decision(tuple(scores), contrast, discrepancy,
-                      "COMMIT" if contrast > discrepancy else "ABSTAIN")
+    if contrast_error_bound_nats is None:
+        return M1Decision(tuple(scores), contrast, None, "UNCALIBRATED")
+    if not math.isfinite(contrast_error_bound_nats) or contrast_error_bound_nats < 0:
+        raise ValueError("M1_CAUSAL_OBSERVABILITY_BOUND")
+    return M1Decision(tuple(scores), contrast, contrast_error_bound_nats,
+                      "COMMIT" if contrast > contrast_error_bound_nats else "ABSTAIN")

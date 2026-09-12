@@ -1,0 +1,105 @@
+{
+  "contract": "M1_PHIC_OBSERVATION_SEMANTICS_DIAGNOSTIC_V1",
+  "attribution_sha256": "0c20fc4691885ba3156a2a9228d87713678edc7d0dd71d3b01751ef624115e27",
+  "rows": 268224,
+  "min_count": 0.0,
+  "max_count": 200.0,
+  "noninteger_rows": 0,
+  "outside_iteration_count_rows": 0,
+  "quantity": "filament-centre cell occupancy timestep count, not ppm",
+  "candidate_evaluator_only": "quadtree_23_16_1_1",
+  "member_ids": [
+    "0",
+    "1",
+    "2"
+  ],
+  "sensor_only_zero_input_test": {
+    "max_response": 0.0,
+    "condition": "Feed ONLY the exported zero surrogate history, with zero initial state/input.",
+    "conclusion": "Persistent sensor state and delay alone cannot create a source response from these inputs.",
+    "caveat": "Unrecorded concentration/prehistory could differ; this is not a physical observability proof."
+  },
+  "temporal_aggregation_counterexample": {
+    "label": "synthetic concentration inputs, not measured PMFS concentrations",
+    "equal_aggregate": 5.0,
+    "early_output": [
+      0.0,
+      0.0,
+      0.15351827510938598,
+      0.28346868942621073,
+      0.3934693402873665,
+      0.48658288096740804,
+      0.5654017914929218,
+      0.4786022837191718,
+      0.40512808665919164,
+      0.34293352159690677,
+      0.2902869588841622,
+      0.24572260566951637,
+      0.20799969509174845,
+      0.17606794067798498,
+      0.14903829412303907,
+      0.12615819228402475,
+      0.10679060421366302,
+      0.09039629485689236,
+      0.07651881159418278,
+      0.06477177562482377
+    ],
+    "late_output": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.15351827510938576,
+      0.28346868942621073,
+      0.3934693402873667,
+      0.486582880967408,
+      0.5654017914929219,
+      0.47860228371917196
+    ],
+    "max_sensor_difference": 0.5654017914929218,
+    "conclusion": "Aggregate alone does not determine the sensor sequence."
+  },
+  "inspected_sources": [
+    {
+      "revision": "8d2e211",
+      "source_sha256": "58322865cdee7cc27456a42d413d2eba10a9779fbcc46a0cb4a387a5a46c5b24",
+      "copies_hit_count_to_exposure": true,
+      "increments_occupancy_once_per_step": true,
+      "samples_source_region_per_filament": true,
+      "scope": "source inspection only; not a binary/source binding"
+    },
+    {
+      "revision": "429b19f",
+      "source_sha256": "aad5e6c63066b819b7ed92f99a9383ceea2b9d7809eb91c977d8914cc2af5d2e",
+      "copies_hit_count_to_exposure": true,
+      "increments_occupancy_once_per_step": true,
+      "samples_source_region_per_filament": true,
+      "scope": "source inspection only; not a binary/source binding"
+    },
+    {
+      "revision": "HEAD",
+      "source_sha256": "d4f7458c30f1844b040d31e8dd9944bfaee9a4b92b7b5755c64fd9a76e634bf5",
+      "copies_hit_count_to_exposure": true,
+      "increments_occupancy_once_per_step": true,
+      "samples_source_region_per_filament": true,
+      "scope": "source inspection only; not a binary/source binding"
+    }
+  ],
+  "next_required_measurement": "time-resolved candidate concentration along executed sensor poses, with units and prehistory",
+  "verdict": "AGGREGATE_OCCUPANCY_IS_NOT_A_CONCENTRATION_PROVIDER",
+  "limits": [
+    "Does not isolate wind, source discretization, 2D/3D mismatch or field-estimation errors.",
+    "The exported candidate coordinate is a region representative, not every sampled source point.",
+    "No online algorithm changes or closed-loop utility claims."
+  ]
+}

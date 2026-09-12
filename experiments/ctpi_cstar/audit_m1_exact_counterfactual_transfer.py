@@ -50,6 +50,8 @@ def main() -> None:
                         help="isolated GADEN do(source) input traces")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
+    if args.out.exists():
+        raise FileExistsError("refuse to overwrite previous evidence")
     sensor = FopdtConfig(tau_s=1.2, dead_time_s=.4)
     rows: list[dict] = []
     house_summary: dict[str, dict] = {}
@@ -79,11 +81,12 @@ def main() -> None:
                 stamps = tuple(float(row["t_sim_s"]) for row in target)
                 measured = tuple(float(row["gas_ppm"]) for row in target)
                 scores = score_candidates(
+                    input_semantics="time_resolved_concentration",
                     timestamps_s=stamps, observed_sensor=measured,
                     candidate_member_exposure={source: (exposure[(source, other_wind)],) for source in SOURCES},
                     sensor=sensor, observation_sigma=observation_sigma,
                 )
-                decision = decide_with_observability(scores, sensor_discrepancy_bound=observation_sigma)
+                decision = decide_with_observability(scores)
                 rows.append({
                     "house": house,
                     "target_wind": target_wind,
@@ -98,7 +101,8 @@ def main() -> None:
                     "decision": decision.decision,
                     "likelihood_contrast": decision.lower_contrast_bound,
                     "discrepancy_bound": decision.discrepancy_bound,
-                    "same_source_same_wind_prediction_forbidden": True,
+                    "same_source_same_wind_trace_excluded_from_scored_means": True,
+                    "target_wind_candidate_traces_used_for_sigma": True,
                     "target_history_sha256": digest(args.assets / "realizations" / f"{house}_{true_source}_{target_wind}" / "measured_history.jsonl"),
                     "candidate_forward_sha256": {
                         source: digest(args.candidate_forward / f"{house}_{source}_{other_wind}" / "candidate_forward_input.jsonl")
@@ -114,15 +118,17 @@ def main() -> None:
     for item in house_summary.values():
         item["pass"] = item["rank1_cases"] == item["cases"] and item["commit_cases"] == item["cases"]
     report = {
-        "contract": "CSTAR_M1_EXACT_COUNTERFACTUAL_TRANSFER_V1",
+        "contract": "CSTAR_M1_EXACT_COUNTERFACTUAL_TRANSFER_V2_CALIBRATION_AUDIT",
         "sensor": {"tau_s": 1.2, "dead_time_s": .4, "implementation": "m1_causal.counterfactual_likelihood"},
         "target_rule": "target source/wind never scored with its same-source same-wind candidate-forward trace",
         "sigma_rule": "per-House median same-candidate fast/slow FOPDT RMS, computed before target scoring",
         "by_house": house_summary,
         "rows": rows,
-        "verdict": "M1_EXACT_COUNTERFACTUAL_CROSS_TRANSPORT_PREMISE_PASS" if all(item["pass"] for item in house_summary.values())
-        else "M1_EXACT_COUNTERFACTUAL_CROSS_TRANSPORT_PREMISE_NO_GO",
+        "verdict": "M1_EXACT_RANKING_ONLY_CALIBRATION_MISSING",
         "limits": [
+            "V1 confidence gate withdrawn: it compared nats with concentration units",
+            "ranking only; no calibrated observability decision or online update is authorized",
+            "sigma uses both wind regimes, so this is not fully held-out-wind calibration",
             "only two candidate source positions per House",
             "candidate-forward traces are evaluator/development assets, not yet an online full-map provider",
             "does not establish closed-loop utility or cross-dataset localization gain",
