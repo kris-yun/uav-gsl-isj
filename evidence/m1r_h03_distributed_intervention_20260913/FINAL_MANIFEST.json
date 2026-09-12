@@ -1,0 +1,31 @@
+{
+  "contract": "M1R_H03_DPISC_FINAL_V1_20260913",
+  "verdict": "NO_GO_NO_CLOSED_LOOP_DISTRIBUTED_OPERATOR",
+  "pre_run_commit": "6a914429f0aec0b09d16ea047b30f108ca7a0025",
+  "remote_verified_commit": "6a914429f0aec0b09d16ea047b30f108ca7a0025",
+  "source_archive_sha256": "8a45e142fa9d9cbc2a8f04d15f333753878673abf404bce3507d778aaed7754b",
+  "raw_archive_sha256": "0ae9377d086b1e9f9795102c51c4f749766ffbd3db1ff982548a2d8a8b025d84",
+  "raw_archive_bytes": 356380,
+  "raw_manifest_files_verified": 24,
+  "worlds": [
+    "H03_SA_fast",
+    "H03_SA_slow",
+    "H03_HF_fast",
+    "H03_HF_slow"
+  ],
+  "gates": {
+    "at_least_two_physical_active_stations_every_world": "FAIL",
+    "physical_source_over_transport_capacity": "PASS",
+    "heldout_provider_direction": "FAIL",
+    "all_sources_all_transports_unique_full_support_rank1": "FAIL",
+    "paired_contrast_non_degrade_same_endpoint_raw": "FAIL",
+    "paired_contrast_strictly_load_bearing": "PASS",
+    "shared_source_across_stations_load_bearing": "FAIL",
+    "verdict": "NO_GO_NO_CLOSED_LOOP_DISTRIBUTED_OPERATOR"
+  },
+  "closed_loop_runs_after_gate": 0,
+  "causal_action_response_established": true,
+  "causal_main_localization_innovation_established": false,
+  "cross_dataset_effectiveness_established": false,
+  "next_decision": "retire current single-channel causal measurement line as main algorithm; preserve it as audit evidence"
+}

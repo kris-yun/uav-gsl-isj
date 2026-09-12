@@ -1,0 +1,410 @@
+{
+  "contract": "M1R_H03_DISTRIBUTED_PAIRED_GATE_V1_20260913",
+  "status": "OFFLINE_CAUSAL_MEASUREMENT_PREMISE_NOT_CLOSED_LOOP",
+  "parameter_search": false,
+  "source_truth_runtime_input": false,
+  "candidate_count": 820,
+  "same_route_all_worlds": true,
+  "same_wind_within_transport": true,
+  "native_gas_threshold_ppm": 0.1,
+  "one_shared_source_per_run": true,
+  "one_nonnegative_scale_per_active_station": true,
+  "observed_source_difference": {
+    "fast": [
+      -4.335408813961067e-06,
+      -1.014193957981178e-08,
+      -4.1447789005402956e-11,
+      -0.0070646174089061126,
+      -0.05555363728980711,
+      -0.009146836068574964,
+      1.519942771814374e-05,
+      6.581876540851291e-08,
+      1.6314840802184342e-10
+    ],
+    "slow": [
+      -1.2822772239824374e-05,
+      -2.999665934229805e-08,
+      -1.2258949064943978e-10,
+      -0.007590959112098547,
+      -0.10853606226325775,
+      -0.04977272502466525,
+      0.0003949616113193208,
+      -0.0002203924700981242,
+      -0.0003837176216826072
+    ]
+  },
+  "observed_source_difference_cosine_fast_slow": 0.9630782910104712,
+  "observed_source_main_norm": 0.08748156150212767,
+  "observed_source_by_transport_interaction_norm": 0.033384941881317444,
+  "provider_observed_source_difference_cosine": {
+    "fast": 0.11735145096520459,
+    "slow": -0.0007760618239800465
+  },
+  "complete_support_evaluation": [
+    {
+      "actual_source": "SA",
+      "transport": "fast",
+      "active_station_count": 1,
+      "active_station_ids": [
+        2
+      ],
+      "station_detail": [
+        {
+          "station_id": 1,
+          "active_by_native_0p1ppm": false,
+          "max_endpoint_ppm": 3.1210248370734885e-07,
+          "observed_contrast_ppm": [
+            1.220614635080446e-07,
+            2.8554169653748033e-10,
+            1.1669436498999456e-12
+          ]
+        },
+        {
+          "station_id": 2,
+          "active_by_native_0p1ppm": true,
+          "max_endpoint_ppm": 0.2100663693823434,
+          "observed_contrast_ppm": [
+            0.03815011269715886,
+            0.030267416978807624,
+            0.030129445468723398
+          ],
+          "truth_rank_interval_paired": [
+            416,
+            820
+          ],
+          "truth_profiled_amplitude": 0.0
+        },
+        {
+          "station_id": 3,
+          "active_by_native_0p1ppm": false,
+          "max_endpoint_ppm": 4.1291732049552455e-05,
+          "observed_contrast_ppm": [
+            1.5240608343173845e-05,
+            6.599709172108827e-08,
+            1.635904347572965e-10
+          ]
+        }
+      ],
+      "truth_xy_evaluator_only": [
+        -0.45,
+        1.9
+      ],
+      "truth_nearest_candidate_xy": [
+        -0.39999999999999997,
+        1.887
+      ],
+      "truth_rank_interval_distributed_paired": [
+        416,
+        820
+      ],
+      "truth_rank_interval_same_endpoint_raw": [
+        630,
+        630
+      ],
+      "single_active_station_truth_ranks": [
+        [
+          416,
+          820
+        ]
+      ],
+      "best_candidate_xy": [
+        12.8,
+        5.487
+      ],
+      "best_candidate_error_to_truth_m": 13.726946820032486
+    },
+    {
+      "actual_source": "HF",
+      "transport": "fast",
+      "active_station_count": 1,
+      "active_station_ids": [
+        2
+      ],
+      "station_detail": [
+        {
+          "station_id": 1,
+          "active_by_native_0p1ppm": false,
+          "max_endpoint_ppm": 1.1397434576541085e-05,
+          "observed_contrast_ppm": [
+            4.457470277469112e-06,
+            1.0427481276349261e-08,
+            4.26147326553029e-11
+          ]
+        },
+        {
+          "station_id": 2,
+          "active_by_native_0p1ppm": true,
+          "max_endpoint_ppm": 0.28052119464881237,
+          "observed_contrast_ppm": [
+            0.04521473010606497,
+            0.08582105426861474,
+            0.03927628153729836
+          ],
+          "truth_rank_interval_paired": [
+            169,
+            169
+          ],
+          "truth_profiled_amplitude": 3.8036845270605424
+        },
+        {
+          "station_id": 3,
+          "active_by_native_0p1ppm": false,
+          "max_endpoint_ppm": 1.1157161814592378e-07,
+          "observed_contrast_ppm": [
+            4.118062503010461e-08,
+            1.7832631257536663e-10,
+            4.4202673545307425e-13
+          ]
+        }
+      ],
+      "truth_xy_evaluator_only": [
+        8.15,
+        -1.413
+      ],
+      "truth_nearest_candidate_xy": [
+        8.0,
+        -1.413
+      ],
+      "truth_rank_interval_distributed_paired": [
+        169,
+        169
+      ],
+      "truth_rank_interval_same_endpoint_raw": [
+        416,
+        416
+      ],
+      "single_active_station_truth_ranks": [
+        [
+          169,
+          169
+        ]
+      ],
+      "best_candidate_xy": [
+        12.8,
+        5.487
+      ],
+      "best_candidate_error_to_truth_m": 8.320606949015199
+    },
+    {
+      "actual_source": "SA",
+      "transport": "slow",
+      "active_station_count": 0,
+      "active_station_ids": [],
+      "station_detail": [
+        {
+          "station_id": 1,
+          "active_by_native_0p1ppm": false,
+          "max_endpoint_ppm": 0.0,
+          "observed_contrast_ppm": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "station_id": 2,
+          "active_by_native_0p1ppm": false,
+          "max_endpoint_ppm": 0.00933771070150456,
+          "observed_contrast_ppm": [
+            0.0006347307506635729,
+            0.003053544530777215,
+            0.002387835596260386
+          ]
+        },
+        {
+          "station_id": 3,
+          "active_by_native_0p1ppm": false,
+          "max_endpoint_ppm": 0.01242275934556785,
+          "observed_contrast_ppm": [
+            0.000395050411664496,
+            -0.00022039208556199588,
+            -0.0003837176207294374
+          ]
+        }
+      ],
+      "truth_xy_evaluator_only": [
+        -0.45,
+        1.9
+      ],
+      "truth_nearest_candidate_xy": [
+        -0.39999999999999997,
+        1.887
+      ],
+      "truth_rank_interval_distributed_paired": [
+        1,
+        820
+      ],
+      "truth_rank_interval_same_endpoint_raw": [
+        1,
+        820
+      ],
+      "single_active_station_truth_ranks": [],
+      "best_candidate_xy": [
+        -0.7,
+        -0.5129999999999999
+      ],
+      "best_candidate_error_to_truth_m": 2.425916115614882
+    },
+    {
+      "actual_source": "HF",
+      "transport": "slow",
+      "active_station_count": 1,
+      "active_station_ids": [
+        2
+      ],
+      "station_detail": [
+        {
+          "station_id": 1,
+          "active_by_native_0p1ppm": false,
+          "max_endpoint_ppm": 3.278691692729929e-05,
+          "observed_contrast_ppm": [
+            1.2822772239824374e-05,
+            2.999665934229805e-08,
+            1.2258949064943978e-10
+          ]
+        },
+        {
+          "station_id": 2,
+          "active_by_native_0p1ppm": true,
+          "max_endpoint_ppm": 0.473820300414554,
+          "observed_contrast_ppm": [
+            0.00822568986276212,
+            0.11158960679403497,
+            0.05216056062092564
+          ],
+          "truth_rank_interval_paired": [
+            85,
+            820
+          ],
+          "truth_profiled_amplitude": 0.0
+        },
+        {
+          "station_id": 3,
+          "active_by_native_0p1ppm": false,
+          "max_endpoint_ppm": 2.4058882534852027e-07,
+          "observed_contrast_ppm": [
+            8.8800345175174e-08,
+            3.8453612831112247e-10,
+            9.531697650580465e-13
+          ]
+        }
+      ],
+      "truth_xy_evaluator_only": [
+        8.15,
+        -1.413
+      ],
+      "truth_nearest_candidate_xy": [
+        8.0,
+        -1.413
+      ],
+      "truth_rank_interval_distributed_paired": [
+        85,
+        820
+      ],
+      "truth_rank_interval_same_endpoint_raw": [
+        80,
+        80
+      ],
+      "single_active_station_truth_ranks": [
+        [
+          85,
+          820
+        ]
+      ],
+      "best_candidate_xy": [
+        11.600000000000001,
+        5.187000000000001
+      ],
+      "best_candidate_error_to_truth_m": 7.447314952383847
+    }
+  ],
+  "gates": {
+    "at_least_two_physical_active_stations_every_world": "FAIL",
+    "physical_source_over_transport_capacity": "PASS",
+    "heldout_provider_direction": "FAIL",
+    "all_sources_all_transports_unique_full_support_rank1": "FAIL",
+    "paired_contrast_non_degrade_same_endpoint_raw": "FAIL",
+    "paired_contrast_strictly_load_bearing": "PASS",
+    "shared_source_across_stations_load_bearing": "FAIL",
+    "verdict": "NO_GO_NO_CLOSED_LOOP_DISTRIBUTED_OPERATOR"
+  },
+  "claim_boundary": "Only all gates passing permits one failed-H03 closed-loop screen.  A local contrast, a single active station, or improvement on only one transport is insufficient.",
+  "inputs": [
+    {
+      "path": "D:\\ZYC\\CSTAR_M1R_CAUSAL_REPAIR_20260912\\evidence\\m1r_h03_distributed_intervention_20260913\\route\\ROUTE_RULE.json",
+      "bytes": 14097,
+      "sha256": "923aaabd3b7b4327924d7ea02d9a0dba48e597bf7751a23b915dc5cdce9c1639"
+    },
+    {
+      "path": "D:\\ZYC\\CSTAR_M1R_CAUSAL_REPAIR_20260912\\evidence\\cstar_current_runtime_assets240_20260907\\maps\\H03\\candidate.csv",
+      "bytes": 195270,
+      "sha256": "b527de42392ef61d4c4ce23c7628e4388ba5b7dbd48b023af819476df87c37f1"
+    },
+    {
+      "path": "D:\\ZYC\\CSTAR_M1R_CAUSAL_REPAIR_20260912\\evidence\\cstar_joint_development_20260908\\CROSSED_PLUME_LOHO_SIGN.json",
+      "bytes": 5480,
+      "sha256": "b9838552bf0793c4cc413d8701bbd0ca6494a1e668694ed61d1605355a772be4"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\_staging\\M1R_H03_DPISC_20260913\\extracted\\M1R_H03_DPISC_RAW_6a91442\\H03_SA_fast\\CASE_MANIFEST.json",
+      "bytes": 1653,
+      "sha256": "67da4f13a99ad130cfcb07597fdfc5788ed43070228a7ba883545c75d64dcecb"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\_staging\\M1R_H03_DPISC_20260913\\extracted\\M1R_H03_DPISC_RAW_6a91442\\H03_SA_fast\\measured_history.jsonl",
+      "bytes": 267850,
+      "sha256": "9b28bdb75ca1eb27945858e67656797e5510c6d61786c1fa8aac03281f1d1298"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\_staging\\M1R_H03_DPISC_20260913\\extracted\\M1R_H03_DPISC_RAW_6a91442\\H03_SA_fast\\candidate_forward_input.jsonl",
+      "bytes": 164535,
+      "sha256": "d64a8c968127119424bc4b557d1456b44a799f033aea755997bc12b0b6fc10b2"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\_staging\\M1R_H03_DPISC_20260913\\extracted\\M1R_H03_DPISC_RAW_6a91442\\H03_SA_slow\\CASE_MANIFEST.json",
+      "bytes": 1653,
+      "sha256": "a549ce6f51915550289d07a8b8c8be47c5fa77a63744efb437e010840dbc53c0"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\_staging\\M1R_H03_DPISC_20260913\\extracted\\M1R_H03_DPISC_RAW_6a91442\\H03_SA_slow\\measured_history.jsonl",
+      "bytes": 264615,
+      "sha256": "840a0ac3e8a1be1ae8893f35729753431a4df5cb3f262f14595c7df91c5f27dd"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\_staging\\M1R_H03_DPISC_20260913\\extracted\\M1R_H03_DPISC_RAW_6a91442\\H03_SA_slow\\candidate_forward_input.jsonl",
+      "bytes": 164512,
+      "sha256": "0230cd0d6419530f894003e47c1ae91db475a868f48ca716179c6b9ef206a7a8"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\_staging\\M1R_H03_DPISC_20260913\\extracted\\M1R_H03_DPISC_RAW_6a91442\\H03_HF_fast\\CASE_MANIFEST.json",
+      "bytes": 1655,
+      "sha256": "69927cb8adea8d0f468cb0168a704025d9b8f4fedc5cb3a2ec87d76e772294a4"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\_staging\\M1R_H03_DPISC_20260913\\extracted\\M1R_H03_DPISC_RAW_6a91442\\H03_HF_fast\\measured_history.jsonl",
+      "bytes": 267858,
+      "sha256": "8c395b5bef840ab563d94fabca6aa4339330fbc5cfb417031684da2a8bd8bc5c"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\_staging\\M1R_H03_DPISC_20260913\\extracted\\M1R_H03_DPISC_RAW_6a91442\\H03_HF_fast\\candidate_forward_input.jsonl",
+      "bytes": 164205,
+      "sha256": "9be6be79f48d24734eb2b1872283265cef4a685c5194544121285cfbdf9fbc26"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\_staging\\M1R_H03_DPISC_20260913\\extracted\\M1R_H03_DPISC_RAW_6a91442\\H03_HF_slow\\CASE_MANIFEST.json",
+      "bytes": 1655,
+      "sha256": "5a1e51e41a04fa87e6f501ef97985450cd082f33fb57e76eaaf9918d2504e6b8"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\_staging\\M1R_H03_DPISC_20260913\\extracted\\M1R_H03_DPISC_RAW_6a91442\\H03_HF_slow\\measured_history.jsonl",
+      "bytes": 269181,
+      "sha256": "0199e0439d27ab3498b69929c8c4a4ea4a1edbb6f52972019c6aef82a6709ea4"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\_staging\\M1R_H03_DPISC_20260913\\extracted\\M1R_H03_DPISC_RAW_6a91442\\H03_HF_slow\\candidate_forward_input.jsonl",
+      "bytes": 164322,
+      "sha256": "d836f9d52a5e0b38eb30f2e1ac80f0b05aef11ee3bfda2629550ab2d5fb31bb9"
+    }
+  ],
+  "code_sha256": "55214ad744d4eb82aedd0dc31125f821b7bd81b0d45822c1d4d4039329f9a1ea"
+}
