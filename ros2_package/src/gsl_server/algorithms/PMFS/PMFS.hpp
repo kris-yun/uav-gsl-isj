@@ -104,6 +104,7 @@ namespace GSL
         bool eventEvidenceCenteredLogOdds = false;
         bool eventEvidenceSequentialAssimilation = false;
         bool eventEvidencePhysicalStopOnly = false;
+        bool eventEvidenceHistoricalRollingPersistence = false;
         bool eventEvidenceAfterWarmupOnly = false;
         bool eventEvidenceTransportLogPool = false;
         bool eventEvidenceTransportRobustPool = false;
@@ -119,6 +120,7 @@ namespace GSL
         int tadmReplicas = 0;
         uint64_t tadmTransportSubstream = 0;
         bool contextBankExportEnabled = false;
+        bool contextBankLightweightAudit = false;
         std::string contextBankExportDirectory;
         double contextBankPreviousSimTime = -1.0;
 

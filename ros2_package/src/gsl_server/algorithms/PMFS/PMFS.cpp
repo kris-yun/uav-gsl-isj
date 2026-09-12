@@ -122,6 +122,10 @@ namespace GSL
                                               pfdiMode == "cer_core_eventtime_m1" ||
                                               pfdiMode == "cer_core_invariant_m1" || pfdiMode == "cer_core_robust_m1";
         eventEvidencePhysicalStopOnly = pfdiMode == "cer_core_stop_m1";
+        eventEvidenceHistoricalRollingPersistence =
+            getParam<bool>("m1r_v41_historical_rolling_persistence", false);
+        if (eventEvidenceHistoricalRollingPersistence && pfdiMode != "cer_ratio_m1")
+            throw std::invalid_argument("M1R_V41_HISTORICAL_PERSISTENCE_REQUIRES_CER_RATIO_M1");
         eventEvidenceAfterWarmupOnly = pfdiMode == "cer_core_eventtime_m1" ||
                                        pfdiMode == "cer_core_invariant_m1" || pfdiMode == "cer_core_robust_m1";
         eventEvidenceTransportLogPool = pfdiMode == "cer_core_invariant_m1";
@@ -179,6 +183,10 @@ namespace GSL
         tadmTransportSubstream = getParam<int64_t>("tadm_transport_substream", 0x5441444D54524E53LL);
         contextBankExportEnabled = getParam<bool>("context_bank_export_enabled", false);
         contextBankExportDirectory = getParam<std::string>("context_bank_export_directory", "");
+        contextBankLightweightAudit = getParam<bool>("m1r_v41_lightweight_audit", false);
+        if (contextBankLightweightAudit &&
+            (!contextBankExportEnabled || !eventEvidenceHistoricalRollingPersistence))
+            throw std::invalid_argument("M1R_V41_LIGHTWEIGHT_AUDIT_REQUIRES_EXPORT_AND_HISTORICAL_PERSISTENCE");
         IF_GUI(settings.visualization.headless = getParam<bool>("headless", false));
     }
 
@@ -292,7 +300,8 @@ namespace GSL
         simulations.configureContextBankExport(
             contextBankExportEnabled,
             contextBankExportDirectory,
-            getParam<std::string>("run_uuid", "unknown"));
+            getParam<std::string>("run_uuid", "unknown"),
+            contextBankLightweightAudit);
         // Native PMFS forward simulations run in OpenMP workers.  Bind their
         // source-point and transport draws to (seed, source-update) instead
         // of thread-local RNG state so OFF/ON pairs have a reproducible
@@ -306,7 +315,8 @@ namespace GSL
                                            eventEvidenceSequentialAssimilation,
                                            eventEvidenceTransportLogPool,
                                            eventEvidenceTransportRobustPool,
-                                           pfdiMode == "cer_core_phic_m1");
+                                           pfdiMode == "cer_core_phic_m1",
+                                           eventEvidenceHistoricalRollingPersistence);
 
         if (cpirEnabled)
             initializeCPIR();

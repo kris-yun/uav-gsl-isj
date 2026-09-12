@@ -25,6 +25,8 @@ GEOMETRY_MANIFEST="${GEOMETRY_MANIFEST:-}"
 QUALIFIED_HELPER="${QUALIFIED_HELPER:-}"
 CONTEXT_BANK_EXPORT_ENABLED="${CONTEXT_BANK_EXPORT_ENABLED:-false}"
 CONTEXT_BANK_EXPORT_DIRECTORY="${CONTEXT_BANK_EXPORT_DIRECTORY:-}"
+M1R_V41_HISTORICAL_ROLLING_PERSISTENCE="${M1R_V41_HISTORICAL_ROLLING_PERSISTENCE:-false}"
+M1R_V41_LIGHTWEIGHT_AUDIT="${M1R_V41_LIGHTWEIGHT_AUDIT:-false}"
 
 REPO_ROOT="${REPO_ROOT:-/home/zyc/gsl_ws/src/GasSourceLocalization}"
 BANK_ROOT_BASE="${BANK_ROOT_BASE:-/mnt/hgfs/workspace/CPIR_M1_FULLGRID_LOOKUP_20260831_R1}"
@@ -108,6 +110,9 @@ esac
 BANK_ROOT="${BANK_ROOT:-${BANK_ROOT_BASE}/${HSHORT}}"
 RUN_ID="${RUN_ID:-CTPI_${HSHORT}_S${SEED}_${ARM}_$(date -u +%Y%m%dT%H%M%SZ)}"
 RUN_DIR="${RUN_ROOT}/${HSHORT}_seed${SEED}_${ARM}"
+if [[ "${CONTEXT_BANK_EXPORT_ENABLED}" == "true" && -z "${CONTEXT_BANK_EXPORT_DIRECTORY}" ]]; then
+  CONTEXT_BANK_EXPORT_DIRECTORY="${RUN_DIR}/context_bank"
+fi
 CPIR_AUDIT_DIR="${RUN_DIR}/ctpi_audit"
 PREFLIGHT_JSON="${RUN_DIR}/ctpi_formal_preflight.json"
 ALGORITHM_BINARY="${PFDI_INSTALL_ROOT}/install/gsl_server/lib/gsl_server/gsl_actionserver_node"
@@ -223,7 +228,7 @@ fi
 export AMENT_PREFIX_PATH="${PFDI_INSTALL_ROOT}/install/gsl_server:${PFDI_INSTALL_ROOT}/deps/install/vgr_bridge:${PFDI_INSTALL_ROOT}/deps/install/gmrf_msgs:${PFDI_INSTALL_ROOT}/deps/install/gsl_actions:${PFDI_INSTALL_ROOT}/deps/install/olfaction_msgs:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_player:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_common:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_msgs:/dev/shm/house1_vgr_install:/home/zyc/ros2_ws/install/gmrf_wind_mapping:/opt/ros/humble:${AMENT_PREFIX_PATH:-}"
 export CMAKE_PREFIX_PATH="${AMENT_PREFIX_PATH}"
 export PATH="${PFDI_INSTALL_ROOT}/install/gsl_server:/dev/shm/house1_vgr_install/lib/vgr_bridge:${PATH}"
-export PYTHONPATH="${VGR_BRIDGE_SOURCE_ROOT}:${PFDI_INSTALL_ROOT}/deps/install/vgr_bridge/lib/python3.10/site-packages:${PFDI_INSTALL_ROOT}/deps/install/gsl_actions/lib/python3.10/site-packages:${PFDI_INSTALL_ROOT}/deps/install/gsl_actions/local/lib/python3.10/dist-packages:${PFDI_INSTALL_ROOT}/deps/install/gmrf_msgs/local/lib/python3.10/dist-packages:${PFDI_INSTALL_ROOT}/deps/install/olfaction_msgs/local/lib/python3.10/dist-packages:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/dev/shm/house1_msgs_install/local/lib/python3.10/dist-packages:/dev/shm/house2_gaden_install/gaden_msgs/local/lib/python3.10/dist-packages:/dev/shm/house1_vgr_bridge:/home/zyc/ros2_ws/src/vgr_bridge:${PYTHONPATH:-}"
+export PYTHONPATH="${VGR_BRIDGE_SOURCE_ROOT}:/dev/shm/house1_vgr_install/lib/python3.10/site-packages:${PFDI_INSTALL_ROOT}/deps/install/vgr_bridge/lib/python3.10/site-packages:${PFDI_INSTALL_ROOT}/deps/install/gsl_actions/lib/python3.10/site-packages:${PFDI_INSTALL_ROOT}/deps/install/gsl_actions/local/lib/python3.10/dist-packages:${PFDI_INSTALL_ROOT}/deps/install/gmrf_msgs/local/lib/python3.10/dist-packages:${PFDI_INSTALL_ROOT}/deps/install/olfaction_msgs/local/lib/python3.10/dist-packages:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/dev/shm/house1_msgs_install/local/lib/python3.10/dist-packages:/dev/shm/house2_gaden_install/gaden_msgs/local/lib/python3.10/dist-packages:/dev/shm/house1_vgr_bridge:/home/zyc/ros2_ws/src/vgr_bridge:${PYTHONPATH:-}"
 export LD_LIBRARY_PATH="${PFDI_INSTALL_ROOT}/install/gsl_server/lib:${PFDI_INSTALL_ROOT}/deps/install/gmrf_msgs/lib:${PFDI_INSTALL_ROOT}/deps/install/gsl_actions/lib:${PFDI_INSTALL_ROOT}/deps/install/olfaction_msgs/lib:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_player/lib:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_common/lib:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_msgs/lib:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_build/gaden_common/third_party/gaden_core/third_party/libbsc:/dev/shm/house1_vgr_install/lib:/home/zyc/ros2_ws/install/gmrf_wind_mapping/lib:/opt/ros/humble/lib:${LD_LIBRARY_PATH:-}"
 
 python3 - "${RUN_DIR}/vgr_bridge_runtime_preflight.json" "${METHOD}" "${VGR_BRIDGE_SOURCE_ROOT}" <<'PY_VGR_BRIDGE'
@@ -334,6 +339,8 @@ PY_MAP
   "cpir_expected_min_warmup_iterations:=${MIN_WARMUP_ITERATIONS}"
   "context_bank_export_enabled:=${CONTEXT_BANK_EXPORT_ENABLED}"
   "context_bank_export_directory:=${CONTEXT_BANK_EXPORT_DIRECTORY}"
+  "m1r_v41_historical_rolling_persistence:=${M1R_V41_HISTORICAL_ROLLING_PERSISTENCE}"
+  "m1r_v41_lightweight_audit:=${M1R_V41_LIGHTWEIGHT_AUDIT}"
   "ctpi_m3_horizontal_speed_mps:=0.4"
   "navigation_trace_file:=${RUN_DIR}/navigation_trace.csv"
   "source_estimate_trace_file:=${RUN_DIR}/source_estimate_trace.csv"

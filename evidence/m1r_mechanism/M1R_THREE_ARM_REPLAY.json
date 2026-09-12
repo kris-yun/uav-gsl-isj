@@ -1,0 +1,28 @@
+{
+  "contract": "M1R_THREE_ARM_REPLAY_V41_20260912",
+  "status": "NOT_IDENTIFIABLE",
+  "result": "THREE_ARM_EXACT_REPLAY_NOT_IDENTIFIABLE_FROM_CURRENT_ARTIFACTS",
+  "arms": {
+    "M0": "persistence-only",
+    "M1": "persistence plus absolute source",
+    "M2": "persistence plus source/context contrast (historical M1R observation law)"
+  },
+  "reason": [
+    "full_candidate_posterior_each_update",
+    "candidate_event_p_sim",
+    "event_p_context",
+    "candidate_event_log_likelihood_increment",
+    "true_source_rank_each_update",
+    "random_transport_identity_each_candidate_update"
+  ],
+  "historical_closed_loop_gate_is_not_a_three_arm_replay": true,
+  "historical_gate_path": "evidence/cstar_cer_ratio_house123_seed12_20260908/CSTAR_CER_RATIO_HOUSE123_SEED12_GATE.json",
+  "instrumented_companion": {
+    "status": "COMPLETED",
+    "label": "NEW_INSTRUMENTED_DEVELOPMENT_REPLICATION",
+    "historical_equivalence_proven": false,
+    "score_path": "evidence/m1r_mechanism/M1R_INSTRUMENTED_THREE_ARM_RESULT.json",
+    "comparison_path": "evidence/m1r_mechanism/M1R_HISTORICAL_REPLICATION_COMPARISON.json",
+    "mechanism_result": "EARLY_SOURCE_NONIDENTIFIABILITY_WITH_LATE_NET_POSITIVE_CONTRAST"
+  }
+}

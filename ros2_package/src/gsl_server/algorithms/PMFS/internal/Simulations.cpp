@@ -360,7 +360,7 @@ namespace GSL::PMFS_internal
     void Simulations::configureEventEvidence(bool enabled, int transportReplicas, bool contrastiveRatio,
                                              bool centeredLogOdds, bool sequentialAssimilation,
                                              bool transportLogPool, bool transportRobustPool,
-                                             bool sensorFopdt)
+                                             bool sensorFopdt, bool historicalRollingPersistence)
     {
         if (transportReplicas < 1 || transportReplicas > 8)
             throw std::invalid_argument("CER_TRANSPORT_REPLICA_RANGE");
@@ -371,6 +371,8 @@ namespace GSL::PMFS_internal
         eventEvidenceTransportLogPool = eventEvidenceSequentialAssimilation && transportLogPool;
         eventEvidenceTransportRobustPool = eventEvidenceSequentialAssimilation && transportRobustPool;
         eventEvidenceSensorFopdt = eventEvidenceContrastiveRatio && sensorFopdt;
+        eventEvidenceHistoricalRollingPersistence =
+            eventEvidenceContrastiveRatio && historicalRollingPersistence;
         eventEvidenceTransportReplicas = transportReplicas;
         eventEvidence.clear();
         eventEvidenceContext.clear();
@@ -863,12 +865,6 @@ namespace GSL::PMFS_internal
             nativeCandidateHitMaps[stableID] = std::move(nativeHitMap);
         }
         exportCandidateHitMap(stableID, candidatePoint, result.hitMap);
-        // Keep the current legacy event inputs auditable.  This export is
-        // write-only and does not affect sourceProb or planner state; PHIC
-        // replay uses it to replace the hit-map observation law offline.
-        exportContrastiveEventAttribution(stableID, candidatePoint, result.transportMemberHitMaps,
-                                          result.transportMemberExposureMaps);
-
         result.sourceProb = eventEvidenceContrastiveRatio ? 1.0L : mixtureScore;
         exportNativeCandidateRecord(stableID, candidatePoint, firstSampledSourcePoint, result.sourceProb, result.hitMap);
 
@@ -895,17 +891,20 @@ namespace GSL::PMFS_internal
         readOnlyForwardExportCurrentDirectory = readOnlyForwardExportDirectory;
     }
 
-    void Simulations::configureContextBankExport(bool enabled, const std::string& directory, const std::string& runUUID)
+    void Simulations::configureContextBankExport(bool enabled, const std::string& directory,
+                                                 const std::string& runUUID, bool lightweightAudit)
     {
         contextBankExportEnabled = enabled && !directory.empty();
         contextBankExportDirectory = directory;
         contextBankExportRunUUID = runUUID;
+        contextBankLightweightAudit = lightweightAudit;
         if (!contextBankExportEnabled)
             return;
         std::filesystem::create_directories(contextBankExportDirectory);
         std::ofstream contract(contextBankExportDirectory + "/context_bank_contract.json", std::ios::out | std::ios::trunc);
         contract << "{\n"
                  << "  \"export_only\": true,\n"
+                 << "  \"m1r_v41_lightweight_audit\": " << (contextBankLightweightAudit ? "true" : "false") << ",\n"
                  << "  \"p2_shadow_enabled\": false,\n"
                  << "  \"native_forward_maps\": true,\n"
                  << "  \"native_source_point\": \"first_sampled_point_if_recoverable\",\n"
@@ -918,9 +917,12 @@ namespace GSL::PMFS_internal
         if (!contextBankExportEnabled)
             return;
         contextBankSourceUpdateId = sourceUpdateId;
+        contextBankAttributionExportedForUpdate = false;
         contextBankSimTime = simTime;
         readOnlyForwardExportSnapshot = static_cast<size_t>(sourceUpdateId);
         readOnlyForwardExportCurrentDirectory = fmt::format("{}/source_update_{:04}", contextBankExportDirectory, sourceUpdateId);
+        if (contextBankLightweightAudit)
+            return;
         std::filesystem::create_directories(readOnlyForwardExportCurrentDirectory + "/candidate_maps");
         std::ofstream manifest(readOnlyForwardExportCurrentDirectory + "/candidate_manifest.csv", std::ios::out | std::ios::trunc);
         manifest << "run_uuid,source_update_id,candidate_id,origin_i,origin_j,size_i,size_j,center_x,center_y,native_source_x,native_source_y,native_score,hit_map_file\n";
@@ -936,6 +938,8 @@ namespace GSL::PMFS_internal
         const std::string directory = readOnlyForwardExportCurrentDirectory;
         std::filesystem::create_directories(directory);
 
+        if (!contextBankLightweightAudit)
+        {
         std::ofstream measured(directory + "/measured_hit_probability.csv", std::ios::out | std::ios::trunc);
         measured << "cell_index,grid_i,grid_j,x,y,occupancy,probability,logOdds,confidence,omega,distanceFromRobot,originalPropagationDirection_x,originalPropagationDirection_y\n";
         for (size_t i = 0; i < measuredHitProb.data.size(); ++i)
@@ -957,6 +961,7 @@ namespace GSL::PMFS_internal
                 continue;
             const Vector2 xy = wind.metadata.indexToCoordinates(i);
             estimatedWind << i << ',' << std::setprecision(17) << xy.x << ',' << xy.y << ',' << wind.data[i].x << ',' << wind.data[i].y << '\n';
+        }
         }
 
         std::ofstream posterior(directory + "/source_posterior.csv", std::ios::out | std::ios::trunc);
@@ -988,6 +993,8 @@ namespace GSL::PMFS_internal
                                                   const std::vector<float>& hitMap)
     {
         if (!contextBankExportEnabled)
+            return;
+        if (contextBankLightweightAudit)
             return;
         std::lock_guard<std::mutex> guard(readOnlyForwardExportMutex);
         const std::string directory = readOnlyForwardExportCurrentDirectory;
@@ -6670,6 +6677,8 @@ namespace GSL::PMFS_internal
                 throw std::runtime_error("CER_RATIO_CONTEXT_EVENT_COUNT");
             long double logLikelihood = 0.0L;
             long double fopdtState = 0.0L;
+            double rollingPreviousConcentration = eventEvidenceWindowStart > 0
+                ? eventEvidence[eventEvidenceWindowStart - 1].concentration : 0.0;
             double previousTime = eventEvidenceWindowStart > 0
                 ? eventEvidence[eventEvidenceWindowStart - 1].simTime
                 : (eventEvidence.empty() ? 0.0 : eventEvidence[eventEvidenceWindowStart].simTime -
@@ -6706,7 +6715,10 @@ namespace GSL::PMFS_internal
                     // Same fixed persistence law as the frozen CORE modes.
                     const long double thresholdLog = std::log1p(event.threshold);
                     const long double previousLog = std::log1p(
-                        eventEvidenceWindowStart > 0 ? eventEvidence[eventEvidenceWindowStart - 1].concentration : 0.0);
+                        eventEvidenceHistoricalRollingPersistence
+                            ? rollingPreviousConcentration
+                            : (eventEvidenceWindowStart > 0
+                                ? eventEvidence[eventEvidenceWindowStart - 1].concentration : 0.0));
                     const long double persistence = 0.5L * std::erfc(
                         (thresholdLog - previousLog) / std::sqrt(2.0L));
                     const long double sourceProbability = clipped(memberMap[event.cell]);
@@ -6716,6 +6728,7 @@ namespace GSL::PMFS_internal
                         logit(persistence) + logit(sourceProbability) - contextLogOdds));
                 }
                 logLikelihood += std::log(event.hit ? corrected : 1.0L - corrected);
+                rollingPreviousConcentration = event.concentration;
                 previousTime = event.simTime;
             }
             if (eventEvidenceTransportLogPool)
@@ -6749,6 +6762,24 @@ namespace GSL::PMFS_internal
     void Simulations::applyContrastiveEventEvidence(std::vector<SimulationResult>& results,
                                                      std::vector<LeafScore>& scores)
     {
+        // Export once per source update, after the candidate-common context is
+        // available.  This is write-only instrumentation and is deliberately
+        // outside the score construction below.
+        if (contextBankExportEnabled && !contextBankAttributionExportedForUpdate)
+        {
+            for (const SimulationResult& result : results)
+            {
+                if (!result.valid || result.leaf == nullptr)
+                    continue;
+                const Vector2 candidatePoint = measuredHitProb.metadata.indicesToCoordinates(
+                    result.leaf->origin.x + result.leaf->size.x / 2,
+                    result.leaf->origin.y + result.leaf->size.y / 2);
+                exportContrastiveEventAttribution(
+                    p2StableID(result.leaf), candidatePoint,
+                    result.transportMemberHitMaps, result.transportMemberExposureMaps);
+            }
+            contextBankAttributionExportedForUpdate = true;
+        }
         std::unordered_map<NQA::Node*, long double> scoreByLeaf;
         for (SimulationResult& result : results)
         {

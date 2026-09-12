@@ -95,7 +95,8 @@ namespace GSL::PMFS_internal
                                     bool sequentialAssimilation = false,
                                     bool transportLogPool = false,
                                     bool transportRobustPool = false,
-                                    bool sensorFopdt = false);
+                                    bool sensorFopdt = false,
+                                    bool historicalRollingPersistence = false);
         void recordEventEvidence(const Vector2& position, bool hit, double concentration,
                                  double threshold, uint64_t blockId, double simTime = 0.0);
         void updateSourceProbability(float refineFraction);
@@ -125,7 +126,8 @@ namespace GSL::PMFS_internal
                               double windSpeed, double windDirection,
                               uint64_t blockId = 0, double simTime = 0.0);
         void beginTADMUpdate(uint64_t sourceUpdateId, double simTime);
-        void configureContextBankExport(bool enabled, const std::string& directory, const std::string& runUUID);
+        void configureContextBankExport(bool enabled, const std::string& directory, const std::string& runUUID,
+                                        bool lightweightAudit = false);
         void beginContextBankUpdate(uint64_t sourceUpdateId, double simTime);
         void exportContextBankState(uint64_t sourceUpdateId, double simTime, double timeSincePreviousUpdate,
                                     const geometry_msgs::msg::Pose& robotPose);
@@ -175,6 +177,7 @@ namespace GSL::PMFS_internal
         bool eventEvidenceTransportLogPool = false;
         bool eventEvidenceTransportRobustPool = false;
         bool eventEvidenceSensorFopdt = false;
+        bool eventEvidenceHistoricalRollingPersistence = false;
         int eventEvidenceTransportReplicas = 1;
         std::vector<EventEvidence> eventEvidence;
         // Member-specific, candidate-invariant context.  Legacy M1R stores an
@@ -206,9 +209,11 @@ namespace GSL::PMFS_internal
         std::mutex causalWindHistoryExportMutex;
 
         bool contextBankExportEnabled = false;
+        bool contextBankLightweightAudit = false;
         std::string contextBankExportDirectory;
         std::string contextBankExportRunUUID;
         uint64_t contextBankSourceUpdateId = 0;
+        bool contextBankAttributionExportedForUpdate = false;
         double contextBankSimTime = 0.0;
         size_t contextBankNativeSimulationCount = 0;
         double contextBankWallStartEpoch = 0.0;

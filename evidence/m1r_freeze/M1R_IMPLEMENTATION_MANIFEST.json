@@ -1,0 +1,99 @@
+{
+  "contract": "M1R_IMPLEMENTATION_FREEZE_V41_20260912",
+  "audit_starting_sha": "c41fdb3833cc203550b760b36260a715fd7b99f3",
+  "historical_runtime_declared_source": "c62a54a+cer-ratio-working-tree",
+  "historical_source_preservation_commit": "8dd5977",
+  "binding_basis": "8dd5977 is the first repository commit that preserves the cer_ratio_m1 source and the nine historical run folders; the runtime manifest itself names an uncommitted tree",
+  "historical_binary_sha256": "62df6d257bda7123dea67c3142b877fc3b8a8d8550012c18bfd3f456925ee533",
+  "historical_binary_bytes_available": false,
+  "source_files": [
+    {
+      "path": "ros2_package/src/gsl_server/algorithms/PMFS/PMFS.cpp",
+      "preserved_commit": "8dd5977",
+      "git_blob": "71a73b329f6da134d34d53fafc99f8fe3854f432",
+      "sha256": "666988be990241d6b79c434a8a322fdfd886cc693eff7d95cc88fafd2ef3f941"
+    },
+    {
+      "path": "ros2_package/src/gsl_server/algorithms/PMFS/PMFS.hpp",
+      "preserved_commit": "8dd5977",
+      "git_blob": "343a9e8cf6d0c1679a31de4bbbd3bf0b003d9a8a",
+      "sha256": "4eb6c4706f47583aa68b540aa2aff72d547a99fd125ad2d0627efc223d96e88a"
+    },
+    {
+      "path": "ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp",
+      "preserved_commit": "8dd5977",
+      "git_blob": "dcee1ede8cf977cc48a869ba579dde235014d06f",
+      "sha256": "14f05b48145b6f46e864182e2aaed670848238d46cc1183a25b8ac138ec2bafc"
+    },
+    {
+      "path": "ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.hpp",
+      "preserved_commit": "8dd5977",
+      "git_blob": "ad33dc464c691eb9d717354bc8c32d63571f34e8",
+      "sha256": "7f1cccb0cfb466f7abd77906e11928d7bc4d560cfc0fdb6a23d2acb56b408bab"
+    },
+    {
+      "path": "closed_loop/ctpi/run_ctpi_fasttrack_case_safe_20260903.sh",
+      "preserved_commit": "8dd5977",
+      "git_blob": "6b677b2b2ec5ae5986359885962572b24418b16f",
+      "sha256": "03f6fe2cff8ac828a11c145216b8075fd34d31e78532259a7bf692b97265fe39"
+    },
+    {
+      "path": "closed_loop/ctpi/vgr_gsl_pmfs_ctpi_fasttrack.launch.py",
+      "preserved_commit": "8dd5977",
+      "git_blob": "6e4d0caafc4ce8716b2de6420c8134adc070bc90",
+      "sha256": "b2cc0ab7dcbcff2cf944f9f34fd43e127f955c87866cd0172f8f3154f9be2f9f"
+    },
+    {
+      "path": "tools/cstar_run_cer_ratio_house123_seed12_20260908.sh",
+      "preserved_commit": "8dd5977",
+      "git_blob": "53b4f0a6573724bd15461aaabf059f2db0cf3c8d",
+      "sha256": "3114a9577d77cc0b739aa9c0839e67263b08bcf189a3432dc988e77ea0f1b20f"
+    }
+  ],
+  "mode": {
+    "pfdi_mode": "cer_ratio_m1",
+    "event_evidence_enabled": true,
+    "contrastive_ratio": true,
+    "transport_replicas": 1,
+    "sequential_assimilation": false,
+    "physical_stop_only": false,
+    "centered_log_odds": false
+  },
+  "observation_law": {
+    "recording_unit": "every completed internal measurement block",
+    "physical_stop_factor_equivalence": false,
+    "persistence": "Normal(log1p(previous recorded block concentration), unit scale) threshold tail; previousConcentration is updated after every recorded block and reset to zero at each candidate score evaluation",
+    "persistence_is_full_fopdt_latent_state": false,
+    "source_probability": "candidate member hit-map probability at the recorded event cell, clipped to [1e-4,1-1e-4]",
+    "context_probability": "arithmetic mean candidate hit-map probability at the event cell over the current first-level valid candidate set",
+    "candidate_score": "product over recorded blocks of Bernoulli likelihood after logit(persistence)+logit(p_sim)-logit(p_context)",
+    "posterior_path": "candidate sourceProb replaces the native first-level leaf score before native PMFS refinement/controller consumption"
+  },
+  "source_assertions": {
+    "previous_concentration_updates_each_event": true,
+    "physical_stop_filter_present_for_historical_mode": false,
+    "historical_mode_records_each_measurement_block": true
+  },
+  "observed_event_counts_by_source_update": {
+    "H01": [
+      32,
+      56,
+      80,
+      104
+    ],
+    "H02": [
+      32,
+      56,
+      80,
+      104
+    ],
+    "H03": [
+      32,
+      56,
+      80,
+      104
+    ]
+  },
+  "implementation_bound": "PASS_WITH_PROVENANCE_LIMIT",
+  "provenance_limit": "the historical binary digest is recorded, but the binary bytes are not present in the preserved evidence tree"
+}

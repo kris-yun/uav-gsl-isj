@@ -1,0 +1,70 @@
+{
+  "contract": "H03_M1R_FAILURE_DECOMPOSITION_V41_20260912",
+  "evidence_scope": {
+    "historical_outcome": "preserved September 8 artifacts",
+    "mechanism_fields": "NEW_INSTRUMENTED_DEVELOPMENT_REPLICATION only",
+    "historical_exact_replay": false
+  },
+  "historical_result": {
+    "a0_final_error_m": 7.64682084267704,
+    "m1r_final_error_m": 8.710181915436669,
+    "m1r_final_increment_m": -1.063361072759629,
+    "a0_distance_auc_m_s": 1439.6303097177008,
+    "m1r_distance_auc_m_s": 1425.3295799264654,
+    "m1r_auc_increment_m_s": 14.300729791235426,
+    "interpretation": "endpoint regression with small whole-horizon AUC improvement; not a uniform trajectory failure"
+  },
+  "instrumented_replication": {
+    "label": "NEW_INSTRUMENTED_DEVELOPMENT_REPLICATION",
+    "terminal_status": "time_budget_timeout",
+    "final_error_m": 8.879846226146036,
+    "nearest_true_candidate_distance_m": 0.7105414958889278,
+    "candidate_count": 85,
+    "update_1": {
+      "m1_true_rank": 22,
+      "m2_true_rank": 79,
+      "m2_minus_m1_early_half": -2.0526399720824924,
+      "m2_minus_m1_late_half": 11.509512516761465,
+      "m2_minus_m1_total": 9.456872544678973,
+      "wrong_sign_events": 20,
+      "event_count": 32
+    },
+    "update_4": {
+      "m1_true_rank": 32,
+      "m2_true_rank": 29,
+      "m2_minus_m1_early_half": 47.36623013370226,
+      "m2_minus_m1_late_half": 75.37091806383401,
+      "m2_minus_m1_total": 122.73714819753627,
+      "m2_true_minus_top_false_log_margin": -386.5624007179274,
+      "wrong_sign_events": 34,
+      "event_count": 104
+    }
+  },
+  "mechanisms": {
+    "EARLY_SOURCE_NONIDENTIFIABILITY": {
+      "status": "SUPPORTED_IN_NEW_REPLICATION",
+      "reason": "the first released M2 update ranks the nearest true-source candidate 79/85 and has a negative first-half contrast increment"
+    },
+    "CONTRASTIVE_EVIDENCE_WRONG_SIGN": {
+      "status": "NOT_PERSISTENT_LATE",
+      "reason": "true-source M2-minus-M1 contrast is net positive after every update and strongly positive late"
+    },
+    "LATE_COUNTEREVIDENCE_EXISTS": {
+      "status": "SUPPORTED_IN_NEW_REPLICATION",
+      "reason": "the final cumulative late-half true-source contrast is +75.370918"
+    },
+    "POSTERIOR_REVISION_FAILURE": {
+      "status": "NOT_SUPPORTED_AS_PRIMARY",
+      "reason": "M2 true-source rank recovers from 79 to 29, so revision is possible; the remaining margin is a source-identifiability failure"
+    },
+    "PLANNER_FEEDBACK_AMPLIFICATION": {
+      "status": "NOT_SELECTED",
+      "reason": "the final source rank is only 29/85 with a -386.562401 margin, so the posterior is not basically correct"
+    }
+  },
+  "reproducible_failure": "historical H03 endpoint error regressed by 1.063361 m; new frozen replication also timed out with 8.879846 m final error",
+  "missing_theoretical_property": "CONTROLLED_EVIDENCE_RELEASE_UNDER_SOURCE_NONIDENTIFIABILITY",
+  "failure_decomposition_status": "CASE_2_EARLY_NONIDENTIFIABILITY",
+  "one_next_mechanism": "IDENTIFIABILITY_CONTROL",
+  "repair_implemented": false
+}
