@@ -1,0 +1,2012 @@
+{
+  "contract": "LOCAL_WIND_RESPONSE_INFORMATION_GATE_V1",
+  "scientific_status": "CAUSAL_ADMISSION_NOT_ESTABLISHED",
+  "status": "OBSERVABLE_INFORMATION_AVAILABLE",
+  "script_sha256": "f432482da447d4ecf4aedadcf6fa39b767d7b6402613d46b75a2fef87cdcd4da",
+  "input_root": "D:\\ZYC\\CSTAR_M1R_CAUSAL_REPAIR_20260912\\evidence\\m1r_instrumented_20260912",
+  "frozen_analysis_config": {
+    "horizon_s": 240.0,
+    "sample_dt_s": 0.2,
+    "time_tolerance_s": 1e-08,
+    "minimum_stop_samples": 10,
+    "gram_rank_absolute_tolerance": 1e-12,
+    "gas_increment_change_absolute_tolerance": 1e-12,
+    "response_lag_samples": 1,
+    "gas_reference_ppm": 1.0,
+    "segment_selection": "maximal same printed xyz, is_moving=0, contiguous time and step; no gas/wind selection",
+    "availability_rule": "each House has at least one eligible stop with wind-difference rank 2 and a nonconstant measured gas trace",
+    "parameter_search": false,
+    "evaluation_role": "development input audit; not preregistered confirmatory efficacy evidence"
+  },
+  "claims": {
+    "source_labels_used": false,
+    "gas_truth_loaded": false,
+    "instrument_exogeneity_pass": false,
+    "source_identification_pass": false,
+    "proper_source_evidence_pass": false,
+    "causal_main_innovation_pass": false,
+    "closed_loop_utility_pass": false
+  },
+  "limitations": [
+    "Wind differences are not certified martingale innovations or exogenous instruments.",
+    "Nonconstant gas and rank-two wind variation do not establish wind-caused gas response; the cross moment is descriptive.",
+    "Measurement noise or shared upstream transport can generate apparent variation or association.",
+    "Local wind W measures a latent spatial flow F: F may cause both W and gas. Intervening on a reading W is not intervening on F.",
+    "W=U,Y=beta*W+epsilon and W=U,Y=beta*U+epsilon are observationally identical but have different do(W) effects; covariance cannot resolve them.",
+    "Correlated samples and stops from one run are not independent realizations.",
+    "CSV coordinate equality is only equality at printed precision; no causal action randomization is assumed.",
+    "There is no candidate source response, source alias exclusion, calibrated likelihood, or efficacy evaluation in this gate.",
+    "An adaptive PMFS route requires conditioning on legal history; fixed-route information is not closed-loop utility."
+  ],
+  "next_minimal_falsifiable_test": "First establish an independently justified measurement/causal model linking local wind W to a real spatial flow perturbation F; a do(W) reading change is not a do(F) intervention, and more wind-provider tuning does not resolve this missing identification assumption. Only after that, freeze the mapping from a local wind innovation to the declared spatial transport perturbation, then generate source-conditioned response derivative vectors using only legal prefixes and map geometry. Freeze those vectors before evaluator-only alias labels are used. Test every preserved H01/H02 source alias after the same predeclared nuisance removal. Identical or zero response vectors, all-abstention, or an unjustified wind-intervention mapping stop causal admission; do not substitute a geometric source-direction score.",
+  "runs": {
+    "H01_seed12_M1R": {
+      "status": "OBSERVABLE_INFORMATION_AVAILABLE",
+      "input_sha256": {
+        "sensor_trace.csv": "a52e719c4fe4522312af4d9f76b034aaa0563d69802b45ccc8f39732aa850663",
+        "wind_trace.csv": "e7c429e1d226a9898919435141252ff0aeda33133773652ac581389720b623fc",
+        "sim_pose_trace.csv": "b76019be011b12260ae99c9c3ba0be65233e66f55c5ff04b57c46915616290fc"
+      },
+      "loaded_columns": {
+        "sensor_trace.csv": [
+          "t_sim_s",
+          "step",
+          "measured_gas_ppm"
+        ],
+        "wind_trace.csv": [
+          "t_sim_s",
+          "step",
+          "wind_u",
+          "wind_v"
+        ],
+        "sim_pose_trace.csv": [
+          "t_sim_s",
+          "step",
+          "x",
+          "y",
+          "z",
+          "is_moving"
+        ]
+      },
+      "aligned_samples": 1200,
+      "first_time_s": 0.2,
+      "last_time_s": 240.0,
+      "maximal_geometry_stop_segments": 14,
+      "segments_below_minimum_samples": 0,
+      "eligible_stop_segments": 14,
+      "rank_two_stop_segments": 14,
+      "rank_two_and_nonconstant_gas_stop_segments": 12,
+      "rank_two_and_gas_above_0_1ppm_segments_descriptive_only": 10,
+      "stops": [
+        {
+          "geometry_stop_id": 0,
+          "first_step": 1,
+          "last_step": 105,
+          "start_s": 0.2,
+          "end_s": 21.0,
+          "samples": 105,
+          "printed_pose_xyz_m": [
+            -3.17,
+            -1.75,
+            0.3
+          ],
+          "wind_difference_samples": 104,
+          "wind_difference_gram": [
+            [
+              0.15754736901399996,
+              0.07988103426299999
+            ],
+            [
+              0.07988103426299999,
+              0.05247049909699999
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.009398961862139774,
+            0.20061890624886017
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 21.344794158276024,
+          "measured_gas_range_ppm": [
+            0.0,
+            0.081031
+          ],
+          "log1p_measured_gas_variance": 0.0003631880145191821,
+          "log1p_response_changed_steps": 103,
+          "log1p_response_rms": 0.0016251715487376056,
+          "gas_above_0_1ppm_samples_descriptive_only": 0,
+          "lag_one_wind_difference_gas_increment_pairs": 103,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            1.1186605015554236e-05,
+            6.6213840774931235e-06
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 1,
+          "first_step": 110,
+          "last_step": 189,
+          "start_s": 22.0,
+          "end_s": 37.8,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            -4.1,
+            -1.13,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.667372808976,
+              -0.06900083346400004
+            ],
+            [
+              -0.06900083346400004,
+              0.04051120013600001
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.03300589848799313,
+            0.6748781106240069
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 20.447197062958725,
+          "measured_gas_range_ppm": [
+            0.045377,
+            0.100681
+          ],
+          "log1p_measured_gas_variance": 0.00023633831784689282,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.0017142784223825422,
+          "gas_above_0_1ppm_samples_descriptive_only": 1,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -5.6910849853265275e-06,
+            -3.2273488574953043e-06
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 2,
+          "first_step": 194,
+          "last_step": 273,
+          "start_s": 38.8,
+          "end_s": 54.6,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            -5.0,
+            -0.83,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.19513274380799994,
+              0.03423338644
+            ],
+            [
+              0.03423338644,
+              0.095156422328
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.08455794294562273,
+            0.20573122319037723
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 2.433020672258764,
+          "measured_gas_range_ppm": [
+            0.069282,
+            0.155722
+          ],
+          "log1p_measured_gas_variance": 0.0007019665795229962,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.0034575846558078287,
+          "gas_above_0_1ppm_samples_descriptive_only": 28,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            3.0861165005248405e-05,
+            -1.2976907112165082e-05
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 3,
+          "first_step": 278,
+          "last_step": 359,
+          "start_s": 55.6,
+          "end_s": 71.8,
+          "samples": 82,
+          "printed_pose_xyz_m": [
+            -5.9,
+            -0.83,
+            0.3
+          ],
+          "wind_difference_samples": 81,
+          "wind_difference_gram": [
+            [
+              0.9876249541359997,
+              -0.020262933068
+            ],
+            [
+              -0.020262933068,
+              0.153336262041
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.15284441246374975,
+            0.98811680371325
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 6.464853950402685,
+          "measured_gas_range_ppm": [
+            0.049471,
+            0.132379
+          ],
+          "log1p_measured_gas_variance": 0.0003017053990920979,
+          "log1p_response_changed_steps": 81,
+          "log1p_response_rms": 0.0026138378549112494,
+          "gas_above_0_1ppm_samples_descriptive_only": 8,
+          "lag_one_wind_difference_gas_increment_pairs": 80,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            2.1731447407868697e-05,
+            6.438655057387291e-06
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 4,
+          "first_step": 370,
+          "last_step": 449,
+          "start_s": 74.0,
+          "end_s": 89.8,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            -3.2,
+            -0.23,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              2.01867748,
+              -0.27862866463999997
+            ],
+            [
+              -0.27862866463999997,
+              0.4649611124
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.4165056767218624,
+            2.0671329156781377
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 4.963036595197584,
+          "measured_gas_range_ppm": [
+            0.089458,
+            0.192789
+          ],
+          "log1p_measured_gas_variance": 0.0002715644460721831,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.0044037755385263715,
+          "gas_above_0_1ppm_samples_descriptive_only": 78,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            2.6386116019414634e-05,
+            3.8204343088811676e-05
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 5,
+          "first_step": 462,
+          "last_step": 541,
+          "start_s": 92.4,
+          "end_s": 108.2,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            0.1,
+            0.37,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.3706281738400001,
+              0.08067414942400002
+            ],
+            [
+              0.08067414942400002,
+              0.21034387243999997
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.1767711045756032,
+            0.40420094170439685
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 2.2865781298069803,
+          "measured_gas_range_ppm": [
+            0.114618,
+            0.253556
+          ],
+          "log1p_measured_gas_variance": 0.0017829712467834116,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.0025860138478511875,
+          "gas_above_0_1ppm_samples_descriptive_only": 80,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            1.8878356067248221e-06,
+            6.149376677797984e-06
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 6,
+          "first_step": 553,
+          "last_step": 634,
+          "start_s": 110.6,
+          "end_s": 126.8,
+          "samples": 82,
+          "printed_pose_xyz_m": [
+            -2.0,
+            1.57,
+            0.3
+          ],
+          "wind_difference_samples": 81,
+          "wind_difference_gram": [
+            [
+              0.09630381416799998,
+              -0.14593129885599998
+            ],
+            [
+              -0.14593129885599998,
+              0.22356556650399997
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0007340861043999974,
+            0.3191352945676
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 434.73823118943795,
+          "measured_gas_range_ppm": [
+            0.20443,
+            0.275024
+          ],
+          "log1p_measured_gas_variance": 0.0001895948224354397,
+          "log1p_response_changed_steps": 81,
+          "log1p_response_rms": 0.0028944751149677407,
+          "gas_above_0_1ppm_samples_descriptive_only": 82,
+          "lag_one_wind_difference_gas_increment_pairs": 80,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -1.0029967959883449e-05,
+            1.3072194332140855e-05
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 7,
+          "first_step": 638,
+          "last_step": 717,
+          "start_s": 127.6,
+          "end_s": 143.4,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            -1.4,
+            2.17,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.00483748728,
+              0.011671658752
+            ],
+            [
+              0.011671658752,
+              0.04235293255199998
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0015026822989018373,
+            0.04568773753309814
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 30.404123058138648,
+          "measured_gas_range_ppm": [
+            0.290682,
+            0.44861
+          ],
+          "log1p_measured_gas_variance": 0.0005179047811463865,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.004886644511626037,
+          "gas_above_0_1ppm_samples_descriptive_only": 80,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            1.9692828502740683e-06,
+            9.758327893346517e-06
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 8,
+          "first_step": 723,
+          "last_step": 803,
+          "start_s": 144.6,
+          "end_s": 160.6,
+          "samples": 81,
+          "printed_pose_xyz_m": [
+            -2.6,
+            1.87,
+            0.3
+          ],
+          "wind_difference_samples": 80,
+          "wind_difference_gram": [
+            [
+              0.008263790375999999,
+              0.0003708850960000001
+            ],
+            [
+              0.0003708850960000001,
+              3.984492000000004e-05
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            2.3152552566526726e-05,
+            0.008280482743433472
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 357.6488043657505,
+          "measured_gas_range_ppm": [
+            0.230551,
+            0.35119
+          ],
+          "log1p_measured_gas_variance": 0.0003445183553766842,
+          "log1p_response_changed_steps": 80,
+          "log1p_response_rms": 0.0024355949111624885,
+          "gas_above_0_1ppm_samples_descriptive_only": 81,
+          "lag_one_wind_difference_gas_increment_pairs": 79,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            2.278842008709644e-06,
+            1.4061482668980663e-07
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 9,
+          "first_step": 807,
+          "last_step": 888,
+          "start_s": 161.4,
+          "end_s": 177.6,
+          "samples": 82,
+          "printed_pose_xyz_m": [
+            -2.0,
+            2.47,
+            0.3
+          ],
+          "wind_difference_samples": 81,
+          "wind_difference_gram": [
+            [
+              0.011339120184,
+              -0.0008630929879999998
+            ],
+            [
+              -0.0008630929879999998,
+              0.0007062348079999996
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0006366314174073339,
+            0.011408723574592666
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 17.92045328371386,
+          "measured_gas_range_ppm": [
+            0.285615,
+            0.481845
+          ],
+          "log1p_measured_gas_variance": 0.001028709030998123,
+          "log1p_response_changed_steps": 80,
+          "log1p_response_rms": 0.0037618924932273745,
+          "gas_above_0_1ppm_samples_descriptive_only": 82,
+          "lag_one_wind_difference_gas_increment_pairs": 80,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -7.515937496897768e-06,
+            -7.338897946636986e-08
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 10,
+          "first_step": 891,
+          "last_step": 972,
+          "start_s": 178.2,
+          "end_s": 194.4,
+          "samples": 82,
+          "printed_pose_xyz_m": [
+            -1.7,
+            2.77,
+            0.3
+          ],
+          "wind_difference_samples": 81,
+          "wind_difference_gram": [
+            [
+              0.007567906200000001,
+              -0.008613456481000002
+            ],
+            [
+              -0.008613456481000002,
+              0.010404374666999996
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0002567062656313691,
+            0.017715574601368626
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 69.01107208192666,
+          "measured_gas_range_ppm": [
+            0.010513,
+            0.461045
+          ],
+          "log1p_measured_gas_variance": 0.015113091405482231,
+          "log1p_response_changed_steps": 81,
+          "log1p_response_rms": 0.010707455428786865,
+          "gas_above_0_1ppm_samples_descriptive_only": 68,
+          "lag_one_wind_difference_gas_increment_pairs": 80,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            1.585789472170988e-05,
+            -1.6315287272801984e-05
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 11,
+          "first_step": 976,
+          "last_step": 1055,
+          "start_s": 195.2,
+          "end_s": 211.0,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            -1.1,
+            2.77,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.0052206067640000004,
+              0.006601319636
+            ],
+            [
+              0.006601319636,
+              0.012321029151999998
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0012753913218009586,
+            0.01626624459419904
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 12.75392447490528,
+          "measured_gas_range_ppm": [
+            0.0,
+            0.005398
+          ],
+          "log1p_measured_gas_variance": 1.0872521974812054e-06,
+          "log1p_response_changed_steps": 47,
+          "log1p_response_rms": 0.0001744978027080561,
+          "gas_above_0_1ppm_samples_descriptive_only": 0,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -5.933010899818527e-08,
+            -5.136415394770954e-08
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 12,
+          "first_step": 1059,
+          "last_step": 1141,
+          "start_s": 211.8,
+          "end_s": 228.2,
+          "samples": 83,
+          "printed_pose_xyz_m": [
+            -0.8,
+            2.17,
+            0.3
+          ],
+          "wind_difference_samples": 82,
+          "wind_difference_gram": [
+            [
+              0.006114201656000001,
+              0.007028618085999999
+            ],
+            [
+              0.007028618085999999,
+              0.011070263211
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0011395746033642622,
+            0.01604489026363574
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 14.079719060312396,
+          "measured_gas_range_ppm": [
+            0.0,
+            0.0
+          ],
+          "log1p_measured_gas_variance": 0.0,
+          "log1p_response_changed_steps": 0,
+          "log1p_response_rms": 0.0,
+          "gas_above_0_1ppm_samples_descriptive_only": 0,
+          "lag_one_wind_difference_gas_increment_pairs": 81,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            0.0,
+            0.0
+          ],
+          "input_richness_available": false
+        },
+        {
+          "geometry_stop_id": 13,
+          "first_step": 1158,
+          "last_step": 1200,
+          "start_s": 231.6,
+          "end_s": 240.0,
+          "samples": 43,
+          "printed_pose_xyz_m": [
+            -2.6,
+            -1.13,
+            0.3
+          ],
+          "wind_difference_samples": 42,
+          "wind_difference_gram": [
+            [
+              0.00827178714,
+              -0.020397105946
+            ],
+            [
+              -0.020397105946,
+              0.130105868552
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.004947658963819707,
+            0.1334299967281803
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 26.96830919509643,
+          "measured_gas_range_ppm": [
+            0.0,
+            0.0
+          ],
+          "log1p_measured_gas_variance": 0.0,
+          "log1p_response_changed_steps": 0,
+          "log1p_response_rms": 0.0,
+          "gas_above_0_1ppm_samples_descriptive_only": 0,
+          "lag_one_wind_difference_gas_increment_pairs": 41,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            0.0,
+            0.0
+          ],
+          "input_richness_available": false
+        }
+      ]
+    },
+    "H02_seed12_M1R": {
+      "status": "OBSERVABLE_INFORMATION_AVAILABLE",
+      "input_sha256": {
+        "sensor_trace.csv": "69530a2ef278a9c4ba088062c9dc3c72afe9166012dbdbebe4b03dd56aa2fab3",
+        "wind_trace.csv": "12686fd0ec627fa48eb028c0ed91498d3e4e088a4720cd128fb7b5027b3935d1",
+        "sim_pose_trace.csv": "e61cea6c84ca7610c2df134c81f3aca5cba7b19d7829e0178b32220a221b294e"
+      },
+      "loaded_columns": {
+        "sensor_trace.csv": [
+          "t_sim_s",
+          "step",
+          "measured_gas_ppm"
+        ],
+        "wind_trace.csv": [
+          "t_sim_s",
+          "step",
+          "wind_u",
+          "wind_v"
+        ],
+        "sim_pose_trace.csv": [
+          "t_sim_s",
+          "step",
+          "x",
+          "y",
+          "z",
+          "is_moving"
+        ]
+      },
+      "aligned_samples": 1200,
+      "first_time_s": 0.2,
+      "last_time_s": 240.0,
+      "maximal_geometry_stop_segments": 14,
+      "segments_below_minimum_samples": 0,
+      "eligible_stop_segments": 14,
+      "rank_two_stop_segments": 14,
+      "rank_two_and_nonconstant_gas_stop_segments": 12,
+      "rank_two_and_gas_above_0_1ppm_segments_descriptive_only": 12,
+      "stops": [
+        {
+          "geometry_stop_id": 0,
+          "first_step": 1,
+          "last_step": 99,
+          "start_s": 0.2,
+          "end_s": 19.8,
+          "samples": 99,
+          "printed_pose_xyz_m": [
+            -0.5,
+            -2.5,
+            0.3
+          ],
+          "wind_difference_samples": 98,
+          "wind_difference_gram": [
+            [
+              0.0011109647559999999,
+              0.0007942937720000001
+            ],
+            [
+              0.0007942937720000001,
+              0.0011905268490000006
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.00035545646653564603,
+            0.0019460351384643546
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 5.474749573220105,
+          "measured_gas_range_ppm": [
+            0.0,
+            0.492312
+          ],
+          "log1p_measured_gas_variance": 0.006129201376041756,
+          "log1p_response_changed_steps": 97,
+          "log1p_response_rms": 0.010321821096102851,
+          "gas_above_0_1ppm_samples_descriptive_only": 96,
+          "lag_one_wind_difference_gas_increment_pairs": 97,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            1.4835562527256906e-06,
+            1.344640993013035e-06
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 1,
+          "first_step": 105,
+          "last_step": 184,
+          "start_s": 21.0,
+          "end_s": 36.8,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            -1.6427,
+            -2.5009,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.020186229230999997,
+              0.04147532429999999
+            ],
+            [
+              0.04147532429999999,
+              0.09888258600000004
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.002363771201615272,
+            0.11670504402938475
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 49.372394396562115,
+          "measured_gas_range_ppm": [
+            0.615469,
+            0.90491
+          ],
+          "log1p_measured_gas_variance": 0.0016662656302700613,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.0038725350291557853,
+          "gas_above_0_1ppm_samples_descriptive_only": 80,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -8.642866416011354e-07,
+            -8.928033995270388e-06
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 2,
+          "first_step": 189,
+          "last_step": 268,
+          "start_s": 37.8,
+          "end_s": 53.6,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            -2.5427,
+            -2.5009,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.014100126479,
+              -0.014075417909000004
+            ],
+            [
+              -0.014075417909000004,
+              0.020177149670999997
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.002738987314234151,
+            0.03153828883576584
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 11.51458010479478,
+          "measured_gas_range_ppm": [
+            0.561173,
+            0.798507
+          ],
+          "log1p_measured_gas_variance": 0.0007568603090463219,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.0037186343566414774,
+          "gas_above_0_1ppm_samples_descriptive_only": 80,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            1.4205203394475258e-06,
+            -3.550384581497885e-06
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 3,
+          "first_step": 273,
+          "last_step": 354,
+          "start_s": 54.6,
+          "end_s": 70.8,
+          "samples": 82,
+          "printed_pose_xyz_m": [
+            -3.4427,
+            -2.5009,
+            0.3
+          ],
+          "wind_difference_samples": 81,
+          "wind_difference_gram": [
+            [
+              0.008893093671999999,
+              0.009255619403999998
+            ],
+            [
+              0.009255619403999998,
+              0.012330977256000002
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0011981493676004127,
+            0.020025921560399586
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 16.714044260196367,
+          "measured_gas_range_ppm": [
+            0.606222,
+            0.682464
+          ],
+          "log1p_measured_gas_variance": 9.084070885152257e-05,
+          "log1p_response_changed_steps": 81,
+          "log1p_response_rms": 0.0011247202643061968,
+          "gas_above_0_1ppm_samples_descriptive_only": 82,
+          "lag_one_wind_difference_gas_increment_pairs": 80,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -1.2718860184787963e-06,
+            -1.0723869874439446e-06
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 4,
+          "first_step": 362,
+          "last_step": 441,
+          "start_s": 72.4,
+          "end_s": 88.2,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            -1.9427,
+            -1.3009,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.0008732856240000007,
+              -0.0016072670959999995
+            ],
+            [
+              -0.0016072670959999995,
+              0.007840635256000001
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0005203867418264721,
+            0.00819353413817353
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 15.745086259145593,
+          "measured_gas_range_ppm": [
+            0.773528,
+            0.997323
+          ],
+          "log1p_measured_gas_variance": 0.0005524956042203104,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.0038641938891931637,
+          "gas_above_0_1ppm_samples_descriptive_only": 80,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -1.0565196666123178e-07,
+            -2.379911659235209e-06
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 5,
+          "first_step": 445,
+          "last_step": 524,
+          "start_s": 89.0,
+          "end_s": 104.8,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            -2.5427,
+            -1.3009,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.002057070207,
+              -0.0015982307959999998
+            ],
+            [
+              -0.0015982307959999998,
+              0.005075331888
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0013680614770834555,
+            0.005764340617916544
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 4.213509929543103,
+          "measured_gas_range_ppm": [
+            0.746338,
+            0.895827
+          ],
+          "log1p_measured_gas_variance": 0.0004181513274148554,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.001938694129616029,
+          "gas_above_0_1ppm_samples_descriptive_only": 80,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -7.069304259758655e-07,
+            1.608963939942023e-06
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 6,
+          "first_step": 528,
+          "last_step": 610,
+          "start_s": 105.6,
+          "end_s": 122.0,
+          "samples": 83,
+          "printed_pose_xyz_m": [
+            -3.1427,
+            -1.6009,
+            0.3
+          ],
+          "wind_difference_samples": 82,
+          "wind_difference_gram": [
+            [
+              0.004742126001,
+              -0.00010904551000000043
+            ],
+            [
+              -0.00010904551000000043,
+              0.014714185179999999
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.004740933719495994,
+            0.014715377461504003
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 3.103898584574261,
+          "measured_gas_range_ppm": [
+            0.73639,
+            0.945621
+          ],
+          "log1p_measured_gas_variance": 0.001588991051183549,
+          "log1p_response_changed_steps": 82,
+          "log1p_response_rms": 0.001882513904186164,
+          "gas_above_0_1ppm_samples_descriptive_only": 83,
+          "lag_one_wind_difference_gas_increment_pairs": 81,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            3.655114619663725e-07,
+            2.2232452944123428e-06
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 7,
+          "first_step": 620,
+          "last_step": 701,
+          "start_s": 124.0,
+          "end_s": 140.2,
+          "samples": 82,
+          "printed_pose_xyz_m": [
+            -1.3427,
+            -3.1009,
+            0.3
+          ],
+          "wind_difference_samples": 81,
+          "wind_difference_gram": [
+            [
+              0.021367288352999995,
+              -0.01866005561000001
+            ],
+            [
+              -0.01866005561000001,
+              0.027827569699999995
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0056598609635492535,
+            0.04353499708945074
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 7.6918845480172875,
+          "measured_gas_range_ppm": [
+            0.995163,
+            1.184014
+          ],
+          "log1p_measured_gas_variance": 0.0003859717923933869,
+          "log1p_response_changed_steps": 81,
+          "log1p_response_rms": 0.0025740610264129962,
+          "gas_above_0_1ppm_samples_descriptive_only": 82,
+          "lag_one_wind_difference_gas_increment_pairs": 80,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            1.7281170355181674e-06,
+            1.679969947656124e-07
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 8,
+          "first_step": 705,
+          "last_step": 784,
+          "start_s": 141.0,
+          "end_s": 156.8,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            -1.3427,
+            -3.7009,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.05938447072399999,
+              0.12204376321999999
+            ],
+            [
+              0.12204376321999999,
+              0.25343251430000013
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0004971685332148187,
+            0.31231981649078533
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 628.197071265242,
+          "measured_gas_range_ppm": [
+            1.207971,
+            1.342423
+          ],
+          "log1p_measured_gas_variance": 0.00018635299531588592,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.0020309116154459284,
+          "gas_above_0_1ppm_samples_descriptive_only": 80,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -6.233056938172086e-06,
+            -1.2073551854685944e-05
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 9,
+          "first_step": 788,
+          "last_step": 869,
+          "start_s": 157.6,
+          "end_s": 173.8,
+          "samples": 82,
+          "printed_pose_xyz_m": [
+            -1.9427,
+            -3.1009,
+            0.3
+          ],
+          "wind_difference_samples": 81,
+          "wind_difference_gram": [
+            [
+              0.060532075089,
+              0.015661637108999996
+            ],
+            [
+              0.015661637108999996,
+              0.010964542376999996
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.006430703924236999,
+            0.065065913541763
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 10.118007967453275,
+          "measured_gas_range_ppm": [
+            1.062962,
+            1.253229
+          ],
+          "log1p_measured_gas_variance": 0.0003480776096291623,
+          "log1p_response_changed_steps": 81,
+          "log1p_response_rms": 0.0034339284996328565,
+          "gas_above_0_1ppm_samples_descriptive_only": 82,
+          "lag_one_wind_difference_gas_increment_pairs": 80,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            6.5225238599945955e-06,
+            3.062639047775688e-06
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 10,
+          "first_step": 879,
+          "last_step": 958,
+          "start_s": 175.8,
+          "end_s": 191.6,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            -4.0427,
+            -2.2009,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.010342806016,
+              0.0020501754580000003
+            ],
+            [
+              0.0020501754580000003,
+              0.002343073791
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0018482599008177877,
+            0.010837619906182212
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 5.863688273162752,
+          "measured_gas_range_ppm": [
+            0.256329,
+            0.989756
+          ],
+          "log1p_measured_gas_variance": 0.008004973048918295,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.01853767962022838,
+          "gas_above_0_1ppm_samples_descriptive_only": 80,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -1.455213575405081e-05,
+            -8.049350878702555e-07
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 11,
+          "first_step": 962,
+          "last_step": 1042,
+          "start_s": 192.4,
+          "end_s": 208.4,
+          "samples": 81,
+          "printed_pose_xyz_m": [
+            -3.7427,
+            -1.6009,
+            0.3
+          ],
+          "wind_difference_samples": 80,
+          "wind_difference_gram": [
+            [
+              0.004830040572000001,
+              -0.0005911694580000002
+            ],
+            [
+              -0.0005911694580000002,
+              0.005405416031000002
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0044602744569018585,
+            0.005775182146098144
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 1.29480421034665,
+          "measured_gas_range_ppm": [
+            0.0,
+            0.131604
+          ],
+          "log1p_measured_gas_variance": 0.000584498164561369,
+          "log1p_response_changed_steps": 66,
+          "log1p_response_rms": 0.003905941784408505,
+          "gas_above_0_1ppm_samples_descriptive_only": 2,
+          "lag_one_wind_difference_gas_increment_pairs": 79,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            2.029250174126578e-07,
+            -5.893841727947441e-07
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 12,
+          "first_step": 1049,
+          "last_step": 1131,
+          "start_s": 209.8,
+          "end_s": 226.2,
+          "samples": 83,
+          "printed_pose_xyz_m": [
+            -3.1427,
+            -3.1009,
+            0.3
+          ],
+          "wind_difference_samples": 82,
+          "wind_difference_gram": [
+            [
+              0.012961716807000003,
+              0.006433291449
+            ],
+            [
+              0.006433291449,
+              0.0047958037589999995
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0012591951481218506,
+            0.01649832541787815
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 13.102278421645911,
+          "measured_gas_range_ppm": [
+            0.0,
+            0.0
+          ],
+          "log1p_measured_gas_variance": 0.0,
+          "log1p_response_changed_steps": 0,
+          "log1p_response_rms": 0.0,
+          "gas_above_0_1ppm_samples_descriptive_only": 0,
+          "lag_one_wind_difference_gas_increment_pairs": 81,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            0.0,
+            0.0
+          ],
+          "input_richness_available": false
+        },
+        {
+          "geometry_stop_id": 13,
+          "first_step": 1146,
+          "last_step": 1200,
+          "start_s": 229.2,
+          "end_s": 240.0,
+          "samples": 55,
+          "printed_pose_xyz_m": [
+            0.7573,
+            -3.4009,
+            0.3
+          ],
+          "wind_difference_samples": 54,
+          "wind_difference_gram": [
+            [
+              0.010747214212999998,
+              -0.001868477464
+            ],
+            [
+              -0.001868477464,
+              0.000593764441
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0002608365098954138,
+            0.011080142144104584
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 42.47926085403968,
+          "measured_gas_range_ppm": [
+            0.0,
+            0.0
+          ],
+          "log1p_measured_gas_variance": 0.0,
+          "log1p_response_changed_steps": 0,
+          "log1p_response_rms": 0.0,
+          "gas_above_0_1ppm_samples_descriptive_only": 0,
+          "lag_one_wind_difference_gas_increment_pairs": 53,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            0.0,
+            0.0
+          ],
+          "input_richness_available": false
+        }
+      ]
+    },
+    "H03_seed12_M1R": {
+      "status": "OBSERVABLE_INFORMATION_AVAILABLE",
+      "input_sha256": {
+        "sensor_trace.csv": "af7e77f8945b76fb4de7bda805c0c0d5e4dd2c094c41879f4d4728febabf5218",
+        "wind_trace.csv": "722b0949e8ae37eafebc17e128447941472c2ed44756ef78269b27699296ec29",
+        "sim_pose_trace.csv": "dbbe280f3f350a57f87d824c3a8b6fd824d21f8ce4074ad0d27d2d2da5770f1b"
+      },
+      "loaded_columns": {
+        "sensor_trace.csv": [
+          "t_sim_s",
+          "step",
+          "measured_gas_ppm"
+        ],
+        "wind_trace.csv": [
+          "t_sim_s",
+          "step",
+          "wind_u",
+          "wind_v"
+        ],
+        "sim_pose_trace.csv": [
+          "t_sim_s",
+          "step",
+          "x",
+          "y",
+          "z",
+          "is_moving"
+        ]
+      },
+      "aligned_samples": 1200,
+      "first_time_s": 0.2,
+      "last_time_s": 240.0,
+      "maximal_geometry_stop_segments": 14,
+      "segments_below_minimum_samples": 0,
+      "eligible_stop_segments": 14,
+      "rank_two_stop_segments": 14,
+      "rank_two_and_nonconstant_gas_stop_segments": 14,
+      "rank_two_and_gas_above_0_1ppm_segments_descriptive_only": 12,
+      "stops": [
+        {
+          "geometry_stop_id": 0,
+          "first_step": 1,
+          "last_step": 109,
+          "start_s": 0.2,
+          "end_s": 21.8,
+          "samples": 109,
+          "printed_pose_xyz_m": [
+            2.0,
+            0.0,
+            0.3
+          ],
+          "wind_difference_samples": 108,
+          "wind_difference_gram": [
+            [
+              0.21914176646000003,
+              0.0296500312
+            ],
+            [
+              0.0296500312,
+              0.04036139381599999
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.03557233740987625,
+            0.22393082286612376
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 6.2950831789859265,
+          "measured_gas_range_ppm": [
+            0.0,
+            0.154474
+          ],
+          "log1p_measured_gas_variance": 0.0007998676511678786,
+          "log1p_response_changed_steps": 107,
+          "log1p_response_rms": 0.012650387171823279,
+          "gas_above_0_1ppm_samples_descriptive_only": 26,
+          "lag_one_wind_difference_gas_increment_pairs": 107,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -5.266624484584035e-05,
+            -1.1171300903656096e-05
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 1,
+          "first_step": 114,
+          "last_step": 193,
+          "start_s": 22.8,
+          "end_s": 38.6,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            1.1,
+            0.387,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.12513719220000002,
+              -0.05154863020000001
+            ],
+            [
+              -0.05154863020000001,
+              0.05481802880000001
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.027580034739275713,
+            0.15237518626072433
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 5.524836632773795,
+          "measured_gas_range_ppm": [
+            0.016275,
+            0.075576
+          ],
+          "log1p_measured_gas_variance": 0.00023433661188522353,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.0061658277577727565,
+          "gas_above_0_1ppm_samples_descriptive_only": 0,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            2.990200444220996e-05,
+            -2.6265699324272045e-05
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 2,
+          "first_step": 198,
+          "last_step": 278,
+          "start_s": 39.6,
+          "end_s": 55.6,
+          "samples": 81,
+          "printed_pose_xyz_m": [
+            0.2,
+            0.387,
+            0.3
+          ],
+          "wind_difference_samples": 80,
+          "wind_difference_gram": [
+            [
+              0.0008968040000000002,
+              0.001049873599999994
+            ],
+            [
+              0.001049873599999994,
+              0.0030383519999999994
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0004679808757519748,
+            0.0034671751242480245
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 7.408796606649355,
+          "measured_gas_range_ppm": [
+            0.016347,
+            0.206992
+          ],
+          "log1p_measured_gas_variance": 0.0014834008317787509,
+          "log1p_response_changed_steps": 80,
+          "log1p_response_rms": 0.01656979792720091,
+          "gas_above_0_1ppm_samples_descriptive_only": 26,
+          "lag_one_wind_difference_gas_increment_pairs": 79,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            4.40836675404728e-06,
+            7.2541851868066305e-06
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 3,
+          "first_step": 304,
+          "last_step": 386,
+          "start_s": 60.8,
+          "end_s": 77.2,
+          "samples": 83,
+          "printed_pose_xyz_m": [
+            5.9,
+            -0.213,
+            0.3
+          ],
+          "wind_difference_samples": 82,
+          "wind_difference_gram": [
+            [
+              0.12384520503299998,
+              0.052380092802000004
+            ],
+            [
+              0.052380092802000004,
+              0.10503745254000003
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.061223784589068096,
+            0.16765887298393192
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 2.7384598013542027,
+          "measured_gas_range_ppm": [
+            1.34956,
+            1.605668
+          ],
+          "log1p_measured_gas_variance": 0.0012055606111605948,
+          "log1p_response_changed_steps": 82,
+          "log1p_response_rms": 0.004192873661664307,
+          "gas_above_0_1ppm_samples_descriptive_only": 83,
+          "lag_one_wind_difference_gas_increment_pairs": 81,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            6.815122931938537e-06,
+            -2.8023250780091466e-05
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 4,
+          "first_step": 392,
+          "last_step": 471,
+          "start_s": 78.4,
+          "end_s": 94.2,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            7.1,
+            -0.513,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.14137260879199995,
+              0.05468427241999999
+            ],
+            [
+              0.05468427241999999,
+              0.10160244494399999
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.06330001847290745,
+            0.17967503526309248
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 2.838467343259841,
+          "measured_gas_range_ppm": [
+            1.01007,
+            1.350703
+          ],
+          "log1p_measured_gas_variance": 0.0009148346473240266,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.008111895956352902,
+          "gas_above_0_1ppm_samples_descriptive_only": 80,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -5.886097217439526e-05,
+            -2.2499441346081327e-05
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 5,
+          "first_step": 475,
+          "last_step": 554,
+          "start_s": 95.0,
+          "end_s": 110.8,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            7.1,
+            0.087,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.132303086927,
+              0.077182525293
+            ],
+            [
+              0.077182525293,
+              0.047308590303
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.001697051739363284,
+            0.1779146254906367
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 104.83747864834598,
+          "measured_gas_range_ppm": [
+            1.179479,
+            1.899769
+          ],
+          "log1p_measured_gas_variance": 0.007290719633022608,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.006038995190879182,
+          "gas_above_0_1ppm_samples_descriptive_only": 80,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -1.8785269124779954e-05,
+            -1.220931873950577e-05
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 6,
+          "first_step": 558,
+          "last_step": 640,
+          "start_s": 111.6,
+          "end_s": 128.0,
+          "samples": 83,
+          "printed_pose_xyz_m": [
+            7.7,
+            -0.213,
+            0.3
+          ],
+          "wind_difference_samples": 82,
+          "wind_difference_gram": [
+            [
+              0.4121662812119999,
+              0.06364368944
+            ],
+            [
+              0.06364368944,
+              0.060974334399999996
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.0497964737661757,
+            0.4233441418458242
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 8.501488355052583,
+          "measured_gas_range_ppm": [
+            1.054779,
+            1.642369
+          ],
+          "log1p_measured_gas_variance": 0.0035170866921481955,
+          "log1p_response_changed_steps": 82,
+          "log1p_response_rms": 0.009241421097922368,
+          "gas_above_0_1ppm_samples_descriptive_only": 83,
+          "lag_one_wind_difference_gas_increment_pairs": 81,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -7.361802179783557e-06,
+            1.2221079995630973e-05
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 7,
+          "first_step": 644,
+          "last_step": 723,
+          "start_s": 128.8,
+          "end_s": 144.6,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            8.3,
+            -0.513,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              1.0285959456000002,
+              0.4565961616
+            ],
+            [
+              0.4565961616,
+              0.21194752960000007
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.007728911646842307,
+            1.232814563553158
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 159.5068775377749,
+          "measured_gas_range_ppm": [
+            0.819978,
+            1.348662
+          ],
+          "log1p_measured_gas_variance": 0.0028401122099146006,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.010977890923887037,
+          "gas_above_0_1ppm_samples_descriptive_only": 80,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            0.00020621895867624162,
+            8.569247250789774e-05
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 8,
+          "first_step": 727,
+          "last_step": 806,
+          "start_s": 145.4,
+          "end_s": 161.2,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            7.7,
+            -0.813,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.2541226879,
+              0.17540450204000005
+            ],
+            [
+              0.17540450204000005,
+              0.205314430128
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.052624513821664734,
+            0.40681260420633525
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 7.730477198990417,
+          "measured_gas_range_ppm": [
+            0.850304,
+            1.245183
+          ],
+          "log1p_measured_gas_variance": 0.0031061799913810013,
+          "log1p_response_changed_steps": 79,
+          "log1p_response_rms": 0.01060788397180149,
+          "gas_above_0_1ppm_samples_descriptive_only": 80,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -8.642596684147068e-06,
+            6.723208695951703e-06
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 9,
+          "first_step": 812,
+          "last_step": 894,
+          "start_s": 162.4,
+          "end_s": 178.8,
+          "samples": 83,
+          "printed_pose_xyz_m": [
+            8.0,
+            0.387,
+            0.3
+          ],
+          "wind_difference_samples": 82,
+          "wind_difference_gram": [
+            [
+              0.088124499244,
+              -0.06390717929999996
+            ],
+            [
+              -0.06390717929999996,
+              0.9686408304999998
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.08351034614648768,
+            0.9732549835975122
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 11.654304268962077,
+          "measured_gas_range_ppm": [
+            0.94529,
+            1.410741
+          ],
+          "log1p_measured_gas_variance": 0.0023392847018833167,
+          "log1p_response_changed_steps": 82,
+          "log1p_response_rms": 0.012676029457724225,
+          "gas_above_0_1ppm_samples_descriptive_only": 83,
+          "lag_one_wind_difference_gas_increment_pairs": 81,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            8.559397533296836e-06,
+            -3.0924960110908255e-05
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 10,
+          "first_step": 902,
+          "last_step": 983,
+          "start_s": 180.4,
+          "end_s": 196.6,
+          "samples": 82,
+          "printed_pose_xyz_m": [
+            6.2,
+            0.687,
+            0.3
+          ],
+          "wind_difference_samples": 81,
+          "wind_difference_gram": [
+            [
+              0.237604683872,
+              0.10869885378799998
+            ],
+            [
+              0.10869885378799998,
+              0.077110901784
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.02224671135407868,
+            0.2924688743019213
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 13.146611633826971,
+          "measured_gas_range_ppm": [
+            0.006473,
+            2.075095
+          ],
+          "log1p_measured_gas_variance": 0.19701404502673267,
+          "log1p_response_changed_steps": 81,
+          "log1p_response_rms": 0.02730772786525763,
+          "gas_above_0_1ppm_samples_descriptive_only": 65,
+          "lag_one_wind_difference_gas_increment_pairs": 80,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            0.00019860965857930856,
+            4.725053956509535e-05
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 11,
+          "first_step": 987,
+          "last_step": 1066,
+          "start_s": 197.4,
+          "end_s": 213.2,
+          "samples": 80,
+          "printed_pose_xyz_m": [
+            5.6,
+            0.387,
+            0.3
+          ],
+          "wind_difference_samples": 79,
+          "wind_difference_gram": [
+            [
+              0.094477334528,
+              0.066808765068
+            ],
+            [
+              0.066808765068,
+              0.125958056248
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.04157973176789953,
+            0.17885565900810046
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 4.301510649623309,
+          "measured_gas_range_ppm": [
+            0.0,
+            0.003684
+          ],
+          "log1p_measured_gas_variance": 6.633544399071012e-07,
+          "log1p_response_changed_steps": 50,
+          "log1p_response_rms": 0.00021994044986258367,
+          "gas_above_0_1ppm_samples_descriptive_only": 0,
+          "lag_one_wind_difference_gas_increment_pairs": 78,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            2.5044579028160526e-07,
+            7.883418151588808e-07
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 12,
+          "first_step": 1070,
+          "last_step": 1152,
+          "start_s": 214.0,
+          "end_s": 230.4,
+          "samples": 83,
+          "printed_pose_xyz_m": [
+            5.3,
+            -0.213,
+            0.3
+          ],
+          "wind_difference_samples": 82,
+          "wind_difference_gram": [
+            [
+              0.11811290471500004,
+              -0.05328403045199998
+            ],
+            [
+              -0.05328403045199998,
+              0.07930275781999999
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.04200029405495186,
+            0.15541536848004817
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 3.7003400089701177,
+          "measured_gas_range_ppm": [
+            0.000708,
+            0.142489
+          ],
+          "log1p_measured_gas_variance": 0.002022546669145586,
+          "log1p_response_changed_steps": 82,
+          "log1p_response_rms": 0.006848559223355892,
+          "gas_above_0_1ppm_samples_descriptive_only": 28,
+          "lag_one_wind_difference_gas_increment_pairs": 81,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            -1.28791335310095e-05,
+            -1.7727585554495446e-07
+          ],
+          "input_richness_available": true
+        },
+        {
+          "geometry_stop_id": 13,
+          "first_step": 1168,
+          "last_step": 1200,
+          "start_s": 233.6,
+          "end_s": 240.0,
+          "samples": 33,
+          "printed_pose_xyz_m": [
+            8.9,
+            1.287,
+            0.3
+          ],
+          "wind_difference_samples": 32,
+          "wind_difference_gram": [
+            [
+              0.19828314289600002,
+              0.11028324756000002
+            ],
+            [
+              0.11028324756000002,
+              0.09139729950000003
+            ]
+          ],
+          "wind_difference_gram_eigenvalues": [
+            0.022290065865585997,
+            0.2673903765304141
+          ],
+          "wind_difference_numerical_rank": 2,
+          "wind_difference_gram_condition_number": 11.995943760006673,
+          "measured_gas_range_ppm": [
+            0.201991,
+            0.910581
+          ],
+          "log1p_measured_gas_variance": 0.02557242235687485,
+          "log1p_response_changed_steps": 32,
+          "log1p_response_rms": 0.022311460278064115,
+          "gas_above_0_1ppm_samples_descriptive_only": 33,
+          "lag_one_wind_difference_gas_increment_pairs": 31,
+          "lag_one_raw_cross_moment_descriptive_only": [
+            0.00035219914267333775,
+            4.910329683900399e-05
+          ],
+          "input_richness_available": true
+        }
+      ]
+    }
+  }
+}

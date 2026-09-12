@@ -1,0 +1,37 @@
+{
+  "contract": "M1R_HISTORICAL_LAW_BASELINE_LOCK_V1",
+  "profile": "closed_loop/ctpi/profiles/m1r_rolling_seed12.env",
+  "first_preserved_implementation": "8dd5977",
+  "current_restoration_implementation": "3b0957d",
+  "historical_algorithm_sha256": "62df6d257bda7123dea67c3142b877fc3b8a8d8550012c18bfd3f456925ee533",
+  "historical_binary_bytes_available": false,
+  "scope": "source-level observation law configuration; NOT historical exact replay",
+  "formula": "Bernoulli(clip(expit(logit(p_persist_previous_recorded_block)+logit(p_sim)-logit(p_context)), 1e-4, 1-1e-4))",
+  "persistence_state": "previous recorded block concentration; candidate evaluation starts from zero; not a full FOPDT latent state",
+  "context": "current first-level candidate arithmetic-mean hit probability within member",
+  "event_unit": "every completed internal measurement block",
+  "transport_members": 1,
+  "native_source_score_replaced": true,
+  "frozen_common_configuration": {
+    "ARM": "M1R",
+    "METHOD": "CTPI_G2_M1_M2",
+    "METHOD_FAMILY": "ctpi_two_module",
+    "SEED": "12",
+    "SENSOR_SEED": "12",
+    "TIMEOUT_SEC": "240.0",
+    "STEPS_SOURCE_UPDATE": "3",
+    "MAX_WARMUP_ITERATIONS": "3",
+    "MIN_WARMUP_ITERATIONS": "1",
+    "M1R_V41_HISTORICAL_ROLLING_PERSISTENCE": "true"
+  },
+  "required_before_any_new_run": [
+    "actual current binary digest and code identity",
+    "same-authority geometry and realization identities",
+    "current runner preflight passes",
+    "fresh output directory",
+    "new mechanism prerequisite gates pass before scheduling a comparison"
+  ],
+  "new_runs_started": 0,
+  "does_not_apply_to": ["A0", "cer_ratio_m1_m2", "other CORE or CTPI modes"],
+  "code_lineage": "M1R_CODE_LINEAGE.md"
+}
