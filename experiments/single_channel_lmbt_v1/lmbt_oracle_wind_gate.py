@@ -78,14 +78,18 @@ class WindField:
     tree: cKDTree
 
 
-def field_index(trace_step: int) -> int:
-    """Frozen player clock: start at field 6, then hold each field two frames.
+@dataclass(frozen=True)
+class WindSchedule:
+    indices: tuple[int, ...]
+    first_gaden_iteration: int
 
-    The gas-file iteration counter wraps during this saved trace, while the
-    controller-visible ``step`` remains continuous.  Wind playback follows the
-    latter; binding to the gas iteration is therefore invalid after the seam.
-    """
-    return (((trace_step - 1) // 2) + 5) % 10 + 1
+    def at(self, trace_step: int) -> int:
+        if 1 <= trace_step <= len(self.indices):
+            return self.indices[trace_step - 1]
+        # Only pre-trace ages are needed. Before the replay seam, native fields
+        # 1..10 were each held for two simulation frames.
+        absolute_iteration = self.first_gaden_iteration + trace_step - 1
+        return (absolute_iteration // 2) % 10 + 1
 
 
 def load_fields(wind_root: Path) -> dict[int, WindField]:
@@ -94,11 +98,11 @@ def load_fields(wind_root: Path) -> dict[int, WindField]:
         match = re.search(r"_(\d+)\.csv$", path.name)
         if match:
             paths[int(match.group(1))] = path
-    if not all(i in paths for i in range(1, 11)):
-        raise FileNotFoundError("LMBT_EXPECTED_WIND_FIELDS_1_TO_10")
+    if not all(i in paths for i in range(0, 11)):
+        raise FileNotFoundError("LMBT_EXPECTED_WIND_FIELDS_0_TO_10")
     fields: dict[int, WindField] = {}
     cols = ["U:0", "U:1", "U:2", "Points:0", "Points:1", "Points:2"]
-    for i in range(1, 11):
+    for i in range(0, 11):
         frame = pd.read_csv(paths[i], usecols=cols)
         xyz = frame[["Points:0", "Points:1", "Points:2"]].to_numpy(np.float64)
         velocity = frame[["U:0", "U:1", "U:2"]].to_numpy(np.float64)
@@ -156,28 +160,36 @@ def load_events(trace_dir: Path, memory_on: bool) -> tuple[list[Event], dict]:
     return events, audit
 
 
-def validate_wind_binding(fields: dict[int, WindField], trace_dir: Path) -> dict:
+def infer_wind_schedule(fields: dict[int, WindField], trace_dir: Path) -> tuple[WindSchedule, dict]:
     wind = pd.read_csv(trace_dir / "wind_trace.csv")
-    sample = wind.iloc[np.linspace(0, len(wind) - 1, min(100, len(wind)), dtype=int)]
+    indices = []
     errors = []
-    for row in sample.itertuples(index=False):
+    for row in wind.itertuples(index=False):
         xyz = np.asarray([row.x, row.y, row.z], dtype=np.float64)
         expected = np.asarray([row.wind_u, row.wind_v, row.wind_w], dtype=np.float64)
-        actual = query_velocity(fields, field_index(int(row.step)), xyz)
-        errors.append(float(np.linalg.norm(actual - expected)))
+        per_field = {
+            index: float(np.linalg.norm(query_velocity(fields, index, xyz) - expected))
+            for index in range(0, 11)
+        }
+        best = min(per_field, key=lambda index: (per_field[index], index))
+        indices.append(best)
+        errors.append(per_field[best])
+    schedule = WindSchedule(tuple(indices), int(wind.iloc[0].iteration))
     result = {
         "samples": len(errors),
         "median_vector_error_m_s": float(np.median(errors)),
         "max_vector_error_m_s": float(np.max(errors)),
-        "mapping": "field=((((continuous_trace_step-1)//2)+5)%10)+1",
+        "mapping": "per-step nearest CFD field 0..10 from allowed local wind; native periodic extrapolation only before trace start",
+        "field_counts": {str(index): int(np.sum(np.asarray(indices) == index)) for index in range(0, 11)},
     }
     if result["median_vector_error_m_s"] > 1.0e-4 or result["max_vector_error_m_s"] > 2.0e-3:
         raise ValueError(f"LMBT_WIND_SEQUENCE_NOT_BOUND:{result}")
-    return result
+    return schedule, result
 
 
 def backward_paths(events: list[Event], fields: dict[int, WindField] | None,
-                   candidate_xy: np.ndarray, reversed_sequence: bool = False,
+                   schedule: WindSchedule | None, candidate_xy: np.ndarray,
+                   reversed_sequence: bool = False,
                    local_ray: bool = False) -> list[tuple[np.ndarray, np.ndarray]]:
     lower = candidate_xy.min(axis=0) - 0.5
     upper = candidate_xy.max(axis=0) + 0.5
@@ -192,9 +204,10 @@ def backward_paths(events: list[Event], fields: dict[int, WindField] | None,
             if local_ray:
                 velocity = np.asarray(event.local_wind_xyz, dtype=np.float64)
             else:
-                index = field_index(past_step)
+                assert schedule is not None
+                index = schedule.at(past_step)
                 if reversed_sequence:
-                    index = 11 - index
+                    index = 10 - index
                 assert fields is not None
                 velocity = query_velocity(fields, index, xyz)
             xyz = xyz - velocity * BACK_DT_S
@@ -228,9 +241,10 @@ def pooled_log_score(paths: list[tuple[np.ndarray, np.ndarray]],
 
 
 def freeze_arm_scores(events: list[Event], fields: dict[int, WindField] | None,
-                      candidate_xy: np.ndarray, reversed_sequence: bool = False,
+                      schedule: WindSchedule | None, candidate_xy: np.ndarray,
+                      reversed_sequence: bool = False,
                       local_ray: bool = False) -> dict[float, np.ndarray]:
-    paths = backward_paths(events, fields, candidate_xy,
+    paths = backward_paths(events, fields, schedule, candidate_xy,
                            reversed_sequence=reversed_sequence, local_ray=local_ray)
     return {kappa: pooled_log_score(paths, candidate_xy, kappa) for kappa in KAPPAS}
 
@@ -278,9 +292,10 @@ def selftest() -> None:
         raise AssertionError("LMBT_INVERSE_SELFTEST")
     if whiff_peaks(np.asarray([0.0, 0.2, 0.4, 0.0, 0.3, 0.0])) != [2, 4]:
         raise AssertionError("LMBT_WHIFF_SELFTEST")
-    for trace_step, expected in ((1, 6), (3, 7), (11, 1), (963, 7)):
-        if field_index(trace_step) != expected:
-            raise AssertionError("LMBT_WIND_INDEX_SELFTEST")
+    schedule = WindSchedule((6, 6, 7, 7), 1050)
+    for trace_step, expected in ((1, 6), (3, 7), (0, 5), (-1, 5)):
+        if schedule.at(trace_step) != expected:
+            raise AssertionError("LMBT_WIND_SCHEDULE_SELFTEST")
     print("LMBT_SELFTEST_PASS")
 
 
@@ -307,18 +322,20 @@ def main() -> None:
         raise ValueError("LMBT_PREREG_CONTRACT")
     candidate_xy = pd.read_csv(args.candidate_csv, usecols=["x", "y"]).to_numpy(np.float64)
     fields = load_fields(args.wind_root)
-    wind_binding = validate_wind_binding(fields, args.trace_dir)
+    wind_schedule, wind_binding = infer_wind_schedule(fields, args.trace_dir)
     memory_events, memory_audit = load_events(args.trace_dir, memory_on=True)
     raw_events, raw_audit = load_events(args.trace_dir, memory_on=False)
 
     # Freeze every score before opening the evaluator-only source truth.
     frozen = {
-        "LMBT_MEMORY_ON_ACTUAL_WIND": freeze_arm_scores(memory_events, fields, candidate_xy),
-        "LMBT_MEMORY_OFF_ACTUAL_WIND": freeze_arm_scores(raw_events, fields, candidate_xy),
+        "LMBT_MEMORY_ON_ACTUAL_WIND": freeze_arm_scores(
+            memory_events, fields, wind_schedule, candidate_xy),
+        "LMBT_MEMORY_OFF_ACTUAL_WIND": freeze_arm_scores(
+            raw_events, fields, wind_schedule, candidate_xy),
         "LMBT_MEMORY_ON_REVERSED_WIND_SEQUENCE": freeze_arm_scores(
-            memory_events, fields, candidate_xy, reversed_sequence=True),
+            memory_events, fields, wind_schedule, candidate_xy, reversed_sequence=True),
         "LOCAL_WIND_RAY_MEMORY_ON": freeze_arm_scores(
-            memory_events, None, candidate_xy, local_ray=True),
+            memory_events, None, None, candidate_xy, local_ray=True),
     }
     truth_xy = parse_truth_after_scoring(args.trace_dir / "formal_runtime_manifest.json")
     results = {
