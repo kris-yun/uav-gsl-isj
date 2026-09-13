@@ -9,15 +9,16 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import math
 import re
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from scipy.spatial import cKDTree
 
 
 DT_S = 0.2
@@ -75,7 +76,12 @@ class Event:
 @dataclass
 class WindField:
     velocity: np.ndarray
-    tree: cKDTree
+
+
+@dataclass
+class RuntimeWind:
+    fields: dict[int, WindField]
+    grid: object
 
 
 @dataclass(frozen=True)
@@ -92,29 +98,29 @@ class WindSchedule:
         return (absolute_iteration // 2) % 10 + 1
 
 
-def load_fields(wind_root: Path) -> dict[int, WindField]:
-    paths: dict[int, Path] = {}
-    for path in wind_root.glob("*.csv"):
-        match = re.search(r"_(\d+)\.csv$", path.name)
-        if match:
-            paths[int(match.group(1))] = path
-    if not all(i in paths for i in range(0, 11)):
-        raise FileNotFoundError("LMBT_EXPECTED_WIND_FIELDS_0_TO_10")
-    fields: dict[int, WindField] = {}
-    cols = ["U:0", "U:1", "U:2", "Points:0", "Points:1", "Points:2"]
-    for i in range(0, 11):
-        frame = pd.read_csv(paths[i], usecols=cols)
-        xyz = frame[["Points:0", "Points:1", "Points:2"]].to_numpy(np.float64)
-        velocity = frame[["U:0", "U:1", "U:2"]].to_numpy(np.float64)
-        fields[i] = WindField(velocity=velocity, tree=cKDTree(xyz))
-    return fields
+def load_runtime_wind(realization: Path, occupancy: Path,
+                      environment_runtime_py: Path) -> RuntimeWind:
+    spec = importlib.util.spec_from_file_location("lmbt_environment_runtime",
+                                                  environment_runtime_py)
+    if spec is None or spec.loader is None:
+        raise ImportError("LMBT_ENVIRONMENT_RUNTIME_IMPORT")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    reader = module.NumericWindReader(realization, occupancy)
+    if len(reader.files) != 11:
+        raise ValueError("LMBT_EXPECTED_RUNTIME_WIND_FIELDS_0_TO_10")
+    fields = {
+        index: WindField(velocity=np.asarray(reader.vectors(index)[0], dtype=np.float64))
+        for index in range(11)
+    }
+    return RuntimeWind(fields=fields, grid=reader.grid)
 
 
-def query_velocity(fields: dict[int, WindField], index: int,
+def query_velocity(runtime_wind: RuntimeWind, index: int,
                    xyz: np.ndarray) -> np.ndarray:
-    field = fields[index]
-    _, nearest = field.tree.query(np.asarray(xyz, dtype=np.float64))
-    return np.asarray(field.velocity[nearest], dtype=np.float64)
+    flat_index = runtime_wind.grid.flat_index(tuple(map(float, xyz)))
+    return np.asarray(runtime_wind.fields[index].velocity[flat_index], dtype=np.float64)
 
 
 def load_events(trace_dir: Path, memory_on: bool) -> tuple[list[Event], dict]:
@@ -160,7 +166,8 @@ def load_events(trace_dir: Path, memory_on: bool) -> tuple[list[Event], dict]:
     return events, audit
 
 
-def infer_wind_schedule(fields: dict[int, WindField], trace_dir: Path) -> tuple[WindSchedule, dict]:
+def infer_wind_schedule(runtime_wind: RuntimeWind,
+                        trace_dir: Path) -> tuple[WindSchedule, dict]:
     wind = pd.read_csv(trace_dir / "wind_trace.csv")
     indices = []
     errors = []
@@ -168,7 +175,7 @@ def infer_wind_schedule(fields: dict[int, WindField], trace_dir: Path) -> tuple[
         xyz = np.asarray([row.x, row.y, row.z], dtype=np.float64)
         expected = np.asarray([row.wind_u, row.wind_v, row.wind_w], dtype=np.float64)
         per_field = {
-            index: float(np.linalg.norm(query_velocity(fields, index, xyz) - expected))
+            index: float(np.linalg.norm(query_velocity(runtime_wind, index, xyz) - expected))
             for index in range(0, 11)
         }
         best = min(per_field, key=lambda index: (per_field[index], index))
@@ -187,7 +194,7 @@ def infer_wind_schedule(fields: dict[int, WindField], trace_dir: Path) -> tuple[
     return schedule, result
 
 
-def backward_paths(events: list[Event], fields: dict[int, WindField] | None,
+def backward_paths(events: list[Event], runtime_wind: RuntimeWind | None,
                    schedule: WindSchedule | None, candidate_xy: np.ndarray,
                    reversed_sequence: bool = False,
                    local_ray: bool = False) -> list[tuple[np.ndarray, np.ndarray]]:
@@ -208,9 +215,11 @@ def backward_paths(events: list[Event], fields: dict[int, WindField] | None,
                 index = schedule.at(past_step)
                 if reversed_sequence:
                     index = 10 - index
-                assert fields is not None
-                velocity = query_velocity(fields, index, xyz)
-            xyz = xyz - velocity * BACK_DT_S
+                assert runtime_wind is not None
+                velocity = query_velocity(runtime_wind, index, xyz)
+            # V1 is a navigation-height source footprint.  Preserve z and use
+            # the horizontal components of the exact 3-D runtime wind cell.
+            xyz[:2] = xyz[:2] - velocity[:2] * BACK_DT_S
             if np.any(xyz[:2] < lower) or np.any(xyz[:2] > upper):
                 break
             positions.append(xyz[:2].copy())
@@ -240,11 +249,11 @@ def pooled_log_score(paths: list[tuple[np.ndarray, np.ndarray]],
     return pooled / len(paths)
 
 
-def freeze_arm_scores(events: list[Event], fields: dict[int, WindField] | None,
+def freeze_arm_scores(events: list[Event], runtime_wind: RuntimeWind | None,
                       schedule: WindSchedule | None, candidate_xy: np.ndarray,
                       reversed_sequence: bool = False,
                       local_ray: bool = False) -> dict[float, np.ndarray]:
-    paths = backward_paths(events, fields, schedule, candidate_xy,
+    paths = backward_paths(events, runtime_wind, schedule, candidate_xy,
                            reversed_sequence=reversed_sequence, local_ray=local_ray)
     return {kappa: pooled_log_score(paths, candidate_xy, kappa) for kappa in KAPPAS}
 
@@ -303,7 +312,9 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--selftest", action="store_true")
     parser.add_argument("--trace-dir", type=Path)
-    parser.add_argument("--wind-root", type=Path)
+    parser.add_argument("--realization", type=Path)
+    parser.add_argument("--occupancy", type=Path)
+    parser.add_argument("--environment-runtime-py", type=Path)
     parser.add_argument("--candidate-csv", type=Path)
     parser.add_argument("--prereg", type=Path)
     parser.add_argument("--out", type=Path)
@@ -311,7 +322,8 @@ def main() -> None:
     if args.selftest:
         selftest()
         return
-    required = (args.trace_dir, args.wind_root, args.candidate_csv, args.prereg, args.out)
+    required = (args.trace_dir, args.realization, args.occupancy,
+                args.environment_runtime_py, args.candidate_csv, args.prereg, args.out)
     if any(value is None for value in required):
         parser.error("formal run requires trace-dir, wind-root, candidate-csv, prereg, out")
     if args.out.exists():
@@ -321,19 +333,20 @@ def main() -> None:
     if prereg.get("contract") != "LMBT_H03_SEED11_ORACLE_WIND_PREMISE_V1":
         raise ValueError("LMBT_PREREG_CONTRACT")
     candidate_xy = pd.read_csv(args.candidate_csv, usecols=["x", "y"]).to_numpy(np.float64)
-    fields = load_fields(args.wind_root)
-    wind_schedule, wind_binding = infer_wind_schedule(fields, args.trace_dir)
+    runtime_wind = load_runtime_wind(args.realization, args.occupancy,
+                                     args.environment_runtime_py)
+    wind_schedule, wind_binding = infer_wind_schedule(runtime_wind, args.trace_dir)
     memory_events, memory_audit = load_events(args.trace_dir, memory_on=True)
     raw_events, raw_audit = load_events(args.trace_dir, memory_on=False)
 
     # Freeze every score before opening the evaluator-only source truth.
     frozen = {
         "LMBT_MEMORY_ON_ACTUAL_WIND": freeze_arm_scores(
-            memory_events, fields, wind_schedule, candidate_xy),
+            memory_events, runtime_wind, wind_schedule, candidate_xy),
         "LMBT_MEMORY_OFF_ACTUAL_WIND": freeze_arm_scores(
-            raw_events, fields, wind_schedule, candidate_xy),
+            raw_events, runtime_wind, wind_schedule, candidate_xy),
         "LMBT_MEMORY_ON_REVERSED_WIND_SEQUENCE": freeze_arm_scores(
-            memory_events, fields, wind_schedule, candidate_xy, reversed_sequence=True),
+            memory_events, runtime_wind, wind_schedule, candidate_xy, reversed_sequence=True),
         "LOCAL_WIND_RAY_MEMORY_ON": freeze_arm_scores(
             memory_events, None, None, candidate_xy, local_ray=True),
     }
@@ -376,6 +389,12 @@ def main() -> None:
             "candidate.csv": sha256(args.candidate_csv),
             "prereg": sha256(args.prereg),
             "script": sha256(Path(__file__)),
+            "occupancy": sha256(args.occupancy),
+            "environment_runtime.py": sha256(args.environment_runtime_py),
+            "runtime_wind": {
+                path.name: sha256(path)
+                for path in sorted((args.realization / "wind").glob("wind_iteration_*"))
+            },
         },
         "limitations": [
             "simulation-known full CFD wind is evaluator-only and unavailable in real flight",

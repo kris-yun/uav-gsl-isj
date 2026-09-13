@@ -33,3 +33,18 @@ native pre-seam periodic rule only for emission ages before the saved trace
 begins.  This is a historical wind-field ledger built without gas values,
 source truth, or algorithm outcomes.  The formal validator now checks every
 saved step, not a 100-point sample, under the same error bounds.
+
+## Third preflight failure and final input correction
+
+The per-step point-cloud matcher at commit `fcd3bcb` also stopped before arm
+scoring.  Of 1380 frames, only six exceeded 0.002 m/s error, but the maximum was
+0.08081 m/s.  Inspection of the verified runtime adapter showed why: the live
+wind server does not query the original unstructured CFD CSV by nearest point.
+GADEN first converts it into `wind_iteration_*` values on the occupancy-defined
+regular 3-D grid and samples that grid.
+
+The formal implementation now imports the project's existing audited
+`NumericWindReader` from `experiments/ctpi_cstar/environment_runtime.py`, reads
+the exact binary wind files used by the realization, and uses the same float32
+grid indexing rule.  No new interpolation and no relaxed tolerance are
+introduced.  The full 1380-frame wind binding must pass before scoring.
