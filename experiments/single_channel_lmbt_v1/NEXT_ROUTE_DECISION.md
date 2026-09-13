@@ -61,4 +61,3 @@ If no such intake control exists, the causal main-innovation route should be clo
 Before any flight or multiseed run, replay the same H03 seed11 concentration history through the frozen first-order sensor model with a preregistered binary intake code. Compare A1/A2/A3 on recovery of the known instantaneous concentration and pose assignment. Only if CRI beats both matched controls should it enter a single H03 closed-loop run.
 
 This simulated gate tests the observation-identifiability premise. It cannot validate the real device until the intake actuator and timing interface are confirmed.
-

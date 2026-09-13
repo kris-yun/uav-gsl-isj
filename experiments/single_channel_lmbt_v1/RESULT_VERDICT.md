@@ -43,4 +43,3 @@ The surviving scientific claim is narrow: **sensor memory is a measurable second
 - Executable: `lmbt_oracle_wind_gate.py`
 - Runtime corrections: `PREFLIGHT_CORRECTION.md`
 - All input hashes, the executable hash, the preregistration hash, wind-binding errors, and arm scores are stored in the formal JSON.
-
