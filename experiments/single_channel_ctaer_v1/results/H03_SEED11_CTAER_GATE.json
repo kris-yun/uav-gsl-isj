@@ -1,0 +1,107 @@
+{
+  "checks": {
+    "beats_frozen_taorl_rank": true,
+    "beats_sign_reversed_rank": true,
+    "map_error_below_frozen_taorl_4p9851448324m": true,
+    "map_error_below_native_pmfs_8p584385m": true,
+    "top_decile": false,
+    "true_candidate_forward_better_than_reverse": true
+  },
+  "claim_boundary": "Any failed primary check stops CTAER tuning, PMFS integration, new seeds and cross-House execution on this route.",
+  "contract": "CTAER_H03_SEED11_ONE_SHOT_V1",
+  "input_hashes": {
+    "CROSSED_PLUME_LOHO_SIGN.json": "b9838552bf0793c4cc413d8701bbd0ca6494a1e668694ed61d1605355a772be4",
+    "PREREGISTRATION_H03_SEED11.json": "ffbac4cde5dc2a0b592bd0f10e6cf409655d6838ae66fecc4818cb0d1f97aaf4",
+    "candidate.csv": "0fa52cf616f92e13462719b6667e21dd5b86856643031e0c4fedde09a3f17e74",
+    "formal_runtime_manifest.json": "3022f2bfd09a261ae418e4473fcae4880946deec963ef27b5b70d6a86ddd1006",
+    "screen_h03_paired_position_premise.py": "8ef59678c4a71c87a5fde1e12e9b2adf4e37630b67c370906a7e0e1ed49fd312",
+    "sensor_trace.csv": "8fe4c20e109c2128d0f39b2e6548b50f88e064f6854e07c38a2aa1c90d571455",
+    "taorl_h03_gate.py": "d0737778799e9d31ea73f1cadc77d7e944e54e49ebb86aa0e76029f1847833d4",
+    "wind_trace.csv": "292c0afe61d794aa677b175e69131bef268f3ff42f1170f33a83f6ccaecd1bac"
+  },
+  "limitations": [
+    "post-TAORL mechanism evaluated on the same exposed H03 development trace",
+    "one House and one fixed historical trajectory only",
+    "rank-MSE contrast is not a calibrated thermodynamic entropy-production estimate",
+    "a pass would require an independent confirmation asset before cross-dataset or main-innovation language"
+  ],
+  "provider_parameter_selected_without_H03": {
+    "direction_sign": 1.0,
+    "distance_power": 1.0,
+    "sigma0": 0.25,
+    "spread": 0.6,
+    "tau_s": 3.0,
+    "wind_window_s": 15
+  },
+  "results": {
+    "CTAER_SHARED_TAU_ARROW_CONTRAST": {
+      "best_loss": -0.10200684380032207,
+      "candidate_count": 7258,
+      "map_error_m": 4.955710746199783,
+      "map_xy": [
+        4.300000000000001,
+        0.4870000000000001
+      ],
+      "normalized_true_rank": 0.11065178448394654,
+      "true_candidate_xy": [
+        -0.49999999999999994,
+        1.887
+      ],
+      "true_loss": -0.057721417069243205,
+      "true_rank": 804
+    },
+    "CTAER_SIGN_REVERSED_CONTROL": {
+      "best_loss": -0.07291867954911435,
+      "candidate_count": 7258,
+      "map_error_m": 8.49918048990607,
+      "map_xy": [
+        8.0,
+        0.9870000000000001
+      ],
+      "normalized_true_rank": 0.8893482155160535,
+      "true_candidate_xy": [
+        -0.49999999999999994,
+        1.887
+      ],
+      "true_loss": 0.057721417069243205,
+      "true_rank": 6455
+    },
+    "TAORL_FORWARD_WINDOWED": {
+      "best_loss": 0.06634259259259259,
+      "candidate_count": 7258,
+      "map_error_m": 4.985144832399557,
+      "map_xy": [
+        4.300000000000001,
+        0.387
+      ],
+      "normalized_true_rank": 0.42552018740526387,
+      "true_candidate_xy": [
+        -0.49999999999999994,
+        1.887
+      ],
+      "true_loss": 0.10717391304347824,
+      "true_rank": 3089
+    }
+  },
+  "score_definition": "forward ordinal loss minus reverse ordinal loss at forward-selected shared tau; lower is better",
+  "script_sha256": "1e49c802f6f3c8007c9f4cc42aa7567bbb96653052a3b7051a2802c333379268",
+  "trace_audit": {
+    "native_dt_s": 0.19999999999999996,
+    "native_samples": 1380,
+    "one_hz_samples": 276,
+    "one_hz_selection": "last native sample in each non-overlapping one-second interval",
+    "true_gas_column_read": false
+  },
+  "true_candidate_detail": {
+    "forward_loss": 0.10717391304347824,
+    "reverse_minus_forward_evidence": 0.057721417069243205,
+    "reverse_shared_tau_loss": 0.16489533011272145,
+    "selected_tau_s": 6.5
+  },
+  "truth_read_after_all_arm_scores": true,
+  "truth_xy_evaluator_only": [
+    -0.45,
+    1.9
+  ],
+  "verdict": "CTAER_H03_NO_GO"
+}
