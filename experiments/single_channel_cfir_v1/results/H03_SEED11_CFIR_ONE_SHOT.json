@@ -1,0 +1,381 @@
+{
+  "checks": {
+    "chronological_map_exact": true,
+    "chronological_rank_exact": true,
+    "default_beats_sign_reversed_control": true,
+    "default_map_improves_one_grid_spacing": false,
+    "default_rank_beats_chronological": false,
+    "default_rank_beats_reversed": false,
+    "default_rank_top_decile": false,
+    "median_map_improves": false,
+    "median_rank_improves": false,
+    "reversed_map_exact": true,
+    "reversed_rank_exact": true
+  },
+  "claim_boundary": "Any primary failure retires the footprint-irreversibility route; do not tune weights, temperatures, windows, diffusion, sensor parameters, or event thresholds on H03.",
+  "contract": "CFIR_H03_SEED11_ONE_SHOT_V1",
+  "event_audit": {
+    "event_count": 45,
+    "event_times_s": [
+      0.6,
+      1.4,
+      2.0,
+      2.8000000000000003,
+      3.4,
+      6.199999999999999,
+      7.799999999999999,
+      9.0,
+      9.6,
+      10.4,
+      10.799999999999999,
+      14.0,
+      15.0,
+      15.799999999999999,
+      17.0,
+      17.400000000000002,
+      19.0,
+      19.6,
+      23.200000000000003,
+      24.8,
+      28.8,
+      35.0,
+      37.0,
+      39.0,
+      42.0,
+      42.6,
+      43.6,
+      46.0,
+      46.6,
+      47.2,
+      48.0,
+      48.4,
+      49.4,
+      50.800000000000004,
+      53.6,
+      168.6,
+      197.4,
+      199.0,
+      201.79999999999998,
+      202.6,
+      206.2,
+      207.0,
+      209.4,
+      210.6,
+      262.6
+    ],
+    "memory_on": true,
+    "scoring_columns": [
+      "t_sim_s",
+      "step",
+      "x",
+      "y",
+      "z",
+      "measured_gas_ppm",
+      "t_sim_s",
+      "step",
+      "x",
+      "y",
+      "z",
+      "wind_u",
+      "wind_v",
+      "wind_w"
+    ],
+    "true_gas_column_read": false
+  },
+  "input_hashes": {
+    "candidate.csv": "0fa52cf616f92e13462719b6667e21dd5b86856643031e0c4fedde09a3f17e74",
+    "environment_runtime.py": "bb761e2c4955ef5c3eeb21aba976ca41a02b0c4b87d23f35e6f914867ebcc77f",
+    "formal_runtime_manifest.json": "3022f2bfd09a261ae418e4473fcae4880946deec963ef27b5b70d6a86ddd1006",
+    "lmbt_py": "fea74af86dc562accc21ed7802e5e584d1db2c9cf9dcd91f0e3b7a90fc85a644",
+    "occupancy": "ac8c9e69e762c8941dab46cd7e804684c2aa50dc6f0912806d19b070c135c4af",
+    "prereg": "8464073803d67827ec37c4e0d6d481656377ccd7b5f718e7ba886c8b62f7e702",
+    "reference_lmbt_json": "9264fc9ac996ad98c32aec10e602654ad390bc3d8dfa4f57cf86502abed6cc1c",
+    "runtime_wind": {
+      "wind_iteration_0": "959df7676a02fe5548deb89da9981b97c91981debc12db5e2db6e4db4594c759",
+      "wind_iteration_1": "077672c54be5105d0bffaf0b5cbc32d9890f2a97d6417ca0d8b7eb4613fd28db",
+      "wind_iteration_10": "82588bb913e4be31f6a55fd02c54a888c24101c0aaefa0e546fa6b82bc3e3505",
+      "wind_iteration_2": "fde30b962abdbd393832404d9829a3bdef89adc969e6c8997821356f5662b6e8",
+      "wind_iteration_3": "906044e6bf85630688795efae1aa72024c84beac53ea06e54fc6628c0f0e7d76",
+      "wind_iteration_4": "72709036ef09b2e0b585e87b2d51e6e9746ecfd982cb79211936fc0d701174e3",
+      "wind_iteration_5": "27aeab890c1fb0e3fb0e467cf28c4511663573fac802515a3e6498a16176dc6d",
+      "wind_iteration_6": "e768db3ae9f1733468b913ae9cf47607a73108abffd657d3275fd89d4de33375",
+      "wind_iteration_7": "9690985adc0770419ec6489a1e4fdcaaa1af692c8a524b28336fdb98a04fa3d8",
+      "wind_iteration_8": "6ef1cba4463f8d6f62d8c71b66bcedeaa064e41db175323011669cf0d5f94cf0",
+      "wind_iteration_9": "e6df31207fe385746e10aaf56f9fe9e95b78a5963a76f03b6def5b0a0e57794a"
+    },
+    "script": "5be2cf26853eacc8ef598b3fb42cd45a1422f65d27a2609a8c9d390bfd36238e",
+    "sensor_trace.csv": "8fe4c20e109c2128d0f39b2e6548b50f88e064f6854e07c38a2aa1c90d571455",
+    "wind_trace.csv": "292c0afe61d794aa677b175e69131bef268f3ff42f1170f33a83f6ccaecd1bac"
+  },
+  "limitations": [
+    "cross-dataset improvement",
+    "held-out confirmation",
+    "real-flight deployability",
+    "main causal innovation established",
+    "online wind provider solved"
+  ],
+  "median_map_error_m": {
+    "CFIR_CHRONOLOGICAL_OVER_REVERSED": 1.924647759981031,
+    "CFIR_SIGN_REVERSED_CONTROL": 13.957373284397033,
+    "LMBT_CHRONOLOGICAL": 1.6714870624686269,
+    "LMBT_REVERSED": 1.547924093746202
+  },
+  "median_normalized_true_rank": {
+    "CFIR_CHRONOLOGICAL_OVER_REVERSED": 0.14799503927242663,
+    "CFIR_SIGN_REVERSED_CONTROL": 0.8520049607275734,
+    "LMBT_CHRONOLOGICAL": 0.10872261264985532,
+    "LMBT_REVERSED": 0.08695053052225438
+  },
+  "results": {
+    "CFIR_CHRONOLOGICAL_OVER_REVERSED": {
+      "0.01": {
+        "best_log_score": -0.5682059322575306,
+        "candidate_count": 7258,
+        "map_error_m": 1.7604172800787885,
+        "map_xy": [
+          0.6000000000000002,
+          0.4870000000000001
+        ],
+        "normalized_true_rank": 0.14124293785310735,
+        "true_best_margin": -1.670371622546976,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -2.2385775548045066,
+        "true_rank": 1026
+      },
+      "0.03": {
+        "best_log_score": -0.2862020394075475,
+        "candidate_count": 7258,
+        "map_error_m": 1.9809767792682478,
+        "map_xy": [
+          0.7000000000000001,
+          0.2869999999999999
+        ],
+        "normalized_true_rank": 0.14799503927242663,
+        "true_best_margin": -0.7049469122063345,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -0.9911489516138821,
+        "true_rank": 1075
+      },
+      "0.1": {
+        "best_log_score": -0.10681306679374569,
+        "candidate_count": 7258,
+        "map_error_m": 1.924647759981031,
+        "map_xy": [
+          0.6000000000000002,
+          0.2869999999999999
+        ],
+        "normalized_true_rank": 0.1537825547747003,
+        "true_best_margin": -0.2651352709969915,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -0.3719483377907372,
+        "true_rank": 1117
+      }
+    },
+    "CFIR_SIGN_REVERSED_CONTROL": {
+      "0.01": {
+        "best_log_score": 36.189951043096734,
+        "candidate_count": 7258,
+        "map_error_m": 13.957373284397033,
+        "map_xy": [
+          12.8,
+          6.287000000000001
+        ],
+        "normalized_true_rank": 0.8587570621468926,
+        "true_best_margin": -33.95137348829223,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": 2.2385775548045066,
+        "true_rank": 6233
+      },
+      "0.03": {
+        "best_log_score": 13.698560052526805,
+        "candidate_count": 7258,
+        "map_error_m": 13.957373284397033,
+        "map_xy": [
+          12.8,
+          6.287000000000001
+        ],
+        "normalized_true_rank": 0.8520049607275734,
+        "true_best_margin": -12.707411100912923,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": 0.9911489516138821,
+        "true_rank": 6184
+      },
+      "0.1": {
+        "best_log_score": 4.373272154058119,
+        "candidate_count": 7258,
+        "map_error_m": 13.957373284397033,
+        "map_xy": [
+          12.8,
+          6.287000000000001
+        ],
+        "normalized_true_rank": 0.8462174452252997,
+        "true_best_margin": -4.001323816267382,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": 0.3719483377907372,
+        "true_rank": 6142
+      }
+    },
+    "LMBT_CHRONOLOGICAL": {
+      "0.01": {
+        "best_log_score": -1.7733495410270206,
+        "candidate_count": 7258,
+        "map_error_m": 1.673699196391036,
+        "map_xy": [
+          0.8000000000000002,
+          0.7870000000000004
+        ],
+        "normalized_true_rank": 0.10734463276836158,
+        "true_best_margin": -2.8129768581534136,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -4.586326399180434,
+        "true_rank": 780
+      },
+      "0.03": {
+        "best_log_score": -0.9559967024522985,
+        "candidate_count": 7258,
+        "map_error_m": 1.6003965133678588,
+        "map_xy": [
+          0.7000000000000001,
+          0.7870000000000004
+        ],
+        "normalized_true_rank": 0.10872261264985532,
+        "true_best_margin": -1.3374826421567914,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -2.2934793446090898,
+        "true_rank": 790
+      },
+      "0.1": {
+        "best_log_score": -0.49496252586543765,
+        "candidate_count": 7258,
+        "map_error_m": 1.6714870624686269,
+        "map_xy": [
+          0.7000000000000001,
+          0.6870000000000003
+        ],
+        "normalized_true_rank": 0.11023839051949842,
+        "true_best_margin": -0.6839619867446657,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -1.1789245126101033,
+        "true_rank": 801
+      }
+    },
+    "LMBT_REVERSED": {
+      "0.01": {
+        "best_log_score": -1.011120421815603,
+        "candidate_count": 7258,
+        "map_error_m": 1.5267183761257344,
+        "map_xy": [
+          0.9,
+          1.1870000000000005
+        ],
+        "normalized_true_rank": 0.08695053052225438,
+        "true_best_margin": -1.3366284225603247,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -2.3477488443759276,
+        "true_rank": 632
+      },
+      "0.03": {
+        "best_log_score": -0.5925399180836504,
+        "candidate_count": 7258,
+        "map_error_m": 1.547924093746202,
+        "map_xy": [
+          0.8000000000000002,
+          0.987
+        ],
+        "normalized_true_rank": 0.08667493454595562,
+        "true_best_margin": -0.7097904749115573,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -1.3023303929952077,
+        "true_rank": 630
+      },
+      "0.1": {
+        "best_log_score": -0.37130861697661777,
+        "candidate_count": 7258,
+        "map_error_m": 1.6003965133678588,
+        "map_xy": [
+          0.7000000000000001,
+          0.7870000000000004
+        ],
+        "normalized_true_rank": 0.09425382389417114,
+        "true_best_margin": -0.43566755784274835,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -0.8069761748193661,
+        "true_rank": 685
+      }
+    }
+  },
+  "score_definition": "S_chronological(candidate,kappa) - S_reversed(candidate,kappa)",
+  "truth_read_after_all_arm_scores": true,
+  "truth_xy_evaluator_only": [
+    -0.45,
+    1.9
+  ],
+  "verdict": "CFIR_H03_ORACLE_PREMISE_NO_GO",
+  "wind_binding": {
+    "field_counts": {
+      "0": 2,
+      "1": 136,
+      "10": 134,
+      "2": 146,
+      "3": 134,
+      "4": 135,
+      "5": 134,
+      "6": 137,
+      "7": 149,
+      "8": 136,
+      "9": 137
+    },
+    "mapping": "per-step nearest CFD field 0..10 from allowed local wind; native periodic extrapolation only before trace start",
+    "max_vector_error_m_s": 5.002298135579117e-07,
+    "median_vector_error_m_s": 5.723420623405685e-09,
+    "samples": 1380
+  }
+}
