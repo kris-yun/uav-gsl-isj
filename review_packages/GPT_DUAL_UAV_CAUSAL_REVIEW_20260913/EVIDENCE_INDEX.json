@@ -1,0 +1,64 @@
+{
+  "contract": "GPT_DUAL_UAV_CAUSAL_REVIEW_INDEX_V1_20260913",
+  "branch": "codex/single-channel-ccde-20260913",
+  "remote": "https://github.com/kris-yun/uav-gsl-isj.git",
+  "package_created_from_commit": "b877f104211c483fb9173d21efdd2f5314840f41",
+  "proposed_route_status": "REVIEW_ONLY_NOT_IMPLEMENTED_NOT_RUN",
+  "evidence": [
+    {
+      "topic": "post_CFIR_main_decision",
+      "path": "docs/PMFS_POST_CFIR_2026_MAIN_INNOVATION_DECISION.md",
+      "machine_path": "evidence/post_cfir_2026_decision_20260913.json",
+      "machine_sha256": "1829271caa49866782dd90970f0448a21486160f8c85277125f132f35f71955c"
+    },
+    {
+      "topic": "CFIR_H03_one_shot",
+      "path": "experiments/single_channel_cfir_v1/RESULT_VERDICT.md",
+      "machine_path": "experiments/single_channel_cfir_v1/results/H03_SEED11_CFIR_ONE_SHOT.json",
+      "machine_sha256": "30ae0b47ff2607e58eb233f6c3df025e595bb5b9c9b95620b4c34e68d3c8ccd2",
+      "verdict": "CFIR_H03_ORACLE_PREMISE_NO_GO"
+    },
+    {
+      "topic": "rank2_physical_position_intervention",
+      "path": "evidence/m1r_h03_rank2_paired_probe_20260913/RESULTS.md",
+      "machine_path": "evidence/m1r_h03_rank2_paired_probe_20260913/FINAL_GATE.json",
+      "machine_sha256": "8f7d54e18b7fae27c755299e8e25e38d251c576988b07c829ab78c90588392a3",
+      "verdict": "NO_GO_NO_CLOSED_LOOP_CURRENT_RANK2_OPERATOR"
+    },
+    {
+      "topic": "DPISC_distributed_intervention",
+      "path": "evidence/m1r_h03_distributed_intervention_20260913/RESULTS.md",
+      "machine_path": "evidence/m1r_h03_distributed_intervention_20260913/FINAL_GATE.json",
+      "machine_sha256": "6a0f91fd0ed2989ce2fd00f67ace46647e60489c2efcd57c5d5025d61e0c9219",
+      "verdict": "NO_GO_NO_CLOSED_LOOP_DISTRIBUTED_OPERATOR"
+    },
+    {
+      "topic": "metric_corrected_source_mismatch_subspace",
+      "path": "experiments/single_channel_scsp_v1/RESULT_VERDICT.md",
+      "machine_path": "experiments/single_channel_scsp_v1/results/H03_SEED11_MC_SCSP_GATE.json",
+      "machine_sha256": "184a5a10eee296e8878237d0b8025fbd68e50cb3bf4c0f2292e3a118e9061a3e"
+    },
+    {
+      "topic": "original_CCDE_heldout_terminal_evidence",
+      "path": "experiments/single_channel_scsp_v1/evidence/prior_ccde_negative/FINAL_VERDICT_CCDE.json",
+      "archive_path": "experiments/single_channel_scsp_v1/evidence/source/CCDE_HELDOUT_EVIDENCE_V3_20260807.tar.gz",
+      "verdict": "CCDE_WIND_MOMENT_NOT_PHYSICALLY_SPECIFIC"
+    },
+    {
+      "topic": "CTAER_result_and_false_mode",
+      "path": "experiments/single_channel_ctaer_v1/RESULT_VERDICT.md",
+      "decision_path": "experiments/single_channel_ctaer_v1/NEXT_ROUTE_DECISION_20260913.md"
+    },
+    {
+      "topic": "LMBT_full_CFD_wind_result",
+      "path": "experiments/single_channel_lmbt_v1/RESULT_VERDICT.md",
+      "machine_path": "experiments/single_channel_lmbt_v1/results/H03_SEED11_LMBT_ORACLE_WIND_GATE.json"
+    }
+  ],
+  "recent_commits": [
+    "3fa23f88231d5b0823b4a7b1b3319689abc7079f preregister CFIR causal footprint gate",
+    "6a711eed1cad4926f2ec1a6ea093836d43167e8c freeze CFIR H03 no-go evidence",
+    "b877f104211c483fb9173d21efdd2f5314840f41 close same-information causal route after CFIR"
+  ]
+}
+
