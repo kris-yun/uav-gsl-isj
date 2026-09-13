@@ -67,7 +67,7 @@ def whiff_peaks(signal: np.ndarray, threshold: float = THRESHOLD_PPM) -> list[in
 @dataclass(frozen=True)
 class Event:
     time_s: float
-    iteration: int
+    trace_step: int
     xyz: tuple[float, float, float]
     local_wind_xyz: tuple[float, float, float]
 
@@ -78,9 +78,14 @@ class WindField:
     tree: cKDTree
 
 
-def field_index(iteration: int) -> int:
-    """Frozen GADEN loop: fields 1..10, each held for two 0.2 s frames."""
-    return (iteration // 2) % 10 + 1
+def field_index(trace_step: int) -> int:
+    """Frozen player clock: start at field 6, then hold each field two frames.
+
+    The gas-file iteration counter wraps during this saved trace, while the
+    controller-visible ``step`` remains continuous.  Wind playback follows the
+    latter; binding to the gas iteration is therefore invalid after the seam.
+    """
+    return (((trace_step - 1) // 2) + 5) % 10 + 1
 
 
 def load_fields(wind_root: Path) -> dict[int, WindField]:
@@ -111,8 +116,8 @@ def query_velocity(fields: dict[int, WindField], index: int,
 def load_events(trace_dir: Path, memory_on: bool) -> tuple[list[Event], dict]:
     sensor_path = trace_dir / "sensor_trace.csv"
     wind_path = trace_dir / "wind_trace.csv"
-    sensor_cols = ["t_sim_s", "iteration", "x", "y", "z", "measured_gas_ppm"]
-    wind_cols = ["t_sim_s", "iteration", "x", "y", "z", "wind_u", "wind_v", "wind_w"]
+    sensor_cols = ["t_sim_s", "step", "x", "y", "z", "measured_gas_ppm"]
+    wind_cols = ["t_sim_s", "step", "x", "y", "z", "wind_u", "wind_v", "wind_w"]
     sensor = pd.read_csv(sensor_path, usecols=sensor_cols)
     wind = pd.read_csv(wind_path, usecols=wind_cols)
     if len(sensor) != len(wind) or not np.allclose(sensor.t_sim_s, wind.t_sim_s):
@@ -135,7 +140,7 @@ def load_events(trace_dir: Path, memory_on: bool) -> tuple[list[Event], dict]:
         row = wind.iloc[receptor]
         events.append(Event(
             time_s=event_time,
-            iteration=int(row.iteration),
+            trace_step=int(row.step),
             xyz=(float(row.x), float(row.y), float(row.z)),
             local_wind_xyz=(float(row.wind_u), float(row.wind_v), float(row.wind_w)),
         ))
@@ -158,13 +163,13 @@ def validate_wind_binding(fields: dict[int, WindField], trace_dir: Path) -> dict
     for row in sample.itertuples(index=False):
         xyz = np.asarray([row.x, row.y, row.z], dtype=np.float64)
         expected = np.asarray([row.wind_u, row.wind_v, row.wind_w], dtype=np.float64)
-        actual = query_velocity(fields, field_index(int(row.iteration)), xyz)
+        actual = query_velocity(fields, field_index(int(row.step)), xyz)
         errors.append(float(np.linalg.norm(actual - expected)))
     result = {
         "samples": len(errors),
         "median_vector_error_m_s": float(np.median(errors)),
         "max_vector_error_m_s": float(np.max(errors)),
-        "mapping": "field=((gaden_iteration//2)%10)+1",
+        "mapping": "field=((((continuous_trace_step-1)//2)+5)%10)+1",
     }
     if result["median_vector_error_m_s"] > 1.0e-4 or result["max_vector_error_m_s"] > 2.0e-3:
         raise ValueError(f"LMBT_WIND_SEQUENCE_NOT_BOUND:{result}")
@@ -183,11 +188,11 @@ def backward_paths(events: list[Event], fields: dict[int, WindField] | None,
         positions = []
         ages = []
         for step in range(1, steps + 1):
-            past_iteration = event.iteration - int(round(step * BACK_DT_S / DT_S))
+            past_step = event.trace_step - int(round(step * BACK_DT_S / DT_S))
             if local_ray:
                 velocity = np.asarray(event.local_wind_xyz, dtype=np.float64)
             else:
-                index = field_index(past_iteration)
+                index = field_index(past_step)
                 if reversed_sequence:
                     index = 11 - index
                 assert fields is not None
@@ -273,8 +278,8 @@ def selftest() -> None:
         raise AssertionError("LMBT_INVERSE_SELFTEST")
     if whiff_peaks(np.asarray([0.0, 0.2, 0.4, 0.0, 0.3, 0.0])) != [2, 4]:
         raise AssertionError("LMBT_WHIFF_SELFTEST")
-    for iteration, expected in ((1050, 6), (1052, 7), (1060, 1)):
-        if field_index(iteration) != expected:
+    for trace_step, expected in ((1, 6), (3, 7), (11, 1), (963, 7)):
+        if field_index(trace_step) != expected:
             raise AssertionError("LMBT_WIND_INDEX_SELFTEST")
     print("LMBT_SELFTEST_PASS")
 
