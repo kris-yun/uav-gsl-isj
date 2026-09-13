@@ -48,3 +48,16 @@ The formal implementation now imports the project's existing audited
 the exact binary wind files used by the realization, and uses the same float32
 grid indexing rule.  No new interpolation and no relaxed tolerance are
 introduced.  The full 1380-frame wind binding must pass before scoring.
+
+## First scoring launch boundary failure
+
+At commit `38bdc26`, the 1380-frame wind binding passed and the program entered
+construction of the first arm's backward paths.  A path left the finite GADEN
+grid, and the audited reader correctly raised `POINT_OUTSIDE_GRID`.  No complete
+arm score, source-truth read, or Gate output was produced.
+
+The correction terminates a backward path as soon as it leaves either the
+runtime wind grid or the candidate-map envelope.  It does not clamp the path to
+the wall, invent wind outside the domain, or alter any registered numerical
+parameter.  Since all source candidates are inside the map, the out-of-domain
+remainder cannot contribute valid candidate evidence.

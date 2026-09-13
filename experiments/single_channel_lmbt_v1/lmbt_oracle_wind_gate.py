@@ -200,6 +200,11 @@ def backward_paths(events: list[Event], runtime_wind: RuntimeWind | None,
                    local_ray: bool = False) -> list[tuple[np.ndarray, np.ndarray]]:
     lower = candidate_xy.min(axis=0) - 0.5
     upper = candidate_xy.max(axis=0) + 0.5
+    if runtime_wind is not None:
+        grid_lower = np.asarray(runtime_wind.grid.minimum[:2], dtype=np.float64)
+        grid_upper = np.asarray(runtime_wind.grid.maximum[:2], dtype=np.float64)
+    else:
+        grid_lower, grid_upper = lower, upper
     steps = int(MAX_AGE_S / BACK_DT_S)
     output: list[tuple[np.ndarray, np.ndarray]] = []
     for event in events:
@@ -207,6 +212,8 @@ def backward_paths(events: list[Event], runtime_wind: RuntimeWind | None,
         positions = []
         ages = []
         for step in range(1, steps + 1):
+            if np.any(xyz[:2] < grid_lower) or np.any(xyz[:2] >= grid_upper):
+                break
             past_step = event.trace_step - int(round(step * BACK_DT_S / DT_S))
             if local_ray:
                 velocity = np.asarray(event.local_wind_xyz, dtype=np.float64)
@@ -220,7 +227,8 @@ def backward_paths(events: list[Event], runtime_wind: RuntimeWind | None,
             # V1 is a navigation-height source footprint.  Preserve z and use
             # the horizontal components of the exact 3-D runtime wind cell.
             xyz[:2] = xyz[:2] - velocity[:2] * BACK_DT_S
-            if np.any(xyz[:2] < lower) or np.any(xyz[:2] > upper):
+            if (np.any(xyz[:2] < lower) or np.any(xyz[:2] > upper) or
+                    np.any(xyz[:2] < grid_lower) or np.any(xyz[:2] >= grid_upper)):
                 break
             positions.append(xyz[:2].copy())
             ages.append(step * BACK_DT_S)
