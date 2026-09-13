@@ -7,12 +7,13 @@ implementation, CCDE, or any protected response bank.
 Read in this order:
 
 1. `RESULT_VERDICT.md`
-2. `NEXT_ROUTE_DECISION.md`
-3. `FAILURE_ROOT_CAUSE.md`
-4. `THEORY_AND_NOVELTY.md`
-5. `LITERATURE_TRACE.md`
-6. `H03_SEED11_PREREG.json`
-7. `lmbt_oracle_wind_gate.py`
+2. `DEVICE_CONTRACT_20260913.md`
+3. `NEXT_ROUTE_DECISION.md`
+4. `FAILURE_ROOT_CAUSE.md`
+5. `THEORY_AND_NOVELTY.md`
+6. `LITERATURE_TRACE.md`
+7. `H03_SEED11_PREREG.json`
+8. `lmbt_oracle_wind_gate.py`
 
 The formal run was restricted to the historical failing case H03 seed 11. It
 used the saved single gas channel, pose history, occupancy support, and the

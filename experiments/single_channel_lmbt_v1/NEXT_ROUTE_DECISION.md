@@ -6,7 +6,12 @@ Keep exact sensor-lag correction as mandatory observation preprocessing. Retire 
 
 Under the present restrictions—one gas channel, no source shutoff, no source-response library, no second receiver, and no deployable full-flow field—a purely passive causal source-localization claim is not identified by the available observations. More optimization cannot create the missing intervention or independent information.
 
-## The remaining causal route
+The 2026-09-13 vendor answer closes the hardware gate for the purchased
+FKT-AQI-L: it is a diffusion-sampling device with one-second uploads and no
+controllable intake. Therefore CRI is not available under the current hardware
+contract. See `DEVICE_CONTRACT_20260913.md`.
+
+## The causal route considered, but unavailable on this device
 
 The scientifically distinct route is **Coded Receptor Intervention (CRI)**: impose a known, weak, time-varying intake pattern at the sensor inlet while the UAV continues flying and the leak continues normally.
 
@@ -52,12 +57,13 @@ All coded-stream arms receive exactly the same raw one-channel measurements and 
 
 ## Gate before implementation
 
-CRI is viable only if the detector exposes a controllable intake pump/valve, or a small external inlet modulator can be mounted without changing the sensing chemistry. The switching period must be faster than plume-scale variation but slow enough for a measurable detector response. These are device facts, not tunable algorithm choices.
+CRI is viable only if the detector exposes a controllable intake pump/valve, or a small external inlet modulator can be mounted without changing the sensing chemistry. The purchased device is confirmed to be diffusion sampling, so it fails this gate.
 
-If no such intake control exists, the causal main-innovation route should be closed. The honest paper direction would then be sensor-memory-aware observation correction plus robust noncausal source localization, and it would need a different main contribution.
+Under the user's no-extra-hardware constraint, the causal main-innovation route is closed. The honest paper direction is sensor-memory-aware observation correction plus robust noncausal source localization, and it needs a different main contribution.
 
-## Smallest decisive next experiment
+## CRI experiment decision
 
-Before any flight or multiseed run, replay the same H03 seed11 concentration history through the frozen first-order sensor model with a preregistered binary intake code. Compare A1/A2/A3 on recovery of the known instantaneous concentration and pose assignment. Only if CRI beats both matched controls should it enter a single H03 closed-loop run.
-
-This simulated gate tests the observation-identifiability premise. It cannot validate the real device until the intake actuator and timing interface are confirmed.
+Do not run the proposed binary-intake simulation. With no actuator on the real
+device, it would validate only a synthetic measurement equation and could not
+support deployment. Continue offline work with the frozen one-second VOC stream,
+UAV pose interpolation, and explicit sensor-memory handling.
