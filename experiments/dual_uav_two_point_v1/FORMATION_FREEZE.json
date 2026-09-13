@@ -1,0 +1,66 @@
+{
+  "schema": "DUAL_UAV_SOURCE_BLIND_FORMATION_FREEZE_V1",
+  "gas_or_source_values_read": false,
+  "center_route_selection_rule": "LEXICOGRAPHIC_FIRST_EXISTING_FROZEN_ROUTE",
+  "center_route": "T_diag_A",
+  "center_route_sha256": "0d1d2aa4499a641fff222fc7b44b15af7171e9b5ed753e55d6bd3f2c025dc717",
+  "occupancy_sha256": "9402690152be4568ced8f2256e9098d82691aaaa1f22a1887eeac55d0e5d098d",
+  "gas_grid_spacing_m": 0.1,
+  "declared_safe_receiver_separation_m": 2.0,
+  "declared_practical_formation_cap_m": 5.0,
+  "r_min_m": 2.0,
+  "r_max_m": 1.8000000000000005,
+  "logarithmic_scales_m": [],
+  "center_route_free_samples": 480,
+  "center_route_blocked_samples": 270,
+  "center_route_samples": 750,
+  "wind_geometry": [
+    {
+      "wind_input": "W_fast.csv",
+      "orientation_rule": "MEDIAN_DEPLOYABLE_WIND_CROSS_DIRECTION",
+      "along_wind_unit": [
+        -0.9624370010658289,
+        0.2715050993617133
+      ],
+      "cross_wind_unit": [
+        -0.2715050993617133,
+        -0.9624370010658289
+      ],
+      "maximum_span_with_any_free_corridor_m": 1.8000000000000005,
+      "usable_samples_at_safe_separation": 0,
+      "route_samples": 750
+    },
+    {
+      "wind_input": "W_slow.csv",
+      "orientation_rule": "MEDIAN_DEPLOYABLE_WIND_CROSS_DIRECTION",
+      "along_wind_unit": [
+        -0.9765560312284666,
+        0.21526336862389314
+      ],
+      "cross_wind_unit": [
+        -0.21526336862389314,
+        -0.9765560312284666
+      ],
+      "maximum_span_with_any_free_corridor_m": 2.200000000000001,
+      "usable_samples_at_safe_separation": 14,
+      "route_samples": 750
+    },
+    {
+      "wind_input": "W_altfast.csv",
+      "orientation_rule": "MEDIAN_DEPLOYABLE_WIND_CROSS_DIRECTION",
+      "along_wind_unit": [
+        -0.9927463788950038,
+        0.12022739783783662
+      ],
+      "cross_wind_unit": [
+        -0.12022739783783662,
+        -0.9927463788950038
+      ],
+      "maximum_span_with_any_free_corridor_m": 2.200000000000001,
+      "usable_samples_at_safe_separation": 13,
+      "route_samples": 750
+    }
+  ],
+  "status": "STOP_RMAX_NOT_GREATER_THAN_RMIN",
+  "stop_reason": "Existing frozen route and House02 free-space geometry cannot support the declared large-UAV separation in every wind orientation."
+}
