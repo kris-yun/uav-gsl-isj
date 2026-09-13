@@ -1,0 +1,130 @@
+{
+  "checks": {
+    "beats_icra_global_rank": true,
+    "beats_raw_value_rank": true,
+    "beats_reverse_time_rank": true,
+    "map_error_below_native_pmfs_8p58m": true,
+    "top_decile": false
+  },
+  "claim_boundary": "Any failed primary check stops TAORL tuning, PMFS integration, new seeds and cross-House execution.",
+  "contract": "TAORL_H03_SEED11_ONE_SHOT_V1",
+  "hardware_bound_parameters": {
+    "output_dt_s": 1.0,
+    "tau_grid_s": [
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      6.5
+    ],
+    "tau_upper_derivation": "T90<=15 s and first-order T90=tau*ln(10), hence tau<=6.514 s",
+    "window_s": 30.0
+  },
+  "input_hashes": {
+    "CROSSED_PLUME_LOHO_SIGN.json": "b9838552bf0793c4cc413d8701bbd0ca6494a1e668694ed61d1605355a772be4",
+    "PREREGISTRATION_H03_SEED11.json": "7fc531b021eac9fe875e06b034373d8a049a5ec518d63df21532e09715ed2b42",
+    "candidate.csv": "0fa52cf616f92e13462719b6667e21dd5b86856643031e0c4fedde09a3f17e74",
+    "formal_runtime_manifest.json": "3022f2bfd09a261ae418e4473fcae4880946deec963ef27b5b70d6a86ddd1006",
+    "screen_h03_paired_position_premise.py": "8ef59678c4a71c87a5fde1e12e9b2adf4e37630b67c370906a7e0e1ed49fd312",
+    "sensor_trace.csv": "8fe4c20e109c2128d0f39b2e6548b50f88e064f6854e07c38a2aa1c90d571455",
+    "wind_trace.csv": "292c0afe61d794aa677b175e69131bef268f3ff42f1170f33a83f6ccaecd1bac"
+  },
+  "limitations": [
+    "one development H03 trace only",
+    "the provider is an H01/H02-selected analytic plume approximation",
+    "a PASS would not establish cross-dataset or real-flight performance",
+    "the 8.58 m PMFS comparison is contextual because this gate freezes the historical trajectory"
+  ],
+  "profiled_tau_at_true_candidate_s": {
+    "forward": 6.5,
+    "reverse": 0.5
+  },
+  "provider_parameter_selected_without_H03": {
+    "direction_sign": 1.0,
+    "distance_power": 1.0,
+    "sigma0": 0.25,
+    "spread": 0.6,
+    "tau_s": 3.0,
+    "wind_window_s": 15
+  },
+  "results": {
+    "ICRA2026_GLOBAL_EDF": {
+      "best_loss": 0.05707710823752165,
+      "candidate_count": 7258,
+      "map_error_m": 6.745685213527238,
+      "map_xy": [
+        6.1000000000000005,
+        0.2869999999999999
+      ],
+      "normalized_true_rank": 0.9727159983464242,
+      "true_candidate_xy": [
+        -0.49999999999999994,
+        1.887
+      ],
+      "true_loss": 0.2488555060515846,
+      "true_rank": 7060
+    },
+    "RAW_PROFILED_VALUE": {
+      "best_loss": 0.3928830275015138,
+      "candidate_count": 7258,
+      "map_error_m": 9.392074797402328,
+      "map_xy": [
+        8.3,
+        -1.513
+      ],
+      "normalized_true_rank": 0.6482017362546507,
+      "true_candidate_xy": [
+        -0.49999999999999994,
+        1.887
+      ],
+      "true_loss": 0.7411321299915684,
+      "true_rank": 4705
+    },
+    "TAORL_FORWARD_WINDOWED": {
+      "best_loss": 0.06634259259259259,
+      "candidate_count": 7258,
+      "map_error_m": 4.985144832399557,
+      "map_xy": [
+        4.300000000000001,
+        0.387
+      ],
+      "normalized_true_rank": 0.42552018740526387,
+      "true_candidate_xy": [
+        -0.49999999999999994,
+        1.887
+      ],
+      "true_loss": 0.10717391304347824,
+      "true_rank": 3089
+    },
+    "TAORL_REVERSE_TIME_CONTROL": {
+      "best_loss": 0.0831924315619968,
+      "candidate_count": 7258,
+      "map_error_m": 8.740106921542779,
+      "map_xy": [
+        8.100000000000001,
+        0.08700000000000019
+      ],
+      "normalized_true_rank": 0.8449772633319553,
+      "true_candidate_xy": [
+        -0.49999999999999994,
+        1.887
+      ],
+      "true_loss": 0.14175523349436395,
+      "true_rank": 6133
+    }
+  },
+  "script_sha256": "d0737778799e9d31ea73f1cadc77d7e944e54e49ebb86aa0e76029f1847833d4",
+  "trace_audit": {
+    "native_dt_s": 0.19999999999999996,
+    "native_samples": 1380,
+    "one_hz_samples": 276,
+    "one_hz_selection": "last native sample in each non-overlapping one-second interval",
+    "true_gas_column_read": false
+  },
+  "truth_read_after_all_arm_scores": true,
+  "truth_xy_evaluator_only": [
+    -0.45,
+    1.9
+  ],
+  "verdict": "TAORL_H03_NO_GO"
+}

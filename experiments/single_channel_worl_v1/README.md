@@ -14,3 +14,7 @@ Read in this order:
 The external ICRA 2026 global-rank method is an explicit comparator.  TAORL is
 allowed to continue only if its forward-time, windowed likelihood beats that
 comparator, a raw-value comparator, and its reverse-time negative control.
+
+The run is complete.  Read `RESULT_VERDICT.md`; the formal all-required verdict
+is NO-GO, while endpoint improvement and forward-time attribution are retained
+as component-level positive evidence.
