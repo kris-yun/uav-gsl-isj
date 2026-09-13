@@ -1,0 +1,36 @@
+{
+  "verdict": "CCDE_WIND_MOMENT_NOT_PHYSICALLY_SPECIFIC",
+  "co_observed": "CCDE_MATCHED_FILTER_ONLY_NO_ADDED_VALUE",
+  "method": "CCDE-PMFS (Candidate-Conditioned Deprojection Evidence)",
+  "mechanism_tested": "selective wind-direction moment deprojection (A2, modes=(0,))",
+  "scope": "held-out H01/H03 seeds 11/12/13 (six seeds), first three native source updates each",
+  "date": "2026-08-07",
+  "vm": "zyc@192.168.111.128",
+  "gate": "fixed-trace A1 (MSF) vs A2 (CCDE-Wind) with per-seed frozen snapshot triplets",
+  "key_evidence": {
+    "a2_vs_a1_ranks": "18 held-out updates: A2 candidate-rank delta vs A1 is 0 on 14 updates, +1 on 3 updates (H01_11 U2, H03_11 U2, H03_13 U2 medoid/cov), -1 on 1 update (H01_12 U0); no consistent added value",
+    "shuffled_control_better_fraction_U2": {
+      "H01_s11": 0.30,
+      "H01_s12": 0.28,
+      "H01_s13": 0.07,
+      "H03_s11": 0.31,
+      "H03_s12": 0.82,
+      "H03_s13": 0.79
+    },
+    "shuffled_control_interpretation": "physical wind-moment association is not robustly better than 100 fixed candidate-shuffled assignments (H01 3/3 seeds worse; H03 2/3 seeds modestly better, 1/3 worse); discovery H03 signal (0.96) does not reproduce (held-out H03 mean ~0.64)",
+    "mechanism_controls": "unit source response = 1.0 on all updates; wind-nuisance leakage <= 1.8e-12 (approx 0); CRN parity byte-identical; M1 fixed-support parity max_abs_diff = 0 on all 18 updates",
+    "h01_no_harm": "no systematic degradation on H01 (A2 ~ A1 on map/medoid error, entropy, coverage)",
+    "h03_improvement": "no material improvement of A2 over A1 on H03 (marginal rank deltas only)"
+  },
+  "verdict_reason": "The candidate-conditioned wind-direction moment passes construction controls (unit response, leakage ~0, CRN, M1 parity) but fails the mechanism-specificity gate on held-out data: physical wind-nuisance association does not beat candidate-shuffled association on both houses in aggregate, and A2 does not robustly improve mechanism metrics over A1.",
+  "no_truth_tuning": "held-out truths were used only after inference artifacts were frozen (INFERENCE_FROZEN.done markers); no discovery or held-out truth was used to select parameters.",
+  "artifacts": [
+    "CCDE_HELDOUT_RESULTS.json",
+    "CCDE_SHUFFLED_CONTROL.json",
+    "CCDE_RUNTIME_REPORT.md",
+    "CCDE_REALFLIGHT_READINESS.md",
+    "gate_output/EVALUATION.json per seed",
+    "snapshot_freeze.sha256 per seed",
+    "SHA256SUMS"
+  ]
+}

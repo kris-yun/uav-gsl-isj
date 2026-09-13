@@ -1,0 +1,43 @@
+{
+  "contract": "MC_SCSP_H03_SEED11_ONE_SHOT_V1",
+  "status": "FROZEN_BEFORE_EXPERIMENT",
+  "data_scope": {
+    "house": "H03",
+    "seed": 11,
+    "source_updates": [0, 1, 2],
+    "role": "development_replay_not_heldout",
+    "source_archive_sha256": "bfb841c50e38b9848cb57e0cad22c6a6e65fcc1b754c384df6cc477cc6b0f295"
+  },
+  "primary_arm": "MC_SCSP_A4_protected_posterior_blend",
+  "fixed_parameters": {
+    "sigma2": 0.16,
+    "lambda": 0.5,
+    "mismatch_energy": 0.95,
+    "alpha": "1-rho",
+    "source_rank_tolerance": "max(shape)*eps*smax"
+  },
+  "controls": [
+    "native_PMFS",
+    "plain_matched_source_filter",
+    "legacy_metric_inconsistent_SCSP",
+    "unprotected_structured_covariance"
+  ],
+  "pass_all": [
+    "weighted_source_nuisance_orthogonality_max_abs_le_1e-8",
+    "final_primary_map_or_medoid_error_at_least_20_percent_better_than_native_PMFS",
+    "final_primary_map_and_medoid_not_worse_than_plain_MSF_by_more_than_0.2_m",
+    "final_primary_improves_at_least_two_of_candidate_rank_candidate_margin_coverage_high_conf_wrong_mass_vs_legacy_SCSP",
+    "primary_does_not_pass_only_by_increasing_entropy"
+  ],
+  "stop_marker": "MC_SCSP_H03_SEED11_NO_GO",
+  "pass_marker": "MC_SCSP_H03_SEED11_DEVELOPMENT_GO_TO_UNTOUCHED_CONFIRMATION",
+  "prohibitions": [
+    "no_truth_selected_parameter",
+    "no_second_channel",
+    "no_new_network",
+    "no_planner_change",
+    "no_new_house_or_seed",
+    "no_rerun_after_result"
+  ]
+}
+
