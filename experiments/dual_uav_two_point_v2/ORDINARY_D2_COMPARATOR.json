@@ -1,0 +1,112 @@
+{
+  "schema": "DUAL_UAV_ORDINARY_D2_COMPARATOR_V1",
+  "same_two_traces": true,
+  "ordinary_d2": {
+    "representation": "ORDINARY_D2",
+    "evaluation_control": "CORRECT",
+    "design_winds": [
+      "W_fast",
+      "W_slow"
+    ],
+    "evaluation_wind": "W_altfast",
+    "distance_rule": "train-only coordinate standardization + nearest two-wind source centroid Euclidean distance",
+    "rank1_count": 1,
+    "minimum_margin": -19.96901326577041,
+    "mean_margin": -8.039575749532005,
+    "cases": [
+      {
+        "source": "S_truth",
+        "predicted": "S_k01",
+        "true_rank": 2,
+        "true_distance": 100.23501732556437,
+        "best_false_source": "S_k01",
+        "best_false_distance": 95.17329129897986,
+        "margin": -5.061726026584509
+      },
+      {
+        "source": "S_k01",
+        "predicted": "S_k01",
+        "true_rank": 1,
+        "true_distance": 104.08312316067375,
+        "best_false_source": "S_k10",
+        "best_false_distance": 107.6796783432788,
+        "margin": 3.5965551826050444
+      },
+      {
+        "source": "S_k10",
+        "predicted": "S_k22",
+        "true_rank": 2,
+        "true_distance": 26.685627172759713,
+        "best_false_source": "S_k22",
+        "best_false_distance": 6.716613906989301,
+        "margin": -19.96901326577041
+      },
+      {
+        "source": "S_k22",
+        "predicted": "S_k01",
+        "true_rank": 2,
+        "true_distance": 502546659.029214,
+        "best_false_source": "S_k01",
+        "best_false_distance": 502546648.30509514,
+        "margin": -10.724118888378143
+      }
+    ]
+  },
+  "signed_increment": {
+    "representation": "SIGNED_INCREMENT",
+    "evaluation_control": "CORRECT",
+    "design_winds": [
+      "W_fast",
+      "W_slow"
+    ],
+    "evaluation_wind": "W_altfast",
+    "distance_rule": "train-only coordinate standardization + nearest two-wind source centroid Euclidean distance",
+    "rank1_count": 2,
+    "minimum_margin": -2.248849854876255,
+    "mean_margin": 2.740036512493613,
+    "cases": [
+      {
+        "source": "S_truth",
+        "predicted": "S_truth",
+        "true_rank": 1,
+        "true_distance": 101.75763844081987,
+        "best_false_source": "S_k22",
+        "best_false_distance": 114.29907007429989,
+        "margin": 12.541431633480016
+      },
+      {
+        "source": "S_k01",
+        "predicted": "S_k22",
+        "true_rank": 3,
+        "true_distance": 41.597436359782016,
+        "best_false_source": "S_k22",
+        "best_false_distance": 39.34858650490576,
+        "margin": -2.248849854876255
+      },
+      {
+        "source": "S_k10",
+        "predicted": "S_k22",
+        "true_rank": 2,
+        "true_distance": 1.33501473373302,
+        "best_false_source": "S_k22",
+        "best_false_distance": 0.4166741431681349,
+        "margin": -0.9183405905648852
+      },
+      {
+        "source": "S_k22",
+        "predicted": "S_k22",
+        "true_rank": 1,
+        "true_distance": 0.1017848701117679,
+        "best_false_source": "S_k10",
+        "best_false_distance": 1.687689732047343,
+        "margin": 1.5859048619355751
+      }
+    ]
+  },
+  "worst_wind_sigma3_sigma1": {
+    "ordinary_d2": 0.000683243798822524,
+    "signed_increment": 0.0006832433423007651
+  },
+  "strict_signed_advantage": false,
+  "rule": "signed must match-or-beat held accuracy and strictly beat both minimum held margin and worst-wind structural ratio"
+}

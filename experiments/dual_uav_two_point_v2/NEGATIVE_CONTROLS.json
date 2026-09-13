@@ -1,0 +1,215 @@
+{
+  "schema": "DUAL_UAV_DESTRUCTIVE_CONTROLS_V1",
+  "time_mismatch_samples": 25,
+  "time_mismatch_seconds": 5.0,
+  "correct_signed_increment": {
+    "representation": "SIGNED_INCREMENT",
+    "evaluation_control": "CORRECT",
+    "design_winds": [
+      "W_fast",
+      "W_slow"
+    ],
+    "evaluation_wind": "W_altfast",
+    "distance_rule": "train-only coordinate standardization + nearest two-wind source centroid Euclidean distance",
+    "rank1_count": 2,
+    "minimum_margin": -2.248849854876255,
+    "mean_margin": 2.740036512493613,
+    "cases": [
+      {
+        "source": "S_truth",
+        "predicted": "S_truth",
+        "true_rank": 1,
+        "true_distance": 101.75763844081987,
+        "best_false_source": "S_k22",
+        "best_false_distance": 114.29907007429989,
+        "margin": 12.541431633480016
+      },
+      {
+        "source": "S_k01",
+        "predicted": "S_k22",
+        "true_rank": 3,
+        "true_distance": 41.597436359782016,
+        "best_false_source": "S_k22",
+        "best_false_distance": 39.34858650490576,
+        "margin": -2.248849854876255
+      },
+      {
+        "source": "S_k10",
+        "predicted": "S_k22",
+        "true_rank": 2,
+        "true_distance": 1.33501473373302,
+        "best_false_source": "S_k22",
+        "best_false_distance": 0.4166741431681349,
+        "margin": -0.9183405905648852
+      },
+      {
+        "source": "S_k22",
+        "predicted": "S_k22",
+        "true_rank": 1,
+        "true_distance": 0.1017848701117679,
+        "best_false_source": "S_k10",
+        "best_false_distance": 1.687689732047343,
+        "margin": 1.5859048619355751
+      }
+    ]
+  },
+  "controls": {
+    "MEASUREMENT_POSITION_SWAP": {
+      "representation": "SIGNED_INCREMENT",
+      "evaluation_control": "MEASUREMENT_POSITION_SWAP",
+      "design_winds": [
+        "W_fast",
+        "W_slow"
+      ],
+      "evaluation_wind": "W_altfast",
+      "distance_rule": "train-only coordinate standardization + nearest two-wind source centroid Euclidean distance",
+      "rank1_count": 1,
+      "minimum_margin": -30.226481347156096,
+      "mean_margin": -8.294397467288317,
+      "cases": [
+        {
+          "source": "S_truth",
+          "predicted": "S_k01",
+          "true_rank": 4,
+          "true_distance": 143.79376384185278,
+          "best_false_source": "S_k01",
+          "best_false_distance": 113.56728249469668,
+          "margin": -30.226481347156096
+        },
+        {
+          "source": "S_k01",
+          "predicted": "S_k22",
+          "true_rank": 3,
+          "true_distance": 42.20477133376389,
+          "best_false_source": "S_k22",
+          "best_false_distance": 39.348624304976816,
+          "margin": -2.8561470287870705
+        },
+        {
+          "source": "S_k10",
+          "predicted": "S_k22",
+          "true_rank": 2,
+          "true_distance": 2.080593462332038,
+          "best_false_source": "S_k22",
+          "best_false_distance": 0.4386916165475692,
+          "margin": -1.6419018457844687
+        },
+        {
+          "source": "S_k22",
+          "predicted": "S_k22",
+          "true_rank": 1,
+          "true_distance": 0.1661682984790674,
+          "best_false_source": "S_k10",
+          "best_false_distance": 1.7131086510534321,
+          "margin": 1.5469403525743648
+        }
+      ],
+      "degrades_vs_correct": true
+    },
+    "TIME_MISMATCH": {
+      "representation": "SIGNED_INCREMENT",
+      "evaluation_control": "TIME_MISMATCH",
+      "design_winds": [
+        "W_fast",
+        "W_slow"
+      ],
+      "evaluation_wind": "W_altfast",
+      "distance_rule": "train-only coordinate standardization + nearest two-wind source centroid Euclidean distance",
+      "rank1_count": 3,
+      "minimum_margin": -0.9174358728316445,
+      "mean_margin": 6.416040014832264,
+      "cases": [
+        {
+          "source": "S_truth",
+          "predicted": "S_truth",
+          "true_rank": 1,
+          "true_distance": 639.6271850125208,
+          "best_false_source": "S_k22",
+          "best_false_distance": 650.6739008388431,
+          "margin": 11.04671582632227
+        },
+        {
+          "source": "S_k01",
+          "predicted": "S_k01",
+          "true_rank": 1,
+          "true_distance": 1.6507084355194823,
+          "best_false_source": "S_k22",
+          "best_false_distance": 15.599683679422336,
+          "margin": 13.948975243902854
+        },
+        {
+          "source": "S_k10",
+          "predicted": "S_k22",
+          "true_rank": 2,
+          "true_distance": 1.3343410329271692,
+          "best_false_source": "S_k22",
+          "best_false_distance": 0.41690516009552475,
+          "margin": -0.9174358728316445
+        },
+        {
+          "source": "S_k22",
+          "predicted": "S_k22",
+          "true_rank": 1,
+          "true_distance": 0.1017848701117679,
+          "best_false_source": "S_k10",
+          "best_false_distance": 1.687689732047343,
+          "margin": 1.5859048619355751
+        }
+      ],
+      "degrades_vs_correct": false
+    },
+    "COLLAPSED_BASELINE": {
+      "representation": "SIGNED_INCREMENT",
+      "evaluation_control": "COLLAPSED_BASELINE",
+      "design_winds": [
+        "W_fast",
+        "W_slow"
+      ],
+      "evaluation_wind": "W_altfast",
+      "distance_rule": "train-only coordinate standardization + nearest two-wind source centroid Euclidean distance",
+      "rank1_count": 1,
+      "minimum_margin": -49.46116891997157,
+      "mean_margin": -15.95077769935434,
+      "cases": [
+        {
+          "source": "S_truth",
+          "predicted": "S_k22",
+          "true_rank": 4,
+          "true_distance": 49.523596776876964,
+          "best_false_source": "S_k22",
+          "best_false_distance": 0.06242785690539481,
+          "margin": -49.46116891997157
+        },
+        {
+          "source": "S_k01",
+          "predicted": "S_k22",
+          "true_rank": 3,
+          "true_distance": 14.40436973435119,
+          "best_false_source": "S_k22",
+          "best_false_distance": 0.06242785690539481,
+          "margin": -14.341941877445796
+        },
+        {
+          "source": "S_k10",
+          "predicted": "S_k22",
+          "true_rank": 2,
+          "true_distance": 1.6960041706028681,
+          "best_false_source": "S_k22",
+          "best_false_distance": 0.06242785690539481,
+          "margin": -1.6335763136974732
+        },
+        {
+          "source": "S_k22",
+          "predicted": "S_k22",
+          "true_rank": 1,
+          "true_distance": 0.06242785690539481,
+          "best_false_source": "S_k10",
+          "best_false_distance": 1.6960041706028681,
+          "margin": 1.6335763136974732
+        }
+      ],
+      "degrades_vs_correct": true
+    }
+  },
+  "all_destructive_controls_degrade": false
+}
