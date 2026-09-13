@@ -1,0 +1,44 @@
+{
+  "schema": "HOUSE02_SOURCE_BLIND_FORMATION_POLICY_V1",
+  "route_inputs": [
+    "occupancy",
+    "connectivity",
+    "fixed altitude",
+    "0.35 m/s speed",
+    "2.0 m formation feasibility"
+  ],
+  "forbidden_inputs_read": [],
+  "gas_read": false,
+  "source_identity_read": false,
+  "component_rule": "largest 4-connected feasible component, lexicographic tie break",
+  "route_rule": "deterministic DFS coverage walk with geometry-valid quarter/midpoint edges",
+  "orientation_rule": "feasible 5-degree angle nearest frozen crosswind; smaller angle tie break",
+  "wind_policies": [
+    {
+      "wind_id": "W_fast",
+      "input_sha256": "24c761e5920c87168abc0e23e9e7e82ae9d6bcbe3ea96b6dacbb22b0bc4d4bcf",
+      "ideal_crosswind_angle_deg": 74.24615132397392,
+      "rule": "MEDIAN_PAST_DEPLOYABLE_WIND_CROSS_DIRECTION"
+    },
+    {
+      "wind_id": "W_slow",
+      "input_sha256": "b9be8be6c8cb84785755930e0a2e3619b2432db0de5a7af97389ad7eb801d106",
+      "ideal_crosswind_angle_deg": 77.56902098336468,
+      "rule": "MEDIAN_PAST_DEPLOYABLE_WIND_CROSS_DIRECTION"
+    },
+    {
+      "wind_id": "W_altfast",
+      "input_sha256": "0b9bb3a1a8640704acd26be259ec0209fe56f291c316e847790bf4f9b3d48733",
+      "ideal_crosswind_angle_deg": 83.09477346869551,
+      "rule": "MEDIAN_PAST_DEPLOYABLE_WIND_CROSS_DIRECTION"
+    }
+  ],
+  "center_samples": 750,
+  "per_wind_pair_samples": 750,
+  "traversal_cells_visited": 4942,
+  "traversal_polyline_length_m": 988.2000122070312,
+  "achievable_duration_s": 150.0,
+  "target_150s_achieved": true,
+  "all_python_geometry_checks_pass": true,
+  "status": "PRE_NATIVE_GEOMETRY_PASS"
+}

@@ -45,7 +45,10 @@ class Occupancy:
             raise ValueError(f"occupancy shape mismatch: {self.cells.shape}")
 
     def state(self, point: np.ndarray) -> int:
-        index = np.floor((np.asarray(point, dtype=np.float32) - self.minimum.astype(np.float32)) / np.float32(self.cell)).astype(int)
+        # GADEN converts the float vector to glm::ivec3.  GLM truncates toward
+        # zero; np.floor disagrees just outside a negative map boundary.
+        scaled = (np.asarray(point, dtype=np.float32) - self.minimum.astype(np.float32)) / np.float32(self.cell)
+        index = scaled.astype(int)
         if any(value < 0 or value >= limit for value, limit in zip(index, self.dimensions)):
             return 3
         x, y, z = index

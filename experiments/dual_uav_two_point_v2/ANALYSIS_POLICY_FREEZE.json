@@ -1,0 +1,26 @@
+{
+  "schema": "DUAL_UAV_TWO_POINT_ANALYSIS_POLICY_FREEZE_V1",
+  "frozen_before_gas_query": true,
+  "design_winds": ["W_fast", "W_slow"],
+  "evaluation_wind": "W_altfast",
+  "evaluation_status_label": "INTERNAL_DEVELOPMENT_HOLDOUT",
+  "primary_structure": "SIGNED_INCREMENT",
+  "secondary_diagnostic": "SECOND_ORDER_STRUCTURE",
+  "representations": {
+    "S1_PLUS": "z_plus",
+    "S1_MINUS": "z_minus",
+    "ORDINARY_D2": "concatenate(z_plus,z_minus)",
+    "SIGNED_INCREMENT": "z_plus-z_minus",
+    "SECOND_ORDER_STRUCTURE": "(z_plus-z_minus)^2"
+  },
+  "structural_gate": "for every wind separately: centered rank=3 and sigma3/sigma1>=0.05",
+  "source_identity_rule": "train-only coordinate standardization, two-design-wind source centroids, Euclidean nearest centroid",
+  "held_wind_gate": "SIGNED_INCREMENT rank1_count=4/4",
+  "hit_floor_ppm": 0.1,
+  "time_mismatch": "shift evaluation minus receiver by 25 samples (5 s), zero-fill prefix",
+  "measurement_position_swap": "swap evaluation receiver measurements while preserving frozen geometry labels and design prototypes",
+  "collapsed_baseline": "set evaluation minus trace equal to plus trace",
+  "negative_control_gate": "every destructive control lowers rank1_count or minimum held-wind margin",
+  "ordinary_d2_advantage_rule": "signed increment matches or exceeds ORDINARY_D2 held accuracy and strictly exceeds both minimum held margin and worst-wind sigma3/sigma1",
+  "forbidden": ["learned embedding", "weight search", "threshold tuning", "evaluation-wind model selection", "PMFS posterior modification"]
+}

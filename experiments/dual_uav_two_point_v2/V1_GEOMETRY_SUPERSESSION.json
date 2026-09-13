@@ -1,0 +1,13 @@
+{
+  "schema": "DUAL_UAV_V1_GEOMETRY_SUPERSESSION_V1",
+  "historical_commit": "de1fee0dea4728b6ba82168e881e88f816a7822b",
+  "historical_result": "STOP_RMAX_NOT_GREATER_THAN_RMIN",
+  "status": "INVALID_AS_GLOBAL_HOUSE02_CONCLUSION",
+  "reasons": [
+    "the V1 test was restricted to historical T_diag_A rather than all House02 free space",
+    "the V1 custom reader used floor while native GADEN coordinate conversion truncates toward zero",
+    "native GADEN confirms that 270 of 750 T_diag_A points are non-free, so T_diag_A is not a deployable navigation route"
+  ],
+  "preserved_limit": "V1 remains evidence that the historical T_diag_A route cannot carry the declared formation",
+  "replacement_evidence": "whole-map 2 m source-blind feasibility and native route validation in dual_uav_two_point_v2"
+}
