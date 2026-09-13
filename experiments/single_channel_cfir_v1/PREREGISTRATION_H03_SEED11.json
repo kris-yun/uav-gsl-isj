@@ -1,0 +1,59 @@
+{
+  "contract": "CFIR_H03_SEED11_ONE_SHOT_V1",
+  "data_role": "exposed_development_failure_case_not_heldout",
+  "formal_case": "H03 algorithm seed 11 frozen A0 trace",
+  "mechanism": "candidate-wise chronological-minus-reversed LMBT log footprint",
+  "score_direction": "higher_is_better",
+  "allowed_model_inputs": [
+    "single measured gas channel",
+    "past pose timestamps",
+    "occupancy-derived free-cell candidate support",
+    "simulation-known historical CFD wind for oracle premise only",
+    "frozen sensor tau 1.2 s and dead time 0.4 s"
+  ],
+  "forbidden_model_inputs": [
+    "true source coordinates before all scores are frozen",
+    "true gas concentration",
+    "PMFS or CTT source-response bank",
+    "future measurements",
+    "House-specific fitting",
+    "learned weight or likelihood temperature",
+    "planner modification"
+  ],
+  "fixed_parameters_inherited_from_lmbt": {
+    "dt_s": 0.2,
+    "backtrack_step_s": 0.4,
+    "maximum_emission_age_s": 80.0,
+    "sensor_tau_s": 1.2,
+    "sensor_dead_time_s": 0.4,
+    "event_threshold_ppm": 0.1,
+    "diffusivity_sensitivity_m2_s": [0.01, 0.03, 0.1],
+    "registered_default_kappa_m2_s": 0.03,
+    "base_spread_m": 0.2,
+    "pooling": "equal-weight mean log footprint across reconstructed whiffs"
+  },
+  "frozen_lmbt_default_comparators": {
+    "chronological_true_rank": 790,
+    "chronological_map_error_m": 1.6003965133678588,
+    "reversed_true_rank": 630,
+    "reversed_map_error_m": 1.547924093746202
+  },
+  "primary_gate_all_required": [
+    "recomputed LMBT default comparators exactly match the frozen reference",
+    "CFIR default MAP error improves over chronological LMBT by at least 0.10 m, one candidate-grid spacing",
+    "CFIR default true-source rank is strictly better than both 790 and 630",
+    "CFIR default normalized true-source rank is at most 0.10",
+    "CFIR default true-source rank is strictly better than sign-reversed CFIR",
+    "median CFIR MAP error and median normalized true-source rank across the frozen kappa grid both improve over chronological LMBT"
+  ],
+  "stop_rule": "Any primary failure retires the footprint-irreversibility route; do not tune weights, temperatures, windows, diffusion, sensor parameters, or event thresholds on H03.",
+  "claim_if_pass": "H03 oracle-wind development premise for candidate-wise causal footprint contrast",
+  "claims_forbidden_even_if_pass": [
+    "cross-dataset improvement",
+    "held-out confirmation",
+    "real-flight deployability",
+    "main causal innovation established",
+    "online wind provider solved"
+  ]
+}
+
