@@ -1,0 +1,54 @@
+{
+  "contract": "CTAER_H03_SEED11_ONE_SHOT_V1",
+  "registered_before_result": true,
+  "data_role": "post-TAORL exposed H03 development trace; not held-out confirmation",
+  "formal_case": "H03 algorithm seed 11 A0 historical trace at the purchased detector 1 Hz output contract",
+  "mechanism": "Candidate-wise Time-Arrow Evidence Ratio (CTAER)",
+  "allowed_inputs": [
+    "one measured gas channel",
+    "past time-aligned UAV pose",
+    "past local wind",
+    "occupancy-derived candidate support",
+    "H01/H02-only selected analytic response provider",
+    "frozen TAORL 30 s windows and hardware-bounded sensor tau grid"
+  ],
+  "forbidden_inputs_before_scoring": [
+    "true source coordinates",
+    "true gas concentration",
+    "source-response bank",
+    "future samples beyond the completed scoring window",
+    "House-specific fitting",
+    "new neural network",
+    "new House or seed"
+  ],
+  "fixed_parameters": {
+    "output_dt_s": 1.0,
+    "nonoverlapping_window_s": 30.0,
+    "sensor_tau_grid_s": [0.5, 1.0, 2.0, 4.0, 6.5],
+    "tau_selection": "per candidate argmin of forward ordinal loss; identical selected tau used for reverse null",
+    "candidate_score": "forward ordinal rank-MSE minus reverse ordinal rank-MSE; lower is better",
+    "likelihood_temperature": "none; only source rank is evaluated"
+  },
+  "comparators": [
+    "frozen TAORL forward-windowed score",
+    "sign-reversed CTAER control"
+  ],
+  "primary_gate_all_required": [
+    "CTAER normalized true-source rank <= 0.10",
+    "CTAER true-source rank strictly beats frozen TAORL forward score",
+    "CTAER true-source rank strictly beats sign-reversed contrast control",
+    "true candidate forward loss is strictly below its reverse loss at the shared tau",
+    "CTAER MAP error is strictly below frozen TAORL 4.9851448324 m",
+    "CTAER MAP error is below contextual native PMFS 8.584385 m"
+  ],
+  "stop_rule": "Any failed primary check stops CTAER tuning, PMFS integration, new seeds and cross-House execution on this route.",
+  "claim_if_pass": "H03 posthoc development premise only: candidate-wise forward-versus-reverse ordinal contrast adds source ordering beyond frozen TAORL.",
+  "claims_forbidden_even_if_pass": [
+    "cross-dataset effectiveness",
+    "causal source localization established",
+    "thermodynamic entropy production estimated",
+    "real-flight readiness",
+    "main innovation established"
+  ]
+}
+
