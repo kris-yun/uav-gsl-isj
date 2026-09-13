@@ -1,0 +1,53 @@
+{
+  "contract": "TAORL_H03_SEED11_ONE_SHOT_V1",
+  "registered_before_result": true,
+  "data_role": "failed-H03 development trace; not held-out confirmation",
+  "formal_case": "H03 algorithm seed 11 A0 historical trace, downsampled to the purchased detector's 1 Hz output contract",
+  "mechanism": "Time-Arrow Ordinal Response Likelihood (TAORL)",
+  "allowed_inputs": [
+    "one measured gas channel",
+    "past time-aligned UAV pose",
+    "past local wind",
+    "occupancy-derived candidate support",
+    "H01/H02-only selected analytic response provider",
+    "FKT-AQI-L 1 Hz and T90<=15 s device constraints"
+  ],
+  "forbidden_inputs_before_scoring": [
+    "true source coordinates",
+    "true gas concentration",
+    "source-response bank",
+    "future wind",
+    "House-specific fitting",
+    "new neural network",
+    "new House or seed"
+  ],
+  "arms": [
+    "RAW_PROFILED_VALUE",
+    "ICRA2026_GLOBAL_EDF",
+    "TAORL_FORWARD_WINDOWED",
+    "TAORL_REVERSE_TIME_CONTROL"
+  ],
+  "fixed_parameters": {
+    "output_dt_s": 1.0,
+    "nonoverlapping_window_s": 30.0,
+    "sensor_tau_grid_s": [0.5, 1.0, 2.0, 4.0, 6.5],
+    "tau_grid_origin": "hardware only: one-second output and T90<=15 s; first-order T90=tau*ln(10)",
+    "ordinal_feature": "average-tie empirical ranks normalized by samples in each window",
+    "sensor_nuisance": "profile minimum ordinal loss over the fixed tau grid for each joint source-timescale hypothesis"
+  },
+  "primary_gate_all_required": [
+    "TAORL normalized true-source rank <= 0.10",
+    "TAORL true-source rank strictly beats raw profiled-value arm",
+    "TAORL true-source rank strictly beats ICRA 2026 global EDF arm",
+    "TAORL true-source rank strictly beats reverse-time control",
+    "TAORL MAP error is below the historical native-PMFS endpoint error of 8.58 m"
+  ],
+  "stop_rule": "Any failed primary check stops TAORL tuning, PMFS integration, new seeds and cross-House execution.",
+  "claim_if_pass": "H03 development premise only: hardware-bounded forward sensor time and local ordinal comparison add source-specific evidence before Bayesian accumulation.",
+  "claims_forbidden_even_if_pass": [
+    "cross-dataset effectiveness",
+    "causal source localization established",
+    "real-flight readiness",
+    "main innovation established"
+  ]
+}
