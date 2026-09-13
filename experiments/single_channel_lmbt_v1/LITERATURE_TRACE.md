@@ -64,6 +64,30 @@ The remaining testable difference is sensor-state-induced lag marginalization
 plus obstacle/time-conditioned receptor footprints used as a source likelihood,
 with no learned propagator, source bank, or planner change.
 
+## Post-gate route anchors
+
+The LMBT gate was negative.  The following sources support the next-route
+principle recorded in `NEXT_ROUTE_DECISION.md`; they do not retroactively rescue
+LMBT.
+
+1. The 2026 *npj Robotics* review above explicitly recommends intermittent or
+   pulsed sampling, closed-loop sniffing with micro-pumps/valves/flow sensors,
+   and timing layers that model hysteresis and recovery.  This is direct field
+   support for intervening at the receptor while leaving the source untouched.
+
+2. Luo et al., **Revisiting Optimal Coding for I-ToF under Practical Sensor
+   Constraints**, CVPR 2026, pp. 12501-12510.
+   Proceedings: https://openaccess.thecvf.com/content/CVPR2026/html/Luo_Revisiting_Optimal_Coding_for_I-ToF_under_Practical_Sensor_Constraints_CVPR_2026_paper.html
+   The paper derives a coding-design metric and includes real hardware limits
+   in modulation/demodulation design.  It supports the distant-field principle
+   of designing an exogenous temporal code under device constraints.  It does
+   not concern gas sensing, and no claim of importing its estimator is allowed.
+
+The second-order transfer is therefore limited to: apply a known, weak intake
+code at a moving single-channel receptor; use synchronization with that code to
+separate current intake from sensor carryover; then evaluate the recovered gas
+evidence inside PMFS.  Real-device feasibility remains unverified.
+
 ## Retrieval limitation
 
 The local idea-spark multi-connector run was attempted, but arXiv and Semantic
@@ -71,4 +95,3 @@ Scholar were rate-limited and OpenAlex/Semantic Scholar output hit a Windows GBK
 encoding failure.  The papers above were independently checked through live
 publisher/proceedings pages.  The collision search is sufficient for a premise
 test, not a final manuscript novelty claim.
-

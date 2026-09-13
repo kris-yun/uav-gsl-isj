@@ -1,0 +1,407 @@
+{
+  "checks": {
+    "actual_beats_local_ray": true,
+    "actual_beats_reversed_wind": false,
+    "actual_wind_top_decile": false,
+    "memory_attribution": true
+  },
+  "claim_boundary": "Any primary failure stops PMFS/ROS integration and cross-House execution.",
+  "contract": "LMBT_H03_SEED11_ORACLE_WIND_PREMISE_V1",
+  "event_audit": {
+    "memory_off": {
+      "event_count": 17,
+      "event_times_s": [
+        3.8,
+        7.0,
+        10.0,
+        11.6,
+        17.4,
+        19.6,
+        20.0,
+        37.6,
+        48.4,
+        50.0,
+        51.8,
+        54.2,
+        169.8,
+        198.0,
+        207.6,
+        209.8,
+        263.8
+      ],
+      "memory_on": false,
+      "scoring_columns": [
+        "t_sim_s",
+        "step",
+        "x",
+        "y",
+        "z",
+        "measured_gas_ppm",
+        "t_sim_s",
+        "step",
+        "x",
+        "y",
+        "z",
+        "wind_u",
+        "wind_v",
+        "wind_w"
+      ],
+      "true_gas_column_read": false
+    },
+    "memory_on": {
+      "event_count": 45,
+      "event_times_s": [
+        0.6,
+        1.4,
+        2.0,
+        2.8000000000000003,
+        3.4,
+        6.199999999999999,
+        7.799999999999999,
+        9.0,
+        9.6,
+        10.4,
+        10.799999999999999,
+        14.0,
+        15.0,
+        15.799999999999999,
+        17.0,
+        17.400000000000002,
+        19.0,
+        19.6,
+        23.200000000000003,
+        24.8,
+        28.8,
+        35.0,
+        37.0,
+        39.0,
+        42.0,
+        42.6,
+        43.6,
+        46.0,
+        46.6,
+        47.2,
+        48.0,
+        48.4,
+        49.4,
+        50.800000000000004,
+        53.6,
+        168.6,
+        197.4,
+        199.0,
+        201.79999999999998,
+        202.6,
+        206.2,
+        207.0,
+        209.4,
+        210.6,
+        262.6
+      ],
+      "memory_on": true,
+      "scoring_columns": [
+        "t_sim_s",
+        "step",
+        "x",
+        "y",
+        "z",
+        "measured_gas_ppm",
+        "t_sim_s",
+        "step",
+        "x",
+        "y",
+        "z",
+        "wind_u",
+        "wind_v",
+        "wind_w"
+      ],
+      "true_gas_column_read": false
+    }
+  },
+  "input_hashes": {
+    "candidate.csv": "0fa52cf616f92e13462719b6667e21dd5b86856643031e0c4fedde09a3f17e74",
+    "environment_runtime.py": "bb761e2c4955ef5c3eeb21aba976ca41a02b0c4b87d23f35e6f914867ebcc77f",
+    "formal_runtime_manifest.json": "3022f2bfd09a261ae418e4473fcae4880946deec963ef27b5b70d6a86ddd1006",
+    "occupancy": "ac8c9e69e762c8941dab46cd7e804684c2aa50dc6f0912806d19b070c135c4af",
+    "prereg": "8b6b6637c11fd806ee61d46867f289f3c356420f39f3e2115d3d90cae540eb66",
+    "runtime_wind": {
+      "wind_iteration_0": "959df7676a02fe5548deb89da9981b97c91981debc12db5e2db6e4db4594c759",
+      "wind_iteration_1": "077672c54be5105d0bffaf0b5cbc32d9890f2a97d6417ca0d8b7eb4613fd28db",
+      "wind_iteration_10": "82588bb913e4be31f6a55fd02c54a888c24101c0aaefa0e546fa6b82bc3e3505",
+      "wind_iteration_2": "fde30b962abdbd393832404d9829a3bdef89adc969e6c8997821356f5662b6e8",
+      "wind_iteration_3": "906044e6bf85630688795efae1aa72024c84beac53ea06e54fc6628c0f0e7d76",
+      "wind_iteration_4": "72709036ef09b2e0b585e87b2d51e6e9746ecfd982cb79211936fc0d701174e3",
+      "wind_iteration_5": "27aeab890c1fb0e3fb0e467cf28c4511663573fac802515a3e6498a16176dc6d",
+      "wind_iteration_6": "e768db3ae9f1733468b913ae9cf47607a73108abffd657d3275fd89d4de33375",
+      "wind_iteration_7": "9690985adc0770419ec6489a1e4fdcaaa1af692c8a524b28336fdb98a04fa3d8",
+      "wind_iteration_8": "6ef1cba4463f8d6f62d8c71b66bcedeaa064e41db175323011669cf0d5f94cf0",
+      "wind_iteration_9": "e6df31207fe385746e10aaf56f9fe9e95b78a5963a76f03b6def5b0a0e57794a"
+    },
+    "script": "fea74af86dc562accc21ed7802e5e584d1db2c9cf9dcd91f0e3b7a90fc85a644",
+    "sensor_trace.csv": "8fe4c20e109c2128d0f39b2e6548b50f88e064f6854e07c38a2aa1c90d571455",
+    "wind_trace.csv": "292c0afe61d794aa677b175e69131bef268f3ff42f1170f33a83f6ccaecd1bac"
+  },
+  "limitations": [
+    "simulation-known full CFD wind is evaluator-only and unavailable in real flight",
+    "one development trace only; no cross-House or held-out claim",
+    "nearest-mesh velocity lookup and isotropic diffusion are premise approximations",
+    "no PMFS or planner integration was evaluated"
+  ],
+  "median_normalized_true_rank": {
+    "LMBT_MEMORY_OFF_ACTUAL_WIND": 0.1413807358412567,
+    "LMBT_MEMORY_ON_ACTUAL_WIND": 0.10872261264985532,
+    "LMBT_MEMORY_ON_REVERSED_WIND_SEQUENCE": 0.08695053052225438,
+    "LOCAL_WIND_RAY_MEMORY_ON": 0.17803500068898995
+  },
+  "results": {
+    "LMBT_MEMORY_OFF_ACTUAL_WIND": {
+      "0.01": {
+        "best_log_score": -1.7186178685601217,
+        "candidate_count": 7258,
+        "map_error_m": 1.8904679314920947,
+        "map_xy": [
+          1.0,
+          0.6870000000000003
+        ],
+        "normalized_true_rank": 0.14441229158054292,
+        "true_best_margin": -3.053189826752469,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -4.7718076953125905,
+        "true_rank": 1049
+      },
+      "0.03": {
+        "best_log_score": -0.9500447671208794,
+        "candidate_count": 7258,
+        "map_error_m": 2.0313712117680507,
+        "map_xy": [
+          1.1,
+          0.5870000000000002
+        ],
+        "normalized_true_rank": 0.1413807358412567,
+        "true_best_margin": -1.4199852614357495,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -2.370030028556629,
+        "true_rank": 1027
+      },
+      "0.1": {
+        "best_log_score": -0.5313946228076215,
+        "candidate_count": 7258,
+        "map_error_m": 2.1723418239310313,
+        "map_xy": [
+          1.2000000000000002,
+          0.4870000000000001
+        ],
+        "normalized_true_rank": 0.13297505856414496,
+        "true_best_margin": -0.6883622191295281,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -1.2197568419371496,
+        "true_rank": 966
+      }
+    },
+    "LMBT_MEMORY_ON_ACTUAL_WIND": {
+      "0.01": {
+        "best_log_score": -1.7733495410270206,
+        "candidate_count": 7258,
+        "map_error_m": 1.673699196391036,
+        "map_xy": [
+          0.8000000000000002,
+          0.7870000000000004
+        ],
+        "normalized_true_rank": 0.10734463276836158,
+        "true_best_margin": -2.8129768581534136,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -4.586326399180434,
+        "true_rank": 780
+      },
+      "0.03": {
+        "best_log_score": -0.9559967024522985,
+        "candidate_count": 7258,
+        "map_error_m": 1.6003965133678588,
+        "map_xy": [
+          0.7000000000000001,
+          0.7870000000000004
+        ],
+        "normalized_true_rank": 0.10872261264985532,
+        "true_best_margin": -1.3374826421567914,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -2.2934793446090898,
+        "true_rank": 790
+      },
+      "0.1": {
+        "best_log_score": -0.49496252586543765,
+        "candidate_count": 7258,
+        "map_error_m": 1.6714870624686269,
+        "map_xy": [
+          0.7000000000000001,
+          0.6870000000000003
+        ],
+        "normalized_true_rank": 0.11023839051949842,
+        "true_best_margin": -0.6839619867446657,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -1.1789245126101033,
+        "true_rank": 801
+      }
+    },
+    "LMBT_MEMORY_ON_REVERSED_WIND_SEQUENCE": {
+      "0.01": {
+        "best_log_score": -1.011120421815603,
+        "candidate_count": 7258,
+        "map_error_m": 1.5267183761257344,
+        "map_xy": [
+          0.9,
+          1.1870000000000005
+        ],
+        "normalized_true_rank": 0.08695053052225438,
+        "true_best_margin": -1.3366284225603247,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -2.3477488443759276,
+        "true_rank": 632
+      },
+      "0.03": {
+        "best_log_score": -0.5925399180836504,
+        "candidate_count": 7258,
+        "map_error_m": 1.547924093746202,
+        "map_xy": [
+          0.8000000000000002,
+          0.987
+        ],
+        "normalized_true_rank": 0.08667493454595562,
+        "true_best_margin": -0.7097904749115573,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -1.3023303929952077,
+        "true_rank": 630
+      },
+      "0.1": {
+        "best_log_score": -0.37130861697661777,
+        "candidate_count": 7258,
+        "map_error_m": 1.6003965133678588,
+        "map_xy": [
+          0.7000000000000001,
+          0.7870000000000004
+        ],
+        "normalized_true_rank": 0.09425382389417114,
+        "true_best_margin": -0.43566755784274835,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -0.8069761748193661,
+        "true_rank": 685
+      }
+    },
+    "LOCAL_WIND_RAY_MEMORY_ON": {
+      "0.01": {
+        "best_log_score": -28.747809944211966,
+        "candidate_count": 7258,
+        "map_error_m": 2.590264272231696,
+        "map_xy": [
+          1.4,
+          0.0870000000000001
+        ],
+        "normalized_true_rank": 0.17279867713931377,
+        "true_best_margin": -23.28585316854928,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -52.033663112761246,
+        "true_rank": 1255
+      },
+      "0.03": {
+        "best_log_score": -13.874665869020788,
+        "candidate_count": 7258,
+        "map_error_m": 2.379972478832476,
+        "map_xy": [
+          1.2999999999999998,
+          0.2869999999999999
+        ],
+        "normalized_true_rank": 0.17803500068898995,
+        "true_best_margin": -9.429453982492806,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -23.304119851513594,
+        "true_rank": 1293
+      },
+      "0.1": {
+        "best_log_score": -5.308736882577997,
+        "candidate_count": 7258,
+        "map_error_m": 2.38990983093505,
+        "map_xy": [
+          1.4,
+          0.387
+        ],
+        "normalized_true_rank": 0.1834091222268155,
+        "true_best_margin": -3.4149472994741528,
+        "true_candidate_index": 86,
+        "true_candidate_xy": [
+          -0.4999999999999999,
+          1.887
+        ],
+        "true_log_score": -8.72368418205215,
+        "true_rank": 1332
+      }
+    }
+  },
+  "sensor_memory_verdict": "LMBT_SENSOR_MEMORY_ATTRIBUTION_PASS",
+  "truth_read_after_all_arm_scores": true,
+  "truth_xy_evaluator_only": [
+    -0.45,
+    1.9
+  ],
+  "verdict": "LMBT_ORACLE_WIND_PREMISE_NO_GO",
+  "wind_binding": {
+    "field_counts": {
+      "0": 2,
+      "1": 136,
+      "10": 134,
+      "2": 146,
+      "3": 134,
+      "4": 135,
+      "5": 134,
+      "6": 137,
+      "7": 149,
+      "8": 136,
+      "9": 137
+    },
+    "mapping": "per-step nearest CFD field 0..10 from allowed local wind; native periodic extrapolation only before trace start",
+    "max_vector_error_m_s": 5.002298135579117e-07,
+    "median_vector_error_m_s": 5.723420623405685e-09,
+    "samples": 1380
+  }
+}
