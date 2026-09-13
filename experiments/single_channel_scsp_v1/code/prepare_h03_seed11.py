@@ -27,14 +27,21 @@ def main():
         raise SystemExit(f"archive hash mismatch: {actual}")
     OUT.mkdir(exist_ok=True)
     with tarfile.open(ARCHIVE, "r:gz") as archive:
-        members = [m for m in archive.getmembers() if m.name.startswith(PREFIX)]
+        selected = [m for m in archive.getmembers() if m.name.startswith(PREFIX)]
+        # The historical Linux package also contains absolute convenience
+        # symlinks under ``standard/``.  They are neither portable nor needed
+        # by this replay; materialize only archived directories/regular files.
+        members = [m for m in selected if m.isdir() or m.isfile()]
         if not members:
             raise SystemExit("H03 seed11 data missing")
         for member in members:
             archive.extract(member, OUT, filter="data")
-    print(f"MC_SCSP_INPUT_READY members={len(members)} sha256={actual}")
+    skipped_links = len(selected) - len(members)
+    print(
+        f"MC_SCSP_INPUT_READY members={len(members)} "
+        f"skipped_links={skipped_links} sha256={actual}"
+    )
 
 
 if __name__ == "__main__":
     main()
-
