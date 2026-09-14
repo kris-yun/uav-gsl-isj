@@ -1,0 +1,540 @@
+{
+  "schema": "OBSERVABILITY_ROUTE_CANDIDATE_FREEZE_V1",
+  "candidate_budget": 12,
+  "deterministic_start_search_budget": 24,
+  "candidate_count": 12,
+  "selection_inputs": [
+    "House02 occupancy",
+    "2 m formation feasibility",
+    "connectivity",
+    "0.4 m altitude",
+    "0.35 m/s speed",
+    "150 s duration",
+    "recorded deployable wind"
+  ],
+  "gas_read": false,
+  "source_identity_or_coordinates_read": false,
+  "candidate_start_rule": "deterministic Euclidean farthest-point starts on the largest geometry-valid graph; lexicographic ties",
+  "candidate_traversal_rule": "DFS with eight deterministic cardinal neighbor orders",
+  "occupancy_sha256": "9402690152be4568ced8f2256e9098d82691aaaa1f22a1887eeac55d0e5d098d",
+  "separation_m": 2.0,
+  "altitude_m": 0.4,
+  "duration_s": 150.0,
+  "cadence_s": 0.2,
+  "speed_mps": 0.35,
+  "wind_policies": [
+    {
+      "wind_id": "W_fast",
+      "input_sha256": "24c761e5920c87168abc0e23e9e7e82ae9d6bcbe3ea96b6dacbb22b0bc4d4bcf",
+      "ideal_crosswind_angle_deg": 74.24615132397392,
+      "rule": "MEDIAN_PAST_DEPLOYABLE_WIND_CROSS_DIRECTION"
+    },
+    {
+      "wind_id": "W_slow",
+      "input_sha256": "b9be8be6c8cb84785755930e0a2e3619b2432db0de5a7af97389ad7eb801d106",
+      "ideal_crosswind_angle_deg": 77.56902098336468,
+      "rule": "MEDIAN_PAST_DEPLOYABLE_WIND_CROSS_DIRECTION"
+    },
+    {
+      "wind_id": "W_altfast",
+      "input_sha256": "0b9bb3a1a8640704acd26be259ec0209fe56f291c316e847790bf4f9b3d48733",
+      "ideal_crosswind_angle_deg": 83.09477346869551,
+      "rule": "MEDIAN_PAST_DEPLOYABLE_WIND_CROSS_DIRECTION"
+    }
+  ],
+  "all_candidates_geometry_valid": true,
+  "candidates": [
+    {
+      "route_id": "AO_00",
+      "deterministic_start_search_index": 0,
+      "start_cell": [
+        11,
+        1
+      ],
+      "start_xy": [
+        -4.242730140686035,
+        -7.300879955291748
+      ],
+      "neighbor_direction_order": [
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          -1
+        ]
+      ],
+      "center_samples": 750,
+      "per_wind_pair_samples": 750,
+      "graph_cells_visited": 4942,
+      "traversal_polyline_length_m": 988.2000122070312,
+      "resampled_path_length_m": 52.43,
+      "total_absolute_heading_change_rad": 267.0353755551324,
+      "duration_s": 150.0,
+      "geometry_valid": true,
+      "center_sha256": "de1301464a613b62a65d90f243a791b8e2b9ea33d0823095e9229690dbb14f96",
+      "plus_sha256": "f65529df8cebd9dd274b3b9cbadcdf5d6c370a589d77d0495fed7cc62d6d6210",
+      "minus_sha256": "00f0c1eb2b211eed055c73d7c07d389768fce3be2957caa8d53f39a2d54e7022"
+    },
+    {
+      "route_id": "AO_01",
+      "deterministic_start_search_index": 1,
+      "start_cell": [
+        71,
+        107
+      ],
+      "start_xy": [
+        1.7572698593139648,
+        3.2991199493408203
+      ],
+      "neighbor_direction_order": [
+        [
+          0,
+          1
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "center_samples": 750,
+      "per_wind_pair_samples": 750,
+      "graph_cells_visited": 4942,
+      "traversal_polyline_length_m": 988.2000412940979,
+      "resampled_path_length_m": 52.43,
+      "total_absolute_heading_change_rad": 224.6238747316702,
+      "duration_s": 150.0,
+      "geometry_valid": true,
+      "center_sha256": "b390b4881813963bfa9b657d9fd05cfda347b9cb7c176075b5e48974e9cb70e1",
+      "plus_sha256": "53e12828146f6521a1f42cb6d70e111af8f45e6829ad3e80b7e11e79f0273137",
+      "minus_sha256": "032bbc76ca86a498bd422324246b563a1086c1626b7989b122ecd40fc74a921e"
+    },
+    {
+      "route_id": "AO_02",
+      "deterministic_start_search_index": 3,
+      "start_cell": [
+        70,
+        37
+      ],
+      "start_xy": [
+        1.6572699546813965,
+        -3.7008800506591797
+      ],
+      "neighbor_direction_order": [
+        [
+          0,
+          -1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          -1,
+          0
+        ]
+      ],
+      "center_samples": 750,
+      "per_wind_pair_samples": 750,
+      "graph_cells_visited": 4942,
+      "traversal_polyline_length_m": 988.1999969482422,
+      "resampled_path_length_m": 52.43,
+      "total_absolute_heading_change_rad": 270.1769682087222,
+      "duration_s": 150.0,
+      "geometry_valid": true,
+      "center_sha256": "fd78950087f93bfca8fe69e36e48a0cb09384f70dcabca3cbbeef3c3112977b7",
+      "plus_sha256": "e651c44605950ccdb0f2de514c8e20377ca4de09eb24f84c5576e192249570bb",
+      "minus_sha256": "ff75fc7ef6e7419baff76ab99850835d882d4f01c15f60ead6d6a94af957d8e1"
+    },
+    {
+      "route_id": "AO_03",
+      "deterministic_start_search_index": 4,
+      "start_cell": [
+        25,
+        46
+      ],
+      "start_xy": [
+        -2.8427302837371826,
+        -2.800879955291748
+      ],
+      "neighbor_direction_order": [
+        [
+          0,
+          -1
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "center_samples": 750,
+      "per_wind_pair_samples": 750,
+      "graph_cells_visited": 4942,
+      "traversal_polyline_length_m": 988.2000050544739,
+      "resampled_path_length_m": 52.43,
+      "total_absolute_heading_change_rad": 289.02652413026095,
+      "duration_s": 150.0,
+      "geometry_valid": true,
+      "center_sha256": "bd86ccd8476dfd8a8c54f2c6ce0779beeff102ad0375bc9eb3323189022f0868",
+      "plus_sha256": "0944480f1bc78924e2a1e550cdc7a12ac8e563d18a24fd30498abf9a8b83d699",
+      "minus_sha256": "7ca8f67fd4b2d20976a3d14ff8460d46f377ce816fc8b169d71eda66aac202af"
+    },
+    {
+      "route_id": "AO_04",
+      "deterministic_start_search_index": 5,
+      "start_cell": [
+        41,
+        82
+      ],
+      "start_xy": [
+        -1.2427301406860352,
+        0.7991199493408203
+      ],
+      "neighbor_direction_order": [
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          -1
+        ]
+      ],
+      "center_samples": 750,
+      "per_wind_pair_samples": 750,
+      "graph_cells_visited": 4942,
+      "traversal_polyline_length_m": 988.2000079154968,
+      "resampled_path_length_m": 52.43,
+      "total_absolute_heading_change_rad": 252.89820861397837,
+      "duration_s": 150.0,
+      "geometry_valid": true,
+      "center_sha256": "395b0f1468b5cfb55a713e8ca25dbde516028abb90db3d3c309157f98dd51e2b",
+      "plus_sha256": "91737fe6fb6773c0088292f5b95aa18fd9b08823c989b70bfbae21ac2641345e",
+      "minus_sha256": "473e6eed8c2df214b6c4a84a665464b4d79f05d82f63ce48f15cbba9fe1baf60"
+    },
+    {
+      "route_id": "AO_05",
+      "deterministic_start_search_index": 6,
+      "start_cell": [
+        21,
+        117
+      ],
+      "start_xy": [
+        -3.242730140686035,
+        4.29911994934082
+      ],
+      "neighbor_direction_order": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          -1,
+          0
+        ]
+      ],
+      "center_samples": 750,
+      "per_wind_pair_samples": 750,
+      "graph_cells_visited": 4942,
+      "traversal_polyline_length_m": 988.2000088691711,
+      "resampled_path_length_m": 52.43,
+      "total_absolute_heading_change_rad": 248.18581963359367,
+      "duration_s": 150.0,
+      "geometry_valid": true,
+      "center_sha256": "3bc312f8d431624da5f058c063e54624dc510d748b2162042b2744be9f4ed560",
+      "plus_sha256": "864f755a31606bcd3bb04d6a57569154fdaf28258a9aab31f88b56644863e714",
+      "minus_sha256": "b3e35d67880385aa9e8a34391bec49a532f40fa484b562db819759a09d5e0294"
+    },
+    {
+      "route_id": "AO_06",
+      "deterministic_start_search_index": 7,
+      "start_cell": [
+        45,
+        11
+      ],
+      "start_xy": [
+        -0.8427300453186035,
+        -6.300879955291748
+      ],
+      "neighbor_direction_order": [
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "center_samples": 750,
+      "per_wind_pair_samples": 750,
+      "graph_cells_visited": 4942,
+      "traversal_polyline_length_m": 988.2000041007996,
+      "resampled_path_length_m": 52.43,
+      "total_absolute_heading_change_rad": 252.89820861397837,
+      "duration_s": 150.0,
+      "geometry_valid": true,
+      "center_sha256": "5b27402ef8d501d3a0923f96a91fe41dedbd085010521438a9b1035e61724698",
+      "plus_sha256": "eeca7435467d39d712589bf3d610ad3816e448b9f9784ab32e27e60a97d2f94f",
+      "minus_sha256": "4812be1a4b802e6be6a76c796ee773d52fee86db1f69ac85cf0aae843955e773"
+    },
+    {
+      "route_id": "AO_07",
+      "deterministic_start_search_index": 8,
+      "start_cell": [
+        72,
+        71
+      ],
+      "start_xy": [
+        1.8572697639465332,
+        -0.30087995529174805
+      ],
+      "neighbor_direction_order": [
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          -1
+        ]
+      ],
+      "center_samples": 750,
+      "per_wind_pair_samples": 750,
+      "graph_cells_visited": 4942,
+      "traversal_polyline_length_m": 988.2000041007996,
+      "resampled_path_length_m": 52.43,
+      "total_absolute_heading_change_rad": 262.32298657474774,
+      "duration_s": 150.0,
+      "geometry_valid": true,
+      "center_sha256": "8847333e12f869d9c94996e50b78b47f8febef5db63db2dc96fef52032f50fe7",
+      "plus_sha256": "d931c4bfbf7a31cf5a3b3fb943dc37331682f469819dfa83fba7b2266f6035ac",
+      "minus_sha256": "398a1990035f7b3087ff665270c6e5b21048c3184faaa862e1c38585e33562d6"
+    },
+    {
+      "route_id": "AO_08",
+      "deterministic_start_search_index": 9,
+      "start_cell": [
+        50,
+        53
+      ],
+      "start_xy": [
+        -0.3427300453186035,
+        -2.1008801460266113
+      ],
+      "neighbor_direction_order": [
+        [
+          0,
+          1
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "center_samples": 750,
+      "per_wind_pair_samples": 750,
+      "graph_cells_visited": 4942,
+      "traversal_polyline_length_m": 988.2000260353088,
+      "resampled_path_length_m": 52.43,
+      "total_absolute_heading_change_rad": 267.0353755551324,
+      "duration_s": 150.0,
+      "geometry_valid": true,
+      "center_sha256": "b40689f75e63e0ac59db50fa4e52ebfa26134b03f7afb9dc11f8696ee46c90ae",
+      "plus_sha256": "7a883a333b3a78a068296b5496c6403463105541a2e0fbdb734af8c4d0995840",
+      "minus_sha256": "8526fd7f340c37878fb8d947b765b4d722238348ed9e75bd4999f69925678027"
+    },
+    {
+      "route_id": "AO_09",
+      "deterministic_start_search_index": 10,
+      "start_cell": [
+        11,
+        26
+      ],
+      "start_xy": [
+        -4.242730140686035,
+        -4.800879955291748
+      ],
+      "neighbor_direction_order": [
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "center_samples": 750,
+      "per_wind_pair_samples": 750,
+      "graph_cells_visited": 4942,
+      "traversal_polyline_length_m": 988.2000069618225,
+      "resampled_path_length_m": 52.43,
+      "total_absolute_heading_change_rad": 259.18139392115796,
+      "duration_s": 150.0,
+      "geometry_valid": true,
+      "center_sha256": "46bbb939e256e667121f4a9c7df204f9261432eaa408ee08b1eb2855a31cd3a1",
+      "plus_sha256": "46b00381c736e7f481a2635a3a81aeb8e28821b4fcac559e4205abeb201e1a56",
+      "minus_sha256": "058628c3afac573b9f3afb54835bc40967047c7c1e2a1868f05c3a55397c9d54"
+    },
+    {
+      "route_id": "AO_10",
+      "deterministic_start_search_index": 11,
+      "start_cell": [
+        2,
+        52
+      ],
+      "start_xy": [
+        -5.142730236053467,
+        -2.2008800506591797
+      ],
+      "neighbor_direction_order": [
+        [
+          0,
+          -1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          -1,
+          0
+        ]
+      ],
+      "center_samples": 750,
+      "per_wind_pair_samples": 750,
+      "graph_cells_visited": 4942,
+      "traversal_polyline_length_m": 988.1999711990356,
+      "resampled_path_length_m": 52.43,
+      "total_absolute_heading_change_rad": 75.39822368615503,
+      "duration_s": 150.0,
+      "geometry_valid": true,
+      "center_sha256": "7678be2673d60949c28b5e1990b13179d572c61bc130ab1bd30a3f04b819d641",
+      "plus_sha256": "5adfeaa4d671eae24f7f55bfc8c9ddd06d3542ce33795e63679d7008592eefdf",
+      "minus_sha256": "a62aa327a1810aca4737bb3f9ac3e03008eeb9f5332f539d74e93cbf2759de0f"
+    },
+    {
+      "route_id": "AO_11",
+      "deterministic_start_search_index": 12,
+      "start_cell": [
+        23,
+        95
+      ],
+      "start_xy": [
+        -3.0427300930023193,
+        2.0991201400756836
+      ],
+      "neighbor_direction_order": [
+        [
+          0,
+          -1
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "center_samples": 750,
+      "per_wind_pair_samples": 750,
+      "graph_cells_visited": 4942,
+      "traversal_polyline_length_m": 988.1999912261963,
+      "resampled_path_length_m": 52.43,
+      "total_absolute_heading_change_rad": 219.9114857512855,
+      "duration_s": 150.0,
+      "geometry_valid": true,
+      "center_sha256": "c3266476b9a5f54f76a4f9a1c52caa5d94d3ebba7cdc2fcf43b77362f2767d08",
+      "plus_sha256": "79d65b8f1318b9833bd316b783fab92f6af31dfd8a5b0e2c3673a908aabdfbda",
+      "minus_sha256": "b4207aac1bdbe13fdb03ed19ac625815884b307bd2e74a3775d74fedf62ae9c2"
+    }
+  ]
+}

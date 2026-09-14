@@ -1,0 +1,30 @@
+{
+  "schema": "OBSERVABILITY_FIRST_DESIGN_SCORING_POLICY_V1",
+  "frozen_before_source_response_query": true,
+  "candidate_budget": 12,
+  "design_winds": ["W_fast", "W_slow"],
+  "forbidden_until_one_route_passes_and_is_pushed": ["W_altfast"],
+  "primary_measurement": "S1_CENTER_PROCESSED_FOPDT",
+  "reason": "test whether trajectory design alone repairs observability with the single-channel sensing modality; dual routes remain 2 m formation-feasible for a later same-data D2 comparator",
+  "route_ranking_lexicographic": [
+    "number of design winds with numerical rank 3",
+    "worst-design-wind sigma3/sigma1",
+    "worst-design-wind maximum corrected Q_energy over frozen 5 s and 10 s windows",
+    "minimum source exposure count and minimum number of exposed temporal thirds",
+    "lower total absolute heading change",
+    "route_id"
+  ],
+  "rank_tolerance": "numpy matrix_rank default",
+  "sigma_gate": 0.05,
+  "hit_floor_ppm": 0.1,
+  "temporal_thirds": [[0, 250], [250, 500], [500, 750]],
+  "exposure_gate": "every source in every design wind has processed response above 0.1 ppm in at least two temporal thirds",
+  "collision_gate": "no exactly identical source-response pair in either design wind",
+  "q_energy_definition": "for each wind and window length, R_l=(I-11T/4)Y_l, M_energy=sum_l R_l R_lT, Q_energy=lambda3(M_energy)/lambda1(M_energy)",
+  "q_energy_windows_s": [5.0, 10.0],
+  "q_energy_gate": "for every design wind, max Q_energy over the two frozen window lengths >= 0.01",
+  "route_pass": "all rank, sigma, Q_energy, collision, and exposure gates pass in both design winds",
+  "new_likelihood": false,
+  "posterior_used": false,
+  "new_gaden": false
+}
