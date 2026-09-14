@@ -1,0 +1,48 @@
+{
+  "status": "DIAGNOSTIC_MIXED_NO_GO",
+  "asset_scope": "VGR_factorial_development_diagnostic_only",
+  "upstream_boundary": "nominal_seeds_are_numeric_pseudoreplicates; no held-out or main-innovation claim",
+  "train_seed": 20260817,
+  "eval_seed": 20260818,
+  "contexts": [
+    [
+      "W_altfast",
+      "T_diag_A"
+    ],
+    [
+      "W_altfast",
+      "T_diag_B"
+    ],
+    [
+      "W_fast",
+      "T_diag_A"
+    ],
+    [
+      "W_fast",
+      "T_diag_B"
+    ],
+    [
+      "W_slow",
+      "T_diag_A"
+    ],
+    [
+      "W_slow",
+      "T_diag_B"
+    ]
+  ],
+  "n_evaluation_prefixes": 120,
+  "intact_mean_fixed_rival_margin": 0.5577662200274115,
+  "direct_q0_mean_margin": 0.2462360681240665,
+  "destructive_mean_fixed_rival_margin": 0.3151647068314306,
+  "intact_mean_true_rank": 1.5166666666666666,
+  "destructive_mean_true_rank": 1.5166666666666666,
+  "ratio_moment_max_abs_error": 0.10562500000000052,
+  "candidate_permutation_equivariance_error": 0.0,
+  "checks": {
+    "joint_history_margin_positive": true,
+    "destructive_control_reduces_margin": true,
+    "ratio_moment_near_one": false,
+    "exact_candidate_permutation_equivariance": true
+  },
+  "interpretation": "This is an offline source-relative mechanism diagnostic on existing VGR factorial episodes. The ordered-history margin is positive and is reduced by the destructive control, but the ratio-moment calibration check fails its 0.05 tolerance; the scorer is therefore not calibrated enough for a probability-map claim. It does not establish PMFS replacement, planner benefit, causal effect, or confirmation because the upstream dataset is explicitly development-only and nominal seeds are pseudoreplicates."
+}
