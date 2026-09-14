@@ -59,3 +59,15 @@ This is a development candidate. The existing VGR factorial source evidence is
 explicitly diagnostic-only and its nominal seeds are pseudoreplicates. A PMFS
 confirmation requires a genuinely independent source-by-transport asset after
 the AVESM mechanism gate passes.
+
+## Small transfer audit (2026-09-15)
+
+Two cross-wind fits and one physical-distance fit were tested offline; none
+passed the predeclared control/null gates. A route-protocol transfer from VGR
+factorial episodes to eight R3C replays was also run. It produced a positive
+mean inverse-e margin (`283.82`) and a reduced shuffle control (`3.16`), but
+the true source was not reliably top-ranked (mean rank `2.5`) and every
+episode crossed the log-20 e-process threshold. The R3C package explicitly
+reuses the frozen R3B physical realization, so this is not independent
+cross-simulation evidence. AVESM therefore remains an unproven candidate for
+cross-data validity; no main-result claim is opened.
