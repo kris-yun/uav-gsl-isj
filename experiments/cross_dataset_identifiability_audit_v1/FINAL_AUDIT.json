@@ -1,0 +1,257 @@
+{
+  "schema": "CROSS_DATASET_IDENTIFIABILITY_AUDIT_V1",
+  "git_head": "5e15ccaaa8da5cfaf308a3f8771cfacbda8aea1d",
+  "read_only": true,
+  "protected_bank_consumed_or_regenerated": false,
+  "literature_search_raw": {
+    "path": "ideaspark_run/cross-dataset-identifiability-20260914/paper_search_2025_2026.json",
+    "sha256": "eafe1151aea536588a295e3b1d373c63e37b73369d1ebf52c999e8446b1fd4ff",
+    "year_range": "2025-2026",
+    "limitations": [
+      "Semantic Scholar and arXiv API requests returned HTTP 429",
+      "DBLP request returned an SSL EOF error",
+      "OpenAlex and Crossref results were retained and shortlisted records were checked on primary pages"
+    ]
+  },
+  "h03_seed12_development_repair_gate": {
+    "a0": {
+      "final_error_m": 7.64682084267704,
+      "distance_auc_m_s": 1439.6303097177008
+    },
+    "m1r": {
+      "final_error_m": 8.710181915436669,
+      "distance_auc_m_s": 1425.3295799264654,
+      "fixed_wrong_candidate_final_margin": -348.21890647157477,
+      "new_replication_true_region_rank": "29/85",
+      "new_replication_true_region_mass": 3.2793023375770594e-168,
+      "true_mass_source": "separate post-update posterior audit; absent from lightweight context bank",
+      "truth_positive_events": 65,
+      "truth_positive_zero_predictions_min": 63,
+      "strongest_false_positive_zero_predictions_max": 3
+    },
+    "identifiability_control_policy": "ABSTAIN_TO_A0_WHEN_REPLICATED_SOURCE_RESOLUTION_IS_UNAVAILABLE",
+    "controlled_result": {
+      "final_error_m": 7.64682084267704,
+      "distance_auc_m_s": 1439.6303097177008,
+      "strictly_improves_a0_on_both": false,
+      "improvement_vs_m1r": {
+        "final_error_m": 1.063361072759629,
+        "distance_auc_m_s": -14.300729791235426
+      }
+    },
+    "trajectory_equivalence": {
+      "historical_equivalence_proven": false,
+      "observation_first_mismatch_row_1_based": 98,
+      "pose_first_mismatch_row_1_based": 98,
+      "evidence_label": "NEW_INSTRUMENTED_DEVELOPMENT_REPLICATION"
+    },
+    "verdict": "H03_IDENTIFIABILITY_CONTROL_SAFETY_PASS_BUT_LOCALIZATION_REPAIR_NO_GO"
+  },
+  "necessary_information_gates": {
+    "replicated_candidate_evidence": {
+      "members": 1,
+      "candidates": 85,
+      "updates": 4,
+      "events": 104,
+      "required_members_min": 2,
+      "pass": false,
+      "reason": "one member cannot estimate transport-replicated source separation"
+    },
+    "local_pde_source_residual": {
+      "sensor_rows": 1392,
+      "unique_xy": 72,
+      "timestamps_with_three_spatial_points": 0,
+      "boundary_flux_observed": false,
+      "zero_initial_field_certified": false,
+      "pass": false,
+      "reason": "no simultaneous spatial stencil and no boundary-flux/initial-condition contract"
+    },
+    "deployable_persistent_transport_provider": {
+      "wind_rows": 1392,
+      "wind_columns": [
+        "t_sim_s",
+        "step",
+        "iteration",
+        "x",
+        "y",
+        "z",
+        "wind_u",
+        "wind_v",
+        "wind_w",
+        "wind_speed",
+        "wind_direction_rad",
+        "seed"
+      ],
+      "full_gmrf_field_history_present": false,
+      "transport_members": 1,
+      "pass": false,
+      "reason": "saved run contains receiver-local wind and one native member, not a causal full-field transport ensemble"
+    },
+    "exact_counterfactual_ranking": {
+      "rank1_cases": 12,
+      "cases": 12,
+      "calibrated_commits": 0,
+      "pass_as_ranking_only": true,
+      "pass_as_calibrated_online_source_evidence": false,
+      "verdict": "M1_EXACT_RANKING_ONLY_CALIBRATION_MISSING"
+    }
+  },
+  "octree_spatial_memory_audit": {
+    "octree_token_in_pmfs_simulations": false,
+    "quadtree_token_in_pmfs_simulations": true,
+    "scim_explicitly_does_not_modify_pi_map": true,
+    "scim_is_planner_state": true,
+    "scim_uses_current_posterior_for_actions": true,
+    "classification": "REPRESENTATION_OR_PLANNER_ABLATION_NOT_PRE_BAYES_SOURCE_INFORMATION"
+  },
+  "prior_bounded_gates": {
+    "sensing_150s": {
+      "path": "experiments/sensing_support_upper_bound_v1/FINAL_GATE.json",
+      "sha256": "b925d136bfef6ae70edbfe53bc5635ab6f0a4e413750d1cda3a0ad9465449dd0",
+      "payload": {
+        "schema": "SENSING_SUPPORT_UPPER_BOUND_FINAL_GATE_V1",
+        "TRACE_INTEGRITY": "PASS",
+        "C0_REFERENCE_REPRODUCTION": "PASS",
+        "C1_CENTER_RAW_ORACLE": "NO_GO_0_OF_12",
+        "C2_D2_PROCESSED_FOPDT": "NO_GO_0_OF_12",
+        "C3_D2_RAW_ORACLE": "NO_GO_0_OF_12",
+        "PRIMARY_BOTTLENECK_ATTRIBUTION": "SENSING_SUPPORT_150S_PREMISE = NO_GO",
+        "DEPLOYABLE_C2_ROUTE_STATUS": "NONE_C2_NO_GO",
+        "HELD_WIND_STATUS": "NOT_RUN_NOT_READ",
+        "FINAL_VERDICT": "SENSING_SUPPORT_150S_PREMISE_NO_GO",
+        "causal_localization_claim": "NOT_AUTHORIZED",
+        "cross_dataset_claim": "NOT_AUTHORIZED",
+        "main_innovation_claim": "NOT_AUTHORIZED",
+        "trace_integrity_audit_sha256": "1776034c59894c7fcf672136a54140202153e3546e90d4f38c945a1804d3d16a",
+        "endpoint_query_summary_sha256": "79cef3be0350f6f5ba82c22e2a3b9cc42edf5987f9b4bdf702829b5476d7511b",
+        "finalization_status": "PASS"
+      }
+    },
+    "support_222_8s": {
+      "path": "experiments/support_extension_mechanism_v1/FINAL_GATE.json",
+      "sha256": "6f728e171cd81c56954ffb2098859fe08314cc9802225248aa98434c039bb562",
+      "payload": {
+        "schema": "SUPPORT_EXTENSION_MECHANISM_FINAL_GATE_V1",
+        "TRACE_INTEGRITY": "PASS",
+        "EXTENDED_C2_PROCESSED_FOPDT": "NO_GO_0_OF_12",
+        "SELECTED_ROUTE": null,
+        "DESIGN_WIND_PASSING_ROUTES": [],
+        "HELD_WIND_STATUS": "NOT_RUN_NOT_READ",
+        "MAIN_INNOVATION_CLAIM": "NOT_AUTHORIZED",
+        "FINAL_VERDICT": "SUPPORT_EXTENSION_MECHANISM_NO_GO",
+        "trace_integrity_audit_sha256": "e9930134a9f74eda20329f23266ac3acc56aab5801f7f19435c6a908d2d21d6b",
+        "endpoint_query_summary_sha256": "bac8bf964c65af1fa42f8aad1aece44ab572c25b1906c3889ce8e518adc16db2",
+        "scoring_policy_sha256": "9231a167dcea971ea3ccb0244fe7061c9a5b9a202a3b7172d645049f62fe4b90",
+        "finalization_status": "PASS"
+      }
+    },
+    "aperture_5m": {
+      "path": "experiments/aperture_extension_mechanism_v1/GEOMETRY_GATE.json",
+      "sha256": "883de5ae0d271d8bf9c44e04fe2d7e00d0d6277712350e6d987c4cfba3e4dde0",
+      "payload": {
+        "schema": "APERTURE_EXTENSION_GEOMETRY_GATE_V1",
+        "candidate_start_search_budget": 24,
+        "valid_candidate_count": 0,
+        "response_query_started": false,
+        "gas_read": false,
+        "held_wind_read": false,
+        "separation_m": 5.0,
+        "duration_s": 222.8,
+        "FINAL_VERDICT": "APERTURE_EXTENSION_MECHANISM_NO_GO_GEOMETRY",
+        "MAIN_INNOVATION_CLAIM": "NOT_AUTHORIZED",
+        "input_hashes": [
+          {
+            "path": "docs/CODEX_APERTURE_EXTENSION_MECHANISM_V1_20260914.md",
+            "sha256": "4b47271610bf1e1e19fe9ebe6c2aad8ebf2e6fbf923caa8900d27ffaf5af0730"
+          },
+          {
+            "path": "tools/build_aperture_extension_routes.py",
+            "sha256": "b12fe0ebd88b98c4356844212f26c40eb8b2b820eda1014ab4b31e3840bf31c4"
+          },
+          {
+            "path": "tools/build_support_extension_routes.py",
+            "sha256": "244f01c912ccc7d340b113b9689f7d295c30e90100bbcd329dd98a3a125693e5"
+          },
+          {
+            "path": "_staging/dual_uav_vm_inputs/OccupancyGrid3D.csv",
+            "sha256": "9402690152be4568ced8f2256e9098d82691aaaa1f22a1887eeac55d0e5d098d"
+          },
+          {
+            "path": "_staging/dual_uav_vm_inputs/W_fast.csv",
+            "sha256": "24c761e5920c87168abc0e23e9e7e82ae9d6bcbe3ea96b6dacbb22b0bc4d4bcf"
+          },
+          {
+            "path": "_staging/dual_uav_vm_inputs/W_slow.csv",
+            "sha256": "b9be8be6c8cb84785755930e0a2e3619b2432db0de5a7af97389ad7eb801d106"
+          }
+        ]
+      }
+    },
+    "observability_learning": {
+      "path": "experiments/observability_learning_falsification_v1/FINAL_GATE.json",
+      "sha256": "f9cdac4dd313cf972bb5d237684c05af975b2c9a4019c629d3da30c4cba8d269",
+      "payload": {
+        "schema": "OBSERVABILITY_LEARNING_FALSIFICATION_FINAL_GATE_V1",
+        "DATASET_INTEGRITY": "PASS",
+        "LABEL_DISTRIBUTION": "PASS",
+        "OBSERVABILITY_AWARE_LEARNING_FALSIFICATION": "NO_GO",
+        "MAIN_INNOVATION_STATUS": "NOT_CONFIRMED",
+        "MAIN_INNOVATION_CLAIM": "NOT_AUTHORIZED",
+        "HELD_CONDITION": "W_slow_AO_08_AO_11",
+        "NEW_GADEN": false,
+        "W_ALTFAST_READ": false,
+        "causal_localization_claim": "NOT_AUTHORIZED",
+        "cross_dataset_claim": "NOT_AUTHORIZED",
+        "falsification_results_sha256": "ecf53a2fb2060e9364fb079848025fb007d414b140cc4bfdac3d44b8bd9c869a",
+        "finalization_status": "PASS"
+      }
+    },
+    "active_observability": {
+      "path": "experiments/active_observability_v1/FINAL_GATE.json",
+      "sha256": "2f32306dab0eff767f7bf31159b09f5a6d176a4040b3742365c36b799bbc5ade",
+      "payload": {
+        "schema": "OBSERVABILITY_FIRST_ROUTE_FINAL_GATE_V1",
+        "TIME_MISMATCH_FORENSIC": "MOTION_REVISIT_CONFOUND_SUPPORTED",
+        "DESIGN_TRACE_INTEGRITY": "PASS",
+        "DESIGN_WIND_OBSERVABILITY": "NO_GO_0_OF_12",
+        "FROZEN_ROUTE_STATUS": "NONE_NO_DESIGN_CANDIDATE_PASS",
+        "HELD_WIND_SOURCE_IDENTITY": "NOT_RUN_W_ALTFAST_UNOPENED",
+        "BASELINE_COMPARATOR": "BEST_CANDIDATE_IS_EXACT_OLD_ROUTE_AND_FAILS",
+        "NOVELTY_COLLISION_STATUS": "NOT_RUN_MECHANISM_PREMISE_FAILED",
+        "FINAL_VERDICT": "OBSERVABILITY_FIRST_ROUTE_PREMISE_NO_GO",
+        "causal_localization_claim": "NOT_AUTHORIZED",
+        "cross_dataset_claim": "NOT_AUTHORIZED",
+        "new_gaden": false
+      }
+    }
+  },
+  "decision_chain": {
+    "IMPLEMENTATION": "M1R candidate-relative contrastive likelihood before Bayesian accumulation",
+    "OBSERVED_FAILURE": "H03 endpoint worsened and the true-source response stayed outside predictive support while fixed false candidates dominated",
+    "MISSING_THEORETICAL_PROPERTY": "observation-conditioned replicated source separation with a calibrated evidence-release rule",
+    "ONE_NEXT_MECHANISM": "OBSERVATION_QUOTIENT_IDENTIFIABILITY_CERTIFICATE",
+    "mechanism_scope": "project evidence only between resolution cells and abstain within unresolved cells; octree/quadtree is only the carrier representation"
+  },
+  "final_verdict": "NO_GO_NO_UNSEEN_SEED_CURRENT_DATA_DO_NOT_SUPPORT_CROSS_DATASET_LOCALIZATION_CLAIM",
+  "claim_boundary": {
+    "development_repair": "NO_GO",
+    "new_replication": "NOT_RUN",
+    "untouched_confirmation": "NOT_RUN",
+    "cross_dataset_localization": "NOT_AUTHORIZED",
+    "identifiability_audit_main_claim": "CANDIDATE_ONLY_REQUIRES_EXTERNAL_DATASET_VALIDATION"
+  },
+  "input_hashes": {
+    "evidence/cstar_cer_ratio_house123_seed12_20260908/CSTAR_CER_RATIO_HOUSE123_SEED12_GATE.json": "9c5d70e5c67553cef15d9e08c35da9cbc3cd919f5a5d063e36c9d9fab959ffb3",
+    "evidence/m1r_post_nogo_diagnosis_20260913/INFORMATION_GATE.json": "4b0a591887e65f80ea6107614113a16d8a14fba08a034a533d72e8a45464167b",
+    "evidence/cstar_m1_exact_counterfactual_calibration_audit_20260910.json": "cd2c67a5f86c1916d1271b9526716347aada467914307210228b4aaa33466662",
+    "evidence/m1r_mechanism/M1R_HISTORICAL_REPLICATION_COMPARISON.json": "d1da8b40f4e3d8894ef8b3be24723c8a2ba65292d3020beaf4f9eaa5aec146b7",
+    "evidence/m1r_causal_repair_20260912/PAIRWISE_PREMISE.json": "82e03458e8f6adb2279b4113e7b50ddb3ea3d46f324a6bc52f803220ee9907e9",
+    "ideaspark_run/cross-dataset-identifiability-20260914/paper_search_2025_2026.json": "eafe1151aea536588a295e3b1d373c63e37b73369d1ebf52c999e8446b1fd4ff",
+    "evidence/m1r_instrumented_20260912/H03_seed12_M1R/context_bank/contrastive_event_attribution.csv": "7d381fe86ba12fdda4ea29ac2d3465b2e947dbf2654b65fcd38aed5ce5f38fa2",
+    "evidence/m1r_instrumented_20260912/H03_seed12_M1R/sensor_trace.csv": "af7e77f8945b76fb4de7bda805c0c0d5e4dd2c094c41879f4d4728febabf5218",
+    "evidence/m1r_instrumented_20260912/H03_seed12_M1R/wind_trace.csv": "722b0949e8ae37eafebc17e128447941472c2ed44756ef78269b27699296ec29",
+    "ros2_package/src/gsl_server/SCIMCore.hpp": "0ef7bbcf1e411d14b3133069a3c9a1694a5e04d1a64ad6fffe5733bccc9aa923",
+    "ros2_package/src/gsl_server/SCIMCore.cpp": "e6f04d8227398125581114a6bb8b1cc4fa695e558897760ed0643306e72fe209",
+    "ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp": "c802a051acb6345c3e11fc86c0867cfc1b3f5a326893d34c1fb42da6f9599b11"
+  }
+}
