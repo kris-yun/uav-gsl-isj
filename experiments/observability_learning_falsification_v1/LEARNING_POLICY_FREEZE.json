@@ -1,0 +1,515 @@
+{
+  "schema": "OBSERVABILITY_LEARNING_POLICY_FREEZE_V1",
+  "frozen_before_dataset_label_aggregation_and_model_fit": true,
+  "policy_authored_from_commit_sha": "1df260213b747f354d3190882d8c03c9b02b089c",
+  "contract": {
+    "path": "docs/CODEX_OBSERVABILITY_LEARNING_FALSIFICATION_V1_20260914.md",
+    "sha256": "891e234da18c541be812fad2857523d5e67c430074fc675d4df64d0bb82ef679"
+  },
+  "code": [
+    {
+      "path": "tools/build_observability_learning_dataset.py",
+      "sha256": "10240deac5151ea4e1799ef5ebb4f0b7d8a66f515d0146e1f9eade3f8f731a5e"
+    },
+    {
+      "path": "tools/create_observability_learning_policy.py",
+      "sha256": "0ef552a2ed38a1789c8f79bc0997a05a04d4149081d1177e7982f17daab6a2b3"
+    }
+  ],
+  "input_trace_files": [
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_00__S_k01__W_fast.csv.gz",
+      "sha256": "c217ee57b3cff8543a209af1f0d1474c60df35cbdcc44a9c14a12fd42f7501e4"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_00__S_k01__W_slow.csv.gz",
+      "sha256": "479db9d56e46df6a467ff526979f42884c0ed60d723dfca59eb14408af53a789"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_00__S_k10__W_fast.csv.gz",
+      "sha256": "6c204dbc0b57f8104cfac0d6f89d9878630c2652e50f5fa6b894a7c4186a3675"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_00__S_k10__W_slow.csv.gz",
+      "sha256": "bf43fe8f073fd4fab0bea0442289bd6363bd93a312bd4026c1e1bc9084a67060"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_00__S_k22__W_fast.csv.gz",
+      "sha256": "24d7cda08cbed912662d1a7943bdc385e465ed79bdf83b7b0df6925694cbba3e"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_00__S_k22__W_slow.csv.gz",
+      "sha256": "e0d169c97b88c74f5a18643a22feb1584286f91160ddc7ae9c30e9e3f2c668c1"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_00__S_truth__W_fast.csv.gz",
+      "sha256": "c200aa3a400d756f9fdd956f4f45504bf246cc272389575c16272b0c0d93c6a0"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_00__S_truth__W_slow.csv.gz",
+      "sha256": "c101182db116a620e49b20b0d3b08557592cf17e6e1ec1b4a6a70cf652a8d595"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_01__S_k01__W_fast.csv.gz",
+      "sha256": "6fac12d5934a176696c1a62acbbd0b3f74b854ef2cb3f16b619698a7d185aa59"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_01__S_k01__W_slow.csv.gz",
+      "sha256": "224f28af712199030448aa4ad4bfc751e23d2963fd8e9227ccb0d0a20c9b6471"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_01__S_k10__W_fast.csv.gz",
+      "sha256": "01632299024bbd5ad78dcfde76727b39fddefe652d589ebd1a34f2b33bece57d"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_01__S_k10__W_slow.csv.gz",
+      "sha256": "9c3663ffed4565c00ba3349df44923d7acfe6cc9de9e325f0eac3a901ae21e40"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_01__S_k22__W_fast.csv.gz",
+      "sha256": "667f88ea48ef4caf04584c4a30a215f5b35028279a77d4197b9f878a026faa26"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_01__S_k22__W_slow.csv.gz",
+      "sha256": "2992eebb82d7239c8f9c4be0096f5728ca79bec1278bd6205879765406369ac6"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_01__S_truth__W_fast.csv.gz",
+      "sha256": "5b464a18b45fdd8771907e4a41c1ce53efd412eb26d5ae0d8805691ceaedc8c4"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_01__S_truth__W_slow.csv.gz",
+      "sha256": "cb7d29b55eaa0d3a855a1aef71a1b65545c2e5cdf27aa07dd3e855e9497dfc22"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_02__S_k01__W_fast.csv.gz",
+      "sha256": "9e3a0cc25eb00d5d6717268dfa2a73c309ad88af5086b513b0b173fc74934fe7"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_02__S_k01__W_slow.csv.gz",
+      "sha256": "ccfd6334d625ce6db18d1ea49954d954c061a06bd7404cb76f26f13f389bf0ac"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_02__S_k10__W_fast.csv.gz",
+      "sha256": "4557853eb5368a3d1f7412937a31b8361d16e63de44645a14a4aad8272d9f478"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_02__S_k10__W_slow.csv.gz",
+      "sha256": "af672280ae3cb9b6685e60eb10f157a5f516995008155648b4cd7608d9ae9da2"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_02__S_k22__W_fast.csv.gz",
+      "sha256": "acaaa0ffa5e3a3b3dbeb81e8d4186655deef77e8b805e102b46c5914e883c4ee"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_02__S_k22__W_slow.csv.gz",
+      "sha256": "094f657cc135cea47b12623fd717bc9459bba35c297ea43833f08cc4767220f7"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_02__S_truth__W_fast.csv.gz",
+      "sha256": "8518b26f9bba77621ea25857a3c1a6682f2416f8a64e50b3d8857ef5cb468e3a"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_02__S_truth__W_slow.csv.gz",
+      "sha256": "ac8ed6757cd66c1e63d97f60ab4c1909420d0923b5f72898e51d6500d5c61a6c"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_03__S_k01__W_fast.csv.gz",
+      "sha256": "6283d221fc94208d9f933bb7acd4263c700cde076fe22edf012f9fb8476772be"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_03__S_k01__W_slow.csv.gz",
+      "sha256": "ca83516363bed4854a7d405336d2adeef8825020a209001a66021f6033d385ac"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_03__S_k10__W_fast.csv.gz",
+      "sha256": "b087e03a4ffc87436a046db751ada3d656253fdf941e8b44da255d8415713caf"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_03__S_k10__W_slow.csv.gz",
+      "sha256": "abf3ea01472149d5f70074defe99155c0a5023576b2e67256dcc88cfef8e1bd5"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_03__S_k22__W_fast.csv.gz",
+      "sha256": "f976cd98bdb957fc51989e9f60a3b91db3f7952f3987ea854ba297f432ce0c45"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_03__S_k22__W_slow.csv.gz",
+      "sha256": "805a4e79f9fb16f094b3b418fa91c9ead0dc8533704640bcc495fe20955db139"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_03__S_truth__W_fast.csv.gz",
+      "sha256": "1714dac6b86f212f66b22ad0b41d444ec641a7e298b2f37f39674f318ccc0634"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_03__S_truth__W_slow.csv.gz",
+      "sha256": "3bbebfc613b2358e58687ebf3aa545b96f332e9484375136ff2cae8e4f7d6eba"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_04__S_k01__W_fast.csv.gz",
+      "sha256": "16645f4032925b91fef735d87fe10f9a60509d8cc6f058474ab7b9ab81f80b3a"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_04__S_k01__W_slow.csv.gz",
+      "sha256": "81f6a6ded8009ea42bee0c3614df8d4507614c1e61a79b582da579579e44a849"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_04__S_k10__W_fast.csv.gz",
+      "sha256": "748d9d0d358d3f6b0dbce4f44c9b2a1c18e800425bb236e5a03524a2306c7c74"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_04__S_k10__W_slow.csv.gz",
+      "sha256": "f0f7ad3dd0c17bcbaebacb7e330a06ad8282e864880b3099fcb561450c2c09b6"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_04__S_k22__W_fast.csv.gz",
+      "sha256": "c089c99956f7632e12488dc5ac7c6a2623054a32222ae0c5cb19e134823c564a"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_04__S_k22__W_slow.csv.gz",
+      "sha256": "835f7c31cdc760ab89065172f30572e00d78d770982ae6c7ac2c492f0e66fb4a"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_04__S_truth__W_fast.csv.gz",
+      "sha256": "21c85a0656e7c6774fde09b0ee5957ed5b128f276faa5926c12b6ea29b8bfbe1"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_04__S_truth__W_slow.csv.gz",
+      "sha256": "e253dd428ae764d3ccc1b3fb9ec588a1e610a43c2657ab18b9a7a4c6741debd4"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_05__S_k01__W_fast.csv.gz",
+      "sha256": "303b011b249340705f7b9225bccd14942a970e93a31789eefc7b331b560af443"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_05__S_k01__W_slow.csv.gz",
+      "sha256": "5df91a2bf162b0edbf2007cc1c4fe9c8098c899660b1151f3c2823d4f1fda540"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_05__S_k10__W_fast.csv.gz",
+      "sha256": "fdaea1e67ac18b3224800b9cf006cff561abdb3f9935a2dce99af6e560154728"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_05__S_k10__W_slow.csv.gz",
+      "sha256": "80456b50b754acee44dd767c39b4665934b6e5a22261df3ba208f9ac150ece6f"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_05__S_k22__W_fast.csv.gz",
+      "sha256": "5f187ccb7e73ecf6c5e96da70d49b1c68757f74f0f77d88e50780901953102f7"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_05__S_k22__W_slow.csv.gz",
+      "sha256": "f8b1e5df805e04f3738dac14281e190d212ff334e01383b88a22f5c792fbc4e7"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_05__S_truth__W_fast.csv.gz",
+      "sha256": "457b6025f66bdc63d147da4c25e7b68ccc494e51d08216b505635a45eadcafef"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_05__S_truth__W_slow.csv.gz",
+      "sha256": "fd9873d56f83eb9e155ffe9dff41d22e9cb5768bbc6024f0ac4b6264f7bd6151"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_06__S_k01__W_fast.csv.gz",
+      "sha256": "c4a562b699287589fcc38fc0da219c728ac8a105f3299483a6847da1080f72e1"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_06__S_k01__W_slow.csv.gz",
+      "sha256": "aad74c3329a7a8175c33b1343554f9fa363ede43594a8cebf398c7908bde610a"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_06__S_k10__W_fast.csv.gz",
+      "sha256": "0b52d1c5de7bb1c2c2aa509aea77d14e8dbe88467095f74c36c33a87f3e4b4d9"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_06__S_k10__W_slow.csv.gz",
+      "sha256": "5c059bc6ce79279c3e55e32e8a5ef1d01eef1d24a0974fdcdc86a80ee62d5d7e"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_06__S_k22__W_fast.csv.gz",
+      "sha256": "7e5741e772916308321b052b552966e909fdc7ffafc8137a6187233232bc1e04"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_06__S_k22__W_slow.csv.gz",
+      "sha256": "7fad910445f29e7abe5afef3af600342f29114db418e9c0ac4027996e1597bb8"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_06__S_truth__W_fast.csv.gz",
+      "sha256": "f0294d8c0615071a1b48f763fbfe0f7611a0cbd096a770c1936b934c54eeeecf"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_06__S_truth__W_slow.csv.gz",
+      "sha256": "a1fc3e08a709c55fee31ad8cb07aed02eecdf03ac10192550f591ca2aee48e3f"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_07__S_k01__W_fast.csv.gz",
+      "sha256": "ca87d3cc09bf9730cf984f0c9acee397b5d015af772cc0c7d793872c968aa3d6"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_07__S_k01__W_slow.csv.gz",
+      "sha256": "f02c8ce00a936088f463eb526e01895df578270f6a01f5825cce983f086719cd"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_07__S_k10__W_fast.csv.gz",
+      "sha256": "51dfe6a78d67cec6c8ceb54b04e183253d076943e1f498f0a0fedd2d70bd5ea6"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_07__S_k10__W_slow.csv.gz",
+      "sha256": "15a20ce7b3d72e52ea717762dc194d9b2556ccd4257106f5adc66d31132eaa1c"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_07__S_k22__W_fast.csv.gz",
+      "sha256": "086758d9ad471e8873274f230d4c4a04af1988e21d686e5a0e4011686d948d74"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_07__S_k22__W_slow.csv.gz",
+      "sha256": "9df05de6cb1466d32c8e249ed491423ec297231834ab375ade29ce1f5883553b"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_07__S_truth__W_fast.csv.gz",
+      "sha256": "21dd75ace9d380b798b73098e9e61f91b90d423bf57e90e5d481ba6172b49f58"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_07__S_truth__W_slow.csv.gz",
+      "sha256": "c77e93262784831fa042628e7f286c5638e894448da2b099b51ac95ae5148dca"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_08__S_k01__W_fast.csv.gz",
+      "sha256": "dd2c8fd6f357f100c4d97c28060900d16801c37cee836edc3655333c08601331"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_08__S_k01__W_slow.csv.gz",
+      "sha256": "0907319dbd29902b68fdbd1546aa5122c546abae4521be7bf25dc84033099071"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_08__S_k10__W_fast.csv.gz",
+      "sha256": "fedc7ce5d7d5a584c42e31dd12f408c063a0be917da2ba82dd42fcbf67e6c2fa"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_08__S_k10__W_slow.csv.gz",
+      "sha256": "60ed2e95414de9ba4c0cefcffa6f7964c0debd3d454c56bd4693a9cdf7a7e6bf"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_08__S_k22__W_fast.csv.gz",
+      "sha256": "4f3c62ff33a691334728dd8afc8fb57fc97a5fe991764c0e69ea5da1631025cb"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_08__S_k22__W_slow.csv.gz",
+      "sha256": "d8c81aa8d0f0ead9ea0c6a7b3caa7af66a32da40bf383fe9b4bbad109a749e82"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_08__S_truth__W_fast.csv.gz",
+      "sha256": "1ee7c056191e05b3f485e5f7edf27b000c46b1b8298ad69888ef105a9a668a82"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_08__S_truth__W_slow.csv.gz",
+      "sha256": "d2ef5949cf7dba4c65be56204360453f1a0a88794d69abc70f315f4b3acbc2b5"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_09__S_k01__W_fast.csv.gz",
+      "sha256": "abbb44dbed86036c9fa43fa28c260f118cdc24c75c29b124489b053a73ca29b4"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_09__S_k01__W_slow.csv.gz",
+      "sha256": "8e0e14a0497d2f570f285c7e0f211440ed0d949e1e513c112d31174e83cac16c"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_09__S_k10__W_fast.csv.gz",
+      "sha256": "fda74c6e32b47361fabd5e5a26e75ee57b9f2351c03e071ab01ed4a1a7a94a49"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_09__S_k10__W_slow.csv.gz",
+      "sha256": "e7d589aa9fb1596ab93b2adc8233fecc973c5c29488f0b30d89b195f4329f893"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_09__S_k22__W_fast.csv.gz",
+      "sha256": "313044f5a872fbe37e58cc94a01a5bf7e7d2979bd2db084dfae0f27389db1206"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_09__S_k22__W_slow.csv.gz",
+      "sha256": "9b509959353cc9ba21b789661d698d93c26ed8ba7efd8d254d7158e96b5dace0"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_09__S_truth__W_fast.csv.gz",
+      "sha256": "2ba1a23d970c8eb065d10c00a7be8afeba7382eb638a2bcb4c85c6bb91683876"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_09__S_truth__W_slow.csv.gz",
+      "sha256": "e5d40eb19ff977e791a9a93dee5c1af74a02469e03044a2a47a87569b3882aed"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_10__S_k01__W_fast.csv.gz",
+      "sha256": "79764a2db437b72b01798481acac0ff73cb9b7109b845caa3d5ad1a596b12563"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_10__S_k01__W_slow.csv.gz",
+      "sha256": "932f0c6b6438ff710c3e5a06108992d7ab345cb0c4a62c021cf9fcb8d44a1fa4"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_10__S_k10__W_fast.csv.gz",
+      "sha256": "869d1ddce93a51c9cd7ecdf54d258527513fbb7105c1e6276f75196e0488f978"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_10__S_k10__W_slow.csv.gz",
+      "sha256": "ef3dad1e6b9d4c5b9d973098fe499323b1c3e00c746455cdd9662c153a7f99c1"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_10__S_k22__W_fast.csv.gz",
+      "sha256": "f4307fed5ee60c360d7a06d61779d6330a1842467dee54be09f5d2f9f0136f12"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_10__S_k22__W_slow.csv.gz",
+      "sha256": "da1b533f3a7d1700e2a2bb006a2f250f69aef22d4e4472863c26457c74a7fbe9"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_10__S_truth__W_fast.csv.gz",
+      "sha256": "109119c6b52f8735d97b58400ca0522bff075633d9ca2f72e83ff9c87eb42f09"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_10__S_truth__W_slow.csv.gz",
+      "sha256": "5e8bbe01d2d13cb914233e91746c8f52d64b2dbe6e10c8aa97c2e320bf026ef5"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_11__S_k01__W_fast.csv.gz",
+      "sha256": "d61ff169f48c07f6471ebf3fd8f08cb9955007a6033c13a7c0c0da4764289e4e"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_11__S_k01__W_slow.csv.gz",
+      "sha256": "b94b19b7dd2db244fa261d305ee2c0586fbf293bc9b03afeb2ea472f35015de7"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_11__S_k10__W_fast.csv.gz",
+      "sha256": "837e53621bf3b2a4b715f903e5edeb372c669704c6b8169f93824655f8011467"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_11__S_k10__W_slow.csv.gz",
+      "sha256": "1f46cdca3d7eeec0b11e67f4a046252eb7b7127bb67c0cda741a1de5da4c6c35"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_11__S_k22__W_fast.csv.gz",
+      "sha256": "36e9ab191da15c2ba2ed68d2b99db86c02e0f7b04a8609bafba121c66f103d3b"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_11__S_k22__W_slow.csv.gz",
+      "sha256": "dba431573805e090368c9ffbfbb95c25a46711fcfc92703c1a4c2492e2d4a2cb"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_11__S_truth__W_fast.csv.gz",
+      "sha256": "861493d947769538d90700d8742bc0baad1d14cda35911a41979514cc5d09d4b"
+    },
+    {
+      "path": "experiments/sensing_support_upper_bound_v1/endpoint_design_traces/AO_11__S_truth__W_slow.csv.gz",
+      "sha256": "05dd494d9405d4851bcbda1e03b85dd1b028f45ac0f0c866aae5b2273c1d6fc4"
+    }
+  ],
+  "measurement": {
+    "configuration": "C2_D2_TWO_CHANNEL_PROCESSED_FOPDT",
+    "ordered_channels": [
+      "plus",
+      "minus"
+    ],
+    "difference": false
+  },
+  "teacher_label": {
+    "window_samples": 26,
+    "window_seconds": 5.0,
+    "targets": [
+      "sigma3_sigma1",
+      "q_energy",
+      "log1p_min_pair_distance",
+      "min_source_hit_support"
+    ],
+    "hit_floor_ppm": 0.1,
+    "source_centering": "I - 11T/4",
+    "q_energy_roundoff": "clamp_negative_ratio_to_zero"
+  },
+  "student_input": {
+    "history": [
+      "processed_c_plus",
+      "processed_c_minus",
+      "mean_endpoint_wind_uvw",
+      "center_xyz",
+      "center_vxyz"
+    ],
+    "excludes": [
+      "source_id",
+      "route_id",
+      "source_coordinate",
+      "future_sample",
+      "privileged_label"
+    ]
+  },
+  "splits": {
+    "train": {
+      "wind": "W_fast",
+      "routes": [
+        "AO_00",
+        "AO_01",
+        "AO_02",
+        "AO_03",
+        "AO_04",
+        "AO_05",
+        "AO_06",
+        "AO_07"
+      ]
+    },
+    "development": {
+      "wind": "W_fast",
+      "routes": [
+        "AO_08",
+        "AO_09",
+        "AO_10",
+        "AO_11"
+      ]
+    },
+    "held": {
+      "wind": "W_slow",
+      "routes": [
+        "AO_08",
+        "AO_09",
+        "AO_10",
+        "AO_11"
+      ]
+    }
+  },
+  "models": {
+    "scaler": "train_only_standardization",
+    "regressor": "Ridge",
+    "alpha": 1.0,
+    "baselines": [
+      "constant_train_mean",
+      "gas_only",
+      "gas_wind",
+      "full"
+    ]
+  },
+  "controls": [
+    "time_reverse",
+    "wind_reverse",
+    "motion_zero",
+    "receiver_swap"
+  ],
+  "promotion_gate": {
+    "rich_targets": [
+      "sigma3_sigma1",
+      "q_energy",
+      "log1p_min_pair_distance"
+    ],
+    "held_vs_constant_improvement_min": 0.2,
+    "held_vs_gas_only_improvement_min": 0.1,
+    "development_vs_constant_improvement_min": 0.2,
+    "held_control_degradation_min": 0.05,
+    "receiver_swap_improvement_max": 0.05,
+    "label_std_nonzero": true
+  },
+  "forbidden": [
+    "W_altfast",
+    "new_gaden",
+    "source_id_feature",
+    "route_id_feature",
+    "posthoc_split_change",
+    "posthoc_label_change",
+    "posterior",
+    "closed_loop"
+  ]
+}
