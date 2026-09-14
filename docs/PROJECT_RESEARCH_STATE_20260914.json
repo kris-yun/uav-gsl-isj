@@ -1,81 +1,75 @@
 {
-  "schema": "UAV_GSL_RESEARCH_MASTER_V2",
+  "schema": "UAV_GSL_RESEARCH_MASTER_V3",
   "date": "2026-09-14",
   "research_control_branch": "project/research-master-20260914",
   "latest_evidence_sha": "1be4363959fcf7909e935568bb74d0a0dbd4328b",
   "paper_main_innovation_validated": false,
-  "current_scientific_question": "Within a finite sensing horizon, which source hypotheses physically influence the robot-accessible sensing domain strongly enough to be identifiable before Bayesian inference or active-search claims are allowed?",
-  "dominant_failure_mechanism": "finite-horizon sensing support is insufficient or highly imbalanced for some source-transport combinations; current inference and route-design layers cannot create missing physical exposure",
+  "current_scientific_question": "Does the geometry of successful finite-time source-to-sensing transition paths retain source identity across turbulent transport regimes when scalar reachability, first-entry statistics and marginal plume occupancy do not?",
+  "dominant_failure_mechanism": "some source-transport combinations have zero or near-zero finite-horizon sensing exposure; inference, fixed dual-view differencing and map-only observability route redesign cannot create missing physical support",
   "validated_main_innovation": null,
-  "active_primary_candidate": null,
-  "current_active_task": {
-    "name": "Finite-Horizon Physical Support Audit",
-    "status": "DIAGNOSTIC_NOT_INNOVATION",
-    "contract": "docs/NEXT_STAGE_PHYSICAL_SUPPORT_AUDIT_20260914.md",
-    "failure_layers": [
-      "RAW_TRANSPORT_SUPPORT_FAILURE",
-      "SENSOR_BANDWIDTH_FAILURE",
-      "TRAJECTORY_COVERAGE_FAILURE",
-      "SUPPORT_ADEQUATE_INFERENCE_REMAINS"
-    ]
+  "active_primary_candidate": {
+    "name": "Source-Conditioned Transition-Path Fingerprint",
+    "chinese": "源条件过渡路径指纹",
+    "mother_theory": "Transition Path Theory / committor / reactive current",
+    "status": "CANDIDATE_OFFLINE_FALSIFICATION_ONLY",
+    "novelty_boundary": "directed geometry of successful source-to-sensing transition paths, not scalar hit probability or generic TPT origin inversion",
+    "collision_status": "LOW_DIRECT_COLLISION_IN_TARGETED_ROBOTIC_GSL_SCREEN_NOT_NOVELTY_CONFIRMED"
   },
-  "confirmed": [
-    "main_v8 is authoritative forward contract",
-    "RMFE full32x2 H02 is NO-GO",
-    "SCTT downstream is NO-GO",
-    "historical M1R is development-positive but not a clean causal/cross-domain proof",
-    "old M2 member averaging is NO-GO",
-    "exact counterfactual microbank preserves source identity under exact candidate-specific forward responses",
-    "deployable estimated transport provider did not qualify",
-    "single-stream causal/statistical transformations did not establish stable full-support source identity",
-    "House02 can physically support a 2 m dual-UAV formation after native occupancy parity audit",
-    "same-frame dual-receiver data integrity is PASS",
-    "fixed signed two-point structure is NO-GO as main innovation",
-    "5 s mismatch is compatible with motion-revisit confounding rather than plume-advection timing",
-    "source-blind map-only persistent-excitation route redesign is NO-GO within the frozen 12-route budget",
-    "best observability route AO_00 is identical to the old route",
-    "W_slow best-route response collapses to rank 2 with effectively zero weakest-mode energy",
-    "S_k01 and S_k22 are zero-exposure sources on the best design route in both design winds"
+  "current_active_task": {
+    "name": "TPT Reactive-Path Premise V1",
+    "status": "AUTHORIZED_FOR_CODEX_OFFLINE_EXECUTION",
+    "start_here": "docs/START_HERE_TPT_REACTIVE_PATH_PREMISE_20260914.md",
+    "contract": "docs/CODEX_TPT_REACTIVE_PATH_PREMISE_V1_20260914.md",
+    "gate": "docs/TPT_REACTIVE_PATH_GATE_V1_20260914.json"
+  },
+  "critical_data_semantics": {
+    "existing_r3b_cache_realizations_per_source_wind": 1,
+    "concentration_snapshots_are_committor_samples": false,
+    "phase0_requirement": "identify exact GADEN stochastic transition/path semantics or exact seeded tagged-filament replay",
+    "stop_if_not_identifiable": "D. TPT_TRAJECTORY_ENSEMBLE_NOT_IDENTIFIABLE"
+  },
+  "novelty_rejected": [
+    "scalar source-to-sensor committor / reachability probability",
+    "first-passage or detection probability as innovation",
+    "generic TPT source/origin inversion",
+    "Bayesian source inference plus TPT",
+    "generic reactive transport corridor",
+    "sensor delay/bandwidth as scientific main innovation",
+    "generic OED/information-gain active sensing",
+    "forward-adjoint domain of dependence as novelty",
+    "LCS/FTLE alone as novelty",
+    "ordinary multi-robot fusion",
+    "signed simultaneous two-point concentration difference",
+    "map-only persistent-excitation route design in current form"
   ],
-  "demoted_or_rejected": [
-    "RMFE fixed-amplitude ranking",
-    "SCTT as causal temporal module",
-    "global transport-invariant representation",
-    "old M2 transport-member averaging",
-    "TSBIE member reweighting",
-    "local-wind continuum causal provider",
-    "same-stream causal posterior repair as main line",
-    "signed simultaneous two-point difference",
-    "second-order two-point difference",
-    "ordinary multi-robot fusion as novelty",
-    "Transport-Robust Persistent-Excitation Sensing in current map-only route-search form",
-    "Collective Multi-Trajectory Informativity until a single/stacked support premise is physically justified",
-    "ME-ACI V11 as established cross-domain positive evidence"
+  "design_gates": {
+    "failure_link": "per design wind: max upper95(q_zero_group) < min lower95(q_exposed_group)",
+    "reactive_current_cross_wind_identity": "8/8 rank-1 with all margins positive",
+    "reactive_current_must_beat": ["ENTRY_ONLY", "UNCONDITIONED_VISIT"],
+    "direction_control_must_degrade": true,
+    "held_wind_locked_until_design_freeze": true,
+    "held_wind_gate": "4/4 rank-1 with all margins positive and reactive-current minimum margin greater than marginal baselines"
+  },
+  "authorized_final_verdicts": [
+    "A. TPT_REACTIVE_PATH_PREMISE_PASS",
+    "B. SCALAR_OR_MARGINAL_TRANSPORT_EXPLAINS_RESULT_NO_PATH_GAIN",
+    "C. TPT_DOES_NOT_EXPLAIN_SUPPORT_FAILURE",
+    "D. TPT_TRAJECTORY_ENSEMBLE_NOT_IDENTIFIABLE",
+    "E. TPT_PATH_FINGERPRINT_NO_CROSS_TRANSPORT_IDENTITY",
+    "F. RNG_INSTRUMENTATION_NOT_QUALIFIED",
+    "G. PRECOMMITTED_ENSEMBLE_RESOURCE_INFEASIBLE"
   ],
-  "diagnostic_mother_theories": [
-    {
-      "name": "forward-adjoint domain of dependence / adjoint sensitivity",
-      "role": "diagnose finite-time sensor/source support",
-      "novelty_status": "DIRECT_COLLISION_WITH_2026_AIAA_TURBULENT_SOURCE_LOCALIZATION_NOT_MAIN_NOVELTY"
-    },
-    {
-      "name": "Lagrangian transport / coherent structures",
-      "role": "possible transport-support explanation or later transport-guided measurement design",
-      "novelty_status": "THEORY_CANDIDATE_ONLY_NOT_AUTHORIZED"
-    },
-    {
-      "name": "persistent excitation / optimal experimental design",
-      "role": "background observability theory",
-      "novelty_status": "CURRENT_IMPLEMENTATION_NO_GO_DO_NOT_RESCUE_BY_POSTHOC_ROUTE_BUDGET_EXPANSION"
-    }
+  "not_authorized": [
+    "PMFS integration",
+    "closed loop",
+    "online planner",
+    "neural committor/current model",
+    "posterior tuning",
+    "causal localization claim",
+    "cross-House claim",
+    "paper novelty claim before final bibliographic screen"
   ],
   "causal_localization_claim_authorized": false,
   "cross_dataset_claim_authorized": false,
-  "next_contract": "docs/NEXT_STAGE_PHYSICAL_SUPPORT_AUDIT_20260914.md",
-  "decision_after_next_gate": {
-    "raw_support_failure": "stop inference development on current 150 s House02 setup; redesign horizon/environment",
-    "sensor_bandwidth_failure": "redesign sensing modality or response time",
-    "trajectory_coverage_failure": "reopen transport-guided measurement design only",
-    "support_adequate_inference_remains": "only then return to inference/model innovation"
-  }
+  "next_contract": "docs/CODEX_TPT_REACTIVE_PATH_PREMISE_V1_20260914.md"
 }
