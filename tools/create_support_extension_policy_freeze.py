@@ -27,6 +27,7 @@ def main() -> None:
         root / "tools/build_observability_route_candidates.py",
         root / "tools/build_house02_global_dual_route.py",
         root / "tools/query_sensing_support_design_routes.py",
+        root / "tools/query_support_extension_design_routes.py",
         root / "tools/audit_sensing_support_upper_bound.py",
         root / "tools/score_sensing_support_upper_bound.py",
         root / "tools/query_synchronized_pair_from_raw_cache.py",
