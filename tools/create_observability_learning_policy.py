@@ -27,7 +27,7 @@ def main():
     out_dir = args.out_dir.resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     contract = repo / "docs/CODEX_OBSERVABILITY_LEARNING_FALSIFICATION_V1_20260914.md"
-    code_paths = [repo / "tools/build_observability_learning_dataset.py", repo / "tools/create_observability_learning_policy.py"]
+    code_paths = [repo / "tools/build_observability_learning_dataset.py", repo / "tools/create_observability_learning_policy.py", repo / "tools/run_observability_learning_falsification.py"]
     trace_paths = sorted((repo / "experiments/sensing_support_upper_bound_v1/endpoint_design_traces").glob("*.csv.gz"))
     if len(trace_paths) != 96:
         raise RuntimeError(f"expected 96 committed C2 traces, found {len(trace_paths)}")
