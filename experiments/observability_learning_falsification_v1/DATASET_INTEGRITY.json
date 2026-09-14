@@ -1,0 +1,113 @@
+{
+  "schema": "OBSERVABILITY_LEARNING_PRIVILEGED_DATASET_V1",
+  "source_trace_mode": "COMMITTED_C2_ORDERED_PLUS_MINUS_PROCESSED",
+  "example_count": 69600,
+  "feature_count": 286,
+  "target_count": 4,
+  "window_samples": 26,
+  "window_seconds": 5.0,
+  "start_index": 25,
+  "routes": [
+    "AO_00",
+    "AO_01",
+    "AO_02",
+    "AO_03",
+    "AO_04",
+    "AO_05",
+    "AO_06",
+    "AO_07",
+    "AO_08",
+    "AO_09",
+    "AO_10",
+    "AO_11"
+  ],
+  "winds": [
+    "W_fast",
+    "W_slow"
+  ],
+  "sources": [
+    "S_truth",
+    "S_k01",
+    "S_k10",
+    "S_k22"
+  ],
+  "feature_slices": {
+    "gas_plus": [
+      0,
+      26
+    ],
+    "gas_minus": [
+      26,
+      52
+    ],
+    "wind": [
+      52,
+      130
+    ],
+    "position": [
+      130,
+      208
+    ],
+    "velocity": [
+      208,
+      286
+    ]
+  },
+  "student_input_excludes": [
+    "source_id",
+    "route_id",
+    "source_coordinate",
+    "future_sample",
+    "privileged_label"
+  ],
+  "target_names": [
+    "sigma3_sigma1",
+    "q_energy",
+    "log1p_min_pair_distance",
+    "min_source_hit_support"
+  ],
+  "train_split": {
+    "wind": "W_fast",
+    "routes": [
+      "AO_00",
+      "AO_01",
+      "AO_02",
+      "AO_03",
+      "AO_04",
+      "AO_05",
+      "AO_06",
+      "AO_07"
+    ]
+  },
+  "development_split": {
+    "wind": "W_fast",
+    "routes": [
+      "AO_08",
+      "AO_09",
+      "AO_10",
+      "AO_11"
+    ]
+  },
+  "held_split": {
+    "wind": "W_slow",
+    "routes": [
+      "AO_08",
+      "AO_09",
+      "AO_10",
+      "AO_11"
+    ]
+  },
+  "target_mean": [
+    9.241191183324062e-06,
+    2.183444532709225e-08,
+    0.0016717887895551478,
+    0.0
+  ],
+  "target_std": [
+    0.00014747557664556422,
+    4.3100131994078896e-07,
+    0.026715293264137643,
+    0.0
+  ],
+  "status": "PASS"
+}
