@@ -160,3 +160,67 @@ The resulting one-mechanism hypothesis is TAORL: within-window ordinal source
 evidence, a hardware-bounded sensor time constant, and a reverse-time negative
 control. It is preregistered for one H03 run; failure retires the route.
 
+---
+
+# TROQL external-dataset search, 2010–2026
+
+Date: 2026-09-14
+
+## Search protocol
+
+Three queries targeting public gas-source-localization datasets, known source
+geometry, repeated experiments, and wind/transport variation were run across
+Semantic Scholar, OpenAlex, arXiv, OpenReview, Crossref, and DBLP. The raw merged
+response is preserved in `paper_search_troql_external_dataset_2010_2026.json`.
+OpenAlex returned 24 records, Crossref 24, and arXiv 8; Semantic Scholar was
+rate-limited, DBLP encountered TLS errors, and OpenReview returned no records.
+
+## Ranked relevant records and datasets
+
+1. Burgués et al., *Gas distribution mapping and source localization using a 3D
+   grid of metal oxide semiconductor sensors* (2019/2020), DOI
+   <https://doi.org/10.1016/j.snb.2019.127309>. Public Orebro3DSEN real-sensor
+   data; selected and scored under frozen V1/V2 gates.
+2. Ojeda et al., *Robotic Gas Source Localization With Probabilistic Mapping and
+   Online Dispersion Simulation* (2024), DOI
+   <https://doi.org/10.1109/TRO.2024.3426368>. Closest online-PMFS context, but
+   not a fresh external run-level confirmation asset.
+3. Ojeda et al., *VGR Dataset* (2023), DOI
+   <https://doi.org/10.1007/s10846-023-02012-z>. Public and large, but simulated
+   and adjacent to the project evidence lineage.
+4. Burgués et al., *Exploration and localization of a gas source with MOX gas
+   sensors on a mobile robot* (2017), DOI
+   <https://doi.org/10.1109/ISOEN.2017.7968898>. Relevant real-sensor study; no
+   newly identified factorial raw asset.
+5. Wada et al., *Collecting a Database for Studying Gas Distribution Mapping and
+   Gas Source Localization with Mobile Robots* (2010), DOI
+   <https://doi.org/10.1299/jsmeicam.2010.5.183>. No current auditable download
+   satisfying the factor contract was located.
+6. Vergara et al., turbulent wind-tunnel gas-sensor dataset (2015), DOI
+   <https://doi.org/10.1016/j.dib.2015.02.014>. The two source positions emit
+   different gases, confounding position with analyte identity.
+7. GSL-Bench (2024), DOI
+   <https://doi.org/10.1109/ICRA57147.2024.10610755>. High-fidelity simulation,
+   not untouched real-sensor confirmation.
+8. Gongora et al., human gas-source-localization dataset (2017), DOI
+   <https://doi.org/10.1109/ISOEN.2017.7968899>. Simulator-derived and its original
+   dataset URL is no longer available.
+9. Hinsen et al., *Red:Vapor* (2026),
+   <https://zenodo.org/records/18299926>. Real transport repeats but one fixed
+   physical source; input-contract NO-GO.
+10. France et al., *Chasing Ghosts* (2026),
+    <https://arxiv.org/abs/2602.19577>. Reports two rooms and five real runs per
+    room, but current public repository lacks the raw flight sensor logs.
+11. Jin et al., *Towards Efficient Gas Leak Detection in Built Environments*
+    (2023), DOI <https://doi.org/10.1109/ICRA48891.2023.10160816>. Reports 24 real
+    experiments; no public run-level raw series was located.
+
+## Search conclusion
+
+Orebro3DSEN was the only located, currently downloadable real-sensor dataset
+supporting both a strong same-source nuisance control and a different-source edge
+without analyte confounding. Its untouched V2 confirmation failed one frozen
+per-direction effect-size requirement. No second certifiably untouched public
+asset satisfying the full factor contract was found. This is a data and
+identification boundary, not evidence of universal mechanism success or failure.
+
