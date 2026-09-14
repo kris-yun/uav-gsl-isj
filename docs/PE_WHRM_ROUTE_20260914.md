@@ -62,3 +62,14 @@ No planner or closed-loop claim is opened by a map-only pass.
 - First read-only VGR contract audit: `experiments/pe_whrm_contract_audit.py` and `experiments/pe_whrm_contract_audit_h01_s0.json`. The trace schema and source/context joins pass, but the selected artifact is `time_budget_timeout`; it is contract evidence only and is not eligible for a localization claim or model-training gate.
 - Source-support inventory: `experiments/pe_whrm_source_support_inventory.py` and `experiments/pe_whrm_source_support_inventory.json`. The available VGR evidence has 3 strata, but each has exactly 1 true-source coordinate and 0 completed runs; pooling Houses would confound geometry with source, so the real shadow is not opened from this checkout.
 - VGR factorial development diagnostic: `experiments/pe_whrm_vgr_factorial_diagnostic.py` and `experiments/pe_whrm_vgr_factorial_diagnostic.json`. Ordered-history fixed-rival margin is positive (0.558 vs direct single-point 0.246) and falls under the destructive time-position control (0.315), but the ratio-moment error is 0.106 (>0.05); therefore the current scorer is a mechanism signal, not yet a calibrated probability map.
+
+## Pivot after the calibration failure
+
+PE-WHRM is parked as a useful representation baseline, not the final
+innovation. The next candidate is [AVESM](AVESM_ROUTE_CANDIDATE_20260914.md),
+which changes the map object itself to an anytime-valid e-process source map.
+Its synthetic contract and VGR development diagnostic are recorded in
+`experiments/avesm_synthetic_gate.py`,
+`experiments/avesm_synthetic_gate_result.json`,
+`experiments/avesm_vgr_factorial_diagnostic.py`, and
+`experiments/avesm_vgr_factorial_diagnostic.json`.

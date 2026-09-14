@@ -1,0 +1,43 @@
+{
+  "status": "PASS_DIAGNOSTIC",
+  "asset_scope": "VGR_factorial_development_diagnostic_only",
+  "upstream_boundary": "nominal seeds are pseudoreplicates; no held-out or main-innovation claim",
+  "contexts": [
+    [
+      "W_altfast",
+      "T_diag_A"
+    ],
+    [
+      "W_altfast",
+      "T_diag_B"
+    ],
+    [
+      "W_fast",
+      "T_diag_A"
+    ],
+    [
+      "W_fast",
+      "T_diag_B"
+    ],
+    [
+      "W_slow",
+      "T_diag_A"
+    ],
+    [
+      "W_slow",
+      "T_diag_B"
+    ]
+  ],
+  "n_eval_episodes": 48,
+  "intact_mean_inverse_e_margin": 14.79177558132141,
+  "destructive_mean_inverse_e_margin": 13.213639284845144,
+  "intact_mean_true_rank": 1.125,
+  "destructive_mean_true_rank": 1.8958333333333333,
+  "null_threshold_log20_cross_rate": 0.041666666666666664,
+  "checks": {
+    "intact_inverse_e_margin_positive": true,
+    "destructive_control_reduces_margin": true,
+    "null_cross_rate_below_0_1": true
+  },
+  "interpretation": "AVESM supplies a sequential source-vs-rival evidence object in this diagnostic, but the upstream dataset remains development-only and pseudoreplicated. This does not authorize PMFS confirmation or closed-loop claims."
+}
