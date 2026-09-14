@@ -1,0 +1,69 @@
+{
+  "schema": "TROQL_OQIC_EXTERNAL_POLICY_FREEZE_V2",
+  "date": "2026-09-14",
+  "mechanism": "transport-replicated observation-quotient distributional-dominance certificate",
+  "development_lineage": "V2 evidence-release statistic selected after V1 development NO-GO; confirmation remained unopened",
+  "claim_scope": "bounded cross-dataset identifiability mechanism premise only",
+  "forbidden_claims": [
+    "closed-loop localization improvement",
+    "online PMFS deployment",
+    "universal source identifiability",
+    "new House or unseen-seed confirmation"
+  ],
+  "external_dataset": {
+    "name": "Orebro3DSEN",
+    "repository": "https://github.com/jburgues/Orebro3DSEN",
+    "upstream_commit": "d5a55a0fc5e77b95456fbb7be62bc8154508dbee",
+    "license": "GPL-3.0",
+    "local_root": "_staging/troql_external/Orebro3DSEN"
+  },
+  "representation": {
+    "kernel": "tools/run_troql_oqic_external_gate.py",
+    "kernel_sha256": "a24be01a0f672c2c2f63ca38af2d7974e67bb5b58865363dd3bd04c24e00c692",
+    "concentration_columns": "C_000 through C_222 in upstream CSV order",
+    "trim_fraction_each_end": 0.1,
+    "contiguous_blocks": 40,
+    "block_summary": "per-channel median",
+    "spatial_transform": "centered mid-ranks then L2 normalization",
+    "prototype_blocks_zero_based": "even",
+    "target_blocks_zero_based": "odd",
+    "prototype": "coordinate-wise median then L2 normalization",
+    "distance": "one minus cosine similarity"
+  },
+  "dominance_gate": {
+    "comparison": "different-source margins versus direction-matched same-source nuisance margins",
+    "minimum_auc_per_direction": 0.8,
+    "maximum_one_sided_p_per_direction": 0.01,
+    "minimum_positive_fraction_per_direction": 0.9,
+    "p_value": "tie-corrected Mann-Whitney normal approximation with continuity correction",
+    "required_directions": 2
+  },
+  "stages": {
+    "development": {
+      "null_pair": ["Exp01", "Exp02"],
+      "source_pair": ["Exp02", "Exp03"],
+      "open_only": ["Exp01", "Exp02", "Exp03"]
+    },
+    "confirmation": {
+      "null_pair": ["Exp08", "Exp09"],
+      "source_pair": ["Exp06", "Exp07"],
+      "open_only": ["Exp06", "Exp07", "Exp08", "Exp09"]
+    }
+  },
+  "raw_inputs": {
+    "README.md": "571885380fdd3650a2d0cc9fe49397863af30abb5067b1c1bedf5905d56b85e5",
+    "LICENSE": "0b383d5a63da644f628d99c33976ea6487ed89aaa59f0b3257992deac1171e6b",
+    "img/TableExperiments.PNG": "ad2909f14cdb95e6596b6b77f2e4a3d4ab822f261450dd8f86a019de445bc680",
+    "logs/Exp01.csv": "da2dd19f0a4b1f5b0ca0359be433a131ccb6872b50d8aab671894833267b97a8",
+    "logs/Exp02.csv": "8709b0ad95aaf6252a0a5ed8cc56f7309d5ec656bd28ac896264629609f41642",
+    "logs/Exp03.csv": "08618437e42b7db795c2caf2acb6aff6be2edd28ee8b2e9e0a93317be0190a08",
+    "logs/Exp06.csv": "dc02d11eed8c431e0cda7274f2c73e292347386d153cd0819e05677d9a100bc2",
+    "logs/Exp07.csv": "af2d6925b7edf037bc36fcd41ae004dea73c7559c0eef26561186a2f5ad6b61f",
+    "logs/Exp08.csv": "7fdcd388554baf9b2499d529bf3741652c4f3466baa6c6b76e41a6de464e5532",
+    "logs/Exp09.csv": "b0d029583125504f827ebb6e1a9cd10266713b1c937c519efad003406fa0ee11"
+  },
+  "protected_project_assets_read": false,
+  "held_wind_read": false,
+  "unseen_seed_read": false,
+  "new_house_added": false
+}
