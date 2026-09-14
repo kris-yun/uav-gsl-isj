@@ -1,0 +1,50 @@
+{
+  "schema": "SUPPORT_EXTENSION_SCORING_POLICY_FREEZE_V1",
+  "frozen_before_aggregate_source_separation_scoring": true,
+  "code": [
+    {
+      "path": "tools/audit_support_extension_traces.py",
+      "sha256": "250554fbb2faeb89f51130970fdbde741287f59311c2c7bd7853555c6e4df467"
+    },
+    {
+      "path": "tools/score_support_extension.py",
+      "sha256": "d88c7cdf10d7c483e9f7869abf038ff87e5939037696c0226b7357f1e5feb229"
+    },
+    {
+      "path": "tools/audit_occupancy_native_parity.py",
+      "sha256": "04d4c56f9501bf6c9e6377e80d68610f438f0edb47e310175e30fbae13a0aac6"
+    },
+    {
+      "path": "tools/query_synchronized_pair_from_raw_cache.py",
+      "sha256": "53b9cbb20be7aa635b3b5d3aa08b1709388f2d276859cb5af743552401b9238c"
+    }
+  ],
+  "conditions": {
+    "sources": [
+      "S_truth",
+      "S_k01",
+      "S_k10",
+      "S_k22"
+    ],
+    "design_winds": [
+      "W_fast",
+      "W_slow"
+    ],
+    "held_wind_read": false,
+    "sample_count": 1115,
+    "prefix_sample_count": 750,
+    "windows_s": [
+      5.0,
+      10.0
+    ],
+    "rank_gate": "rank == 3",
+    "sigma_gate": "sigma3_sigma1 >= 0.05",
+    "q_energy_gate": "maximum_q_energy >= 0.01",
+    "collision_gate": "exact_pair_collisions == 0",
+    "exposure_gate": "union exposure in at least two equal thirds per source per wind",
+    "rich_extension_gate": "full_rich_support_score > own_150s_prefix_score + 1e-15 on both winds",
+    "rich_support_score": "sigma3_sigma1 + maximum_q_energy + 0.001*log1p(minimum_pair_distance)",
+    "channel_order_preserved": true,
+    "channel_difference_used": false
+  }
+}
