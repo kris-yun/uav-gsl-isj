@@ -1,42 +1,23 @@
 {
-  "schema": "UAV_GSL_RESEARCH_MASTER_V1",
+  "schema": "UAV_GSL_RESEARCH_MASTER_V2",
   "date": "2026-09-14",
   "research_control_branch": "project/research-master-20260914",
-  "base_evidence_sha": "3cf57c079411d03205c820d9cc1f2dc5281083e4",
+  "latest_evidence_sha": "1be4363959fcf7909e935568bb74d0a0dbd4328b",
   "paper_main_innovation_validated": false,
-  "current_scientific_question": "How can a mobile sensing system design its measurement trajectory or multi-robot geometry so that different source locations remain physically distinguishable across turbulent transport regimes before Bayesian source-belief assimilation?",
-  "dominant_failure_mechanism": "source-response operator is practically rank-collapsed because sensing trajectories do not sufficiently excite all source-discriminating modes",
-  "primary_candidate": {
-    "name": "Transport-Robust Persistent-Excitation Sensing",
-    "chinese": "输运鲁棒持续激励感知",
-    "status": "CANDIDATE_UNVALIDATED",
-    "mother_theories": [
-      "persistent excitation and system identification",
-      "optimal experimental design",
-      "inverse-problem measurement design",
-      "robust observability"
-    ],
-    "core_objective": "maximize worst-transport weakest source-contrast mode before posterior assimilation",
-    "finite_bank_metric": "min_w sigma3(C_w(R))/sigma1(C_w(R)) with Q_energy/exposure/coverage constraints",
-    "next_gate": "active_observability_v1"
-  },
-  "secondary_candidate": {
-    "name": "Collective Multi-Trajectory Informativity",
-    "chinese": "多轨迹集体可辨识性",
-    "status": "LOCKED_UNTIL_PRIMARY_PREMISE",
-    "mother_theory": "multi-signal informativity / collectively persistent excitation",
-    "trigger": "single-route observability principle is supported but no single deployment-feasible route can excite all source modes",
-    "forbidden_interpretations": [
-      "ordinary multi-robot belief fusion",
-      "Product of Experts as novelty",
-      "fixed signed concentration difference"
+  "current_scientific_question": "Within a finite sensing horizon, which source hypotheses physically influence the robot-accessible sensing domain strongly enough to be identifiable before Bayesian inference or active-search claims are allowed?",
+  "dominant_failure_mechanism": "finite-horizon sensing support is insufficient or highly imbalanced for some source-transport combinations; current inference and route-design layers cannot create missing physical exposure",
+  "validated_main_innovation": null,
+  "active_primary_candidate": null,
+  "current_active_task": {
+    "name": "Finite-Horizon Physical Support Audit",
+    "status": "DIAGNOSTIC_NOT_INNOVATION",
+    "contract": "docs/NEXT_STAGE_PHYSICAL_SUPPORT_AUDIT_20260914.md",
+    "failure_layers": [
+      "RAW_TRANSPORT_SUPPORT_FAILURE",
+      "SENSOR_BANDWIDTH_FAILURE",
+      "TRAJECTORY_COVERAGE_FAILURE",
+      "SUPPORT_ADEQUATE_INFERENCE_REMAINS"
     ]
-  },
-  "route_prior_candidate": {
-    "name": "Plume-boundary information seeking",
-    "status": "THEORY_ONLY",
-    "mother_reference": "Nature 2026 Drosophila vector-based plume-edge navigation",
-    "trigger": "must first show boundary-oriented sensing increases weakest source-mode observability"
   },
   "confirmed": [
     "main_v8 is authoritative forward contract",
@@ -50,13 +31,13 @@
     "House02 can physically support a 2 m dual-UAV formation after native occupancy parity audit",
     "same-frame dual-receiver data integrity is PASS",
     "fixed signed two-point structure is NO-GO as main innovation",
-    "current route severely under-excites some source interventions"
+    "5 s mismatch is compatible with motion-revisit confounding rather than plume-advection timing",
+    "source-blind map-only persistent-excitation route redesign is NO-GO within the frozen 12-route budget",
+    "best observability route AO_00 is identical to the old route",
+    "W_slow best-route response collapses to rank 2 with effectively zero weakest-mode energy",
+    "S_k01 and S_k22 are zero-exposure sources on the best design route in both design winds"
   ],
-  "currently_testing": [
-    "whether the 5 s mismatch improvement is motion-revisit confounding rather than plume-advection information",
-    "whether source-blind observability-first route design can restore source identity with unchanged inference"
-  ],
-  "rejected_or_demoted": [
+  "demoted_or_rejected": [
     "RMFE fixed-amplitude ranking",
     "SCTT as causal temporal module",
     "global transport-invariant representation",
@@ -67,18 +48,34 @@
     "signed simultaneous two-point difference",
     "second-order two-point difference",
     "ordinary multi-robot fusion as novelty",
+    "Transport-Robust Persistent-Excitation Sensing in current map-only route-search form",
+    "Collective Multi-Trajectory Informativity until a single/stacked support premise is physically justified",
     "ME-ACI V11 as established cross-domain positive evidence"
   ],
-  "novelty_collisions": [
-    "generic sensor placement / OED",
-    "generic online Bayesian experimental design for source localization",
-    "physics sensor placement optimization",
-    "stereo olfaction",
-    "multi-robot GSL belief fusion and informative-region allocation"
+  "diagnostic_mother_theories": [
+    {
+      "name": "forward-adjoint domain of dependence / adjoint sensitivity",
+      "role": "diagnose finite-time sensor/source support",
+      "novelty_status": "DIRECT_COLLISION_WITH_2026_AIAA_TURBULENT_SOURCE_LOCALIZATION_NOT_MAIN_NOVELTY"
+    },
+    {
+      "name": "Lagrangian transport / coherent structures",
+      "role": "possible transport-support explanation or later transport-guided measurement design",
+      "novelty_status": "THEORY_CANDIDATE_ONLY_NOT_AUTHORIZED"
+    },
+    {
+      "name": "persistent excitation / optimal experimental design",
+      "role": "background observability theory",
+      "novelty_status": "CURRENT_IMPLEMENTATION_NO_GO_DO_NOT_RESCUE_BY_POSTHOC_ROUTE_BUDGET_EXPANSION"
+    }
   ],
-  "next_contract": "docs/NEXT_STAGE_EXECUTION_CONTRACT_20260914.md",
+  "causal_localization_claim_authorized": false,
+  "cross_dataset_claim_authorized": false,
+  "next_contract": "docs/NEXT_STAGE_PHYSICAL_SUPPORT_AUDIT_20260914.md",
   "decision_after_next_gate": {
-    "if_pass": "freeze observability-first mechanism, run strict novelty collision, then reserve untouched cross-environment confirmation",
-    "if_fail": "stop inventing inference algorithms under current sensing modality and redesign sensing modality/environment"
+    "raw_support_failure": "stop inference development on current 150 s House02 setup; redesign horizon/environment",
+    "sensor_bandwidth_failure": "redesign sensing modality or response time",
+    "trajectory_coverage_failure": "reopen transport-guided measurement design only",
+    "support_adequate_inference_remains": "only then return to inference/model innovation"
   }
 }
