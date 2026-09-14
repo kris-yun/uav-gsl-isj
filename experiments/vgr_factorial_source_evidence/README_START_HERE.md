@@ -80,6 +80,10 @@ contains stronger, precommitted premise tests:
 - observability-aware learning falsification: NO-GO;
 - held `W_altfast`: correctly left unopened after the design-wind failure.
 
+The replication audit does hash the already-spent 72-episode derivative, which
+contains rows labeled `W_altfast`; it does not query the protected raw held-wind
+cache or execute a new held-wind gate for the rejected route candidate.
+
 The generated candidate assumes the existence of stable, flight-feasible
 source-separating edges.  The existing gates and the new pseudoreplication audit
 invalidate that premise in the available House02/VGR asset.  Running another
