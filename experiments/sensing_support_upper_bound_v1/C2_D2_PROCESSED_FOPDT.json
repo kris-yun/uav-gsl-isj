@@ -1,0 +1,5103 @@
+{
+  "schema": "SENSING_SUPPORT_CONFIGURATION_SCORE_V1",
+  "configuration_id": "C2",
+  "measurement": "D2_TWO_CHANNEL_PROCESSED_FOPDT",
+  "channels": [
+    "plus_processed",
+    "minus_processed"
+  ],
+  "channel_order_preserved": true,
+  "channel_difference_used": false,
+  "deployable_candidate_eligible": true,
+  "oracle_only": false,
+  "design_winds": [
+    "W_fast",
+    "W_slow"
+  ],
+  "held_wind_read": false,
+  "candidate_count": 12,
+  "passing_candidate_count": 0,
+  "passing_routes": [],
+  "ranking": [
+    "AO_00",
+    "AO_08",
+    "AO_03",
+    "AO_10",
+    "AO_06",
+    "AO_05",
+    "AO_09",
+    "AO_02",
+    "AO_04",
+    "AO_07",
+    "AO_11",
+    "AO_01"
+  ],
+  "selected_route": null,
+  "configuration_gate": "NO_GO_0_OF_12",
+  "results": [
+    {
+      "route_id": "AO_00",
+      "rank3_wind_count": 2,
+      "worst_design_sigma3_sigma1": 0.0006832437988225239,
+      "worst_design_maximum_q_energy": 4.961340990004211e-07,
+      "minimum_source_exposure_samples": 0,
+      "minimum_exposed_thirds": 0,
+      "total_absolute_heading_change_rad": 267.0353755551324,
+      "both_design_winds_all_gates": false,
+      "winds": {
+        "W_fast": {
+          "rank": 3,
+          "singular_values": [
+            568.4719142075959,
+            27.765655816432314,
+            0.772681623196153,
+            3.626019509460803e-14
+          ],
+          "sigma3_sigma1": 0.0013592256783225764,
+          "minimum_pair_distance": 1.1093777707619863,
+          "exact_pair_collisions": 0,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 1.600433362365733e-06,
+              "corrected_ratio": 1.600433362365733e-06,
+              "eigenvalues": [
+                8166370.780978222,
+                19776.228057700282,
+                13.069732247326254,
+                3.808963568892068e-09
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": 1.6203447012779221e-06,
+              "corrected_ratio": 1.6203447012779221e-06,
+              "eigenvalues": [
+                15422443.397871373,
+                34436.15214239744,
+                24.989674440499552,
+                -2.3283067750530926e-09
+              ],
+              "psd_roundoff_clamped": false
+            }
+          },
+          "maximum_q_energy": 1.6203447012779221e-06,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 237,
+                "third_counts": [
+                  0,
+                  7,
+                  230
+                ],
+                "exposed_thirds": 2
+              },
+              "minus": {
+                "samples": 472,
+                "third_counts": [
+                  0,
+                  222,
+                  250
+                ],
+                "exposed_thirds": 2
+              },
+              "union": {
+                "samples": 472,
+                "third_counts": [
+                  0,
+                  222,
+                  250
+                ],
+                "exposed_thirds": 2
+              },
+              "overlap": {
+                "samples": 237,
+                "third_counts": [
+                  0,
+                  7,
+                  230
+                ],
+                "exposed_thirds": 2
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 235
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 7,
+                "third_counts": [
+                  7,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 7,
+                "third_counts": [
+                  7,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 1
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 7,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 291,
+                "third_counts": [
+                  0,
+                  42,
+                  249
+                ],
+                "exposed_thirds": 2
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 291,
+                "third_counts": [
+                  0,
+                  42,
+                  249
+                ],
+                "exposed_thirds": 2
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 291,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 20,
+                "third_counts": [
+                  0,
+                  0,
+                  20
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 20,
+                "third_counts": [
+                  0,
+                  0,
+                  20
+                ],
+                "exposed_thirds": 1
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 20,
+              "minus_only_samples": 0
+            }
+          },
+          "rank_gate": true,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": true,
+          "exposure_gate": false,
+          "all_gates": false
+        },
+        "W_slow": {
+          "rank": 3,
+          "singular_values": [
+            506.2605898001619,
+            6.172412326357514,
+            0.3458994085691941,
+            1.6931144233949206e-14
+          ],
+          "sigma3_sigma1": 0.0006832437988225239,
+          "minimum_pair_distance": 0.48943298013414815,
+          "exact_pair_collisions": 0,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 4.781636149870619e-07,
+              "corrected_ratio": 4.781636149870619e-07,
+              "eigenvalues": [
+                6505638.127162518,
+                976.5975684551354,
+                3.1107594446816886,
+                3.092281986027704e-09
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": 4.961340990004211e-07,
+              "corrected_ratio": 4.961340990004211e-07,
+              "eigenvalues": [
+                12296113.445095917,
+                1587.1681207428082,
+                6.100521165289627,
+                2.1100277081103914e-10
+              ],
+              "psd_roundoff_clamped": false
+            }
+          },
+          "maximum_q_energy": 4.961340990004211e-07,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 127,
+                "third_counts": [
+                  0,
+                  0,
+                  127
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 470,
+                "third_counts": [
+                  0,
+                  220,
+                  250
+                ],
+                "exposed_thirds": 2
+              },
+              "union": {
+                "samples": 470,
+                "third_counts": [
+                  0,
+                  220,
+                  250
+                ],
+                "exposed_thirds": 2
+              },
+              "overlap": {
+                "samples": 127,
+                "third_counts": [
+                  0,
+                  0,
+                  127
+                ],
+                "exposed_thirds": 1
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 343
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 7,
+                "third_counts": [
+                  7,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 7,
+                "third_counts": [
+                  7,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 1
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 7,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 175,
+                "third_counts": [
+                  0,
+                  2,
+                  173
+                ],
+                "exposed_thirds": 2
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 175,
+                "third_counts": [
+                  0,
+                  2,
+                  173
+                ],
+                "exposed_thirds": 2
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 175,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            }
+          },
+          "rank_gate": true,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": true,
+          "exposure_gate": false,
+          "all_gates": false
+        }
+      }
+    },
+    {
+      "route_id": "AO_08",
+      "rank3_wind_count": 0,
+      "worst_design_sigma3_sigma1": 4.465186623676314e-17,
+      "worst_design_maximum_q_energy": 1.9596146108979833e-17,
+      "minimum_source_exposure_samples": 0,
+      "minimum_exposed_thirds": 0,
+      "total_absolute_heading_change_rad": 267.0353755551324,
+      "both_design_winds_all_gates": false,
+      "winds": {
+        "W_fast": {
+          "rank": 2,
+          "singular_values": [
+            79.1915448552258,
+            0.375587696800056,
+            5.794521898305257e-15,
+            7.201149025077993e-16
+          ],
+          "sigma3_sigma1": 7.317096678564012e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 1,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 9.665608927128416e-19,
+              "corrected_ratio": 9.665608927128416e-19,
+              "eigenvalues": [
+                117485.32583884122,
+                2.2736310805375006,
+                1.1355672142344945e-13,
+                -1.123441107506144e-11
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": 1.9596146108979833e-17,
+              "corrected_ratio": 1.9596146108979833e-17,
+              "eigenvalues": [
+                148304.2452736469,
+                2.279616017130154,
+                2.9061916589643662e-12,
+                -1.3693319648518777e-11
+              ],
+              "psd_roundoff_clamped": false
+            }
+          },
+          "maximum_q_energy": 1.9596146108979833e-17,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 7,
+                "third_counts": [
+                  7,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 7,
+                "third_counts": [
+                  7,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 1
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 7,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 264,
+                "third_counts": [
+                  0,
+                  52,
+                  212
+                ],
+                "exposed_thirds": 2
+              },
+              "minus": {
+                "samples": 331,
+                "third_counts": [
+                  0,
+                  82,
+                  249
+                ],
+                "exposed_thirds": 2
+              },
+              "union": {
+                "samples": 347,
+                "third_counts": [
+                  0,
+                  98,
+                  249
+                ],
+                "exposed_thirds": 2
+              },
+              "overlap": {
+                "samples": 248,
+                "third_counts": [
+                  0,
+                  36,
+                  212
+                ],
+                "exposed_thirds": 2
+              },
+              "plus_only_samples": 16,
+              "minus_only_samples": 83
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        },
+        "W_slow": {
+          "rank": 2,
+          "singular_values": [
+            161.5727707202137,
+            0.4135364014865843,
+            7.214525745702183e-15,
+            1.3987328771344318e-15
+          ],
+          "sigma3_sigma1": 4.465186623676314e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 1,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 1.2200821173850526e-16,
+              "corrected_ratio": 1.2200821173850526e-16,
+              "eigenvalues": [
+                508223.4225209952,
+                2.8311414453180386,
+                6.20074309454094e-11,
+                -9.233172925540632e-13
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": 6.88657715869369e-17,
+              "corrected_ratio": 6.88657715869369e-17,
+              "eigenvalues": [
+                634617.9742483187,
+                2.8397563181719465,
+                4.3703456459549314e-11,
+                1.227744033040075e-11
+              ],
+              "psd_roundoff_clamped": false
+            }
+          },
+          "maximum_q_energy": 1.2200821173850526e-16,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 8,
+                "third_counts": [
+                  8,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 8,
+                "third_counts": [
+                  8,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 1
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 8,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 126,
+                "third_counts": [
+                  0,
+                  11,
+                  115
+                ],
+                "exposed_thirds": 2
+              },
+              "minus": {
+                "samples": 128,
+                "third_counts": [
+                  0,
+                  0,
+                  128
+                ],
+                "exposed_thirds": 1
+              },
+              "union": {
+                "samples": 180,
+                "third_counts": [
+                  0,
+                  11,
+                  169
+                ],
+                "exposed_thirds": 2
+              },
+              "overlap": {
+                "samples": 74,
+                "third_counts": [
+                  0,
+                  0,
+                  74
+                ],
+                "exposed_thirds": 1
+              },
+              "plus_only_samples": 52,
+              "minus_only_samples": 54
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        }
+      }
+    },
+    {
+      "route_id": "AO_03",
+      "rank3_wind_count": 0,
+      "worst_design_sigma3_sigma1": 2.088929178400786e-17,
+      "worst_design_maximum_q_energy": 1.267675095719487e-17,
+      "minimum_source_exposure_samples": 0,
+      "minimum_exposed_thirds": 0,
+      "total_absolute_heading_change_rad": 289.02652413026095,
+      "both_design_winds_all_gates": false,
+      "winds": {
+        "W_fast": {
+          "rank": 2,
+          "singular_values": [
+            41.97757179263641,
+            0.281343235589148,
+            1.34934039864801e-15,
+            5.009339730051472e-16
+          ],
+          "sigma3_sigma1": 3.214431757304999e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 1,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 5.067167158738481e-16,
+              "corrected_ratio": 5.067167158738481e-16,
+              "eigenvalues": [
+                38443.1185951231,
+                2.00140368554257,
+                1.947977080246964e-11,
+                1.4205706906063462e-13
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": 1.550241385573518e-17,
+              "corrected_ratio": 1.550241385573518e-17,
+              "eigenvalues": [
+                69343.81963364981,
+                2.279220006680571,
+                1.074996590298294e-12,
+                -6.255358418430945e-12
+              ],
+              "psd_roundoff_clamped": false
+            }
+          },
+          "maximum_q_energy": 5.067167158738481e-16,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 338,
+                "third_counts": [
+                  0,
+                  88,
+                  250
+                ],
+                "exposed_thirds": 2
+              },
+              "minus": {
+                "samples": 134,
+                "third_counts": [
+                  0,
+                  0,
+                  134
+                ],
+                "exposed_thirds": 1
+              },
+              "union": {
+                "samples": 338,
+                "third_counts": [
+                  0,
+                  88,
+                  250
+                ],
+                "exposed_thirds": 2
+              },
+              "overlap": {
+                "samples": 134,
+                "third_counts": [
+                  0,
+                  0,
+                  134
+                ],
+                "exposed_thirds": 1
+              },
+              "plus_only_samples": 204,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 5,
+                "third_counts": [
+                  0,
+                  0,
+                  5
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 5,
+                "third_counts": [
+                  0,
+                  0,
+                  5
+                ],
+                "exposed_thirds": 1
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 5,
+              "minus_only_samples": 0
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        },
+        "W_slow": {
+          "rank": 1,
+          "singular_values": [
+            1.0546149194769046,
+            6.234399974461427e-17,
+            2.2030158772721012e-17,
+            1.1827716135126085e-33
+          ],
+          "sigma3_sigma1": 2.088929178400786e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 3,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 1.267675095719487e-17,
+              "corrected_ratio": 1.267675095719487e-17,
+              "eigenvalues": [
+                28.715156668814686,
+                1.3452744676826535e-15,
+                3.6401488978739723e-16,
+                -3.4896276946371357e-16
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": -3.673504866327344e-18,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                56.27301129311522,
+                6.8674097630289405e-15,
+                -2.0671918082815238e-16,
+                -9.782107642271053e-16
+              ],
+              "psd_roundoff_clamped": true
+            }
+          },
+          "maximum_q_energy": 1.267675095719487e-17,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 33,
+                "third_counts": [
+                  0,
+                  0,
+                  33
+                ],
+                "exposed_thirds": 1
+              },
+              "union": {
+                "samples": 33,
+                "third_counts": [
+                  0,
+                  0,
+                  33
+                ],
+                "exposed_thirds": 1
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 33
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        }
+      }
+    },
+    {
+      "route_id": "AO_10",
+      "rank3_wind_count": 0,
+      "worst_design_sigma3_sigma1": 1.9492954123314278e-17,
+      "worst_design_maximum_q_energy": 0.0,
+      "minimum_source_exposure_samples": 0,
+      "minimum_exposed_thirds": 0,
+      "total_absolute_heading_change_rad": 75.39822368615503,
+      "both_design_winds_all_gates": false,
+      "winds": {
+        "W_fast": {
+          "rank": 2,
+          "singular_values": [
+            7.652279375917173,
+            1.5269256130161633,
+            8.161400698239714e-16,
+            1.305932519072467e-16
+          ],
+          "sigma3_sigma1": 1.0665319831271215e-16,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 1,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 3.734772628294609e-17,
+              "corrected_ratio": 3.734772628294609e-17,
+              "eigenvalues": [
+                1452.862292996844,
+                32.467397448912934,
+                5.4261103245659544e-14,
+                9.997492299710996e-16
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": -4.800330494688336e-20,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                2605.7332591458508,
+                49.101954058871975,
+                -1.2508380824901451e-16,
+                -6.141473734998555e-13
+              ],
+              "psd_roundoff_clamped": true
+            }
+          },
+          "maximum_q_energy": 3.734772628294609e-17,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 156,
+                "third_counts": [
+                  10,
+                  42,
+                  104
+                ],
+                "exposed_thirds": 3
+              },
+              "minus": {
+                "samples": 442,
+                "third_counts": [
+                  4,
+                  188,
+                  250
+                ],
+                "exposed_thirds": 3
+              },
+              "union": {
+                "samples": 459,
+                "third_counts": [
+                  14,
+                  195,
+                  250
+                ],
+                "exposed_thirds": 3
+              },
+              "overlap": {
+                "samples": 139,
+                "third_counts": [
+                  0,
+                  35,
+                  104
+                ],
+                "exposed_thirds": 2
+              },
+              "plus_only_samples": 17,
+              "minus_only_samples": 303
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 51,
+                "third_counts": [
+                  0,
+                  0,
+                  51
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 51,
+                "third_counts": [
+                  0,
+                  0,
+                  51
+                ],
+                "exposed_thirds": 1
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 51,
+              "minus_only_samples": 0
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        },
+        "W_slow": {
+          "rank": 1,
+          "singular_values": [
+            16.129087822334686,
+            1.164509296737976e-15,
+            3.14403568971677e-16,
+            9.805615483288577e-32
+          ],
+          "sigma3_sigma1": 1.9492954123314278e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 3,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": -7.644585775399245e-18,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                5987.362051333333,
+                2.4083346213872567e-14,
+                -4.577090276978804e-14,
+                -1.2394084278128565e-12
+              ],
+              "psd_roundoff_clamped": true
+            },
+            "10.0": {
+              "raw_ratio": -1.706183571992586e-17,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                10838.914963796928,
+                4.580466117028366e-14,
+                -1.8493178649454934e-13,
+                -9.884088960618593e-13
+              ],
+              "psd_roundoff_clamped": true
+            }
+          },
+          "maximum_q_energy": 0.0,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 140,
+                "third_counts": [
+                  0,
+                  27,
+                  113
+                ],
+                "exposed_thirds": 2
+              },
+              "minus": {
+                "samples": 424,
+                "third_counts": [
+                  0,
+                  180,
+                  244
+                ],
+                "exposed_thirds": 2
+              },
+              "union": {
+                "samples": 428,
+                "third_counts": [
+                  0,
+                  184,
+                  244
+                ],
+                "exposed_thirds": 2
+              },
+              "overlap": {
+                "samples": 136,
+                "third_counts": [
+                  0,
+                  23,
+                  113
+                ],
+                "exposed_thirds": 2
+              },
+              "plus_only_samples": 4,
+              "minus_only_samples": 288
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        }
+      }
+    },
+    {
+      "route_id": "AO_06",
+      "rank3_wind_count": 0,
+      "worst_design_sigma3_sigma1": 1.8026170958654303e-17,
+      "worst_design_maximum_q_energy": 1.639225785091609e-17,
+      "minimum_source_exposure_samples": 0,
+      "minimum_exposed_thirds": 0,
+      "total_absolute_heading_change_rad": 252.89820861397837,
+      "both_design_winds_all_gates": false,
+      "winds": {
+        "W_fast": {
+          "rank": 2,
+          "singular_values": [
+            11.752462031281931,
+            2.659468729160427,
+            7.553741128708408e-16,
+            3.4387595900202397e-16
+          ],
+          "sigma3_sigma1": 6.427369098153523e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 1,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 2.453513693492926e-16,
+              "corrected_ratio": 2.453513693492926e-16,
+              "eigenvalues": [
+                2560.5878746105614,
+                183.23326439631526,
+                6.28243741374896e-13,
+                -4.8048749712423135e-14
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": 3.2342072706481473e-16,
+              "corrected_ratio": 3.2342072706481473e-16,
+              "eigenvalues": [
+                4691.907333269824,
+                346.837951441355,
+                1.5174600810468627e-12,
+                5.068859322872218e-14
+              ],
+              "psd_roundoff_clamped": false
+            }
+          },
+          "maximum_q_energy": 3.2342072706481473e-16,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 176,
+                "third_counts": [
+                  30,
+                  76,
+                  70
+                ],
+                "exposed_thirds": 3
+              },
+              "minus": {
+                "samples": 395,
+                "third_counts": [
+                  30,
+                  152,
+                  213
+                ],
+                "exposed_thirds": 3
+              },
+              "union": {
+                "samples": 435,
+                "third_counts": [
+                  51,
+                  171,
+                  213
+                ],
+                "exposed_thirds": 3
+              },
+              "overlap": {
+                "samples": 136,
+                "third_counts": [
+                  9,
+                  57,
+                  70
+                ],
+                "exposed_thirds": 3
+              },
+              "plus_only_samples": 40,
+              "minus_only_samples": 259
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 66,
+                "third_counts": [
+                  0,
+                  0,
+                  66
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 101,
+                "third_counts": [
+                  0,
+                  0,
+                  101
+                ],
+                "exposed_thirds": 1
+              },
+              "union": {
+                "samples": 114,
+                "third_counts": [
+                  0,
+                  0,
+                  114
+                ],
+                "exposed_thirds": 1
+              },
+              "overlap": {
+                "samples": 53,
+                "third_counts": [
+                  0,
+                  0,
+                  53
+                ],
+                "exposed_thirds": 1
+              },
+              "plus_only_samples": 13,
+              "minus_only_samples": 48
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        },
+        "W_slow": {
+          "rank": 1,
+          "singular_values": [
+            19.086041513984355,
+            1.5310708117810972e-15,
+            3.440482472550552e-16,
+            1.9644467585234115e-31
+          ],
+          "sigma3_sigma1": 1.8026170958654303e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 3,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": -1.9657450275702124e-17,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                8338.929372172299,
+                -1.3198186802810615e-14,
+                -1.639220894860689e-13,
+                -7.312637115359992e-12
+              ],
+              "psd_roundoff_clamped": true
+            },
+            "10.0": {
+              "raw_ratio": 1.639225785091609e-17,
+              "corrected_ratio": 1.639225785091609e-17,
+              "eigenvalues": [
+                14827.126685798961,
+                6.231590053407265e-13,
+                2.430500838218155e-13,
+                2.0187479166450894e-14
+              ],
+              "psd_roundoff_clamped": false
+            }
+          },
+          "maximum_q_energy": 1.639225785091609e-17,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 31,
+                "third_counts": [
+                  0,
+                  0,
+                  31
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 409,
+                "third_counts": [
+                  0,
+                  159,
+                  250
+                ],
+                "exposed_thirds": 2
+              },
+              "union": {
+                "samples": 409,
+                "third_counts": [
+                  0,
+                  159,
+                  250
+                ],
+                "exposed_thirds": 2
+              },
+              "overlap": {
+                "samples": 31,
+                "third_counts": [
+                  0,
+                  0,
+                  31
+                ],
+                "exposed_thirds": 1
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 378
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        }
+      }
+    },
+    {
+      "route_id": "AO_05",
+      "rank3_wind_count": 0,
+      "worst_design_sigma3_sigma1": 1.5847264351320692e-17,
+      "worst_design_maximum_q_energy": 0.0,
+      "minimum_source_exposure_samples": 0,
+      "minimum_exposed_thirds": 0,
+      "total_absolute_heading_change_rad": 248.18581963359367,
+      "both_design_winds_all_gates": false,
+      "winds": {
+        "W_fast": {
+          "rank": 1,
+          "singular_values": [
+            126.20991367915462,
+            8.027032032618533e-15,
+            2.0969492002927333e-15,
+            1.2906788281344072e-30
+          ],
+          "sigma3_sigma1": 1.661477406302255e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 3,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": -1.8978395767121426e-17,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                413847.5642480578,
+                8.790920092592628e-11,
+                -7.854162861558852e-12,
+                -7.130890262031714e-11
+              ],
+              "psd_roundoff_clamped": true
+            },
+            "10.0": {
+              "raw_ratio": 1.3350281600223787e-17,
+              "corrected_ratio": 1.3350281600223787e-17,
+              "eigenvalues": [
+                809526.114683102,
+                6.653106702274126e-10,
+                1.0807401593754468e-11,
+                -2.8879487279454484e-11
+              ],
+              "psd_roundoff_clamped": false
+            }
+          },
+          "maximum_q_energy": 1.3350281600223787e-17,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 298,
+                "third_counts": [
+                  0,
+                  104,
+                  194
+                ],
+                "exposed_thirds": 2
+              },
+              "minus": {
+                "samples": 495,
+                "third_counts": [
+                  0,
+                  245,
+                  250
+                ],
+                "exposed_thirds": 2
+              },
+              "union": {
+                "samples": 495,
+                "third_counts": [
+                  0,
+                  245,
+                  250
+                ],
+                "exposed_thirds": 2
+              },
+              "overlap": {
+                "samples": 298,
+                "third_counts": [
+                  0,
+                  104,
+                  194
+                ],
+                "exposed_thirds": 2
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 197
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        },
+        "W_slow": {
+          "rank": 1,
+          "singular_values": [
+            98.46446217818182,
+            7.42314584968891e-15,
+            1.5603923613482653e-15,
+            5.166730389151457e-31
+          ],
+          "sigma3_sigma1": 1.5847264351320692e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 3,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": -1.644850192055383e-16,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                252073.57226754428,
+                2.651313681956629e-12,
+                -4.146232637563567e-11,
+                -8.904883702300126e-11
+              ],
+              "psd_roundoff_clamped": true
+            },
+            "10.0": {
+              "raw_ratio": -3.508830161765594e-17,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                494382.29763155506,
+                4.671612226060435e-12,
+                -1.7347035173725753e-11,
+                -1.2186800358795714e-10
+              ],
+              "psd_roundoff_clamped": true
+            }
+          },
+          "maximum_q_energy": 0.0,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 152,
+                "third_counts": [
+                  0,
+                  34,
+                  118
+                ],
+                "exposed_thirds": 2
+              },
+              "minus": {
+                "samples": 238,
+                "third_counts": [
+                  0,
+                  204,
+                  34
+                ],
+                "exposed_thirds": 2
+              },
+              "union": {
+                "samples": 359,
+                "third_counts": [
+                  0,
+                  228,
+                  131
+                ],
+                "exposed_thirds": 2
+              },
+              "overlap": {
+                "samples": 31,
+                "third_counts": [
+                  0,
+                  10,
+                  21
+                ],
+                "exposed_thirds": 2
+              },
+              "plus_only_samples": 121,
+              "minus_only_samples": 207
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        }
+      }
+    },
+    {
+      "route_id": "AO_09",
+      "rank3_wind_count": 0,
+      "worst_design_sigma3_sigma1": 1.5664745059787143e-17,
+      "worst_design_maximum_q_energy": 0.0,
+      "minimum_source_exposure_samples": 0,
+      "minimum_exposed_thirds": 0,
+      "total_absolute_heading_change_rad": 259.18139392115796,
+      "both_design_winds_all_gates": false,
+      "winds": {
+        "W_fast": {
+          "rank": 2,
+          "singular_values": [
+            42.42375529098198,
+            2.469764498802695,
+            3.922981930780307e-15,
+            7.230070519045947e-16
+          ],
+          "sigma3_sigma1": 9.247135016390723e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 1,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 1.0691959008878863e-16,
+              "corrected_ratio": 1.0691959008878863e-16,
+              "eigenvalues": [
+                46789.2629529266,
+                87.07984840151771,
+                5.002688815483456e-12,
+                -1.1409248342160678e-12
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": 1.6405661403725035e-17,
+              "corrected_ratio": 1.6405661403725035e-17,
+              "eigenvalues": [
+                91303.36011045278,
+                122.77760576753278,
+                1.4978920109944632e-12,
+                -3.188180410439149e-12
+              ],
+              "psd_roundoff_clamped": false
+            }
+          },
+          "maximum_q_energy": 1.0691959008878863e-16,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 165,
+                "third_counts": [
+                  14,
+                  69,
+                  82
+                ],
+                "exposed_thirds": 3
+              },
+              "minus": {
+                "samples": 422,
+                "third_counts": [
+                  25,
+                  206,
+                  191
+                ],
+                "exposed_thirds": 3
+              },
+              "union": {
+                "samples": 460,
+                "third_counts": [
+                  39,
+                  230,
+                  191
+                ],
+                "exposed_thirds": 3
+              },
+              "overlap": {
+                "samples": 127,
+                "third_counts": [
+                  0,
+                  45,
+                  82
+                ],
+                "exposed_thirds": 2
+              },
+              "plus_only_samples": 38,
+              "minus_only_samples": 295
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 46,
+                "third_counts": [
+                  0,
+                  0,
+                  46
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 56,
+                "third_counts": [
+                  0,
+                  0,
+                  56
+                ],
+                "exposed_thirds": 1
+              },
+              "union": {
+                "samples": 73,
+                "third_counts": [
+                  0,
+                  0,
+                  73
+                ],
+                "exposed_thirds": 1
+              },
+              "overlap": {
+                "samples": 29,
+                "third_counts": [
+                  0,
+                  0,
+                  29
+                ],
+                "exposed_thirds": 1
+              },
+              "plus_only_samples": 17,
+              "minus_only_samples": 27
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        },
+        "W_slow": {
+          "rank": 1,
+          "singular_values": [
+            25.302508270918402,
+            8.700055650212105e-16,
+            3.9635734143709235e-16,
+            9.604776178803872e-33
+          ],
+          "sigma3_sigma1": 1.5664745059787143e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 3,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": -3.0182495700106577e-19,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                16504.102459957045,
+                3.7520623553554755e-13,
+                -4.981350015317719e-15,
+                -5.594845214647613e-12
+              ],
+              "psd_roundoff_clamped": true
+            },
+            "10.0": {
+              "raw_ratio": -3.717632177208888e-18,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                31213.119520265696,
+                7.44012592723392e-13,
+                -1.160388974796066e-13,
+                -1.6389265066672764e-11
+              ],
+              "psd_roundoff_clamped": true
+            }
+          },
+          "maximum_q_energy": 0.0,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 90,
+                "third_counts": [
+                  0,
+                  34,
+                  56
+                ],
+                "exposed_thirds": 2
+              },
+              "minus": {
+                "samples": 415,
+                "third_counts": [
+                  0,
+                  165,
+                  250
+                ],
+                "exposed_thirds": 2
+              },
+              "union": {
+                "samples": 415,
+                "third_counts": [
+                  0,
+                  165,
+                  250
+                ],
+                "exposed_thirds": 2
+              },
+              "overlap": {
+                "samples": 90,
+                "third_counts": [
+                  0,
+                  34,
+                  56
+                ],
+                "exposed_thirds": 2
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 325
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        }
+      }
+    },
+    {
+      "route_id": "AO_02",
+      "rank3_wind_count": 0,
+      "worst_design_sigma3_sigma1": 1.306079355861815e-17,
+      "worst_design_maximum_q_energy": 3.848675854091494e-18,
+      "minimum_source_exposure_samples": 0,
+      "minimum_exposed_thirds": 0,
+      "total_absolute_heading_change_rad": 270.1769682087222,
+      "both_design_winds_all_gates": false,
+      "winds": {
+        "W_fast": {
+          "rank": 2,
+          "singular_values": [
+            3.4067316466344373,
+            0.5453605631082462,
+            3.0000034759236415e-16,
+            6.595303836878165e-17
+          ],
+          "sigma3_sigma1": 8.806104463459548e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 1,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 3.848675854091494e-18,
+              "corrected_ratio": 3.848675854091494e-18,
+              "eigenvalues": [
+                273.217543194055,
+                5.574450821108324,
+                1.0515257614051592e-15,
+                -2.4312983828262935e-14
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": -3.4660358393686077e-18,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                451.4684844660139,
+                8.107566297472895,
+                -1.5648059475046336e-15,
+                -1.1217141090614025e-14
+              ],
+              "psd_roundoff_clamped": true
+            }
+          },
+          "maximum_q_energy": 3.848675854091494e-18,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 16,
+                "third_counts": [
+                  0,
+                  0,
+                  16
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 3,
+                "third_counts": [
+                  0,
+                  0,
+                  3
+                ],
+                "exposed_thirds": 1
+              },
+              "union": {
+                "samples": 19,
+                "third_counts": [
+                  0,
+                  0,
+                  19
+                ],
+                "exposed_thirds": 1
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 16,
+              "minus_only_samples": 3
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 57,
+                "third_counts": [
+                  0,
+                  0,
+                  57
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 174,
+                "third_counts": [
+                  0,
+                  0,
+                  174
+                ],
+                "exposed_thirds": 1
+              },
+              "union": {
+                "samples": 186,
+                "third_counts": [
+                  0,
+                  0,
+                  186
+                ],
+                "exposed_thirds": 1
+              },
+              "overlap": {
+                "samples": 45,
+                "third_counts": [
+                  0,
+                  0,
+                  45
+                ],
+                "exposed_thirds": 1
+              },
+              "plus_only_samples": 12,
+              "minus_only_samples": 129
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        },
+        "W_slow": {
+          "rank": 1,
+          "singular_values": [
+            0.005601243844690394,
+            2.677413465354654e-19,
+            7.315668952698186e-20,
+            2.490116871090026e-36
+          ],
+          "sigma3_sigma1": 1.306079355861815e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 3,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 1.44414975705898e-17,
+              "corrected_ratio": 1.44414975705898e-17,
+              "eigenvalues": [
+                0.0008156725621589025,
+                1.2335287022948144e-19,
+                1.1779533324814548e-20,
+                -2.942516534232469e-21
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": -2.1658487483204555e-17,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                0.001537006363538062,
+                1.1750052346326051e-21,
+                -3.3289233086294864e-20,
+                -4.3352639255708434e-19
+              ],
+              "psd_roundoff_clamped": true
+            }
+          },
+          "maximum_q_energy": 1.44414975705898e-17,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        }
+      }
+    },
+    {
+      "route_id": "AO_04",
+      "rank3_wind_count": 0,
+      "worst_design_sigma3_sigma1": 1.0553289084656314e-17,
+      "worst_design_maximum_q_energy": 0.0,
+      "minimum_source_exposure_samples": 0,
+      "minimum_exposed_thirds": 0,
+      "total_absolute_heading_change_rad": 252.89820861397837,
+      "both_design_winds_all_gates": false,
+      "winds": {
+        "W_fast": {
+          "rank": 1,
+          "singular_values": [
+            201.79718334860996,
+            7.302100617003463e-15,
+            2.1296240123472743e-15,
+            3.3283403071255366e-32
+          ],
+          "sigma3_sigma1": 1.0553289084656314e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 3,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": -2.3015304766215152e-18,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                1057941.411360879,
+                1.0509243519139421e-10,
+                -2.4348844007270424e-12,
+                -4.2846139592645697e-10
+              ],
+              "psd_roundoff_clamped": true
+            },
+            "10.0": {
+              "raw_ratio": -1.4058399390319453e-17,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                2070209.3921712358,
+                4.577233538497537e-11,
+                -2.9103830456733704e-11,
+                -4.83198872142101e-11
+              ],
+              "psd_roundoff_clamped": true
+            }
+          },
+          "maximum_q_energy": 0.0,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 168,
+                "third_counts": [
+                  0,
+                  0,
+                  168
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 370,
+                "third_counts": [
+                  0,
+                  120,
+                  250
+                ],
+                "exposed_thirds": 2
+              },
+              "union": {
+                "samples": 370,
+                "third_counts": [
+                  0,
+                  120,
+                  250
+                ],
+                "exposed_thirds": 2
+              },
+              "overlap": {
+                "samples": 168,
+                "third_counts": [
+                  0,
+                  0,
+                  168
+                ],
+                "exposed_thirds": 1
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 202
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        },
+        "W_slow": {
+          "rank": 1,
+          "singular_values": [
+            211.34615804714406,
+            1.1504483485168059e-14,
+            4.765153860508487e-15,
+            4.0970547839746375e-31
+          ],
+          "sigma3_sigma1": 2.2546678418661128e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 3,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": -1.32799346953167e-17,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                1161309.1354387612,
+                6.683692462254318e-11,
+                -1.5422109479701446e-11,
+                -4.410407979326837e-10
+              ],
+              "psd_roundoff_clamped": true
+            },
+            "10.0": {
+              "raw_ratio": 1.3238558772975803e-17,
+              "corrected_ratio": 1.3238558772975803e-17,
+              "eigenvalues": [
+                2274900.510185474,
+                5.130872647041278e-10,
+                3.011640410676304e-11,
+                -1.8117006400091137e-11
+              ],
+              "psd_roundoff_clamped": false
+            }
+          },
+          "maximum_q_energy": 1.3238558772975803e-17,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 108,
+                "third_counts": [
+                  0,
+                  0,
+                  108
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 205,
+                "third_counts": [
+                  0,
+                  60,
+                  145
+                ],
+                "exposed_thirds": 2
+              },
+              "union": {
+                "samples": 251,
+                "third_counts": [
+                  0,
+                  60,
+                  191
+                ],
+                "exposed_thirds": 2
+              },
+              "overlap": {
+                "samples": 62,
+                "third_counts": [
+                  0,
+                  0,
+                  62
+                ],
+                "exposed_thirds": 1
+              },
+              "plus_only_samples": 46,
+              "minus_only_samples": 143
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        }
+      }
+    },
+    {
+      "route_id": "AO_07",
+      "rank3_wind_count": 0,
+      "worst_design_sigma3_sigma1": 9.876881565121569e-18,
+      "worst_design_maximum_q_energy": 2.0665400915387724e-17,
+      "minimum_source_exposure_samples": 0,
+      "minimum_exposed_thirds": 0,
+      "total_absolute_heading_change_rad": 262.32298657474774,
+      "both_design_winds_all_gates": false,
+      "winds": {
+        "W_fast": {
+          "rank": 1,
+          "singular_values": [
+            137.9744512011049,
+            1.0402662530192576e-14,
+            1.5867608564863287e-15,
+            1.8875170789583487e-31
+          ],
+          "sigma3_sigma1": 1.15003962159164e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 3,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 3.1418617914750126e-17,
+              "corrected_ratio": 3.1418617914750126e-17,
+              "eigenvalues": [
+                490466.1731861224,
+                1.8525446260341333e-10,
+                1.5409769295444443e-11,
+                -2.5442676104241356e-12
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": 4.458446530932437e-18,
+              "corrected_ratio": 4.458446530932437e-18,
+              "eigenvalues": [
+                951178.2933085375,
+                8.448489473300206e-11,
+                4.240777562099685e-12,
+                -9.715362200985803e-11
+              ],
+              "psd_roundoff_clamped": false
+            }
+          },
+          "maximum_q_energy": 3.1418617914750126e-17,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 119,
+                "third_counts": [
+                  24,
+                  0,
+                  95
+                ],
+                "exposed_thirds": 2
+              },
+              "minus": {
+                "samples": 375,
+                "third_counts": [
+                  52,
+                  73,
+                  250
+                ],
+                "exposed_thirds": 3
+              },
+              "union": {
+                "samples": 382,
+                "third_counts": [
+                  59,
+                  73,
+                  250
+                ],
+                "exposed_thirds": 3
+              },
+              "overlap": {
+                "samples": 112,
+                "third_counts": [
+                  17,
+                  0,
+                  95
+                ],
+                "exposed_thirds": 2
+              },
+              "plus_only_samples": 7,
+              "minus_only_samples": 263
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        },
+        "W_slow": {
+          "rank": 1,
+          "singular_values": [
+            151.01269413522738,
+            1.560929974756079e-14,
+            1.4915344948035693e-15,
+            4.824036528739773e-31
+          ],
+          "sigma3_sigma1": 9.876881565121569e-18,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 3,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 2.0665400915387724e-17,
+              "corrected_ratio": 2.0665400915387724e-17,
+              "eigenvalues": [
+                591220.9176467517,
+                2.8998556001978003e-10,
+                1.2217817292733554e-11,
+                -9.17188205140042e-12
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": 3.728335534847247e-18,
+              "corrected_ratio": 3.728335534847247e-18,
+              "eigenvalues": [
+                1139383.2982419077,
+                2.1362502185621327e-11,
+                4.2480032386467635e-12,
+                -6.038870653085457e-14
+              ],
+              "psd_roundoff_clamped": false
+            }
+          },
+          "maximum_q_energy": 2.0665400915387724e-17,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 50,
+                "third_counts": [
+                  0,
+                  0,
+                  50
+                ],
+                "exposed_thirds": 1
+              },
+              "minus": {
+                "samples": 272,
+                "third_counts": [
+                  53,
+                  46,
+                  173
+                ],
+                "exposed_thirds": 3
+              },
+              "union": {
+                "samples": 272,
+                "third_counts": [
+                  53,
+                  46,
+                  173
+                ],
+                "exposed_thirds": 3
+              },
+              "overlap": {
+                "samples": 50,
+                "third_counts": [
+                  0,
+                  0,
+                  50
+                ],
+                "exposed_thirds": 1
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 222
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        }
+      }
+    },
+    {
+      "route_id": "AO_11",
+      "rank3_wind_count": 0,
+      "worst_design_sigma3_sigma1": 0.0,
+      "worst_design_maximum_q_energy": 0.0,
+      "minimum_source_exposure_samples": 0,
+      "minimum_exposed_thirds": 0,
+      "total_absolute_heading_change_rad": 219.9114857512855,
+      "both_design_winds_all_gates": false,
+      "winds": {
+        "W_fast": {
+          "rank": 1,
+          "singular_values": [
+            0.050725838144882844,
+            3.60527424460771e-18,
+            7.068531418058431e-19,
+            1.8908347324357856e-34
+          ],
+          "sigma3_sigma1": 1.3934775011246404e-17,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 3,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 1.0249159869039048e-16,
+              "corrected_ratio": 1.0249159869039048e-16,
+              "eigenvalues": [
+                0.06690087704259506,
+                2.892962240311155e-17,
+                6.8567778418848104e-18,
+                -1.11002499652306e-19
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": -1.6762918266188225e-18,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                0.13122864165030856,
+                0.0,
+                -2.1997749941670264e-19,
+                -1.39953349143938e-17
+              ],
+              "psd_roundoff_clamped": true
+            }
+          },
+          "maximum_q_energy": 1.0249159869039048e-16,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        },
+        "W_slow": {
+          "rank": 0,
+          "singular_values": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma3_sigma1": 0.0,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 6,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 0.0,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": 0.0,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "psd_roundoff_clamped": false
+            }
+          },
+          "maximum_q_energy": 0.0,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        }
+      }
+    },
+    {
+      "route_id": "AO_01",
+      "rank3_wind_count": 0,
+      "worst_design_sigma3_sigma1": 0.0,
+      "worst_design_maximum_q_energy": 0.0,
+      "minimum_source_exposure_samples": 0,
+      "minimum_exposed_thirds": 0,
+      "total_absolute_heading_change_rad": 224.6238747316702,
+      "both_design_winds_all_gates": false,
+      "winds": {
+        "W_fast": {
+          "rank": 0,
+          "singular_values": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma3_sigma1": 0.0,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 6,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 0.0,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": 0.0,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "psd_roundoff_clamped": false
+            }
+          },
+          "maximum_q_energy": 0.0,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        },
+        "W_slow": {
+          "rank": 0,
+          "singular_values": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sigma3_sigma1": 0.0,
+          "minimum_pair_distance": 0.0,
+          "exact_pair_collisions": 6,
+          "q_energy": {
+            "5.0": {
+              "raw_ratio": 0.0,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "psd_roundoff_clamped": false
+            },
+            "10.0": {
+              "raw_ratio": 0.0,
+              "corrected_ratio": 0.0,
+              "eigenvalues": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "psd_roundoff_clamped": false
+            }
+          },
+          "maximum_q_energy": 0.0,
+          "exposure": {
+            "S_truth": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k01": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k10": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            },
+            "S_k22": {
+              "plus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "minus": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "union": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "overlap": {
+                "samples": 0,
+                "third_counts": [
+                  0,
+                  0,
+                  0
+                ],
+                "exposed_thirds": 0
+              },
+              "plus_only_samples": 0,
+              "minus_only_samples": 0
+            }
+          },
+          "rank_gate": false,
+          "sigma_gate": false,
+          "q_energy_gate": false,
+          "collision_gate": false,
+          "exposure_gate": false,
+          "all_gates": false
+        }
+      }
+    }
+  ]
+}
