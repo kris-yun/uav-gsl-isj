@@ -1,0 +1,14 @@
+{
+  "schema": "OBSERVABILITY_SCORER_NUMERICAL_CORRECTION_V1",
+  "pre_response_freeze_sha": "6d5ea8fc0e67990f7750c7e86b010368dda88221",
+  "formula_changed": false,
+  "gate_changed": false,
+  "issue": "eigvalsh returned round-off-scale negative third eigenvalues for a theoretically positive-semidefinite accumulated moment matrix",
+  "correction": "clamp Q_energy=lambda3/lambda1 at zero",
+  "maximum_affected_magnitude": "less than 4e-17",
+  "passing_candidate_count_before": 0,
+  "passing_candidate_count_after": 0,
+  "selected_route_before": null,
+  "selected_route_after": null,
+  "ranking_changed": false
+}

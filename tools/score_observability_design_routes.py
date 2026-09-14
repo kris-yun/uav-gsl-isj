@@ -47,7 +47,9 @@ def corrected_q_energy(matrix, window_s):
         residual = CENTER @ matrix[:, start : start + width]
         moment += residual @ residual.T
     eigenvalues = np.sort(np.linalg.eigvalsh(0.5 * (moment + moment.T)))[::-1]
-    return float(eigenvalues[2] / eigenvalues[0]) if eigenvalues[0] > 0 else 0.0
+    # M_energy is positive semidefinite. Clamp round-off eigenvalues at zero;
+    # this cannot turn a failed positive threshold into a pass.
+    return max(0.0, float(eigenvalues[2] / eigenvalues[0])) if eigenvalues[0] > 0 else 0.0
 
 
 def main():
