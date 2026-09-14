@@ -1,0 +1,84 @@
+{
+  "schema": "UAV_GSL_RESEARCH_MASTER_V1",
+  "date": "2026-09-14",
+  "research_control_branch": "project/research-master-20260914",
+  "base_evidence_sha": "3cf57c079411d03205c820d9cc1f2dc5281083e4",
+  "paper_main_innovation_validated": false,
+  "current_scientific_question": "How can a mobile sensing system design its measurement trajectory or multi-robot geometry so that different source locations remain physically distinguishable across turbulent transport regimes before Bayesian source-belief assimilation?",
+  "dominant_failure_mechanism": "source-response operator is practically rank-collapsed because sensing trajectories do not sufficiently excite all source-discriminating modes",
+  "primary_candidate": {
+    "name": "Transport-Robust Persistent-Excitation Sensing",
+    "chinese": "输运鲁棒持续激励感知",
+    "status": "CANDIDATE_UNVALIDATED",
+    "mother_theories": [
+      "persistent excitation and system identification",
+      "optimal experimental design",
+      "inverse-problem measurement design",
+      "robust observability"
+    ],
+    "core_objective": "maximize worst-transport weakest source-contrast mode before posterior assimilation",
+    "finite_bank_metric": "min_w sigma3(C_w(R))/sigma1(C_w(R)) with Q_energy/exposure/coverage constraints",
+    "next_gate": "active_observability_v1"
+  },
+  "secondary_candidate": {
+    "name": "Collective Multi-Trajectory Informativity",
+    "chinese": "多轨迹集体可辨识性",
+    "status": "LOCKED_UNTIL_PRIMARY_PREMISE",
+    "mother_theory": "multi-signal informativity / collectively persistent excitation",
+    "trigger": "single-route observability principle is supported but no single deployment-feasible route can excite all source modes",
+    "forbidden_interpretations": [
+      "ordinary multi-robot belief fusion",
+      "Product of Experts as novelty",
+      "fixed signed concentration difference"
+    ]
+  },
+  "route_prior_candidate": {
+    "name": "Plume-boundary information seeking",
+    "status": "THEORY_ONLY",
+    "mother_reference": "Nature 2026 Drosophila vector-based plume-edge navigation",
+    "trigger": "must first show boundary-oriented sensing increases weakest source-mode observability"
+  },
+  "confirmed": [
+    "main_v8 is authoritative forward contract",
+    "RMFE full32x2 H02 is NO-GO",
+    "SCTT downstream is NO-GO",
+    "historical M1R is development-positive but not a clean causal/cross-domain proof",
+    "old M2 member averaging is NO-GO",
+    "exact counterfactual microbank preserves source identity under exact candidate-specific forward responses",
+    "deployable estimated transport provider did not qualify",
+    "single-stream causal/statistical transformations did not establish stable full-support source identity",
+    "House02 can physically support a 2 m dual-UAV formation after native occupancy parity audit",
+    "same-frame dual-receiver data integrity is PASS",
+    "fixed signed two-point structure is NO-GO as main innovation",
+    "current route severely under-excites some source interventions"
+  ],
+  "currently_testing": [
+    "whether the 5 s mismatch improvement is motion-revisit confounding rather than plume-advection information",
+    "whether source-blind observability-first route design can restore source identity with unchanged inference"
+  ],
+  "rejected_or_demoted": [
+    "RMFE fixed-amplitude ranking",
+    "SCTT as causal temporal module",
+    "global transport-invariant representation",
+    "old M2 transport-member averaging",
+    "TSBIE member reweighting",
+    "local-wind continuum causal provider",
+    "same-stream causal posterior repair as main line",
+    "signed simultaneous two-point difference",
+    "second-order two-point difference",
+    "ordinary multi-robot fusion as novelty",
+    "ME-ACI V11 as established cross-domain positive evidence"
+  ],
+  "novelty_collisions": [
+    "generic sensor placement / OED",
+    "generic online Bayesian experimental design for source localization",
+    "physics sensor placement optimization",
+    "stereo olfaction",
+    "multi-robot GSL belief fusion and informative-region allocation"
+  ],
+  "next_contract": "docs/NEXT_STAGE_EXECUTION_CONTRACT_20260914.md",
+  "decision_after_next_gate": {
+    "if_pass": "freeze observability-first mechanism, run strict novelty collision, then reserve untouched cross-environment confirmation",
+    "if_fail": "stop inventing inference algorithms under current sensing modality and redesign sensing modality/environment"
+  }
+}
