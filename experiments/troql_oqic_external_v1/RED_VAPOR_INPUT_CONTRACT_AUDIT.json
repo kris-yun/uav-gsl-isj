@@ -1,0 +1,29 @@
+{
+  "schema": "TROQL_RED_VAPOR_INPUT_CONTRACT_AUDIT_V1",
+  "date": "2026-09-14",
+  "dataset": "Red:Vapor",
+  "repository": "https://github.com/DLR-KN/red-vapor",
+  "repository_commit": "a267df617df665a7d7bcb9c28c942a2ece0a751c",
+  "dataset_record": "https://zenodo.org/records/18299926",
+  "verified_inputs": {
+    "overview_table.csv_sha256": "04a2400300d99b24a8d0a13380b0be26fc22508d36d2a586e516337932b34935",
+    "csv_header_specification.pdf_sha256": "8999e1ab4799a5070830ae9a76b266be442dcf1fed7ad544548c6373f1a964a6",
+    "voxel_maps.pkl_md5": "9a3ec10b1645ff2788ab8d292fb41dcf",
+    "voxel_maps.pkl_sha256": "af35deefb90709798a891242568c522a7f9dfe9131d235bdc0d7541ef9ad8a12"
+  },
+  "observed_factor_structure": {
+    "sampling_experiments": 8,
+    "setup_B_low_high_pair": [2, 3],
+    "setup_C_low_high_pair": [4, 5],
+    "setup_D_low_high_pair": [6, 7],
+    "setup_C_extra_low_replicate": 8,
+    "setup_C_to_D_change": "entire scale-model landscape rotated 45 degrees counter-clockwise"
+  },
+  "required_positive_control": "two or more known source locations in one fixed environment, each observed under replicated transport members",
+  "available_positive_control": false,
+  "result_data_unpickled": false,
+  "result_data_scored": false,
+  "verdict": "RED_VAPOR_SOURCE_CONTRAST_CONTRACT_NO_GO",
+  "authorized_use": "same-source transport nuisance study only",
+  "forbidden_use": "different-source localization identifiability confirmation"
+}
