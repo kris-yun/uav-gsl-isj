@@ -1,0 +1,65 @@
+{
+  "mechanism": "PE-WHRM",
+  "root": "D:\\ZYC\\CSTAR_CCDE_VGR_FACTORIAL_20260914\\evidence",
+  "status": "SOURCE_SUPPORT_NO_GO",
+  "strata_count": 3,
+  "eligible_strata_count": 0,
+  "criterion": "At least two distinct true-source coordinates and two completed labelled runs within the same dataset/config/wind/sensor stratum.",
+  "strata": [
+    {
+      "stratum": {
+        "dataset": "VGR_House01",
+        "config_id": "2,4-1_fast",
+        "wind_config": "official_gaden_wind",
+        "sensor_config": "fopdt_tau1p2_dead0p4_noise0"
+      },
+      "n_runs": 25,
+      "n_completed": 0,
+      "unique_source_coordinates": [
+        [
+          -0.4,
+          -2.9
+        ]
+      ],
+      "n_unique_sources": 1,
+      "pe_whrm_pair_support": false
+    },
+    {
+      "stratum": {
+        "dataset": "VGR_House02",
+        "config_id": "3,5-1_fast",
+        "wind_config": "official_gaden_wind",
+        "sensor_config": "fopdt_tau1p2_dead0p4_noise0"
+      },
+      "n_runs": 15,
+      "n_completed": 0,
+      "unique_source_coordinates": [
+        [
+          0.0,
+          -1.0
+        ]
+      ],
+      "n_unique_sources": 1,
+      "pe_whrm_pair_support": false
+    },
+    {
+      "stratum": {
+        "dataset": "VGR_House03",
+        "config_id": "1-2,5_fast",
+        "wind_config": "official_gaden_wind",
+        "sensor_config": "fopdt_tau1p2_dead0p4_noise0"
+      },
+      "n_runs": 15,
+      "n_completed": 0,
+      "unique_source_coordinates": [
+        [
+          -0.45,
+          1.9
+        ]
+      ],
+      "n_unique_sources": 1,
+      "pe_whrm_pair_support": false
+    }
+  ],
+  "interpretation": "Do not pool Houses or change the context stratum to manufacture source variation; that would confound geometry/context with source-relative evidence."
+}
