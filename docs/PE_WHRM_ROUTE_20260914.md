@@ -59,3 +59,4 @@ No planner or closed-loop claim is opened by a map-only pass.
 - Collision audit: `ideaspark_run/pmfs-probability-map-kernel-replacement/phase3_collision/collision_hits.json`
 - Independent critique: `ideaspark_run/pmfs-probability-map-kernel-replacement/phase3_critique/phase3_critique_output.json`
 - Synthetic contract smoke (PASS; not a localization result): `experiments/pe_whrm_smoke.py` and `experiments/pe_whrm_smoke_result.json`
+- First read-only VGR contract audit: `experiments/pe_whrm_contract_audit.py` and `experiments/pe_whrm_contract_audit_h01_s0.json`. The trace schema and source/context joins pass, but the selected artifact is `time_budget_timeout`; it is contract evidence only and is not eligible for a localization claim or model-training gate.

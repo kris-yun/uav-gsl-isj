@@ -1,0 +1,67 @@
+{
+  "mechanism": "PE-WHRM",
+  "run_dir": "D:\\ZYC\\A-gas\\HOUSE1_DECISIVE_CLOSED_LOOP_20260818_P2_RNG_CRN_SHADOW\\evidence\\p2_shadow_h01_fast_s0_k8",
+  "status": "CONTRACT_PARTIAL_NO_GO",
+  "structural_contract_pass": true,
+  "trajectory_usable_for_final_claim": false,
+  "reason": "The selected artifact has the required joined fields but its run status is not completed; it is contract evidence only, not a localization result.",
+  "run_status": {
+    "status": "time_budget_timeout",
+    "run_id": "HOUSE1_P2_SHADOW_H01_FAST_S0_K8",
+    "method": "B4_PMFS_official",
+    "seed": 0,
+    "gsl_result_code": "runner_time_budget_timeout",
+    "gsl_action_status": "timeout"
+  },
+  "source_context": {
+    "run_id": "HOUSE1_P2_SHADOW_H01_FAST_S0_K8",
+    "dataset": "House01",
+    "config_id": "2,4-1_fast",
+    "source_config": "official_gaden_source",
+    "wind_config": "official_gaden_wind",
+    "sensor_config": "fopdt_tau1p2_dead0p4_noise0",
+    "seed": "0",
+    "ground_truth_x": "-0.4",
+    "ground_truth_y": "-2.9",
+    "gsl_action_status": "timeout",
+    "declared_success": "False"
+  },
+  "checks": {
+    "sensor_exists": true,
+    "sensor_schema": true,
+    "sensor_nonempty": true,
+    "sensor_time_strictly_increasing": true,
+    "pose_exists": true,
+    "pose_schema": true,
+    "pose_nonempty": true,
+    "pose_time_strictly_increasing": true,
+    "wind_exists": true,
+    "wind_schema": true,
+    "wind_nonempty": true,
+    "wind_time_strictly_increasing": true,
+    "candidate_scores_exists": true,
+    "candidate_scores_schema": true,
+    "candidate_scores_nonempty": true,
+    "trace_lengths_aligned": true,
+    "run_status_present": true,
+    "trajectory_completed": false,
+    "source_label_join_available": true,
+    "context_stratum_available": true,
+    "candidate_map_trace_available": true
+  },
+  "row_counts": {
+    "sensor": 6229,
+    "pose": 6229,
+    "wind": 6229,
+    "candidate_scores": 162
+  },
+  "sha256": {
+    "sensor": "f0aec1b3b1f2ee4c142fd9ecb47d3516a936cdc8df430ee0070898010170d612",
+    "pose": "034bcddd2e7dfb98d93a594e09e6bfc00506f9bf7120356bcaf3b86c582c26e0",
+    "wind": "86ae656ce3d73b56c7ce964b8d91fca3ef7cf90cc2af57e7a9beb604ad1edbbb",
+    "status": "c76586307a81a841962c59c33723482ad5d20c5cd2d8288c0841173529eed661",
+    "raw_record": "8db5ed63939b2810d8f305110f3694eb605ac0ae8c3d17e68092c24c06132f54",
+    "candidate_scores": "fb8bf1333fcf9a24ea01df67d50b3aab71d356fd6986c6cb081e87230261ba39"
+  },
+  "next_gate": "Use only a completed source-labelled development shadow; do not open held-out or closed-loop claims from this timeout artifact."
+}
