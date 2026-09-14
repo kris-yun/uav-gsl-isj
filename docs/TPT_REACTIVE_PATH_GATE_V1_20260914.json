@@ -1,0 +1,88 @@
+{
+  "schema": "TPT_REACTIVE_PATH_GATE_V1",
+  "date": "2026-09-14",
+  "status": "OFFLINE_PREMISE_ONLY",
+  "starting_evidence_sha": "1be4363959fcf7909e935568bb74d0a0dbd4328b",
+  "execution_branch": "codex/tpt-reactive-path-premise-20260914",
+  "hypothesis": "successful finite-time source-to-sensing transition-path geometry preserves source identity across transport regimes beyond scalar hit probability, first-entry statistics, and unconditional plume occupancy",
+  "novelty_boundary": {
+    "scalar_committor_novelty": "REJECTED",
+    "first_passage_detection_probability_novelty": "REJECTED",
+    "generic_tpt_origin_inversion_novelty": "REJECTED",
+    "reactive_path_geometry_in_robotic_gsl": "LOW_DIRECT_COLLISION_TARGETED_SCREEN_ONLY",
+    "novelty_confirmed": false
+  },
+  "phase0": {
+    "require_transition_ensemble_identifiable": true,
+    "forbid_concentration_snapshots_as_committor": true,
+    "stop_if_not_identifiable": "D. TPT_TRAJECTORY_ENSEMBLE_NOT_IDENTIFIABLE"
+  },
+  "ensemble": {
+    "sources": ["S_truth", "S_k01", "S_k10", "S_k22"],
+    "design_winds": ["W_fast", "W_slow"],
+    "held_wind": "W_altfast",
+    "held_wind_locked_until_design_pass": true,
+    "seeds": "41001..41048",
+    "seeds_per_source_wind": 48,
+    "design_run_count": 384,
+    "route": "AO_00",
+    "horizon_s": 150,
+    "cadence_s": 0.2,
+    "raw_hit_floor_ppm": 0.1
+  },
+  "failure_link_gate": {
+    "exposed_sources": ["S_truth", "S_k10"],
+    "historical_zero_exposure_sources": ["S_k01", "S_k22"],
+    "per_design_wind_requirement": "max upper95(q_zero_group) < min lower95(q_exposed_group)",
+    "fail_verdict": "C. TPT_DOES_NOT_EXPLAIN_SUPPORT_FAILURE"
+  },
+  "representations": [
+    "Q_ONLY",
+    "ENTRY_ONLY",
+    "UNCONDITIONED_VISIT",
+    "REACTIVE_CURRENT"
+  ],
+  "anti_triviality": {
+    "accessible_sensing_layer_only": true,
+    "global_source_neighborhood_mask": "remove every cell within 2 * gas-grid spacing of any of the four source coordinates",
+    "unmasked_current_can_pass": false
+  },
+  "design_cross_wind_gate": {
+    "identity_cases": 8,
+    "reactive_current_rank1_required": "8/8",
+    "all_margins_positive": true,
+    "minimum_margin_strictly_greater_than": ["ENTRY_ONLY", "UNCONDITIONED_VISIT"],
+    "distance": "1-cosine",
+    "no_learning_or_fitted_metric": true
+  },
+  "direction_control": {
+    "control": "EDGE_DIRECTION_ROTATE_90",
+    "must_degrade_rank_count_or_minimum_margin": true
+  },
+  "held_gate": {
+    "run_only_after_design_freeze": true,
+    "rank1_required": "4/4",
+    "all_margins_positive": true,
+    "minimum_margin_strictly_greater_than": ["ENTRY_ONLY", "UNCONDITIONED_VISIT"],
+    "label": "INTERNAL_DEVELOPMENT_HOLDOUT"
+  },
+  "authorized_final_verdicts": [
+    "A. TPT_REACTIVE_PATH_PREMISE_PASS",
+    "B. SCALAR_OR_MARGINAL_TRANSPORT_EXPLAINS_RESULT_NO_PATH_GAIN",
+    "C. TPT_DOES_NOT_EXPLAIN_SUPPORT_FAILURE",
+    "D. TPT_TRAJECTORY_ENSEMBLE_NOT_IDENTIFIABLE",
+    "E. TPT_PATH_FINGERPRINT_NO_CROSS_TRANSPORT_IDENTITY",
+    "F. RNG_INSTRUMENTATION_NOT_QUALIFIED",
+    "G. PRECOMMITTED_ENSEMBLE_RESOURCE_INFEASIBLE"
+  ],
+  "not_authorized": [
+    "PMFS integration",
+    "closed loop",
+    "online planner",
+    "neural committor",
+    "posterior tuning",
+    "causal localization claim",
+    "cross-House claim",
+    "paper novelty claim before final bibliographic screen"
+  ]
+}
