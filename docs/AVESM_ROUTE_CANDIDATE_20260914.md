@@ -71,3 +71,13 @@ episode crossed the log-20 e-process threshold. The R3C package explicitly
 reuses the frozen R3B physical realization, so this is not independent
 cross-simulation evidence. AVESM therefore remains an unproven candidate for
 cross-data validity; no main-result claim is opened.
+
+## Fresh House123 seed probe (2026-09-15)
+
+With explicit authorization, a bounded new-seed probe generated four fixed
+route histories (`H01_SA`, `H01_SB`, `H03_SA`, `H03_SB`), 300 frames each, from
+the current GADEN runtime. The contract and hashes passed, but all four
+histories contained zero nonzero gas frames. The resulting AVESM transfer
+diagnostic is therefore `CROSS_HOUSE_TRANSFER_NO_GO`: any apparent rank signal
+is a prior/model artifact, not observed source evidence. The probe is retained
+as a data-coverage failure, not counted as a negative scientific result.
