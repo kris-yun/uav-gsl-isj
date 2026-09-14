@@ -3,145 +3,139 @@
 Date: 2026-09-14
 
 Branch: `project/research-master-20260914`
-Base evidence head: `3cf57c079411d03205c820d9cc1f2dc5281083e4`
+Latest evidence head: `1be4363959fcf7909e935568bb74d0a0dbd4328b`
 
-This branch is the **research-control branch**. It does not authorize algorithm or simulator changes. Its purpose is to keep one authoritative view of the scientific question, evidence, rejected routes, candidate theory, and the next falsification gate.
+This branch is the **research-control branch**. It does not authorize algorithm or simulator changes. It keeps one authoritative view of the scientific question, evidence, rejected routes, candidate theory, and the next falsification gate.
 
 ## Read in this order
 
-1. `docs/PROJECT_SCIENTIFIC_QUESTION_AND_CORE_IDEA_20260914.md`
-2. `docs/PROJECT_EVIDENCE_LEDGER_20260914.md`
-3. `docs/BIG_SCIENCE_THEORY_MAP_20260914.md`
-4. `docs/NEXT_STAGE_EXECUTION_CONTRACT_20260914.md`
-5. `docs/PROJECT_RESEARCH_STATE_20260914.json`
+1. `docs/LATEST_DECISION_AFTER_ACTIVE_OBSERVABILITY_NOGO_20260914.md`
+2. `docs/PROJECT_SCIENTIFIC_QUESTION_AND_CORE_IDEA_20260914.md`
+3. `docs/PROJECT_EVIDENCE_LEDGER_20260914.md`
+4. `docs/BIG_SCIENCE_THEORY_MAP_20260914.md`
+5. `docs/NEXT_STAGE_PHYSICAL_SUPPORT_AUDIT_20260914.md`
+6. `docs/PROJECT_RESEARCH_STATE_20260914.json`
 
-## Current one-sentence research problem
+## Current one-sentence scientific problem
 
-> In turbulent gas transport with slow sensor dynamics, how can a mobile sensing system **design its measurement geometry and trajectory so that different source hypotheses remain physically distinguishable across transport regimes before Bayesian inference is allowed to update the source belief?**
+> In finite-horizon turbulent gas transport with slow sensor dynamics, **which source hypotheses can physically influence the robot-accessible sensing domain strongly enough to be identifiable at all, before any Bayesian inference or active-search policy is allowed to claim source information?**
 
-The project is therefore no longer primarily about inventing another posterior correction. The dominant unresolved problem is **source identifiability under the measurement operator**.
+The dominant unresolved problem is now **finite-horizon sensing support / source identifiability under the physical observation operator**.
 
-## Current core scientific idea — CANDIDATE, not yet validated
+## Current main-innovation status
 
-Working name:
+```text
+VALIDATED_MAIN_INNOVATION = NONE
+PRIMARY_CANDIDATE = NONE_PENDING_PHYSICAL_SUPPORT_AUDIT
+CAUSAL_LOCALIZATION_CLAIM = NOT_AUTHORIZED
+CROSS_DATASET_CLAIM = NOT_AUTHORIZED
+```
 
-**Transport-Robust Persistent-Excitation Sensing**  
-**输运鲁棒的持续激励感知**
-
-Core principle:
-
-> Do not ask the inference algorithm to recover source identity from a measurement trajectory that never excited all source directions. Design the sensing trajectory/formation first so that the weakest source-discriminating physical mode remains observable under multiple transport regimes; only then assimilate measurements into PMFS.
-
-For a route/design `R`, transport regime `w`, and `S` controlled source hypotheses, collect source responses into `Y_w(R)`. Center across source hypotheses:
-
-\[
-C_w(R)=P_S Y_w(R),\qquad P_S=I-\frac1S\mathbf1\mathbf1^T.
-\]
-
-For four source hypotheses there are at most three independent source-contrast modes. A basic conditioning diagnostic is
-
-\[
-\gamma_w(R)=\frac{\sigma_3(C_w(R))}{\sigma_1(C_w(R))}.
-\]
-
-The current design objective is not expected posterior entropy. It is a worst-transport observability objective such as
-
-\[
-R^*=\arg\max_R\min_{w\in\mathcal W_{design}}\gamma_w(R),
-\]
-
-subject to a non-negligible weakest-mode energy, exposure/coverage, collision-free geometry, and deployment constraints.
-
-This is closest to **persistent excitation / system identification / optimal experimental design**, not to a new Bayesian likelihood.
+The project should not invent another posterior correction until the physical-support layer is resolved.
 
 ## Why the project arrived here
 
-The strongest repeated failure pattern is now:
+Repeated evidence now shows:
 
 ```text
-more elaborate inference on the same weak observation stream
-    -> sometimes changes ranking
-    -> does not stably recover source identity across environments
+more sophisticated processing of the same weak observation stream
+    -> can change rankings
+    -> does not stably recover full source identity
 ```
 
-while the newest dual-receiver experiment showed:
+The latest active-observability experiment was precommitted and source-blind at route-generation time. It tested 12 map-only routes using only `W_fast + W_slow` and did not open `W_altfast` after the design gate failed.
+
+For the best route `AO_00`:
 
 ```text
-same-frame dual trace integrity: PASS
-signed two-point structure: formally rank 3
-weakest source direction: ~10^-3 of dominant direction
-held-wind source identity: 2/4
-ordinary dual receiver: 1/4
+W_fast: rank=3, sigma3/sigma1=0.000609, Q_energy<=6.8e-8
+W_slow: rank=2, sigma3/sigma1=4.42e-17, Q_energy<=1.78e-16
+zero-exposure sources: S_k01, S_k22
 ```
 
-The frozen route exposed `S_truth` hundreds of times, but some alternative source interventions only a handful of times or nearly never. That is an **experiment-design / observability failure before it is an inference failure**.
+No route passed. The best route was SHA-256 identical to the old route. Therefore **persistent-excitation route design is NO-GO in its current form within the frozen 12-route budget**.
+
+The 5 s dual-receiver time mismatch is also no longer a candidate mechanism. Geometry-only forensic analysis supports motion-revisit confounding: median revisit time is about 4.04 s while median wind-advection times are about 104–475 s.
 
 ## Current status labels
 
 ### CONFIRMED
 
 - `main_v8` remains the authoritative forward contract; `dataset_v1` is excluded.
-- RMFE full32x2 did not improve H02 and exposed amplitude-scale/ranking failure.
-- SCTT downstream did not outperform classic PMFS and shuffle contradicted the claimed temporal mechanism.
-- M1R has development-screen gains, but its historical implementation/documentation do not justify a clean cross-domain causal claim.
+- RMFE full32x2 H02 is NO-GO and exposed amplitude/ranking failure.
+- SCTT downstream is NO-GO and shuffle contradicted the claimed temporal mechanism.
+- Historical M1R has development-screen gains but is not a clean causal or cross-domain proof.
 - Old M2 transport-member averaging is NO-GO.
-- Counterfactual exact microbank tests showed source effects can survive controlled transport changes when exact candidate-specific physical responses are available; this did not produce a deployable full-map provider.
-- LMBT / CTAER / CFIR / Rank-2 / DPISC / CCDE / SCSP and related single-stream transformations did not establish stable full-support source identity.
-- Same-frame dual-UAV data are technically feasible in House02 after geometry parity correction.
-- Fixed 2 m signed two-point difference is NO-GO as the main algorithmic innovation: per-wind conditioning is about `6.8e-4`–`1.4e-3`, held-wind source rank is 2/4, and a 5 s time mismatch improves to 3/4.
-- House02 has enough physical space for a 2 m dual-UAV formation; the earlier route-only infeasibility was not a whole-map limitation.
+- Exact counterfactual microbank tests show source effects can survive controlled transport changes when exact candidate-specific responses are available; this did not yield a deployable full-map provider.
+- LMBT / CTAER / CFIR / Rank-2 / DPISC / CCDE / SCSP and related single-stream transforms do not establish stable full-support source identity.
+- House02 can physically support a 2 m dual-UAV formation after native occupancy parity correction.
+- Same-frame dual-receiver data integrity is PASS.
+- Fixed signed two-point difference / second-order structure is NO-GO as a main algorithmic innovation.
+- The 5 s mismatch is compatible with motion-revisit confounding and is not authorized as a plume-lag mechanism.
+- Source-blind map-only persistent-excitation route redesign is NO-GO in the frozen 12-route budget.
+- In design winds, some source/transport combinations produce effectively zero exposure over all tested admissible routes.
 
 ### CURRENTLY TESTING
 
-- Whether the 5 s mismatch improvement is a motion-revisit artifact rather than a plume-advection cue.
-- Whether source-blind measurement-route design can turn the source-response operator from practically rank-collapsed into well-conditioned without changing the inference rule.
+Only one upstream question is active:
 
-### PRIMARY CANDIDATE THEORY
+**finite-horizon physical support** — whether source/transport combinations fail because the raw plume never reaches accessible sensing space, slow FOPDT removes usable contrast, admissible trajectories miss existing support, or inference still fails after support is adequate.
 
-**Persistent excitation + robust optimal experimental design / observability-first sensing.**
-
-### SECONDARY CANDIDATE MODULE — only if the primary premise passes
-
-**Collective multi-trajectory informativity** for two UAVs.
-
-If no single safe trajectory can excite all source directions, two UAVs should not be treated as two ordinary PMFS agents or a simple difference pair. They may instead be assigned **complementary trajectories whose stacked measurements are collectively persistently exciting**. This maps directly to modern multi-signal informativity theory and is the strongest current candidate for a genuine second module.
-
-### CANDIDATE BIOPHYSICAL ROUTE PRIOR — not yet a module
-
-2026 Nature work on Drosophila plume-edge navigation suggests that plume boundaries can act as high-information spatial landmarks. This may later motivate a route generator that seeks plume-boundary transitions, but it is not authorized as a main contribution until the observability-first premise passes and collision with existing plume-tracking work is screened.
-
-### REJECTED OR DEMOTED AS MAIN INNOVATION
+### DEMOTED / REJECTED AS CURRENT MAIN INNOVATION
 
 - fixed-A RMFE ranking;
-- SCTT as a causal temporal module;
+- SCTT as causal temporal module;
 - global transport-invariant representation;
 - old M2 member averaging;
 - TSBIE transport-member reweighting;
 - local-wind continuum causal provider;
 - simple causal posterior repair on the same single-UAV gas stream;
-- signed simultaneous two-point difference / second-order difference as the main dual-UAV algorithm;
-- ordinary multi-robot fusion, Product-of-Experts, or 'two robots give more data' as novelty;
-- ME-ACI V11 as established cross-domain evidence (later multiseed qualification is NO-GO).
+- signed simultaneous two-point difference / second-order structure;
+- ordinary multi-robot fusion / Product-of-Experts as novelty;
+- `Transport-Robust Persistent-Excitation Sensing` in its current map-only route-search form;
+- `Collective Multi-Trajectory Informativity` is locked and cannot be promoted because its primary premise did not pass;
+- ME-ACI V11 as established cross-domain positive evidence.
+
+## Big-science theory map after the latest NO-GO
+
+### Diagnostic mother theory now most relevant: finite-time transport support / domain of dependence
+
+The current failure resembles a **transport-support problem**: some sources do not contribute non-negligible signal inside the admissible sensing domain within the finite horizon.
+
+Forward–adjoint duality and sensor **domains of dependence** are a strong physical language for diagnosing this. However, a 2026 AIAA SciTech paper already applies multi-sensor domains of dependence to turbulent scalar source localization. Therefore this theory is useful for diagnosis but **cannot be claimed as our novelty by itself**.
+
+### Lagrangian transport / coherent structures — secondary physics candidate, not authorized module
+
+Lagrangian coherent structures and transport barriers describe which material regions communicate over finite time. They may later help explain or design access to plume-support regions, but they are not authorized until the physical-support audit proves that route coverage, rather than raw transport or sensor bandwidth, is the dominant bottleneck.
+
+### Persistent excitation / OED — retained as background theory, not active innovation
+
+The theory remains scientifically relevant, but the current implementation failed because the physical source-support modes were nearly absent. It should not be rescued by enlarging route search after seeing the failure.
+
+## Immediate next decision
+
+Run only:
+
+`docs/NEXT_STAGE_PHYSICAL_SUPPORT_AUDIT_20260914.md`
+
+The audit must separate four failure layers:
+
+1. `RAW_TRANSPORT_SUPPORT_FAILURE`
+2. `SENSOR_BANDWIDTH_FAILURE`
+3. `TRAJECTORY_COVERAGE_FAILURE`
+4. `SUPPORT_ADEQUATE_INFERENCE_REMAINS`
+
+Only after this classification may a new big-science theory be promoted into a candidate module.
 
 ## Paper-level claim boundary today
 
 The project **does not yet have a validated cross-dataset main innovation**.
 
-The strongest defensible paper-level scientific narrative today is:
+The strongest defensible scientific narrative is now:
 
-1. PMFS and several increasingly sophisticated source-evidence transforms fail when the sensing trajectory does not physically excite source-discriminating modes.
-2. These failures expose an identifiability bottleneck upstream of Bayesian assimilation.
-3. The new research direction is to make source identity observable by design, using transport-robust persistent excitation / optimal experimental design principles.
-4. Only if that premise succeeds on frozen development winds and an untouched held transport regime should it be promoted to the paper's main innovation.
+1. multiple increasingly sophisticated inference-layer repairs fail when the physical observation operator does not expose all source hypotheses;
+2. fixed dual-receiver structure and map-only observability design also fail under the current finite-horizon experiment;
+3. the unresolved bottleneck is therefore upstream: finite-time transport support, sensor bandwidth, or route access;
+4. the next main innovation must arise from the physically verified bottleneck, not from another post-hoc score.
 
-## Immediate next decision
-
-Run the contract in `docs/NEXT_STAGE_EXECUTION_CONTRACT_20260914.md`.
-
-The decisive question is:
-
-> Can measurement design alone, with the same sensor physics and the same simple source evaluator, raise the weakest source mode from the current ~10^-3 regime to the pre-registered observability regime and recover 4/4 held-wind source identity?
-
-If YES: freeze the mechanism, run novelty collision, then prepare untouched cross-environment confirmation.
-
-If NO: stop modifying inference under the current sensing modality and redesign the physical sensing modality / environment before proposing another algorithm.
+If the physical-support audit shows raw plume support itself is absent, algorithm development on the current 150 s House02 experiment should stop. If raw support exists but FOPDT erases it, the next research variable is sensor modality/response time. If usable support exists but routes miss it, transport-guided measurement design can reopen. Only if support is adequate and identity still collapses should inference innovation resume.
