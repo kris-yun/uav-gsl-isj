@@ -1,0 +1,103 @@
+{
+  "title_zh": "用于气体源定位的置换等变全历史比值图",
+  "plain_motivation_en": "Sparse mobile gas measurements create a mismatch between reconstructing a concentration field and locating the source. A model may give calibrated uncertainty for the field while losing the ordered, candidate-relative evidence needed to tell one source location from a fixed wrong candidate. The needed object is therefore not just the field value at the current measurement, but the likelihood ratio between each candidate source and the complete adaptive measurement history.\n\nPhysics-guided sparse inversion uses a deterministic Green-function surrogate (semanticscholar:c930ca69d5ed8553c0638ebe60205fe9c1845e58), while probabilistic neural operators score distributions over output functions (dblp:journals/corr/abs-2502-12902). XIT assumes a posterior mean-variance field and uses it for planning (dblp:journals/corr/abs-2602-13739). None asks whether each successive history prefix increases the true source's evidence against the same wrong candidate. The Permutation-Equivariant Whole-History Ratio Map (PE-WHRM) targets this missing ordered, source-relative quantity while preserving the frozen PMFS source grid and updater interface.\n\nThe gap is timely because 2026 work already couples posterior fields to active gas-mapping decisions in XIT (dblp:journals/corr/abs-2602-13739) and compares calibrated uncertainty methods for sparse autonomous reconstruction (dblp:journals/corr/abs-2604-06387), but both organize inference around field reconstruction or a supplied field posterior. Existing source-labelled PMFS trajectories contain the complete prefixes and counter-source pairings needed to estimate a joint-versus-product density ratio. Shared scoring that is equivariant to source-grid relabeling gives a concrete way to preserve source-grid symmetry. Together, these ingredients make it possible to test source-relative evidence directly instead of using field calibration as a proxy for localization.\n\nThe EUSIPCO 2024 method embedded Poisson and Green-function structure in a neural sparse-inversion pipeline for distributed gas-source localization (semanticscholar:c930ca69d5ed8553c0638ebe60205fe9c1845e58). It did not learn a whole-history likelihood ratio for every candidate source or expose prefix-wise true-versus-fixed-rival evidence. Its inference object remained a deterministic candidate-response surrogate, so it lacked a measurement of source-relative evidence under adaptive histories.\n\nThe probabilistic neural operator learned calibrated distributions over output functions using a proper field-space scoring rule (dblp:journals/corr/abs-2502-12902). It did not convert joint source-history versus product pairings into prior-normalized source probabilities or fixed-rival prefix increments. Its target was functional uncertainty rather than candidate-source identification, so ordered source labels were absent from the estimand.\n\nXIT used a supplied posterior mean-variance field to trade off exploration and exploitation during active gas-distribution mapping (dblp:journals/corr/abs-2602-13739). It did not replace the posterior updater with a source-relative whole-history map or test whether measurements improve a fixed-rival localization margin. Planning consumed the posterior as an input, leaving the evidential semantics of the posterior outside the method's scope.\n\nThe 2026 uncertainty study compared reconstruction-oriented uncertainty estimators for sparse autonomous-vehicle observations (dblp:journals/corr/abs-2604-06387). It did not train an ordered-history source-ratio estimator or test destructive permutations that retain marginal measurements. Its evaluation object was field reconstruction and calibration, so it lacked a source-pair intervention that could identify localization evidence.\n\nClosing the gap yields an auditable probability-map update whose increments can be attributed to ordered evidence for one source over a fixed rival, rather than to field calibration alone. Posterior-driven planners such as XIT (dblp:journals/corr/abs-2602-13739) could consume a map with explicit localization semantics, and the source-identification question would be separated from the functional-uncertainty objective of probabilistic neural operators (dblp:journals/corr/abs-2502-12902). The resulting claim is narrower but causal: destroying the history-source relation must destroy the localization margin.",
+  "plain_motivation_zh": "稀疏移动气体测量使浓度场重建与源点定位之间出现结构性错位。模型可以为浓度场给出经过校准的不确定性，却丢失区分一个源点位置与固定错误候选所需的、有顺序且相对于候选的证据。因此，需要研究的对象不只是当前测量处的场值，而是每个候选源点与完整自适应测量历史之间的似然比。\n\n物理引导的稀疏反演把确定性的 Green-function surrogate 放入神经稀疏反演流程（semanticscholar:c930ca69d5ed8553c0638ebe60205fe9c1845e58），而 probabilistic neural operator 对输出函数的分布进行评分（dblp:journals/corr/abs-2502-12902）。XIT 假设一个后验均值-方差场，并用它进行规划（dblp:journals/corr/abs-2602-13739）。这些方法都没有询问：每个连续的历史前缀是否让真实源点相对于同一个错误候选获得更多证据。PE-WHRM 针对的正是这个缺失的、有顺序且相对于源点的量，同时保留冻结的 PMFS 源网格和 updater interface。\n\n这个缺口之所以现在值得检验，是因为 2026 年的工作已经把后验场与 XIT 的主动气体分布制图决策结合起来（dblp:journals/corr/abs-2602-13739），并比较了稀疏自主重建中的校准不确定性方法（dblp:journals/corr/abs-2604-06387）；但两者仍围绕场重建或给定的场后验来组织推断。现有的 source-labelled PMFS 轨迹包含估计 joint-versus-product density ratio 所需的完整前缀和反源点配对。对源网格重标记保持等变的 shared scoring 提供了保留源网格对称性的具体工具。结合起来，这些条件允许直接检验相对于源点的证据，而不是把场校准当作定位的代理。\n\nEUSIPCO 2024 的方法把 Poisson 和 Green-function 结构嵌入分布式气体源定位的神经稀疏反演流程（semanticscholar:c930ca69d5ed8553c0638ebe60205fe9c1845e58）。它没有为每个候选源点学习全历史似然比，也没有显露逐前缀的真实源点相对于固定错误候选的证据。它的推断对象仍是确定性的候选响应 surrogate，因此缺少在自适应历史下测量源点相对证据的量。\n\nProbabilistic neural operator 使用 proper field-space scoring rule 学习输出函数的校准分布（dblp:journals/corr/abs-2502-12902）。它没有把 joint source-history 与 product 配对转换为先验归一化的源点概率或固定候选的前缀增量。它的目标是函数不确定性，而不是候选源点识别，所以有顺序的源点标签不在其 estimand 中。\n\nXIT 使用给定的后验均值-方差场，在主动气体分布制图中权衡探索与利用（dblp:journals/corr/abs-2602-13739）。它没有用相对于源点的全历史图替换后验 updater，也没有检验测量是否改善固定错误候选的定位 margin。规划把后验作为输入，因此后验的证据语义不在该方法的范围内。\n\n2026 年的不确定性研究比较了面向重建的不确定性估计器，用于稀疏自主车辆观测（dblp:journals/corr/abs-2604-06387）。它没有训练有顺序的历史源点比值估计器，也没有检验保留边际测量的破坏性置换。它的评价对象是场重建和校准，因此缺少能够识别定位证据的 source-pair intervention。\n\n缺口闭合后，可以得到一个可审计的概率图更新：其增量可归因于一个源点相对于固定错误候选的有顺序证据，而不只是场校准。由后验驱动的规划器，例如 XIT（dblp:journals/corr/abs-2602-13739），可以使用具有明确定位语义的概率图；同时，源点识别问题也会与 probabilistic neural operator 的函数不确定性目标区分开（dblp:journals/corr/abs-2502-12902）。因此，得到的主张更窄但具有因果性：破坏历史与源点之间的关系，必须破坏定位 margin。",
+  "plain_method_steps_en": [
+    {
+      "step_id": "S1",
+      "what_to_do": "Use the frozen source grid and source-labelled PMFS trajectories, including ordered measurement positions and values, to form complete ordered prefixes `H_t`. Mark each observed source-prefix pair as a matched joint example. Construct a product-of-marginals control by independently pairing a source with another history prefix while preserving the empirical source and history marginals, and balance the matched and product pairs. The inputs are the frozen source grid and source-labelled PMFS trajectories; the output is a balanced set of matched and product-of-marginals prefix pairs.",
+      "why_this_makes_sense": "The missing information is how a source relates to the ordered history. Contrasting matched dependence with a control that keeps the source and history marginals unchanged targets that relation."
+    },
+    {
+      "step_id": "S2",
+      "what_to_do": "Train one candidate-shared binary scorer `D_theta(s,H_t)` on the balanced joint/product prefix pairs, using a common candidate representation for every source location. Use its logit `ell_theta(s,H_t)` as one density-ratio estimate for each candidate source and history prefix; no source-index-specific parameter is allowed. The inputs are the balanced prefix pairs from S1 and the common candidate representation; the output is one ratio logit per candidate source and history prefix.",
+      "why_this_makes_sense": "The joint-versus-product contrast targets dependence between a candidate source and the whole history, while parameter sharing makes source-grid relabeling act through the same scoring rule."
+    },
+    {
+      "step_id": "S3",
+      "what_to_do": "Check the ratio moment on product pairs. Then combine every candidate logit with the frozen PMFS prior `pi_0(s)` and normalize across the full source grid to produce `q_theta(s|H_t)` for every history prefix. The inputs are the candidate ratio logits from S2 and the frozen PMFS source prior; the output is a normalized source probability map for every history prefix.",
+      "why_this_makes_sense": "A classifier score is not itself a probability map. The moment check tests the density-ratio interpretation, while prior normalization preserves the intended Bayesian source support."
+    },
+    {
+      "step_id": "S4",
+      "what_to_do": "For each candidate, difference its whole-history ratio logit between consecutive prefixes. Subtract the same increment for a fixed wrong candidate to produce `delta_theta,t(s*,r)`, then accumulate these differences into true-versus-rival margins and record the final true-source rank. The inputs are prefix-indexed ratio logits and a fixed set of wrong-candidate rivals; the outputs are per-update and cumulative fixed-rival margins plus the final true-source rank.",
+      "why_this_makes_sense": "Localization improvement requires evidence relative to persistent wrong candidates; positive true-source increments alone do not show that distinction."
+    },
+    {
+      "step_id": "S5",
+      "what_to_do": "Check that relabeling the source grid produces the same permutation of the output map. Then recompute S1-S4 on intact held-out histories and on destructive permutations of time-position assignments and source-history pairings that preserve marginal measurements. The inputs are the trained shared scorer, intact held-out histories, and their destructive permutations; the outputs are equivariance residuals and intact-versus-permuted localization evidence traces.",
+      "why_this_makes_sense": "The claimed contribution is the ordered source-relative mechanism, so the controls should destroy that relation while leaving marginal field information available."
+    }
+  ],
+  "plain_method_steps_zh": [
+    {
+      "step_id": "S1",
+      "what_to_do": "使用冻结的源网格和 source-labelled PMFS 轨迹（包括有顺序的测量位置和值）构造完整的有序前缀 `H_t`。把每个观测到的源点-前缀配对标记为 matched joint example。通过把一个源点独立地与另一个历史前缀配对，同时保留经验上的源点边际和历史边际，构造 product-of-marginals control，并平衡 matched 与 product 配对。输入是冻结的源网格和 source-labelled PMFS 轨迹；输出是平衡的 matched 与 product-of-marginals 前缀配对集合。",
+      "why_this_makes_sense": "缺失的信息是源点如何与有顺序的历史发生关系。把 matched dependence 与保持源点和历史边际不变的 control 进行对比，就能针对这层关系。"
+    },
+    {
+      "step_id": "S2",
+      "what_to_do": "在平衡的 joint/product 前缀配对上训练一个对候选源点共享的二分类 scorer `D_theta(s,H_t)`，对每个源点位置使用共同的候选表示。把它的 logit `ell_theta(s,H_t)` 作为每个候选源点和历史前缀的一个 density-ratio estimate；不允许使用 source-index-specific parameter。输入是 S1 的平衡前缀配对和共同的候选表示；输出是每个候选源点、每个历史前缀各一个 ratio logit。",
+      "why_this_makes_sense": "joint-versus-product 对比针对候选源点与完整历史之间的依赖，而参数共享使源网格重标记始终经过同一套 scoring rule。"
+    },
+    {
+      "step_id": "S3",
+      "what_to_do": "在 product 配对上检查 ratio moment。然后把每个候选 logit 与冻结的 PMFS 先验 `pi_0(s)` 结合，在完整源网格上归一化，得到每个历史前缀的 `q_theta(s|H_t)`。输入是 S2 的候选 ratio logits 和冻结的 PMFS source prior；输出是每个历史前缀的归一化源点概率图。",
+      "why_this_makes_sense": "分类器分数本身不是概率图。moment check 检验 density-ratio interpretation，而 prior normalization 保留预期的 Bayesian source support。"
+    },
+    {
+      "step_id": "S4",
+      "what_to_do": "对每个候选源点，计算相邻前缀之间的全历史 ratio logit 差分。再减去一个固定错误候选的同一增量，得到 `delta_theta,t(s*,r)`；随后累加这些差分，形成真实源点与错误候选之间的 margin，并记录最终真实源点 rank。输入是按前缀索引的 ratio logits 和固定的错误候选集合；输出是每次更新及累计的 fixed-rival margins，以及最终真实源点 rank。",
+      "why_this_makes_sense": "定位改善需要相对于持续存在的错误候选的证据；只有真实源点增量为正，并不能说明这种区分已经出现。"
+    },
+    {
+      "step_id": "S5",
+      "what_to_do": "检查源网格重标记是否使输出概率图产生完全相同的置换。然后在完整的 held-out histories 上，以及在保留边际测量的 time-position assignment 和 source-history pairing 的破坏性置换上，重新执行 S1-S4。输入是已训练的 shared scorer、完整的 held-out histories 及其破坏性置换；输出是 equivariance residuals，以及 intact 与 permuted 两类定位证据轨迹。",
+      "why_this_makes_sense": "贡献所声称的是有顺序的源点相对机制，因此 control 应该破坏这层关系，同时让边际场信息仍然可用。"
+    }
+  ],
+  "plain_method_modules_en": [
+    {
+      "module_id": "M0_data_setup",
+      "purpose_oneline": "Prepare ordered source-history pairs and the product-of-marginals control from the frozen PMFS data.",
+      "step_ids": ["S1"]
+    },
+    {
+      "module_id": "M1_shared_ratio_map",
+      "purpose_oneline": "Estimate shared source-history ratios and convert them into a prior-normalized source probability map.",
+      "step_ids": ["S2", "S3"]
+    },
+    {
+      "module_id": "M2_fixed_rival_evidence",
+      "purpose_oneline": "Turn consecutive ratio logits into per-update and cumulative evidence against fixed wrong candidates.",
+      "step_ids": ["S4"]
+    },
+    {
+      "module_id": "M3_validation",
+      "purpose_oneline": "Test source-grid equivariance and whether destructive permutations remove the ordered source-relative evidence.",
+      "step_ids": ["S5"]
+    }
+  ],
+  "plain_method_modules_zh": [
+    {
+      "module_id": "M0_data_setup",
+      "purpose_oneline": "从冻结的 PMFS 数据准备有顺序的源点-历史配对及 product-of-marginals control。",
+      "step_ids": ["S1"]
+    },
+    {
+      "module_id": "M1_shared_ratio_map",
+      "purpose_oneline": "估计共享的源点-历史比值，并把它们转换为先验归一化的源点概率图。",
+      "step_ids": ["S2", "S3"]
+    },
+    {
+      "module_id": "M2_fixed_rival_evidence",
+      "purpose_oneline": "把连续前缀的 ratio logits 转换为针对固定错误候选的逐次及累计证据。",
+      "step_ids": ["S4"]
+    },
+    {
+      "module_id": "M3_validation",
+      "purpose_oneline": "检验源网格等变性，以及破坏性置换是否移除有顺序的源点相对证据。",
+      "step_ids": ["S5"]
+    }
+  ]
+}

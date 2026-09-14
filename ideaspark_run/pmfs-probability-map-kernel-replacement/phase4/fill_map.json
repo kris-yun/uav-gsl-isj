@@ -1,0 +1,139 @@
+{
+  "method_name": "Permutation-Equivariant Whole-History Ratio Map (PE-WHRM)",
+  "abstract_draft": "Gas-source localization from sparse mobile measurements requires a probability map that preserves how an ordered trajectory distinguishes each candidate source, not merely one that reconstructs or calibrates the concentration field. Existing physics-guided inversion encodes a Green-function response (semanticscholar:c930ca69d5ed8553c0638ebe60205fe9c1845e58), while probabilistic neural operators quantify uncertainty over fields (dblp:journals/corr/abs-2502-12902); neither turns the complete adaptive history into source-relative evidence that can be audited against fixed rivals. We propose the Permutation-Equivariant Whole-History Ratio Map (PE-WHRM), which trains a shared prefix classifier to distinguish joint source-history pairs from product-of-marginals pairs, interprets its logit as a density-ratio score, and prior-normalizes all candidate scores into a source map. Shared scoring makes source-grid relabeling exactly equivariant, while prefix differences expose when new measurements favor the true source over a fixed wrong candidate. The proposal is falsified if destructive time-position or source-history permutation leaves cumulative true-versus-fixed-rival log-odds margin and final source rank unchanged, or if ratio-moment and equivariance checks fail. The expected outcome is therefore not generic field calibration: intact ordered histories should create a reproducible localization margin that disappears when their source-relative structure is destroyed, without an online candidate-response provider.",
+  "motivation.problem_framing": "Sparse mobile gas measurements create a structural mismatch between field reconstruction and source localization. A learner can assign calibrated uncertainty to a concentration field while discarding the ordered, candidate-relative evidence that distinguishes one source location from a fixed rival. The relevant object is therefore not only a field value at the current measurement, but the likelihood ratio between a candidate source and the entire adaptive measurement history.\n\nThe closest adjacent methods stop on either side of this object. Physics-guided sparse inversion inserts a deterministic Green-function surrogate (semanticscholar:c930ca69d5ed8553c0638ebe60205fe9c1845e58), and probabilistic neural operators score distributions over output functions (dblp:journals/corr/abs-2502-12902). XIT instead assumes a posterior mean-variance field and uses it for planning (dblp:journals/corr/abs-2602-13739). None of these constructions identifies whether each successive history prefix increases the true source's evidence relative to the same wrong candidate. PE-WHRM targets that missing source-relative, ordered-history object while preserving the frozen PMFS source grid and updater interface.",
+  "motivation.why_now": "The gap is timely because 2026 work already couples posterior fields to active gas-mapping decisions in XIT (dblp:journals/corr/abs-2602-13739) and compares calibrated uncertainty methods for sparse autonomous reconstruction (dblp:journals/corr/abs-2604-06387), yet both still organize inference around field reconstruction or a supplied field posterior. Existing source-labelled PMFS trajectories now provide the complete prefixes and counter-source pairings needed to estimate a joint-versus-product density ratio, while permutation-equivariant shared scoring supplies a concrete structural tool for preserving source-grid symmetry. Together, these ingredients make it possible to test source-relative evidence directly rather than treating field calibration as a proxy for localization.",
+  "motivation.why_prior_stopped[0].what_they_did": "The EUSIPCO 2024 method embedded Poisson and Green-function structure in a neural sparse-inversion pipeline for distributed gas-source localization.",
+  "motivation.why_prior_stopped[0].what_they_did_not_do": "It did not learn a whole-history likelihood ratio for every candidate source or expose prefix-wise true-versus-fixed-rival evidence.",
+  "motivation.why_prior_stopped[0].structural_reason_they_stopped": "Its inference object remained a deterministic candidate-response surrogate, so it lacked a measurement for source-relative evidence under adaptive histories.",
+  "motivation.why_prior_stopped[1].what_they_did": "The probabilistic neural operator learned calibrated distributions over output functions using a proper field-space scoring rule.",
+  "motivation.why_prior_stopped[1].what_they_did_not_do": "It did not convert joint source-history versus product pairings into prior-normalized source probabilities or fixed-rival prefix increments.",
+  "motivation.why_prior_stopped[1].structural_reason_they_stopped": "Its target was functional uncertainty rather than candidate-source identification, so ordered source labels were absent from the estimand.",
+  "motivation.why_prior_stopped[2].what_they_did": "XIT used a supplied posterior mean-variance field to trade off exploration and exploitation during active gas-distribution mapping.",
+  "motivation.why_prior_stopped[2].what_they_did_not_do": "It did not replace the posterior updater with a source-relative whole-history map or test whether measurements improve a fixed-rival localization margin.",
+  "motivation.why_prior_stopped[2].structural_reason_they_stopped": "Planning consumed the posterior as an input, leaving the evidential semantics of the posterior outside the method's scope.",
+  "motivation.why_prior_stopped[3].what_they_did": "The 2026 uncertainty study compared reconstruction-oriented uncertainty estimators for sparse autonomous-vehicle observations.",
+  "motivation.why_prior_stopped[3].what_they_did_not_do": "It did not train an ordered-history source-ratio estimator or test destructive permutations that retain marginal measurements.",
+  "motivation.why_prior_stopped[3].structural_reason_they_stopped": "Its evaluation object was field reconstruction and calibration, so it lacked a source-pair intervention that could identify localization evidence.",
+  "motivation.what_changes_when_gap_closes": "Closing the gap yields an auditable probability-map update whose increments can be attributed to ordered evidence for one source over a fixed rival, rather than to field calibration alone. It would let posterior-driven planners such as XIT (dblp:journals/corr/abs-2602-13739) consume a map with explicit localization semantics and would separate the source-identification question from the functional-uncertainty objective of probabilistic neural operators (dblp:journals/corr/abs-2502-12902). The resulting claim is narrower but causal: destroying the history-source relation must destroy the localization margin.",
+  "core_claim": "A prior-normalized, permutation-equivariant density ratio of candidate source and complete ordered history can preserve source-relative localization evidence that field-calibrated maps omit.",
+  "sub_claims": [
+    {
+      "id": "c1",
+      "statement": "Balanced joint-source-history versus product-of-marginals classification identifies a per-candidate history density ratio, subject to support and classifier-calibration assumptions.",
+      "supports_which_aspect": "Defines the missing source-relative estimand instead of using field uncertainty as a localization proxy."
+    },
+    {
+      "id": "c2",
+      "statement": "A shared candidate scorer followed by prior normalization makes relabeling the source grid permute, rather than alter, the output probability map.",
+      "supports_which_aspect": "Encodes the source-grid symmetry needed for a candidate map to remain semantically stable."
+    },
+    {
+      "id": "c3",
+      "statement": "Differences of consecutive ratio logits provide a fixed-rival evidence trace whose cumulative margin distinguishes intact histories from destructive permutations.",
+      "supports_which_aspect": "Makes ordered localization evidence observable and directly falsifiable."
+    }
+  ],
+  "key_equations": [
+    {
+      "id": "e1",
+      "linked_step_id": "S2",
+      "latex": "\\mathcal{L}_{\\mathrm{ratio}}(\\theta)=-\\mathbb{E}_{p(s,H_t)}\\log D_\\theta(s,H_t)-\\mathbb{E}_{p(s)p(H_t)}\\log\\!\\left(1-D_\\theta(s,H_t)\\right)",
+      "description": "Balanced binary loss separating matched source-history prefixes from independently paired prefixes.",
+      "description_zh": "用平衡二分类损失区分匹配的源点-历史前缀与独立重配的前缀。"
+    },
+    {
+      "id": "e2",
+      "linked_step_id": "S2",
+      "latex": "\\ell_\\theta(s,H_t)=\\log\\frac{D_\\theta(s,H_t)}{1-D_\\theta(s,H_t)}\\approx\\log\\frac{p(s,H_t)}{p(s)p(H_t)}",
+      "description": "The classifier logit estimates the source-history density ratio under balanced class priors.",
+      "description_zh": "在类别先验平衡时，分类器 logit 估计源点与历史之间的密度比。"
+    },
+    {
+      "id": "e3",
+      "linked_step_id": "S3",
+      "latex": "q_\\theta(s\\mid H_t)=\\frac{\\pi_0(s)\\exp\\ell_\\theta(s,H_t)}{\\sum_{u\\in\\mathcal{S}}\\pi_0(u)\\exp\\ell_\\theta(u,H_t)}",
+      "description": "PMFS prior normalization converts candidate ratio logits into a probability map over the frozen source grid.",
+      "description_zh": "用 PMFS 先验归一化候选源点的密度比 logit，得到冻结源网格上的概率图。"
+    },
+    {
+      "id": "e4",
+      "linked_step_id": "S4",
+      "latex": "\\Delta_{\\theta,t}(s)=\\ell_\\theta(s,H_t)-\\ell_\\theta(s,H_{t-1}),\\qquad \\delta_{\\theta,t}(s^*,r)=\\Delta_{\\theta,t}(s^*)-\\Delta_{\\theta,t}(r)",
+      "description": "Prefix differences isolate the new whole-history evidence for the true source against a fixed rival.",
+      "description_zh": "前缀差分提取新增的全历史证据，并比较真实源点与固定错误候选。"
+    },
+    {
+      "id": "e5",
+      "linked_step_id": "S5",
+      "latex": "\\mathbf{q}_\\theta(H_t;\\Pi\\mathcal{S})=\\Pi\\,\\mathbf{q}_\\theta(H_t;\\mathcal{S})",
+      "description": "Exact source-grid permutation equivariance requires relabeling candidates to relabel the map identically.",
+      "description_zh": "精确源网格置换等变要求候选源点重标记后，概率图以相同方式重排。"
+    }
+  ],
+  "method_flow.high_level_pipeline": "PE-WHRM receives a frozen candidate-source grid and each ordered prefix of an existing source-labelled PMFS trajectory. It forms matched source-history pairs and independently re-paired product controls, then applies one shared candidate scorer to all sources so source relabeling cannot change the scoring rule. Balanced binary logits are checked as density ratios and combined with the PMFS prior to produce a normalized source probability map at every prefix. Consecutive logits are differenced for the true source and fixed rivals, yielding the cumulative evidence margin and final rank used by the falsification test. Ratio-moment, exact-equivariance, time-position permutation, and source-pair permutation checks determine whether the map uses the claimed ordered source-relative mechanism.",
+  "method_flow.steps": [
+    {
+      "step_id": "S1",
+      "title": "Construct ordered prefix pairs",
+      "what_changes": "Replace isolated measurement-target examples with complete ordered prefixes `H_t`; label the observed source-prefix pair as joint data and construct a product control by independently pairing a source with another history prefix while preserving the empirical marginals.",
+      "why_this_step": "The bottleneck is missing source-relative information in the ordered history, so the learning problem must contrast dependence with a control that retains source and history marginals.",
+      "linked_component": "engineering",
+      "linked_falsification": "mechanism_distinguisher",
+      "input": "Frozen source grid and source-labelled PMFS trajectories with ordered measurement positions and values.",
+      "output": "Balanced matched and product-of-marginals prefix pairs."
+    },
+    {
+      "step_id": "S2",
+      "title": "Estimate the shared history ratio",
+      "what_changes": "Train one candidate-shared binary scorer `D_theta(s,H_t)` on the balanced joint/product pairs and use its logit `ell_theta(s,H_t)` as the density-ratio estimate; no source-index-specific parameter is allowed.",
+      "why_this_step": "The joint-versus-product contrast targets dependence between a candidate source and the whole history, while parameter sharing encodes source-grid permutation equivariance by construction.",
+      "linked_component": "both",
+      "linked_falsification": "mechanism_distinguisher",
+      "input": "Balanced prefix pairs from S1 and a common candidate representation for every source location.",
+      "output": "One ratio logit per candidate source and history prefix."
+    },
+    {
+      "step_id": "S3",
+      "title": "Validate and prior-normalize ratios",
+      "what_changes": "Check the ratio moment on product pairs, then combine every candidate logit with the frozen PMFS prior `pi_0(s)` and normalize across the full source grid to obtain `q_theta(s|H_t)`.",
+      "why_this_step": "A classifier score alone is not a probability map; the moment check tests the density-ratio interpretation and prior normalization preserves the intended Bayesian source support.",
+      "linked_component": "theory",
+      "linked_falsification": "metric_specification",
+      "input": "Candidate ratio logits from S2 and the frozen PMFS source prior.",
+      "output": "A normalized source probability map for every history prefix."
+    },
+    {
+      "step_id": "S4",
+      "title": "Extract fixed-rival evidence increments",
+      "what_changes": "Difference each candidate's whole-history ratio logit between consecutive prefixes and subtract the same increment for a fixed wrong candidate, producing `delta_theta,t(s*,r)` and its cumulative true-versus-rival margin.",
+      "why_this_step": "Localization improvement requires relative evidence against persistent wrong candidates; positive true-source increments alone do not establish that distinction.",
+      "linked_component": "engineering",
+      "linked_falsification": "metric_specification",
+      "input": "Prefix-indexed ratio logits and a fixed set of wrong-candidate rivals.",
+      "output": "Per-update and cumulative fixed-rival margins plus final true-source rank."
+    },
+    {
+      "step_id": "S5",
+      "title": "Enforce structural falsification checks",
+      "what_changes": "Verify exact output permutation under source-grid relabeling and recompute S1-S4 after destructive time-position and source-history pairing permutations that preserve marginal measurements.",
+      "why_this_step": "The contribution is the ordered source-relative mechanism, so controls must selectively destroy that relation while leaving marginal field information available.",
+      "linked_component": "theory",
+      "linked_falsification": "mechanism_distinguisher",
+      "input": "The trained shared scorer, intact held-out histories, and their destructive permutations.",
+      "output": "Equivariance residuals and intact-versus-permuted localization evidence traces."
+    }
+  ],
+  "method_flow.design_reasoning_echo": "The design treats probability-map replacement as an estimand problem rather than a request for a more expressive field learner. The naive direct model `q0(y_t|g_t(s))` scores the current observation against a candidate response and can be calibrated without preserving how the complete adaptive history separates sources. PE-WHRM instead estimates dependence between candidate source and ordered prefix through the standard likelihood-ratio trick, but makes the localization-specific structure carry the contribution: a shared source scorer, PMFS-prior normalization, prefix-wise fixed-rival increments, and destructive controls. Its load-bearing premises are that source-labelled trajectories cover the held-out history support, independent re-pairing approximates `p(s)p(H_t)` despite the adaptive collection policy, and balanced classification is calibrated enough for ratio interpretation; the latter two remain explicit theoretical and empirical checks rather than hidden guarantees.",
+  "feasibility_validation.data.verdict": "feasible",
+  "feasibility_validation.data.rationale": "The method uses existing source-labelled PMFS trajectories, frozen source priors, and complete measurement histories already named in the candidate, with no closed or private external dataset required.",
+  "feasibility_validation.theoretical.verdict": "tight",
+  "feasibility_validation.theoretical.rationale": "The density-ratio identity and shared-score equivariance are tractable, but a defensible argument still requires the product-pair construction to represent `p(s)p(H_t)` under the adaptive trajectory policy and adequate support overlap.",
+  "feasibility_validation.engineering.verdict": "feasible",
+  "feasibility_validation.engineering.rationale": "All-prefix pair generation, shared candidate scoring, normalization, and permutation checks fit the stated local 24-GPU-day envelope, although prefix caching is needed to avoid repeated whole-history encoding.",
+  "feasibility_validation.falsification.verdict": "feasible",
+  "feasibility_validation.falsification.rationale": "The frozen PMFS rule grid supplies held-out complete episodes, and both time-position and source-history permutations can be implemented offline while retaining the marginal measurements required by the mechanism distinguisher.",
+  "feasibility_validation.overall": "tight",
+  "reviewer_concerns_and_responses[0].response": "The defense is anchored in `core_claim`, S1-S5 of `method_flow.steps`, and the destructive-control clause of `falsification_prediction`: none claims novelty for classifier-based density-ratio estimation. Consistent with the Phase 3.2 rationale summarized in the attack, the claimed delta is the localization-specific composition of ordered adaptive histories, exact source-grid equivariance, PMFS-prior normalization, fixed-rival prefix evidence, and controls that selectively destroy the history-source relation.",
+  "domain_landscape.position_note": "PE-WHRM uses the mid-frequency `structural_prior_encoding` pattern through exact source-grid equivariance, while avoiding the field-operator replacement pattern already saturated across 73% of the 41-paper domain sample."
+}

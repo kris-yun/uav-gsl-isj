@@ -1,0 +1,1616 @@
+{
+  "title": "Permutation-Equivariant Whole-History Ratio Maps for Gas-Source Localization",
+  "title_zh": "<TODO[title_zh]: Chinese translation; keep proper nouns and method acronyms in English>",
+  "method_name": "<TODO[method_name]: short handle for the proposed method, e.g. 'Persistent Baseline GRPO (PB-GRPO)'>",
+  "hook": "A probability map can improve field calibration yet lose the ordered source evidence needed for localization. We predict that a whole-history ratio map improves cumulative true-versus-fixed-rival log-odds margin, while destructive time-position or source-pair permutation removes that advantage even though the marginal measurements are unchanged.",
+  "abstract_draft": "<TODO[abstract_draft]: 150-250 words. Order: problem → bottleneck (cite ≥ 1 Phase 0 paper) → contribution (one sentence) → falsification prediction → expected outcome.>",
+  "motivation": {
+    "problem_framing": "<TODO[motivation.problem_framing]: 2-3 paragraphs framing the user's problem. Reference the bottleneck_statement from Phase 1 and the closest_adjacent papers. NOT a category label.>",
+    "why_now": "<TODO[motivation.why_now]: one paragraph on what makes this gap timely. Cite the most recent Phase 0 papers (within last 4-12 months) that get close but stop short.>",
+    "why_prior_stopped": [
+      {
+        "paper_id": "semanticscholar:c930ca69d5ed8553c0638ebe60205fe9c1845e58",
+        "venue_year": "European Signal Processing Conference 2024",
+        "what_they_did": "<TODO[motivation.why_prior_stopped[0].what_they_did]: one sentence>",
+        "what_they_did_not_do": "<TODO[motivation.why_prior_stopped[0].what_they_did_not_do]: one sentence — the specific limit being lifted by the candidate>",
+        "structural_reason_they_stopped": "<TODO[motivation.why_prior_stopped[0].structural_reason_they_stopped]: one sentence — missing tool / missing assumption-relaxation / missing mechanism / missing measurement>"
+      },
+      {
+        "paper_id": "dblp:journals/corr/abs-2502-12902",
+        "venue_year": "Trans. Mach. Learn. Res. 2025",
+        "what_they_did": "<TODO[motivation.why_prior_stopped[1].what_they_did]: one sentence>",
+        "what_they_did_not_do": "<TODO[motivation.why_prior_stopped[1].what_they_did_not_do]: one sentence — the specific limit being lifted by the candidate>",
+        "structural_reason_they_stopped": "<TODO[motivation.why_prior_stopped[1].structural_reason_they_stopped]: one sentence — missing tool / missing assumption-relaxation / missing mechanism / missing measurement>"
+      },
+      {
+        "paper_id": "dblp:journals/corr/abs-2602-13739",
+        "venue_year": "arXiv 2026",
+        "what_they_did": "<TODO[motivation.why_prior_stopped[2].what_they_did]: one sentence>",
+        "what_they_did_not_do": "<TODO[motivation.why_prior_stopped[2].what_they_did_not_do]: one sentence — the specific limit being lifted by the candidate>",
+        "structural_reason_they_stopped": "<TODO[motivation.why_prior_stopped[2].structural_reason_they_stopped]: one sentence — missing tool / missing assumption-relaxation / missing mechanism / missing measurement>"
+      },
+      {
+        "paper_id": "dblp:journals/corr/abs-2604-06387",
+        "venue_year": "arXiv 2026",
+        "what_they_did": "<TODO[motivation.why_prior_stopped[3].what_they_did]: one sentence>",
+        "what_they_did_not_do": "<TODO[motivation.why_prior_stopped[3].what_they_did_not_do]: one sentence — the specific limit being lifted by the candidate>",
+        "structural_reason_they_stopped": "<TODO[motivation.why_prior_stopped[3].structural_reason_they_stopped]: one sentence — missing tool / missing assumption-relaxation / missing mechanism / missing measurement>"
+      }
+    ],
+    "what_changes_when_gap_closes": "<TODO[motivation.what_changes_when_gap_closes]: 2-3 sentences naming downstream consequences. NOT \"better numbers\" — name the specific capability or theoretical statement that becomes available>"
+  },
+  "core_claim": "<TODO[core_claim]: one sentence; should mirror the candidate's hook stripped to its load-bearing assertion>",
+  "sub_claims": "<TODO[sub_claims]: list of {id, statement, supports_which_aspect}; 2-4 entries>",
+  "key_equations": "<TODO[key_equations]: optional 3-6 equations; each {id, linked_step_id, latex, description, description_zh}. Emit [] (literal empty list) for a pure-prose candidate.>",
+  "method_flow": {
+    "high_level_pipeline": "<TODO[method_flow.high_level_pipeline]: 3-5 sentences narrating the method end-to-end as a story: input → key transformation → output>",
+    "steps": "<TODO[method_flow.steps]: derive from candidate.core_mechanism_steps; emit a list where each entry is {step_id, title, what_changes, why_this_step, linked_component, linked_falsification, input, output}. Each step_id MUST be S1, S2, ... in reading order. linked_component ∈ {theory, engineering, both}; linked_falsification ∈ {metric_specification, mechanism_distinguisher, both}.>",
+    "design_reasoning_echo": "<TODO[method_flow.design_reasoning_echo]: one paragraph echoing or condensing candidate.core_mechanism_reasoning>"
+  },
+  "plain_motivation_en": "<TODO[plain_motivation_en]: plain-language English rendering of motivation for a reader outside this subfield. Simplify LANGUAGE only — never drop the load-bearing mechanism. Spell out every abbreviation on first use.>",
+  "plain_motivation_zh": "<TODO[plain_motivation_zh]: Chinese 普通版 counterpart. Same content; keep identifiers/symbols/acronyms in English.>",
+  "plain_method_steps_en": "<TODO[plain_method_steps_en]: list of {step_id, what_to_do, why_this_makes_sense}; SAME step_ids and SAME order as method_flow.steps.>",
+  "plain_method_steps_zh": "<TODO[plain_method_steps_zh]: Chinese 普通版 counterpart; English for identifiers/symbols/acronyms.>",
+  "plain_method_modules_en": "<TODO[plain_method_modules_en]: group the CONTRIBUTION steps into named modules; list of {module_id, purpose_oneline, step_ids}.>",
+  "plain_method_modules_zh": "<TODO[plain_method_modules_zh]: Chinese 普通版 counterpart.>",
+  "falsification_prediction": "Train the whole-history ratio estimator on existing source-labelled PMFS trajectories and evaluate it on held-out complete episodes across the frozen PMFS rule grid against unchanged PMFS, a calibrated direct q0(y_t|g_t(s)) arm, and a field-only probabilistic learner. If the mechanism works, cumulative true-versus-fixed-rival log-odds margin increases and final true-source rank decreases relative to direct q0 without requiring an online candidate-response provider. The single load-bearing variable is delta_theta,t(s*,r), the difference of consecutive whole-history ratio-logit increments for the true source and a fixed rival. Destructively permuting measurement time-position assignments or independently permuting source-history pairings must drive cumulative fixed-rival margin and final rank back toward the direct-q0 or product-pair control; if intact and permuted arms are indistinguishable, or the ratio-moment and exact-equivariance checks fail, the claimed whole-history source-relative mechanism is falsified.",
+  "compute_budget": "24 GPU-days on one 80GB-class GPU for prefix training, checkpoint selection, and all held-out rule-grid/control arms; $0 paid API inference because all models, labels, and scoring are local.",
+  "almost_prior_paper_id": "dblp:journals/corr/abs-2502-12902",
+  "almost_prior_venue_year": "Trans. Mach. Learn. Res. 2025",
+  "what_step_was_missed": "It would have needed to replace field-function scoring with balanced joint-source-history versus product-of-marginals prefix classification, then prior-normalize the resulting per-source density-ratio logits and test their fixed-rival increments under destructive history permutations.",
+  "feasibility_validation": {
+    "compute": {
+      "verdict": "feasible",
+      "rationale": "GPU line ≈ 24 vs 150 GPU-day (16%) → feasible; API line ≈ $0 vs $10000 (0%) → feasible. Overall (worse line) → feasible."
+    },
+    "data": {
+      "verdict": "<TODO[feasibility_validation.data.verdict]: feasible | tight | infeasible>",
+      "rationale": "<TODO[feasibility_validation.data.rationale]: one sentence: required data sources accessible; if any closed/private, name a public substitute>"
+    },
+    "theoretical": {
+      "verdict": "<TODO[feasibility_validation.theoretical.verdict]: feasible | tight | infeasible | n/a (only when the candidate has no theoretical contribution)>",
+      "rationale": "<TODO[feasibility_validation.theoretical.rationale]: one sentence; if tight, name the missing prerequisite>"
+    },
+    "engineering": {
+      "verdict": "<TODO[feasibility_validation.engineering.verdict]: feasible | tight | infeasible | n/a (only when the candidate has no engineering contribution)>",
+      "rationale": "<TODO[feasibility_validation.engineering.rationale]: one sentence; if tight, name the binding implementation cost>"
+    },
+    "falsification": {
+      "verdict": "<TODO[feasibility_validation.falsification.verdict]: feasible | tight | infeasible>",
+      "rationale": "<TODO[feasibility_validation.falsification.rationale]: one sentence: the falsification_prediction experiment is concrete enough to run with available tooling>"
+    },
+    "overall": "<TODO[feasibility_validation.overall]: feasible | tight | infeasible>"
+  },
+  "differentiation_from_lit": [
+    {
+      "paper_id": "semanticscholar:c930ca69d5ed8553c0638ebe60205fe9c1845e58",
+      "venue_year": "European Signal Processing Conference 2024",
+      "delta": "That method inserts a deterministic Green-function surrogate and its derivative into sparse source inversion, whereas this candidate learns an ordered-history source likelihood ratio and emits a normalized source map without online Green or candidate-response evaluation."
+    },
+    {
+      "paper_id": "dblp:journals/corr/abs-2502-12902",
+      "venue_year": "Trans. Mach. Learn. Res. 2025",
+      "delta": "PNO learns a calibrated distribution over output functions with a proper field-space score, whereas this candidate's joint-versus-product objective estimates per-source history ratios whose prefix differences are evaluated directly against fixed rivals."
+    },
+    {
+      "paper_id": "dblp:journals/corr/abs-2602-13739",
+      "venue_year": "arXiv 2026",
+      "delta": "XIT consumes a supplied posterior mean-variance field for UCB planning, whereas this candidate replaces the updater itself with a source-relative probability map and makes no planning-improvement claim."
+    },
+    {
+      "paper_id": "dblp:journals/corr/abs-2604-06387",
+      "venue_year": "arXiv 2026",
+      "delta": "Abstract-only inference: that comparison selects uncertainty methods by field reconstruction and calibration, whereas this candidate trains and tests whole-history true-versus-rival likelihood-ratio increments before posterior normalization."
+    }
+  ],
+  "reviewer_concerns_and_responses": [
+    {
+      "attack": "Paper-pointed threat: openalex:W4391952441 (collision_hits). This paper establishes that neural binary classifiers can approximate likelihood ratios through the likelihood-ratio trick, so the candidate cannot claim novelty for classifier-based density-ratio estimation itself. It does not subsume the candidate's narrower contribution because the retrieved result does not supply an ordered adaptive gas-history object, exact source-grid permutation equivariance, PMFS-prior normalization, prefix-difference fixed-rival evidence, or destructive history controls; the candidate explicitly labels neural ratio estimation as standard and makes those source-localization-specific elements carry the claim.",
+      "severity": "non_blocking",
+      "response": "<TODO[reviewer_concerns_and_responses[0].response]: 2-3 sentences: explain where in the candidate (which field) the defense is anchored; reference the Phase 3.2 verdict_rationale when relevant>",
+      "fields_changed_to_address": []
+    }
+  ],
+  "domain_landscape": {
+    "n_papers": 41,
+    "pattern_distribution": [
+      {
+        "pattern_id": "architectural_operator_substitution",
+        "count": 30,
+        "share": 0.73,
+        "saturation_band": "saturated"
+      },
+      {
+        "pattern_id": "adapt_via_conditioning",
+        "count": 15,
+        "share": 0.37,
+        "saturation_band": "mid_frequency"
+      },
+      {
+        "pattern_id": "structural_prior_encoding",
+        "count": 15,
+        "share": 0.37,
+        "saturation_band": "mid_frequency"
+      },
+      {
+        "pattern_id": "heterogeneous_decomposition",
+        "count": 9,
+        "share": 0.22,
+        "saturation_band": "mid_frequency"
+      },
+      {
+        "pattern_id": "relax_discrete_search_to_continuous",
+        "count": 7,
+        "share": 0.17,
+        "saturation_band": "mid_frequency"
+      },
+      {
+        "pattern_id": "reframe_as_solvable_object",
+        "count": 1,
+        "share": 0.02,
+        "saturation_band": "untested"
+      }
+    ],
+    "candidate_uses": [
+      {
+        "pattern_id": "structural_prior_encoding",
+        "role": "closes Gap 1",
+        "sub_pattern_id": "C16 (Encode Structure by Construction)",
+        "saturation_in_domain": "mid_frequency"
+      }
+    ],
+    "position_note": "<TODO[domain_landscape.position_note]: one sentence describing how the candidate's chosen patterns sit relative to the area's pattern usage; descriptive, not prescriptive>"
+  },
+  "literature_breakdown": {
+    "summary": {
+      "n_phase0_total": 48,
+      "n_phase0_on_topic": 42,
+      "n_phase0_outside_taxonomy": 6,
+      "n_phase3_collision": 224
+    },
+    "phase0_by_pattern": [
+      {
+        "pattern_id": "adapt_via_conditioning",
+        "pattern_name": "Adapt by Conditioning, Not Retraining",
+        "papers": [
+          {
+            "paper_id": "semanticscholar:4b637b5f74151bf61b3360fa3be3c82c556fc5e0",
+            "title": "Gas Source Localization in Unknown Indoor Environments Using Dual-Mode Information-Theoretic Search",
+            "venue_year": "IEEE Robotics and Automation Letters 2025",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:7358a6f9172a5eea337d255ef747450f79f7021a",
+            "title": "Gas concentration mapping and source localization for environmental monitoring through unmanned aerial systems using model-free reinforcement learning agents",
+            "venue_year": "PLoS ONE 2024",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:cc8243c80badf6b717f5b98c560f9104d472e35a",
+            "title": "Simulations of Sparse Static Detector Networks for City-Scale Radiological/Nuclear Detection",
+            "venue_year": "IEEE Transactions on Nuclear Science 2024",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "openalex:W4415368935",
+            "title": "Information-Theoretic Sensor Selection Framework for E-Nose Arrays via Adaptive Sparse Regression",
+            "venue_year": "arXiv 2025-08",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:4b637b5f74151bf61b3360fa3be3c82c556fc5e0",
+            "title": "Gas Source Localization in Unknown Indoor Environments Using Dual-Mode Information-Theoretic Search",
+            "venue_year": "IEEE Robotics and Automation Letters 2025",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          }
+        ]
+      },
+      {
+        "pattern_id": "architectural_operator_substitution",
+        "pattern_name": "Substitute the Operator or Representation",
+        "papers": [
+          {
+            "paper_id": "semanticscholar:10a8d33acb52f1cc514dbde255934f78f0dea685",
+            "title": "AWED: Asymmetric Wavelet Encoder–Decoder Framework for Simultaneous Gas Distribution Mapping and Gas Source Localization",
+            "venue_year": "IEEE Transactions on Instrumentation and Measurement 2024",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:ddd09240bc7fb965f7537bfe94142e99920fb715",
+            "title": "GAS SOURCE LOCALIZATION THROUGH DEEP LEARNING METHOD BASED ON GAS DISTRIBUTION MAP DATABASE",
+            "venue_year": "Jurnal Teknologi 2024",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:64d5daab7be0bad17b80e32864d15fd46d5a2b03",
+            "title": "Sparse Mobile Crowdsensing for Gas Monitoring in Coal Mine Working Face",
+            "venue_year": "IEEE Internet of Things Journal 2024",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:191ceb16deebbc3df0ef0c486c77c9a4df96c6f6",
+            "title": "Magnetic Source Detection Using an Array of Planar Hall Effect Sensors and Machine Learning Algorithms",
+            "venue_year": "Applied Sciences 2025",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:ce5288cdb2ae789c459cec6436ae66130ca86a8e",
+            "title": "Multiple Radiation Source Localization in IoT: A Radio-Map-Assisted Scheme",
+            "venue_year": "IEEE Internet of Things Journal 2025",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:1e07d8ba4e7741e7564fb11159eb9fd06c302f4d",
+            "title": "Integration of Multi-Gas Sensors and Aerial Thermography into UAVs for Environmental Monitoring of a Landfill",
+            "venue_year": "Applied Sciences 2026",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:db258b9c4bb10f0bc0b7a5060954bc1d126034d6",
+            "title": "Advancing Radio Map Construction and Obstacle Sensing: An Integrated Generative Framework in THz Band",
+            "venue_year": "IEEE Transactions on Communications 2026",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:43cb93a2041a69609132e2f860c96f80cbb75044",
+            "title": "Energy-Modified Leverage Sampling for Radio Map Construction via Matrix Completion",
+            "venue_year": "IEEE Signal Processing Letters 2024",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "openalex:W4404840050",
+            "title": "Conditional neural field latent diffusion model for generating spatiotemporal turbulence",
+            "venue_year": "Nature Communications 2024",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "openalex:W4403599980",
+            "title": "Enhancing mixed gas discrimination in e-nose system: Sparse recurrent neural networks using transient current fluctuation of SMO array sensor",
+            "venue_year": "Journal of Industrial Information Integration 2024",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "openalex:W4407948647",
+            "title": "DDN-SLAM: Real Time Dense Dynamic Neural Implicit SLAM",
+            "venue_year": "IEEE Robotics and Automation Letters 2025",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "openalex:W4408898461",
+            "title": "UAV-Based Large-Scale Active Mapping with Implicit Neural Representations",
+            "venue_year": "arXiv 2025-01",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "openalex:W4411055459",
+            "title": "Dual-Conditionally Guided Diffusion Models for Fusion of Unregistered Multisource Remote Sensing Images",
+            "venue_year": "IEEE Transactions on Geoscience and Remote Sensing 2025",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "openalex:W4410880143",
+            "title": "Generative inverse modeling for improved geological CO2 storage prediction via conditional diffusion models",
+            "venue_year": "Applied Energy 2025",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "dblp:journals/corr/abs-2604-06387",
+            "title": "Uncertainty Estimation for Deep Reconstruction in Actuatic Disaster Scenarios with Autonomous Vehicles",
+            "venue_year": "arXiv 2026",
+            "bottleneck_targeted": "Sparse mobile observations make accurate field reconstruction and calibrated uncertainty estimation difficult."
+          },
+          {
+            "paper_id": "dblp:journals/corr/abs-2502-12902",
+            "title": "Probabilistic neural operators for functional uncertainty quantification",
+            "venue_year": "Trans. Mach. Learn. Res. 2025",
+            "bottleneck_targeted": "Deterministic neural operators do not represent predictive distributions or calibrated functional uncertainty under model and data uncertainty."
+          }
+        ]
+      },
+      {
+        "pattern_id": "heterogeneous_decomposition",
+        "pattern_name": "Decompose for Differentiated Treatment",
+        "papers": [
+          {
+            "paper_id": "semanticscholar:5ee5437622b98e7e0986da75c1e3baabcc535689",
+            "title": "Gas Source Localization for UAV Using Infotaxis-Based Three-Dimensional Algorithm and Particle Filtering",
+            "venue_year": "Cybersecurity and Cyberforensics Conference 2024",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:70d1c9d7e2d1c18865f0b1fb4c395a1159ff36a6",
+            "title": "Robust Sparse Bayesian Learning Source Localization in an Uncertain Shallow-Water Waveguide",
+            "venue_year": "Electronics 2024",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:0c708eb352db7ce8fd4abd407503e3f6570414e7",
+            "title": "Sensor Layout Optimization and Natural Gas Leakage Source Term Estimation Based on Non-Dominated Sorting Genetic Algorithm",
+            "venue_year": "Fire 2026",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "openalex:W4410886696",
+            "title": "MEF-Explore: Communication-Constrained Multi-Robot Entropy-Field-Based Exploration",
+            "venue_year": "IEEE Transactions on Automation Science and Engineering 2025",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "openalex:W4412597369",
+            "title": "SBCS-Net: Sparse Bayesian and Deep Learning Framework for Compressed Sensing in Sensor Networks",
+            "venue_year": "Sensors 2025",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          }
+        ]
+      },
+      {
+        "pattern_id": "reframe_as_solvable_object",
+        "pattern_name": "Reframe as a Solvable Object",
+        "papers": [
+          {
+            "paper_id": "dblp:journals/corr/abs-2602-13739",
+            "title": "XIT: Exploration and Exploitation Informed Trees for Active Gas Distribution Mapping in Unknown Environments",
+            "venue_year": "arXiv 2026",
+            "bottleneck_targeted": "Active gas mapping must jointly handle unknown-space exploration, informative sampling, and posterior-guided trajectory selection."
+          }
+        ]
+      },
+      {
+        "pattern_id": "structural_prior_encoding",
+        "pattern_name": "Encode Structure by Construction",
+        "papers": [
+          {
+            "paper_id": "semanticscholar:57a422b7c673de29403e11bff3f9efb6ec5d316e",
+            "title": "Multi-Agent Adaptive Super-Resolution Sparse Source Localization For Advection-Diffusion Processes",
+            "venue_year": "IEEE International Workshop on Computational Advances in Multi-Sensor Adaptive Processing 2025",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:c930ca69d5ed8553c0638ebe60205fe9c1845e58",
+            "title": "Physics-Guided Neural Networks for Distributed Sparse Gas Source Localization Using Poisson's Equation and Green's Function Method",
+            "venue_year": "European Signal Processing Conference 2024",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:130922cb120c1b98467c5162fe9c12c01dda78a4",
+            "title": "Deep Learning Based Topography Aware Gas Source Localization with Mobile Robot",
+            "venue_year": "IEEE International Conference on Robotics and Automation 2025",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:875dd460644da338883d1671ff27af05648ced4c",
+            "title": "Source Localization of the Chemical Gas Dispersion Using Recursive Tracking With Transformer",
+            "venue_year": "IEEE Access 2024",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:dbdaa64ee47744e41610ae8b5f2b4db67a2ec39e",
+            "title": "Dual-Input Spatiotemporal Deep Learning With ConvLSTM-U-Net for Gas Dispersion Prediction From Sparse Mobile Sensor Data",
+            "venue_year": "IEEE Sensors Journal 2026",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:765d6c6af5f9487b09937aa1ddb21225022120b0",
+            "title": "Physics‐informed sparse causal inference for source detection of plant‐wide oscillations",
+            "venue_year": "AIChE Journal 2024",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:897820d2cbde7922162b1b6de78f074dfdee6a40",
+            "title": "Mr.MSTE: Multi-robot Multi-Source Term Estimation with Wind-Aware Coverage Control",
+            "venue_year": "arXiv 2025-12",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:f1312c91d97909e6d83b36c14a5026f10d20bcb7",
+            "title": "Methane Release Rate Estimation Using Model-Based Gas Tomography",
+            "venue_year": "IEEE Sensors Letters 2025",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:c501f7041877eafd9ba7244bf164ecbb33809c87",
+            "title": "Internal Vibration Source Inversion of Gas Insulated Switchgear by Ensemble Kalman Filter - Finite Element Analysis and Particle Swarm Optimization",
+            "venue_year": "IEEE Transactions on Power Delivery 2025",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "semanticscholar:2aa24f55084de9add155abe8a731c933e6441a6b",
+            "title": "Meshless Interpolation-Based Surface Thermography Characterization for Heat Source Detection",
+            "venue_year": "IEEE Sensors Journal 2026",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "openalex:W4409731780",
+            "title": "Response estimation and system identification of dynamical systems via physics-informed neural networks",
+            "venue_year": "Advanced Modeling and Simulation in Engineering Sciences 2025",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "openalex:W4404572481",
+            "title": "Automated seismic event detection considering faulty data interference using deep learning and Bayesian fusion",
+            "venue_year": "Computer-Aided Civil and Infrastructure Engineering 2024",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "openalex:W4412722403",
+            "title": "Graph-Driven Models for Gas Mixture Identification and Concentration Estimation on Heterogeneous Sensor Array Signals",
+            "venue_year": "IEEE Transactions on Instrumentation and Measurement 2025",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "openalex:W4413925238",
+            "title": "Differentiable Composite Neural Signed Distance Fields for Robot Navigation in Dynamic Indoor Environments",
+            "venue_year": "arXiv 2025-05",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          },
+          {
+            "paper_id": "openalex:W4405128505",
+            "title": "iS-MAP: Neural Implicit Mapping and Positioning for Structural Environments",
+            "venue_year": "Lecture notes in computer science 2024",
+            "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+          }
+        ]
+      }
+    ],
+    "phase0_outside_taxonomy": [
+      {
+        "paper_id": "semanticscholar:d9508327fe4d44c54f253a1bbf998ea5b2c66f9e",
+        "title": "Modular UAV-Based System for Low-Cost Air Pollution Monitoring Using Open-Source Microcontrollers and Multi-Gas Sensors",
+        "venue_year": "Inżynieria Mineralna 2025",
+        "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+      },
+      {
+        "paper_id": "openalex:W4410079250",
+        "title": "SSRMF: A sparse spectral reconstruction enhanced matched filter for improving point-source methane emission detection in complex terrain",
+        "venue_year": "ISPRS Journal of Photogrammetry and Remote Sensing 2025",
+        "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+      },
+      {
+        "paper_id": "openalex:W7078159414",
+        "title": "Overcoming selectivity challenges in single gas sensor leveraging temperature modulation and multi-feature fusion",
+        "venue_year": "Chemical Engineering Journal 2025",
+        "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+      },
+      {
+        "paper_id": "openalex:W4403771534",
+        "title": "OccWorld: Learning a 3D Occupancy World Model for Autonomous Driving",
+        "venue_year": "Lecture notes in computer science 2024",
+        "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+      },
+      {
+        "paper_id": "openalex:W4403778905",
+        "title": "Fully Sparse 3D Occupancy Prediction",
+        "venue_year": "Lecture notes in computer science 2024",
+        "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+      },
+      {
+        "paper_id": "openalex:W4408011443",
+        "title": "A novel model and simulation method for multivariate Gaussian fields involving nonlinear probabilistic dependencies and different variable-wise spatial variabilities",
+        "venue_year": "Reliability Engineering & System Safety 2025",
+        "bottleneck_targeted": "Incomplete observations make the target inference or reconstruction difficult."
+      }
+    ],
+    "phase3_collision": [
+      {
+        "paper_id": "openalex:W7165661202",
+        "title": "PEAR: Permutation-Equivariant Adaptive Routing Multi-Agent Debate",
+        "venue_year": "Edinburgh Research Explorer (University of Edinburgh) 2026"
+      },
+      {
+        "paper_id": "openalex:W7129109269",
+        "title": "When Algorithms Meet Ethics: Systematic Evidence of Framing Effects in LLM Organizational Decision-Making",
+        "venue_year": "Preprints.org 2026"
+      },
+      {
+        "paper_id": "openalex:W7126029520",
+        "title": "Framework for Government Policy on Agentic and Generative AI in Healthcare: Governance, Regulation, and Risk Management of Open-Source and Proprietary Models",
+        "venue_year": "International Journal of Innovative Research in Engineering & Management 2026"
+      },
+      {
+        "paper_id": "openalex:W4416944280",
+        "title": "Temperature-Dependent Effects of Induced Hyperthermia, Including Whole-Body Hyperthermia, on the Hallmarks of Cancer: A Systematic Review",
+        "venue_year": "Cancers 2025"
+      },
+      {
+        "paper_id": "openalex:W4391377095",
+        "title": "Is K-fold cross validation the best model selection method for machine learning?",
+        "venue_year": "Information Fusion 2026"
+      },
+      {
+        "paper_id": "openalex:W7116971658",
+        "title": "Omega-3 Source Matters: Comparative Lipid Signatures and Quantitative Distribution of EPA/DHA Across Marine Resources",
+        "venue_year": "Marine Drugs 2025"
+      },
+      {
+        "paper_id": "openalex:W7123758967",
+        "title": "The Mantle Fe3+/ΣFe Ratio Has Doubled Since the Early Archean",
+        "venue_year": "Nature Communications 2026"
+      },
+      {
+        "paper_id": "openalex:W7125700089",
+        "title": "From unsupervised selection of AIMs to likelihood-based BGA inference: Challenges revealed by OpenADMIXTURE and GENOGEOGRAPHER",
+        "venue_year": "Forensic Science International Genetics 2026"
+      },
+      {
+        "paper_id": "openalex:W7158423426",
+        "title": "Quasi-Equivariant Metanetworks",
+        "venue_year": "arXiv (Cornell University) 2026"
+      },
+      {
+        "paper_id": "openalex:W7118917587",
+        "title": "Whole‐Genome Resequencing Reveals the Demographic History and Adaptive Evolution of Tamarix austromongolica in the Yellow River Basin",
+        "venue_year": "Ecology and Evolution 2026"
+      },
+      {
+        "paper_id": "openalex:W7131093567",
+        "title": "What accountants need to know about artificial intelligence and machine learning: a review and call for future research",
+        "venue_year": "Journal of Accounting Literature 2026"
+      },
+      {
+        "paper_id": "openalex:W4416571832",
+        "title": "Whole-genome analysis reveals genetic diversity and selection pressure in Sichuan donkey",
+        "venue_year": "BMC Genomics 2025"
+      },
+      {
+        "paper_id": "openalex:W4386794225",
+        "title": "All you need is spin: SU(2) equivariant variational quantum circuits based on spin networks",
+        "venue_year": "Quantum Science and Technology 2026"
+      },
+      {
+        "paper_id": "openalex:W7124974107",
+        "title": "A Novel Permutation Entropy–Based Method for Assessing the Stability of Seawalls on Soft Soils",
+        "venue_year": "Structural Control and Health Monitoring 2026"
+      },
+      {
+        "paper_id": "openalex:W4416916631",
+        "title": "Emission Performance, Environmental Disclosure, and Firm Value: Evidence from Southeast Asia",
+        "venue_year": "Risks 2025"
+      },
+      {
+        "paper_id": "openalex:W4391272962",
+        "title": "Manifold GCN: Diffusion-based Convolutional Neural Network for Manifold-valued Graphs",
+        "venue_year": "International Journal of Computer Vision 2026"
+      },
+      {
+        "paper_id": "openalex:W2807045837",
+        "title": "The Incidence of Coarse Certification: Evidence From the ENERGY STAR Program",
+        "venue_year": "The RAND Journal of Economics 2026"
+      },
+      {
+        "paper_id": "openalex:W4416792627",
+        "title": "MD&A disclosure and investment efficiency: evidence from Chinese listed firms",
+        "venue_year": "International Journal of Accounting and Information Management 2025"
+      },
+      {
+        "paper_id": "openalex:W4416575010",
+        "title": "A Review of Reservoir Modeling and Optimization Methods based on Graph Neural Networks",
+        "venue_year": "Frontiers in Science and Engineering 2025"
+      },
+      {
+        "paper_id": "openalex:W7117735857",
+        "title": "How Can Digital–Real Integration Affect High-Quality Development of the Regional Economy? Evidence from China",
+        "venue_year": "Sustainability 2025"
+      },
+      {
+        "paper_id": "openalex:W7126029113",
+        "title": "A Hybrid Temporal–Spatial Framework Incorporating Prior Knowledge for Predicting Sparse and Intermittent Item Demand",
+        "venue_year": "Applied Sciences 2026"
+      },
+      {
+        "paper_id": "openalex:W7166875702",
+        "title": "Stable-RAG: Mitigating Retrieval-Permutation-Induced Hallucinations in Retrieval-Augmented Generation",
+        "venue_year": "2026"
+      },
+      {
+        "paper_id": "openalex:W7126028387",
+        "title": "Demographic history of the Jomon people: insights from whole-mitogenome analysis",
+        "venue_year": "Anthropological Science 2026"
+      },
+      {
+        "paper_id": "openalex:W4416767516",
+        "title": "Application of Dynamic-Static Neural Network Model Integrating Physical Constraints in EUR Prediction of Shale Gas Wells",
+        "venue_year": "ACS Omega 2025"
+      },
+      {
+        "paper_id": "openalex:W7106702281",
+        "title": "Agrivoltaic systems: Trade-offs on microclimate, physiology, yield and canopy thermal-spectral maps",
+        "venue_year": "Agricultural Systems 2025"
+      },
+      {
+        "paper_id": "openalex:W4416795922",
+        "title": "Using metagenomics and whole-genome sequencing to characterize enteric pathogens across various sources in Africa",
+        "venue_year": "Nature Communications 2025"
+      },
+      {
+        "paper_id": "openalex:W4417314947",
+        "title": "The technological uniqueness paradox",
+        "venue_year": "Strategic Management Journal 2025"
+      },
+      {
+        "paper_id": "openalex:W7169474205",
+        "title": "Positional Attention-based Graph Neural Network for Learning Permutation Non-equivariant Wireless Policies",
+        "venue_year": "arXiv (Cornell University) 2026"
+      },
+      {
+        "paper_id": "openalex:W7141686035",
+        "title": "Designing implicit population learners: a permutation-equivariant state space approach for brain disease diagnosis",
+        "venue_year": "Frontiers in Computational Neuroscience 2026"
+      },
+      {
+        "paper_id": "openalex:W7154936861",
+        "title": "Belief Dispersion and Entrepreneurial Entry",
+        "venue_year": "National Bureau of Economic Research 2026"
+      },
+      {
+        "paper_id": "openalex:W7131235394",
+        "title": "Assessing Flood Susceptibility Using a Data-Driven, GIS-Based Frequency Ratio Model",
+        "venue_year": "Atmosphere 2026"
+      },
+      {
+        "paper_id": "openalex:W4416663103",
+        "title": "Profiling the genomic landscape and evolutionary history of polyploid giant cancer cells in undifferentiated pleomorphic sarcomas",
+        "venue_year": "Cancer Letters 2025"
+      },
+      {
+        "paper_id": "openalex:W7128732072",
+        "title": "A hybrid adaptive trading strategy integrating investor sentiment for precious metal ETFs",
+        "venue_year": "Financial Innovation 2026"
+      },
+      {
+        "paper_id": "openalex:W4416736371",
+        "title": "Contrastive learning-based multi-mechanism disentangled assessment for drug-drug interaction",
+        "venue_year": "BMC Bioinformatics 2025"
+      },
+      {
+        "paper_id": "openalex:W7133364588",
+        "title": "Symbol-Equivariant Recurrent Reasoning Models",
+        "venue_year": "arXiv (Cornell University) 2026"
+      },
+      {
+        "paper_id": "openalex:W7133947181",
+        "title": "The Changing Natural History of Anisometropia: A Scoping Review",
+        "venue_year": "Ophthalmic and Physiological Optics 2026"
+      },
+      {
+        "paper_id": "openalex:W4360891722",
+        "title": "Complete Invariants of Atomic Clouds under Rigid Motion with Lipschitz Continuous Metrics in a Polynomial Time",
+        "venue_year": "match Communications in Mathematical and in Computer Chemistry 2026"
+      },
+      {
+        "paper_id": "openalex:W7139036897",
+        "title": "Whole‐Genome Sequence Profiling of Listeria innocua From Different Sources: Implications for Public Health",
+        "venue_year": "MicrobiologyOpen 2026"
+      },
+      {
+        "paper_id": "openalex:W7120145095",
+        "title": "Interannual Variability in Greenhouse Gas Emissions Challenges Post‐Restoration Net Sink Predictions in California Delta Wetlands",
+        "venue_year": "Global Change Biology 2026"
+      },
+      {
+        "paper_id": "openalex:W4416409508",
+        "title": "Fast and Easy Whole-Brain Network Model Parameter Estimation with Automatic Differentiation",
+        "venue_year": "bioRxiv (Cold Spring Harbor Laboratory) 2025"
+      },
+      {
+        "paper_id": "openalex:W7159933806",
+        "title": "PDSL: Propagation Dynamics Aware Framework for Source Localization",
+        "venue_year": "IEEE Transactions on Network Science and Engineering 2026"
+      },
+      {
+        "paper_id": "openalex:W7162818396",
+        "title": "On the Equivariant Learning of the $Q$-tensor Order Parameter",
+        "venue_year": "arXiv (Cornell University) 2026"
+      },
+      {
+        "paper_id": "openalex:W7155539710",
+        "title": "Plasticity of source-sink dynamics contributes to wheat yield stability",
+        "venue_year": "Nature Communications 2026"
+      },
+      {
+        "paper_id": "openalex:W4416331468",
+        "title": "Sparse outlier-robust PCA for multi-source data",
+        "venue_year": "Statistics and Computing 2025"
+      },
+      {
+        "paper_id": "openalex:W7118192065",
+        "title": "Autonomous Gas Leak Detection in Hazardous Environments Using Gradient-Guided Depth-First Search Algorithm",
+        "venue_year": "Automation 2026"
+      },
+      {
+        "paper_id": "openalex:W7154374437",
+        "title": "Aesthetic modular source and carbon potential as mathematical foundations for architectural AIGC design",
+        "venue_year": "Humanities and Social Sciences Communications 2026"
+      },
+      {
+        "paper_id": "openalex:W4416333641",
+        "title": "Blue-eared Hedgehog Optimization (BEHO): A Nature-inspired Metaheuristic for Robust and Efficient Global Optimization",
+        "venue_year": "International journal of intelligent engineering and systems 2025"
+      },
+      {
+        "paper_id": "openalex:W7140304018",
+        "title": "Genomic history of early dogs in Europe",
+        "venue_year": "Nature 2026"
+      },
+      {
+        "paper_id": "openalex:W4417411697",
+        "title": "Multi-sensor observer-based residual learning with Auto-Permutation Feature Importance for fault diagnosis of multistage centrifugal pumps under variable pressures",
+        "venue_year": "Scientific Reports 2025"
+      },
+      {
+        "paper_id": "openalex:W4387272104",
+        "title": "Mergers, Foreign Competition, and Jobs: Evidence from the US Appliance Industry",
+        "venue_year": "American Economic Review 2026"
+      },
+      {
+        "paper_id": "openalex:W4417456682",
+        "title": "The Evolution of Gas Sensors Into Neuromorphic Systems",
+        "venue_year": "Advanced Electronic Materials 2025"
+      },
+      {
+        "paper_id": "openalex:W4416597208",
+        "title": "An in-depth review on tannin sources, extraction methods, and industrial applications",
+        "venue_year": "Discover Food 2025"
+      },
+      {
+        "paper_id": "openalex:W7140088223",
+        "title": "Archaeogenetic insights into the demographic history of Late Neanderthals",
+        "venue_year": "Proceedings of the National Academy of Sciences 2026"
+      },
+      {
+        "paper_id": "openalex:W7131625885",
+        "title": "A survey of image encryption schemes: Arnold transformation, chaos, bit-plane extraction and permutation based algorithms",
+        "venue_year": "Multimedia Tools and Applications 2026"
+      },
+      {
+        "paper_id": "openalex:W7212032727",
+        "title": "Hyperion as a Strategic-Materials Platform: Gain, Tritium Breeding, He-3 Co-Production, and 14 MeV Neutron Output from a Compact Spherical-Tokamak",
+        "venue_year": "Zenodo (CERN European Organization for Nuclear Research) 2026"
+      },
+      {
+        "paper_id": "openalex:W7133300256",
+        "title": "Alpha frequency shapes perceptual sensitivity by modulating optimal phase likelihood",
+        "venue_year": "Nature Communications 2026"
+      },
+      {
+        "paper_id": "openalex:W4417344542",
+        "title": "A Review on Recent Processing and Bioprocessing Developments in Alternative Proteins: Sources, Modification Methods, Economic Feasibility, and Future Challenges",
+        "venue_year": "Food and Bioprocess Technology 2025"
+      },
+      {
+        "paper_id": "openalex:W7118191190",
+        "title": "Statistical CSI-Based Distributed Precoding Design for OFDM-Cooperative Multi-Satellite Systems",
+        "venue_year": "IEEE Journal on Selected Areas in Communications 2026"
+      },
+      {
+        "paper_id": "openalex:W4417423865",
+        "title": "The mantle source of REE-rich alkaline silicate magmas can be enriched by continent-derived sediment subduction",
+        "venue_year": "Nature Communications 2025"
+      },
+      {
+        "paper_id": "openalex:W7160133852",
+        "title": "ShadowVIMP: permutation-based multiple testing-controlled variable selection",
+        "venue_year": "BMC Bioinformatics 2026"
+      },
+      {
+        "paper_id": "openalex:W7139940227",
+        "title": "Patent regime shift and firm innovation strategy: Evidence from the Second Amendment to China's Patent Law",
+        "venue_year": "Strategic Management Journal 2026"
+      },
+      {
+        "paper_id": "openalex:W4416321844",
+        "title": "Quantifying the Scaling Effects of Urban Green Infrastructure on Air Quality and Greenhouse Gas Dynamics: Insights from a Multi-Site Evaluation in Athens, Greece",
+        "venue_year": "Sustainability 2025"
+      },
+      {
+        "paper_id": "openalex:W7138837843",
+        "title": "Real-world clinical utility of tumor whole-genome sequencing in solid cancers",
+        "venue_year": "Nature Medicine 2026"
+      },
+      {
+        "paper_id": "openalex:W7162681529",
+        "title": "FLOWR: flow matching for structure-aware de novo, interaction- and fragment-based ligand generation",
+        "venue_year": "Nature Computational Science 2026"
+      },
+      {
+        "paper_id": "openalex:W4416946679",
+        "title": "Board gender diversity and ESG performance with evidence on sustainability committees",
+        "venue_year": "Research Square 2025"
+      },
+      {
+        "paper_id": "openalex:W7152996831",
+        "title": "Mixed-Effects XGBoost with Group-Aware Permutation Importance and Cross-Validation for Multilevel Cross-Classified Continuous Outcomes",
+        "venue_year": "Psychometrika 2026"
+      },
+      {
+        "paper_id": "openalex:W7155183593",
+        "title": "Fourier Ambiguity Resolution for Carrier-Phase GNSS",
+        "venue_year": "Applied Sciences 2026"
+      },
+      {
+        "paper_id": "openalex:W4395471477",
+        "title": "Do Political Connections Pay for Pledging of Shares: Evidence from India",
+        "venue_year": "American Business Review 2026"
+      },
+      {
+        "paper_id": "openalex:W2884519667",
+        "title": "John Bolton and the nature of discrete radio sources",
+        "venue_year": "2026"
+      },
+      {
+        "paper_id": "openalex:W7123610745",
+        "title": "The Effect of eWOM Sources on Purchase Intention: The Moderating Role of Gender",
+        "venue_year": "Journal of theoretical and applied electronic commerce research 2026"
+      },
+      {
+        "paper_id": "openalex:W7138035210",
+        "title": "Revisiting the Canonicalization for Fast and Accurate Crystal Tensor Property Prediction",
+        "venue_year": "Proceedings of the AAAI Conference on Artificial Intelligence 2026"
+      },
+      {
+        "paper_id": "openalex:W7127179770",
+        "title": "Stock Liquidity and Social Media Analyst Coverage: Evidence from Tick Size Pilot Program",
+        "venue_year": "Journal of risk and financial management 2026"
+      },
+      {
+        "paper_id": "openalex:W7128585789",
+        "title": "Hybrid multiscale forecasting of SRU sulfur gas concentrations using VMD CEEMDAN and optimized PatchTST",
+        "venue_year": "iScience 2026"
+      },
+      {
+        "paper_id": "openalex:W4416351878",
+        "title": "Whole genome sequencing of the pulmonary microbiome in interstitial lung disease subtypes",
+        "venue_year": "Respiratory Research 2025"
+      },
+      {
+        "paper_id": "openalex:W7128775705",
+        "title": "The neural basis of cost-benefit trade-offs in effort investment: a quantitative activation likelihood estimation meta-analysis",
+        "venue_year": "Cognitive Affective & Behavioral Neuroscience 2026"
+      },
+      {
+        "paper_id": "openalex:W7125333538",
+        "title": "An Environmental History of Knowledge and Politics",
+        "venue_year": "Central European University Press eBooks 2026"
+      },
+      {
+        "paper_id": "openalex:W4416808855",
+        "title": "Ovo, an open-source ecosystem for de novo protein design",
+        "venue_year": "Communications Biology 2026"
+      },
+      {
+        "paper_id": "openalex:W7127121743",
+        "title": "Non-Neural Sources Systematically Impact Aperiodic EEG Activity",
+        "venue_year": "bioRxiv (Cold Spring Harbor Laboratory) 2026"
+      },
+      {
+        "paper_id": "openalex:W7119193896",
+        "title": "How to grow new applications out of old research? Evidence from firm cumulative investments in deep learning",
+        "venue_year": "Strategic Management Journal 2026"
+      },
+      {
+        "paper_id": "openalex:W4417443950",
+        "title": "HiCORE: Enhancing consumer intent prediction via hybrid attention and contrastive learning in sequential recommendation",
+        "venue_year": "Expert Systems with Applications 2025"
+      },
+      {
+        "paper_id": "openalex:W4416721090",
+        "title": "Harmonizing Human Touch and AI Precision in Customer Service",
+        "venue_year": "Journal of Service Research 2025"
+      },
+      {
+        "paper_id": "openalex:W7165148805",
+        "title": "Sparse identification of effective microparticle interaction potential in dusty plasma from simulation data",
+        "venue_year": "Physics of Plasmas 2026"
+      },
+      {
+        "paper_id": "openalex:W7130843130",
+        "title": "A Practical Roadmap for Clinical Translation of Metabolic Biomarkers: A Review",
+        "venue_year": "International Journal of Molecular Sciences 2026"
+      },
+      {
+        "paper_id": "openalex:W7160985213",
+        "title": "Uncertainty-aware temperature field reconstruction from sparse samples and sensing via latent-space enhancement for GIS digital twin applications",
+        "venue_year": "Scientific Reports 2026"
+      },
+      {
+        "paper_id": "openalex:W7128218969",
+        "title": "Lifespan development of EEG alpha and aperiodic component sources is shaped by the connectome and axonal delays",
+        "venue_year": "National Science Review 2026"
+      },
+      {
+        "paper_id": "openalex:W7138257873",
+        "title": "From sound to source: Human and model recognition of environmental sounds",
+        "venue_year": "bioRxiv (Cold Spring Harbor Laboratory) 2026"
+      },
+      {
+        "paper_id": "openalex:W7118404505",
+        "title": "Domain-adaptive faster R-CNN for non-PPE identification on construction sites from body-worn and general images",
+        "venue_year": "Scientific Reports 2026"
+      },
+      {
+        "paper_id": "openalex:W4416765774",
+        "title": "Do Environmental Certifications Pay? A Bibliometric and Systematic Review of Environmental Management Systems and Eco‐Label Impacts",
+        "venue_year": "Business Strategy and the Environment 2025"
+      },
+      {
+        "paper_id": "openalex:W4416530915",
+        "title": "Spatiotemporal dynamics of local transport greenhouse gases using mobile phone data: A framework for emissions estimation, allocation, and determinants identification",
+        "venue_year": "Journal of Transport Geography 2025"
+      },
+      {
+        "paper_id": "openalex:W4417360183",
+        "title": "Development of an automated transformer-based text analysis framework for monitoring fire door defects in buildings",
+        "venue_year": "Scientific Reports 2025"
+      },
+      {
+        "paper_id": "openalex:W7128778858",
+        "title": "Comparation of Graph Neural Networks and Traditional Machine Learning for Property Prediction in All-Inorganic Perovskite Materials",
+        "venue_year": "Inorganics 2026"
+      },
+      {
+        "paper_id": "openalex:W7172494794",
+        "title": "Carbon Nanotube-Based Gas Sensors: Sensing Mechanisms, Functional Interfaces, Gas-Specific Performance, and Flexible/Wearable Integration",
+        "venue_year": "Sensors 2026"
+      },
+      {
+        "paper_id": "openalex:W4409788177",
+        "title": "Private firms and the economic role of accounting: A review of empirical research",
+        "venue_year": "Journal of Accounting and Economics 2026"
+      },
+      {
+        "paper_id": "openalex:W7124133639",
+        "title": "Beyond the Lungs: Cardiovascular Risk in COPD Patients with a History of Tuberculosis—A Narrative Review",
+        "venue_year": "Journal of Clinical Medicine 2026"
+      },
+      {
+        "paper_id": "openalex:W7127437551",
+        "title": "Region-resolved proteomic map of the human brain: functional interconnections and neurological implications",
+        "venue_year": "Signal Transduction and Targeted Therapy 2026"
+      },
+      {
+        "paper_id": "openalex:W7128780328",
+        "title": "Assessing Proxy-Based Grassland Gross Primary Productivity Using Machine Learning Approaches and Multi-Source Remote Sensing",
+        "venue_year": "Sustainability 2026"
+      },
+      {
+        "paper_id": "openalex:W4416934759",
+        "title": "Accelerating multijet-merged event generation with neural network matrix element surrogates",
+        "venue_year": "SciPost Physics 2026"
+      },
+      {
+        "paper_id": "openalex:W4287887621",
+        "title": "The Cost of Intermediary Market Power for Distressed Borrowers",
+        "venue_year": "National Bureau of Economic Research 2026"
+      },
+      {
+        "paper_id": "openalex:W7129410120",
+        "title": "Compounded effects on wetland greenhouse gas fluxes from climate change and water management along a saline to freshwater gradient",
+        "venue_year": "Proceedings of the National Academy of Sciences 2026"
+      },
+      {
+        "paper_id": "openalex:W7164235043",
+        "title": "The homotopy groups of the equivariant automorphism group of Kirchberg algebras with compact group actions and equivariant Dadarlat-Pennig theory",
+        "venue_year": "arXiv (Cornell University) 2026"
+      },
+      {
+        "paper_id": "openalex:W7110022402",
+        "title": "Convergence of Corporate Digital Innovation: Herding Behavior or Peer Effects?",
+        "venue_year": "Journal of theoretical and applied electronic commerce research 2025"
+      },
+      {
+        "paper_id": "openalex:W7126064346",
+        "title": "Anti‐Jamming Satellite Communication Based on Blind Source Separation: Problems and Challenges",
+        "venue_year": "International Journal of Satellite Communications and Networking 2026"
+      },
+      {
+        "paper_id": "openalex:W7108321963",
+        "title": "Review of Memristors for In‐Memory Computing and Spiking Neural Networks",
+        "venue_year": "Advanced Intelligent Systems 2025"
+      },
+      {
+        "paper_id": "openalex:W7125208734",
+        "title": "Non-destructive acrylamide quantification in whole-grain bread using RGB-thermal images",
+        "venue_year": "European Food Research and Technology 2026"
+      },
+      {
+        "paper_id": "openalex:W4319229158",
+        "title": "Adaptation of the tuning parameter in general Bayesian inference with robust divergence",
+        "venue_year": "Statistics and Computing 2023"
+      },
+      {
+        "paper_id": "openalex:W4401401205",
+        "title": "Kilonova Spectral Inverse Modelling with Simulation-based Inference: An Amortized Neural Posterior Estimation Analysis",
+        "venue_year": "The Astrophysical Journal 2024"
+      },
+      {
+        "paper_id": "openalex:W4404282898",
+        "title": "Neural Methods for Amortized Inference",
+        "venue_year": "Annual Review of Statistics and Its Application 2024"
+      },
+      {
+        "paper_id": "openalex:W4362464986",
+        "title": "Amortized Bayesian inference on generative dynamical network models of epilepsy using deep neural density estimators",
+        "venue_year": "Neural Networks 2023"
+      },
+      {
+        "paper_id": "openalex:W4390548146",
+        "title": "Evidence Networks: simple losses for fast, amortized, neural Bayesian model comparison",
+        "venue_year": "Machine Learning Science and Technology 2024"
+      },
+      {
+        "paper_id": "semanticscholar:d2eefda1f4053fe105bce9932a518606b656d476",
+        "title": "Calibrated Uncertainty Estimation for Soil Organic Carbon from Raman Spectra",
+        "venue_year": "Analytical Chemistry 2025"
+      },
+      {
+        "paper_id": "openalex:W4323568501",
+        "title": "Neural posterior estimation for exoplanetary atmospheric retrieval",
+        "venue_year": "Astronomy and Astrophysics 2023"
+      },
+      {
+        "paper_id": "openalex:W4386965882",
+        "title": "BayesFlow: Amortized Bayesian Workflows With Neural Networks",
+        "venue_year": "The Journal of Open Source Software 2023"
+      },
+      {
+        "paper_id": "openalex:W4313366973",
+        "title": "SICRET: Supernova Ia Cosmology with truncated marginal neural Ratio EsTimation",
+        "venue_year": "Monthly Notices of the Royal Astronomical Society 2022"
+      },
+      {
+        "paper_id": "openalex:W4400519975",
+        "title": "Simulation-based inference on virtual brain models of disorders",
+        "venue_year": "Machine Learning Science and Technology 2024"
+      },
+      {
+        "paper_id": "semanticscholar:679343d0f818db6739c1aa8fa003de6d6048a626",
+        "title": "Design-marginal calibration of Gaussian process predictive distributions: Bayesian and conformal approaches",
+        "venue_year": "arXiv 2025"
+      },
+      {
+        "paper_id": "openalex:W4306311938",
+        "title": "Fast Estimation of Bayesian State Space Models Using Amortized Simulation-Based Inference",
+        "venue_year": "arXiv (Cornell University) 2022"
+      },
+      {
+        "paper_id": "openalex:W4411020658",
+        "title": "Amortized template matching of molecular conformations from cryoelectron microscopy images using simulation-based inference",
+        "venue_year": "Proceedings of the National Academy of Sciences 2025"
+      },
+      {
+        "paper_id": "openalex:W4353028638",
+        "title": "Eryn: a multipurpose sampler for Bayesian inference",
+        "venue_year": "Monthly Notices of the Royal Astronomical Society 2023"
+      },
+      {
+        "paper_id": "openalex:W4366825558",
+        "title": "Target-aware Bayesian inference via generalized thermodynamic integration",
+        "venue_year": "Computational Statistics 2023"
+      },
+      {
+        "paper_id": "openalex:W4400945070",
+        "title": "Amortized template-matching of molecular conformations from cryo-electron microscopy images using simulation-based inference",
+        "venue_year": "bioRxiv (Cold Spring Harbor Laboratory) 2024"
+      },
+      {
+        "paper_id": "openalex:W4395078733",
+        "title": "All thresholds barred: direct estimation of call density in bioacoustic data",
+        "venue_year": "Frontiers in Bird Science 2024"
+      },
+      {
+        "paper_id": "openalex:W4387799659",
+        "title": "Sensitivity-Aware Amortized Bayesian Inference",
+        "venue_year": "arXiv (Cornell University) 2023"
+      },
+      {
+        "paper_id": "openalex:W4391952441",
+        "title": "Learning likelihood ratios with neural network classifiers",
+        "venue_year": "Journal of High Energy Physics 2024"
+      },
+      {
+        "paper_id": "openalex:W4394867612",
+        "title": "All-in-one simulation-based inference",
+        "venue_year": "arXiv (Cornell University) 2024"
+      },
+      {
+        "paper_id": "openalex:W4321352730",
+        "title": "Sequential multilevel assimilation of inverted seismic data",
+        "venue_year": "Computational Geosciences 2023"
+      },
+      {
+        "paper_id": "openalex:W4375852289",
+        "title": "Conformal Quantitative Predictive Monitoring of STL Requirements for Stochastic Processes",
+        "venue_year": "2023"
+      },
+      {
+        "paper_id": "semanticscholar:627771df1e6a663531b69e4d04711465d085ac8f",
+        "title": "Conformal Bayes for Two-Sided Censored Gaussian Regression under Label Shift",
+        "venue_year": "2026"
+      },
+      {
+        "paper_id": "openalex:W4316039232",
+        "title": "Generalized Geographically Weighted Regression Model within a Modularized Bayesian Framework",
+        "venue_year": "Bayesian Analysis 2023"
+      },
+      {
+        "paper_id": "openalex:W4380490520",
+        "title": "Conformal prediction beyond exchangeability",
+        "venue_year": "The Annals of Statistics 2023"
+      },
+      {
+        "paper_id": "openalex:W4399728259",
+        "title": "Missing data in amortized simulation-based neural posterior estimation",
+        "venue_year": "PLoS Computational Biology 2024"
+      },
+      {
+        "paper_id": "openalex:W4409261143",
+        "title": "sbi reloaded: a toolkit for simulation-based inference workflows",
+        "venue_year": "The Journal of Open Source Software 2025"
+      },
+      {
+        "paper_id": "openalex:W4386126757",
+        "title": "Bayesian Inference for Misspecified Generative Models",
+        "venue_year": "Annual Review of Statistics and Its Application 2023"
+      },
+      {
+        "paper_id": "openalex:W4367059410",
+        "title": "Neural Importance Sampling for Rapid and Reliable Gravitational-Wave Inference",
+        "venue_year": "Physical Review Letters 2023"
+      },
+      {
+        "paper_id": "openalex:W4411532284",
+        "title": "Beyond conformal predictors: Adaptive Conformal Inference with confidence predictors",
+        "venue_year": "Pattern Recognition 2025"
+      },
+      {
+        "paper_id": "openalex:W4388824620",
+        "title": "Bayesian calibration of viscous anisotropic hydrodynamic simulations of heavy-ion collisions",
+        "venue_year": "Physical Review C 2023"
+      },
+      {
+        "paper_id": "openalex:W4383483148",
+        "title": "Exploring the likelihood of the 21-cm power spectrum with simulation-based inference",
+        "venue_year": "Monthly Notices of the Royal Astronomical Society 2023"
+      },
+      {
+        "paper_id": "openalex:W4412473112",
+        "title": "Uncertainty-Aware Predictive Process Monitoring in Healthcare: Explainable Insights into Probability Calibration for Conformal Prediction",
+        "venue_year": "Applied Sciences 2025"
+      },
+      {
+        "paper_id": "semanticscholar:daef53f3f372e6e4d4419e09bc855d948f3c7623",
+        "title": "In-sample calibration yields conformal calibration guarantees",
+        "venue_year": "2025"
+      },
+      {
+        "paper_id": "semanticscholar:b00abefe4e495f905a94888f8c7632ac0e3d133c",
+        "title": "Another Fit Bites the Dust: Conformal Prediction as a Calibration Standard for Machine Learning in High-Energy Physics",
+        "venue_year": "arXiv 2025"
+      },
+      {
+        "paper_id": "semanticscholar:065829d01b55406a3e78842df19d4a95e04e5cfa",
+        "title": "Conformal Bayes under Label Shift: Post-Hoc Calibration vs. In-Training Adaptation",
+        "venue_year": "arXiv 2026"
+      },
+      {
+        "paper_id": "semanticscholar:ab969794c6f325b08758f5eb5f1d42d8485a977e",
+        "title": "Event-Graph Neural Survival Model with Conformal Intervals for Predictive Maintenance in Industrial IoT",
+        "venue_year": "Scientia. Technology, Science and Society 2026"
+      },
+      {
+        "paper_id": "semanticscholar:1fd5a41f562f9335233f845c797596139d1034bc",
+        "title": "Conformal Prediction for Image Segmentation Using Morphological Prediction Sets",
+        "venue_year": "International Conference on Medical Image Computing and Computer-Assisted Intervention 2025"
+      },
+      {
+        "paper_id": "semanticscholar:10e7a192a264282dd0da84e264458b3d1b6a9533",
+        "title": "Self-Calibrating Conformal Prediction",
+        "venue_year": "Neural Information Processing Systems 2024"
+      },
+      {
+        "paper_id": "semanticscholar:57468440a9c19c2777f12c9b51bcce90898eb07e",
+        "title": "CAP: A General Algorithm for Online Selective Conformal Prediction with FCR Control",
+        "venue_year": "arXiv 2024"
+      },
+      {
+        "paper_id": "semanticscholar:55bf76b08596632ecb4f8da1c1aa7d0e58dd4cea",
+        "title": "Beyond conformal predictors: Adaptive Conformal Inference with confidence predictors",
+        "venue_year": "Pattern Recognition 2024"
+      },
+      {
+        "paper_id": "semanticscholar:d21073ccf0fd08e0c0b0e079375a8a22cbe6a2c7",
+        "title": "Unsupervised Defect Detection in Industrial Images with Conformal Anomaly Detection and VAEs",
+        "venue_year": "e-Journal of Nondestructive Testing 2026"
+      },
+      {
+        "paper_id": "semanticscholar:ea1eb185b6d39bb4a0390bf13352a69f17a0a503",
+        "title": "Replicable Conformal Prediction",
+        "venue_year": "2026"
+      },
+      {
+        "paper_id": "semanticscholar:fdca89378d480abd01e57f6beb5a4f2b34903c6a",
+        "title": "Anytime-Valid Distribution Shift Detection via Predictive Rank Martingales",
+        "venue_year": "2026"
+      },
+      {
+        "paper_id": "semanticscholar:5e7707e2133d965ff48718ecf9ce61b19c65b570",
+        "title": "On the Out-of-Distribution Coverage of Combining Split Conformal Prediction and Bayesian Deep Learning",
+        "venue_year": "Trans. Mach. Learn. Res. 2023"
+      },
+      {
+        "paper_id": "semanticscholar:60e5354b2e6ea72d7818fb5d6f66f592fec1ba80",
+        "title": "A multi-stage stacking framework for accurate and interpretable life expectancy modeling",
+        "venue_year": "PLoS ONE 2026"
+      },
+      {
+        "paper_id": "semanticscholar:4c6177bdc69565a86287044cbc8a67e10c5fb0be",
+        "title": "Conformalized Multiple Testing after Data-dependent Selection",
+        "venue_year": "Neural Information Processing Systems 2024"
+      },
+      {
+        "paper_id": "semanticscholar:03801e87a2bdc5f38e7aa4b2c759a56db685d333",
+        "title": "A Robust Conformal Framework for IoT-Based Predictive Maintenance",
+        "venue_year": "Future Internet 2025"
+      },
+      {
+        "paper_id": "openalex:W4391835486",
+        "title": "Adaptive tempered reversible jump algorithm for Bayesian curve fitting",
+        "venue_year": "Inverse Problems 2024"
+      },
+      {
+        "paper_id": "openalex:W4387917715",
+        "title": "Few-Shot Calibration of Set Predictors via Meta-Learned Cross-Validation-Based Conformal Prediction",
+        "venue_year": "IEEE Transactions on Pattern Analysis and Machine Intelligence 2023"
+      },
+      {
+        "paper_id": "openalex:W4313491321",
+        "title": "The Multiple Snow Data Assimilation System (MuSA v1.0)",
+        "venue_year": "Geoscientific model development 2022"
+      },
+      {
+        "paper_id": "openalex:W4392896772",
+        "title": "A review of predictive uncertainty estimation with machine learning",
+        "venue_year": "Artificial Intelligence Review 2024"
+      },
+      {
+        "paper_id": "openalex:W4366588606",
+        "title": "Amortized Inference with User Simulations",
+        "venue_year": "2023"
+      },
+      {
+        "paper_id": "openalex:W4313646755",
+        "title": "A Multi‐Model Ensemble Kalman Filter for Data Assimilation and Forecasting",
+        "venue_year": "Journal of Advances in Modeling Earth Systems 2023"
+      },
+      {
+        "paper_id": "openalex:W2966361766",
+        "title": "Additive Bayesian Variable Selection under Censoring and Misspecification",
+        "venue_year": "Statistical Science 2022"
+      },
+      {
+        "paper_id": "openalex:W4401911403",
+        "title": "Remote Sensing Data Assimilation in Crop Growth Modeling from an Agricultural Perspective: New Insights on Challenges and Prospects",
+        "venue_year": "Agronomy 2024"
+      },
+      {
+        "paper_id": "openalex:W4387663093",
+        "title": "Amortized Variational Inference: A Systematic Review",
+        "venue_year": "Journal of Artificial Intelligence Research 2023"
+      },
+      {
+        "paper_id": "openalex:W4391021526",
+        "title": "Multi-Agent Reachability Calibration with Conformal Prediction",
+        "venue_year": "2023"
+      },
+      {
+        "paper_id": "openalex:W4391127018",
+        "title": "Amortized simulation-based frequentist inference for tractable and intractable likelihoods",
+        "venue_year": "Machine Learning Science and Technology 2024"
+      },
+      {
+        "paper_id": "openalex:W4323312936",
+        "title": "LCDnet: a lightweight crowd density estimation model for real-time video surveillance",
+        "venue_year": "Journal of Real-Time Image Processing 2023"
+      },
+      {
+        "paper_id": "openalex:W4387820074",
+        "title": "HMCLab: a framework for solving diverse geophysical inverse problems using the Hamiltonian Monte Carlo method",
+        "venue_year": "Geophysical Journal International 2023"
+      },
+      {
+        "paper_id": "openalex:W4388949007",
+        "title": "Augmented state estimation of urban settings using on-the-fly sequential Data Assimilation",
+        "venue_year": "Computers & Fluids 2023"
+      },
+      {
+        "paper_id": "openalex:W4311934114",
+        "title": "Predicting Endocrine Disruption Using Conformal Prediction – A Prioritization Strategy to Identify Hazardous Chemicals with Confidence",
+        "venue_year": "Chemical Research in Toxicology 2022"
+      },
+      {
+        "paper_id": "openalex:W4413804012",
+        "title": "2025 Focused Update of the 2019 ESC/EAS Guidelines for the management of dyslipidaemias",
+        "venue_year": "European Heart Journal 2025"
+      },
+      {
+        "paper_id": "openalex:W4310427552",
+        "title": "CaloMan: Fast generation of calorimeter showers with density estimation on learned manifolds",
+        "venue_year": "arXiv (Cornell University) 2022"
+      },
+      {
+        "paper_id": "openalex:W4387221896",
+        "title": "A Primer on Bayesian Neural Networks: Review and Debates",
+        "venue_year": "Statistical Science 2026"
+      },
+      {
+        "paper_id": "openalex:W4410548472",
+        "title": "Conformal Prediction: A Data Perspective",
+        "venue_year": "ACM Computing Surveys 2025"
+      },
+      {
+        "paper_id": "openalex:W4311958230",
+        "title": "Inferring surface energy fluxes using drone data assimilation in large eddy simulations",
+        "venue_year": "Atmospheric measurement techniques 2022"
+      },
+      {
+        "paper_id": "openalex:W4381561613",
+        "title": "Score-based Data Assimilation",
+        "venue_year": "arXiv (Cornell University) 2023"
+      },
+      {
+        "paper_id": "openalex:W4306704199",
+        "title": "Amortized Inference for Heterogeneous Reconstruction in Cryo-EM",
+        "venue_year": "arXiv (Cornell University) 2022"
+      },
+      {
+        "paper_id": "openalex:W4304731997",
+        "title": "Truncated proposals for scalable and hassle-free simulation-based inference",
+        "venue_year": "arXiv (Cornell University) 2022"
+      },
+      {
+        "paper_id": "openalex:W4385873696",
+        "title": "Neural posterior estimation with guaranteed exact coverage: The ringdown of GW150914",
+        "venue_year": "Physical review. D/Physical review. D. 2023"
+      },
+      {
+        "paper_id": "openalex:W4281967986",
+        "title": "Equation‐Free Surrogate Modeling of Geophysical Flows at the Intersection of Machine Learning and Data Assimilation",
+        "venue_year": "Journal of Advances in Modeling Earth Systems 2022"
+      },
+      {
+        "paper_id": "openalex:W4390948776",
+        "title": "First application of data assimilation-based control to fusion plasma",
+        "venue_year": "Scientific Reports 2024"
+      },
+      {
+        "paper_id": "openalex:W4399872966",
+        "title": "Generalized Bayesian MARS: Tools for Stochastic Computer Model Emulation",
+        "venue_year": "SIAM/ASA Journal on Uncertainty Quantification 2024"
+      },
+      {
+        "paper_id": "semanticscholar:4455895831c38251b8b492367462078e8c9e8fb0",
+        "title": "Beyond Uncertainty Sets: Leveraging Optimal Transport to Extend Conformal Predictive Distribution to Multivariate Settings",
+        "venue_year": "arXiv 2025"
+      },
+      {
+        "paper_id": "semanticscholar:77e020a99e22d35be022b3f026b0375c31a25b59",
+        "title": "Volume-Sorted Prediction Set: Efficient Conformal Prediction for Multi-Target Regression",
+        "venue_year": "arXiv 2025"
+      },
+      {
+        "paper_id": "semanticscholar:cb3a09237dea7d31920cad0aeb4f7a183fb58d02",
+        "title": "Conformal Distributionally-Robust Model Predictive Control with a Budgeted Multi-Step Barrier",
+        "venue_year": "2025 IEEE 4th Industrial Electronics Society Annual On-Line Conference (ONCON) 2025"
+      },
+      {
+        "paper_id": "semanticscholar:8574fc76cae61f6949b5db749117fb1b81a46540",
+        "title": "Shape-Adaptive Conditional Calibration for Conformal Prediction via Minimax Optimization",
+        "venue_year": "2026"
+      },
+      {
+        "paper_id": "semanticscholar:e91560fb07f88c081b1deddc064d27b9389549dd",
+        "title": "Loss-Controlling Calibration for Predictive Models",
+        "venue_year": "arXiv 2023"
+      },
+      {
+        "paper_id": "semanticscholar:66ad9efacbd145325745b85a306724499066e0c5",
+        "title": "Conformal Prediction for Privacy-Preserving Machine Learning",
+        "venue_year": "arXiv 2025"
+      },
+      {
+        "paper_id": "semanticscholar:866537368787c5bda3d989b5f334d0e8f08bf1e2",
+        "title": "Residual distribution predictive systems.",
+        "venue_year": "Philosophical transactions. Series A, Mathematical, physical, and engineering sciences 2025"
+      },
+      {
+        "paper_id": "semanticscholar:ec172a1e3263dc168f051ffac79c7f75bddfecbc",
+        "title": "Enhancing Short-Term Wind Energy Forecasting with XGBoost and Conformal Prediction for Robust Uncertainty Quantification",
+        "venue_year": "De Computis 2026"
+      },
+      {
+        "paper_id": "semanticscholar:0a963c4b904c8cff255a139b0548b0395d351c51",
+        "title": "Surrogate model approach for efficient conformal prediction approximation",
+        "venue_year": "IISE Annual Conference &amp; Expo 2024 2024"
+      },
+      {
+        "paper_id": "semanticscholar:caf6a59606520e98a3315c17996fd55f208ef529",
+        "title": "Auxiliary Data Enhanced Conformal Prediction",
+        "venue_year": "Random Matrices. Theory and Applications 2026"
+      },
+      {
+        "paper_id": "semanticscholar:2114678a7bd565fe5b555135f196b33b60a71d39",
+        "title": "Finite-Sample Conformal Coverage Recovery via Fusion under Degraded Local Guarantees in Occupancy Map Estimation",
+        "venue_year": "arXiv 2026"
+      },
+      {
+        "paper_id": "semanticscholar:3901a8cebcd6f988f84e01f029e90a3c75884630",
+        "title": "A Model-Risk-Friendly Probability of Default Workflow: Calibration, Distribution-Free Uncertainty Quantification, and SHAP Explanations on the UCI Credit Card Default Dataset",
+        "venue_year": "Journal of Advanced Computing Systems 2024"
+      },
+      {
+        "paper_id": "semanticscholar:5d32e1cfafb638d60b25f850a4167016af36ed98",
+        "title": "Improving Adaptive Conformal Prediction Using Self-Supervised Learning",
+        "venue_year": "International Conference on Artificial Intelligence and Statistics 2023"
+      },
+      {
+        "paper_id": "semanticscholar:d70e54803a34da6d07cc6c430fc6b76dafa915ab",
+        "title": "Distribution-Free Finite-Sample Guarantees and Split Conformal Prediction",
+        "venue_year": "arXiv 2022"
+      },
+      {
+        "paper_id": "semanticscholar:e730785e04b86d5808a3dd82355020f3fb8802e3",
+        "title": "Decision-calibrated prediction sets for robust power system operations",
+        "venue_year": "2026"
+      },
+      {
+        "paper_id": "semanticscholar:2b983972e286290689bb4f5891e808333d11f942",
+        "title": "24 Key brain region identification in obesity prediction with structural MRI and probabilistic uncertainty aware model",
+        "venue_year": "Journal of Clinical and Translational Science 2025"
+      },
+      {
+        "paper_id": "semanticscholar:50e97575ca66c8d071fd22a89611e445a91048c1",
+        "title": "Unified Conformalized Multiple Testing with Full Data Efficiency",
+        "venue_year": "2025"
+      },
+      {
+        "paper_id": "semanticscholar:35d468c9d259c0deba12f2986928542cce365f43",
+        "title": "Cyberattack Detection and Uncertainty Quantification through Additive Affine Log-Distance Cyberattack Scoring (AALD-CS)",
+        "venue_year": "2026 Joint International Conference on Digital Arts, Media and Technology with ECTI Northern Section Conference on Electrical, Electronics, Computer and Telecommunication Engineering (ECTI DAMT & NCON) 2026"
+      },
+      {
+        "paper_id": "semanticscholar:1bb8953f37cb4613548525694ad083b3369c851b",
+        "title": "Multimodal Learning on Low-Quality Data with Conformal Predictive Self-Calibration",
+        "venue_year": "arXiv 2026"
+      },
+      {
+        "paper_id": "semanticscholar:cb959b55382ad2aab1ce7ae6a7bb336cfb9b940f",
+        "title": "Set-Preserving Calibration from Conformal P-Values to E-Values",
+        "venue_year": "arXiv 2026"
+      },
+      {
+        "paper_id": "semanticscholar:9ff5a384b000e86824782cbaa49bf262bf8e3d07",
+        "title": "Conformal Anomaly Detection for Predictive Maintenance in Thermal Power Plants",
+        "venue_year": "IEEE Access 2025"
+      },
+      {
+        "paper_id": "openalex:W4386026724",
+        "title": "Kalman Filter and Its Application in Data Assimilation",
+        "venue_year": "Atmosphere 2023"
+      },
+      {
+        "paper_id": "openalex:W3183048323",
+        "title": "A survey of uncertainty in deep neural networks",
+        "venue_year": "Artificial Intelligence Review 2023"
+      },
+      {
+        "paper_id": "openalex:W4391641610",
+        "title": "Amortized identification of biomolecular conformations in Cryo-EM using simulation-based inference",
+        "venue_year": "Biophysical Journal 2024"
+      },
+      {
+        "paper_id": "openalex:W4391812427",
+        "title": "A Novel Deep Learning Approach for Data Assimilation of Complex Hydrological Systems",
+        "venue_year": "Water Resources Research 2024"
+      },
+      {
+        "paper_id": "openalex:W4382196087",
+        "title": "Class imbalance should not throw you off balance: Choosing the right classifiers and performance metrics for brain decoding with imbalanced data",
+        "venue_year": "NeuroImage 2023"
+      },
+      {
+        "paper_id": "openalex:W4311728648",
+        "title": "Generalised Latent Assimilation in Heterogeneous Reduced Spaces with Machine Learning Surrogate Models",
+        "venue_year": "Journal of Scientific Computing 2022"
+      },
+      {
+        "paper_id": "openalex:W4361009284",
+        "title": "Bayesian cluster analysis",
+        "venue_year": "Philosophical Transactions of the Royal Society A Mathematical Physical and Engineering Sciences 2023"
+      },
+      {
+        "paper_id": "openalex:W4388656403",
+        "title": "Towards optimal doubly robust estimation of heterogeneous causal effects",
+        "venue_year": "Electronic Journal of Statistics 2023"
+      },
+      {
+        "paper_id": "openalex:W4391944190",
+        "title": "Past, Present and Future of Software for Bayesian Inference",
+        "venue_year": "Statistical Science 2024"
+      },
+      {
+        "paper_id": "openalex:W4387010331",
+        "title": "Calibrating AI Models for Wireless Communications via Conformal Prediction",
+        "venue_year": "IEEE Transactions on Machine Learning in Communications and Networking 2023"
+      },
+      {
+        "paper_id": "openalex:W4320921472",
+        "title": "Enable high-resolution, real-time ensemble simulation and data assimilation of flood inundation using distributed GPU parallelization",
+        "venue_year": "Journal of Hydrology 2023"
+      },
+      {
+        "paper_id": "openalex:W4360897377",
+        "title": "Robust Bayesian Learning for Reliable Wireless AI: Framework and Applications",
+        "venue_year": "IEEE Transactions on Cognitive Communications and Networking 2023"
+      },
+      {
+        "paper_id": "openalex:W4311506764",
+        "title": "Estimating diagnostic uncertainty in artificial intelligence assisted pathology using conformal prediction",
+        "venue_year": "Nature Communications 2022"
+      },
+      {
+        "paper_id": "openalex:W4387195417",
+        "title": "Diffusion Models: A Comprehensive Survey of Methods and Applications",
+        "venue_year": "ACM Computing Surveys 2023"
+      },
+      {
+        "paper_id": "openalex:W4317499882",
+        "title": "Gene expression model inference from snapshot RNA data using Bayesian non-parametrics",
+        "venue_year": "Nature Computational Science 2023"
+      },
+      {
+        "paper_id": "openalex:W4392566137",
+        "title": "Detecting Model Misspecification in Amortized Bayesian Inference with Neural Networks",
+        "venue_year": "Lecture notes in computer science 2024"
+      },
+      {
+        "paper_id": "openalex:W4319072625",
+        "title": "Coupling of adjoint-based Markov/CCMT predictive analytics with data assimilation for real-time risk scenario forecasting of industrial digital process control systems",
+        "venue_year": "Process Safety and Environmental Protection 2023"
+      },
+      {
+        "paper_id": "openalex:W4387784188",
+        "title": "Improving Bayesian Model Averaging for Ensemble Flood Modeling Using Multiple Markov Chains Monte Carlo Sampling",
+        "venue_year": "Water Resources Research 2023"
+      },
+      {
+        "paper_id": "openalex:W3118592089",
+        "title": "Bayesian inference in high-dimensional models",
+        "venue_year": "Statistics Surveys 2026"
+      },
+      {
+        "paper_id": "openalex:W4392151733",
+        "title": "Forking Uncertainties: Reliable Prediction and Model Predictive Control With Sequence Models via Conformal Risk Control",
+        "venue_year": "IEEE Journal on Selected Areas in Information Theory 2024"
+      },
+      {
+        "paper_id": "openalex:W2991102372",
+        "title": "Crime in Philadelphia: Bayesian Clustering with Particle Optimization",
+        "venue_year": "Journal of the American Statistical Association 2022"
+      },
+      {
+        "paper_id": "openalex:W4389983528",
+        "title": "Bayesian model selection via mean-field variational approximation",
+        "venue_year": "Journal of the Royal Statistical Society Series B (Statistical Methodology) 2024"
+      },
+      {
+        "paper_id": "openalex:W4401692489",
+        "title": "Cross-Validation Conformal Risk Control",
+        "venue_year": "2024"
+      },
+      {
+        "paper_id": "openalex:W4392756306",
+        "title": "Shallow and deep learning classifiers in medical image analysis",
+        "venue_year": "European Radiology Experimental 2024"
+      }
+    ]
+  }
+}

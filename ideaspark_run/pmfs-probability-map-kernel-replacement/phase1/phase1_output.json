@@ -1,0 +1,294 @@
+{
+  "fulltext_degraded": false,
+  "intake": {
+    "domain": "robotic gas-source localization with sequential sparse gas sensing and probability-map inference",
+    "venue": "robotics, autonomous sensing, or instrumentation venue with a method contribution",
+    "time": "approximately five months for a bounded falsification campaign",
+    "data": [
+      "existing PMFS probability-map trajectories or logs",
+      "physics-based gas-dispersion simulations",
+      "sequential sparse gas-sensor measurements with source labels"
+    ],
+    "compute": "80GB-class GPUs (A100/H100), up to 8 concurrent (one node), approximately 150 GPU-days over 5 months, plus ~$10k inference/API budget for the full falsification campaign",
+    "expertise": "robotic gas-source localization, Bayesian inference, and probability-map evaluation",
+    "preference": "both",
+    "baseline": "the existing PMFS probability-map kernel and its downstream Bayesian source-localization pipeline",
+    "user_direction": "我们还是保存他的概率图这个概率,就是站在他的肩膀上么,但是他是几年前的方法了,现在的概率图其他领域的这种有没有最新的思想是更新的比他更好的,我们用过来",
+    "excluded_direction": "n_a",
+    "limitation": "Small internal modifications are hard to integrate and have not repaired PMFS; the user therefore wants to replace a larger probability-map component while preserving the probability representation and testing a causal direction only if it has not already been tried.",
+    "contribution_type": "method",
+    "_inferred_fields": [
+      "domain",
+      "venue",
+      "time",
+      "data",
+      "compute",
+      "expertise",
+      "preference"
+    ]
+  },
+  "bottleneck_statement": "For sequential sparse-field inference systems whose map is consumed by Bayesian source ranking or active sensing, replacing the spatial kernel can improve reconstruction or even local calibration while still changing the relative evidence assigned to competing source hypotheses. The retrieved frontier separates these obligations: the PGNN-Green approach replaces a deterministic physical response inside sparse Bayesian inversion but assumes steady, wind-free Poisson transport and a homoscedastic Gaussian likelihood (semanticscholar:c930ca69d5ed8553c0638ebe60205fe9c1845e58); probabilistic neural operators learn calibrated distributions over output functions from paired operator data but do not establish online evidence equivalence for source candidates (dblp:journals/corr/abs-2502-12902); and XIT consumes a GMRF mean-variance posterior as a UCB planning field while treating the map update operator as given (dblp:journals/corr/abs-2602-13739). The concrete bottleneck is therefore that map-space accuracy or calibration does not identify whether an alternative update kernel preserves, improves, or reverses the source-discriminative likelihood increments and decisions that PMFS needs under path-dependent sparse observations.",
+  "closest_adjacent": [
+    {
+      "paper_id": "semanticscholar:c930ca69d5ed8553c0638ebe60205fe9c1845e58",
+      "is_anchor": true,
+      "summary_and_residue": "This work replaces an analytic Green response with a physics-guided neural surrogate inside sparse Bayesian source inversion, retains continuous source locations, and uses the surrogate derivative in the source-location update. It replaces the deterministic forward-response kernel rather than an online probability-map update, and its steady, wind-free Poisson model with homoscedastic Gaussian noise does not establish preservation of candidate-source evidence under intermittent, path-dependent gas sensing.",
+      "residue_confidence": "fulltext-grounded"
+    },
+    {
+      "paper_id": "dblp:journals/corr/abs-2502-12902",
+      "is_anchor": false,
+      "summary_and_residue": "PNO trains a neural operator to output a functional predictive distribution using strictly proper scoring rules, allowing non-Gaussian samples and calibration-aware training. Its method starts from paired input-output functions drawn from a fixed data distribution and does not specify sequential sparse-measurement assimilation or conditions under which the learned functional distribution preserves downstream source-posterior likelihood ratios and ranks.",
+      "residue_confidence": "fulltext-grounded"
+    },
+    {
+      "paper_id": "dblp:journals/corr/abs-2602-13739",
+      "is_anchor": false,
+      "summary_and_residue": "XIT performs active gas-distribution mapping by planning over an upper-confidence field derived from an online obstacle-aware GMRF posterior and replanning after each executed trajectory. It assumes the GMRF mapping operator and its pointwise mean-variance semantics are valid, so it does not test whether a replacement inference kernel leaves source localization or trajectory ordering invariant when its uncertainty geometry changes.",
+      "residue_confidence": "fulltext-grounded"
+    },
+    {
+      "paper_id": "dblp:journals/corr/abs-2604-06387",
+      "is_anchor": false,
+      "summary_and_residue": "This study compares Gaussian processes, Monte Carlo dropout, deep ensembles, and evidential learning for sparse environmental-field reconstruction under several observation geometries, explicitly separating epistemic and aleatoric uncertainty. It evaluates field error, calibration, and uncertainty-error association, but does not define a posterior over source candidates or test whether uncertainty improvements yield better relative source evidence in a sequential localization loop.",
+      "residue_confidence": "fulltext-grounded"
+    }
+  ],
+  "what_phase_0_did_not_address": [
+    "No retrieved frontier leaf establishes when a probability-map replacement trained or scored in field space preserves the sign and ordering of incremental evidence between a true source and fixed wrong-source rivals during sequential sparse updates; this is a structural proxy-state problem, with PMFS as the primary instance — stakes: robotic responders can receive a sharper-looking map yet rank the wrong leak, wasting trajectories and making map-quality results non-transferable to localization claims.",
+    "No retrieved frontier leaf tests whether pointwise reconstruction accuracy, uncertainty calibration, or mean-variance quality is actually sufficient for the downstream source-discrimination and action decisions for which the map is maintained; this questions the shared field-first surrogate assumption without prescribing its replacement — stakes: a field-wide evaluation convention may validate kernels that do not improve the scientific target, blocking principled comparison and potentially invalidating published conclusions drawn only from map metrics.",
+    "Under transport mismatch, intermittent detections, and path-dependent missingness, no retrieved leaf characterizes when repeated updates can reduce reported map uncertainty while flattening or reversing relative evidence among source hypotheses — stakes: autonomous systems can become confidently wrong in precisely the sparse regimes that motivate probability mapping, while researchers lack a falsifiable condition for deciding whether a newer kernel is safe to import.",
+    "No retrieved leaf jointly checks online update coherence across heterogeneous observation operators and the stability of downstream source rank or planning utility under the same held-out trajectory — stakes: a kernel may appear robust when evaluated with static masks or complete simulated fields but fail after deployment-specific sensing choices feed back into the observations, wasting compute and blocking closed-loop transfer.",
+    "Because the available PMFS anchor fulltext does not pin the operational update rules, no single assumed PMFS setting can support a faithful replacement claim; conclusions must remain stable across the unresolved rule grid — stakes: otherwise an apparent gain can be manufactured by choosing one undocumented baseline setting, undermining reproducibility and any causal interpretation of the replacement."
+  ],
+  "method_lineage": {
+    "line": "probabilistic spatial-field updating as an intermediate state for gas-source inference and active sensing",
+    "nodes": [
+      {
+        "node_id": "n0",
+        "method": "Gaussian-process spatial field regression",
+        "move": "Represent a latent spatial field with a covariance kernel and condition it on sparse noisy observations to obtain posterior mean and covariance.",
+        "parent": null,
+        "provenance": "parametric",
+        "age_band": ">16y",
+        "confidence": "high",
+        "residual_problem": "Exact updates scale poorly and kernel stationarity or smoothness can be badly misspecified for transported plumes.",
+        "is_frontier_leaf": false
+      },
+      {
+        "node_id": "n1",
+        "method": "Gaussian Markov random-field gas mapping",
+        "move": "Replace dense covariance inference with a sparse precision graph whose connectivity can be cut by obstacles.",
+        "parent": "n0",
+        "provenance": "parametric",
+        "age_band": "8-16y",
+        "confidence": "high",
+        "residual_problem": "Gaussian local smoothness and pointwise variance remain proxies for non-Gaussian transport uncertainty and downstream source evidence.",
+        "is_frontier_leaf": false
+      },
+      {
+        "node_id": "n2",
+        "method": "deterministic learned sparse-field reconstruction",
+        "move": "Learn a nonlinear image-to-field reconstruction map that amortizes inference and exploits spatial structure.",
+        "parent": "n0",
+        "provenance": "parametric",
+        "age_band": "4-8y",
+        "confidence": "medium",
+        "residual_problem": "Point predictions do not expose calibrated epistemic uncertainty or source-hypothesis evidence.",
+        "is_frontier_leaf": false
+      },
+      {
+        "node_id": "n3",
+        "method": "neural operators for PDE solution maps",
+        "move": "Learn resolution-flexible mappings between input and output function spaces rather than a fixed-grid predictor.",
+        "parent": "n2",
+        "provenance": "parametric",
+        "age_band": "4-8y",
+        "confidence": "medium",
+        "residual_problem": "Standard operators are deterministic and their field loss does not identify downstream inferential utility.",
+        "is_frontier_leaf": false
+      },
+      {
+        "node_id": "n4",
+        "method": "sparse Bayesian learning for source support",
+        "move": "Use hierarchical shrinkage and evidence maximization to infer a sparse set of active source coefficients.",
+        "parent": "n0",
+        "provenance": "parametric",
+        "age_band": ">16y",
+        "confidence": "high",
+        "residual_problem": "Grid support and fixed forward responses limit continuous localization and transport flexibility.",
+        "is_frontier_leaf": false
+      },
+      {
+        "node_id": "n5",
+        "method": "continuous-support Green-function source inversion",
+        "move": "Optimize source coordinates through Green-function derivatives after sparse support estimation.",
+        "parent": "n4",
+        "provenance": "parametric",
+        "age_band": "4-8y",
+        "confidence": "medium",
+        "residual_problem": "Analytic responses may be unavailable, discontinuous, or expensive for realistic boundaries.",
+        "is_frontier_leaf": false
+      },
+      {
+        "node_id": "n6",
+        "method": "physics-guided neural Green-function surrogate in SBL",
+        "move": "Approximate Green-function values and gradients with a boundary-constrained neural surrogate and insert it into continuous source-coordinate optimization.",
+        "parent": "n5",
+        "provenance": "retrieved:semanticscholar:c930ca69d5ed8553c0638ebe60205fe9c1845e58",
+        "age_band": "0-2y",
+        "confidence": "high",
+        "residual_problem": "A deterministic steady-state response surrogate does not establish faithful source evidence under uncertain, intermittent, path-dependent transport.",
+        "is_frontier_leaf": true
+      },
+      {
+        "node_id": "n7",
+        "method": "deep reconstruction with explicit epistemic and aleatoric uncertainty",
+        "move": "Attach sampling, ensemble, or evidential uncertainty to a shared U-Net and compare it with Gaussian-process inference across observation geometries.",
+        "parent": "n2",
+        "provenance": "retrieved:dblp:journals/corr/abs-2604-06387",
+        "age_band": "0-2y",
+        "confidence": "high",
+        "residual_problem": "Field calibration and uncertainty-error correlation are not tied to source-candidate evidence or sequential decision quality.",
+        "is_frontier_leaf": true
+      },
+      {
+        "node_id": "n8",
+        "method": "probabilistic neural operator",
+        "move": "Train a functional predictive distribution with a strictly proper energy score instead of adding post-hoc Gaussian uncertainty to a deterministic operator.",
+        "parent": "n3",
+        "provenance": "retrieved:dblp:journals/corr/abs-2502-12902",
+        "age_band": "0-2y",
+        "confidence": "high",
+        "residual_problem": "Paired function-distribution training does not specify online sparse assimilation or preservation of downstream source likelihood ratios.",
+        "is_frontier_leaf": true
+      },
+      {
+        "node_id": "n9",
+        "method": "XIT active GDM over a GMRF-UCB field",
+        "move": "Close the loop by sampling and expanding informative trajectory trees over gas-posterior mean and variance while exploring unknown geometry.",
+        "parent": "n1",
+        "provenance": "retrieved:dblp:journals/corr/abs-2602-13739",
+        "age_band": "0-2y",
+        "confidence": "high",
+        "residual_problem": "The planner assumes the map posterior is trustworthy and does not test whether alternative kernels preserve source or trajectory ordering.",
+        "is_frontier_leaf": true
+      },
+      {
+        "node_id": "n10",
+        "method": "AWED ultrasparse gas-map super-resolution",
+        "move": "Use asymmetric encoding and wavelet-domain reconstruction to infer dense gas maps and source location from ultrasparse sensor grids.",
+        "parent": "n2",
+        "provenance": "retrieved:semanticscholar:10a8d33acb52f1cc514dbde255934f78f0dea685",
+        "age_band": "0-2y",
+        "confidence": "high",
+        "residual_problem": "High-resolution reconstruction accuracy does not provide an online posterior or certify source-evidence behavior under distribution shift.",
+        "is_frontier_leaf": true
+      },
+      {
+        "node_id": "c1",
+        "method": "sequential Monte Carlo and particle-filter data assimilation",
+        "move": "Represent nonlinear or non-Gaussian state uncertainty with weighted particles updated as observations arrive.",
+        "parent": null,
+        "provenance": "parametric",
+        "age_band": ">16y",
+        "confidence": "high",
+        "residual_problem": "Flexible posterior representation still depends on a faithful observation likelihood and can degenerate under sparse, misspecified measurements.",
+        "is_frontier_leaf": false,
+        "is_collateral": true
+      },
+      {
+        "node_id": "c2",
+        "method": "robust or generalized Bayesian updating",
+        "move": "Temper or replace the ordinary likelihood to reduce sensitivity to model misspecification and outliers.",
+        "parent": null,
+        "provenance": "parametric",
+        "age_band": "8-16y",
+        "confidence": "high",
+        "residual_problem": "Robustness of the posterior does not by itself identify the correct spatial map operator or guarantee source discrimination.",
+        "is_frontier_leaf": false,
+        "is_collateral": true
+      },
+      {
+        "node_id": "c3",
+        "method": "conformal predictive sets",
+        "move": "Calibrate predictive coverage under exchangeability without requiring a fully specified probabilistic model.",
+        "parent": null,
+        "provenance": "parametric",
+        "age_band": "4-8y",
+        "confidence": "medium",
+        "residual_problem": "Marginal or set coverage does not identify relative evidence among source hypotheses or validity under adaptive path selection.",
+        "is_frontier_leaf": false,
+        "is_collateral": true
+      }
+    ],
+    "notes": "Retrieved nodes are the citable recent frontier; parametric nodes are awareness-only and prevent regression to established GP, GMRF, neural-operator, SBL, particle-filter, robust-Bayes, or conformal moves. The recent leaves share a field-first evaluation assumption: map reconstruction or local uncertainty is treated as a sufficient proxy for source inference or information utility, but none of the retrieved leaves tests that sufficiency under sequential sparse observation feedback."
+  },
+  "anchor_rule_pinning": {
+    "paper_id": "user_ref:title:PMFS",
+    "method_chars": 0,
+    "pinned": [],
+    "unpinned": [
+      "the PMFS accept/reject or candidate-selection predicate",
+      "the population over which that predicate is computed",
+      "particle, candidate, and measurement batch sizes",
+      "the probability-map and posterior update equations",
+      "the number and schedule of update iterations",
+      "tie-breaking for equal candidate scores or ranks"
+    ],
+    "sufficient_for_faithful_generator": false,
+    "why": "The PMFS user-supplied anchor could not be fetched and has zero method characters, so a downstream generator would have to guess every operational rule needed for faithful simulation or replay."
+  },
+  "phase2_hard_constraints": [
+    "Any claim comparing a replacement with PMFS must be stated across a grid over the unpinned PMFS predicate, population, batch-size, update, iteration, and tie-breaking choices; no single assumed PMFS setting may support the claim.",
+    "Preserve the distinction between map-space calibration and source-evidence improvement: evaluate fixed wrong-source rivals, true-source rank or margin, and downstream decision behavior rather than treating lower field error or uncertainty alone as localization improvement."
+  ],
+  "domain_pattern_distribution": {
+    "n_total": 48,
+    "n_on_topic": 41,
+    "patterns": [
+      {
+        "pattern_id": "architectural_operator_substitution",
+        "count": 30,
+        "share": 0.73,
+        "saturation_band": "saturated"
+      },
+      {
+        "pattern_id": "adapt_via_conditioning",
+        "count": 15,
+        "share": 0.37,
+        "saturation_band": "mid_frequency"
+      },
+      {
+        "pattern_id": "structural_prior_encoding",
+        "count": 15,
+        "share": 0.37,
+        "saturation_band": "mid_frequency"
+      },
+      {
+        "pattern_id": "heterogeneous_decomposition",
+        "count": 9,
+        "share": 0.22,
+        "saturation_band": "mid_frequency"
+      },
+      {
+        "pattern_id": "relax_discrete_search_to_continuous",
+        "count": 7,
+        "share": 0.17,
+        "saturation_band": "mid_frequency"
+      },
+      {
+        "pattern_id": "reframe_as_solvable_object",
+        "count": 1,
+        "share": 0.02,
+        "saturation_band": "untested"
+      }
+    ],
+    "saturation_threshold_saturated": 0.5,
+    "saturation_threshold_untested_count": 1,
+    "notes": "Architectural operator substitution dominates this corpus, but its closest papers usually stop at field reconstruction, surrogate-response fidelity, or local uncertainty rather than proving preservation of sequential source evidence and decisions."
+  },
+  "state": "proceed",
+  "ood_reasons": [],
+  "remedial_steps": []
+}

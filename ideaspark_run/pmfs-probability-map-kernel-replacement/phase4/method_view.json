@@ -1,0 +1,170 @@
+{
+  "title": "Permutation-Equivariant Whole-History Ratio Maps for Gas-Source Localization",
+  "method_name": "Permutation-Equivariant Whole-History Ratio Map (PE-WHRM)",
+  "abstract_draft": "Gas-source localization from sparse mobile measurements requires a probability map that preserves how an ordered trajectory distinguishes each candidate source, not merely one that reconstructs or calibrates the concentration field. Existing physics-guided inversion encodes a Green-function response (semanticscholar:c930ca69d5ed8553c0638ebe60205fe9c1845e58), while probabilistic neural operators quantify uncertainty over fields (dblp:journals/corr/abs-2502-12902); neither turns the complete adaptive history into source-relative evidence that can be audited against fixed rivals. We propose the Permutation-Equivariant Whole-History Ratio Map (PE-WHRM), which trains a shared prefix classifier to distinguish joint source-history pairs from product-of-marginals pairs, interprets its logit as a density-ratio score, and prior-normalizes all candidate scores into a source map. Shared scoring makes source-grid relabeling exactly equivariant, while prefix differences expose when new measurements favor the true source over a fixed wrong candidate. The proposal is falsified if destructive time-position or source-history permutation leaves cumulative true-versus-fixed-rival log-odds margin and final source rank unchanged, or if ratio-moment and equivariance checks fail. The expected outcome is therefore not generic field calibration: intact ordered histories should create a reproducible localization margin that disappears when their source-relative structure is destroyed, without an online candidate-response provider.",
+  "core_claim": "A prior-normalized, permutation-equivariant density ratio of candidate source and complete ordered history can preserve source-relative localization evidence that field-calibrated maps omit.",
+  "sub_claims": [
+    {
+      "id": "c1",
+      "statement": "Balanced joint-source-history versus product-of-marginals classification identifies a per-candidate history density ratio, subject to support and classifier-calibration assumptions.",
+      "supports_which_aspect": "Defines the missing source-relative estimand instead of using field uncertainty as a localization proxy."
+    },
+    {
+      "id": "c2",
+      "statement": "A shared candidate scorer followed by prior normalization makes relabeling the source grid permute, rather than alter, the output probability map.",
+      "supports_which_aspect": "Encodes the source-grid symmetry needed for a candidate map to remain semantically stable."
+    },
+    {
+      "id": "c3",
+      "statement": "Differences of consecutive ratio logits provide a fixed-rival evidence trace whose cumulative margin distinguishes intact histories from destructive permutations.",
+      "supports_which_aspect": "Makes ordered localization evidence observable and directly falsifiable."
+    }
+  ],
+  "key_equations": [
+    {
+      "id": "e1",
+      "linked_step_id": "S2",
+      "latex": "\\mathcal{L}_{\\mathrm{ratio}}(\\theta)=-\\mathbb{E}_{p(s,H_t)}\\log D_\\theta(s,H_t)-\\mathbb{E}_{p(s)p(H_t)}\\log\\!\\left(1-D_\\theta(s,H_t)\\right)",
+      "description": "Balanced binary loss separating matched source-history prefixes from independently paired prefixes.",
+      "description_zh": "用平衡二分类损失区分匹配的源点-历史前缀与独立重配的前缀。"
+    },
+    {
+      "id": "e2",
+      "linked_step_id": "S2",
+      "latex": "\\ell_\\theta(s,H_t)=\\log\\frac{D_\\theta(s,H_t)}{1-D_\\theta(s,H_t)}\\approx\\log\\frac{p(s,H_t)}{p(s)p(H_t)}",
+      "description": "The classifier logit estimates the source-history density ratio under balanced class priors.",
+      "description_zh": "在类别先验平衡时，分类器 logit 估计源点与历史之间的密度比。"
+    },
+    {
+      "id": "e3",
+      "linked_step_id": "S3",
+      "latex": "q_\\theta(s\\mid H_t)=\\frac{\\pi_0(s)\\exp\\ell_\\theta(s,H_t)}{\\sum_{u\\in\\mathcal{S}}\\pi_0(u)\\exp\\ell_\\theta(u,H_t)}",
+      "description": "PMFS prior normalization converts candidate ratio logits into a probability map over the frozen source grid.",
+      "description_zh": "用 PMFS 先验归一化候选源点的密度比 logit，得到冻结源网格上的概率图。"
+    },
+    {
+      "id": "e4",
+      "linked_step_id": "S4",
+      "latex": "\\Delta_{\\theta,t}(s)=\\ell_\\theta(s,H_t)-\\ell_\\theta(s,H_{t-1}),\\qquad \\delta_{\\theta,t}(s^*,r)=\\Delta_{\\theta,t}(s^*)-\\Delta_{\\theta,t}(r)",
+      "description": "Prefix differences isolate the new whole-history evidence for the true source against a fixed rival.",
+      "description_zh": "前缀差分提取新增的全历史证据，并比较真实源点与固定错误候选。"
+    },
+    {
+      "id": "e5",
+      "linked_step_id": "S5",
+      "latex": "\\mathbf{q}_\\theta(H_t;\\Pi\\mathcal{S})=\\Pi\\,\\mathbf{q}_\\theta(H_t;\\mathcal{S})",
+      "description": "Exact source-grid permutation equivariance requires relabeling candidates to relabel the map identically.",
+      "description_zh": "精确源网格置换等变要求候选源点重标记后，概率图以相同方式重排。"
+    }
+  ],
+  "method_flow": {
+    "high_level_pipeline": "PE-WHRM receives a frozen candidate-source grid and each ordered prefix of an existing source-labelled PMFS trajectory. It forms matched source-history pairs and independently re-paired product controls, then applies one shared candidate scorer to all sources so source relabeling cannot change the scoring rule. Balanced binary logits are checked as density ratios and combined with the PMFS prior to produce a normalized source probability map at every prefix. Consecutive logits are differenced for the true source and fixed rivals, yielding the cumulative evidence margin and final rank used by the falsification test. Ratio-moment, exact-equivariance, time-position permutation, and source-pair permutation checks determine whether the map uses the claimed ordered source-relative mechanism.",
+    "steps": [
+      {
+        "step_id": "S1",
+        "title": "Construct ordered prefix pairs",
+        "what_changes": "Replace isolated measurement-target examples with complete ordered prefixes `H_t`; label the observed source-prefix pair as joint data and construct a product control by independently pairing a source with another history prefix while preserving the empirical marginals.",
+        "why_this_step": "The bottleneck is missing source-relative information in the ordered history, so the learning problem must contrast dependence with a control that retains source and history marginals.",
+        "linked_component": "engineering",
+        "linked_falsification": "mechanism_distinguisher",
+        "input": "Frozen source grid and source-labelled PMFS trajectories with ordered measurement positions and values.",
+        "output": "Balanced matched and product-of-marginals prefix pairs."
+      },
+      {
+        "step_id": "S2",
+        "title": "Estimate the shared history ratio",
+        "what_changes": "Train one candidate-shared binary scorer `D_theta(s,H_t)` on the balanced joint/product pairs and use its logit `ell_theta(s,H_t)` as the density-ratio estimate; no source-index-specific parameter is allowed.",
+        "why_this_step": "The joint-versus-product contrast targets dependence between a candidate source and the whole history, while parameter sharing encodes source-grid permutation equivariance by construction.",
+        "linked_component": "both",
+        "linked_falsification": "mechanism_distinguisher",
+        "input": "Balanced prefix pairs from S1 and a common candidate representation for every source location.",
+        "output": "One ratio logit per candidate source and history prefix."
+      },
+      {
+        "step_id": "S3",
+        "title": "Validate and prior-normalize ratios",
+        "what_changes": "Check the ratio moment on product pairs, then combine every candidate logit with the frozen PMFS prior `pi_0(s)` and normalize across the full source grid to obtain `q_theta(s|H_t)`.",
+        "why_this_step": "A classifier score alone is not a probability map; the moment check tests the density-ratio interpretation and prior normalization preserves the intended Bayesian source support.",
+        "linked_component": "theory",
+        "linked_falsification": "metric_specification",
+        "input": "Candidate ratio logits from S2 and the frozen PMFS source prior.",
+        "output": "A normalized source probability map for every history prefix."
+      },
+      {
+        "step_id": "S4",
+        "title": "Extract fixed-rival evidence increments",
+        "what_changes": "Difference each candidate's whole-history ratio logit between consecutive prefixes and subtract the same increment for a fixed wrong candidate, producing `delta_theta,t(s*,r)` and its cumulative true-versus-rival margin.",
+        "why_this_step": "Localization improvement requires relative evidence against persistent wrong candidates; positive true-source increments alone do not establish that distinction.",
+        "linked_component": "engineering",
+        "linked_falsification": "metric_specification",
+        "input": "Prefix-indexed ratio logits and a fixed set of wrong-candidate rivals.",
+        "output": "Per-update and cumulative fixed-rival margins plus final true-source rank."
+      },
+      {
+        "step_id": "S5",
+        "title": "Enforce structural falsification checks",
+        "what_changes": "Verify exact output permutation under source-grid relabeling and recompute S1-S4 after destructive time-position and source-history pairing permutations that preserve marginal measurements.",
+        "why_this_step": "The contribution is the ordered source-relative mechanism, so controls must selectively destroy that relation while leaving marginal field information available.",
+        "linked_component": "theory",
+        "linked_falsification": "mechanism_distinguisher",
+        "input": "The trained shared scorer, intact held-out histories, and their destructive permutations.",
+        "output": "Equivariance residuals and intact-versus-permuted localization evidence traces."
+      }
+    ],
+    "design_reasoning_echo": "The design treats probability-map replacement as an estimand problem rather than a request for a more expressive field learner. The naive direct model `q0(y_t|g_t(s))` scores the current observation against a candidate response and can be calibrated without preserving how the complete adaptive history separates sources. PE-WHRM instead estimates dependence between candidate source and ordered prefix through the standard likelihood-ratio trick, but makes the localization-specific structure carry the contribution: a shared source scorer, PMFS-prior normalization, prefix-wise fixed-rival increments, and destructive controls. Its load-bearing premises are that source-labelled trajectories cover the held-out history support, independent re-pairing approximates `p(s)p(H_t)` despite the adaptive collection policy, and balanced classification is calibrated enough for ratio interpretation; the latter two remain explicit theoretical and empirical checks rather than hidden guarantees."
+  },
+  "plain_method_steps_en": [
+    {
+      "step_id": "S1",
+      "what_to_do": "Use the frozen source grid and source-labelled PMFS trajectories, including ordered measurement positions and values, to form complete ordered prefixes `H_t`. Mark each observed source-prefix pair as a matched joint example. Construct a product-of-marginals control by independently pairing a source with another history prefix while preserving the empirical source and history marginals, and balance the matched and product pairs. The inputs are the frozen source grid and source-labelled PMFS trajectories; the output is a balanced set of matched and product-of-marginals prefix pairs.",
+      "why_this_makes_sense": "The missing information is how a source relates to the ordered history. Contrasting matched dependence with a control that keeps the source and history marginals unchanged targets that relation."
+    },
+    {
+      "step_id": "S2",
+      "what_to_do": "Train one candidate-shared binary scorer `D_theta(s,H_t)` on the balanced joint/product prefix pairs, using a common candidate representation for every source location. Use its logit `ell_theta(s,H_t)` as one density-ratio estimate for each candidate source and history prefix; no source-index-specific parameter is allowed. The inputs are the balanced prefix pairs from S1 and the common candidate representation; the output is one ratio logit per candidate source and history prefix.",
+      "why_this_makes_sense": "The joint-versus-product contrast targets dependence between a candidate source and the whole history, while parameter sharing makes source-grid relabeling act through the same scoring rule."
+    },
+    {
+      "step_id": "S3",
+      "what_to_do": "Check the ratio moment on product pairs. Then combine every candidate logit with the frozen PMFS prior `pi_0(s)` and normalize across the full source grid to produce `q_theta(s|H_t)` for every history prefix. The inputs are the candidate ratio logits from S2 and the frozen PMFS source prior; the output is a normalized source probability map for every history prefix.",
+      "why_this_makes_sense": "A classifier score is not itself a probability map. The moment check tests the density-ratio interpretation, while prior normalization preserves the intended Bayesian source support."
+    },
+    {
+      "step_id": "S4",
+      "what_to_do": "For each candidate, difference its whole-history ratio logit between consecutive prefixes. Subtract the same increment for a fixed wrong candidate to produce `delta_theta,t(s*,r)`, then accumulate these differences into true-versus-rival margins and record the final true-source rank. The inputs are prefix-indexed ratio logits and a fixed set of wrong-candidate rivals; the outputs are per-update and cumulative fixed-rival margins plus the final true-source rank.",
+      "why_this_makes_sense": "Localization improvement requires evidence relative to persistent wrong candidates; positive true-source increments alone do not show that distinction."
+    },
+    {
+      "step_id": "S5",
+      "what_to_do": "Check that relabeling the source grid produces the same permutation of the output map. Then recompute S1-S4 on intact held-out histories and on destructive permutations of time-position assignments and source-history pairings that preserve marginal measurements. The inputs are the trained shared scorer, intact held-out histories, and their destructive permutations; the outputs are equivariance residuals and intact-versus-permuted localization evidence traces.",
+      "why_this_makes_sense": "The claimed contribution is the ordered source-relative mechanism, so the controls should destroy that relation while leaving marginal field information available."
+    }
+  ],
+  "plain_method_steps_zh": [
+    {
+      "step_id": "S1",
+      "what_to_do": "使用冻结的源网格和 source-labelled PMFS 轨迹（包括有顺序的测量位置和值）构造完整的有序前缀 `H_t`。把每个观测到的源点-前缀配对标记为 matched joint example。通过把一个源点独立地与另一个历史前缀配对，同时保留经验上的源点边际和历史边际，构造 product-of-marginals control，并平衡 matched 与 product 配对。输入是冻结的源网格和 source-labelled PMFS 轨迹；输出是平衡的 matched 与 product-of-marginals 前缀配对集合。",
+      "why_this_makes_sense": "缺失的信息是源点如何与有顺序的历史发生关系。把 matched dependence 与保持源点和历史边际不变的 control 进行对比，就能针对这层关系。"
+    },
+    {
+      "step_id": "S2",
+      "what_to_do": "在平衡的 joint/product 前缀配对上训练一个对候选源点共享的二分类 scorer `D_theta(s,H_t)`，对每个源点位置使用共同的候选表示。把它的 logit `ell_theta(s,H_t)` 作为每个候选源点和历史前缀的一个 density-ratio estimate；不允许使用 source-index-specific parameter。输入是 S1 的平衡前缀配对和共同的候选表示；输出是每个候选源点、每个历史前缀各一个 ratio logit。",
+      "why_this_makes_sense": "joint-versus-product 对比针对候选源点与完整历史之间的依赖，而参数共享使源网格重标记始终经过同一套 scoring rule。"
+    },
+    {
+      "step_id": "S3",
+      "what_to_do": "在 product 配对上检查 ratio moment。然后把每个候选 logit 与冻结的 PMFS 先验 `pi_0(s)` 结合，在完整源网格上归一化，得到每个历史前缀的 `q_theta(s|H_t)`。输入是 S2 的候选 ratio logits 和冻结的 PMFS source prior；输出是每个历史前缀的归一化源点概率图。",
+      "why_this_makes_sense": "分类器分数本身不是概率图。moment check 检验 density-ratio interpretation，而 prior normalization 保留预期的 Bayesian source support。"
+    },
+    {
+      "step_id": "S4",
+      "what_to_do": "对每个候选源点，计算相邻前缀之间的全历史 ratio logit 差分。再减去一个固定错误候选的同一增量，得到 `delta_theta,t(s*,r)`；随后累加这些差分，形成真实源点与错误候选之间的 margin，并记录最终真实源点 rank。输入是按前缀索引的 ratio logits 和固定的错误候选集合；输出是每次更新及累计的 fixed-rival margins，以及最终真实源点 rank。",
+      "why_this_makes_sense": "定位改善需要相对于持续存在的错误候选的证据；只有真实源点增量为正，并不能说明这种区分已经出现。"
+    },
+    {
+      "step_id": "S5",
+      "what_to_do": "检查源网格重标记是否使输出概率图产生完全相同的置换。然后在完整的 held-out histories 上，以及在保留边际测量的 time-position assignment 和 source-history pairing 的破坏性置换上，重新执行 S1-S4。输入是已训练的 shared scorer、完整的 held-out histories 及其破坏性置换；输出是 equivariance residuals，以及 intact 与 permuted 两类定位证据轨迹。",
+      "why_this_makes_sense": "贡献所声称的是有顺序的源点相对机制，因此 control 应该破坏这层关系，同时让边际场信息仍然可用。"
+    }
+  ]
+}

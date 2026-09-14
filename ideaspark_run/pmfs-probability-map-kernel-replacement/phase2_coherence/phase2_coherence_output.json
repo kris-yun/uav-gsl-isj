@@ -1,0 +1,495 @@
+{
+  "trace_report": {
+    "likely_fatal_attack": {
+      "step": "S3",
+      "verbatim_step_quote": "3. For every joint mini-batch, construct a balanced product-of-marginals batch by independently permuting source labels among histories inside the same c stratum and attach inverse source-frequency weights that target pi_0; output positive and negative source-history pairs.",
+      "why_picked_first": "This is the only producer of the density-ratio target. The text does not say whether inverse-frequency weights apply to both BCE classes, and it does not require positive logging support for every prior-positive grid cell. Either defect can make the later logits target the wrong prior or leave a source-cell estimand undefined while all downstream code still looks well formed.",
+      "executed_attack_outcome": "The dry run found that the negative-only reading produces posterior odds 12.0 instead of the declared-prior odds 4.0, while the global ratio moment still equals 1.0. A prior-positive cell C with q_C=0 has pi0_C/q_C=inf and zero positive pairs. These are structural failures of the unqualified procedure, repaired below as explicit weighting and input-domain conditions; actual artifact support remains an unrepaired note."
+    },
+    "formalized_procedure": [
+      {
+        "step": "S1",
+        "consumes": [
+          "versioned source-labelled episode log E",
+          "source grid S with K cells",
+          "declared prior pi_0 in R_+^K",
+          "stratum definition c"
+        ],
+        "produces": [
+          "prefix table P={(s*,H_t,c)}",
+          "H_t is a length-t sequence of 5-tuples"
+        ],
+        "note": "VERBATIM: 1. Read the existing source-labelled PMFS trajectory/log artifact and serialize each episode into ordered prefixes H_t with source cell s*, physical coordinates, environment/acquisition-policy stratum c, and the declared PMFS prior pi_0; output a versioned prefix table without reconstructing a dense field. Formalization is direct; pi_0 must move with the physical source coordinate under relabelling."
+      },
+      {
+        "step": "S2",
+        "consumes": [
+          "complete episodes E and prefix table P"
+        ],
+        "produces": [
+          "disjoint development and held-out episode sets",
+          "per-stratum empirical logging frequencies qhat_c(s)"
+        ],
+        "note": "VERBATIM: 2. Split complete episodes, never individual prefixes, into development and held-out trajectory partitions; output leakage-free joint samples (s*,H_t,c) and empirical source frequencies per stratum. A deterministic or randomized split policy is not numerically bound, but the split fraction is an experiment-scale choice rather than a mechanism parameter. Empty partitions are exposed in T3."
+      },
+      {
+        "step": "S3",
+        "consumes": [
+          "joint batch B+={(s_i,H_i,c)}",
+          "qhat_c(s)",
+          "pi_0(s|c)"
+        ],
+        "produces": [
+          "positive weighted pairs",
+          "source-permuted negative weighted pairs",
+          "two class-normalized empirical measures Jhat_c and Mhat_c"
+        ],
+        "note": "VERBATIM: 3. For every joint mini-batch, construct a balanced product-of-marginals batch by independently permuting source labels among histories inside the same c stratum and attach inverse source-frequency weights that target pi_0; output positive and negative source-history pairs. READING A: apply w_c(s)=pi_0(s|c)/qhat_c(s) to the true source in positives and to the permuted source in negatives, normalizing each class separately; this targets J=pi_0(s)p(H|s,c) and M=pi_0(s)p(H|c). READING B: the nearest grammatical attachment weights only the newly constructed product batch; then J retains logging marginal q and M uses pi_0. T2 executes both readings. Zero qhat for a prior-positive source makes either reading undefined."
+      },
+      {
+        "step": "S4",
+        "consumes": [
+          "prefix H_t in R^{t x d}",
+          "physical source feature psi(s,c)",
+          "parameters theta"
+        ],
+        "produces": [
+          "history vector z_theta(H_t)",
+          "logit vector f_theta(S,H_t,c) in R^K"
+        ],
+        "note": "VERBATIM: 4. Implement a causal sequence encoder over ordered (x_tau,Delta_tau,c_tau,m_tau,y_tau) records and a shared scorer f_theta applied to each physical source coordinate, prohibiting candidate-index embeddings and candidate-specific parameters; output one logit per source cell. The pointwise shared scorer commutes with list permutations provided evaluation is deterministic and coordinates, context, and priors are permuted together. Merely supplying spatial inputs does not force the learned function to use them."
+      },
+      {
+        "step": "S5",
+        "consumes": [
+          "Jhat_c and Mhat_c from S3",
+          "scorer from S4",
+          "development checkpoints"
+        ],
+        "produces": [
+          "selected theta_hat",
+          "binary log-loss record",
+          "permutation-test result"
+        ],
+        "note": "VERBATIM: 5. Train the scorer by the balanced joint-versus-product binary cross-entropy and select the checkpoint with the lowest development binary log loss subject to passing the exact candidate-permutation unit test; output a calibrated whole-history log-ratio estimator. At a population Bayes optimum f=log(J/M); finite training only yields an empirical approximation. Equal stored development losses have no stated tie rule, repaired below."
+      },
+      {
+        "step": "S6",
+        "consumes": [
+          "theta_hat",
+          "online prefix H_t",
+          "K-vector pi_0"
+        ],
+        "produces": [
+          "K logits",
+          "pi_theta,t(s)=pi_0(s)exp(f_s)/sum_u pi_0(u)exp(f_u)"
+        ],
+        "note": "VERBATIM: 6. For every online prefix, evaluate the shared scorer once per candidate cell, combine logits with pi_0, and normalize across cells to output the same probability-map tensor interface consumed by the downstream PMFS source-ranking code; no online g_t(s) or candidate-response service is called. The denominator is positive only for nonempty prior support and finite logits."
+      },
+      {
+        "step": "S7",
+        "consumes": [
+          "consecutive logit vectors f_t and f_{t-1}",
+          "true source s*",
+          "fixed rival set R"
+        ],
+        "produces": [
+          "i_t(s)=f_t(s)-f_{t-1}(s)",
+          "delta_t(s*,r)=i_t(s*)-i_t(r)",
+          "ranks"
+        ],
+        "note": "VERBATIM: 7. Cache consecutive prefix logits and compute i_theta,t(s) and delta_theta,t(s*,r) for the same fixed wrong-source rivals in every arm; output auditable pre-normalization evidence traces and final source ranks. A rival requires K at least 2. Under the intended ratio target, the source-independent log p(H_t|c) term cancels in every fixed-rival contrast."
+      },
+      {
+        "step": "S8",
+        "consumes": [
+          "held-out episodes",
+          "held-out joint/product pairs",
+          "trained scorer"
+        ],
+        "produces": [
+          "binary loss",
+          "ratio moment",
+          "equivariance error",
+          "two controlled history variants",
+          "downstream outputs"
+        ],
+        "note": "VERBATIM: 8. Verify the trained object on held-out episodes with binary log loss, the product-sample ratio-moment diagnostic, and exact permutation equivariance, then run two destructive controls: permute measurement time-position assignments within histories and permute source-history pairing while preserving marginals; output both direct property probes and downstream map/rank results. 'Permute measurement time-position assignments' admits two readings: reassign y values over fixed time-position slots, or move time-position labels over fixed y values. Both preserve one-dimensional marginals but destroy different associations, so this wording is patched to the first precise operation. The ratio moment is necessary but not sufficient for estimand correctness."
+      },
+      {
+        "step": "S9",
+        "consumes": [
+          "identical held-out histories",
+          "fixed prior",
+          "fixed rivals",
+          "frozen unresolved-rule grid",
+          "four named arms"
+        ],
+        "produces": [
+          "per-rule-tuple arm effects"
+        ],
+        "note": "VERBATIM: 9. Compare the intact ratio map with PMFS, the direct calibrated q0 arm, and a field-only probabilistic map learner on identical held-out histories, initial priors, fixed rivals, and the complete frozen grid of unresolved PMFS rules; output per-rule-tuple effects instead of selecting a favorable baseline setting. This is an evaluation step; its grid cardinality is campaign scale, not an algorithmic magic constant."
+      },
+      {
+        "step": "S10",
+        "consumes": [
+          "map diagnostics",
+          "fixed-rival traces",
+          "source ranks",
+          "control-arm results"
+        ],
+        "produces": [
+          "primary localization report",
+          "secondary map-quality report"
+        ],
+        "note": "VERBATIM: 10. Report map calibration and reconstruction only as secondary diagnostics; the primary outputs are cumulative fixed-rival log-odds margin, true-source rank, and whether the destructive controls erase the intact estimator's downstream advantage. This orders outputs and does not create an estimator."
+      }
+    ],
+    "unbound_parameters": [],
+    "estimand_match": {
+      "declared": "R_t(s)=p(H_t|s,c)/p(H_t|c) for every prefix and candidate, plus fixed-rival increments and the prior-weighted normalized map.",
+      "reading_A": "Matches: separately normalizing pi_0/qhat weights in both classes gives J=pi_0(s)p(H|s,c), M=pi_0(s)p(H|c), hence J/M=R.",
+      "reading_B": "Mismatches: weighting only negatives gives J=q(s)p(H|s,c), M=pi_0(s)p_q(H|c), so pi_0 exp(f) normalizes to q(s)p(H|s,c), silently restoring the logging source prior."
+    },
+    "dry_run": {
+      "instance": "One stratum c, sources A/B, declared prior (0.5,0.5), logging frequencies (0.75,0.25), and two-step binary histories. p(H|A)={00:.4,01:.1,10:.1,11:.4}; p(H|B)={00:.1,01:.4,10:.4,11:.1}. Execute online history H_2=11. Both sources have identical one-time marginals 0.5, but their ordered joint laws differ. A third probe cell C has pi_0(C)=0.2 and q(C)=0.",
+      "execution": {
+        "mode": "executed",
+        "script": "import math\nS=('A','B'); p0={'A':.5,'B':.5}; q={'A':.75,'B':.25}\nP={'A':{'00':.4,'01':.1,'10':.1,'11':.4},'B':{'00':.1,'01':.4,'10':.4,'11':.1}}; h='11'\ndef norm(d):\n t=sum(d.values()); return {k:v/t for k,v in d.items()}\np1={s:sum(v for x,v in P[s].items() if x.startswith(h[:1])) for s in S}; m1=sum(p0[s]*p1[s] for s in S); f1={s:math.log(p1[s]/m1) for s in S}\np2={s:P[s][h] for s in S}; m2=sum(p0[s]*p2[s] for s in S); f2={s:math.log(p2[s]/m2) for s in S}; post=norm({s:p0[s]*math.exp(f2[s]) for s in S}); inc={s:f2[s]-f1[s] for s in S}\npoint={(s,t,y):sum(v for x,v in P[s].items() if x[t]==y) for s in S for t in (0,1) for y in ('0','1')}; naive=norm({s:p0[s]*point[(s,0,h[0])]*point[(s,1,h[1])] for s in S})\nmq=sum(q[s]*p2[s] for s in S); fw={s:math.log(q[s]*p2[s]/(p0[s]*mq)) for s in S}; wrong=norm({s:p0[s]*math.exp(fw[s]) for s in S})\nmoment=0\nfor x in P['A']:\n mx=sum(q[s]*P[s][x] for s in S)\n for s in S: moment+=p0[s]*mx*math.exp(math.log(q[s]*P[s][x]/(p0[s]*mx)))\nprint('f1',f1,'f2',f2,'post',post,'inc',inc,'delta',inc['A']-inc['B'])\nprint('naive',naive,'naive_margin',math.log(naive['A']/naive['B']),'full_margin',math.log(post['A']/post['B']))\nprint('equivariance_error',max(abs(a-b) for a,b in zip([f2['B'],f2['A']],reversed([f2['A'],f2['B']]))))\nprint('negative_only',wrong,'odds',wrong['A']/wrong['B'],'correct_odds',post['A']/post['B'],'moment',moment)\nprint('zero_support',.2/0 if False else float('inf'),'positive_pairs',0)",
+        "output": "f1 {'A': 0.0, 'B': 0.0} f2 {'A': 0.47000362924573563, 'B': -0.916290731874155} post {'A': 0.8, 'B': 0.2} inc {'A': 0.47000362924573563, 'B': -0.916290731874155} delta 1.3862943611198906\nnaive {'A': 0.5, 'B': 0.5} naive_margin 0.0 full_margin 1.3862943611198906\nequivariance_error 0.0\nnegative_only {'A': 0.9230769230769231, 'B': 0.07692307692307693} odds 12.0 correct_odds 4.0 moment 1.0\nzero_support inf positive_pairs 0"
+      },
+      "computed_quantities": [
+        {
+          "quantity": "Intended whole-history ratio logits and posterior",
+          "value": "f_1(A)=f_1(B)=0; f_2(A)=log(1.6)=0.470004; f_2(B)=log(0.4)=-0.916291; pi_2=(0.8,0.2)",
+          "arithmetic": "p(H_1=1|A)=p(H_1=1|B)=0.5 so M_1=0.5. For H_2=11, M_2=.5*.4+.5*.1=.25; ratios are .4/.25=1.6 and .1/.25=.4; prior normalization gives (.8,.2)."
+        },
+        {
+          "quantity": "Fixed-rival increment",
+          "value": "delta_2(A,B)=1.386294",
+          "arithmetic": "[0.470004-0]-[-0.916291-0]=1.386294."
+        },
+        {
+          "quantity": "Independent pointwise-naive output",
+          "value": "posterior=(0.5,0.5), margin=0",
+          "arithmetic": "Each source has p(y_1=1|s)=p(y_2=1|s)=.5; multiplying pointwise terms gives equal .25 likelihoods."
+        },
+        {
+          "quantity": "Negative-only weighting reading",
+          "value": "posterior=(.923077,.076923), odds=12 rather than correct prior odds=4",
+          "arithmetic": "For H=11, p_q(H)=.75*.4+.25*.1=.325. f_wrong(A)=log[(.75*.4)/(.5*.325)]=.613104 and f_wrong(B)=log[(.25*.1)/(.5*.325)]=-1.871802; multiplying by pi_0 returns odds (.75*.4)/(.25*.1)=12."
+        },
+        {
+          "quantity": "Ratio-moment diagnostic under wrong weighting",
+          "value": "E_M exp(f_wrong)=1.000000",
+          "arithmetic": "Summing pi_0(s)p_q(H)*[q(s)p(H|s)/(pi_0(s)p_q(H))] over all s,H equals sum_s,H q(s)p(H|s)=1 by normalization."
+        },
+        {
+          "quantity": "Permutation-equivariance break attempt",
+          "value": "max absolute logit error=0.0",
+          "arithmetic": "Evaluating the same pointwise f(s,H) in order (B,A) returns exactly the reversed (A,B) logit list; this is forced by the test construction and checks only the stated list-index symmetry."
+        },
+        {
+          "quantity": "Zero-support cell",
+          "value": "pi_0(C)/q(C)=infinity; positive pairs for C=0",
+          "arithmetic": ".2/0 is undefined/infinite and no source permutation can create a joint positive (C,H) when C never labels a logged history."
+        }
+      ],
+      "anomalies": [
+        {
+          "anomaly": "Under the defensible negative-only reading of Step 3, the same H=11 produces posterior source odds 12.0 instead of the declared-prior odds 4.0.",
+          "kind": "structural",
+          "why": "The algebra always leaves q(s)/pi_0(s) in f when only M is reweighted; after multiplying by pi_0, the map uses q. The numeric values merely expose the identity. Reading-dependent: negative-only attachment."
+        },
+        {
+          "anomaly": "The wrong-prior ratio still has E_M exp(f_wrong)=1.0 exactly.",
+          "kind": "structural",
+          "why": "Every normalized joint-to-reference density ratio has moment one, including the wrong joint. Therefore the candidate's ratio-moment probe cannot by itself verify the declared conditional-likelihood-ratio estimand. Reading-dependent: negative-only attachment, but the insufficiency of the moment is reading-robust."
+        },
+        {
+          "anomaly": "A prior-positive unlogged cell has infinite inverse-frequency weight and zero positive examples.",
+          "kind": "structural",
+          "why": "No estimator based only on observed labelled pairs can form J(s,H) for qhat_c(s)=0; the failure holds for every history distribution. Reading-robust."
+        }
+      ]
+    },
+    "degenerate_probes": [
+      {
+        "probe": "empty episode set or an empty development/held-out partition",
+        "behavior": "S2 cannot estimate qhat_c or development loss; S3 and S5 have no empirical measure/checkpoint criterion.",
+        "finding": "Patched with a nonempty-partition input precondition."
+      },
+      {
+        "probe": "K=0 candidate cells",
+        "behavior": "S6 normalizes an empty vector with denominator zero and S7 has no rival.",
+        "finding": "Patched with K_c>=2 on prior support."
+      },
+      {
+        "probe": "single source cell",
+        "behavior": "Joint and product are identical, the optimal logit is zero, and no fixed wrong-source rival exists.",
+        "finding": "Patched with K_c>=2; a one-source localization grid is outside the valid domain."
+      },
+      {
+        "probe": "prior-positive source with qhat_c(s)=0",
+        "behavior": "Inverse-frequency weighting divides by zero and the positive joint has no support for that source, although S6 would still emit a coordinate logit by extrapolation.",
+        "finding": "Patched as an explicit full-support precondition; whether the real artifact satisfies it remains unresolved."
+      },
+      {
+        "probe": "all histories identical across sources",
+        "behavior": "J=M, so f=0, pi_t=pi_0, all increments are zero, and the procedure halts with a meaningful null result.",
+        "finding": null
+      },
+      {
+        "probe": "ties at the checkpoint-selection criterion",
+        "behavior": "Several passing checkpoints can have the same stored development loss, so S5 does not select uniquely.",
+        "finding": "Patched with the earliest-checkpoint tie rule."
+      },
+      {
+        "probe": "all logits tied",
+        "behavior": "S6 returns the normalized prior and S7 returns zero fixed-rival increments; ranks still require a downstream deterministic tie convention, but the probability map is meaningful.",
+        "finding": null
+      },
+      {
+        "probe": "maximum allowed input",
+        "behavior": "No numerical maximum is specified. For every finite prefix length T and finite K, S4-S10 halt with pointwise cost proportional to K times encoder/scorer cost; resource limits are an implementability issue, not a semantic loop.",
+        "finding": null
+      }
+    ],
+    "claim_step_map": [
+      {
+        "claim": "The shared scorer is exactly source-list-permutation equivariant.",
+        "established_by": "S4 and S6",
+        "strength_grade": "conditional",
+        "assumptions_missing": [
+          "deterministic pointwise evaluation",
+          "physical coordinates, context features, and priors are permuted together",
+          "no hidden index-dependent preprocessing"
+        ],
+        "arbitration": "proof-obligations",
+        "measured": null
+      },
+      {
+        "claim": "The joint-versus-product logits are whole-history likelihood ratios.",
+        "established_by": "S3 and S5",
+        "strength_grade": "conditional",
+        "assumptions_missing": [
+          "both BCE classes are separately reweighted to pi_0",
+          "qhat_c(s)>0 for every prior-positive source",
+          "population Bayes optimum or adequate finite approximation",
+          "train and target policy strata match"
+        ],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "Prior-weighted normalization yields a probability map with the PMFS tensor interface.",
+        "established_by": "S6",
+        "strength_grade": "established",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "Prefix differences yield fixed-rival evidence before posterior normalization.",
+        "established_by": "S7",
+        "strength_grade": "conditional",
+        "assumptions_missing": [
+          "S3-S5 target the declared ratio",
+          "the same scorer and fixed rival identities are used at consecutive prefixes"
+        ],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "Retaining full coordinate and directional history prevents symmetry from discarding spatial information.",
+        "established_by": "UNESTABLISHED",
+        "strength_grade": "overclaim",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "The pointwise shared family is sufficient for the scalar ratio target.",
+        "established_by": "S4 and S5",
+        "strength_grade": "conditional",
+        "assumptions_missing": [
+          "psi and z retain all target-relevant information",
+          "the scorer family has adequate capacity",
+          "optimization reaches a suitable solution"
+        ],
+        "arbitration": "proof-obligations",
+        "measured": null
+      },
+      {
+        "claim": "The replacement requires neither a dense-field target nor an online candidate-response provider.",
+        "established_by": "S1, S4, and S6",
+        "strength_grade": "established",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "The ratio moment verifies the trained ratio object.",
+        "established_by": "UNESTABLISHED",
+        "strength_grade": "overclaim",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": "The executed wrong-prior density ratio passes the moment exactly at 1.0."
+      },
+      {
+        "claim": "The selected checkpoint is a calibrated whole-history log-ratio estimator.",
+        "established_by": "S5 and S8",
+        "strength_grade": "empirical",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": null
+      },
+      {
+        "claim": "The mechanism confronts the false pointwise-factorization premise of direct q0.",
+        "established_by": "S4, S5, and S9",
+        "strength_grade": "empirical",
+        "assumptions_missing": [],
+        "arbitration": "argument",
+        "measured": "On the constructed path-dependent instance, full-history margin=1.386294 and pointwise-naive margin=0; this is instance-contingent, not real-system evidence."
+      }
+    ],
+    "naive_comparison": {
+      "declared_branch": "(i) false-premise",
+      "naive_version": "Using the same labelled histories and prior, estimate one source-conditioned likelihood for each current record and multiply those pointwise terms over time, with no sequence encoder and no joint-versus-product classifier.",
+      "naive_fairness": "It uses the same logged information, prior, local deployment, source grid, and per-cell evaluation budget, calls no online provider, and is simpler because it factorizes into per-time empirical terms instead of learning a whole-history representation and ratio task.",
+      "instance_behavior": {
+        "naive": "Both sources have per-time likelihood 0.5 for each observed 1, so posterior=(0.5,0.5) and A-versus-B log-odds margin=0.",
+        "mechanism": "For H=11, posterior=(0.8,0.2) and A-versus-B log-odds margin=log(4)=1.386294.",
+        "divergence": "mechanism minus naive margin = 1.386294",
+        "kind": "instance_contingent"
+      },
+      "verdict": "confronts_obstacle",
+      "reasoning": "The independently built naive loses all discrimination because the two sources have identical pointwise marginals, whereas the ordered joint differs and the full-history ratio recovers it. This is positive mechanism-depth evidence only on the invented instance; it does not predict the real PMFS effect."
+    }
+  },
+  "verdict": "patched",
+  "unrepaired": [
+    {
+      "finding": "The two allowed inputs do not establish that every prior-positive source-grid cell has positive labelled-trajectory frequency inside every environment/acquisition-policy stratum, so real-data executability remains conditional on the newly explicit support gate.",
+      "severity": "note",
+      "why_not_repaired": "The written algorithm can be made internally sound by stating the condition, but whether the existing artifact satisfies it is an external data fact unavailable under the input restriction. Inventing coverage or adding a simulator/transport model would exceed a coherence wording repair.",
+      "verbatim_step_quote": "3. For every joint mini-batch, construct a balanced product-of-marginals batch by independently permuting source labels among histories inside the same c stratum and attach inverse source-frequency weights that target pi_0; output positive and negative source-history pairs.",
+      "executed_evidence": "Probe model: add source C with pi_0(C)=0.2 and empirical logging qhat_c(C)=0. The required weight is w_c(C)=pi_0(C)/qhat_c(C)=0.2/0=infinity, and the positive-pair count for C is 0. No permutation of observed labels creates a joint positive for C. This establishes the support requirement, not whether the actual logs meet it.",
+      "reading_dependence": "reading_robust",
+      "structural_requirement": null
+    }
+  ],
+  "applied_revisions": [
+    {
+      "scope": "coherence",
+      "op": "append_sentence",
+      "field": "core_mechanism",
+      "value": "Operationally, let qhat_c(s) be the development logging frequency: the valid input domain requires at least two prior-positive source cells, nonempty development and held-out episode partitions, and qhat_c(s)>0 for every cell with pi_0(s|c)>0; apply w_c(s)=pi_0(s|c)/qhat_c(s) to positive examples using their true labels and to negative examples using their permuted labels, normalize weights separately within each BCE class, and interpret J_c and M_c in the displayed loss as those two reweighted measures, otherwise the full-grid estimator is undefined and no map is emitted.",
+      "outcome": "applied",
+      "delta_summary": "Repairs the T1 estimand mismatch under the negative-only reading and the T2/T3 zero-support division by zero."
+    },
+    {
+      "scope": "coherence",
+      "op": "append_sentence",
+      "field": "core_mechanism_reasoning",
+      "value": "Additional load-bearing premise P6: within every reported c stratum, each pi_0-positive source cell has positive development logging support and both BCE classes are separately reweighted by pi_0/qhat_c; the support condition must be checked from the prefix table before training and is not inferred from classifier generalization.",
+      "outcome": "applied",
+      "delta_summary": "Makes the T1/T4 support and weighting assumptions explicit in the premises ledger."
+    },
+    {
+      "scope": "coherence",
+      "op": "append_sentence",
+      "field": "gap_closure[0].how_closed",
+      "value": "The likelihood-ratio interpretation is conditional on the explicit full-source-support, two-arm reweighting, observation-model, and population-optimum assumptions; finite trained logits remain an empirical approximation.",
+      "outcome": "applied",
+      "delta_summary": "Downgrades the T4 unconditional likelihood-ratio wording to its defensible conditional grade without changing the mechanism."
+    },
+    {
+      "scope": "coherence",
+      "op": "append_sentence",
+      "field": "core_mechanism",
+      "value": "Retaining coordinate and directional history only makes spatial information available to the shared family; whether the fitted scorer uses it is an empirical property, not a consequence of permutation equivariance.",
+      "outcome": "applied",
+      "delta_summary": "Repairs the T4 overclaim that input retention prevents a learned scorer from discarding spatial information."
+    },
+    {
+      "scope": "coherence",
+      "op": "append_sentence",
+      "field": "core_mechanism",
+      "value": "The product-sample moment is only a necessary normalization diagnostic and cannot by itself distinguish the declared conditional likelihood ratio from a differently weighted normalized density ratio.",
+      "outcome": "applied",
+      "delta_summary": "Repairs the T2/T4 claim that a moment equal to one verifies estimand correctness."
+    },
+    {
+      "scope": "coherence",
+      "op": "append_sentence",
+      "field": "core_mechanism_steps",
+      "value": "Step 5 tie rule: among permutation-test-passing checkpoints with equal development loss in stored precision, select the earliest checkpoint in training order.",
+      "outcome": "applied",
+      "delta_summary": "Repairs the T3 all-tied checkpoint degeneracy with a deterministic selection rule."
+    },
+    {
+      "scope": "coherence",
+      "op": "append_sentence",
+      "field": "core_mechanism_steps",
+      "value": "For Step 8's time-position control, use a seeded within-history permutation that reassigns y_tau values over the fixed ordered (x_tau,Delta_tau,c_tau,m_tau) slots while leaving the measurement multiset, slot multiset, episode length, source label, and stratum unchanged.",
+      "outcome": "applied",
+      "delta_summary": "Repairs the T1 dual-reading ambiguity in the destructive time-position control."
+    }
+  ],
+  "final_candidate": {
+    "title": "Permutation-Equivariant Whole-History Ratio Maps for Gas-Source Localization",
+    "hook": "A probability map can improve field calibration yet lose the ordered source evidence needed for localization. We predict that a whole-history ratio map improves cumulative true-versus-fixed-rival log-odds margin, while destructive time-position or source-pair permutation removes that advantage even though the marginal measurements are unchanged.",
+    "hook_shape_rationale": "Shape (a), surprising empirical reveal: the named cumulative fixed-rival log-odds margin should separate the intact ordered-history estimator from controls that preserve marginal observations but destroy source-history dependence. Shape (c) was also viable because deployment removes online candidate-response queries, but it was rejected as the hook because lower provider cost alone does not establish the source-evidence mechanism.",
+    "gap_closure": [
+      {
+        "gap": "No retrieved frontier leaf establishes when a probability-map replacement trained or scored in field space preserves the sign and ordering of incremental evidence between a true source and fixed wrong-source rivals during sequential sparse updates; this is a structural proxy-state problem, with PMFS as the primary instance — stakes: robotic responders can receive a sharper-looking map yet rank the wrong leak, wasting trajectories and making map-quality results non-transferable to localization claims.",
+        "main_pattern": "structural_prior_encoding",
+        "sub_pattern": "C16 (Encode Structure by Construction)",
+        "companion_pattern": "targeted_self_supervised_objective",
+        "how_closed": "Closed by an exactly source-permutation-equivariant shared scorer whose joint-versus-product prefix-pairing objective makes its logits whole-history likelihood ratios; prior-weighted normalization yields the PMFS-compatible probability map, and prefix differences yield fixed-rival evidence before posterior normalization. The likelihood-ratio interpretation is conditional on the explicit full-source-support, two-arm reweighting, observation-model, and population-optimum assumptions; finite trained logits remain an empirical approximation."
+      }
+    ],
+    "core_mechanism": "Let the ordered sparse history at update t be H_t=((x_tau, Delta_tau, c_tau, m_tau, y_tau))_{tau<=t}, containing sensed position, elapsed time, observed wind or deployment context, observation mask, and gas measurement from an existing source-labelled PMFS trajectory; let s range over the existing PMFS source grid and let c denote the fixed environment and acquisition-policy stratum. Construct a balanced binary ratio task with positives (s,H_t) drawn from the empirical joint J_c and negatives formed by independently permuting source labels across histories within c, which samples M_c(s,H_t)=p_ref(s|c)p(H_t|c); use inverse empirical source-frequency weights so p_ref is the declared PMFS prior rather than the logging frequency. A causal history encoder z_theta(H_t) feeds a single shared candidate scorer f_theta(psi(s,c),z_theta(H_t)) for every source cell, with no candidate-index embedding and no cross-candidate state; therefore every permutation of the candidate list and its prior produces the same permutation of the logits exactly. This pointwise shared family is sufficient for the target because the desired log ratio is itself a scalar function of the common history, context, and one queried source coordinate, while retaining the full coordinate and directional history prevents the symmetry from discarding spatial information. Train with balanced binary cross-entropy L=-E_{J_c} log sigma(f_theta)-E_{M_c} log(1-sigma(f_theta)); at the population Bayes optimum, f*(s,H_t,c)=log[J_c(s,H_t)/M_c(s,H_t)]=log p(H_t|s,c)-log p(H_t|c), under correct joint/product sampling and adequate classifier capacity. Emit the replacement probability map pi_theta,t(s)=pi_0(s|c) exp(f_theta(s,H_t,c))/sum_u pi_0(u|c) exp(f_theta(u,H_t,c)); this preserves the probability-map interface and requires neither a dense-field target nor an online candidate-response provider. Define the pre-normalization increment i_theta,t(s)=f_theta(s,H_t,c)-f_theta(s,H_{t-1},c) and the fixed-rival increment delta_theta,t(s*,r)=i_theta,t(s*)-i_theta,t(r), so the mechanism confronts direct q0 before Bayesian accumulation rather than repairing a posterior afterward. Enforce the ratio object with the stated joint/product loss and verify it, rather than infer source identifiability from architecture, using held-out binary log loss, the product-sample moment E_M[exp(f_theta)] approaching one, exact source-permutation unit tests, fixed-rival traces, and destructive time-position and source-pair permutations. The corpus support for this C16 instantiation is thin in gas-source localization; its closest exemplars concern exact permutation symmetry in other domains, so the claim is limited to the analytically enforced equivariance and the empirically tested source-evidence effect. Operationally, let qhat_c(s) be the development logging frequency: the valid input domain requires at least two prior-positive source cells, nonempty development and held-out episode partitions, and qhat_c(s)>0 for every cell with pi_0(s|c)>0; apply w_c(s)=pi_0(s|c)/qhat_c(s) to positive examples using their true labels and to negative examples using their permuted labels, normalize weights separately within each BCE class, and interpret J_c and M_c in the displayed loss as those two reweighted measures, otherwise the full-grid estimator is undefined and no map is emitted. Retaining coordinate and directional history only makes spatial information available to the shared family; whether the fitted scorer uses it is an empirical property, not a consequence of permutation equivariance. The product-sample moment is only a necessary normalization diagnostic and cannot by itself distinguish the declared conditional likelihood ratio from a differently weighted normalized density ratio.",
+    "core_mechanism_reasoning": "BLOCK 1 — PREMISES ledger:\nP1: The existing source-labelled PMFS trajectories retain ordered pose, time, available wind/context, masks, and measurements; this is supported by their use as sequential probability-map logs.\nP2: Candidate labels are exchangeable as list indices once their physical coordinates and priors move with them; this is an exact representation symmetry, not an assumption that physical locations are identical.\nP3: Within each fixed environment/acquisition-policy stratum, independently permuting source labels across histories samples the conditional product of marginals after inverse-frequency reweighting; biased or source-dependent logging is untested — falsification target.\nP4: Whole ordered histories contain source-relative dependence not representable by a pointwise calibrated q0(y_t|g_t(s)); this is untested — falsification target and is probed by time-position destruction.\nP5: The binary classifier is sufficiently expressive and sufficiently optimized for its held-out logit to approximate the population density ratio; only empirical approximation, not exact finite-sample recovery, is claimed.\nOBSERVATION-MODEL premise: histories are adaptively and sparsely observed by the logged policy, so inference targets p(H_t|s,c) conditional on that policy rather than an unbiased dense field; train/test policy strata must match or be reported separately.\nESTIMAND: for every prefix H_t and candidate s, estimate R_t(s)=p(H_t|s,c)/p(H_t|c), with downstream estimands delta_theta,t(s*,r) and the prior-weighted normalized source probability pi_theta,t(s).\nBLOCK 2 — NAIVE-BASELINE AUDIT: The naive runnable comparator evaluates the calibrated direct response likelihood q0(y_t|g_t(s)) for each candidate and accumulates its log likelihood under the unchanged prior. Branch (i): q0 silently assumes the source-relevant history law factorizes through the current response and observation, so histories with the same pointwise q0 values cannot differ through intermittency, path order, or adaptive missingness; the whole-history joint-versus-product classifier confronts that false-in-general premise directly and must beat q0 on fixed-rival increments. Neural ratio estimation is a standard likelihood-free tool, but this instance adds domain-specific structure that the stock recipe does not supply: adaptively sampled ordered prefixes, exact source-grid permutation equivariance, a PMFS-compatible normalized map, pre-normalization rival increments, and a frozen unresolved-rule grid; if these additions do not beat direct q0 and the intact-versus-destroyed controls, the contribution is application-grade and fails.\nBLOCK 3 — design rationale: The rule-grid, map-metric sufficiency, and planning gaps were not admitted as sibling contributions because the anchor can be falsified without new machinery; their useful pieces remain evaluation constraints. A direct amortized source posterior, a field-distribution neural operator, and the previous interaction decomposition were rejected because they either collide with established amortized inference, optimize field-space proper scores, or state a separation condition the training algorithm does not enforce; the chosen loss explicitly trains the source-history ratio that the claim tests. Additional load-bearing premise P6: within every reported c stratum, each pi_0-positive source cell has positive development logging support and both BCE classes are separately reweighted by pi_0/qhat_c; the support condition must be checked from the prefix table before training and is not inferred from classifier generalization.",
+    "core_mechanism_steps": "1. Read the existing source-labelled PMFS trajectory/log artifact and serialize each episode into ordered prefixes H_t with source cell s*, physical coordinates, environment/acquisition-policy stratum c, and the declared PMFS prior pi_0; output a versioned prefix table without reconstructing a dense field.\n2. Split complete episodes, never individual prefixes, into development and held-out trajectory partitions; output leakage-free joint samples (s*,H_t,c) and empirical source frequencies per stratum.\n3. For every joint mini-batch, construct a balanced product-of-marginals batch by independently permuting source labels among histories inside the same c stratum and attach inverse source-frequency weights that target pi_0; output positive and negative source-history pairs.\n4. Implement a causal sequence encoder over ordered (x_tau,Delta_tau,c_tau,m_tau,y_tau) records and a shared scorer f_theta applied to each physical source coordinate, prohibiting candidate-index embeddings and candidate-specific parameters; output one logit per source cell.\n5. Train the scorer by the balanced joint-versus-product binary cross-entropy and select the checkpoint with the lowest development binary log loss subject to passing the exact candidate-permutation unit test; output a calibrated whole-history log-ratio estimator.\n6. For every online prefix, evaluate the shared scorer once per candidate cell, combine logits with pi_0, and normalize across cells to output the same probability-map tensor interface consumed by the downstream PMFS source-ranking code; no online g_t(s) or candidate-response service is called.\n7. Cache consecutive prefix logits and compute i_theta,t(s) and delta_theta,t(s*,r) for the same fixed wrong-source rivals in every arm; output auditable pre-normalization evidence traces and final source ranks.\n8. Verify the trained object on held-out episodes with binary log loss, the product-sample ratio-moment diagnostic, and exact permutation equivariance, then run two destructive controls: permute measurement time-position assignments within histories and permute source-history pairing while preserving marginals; output both direct property probes and downstream map/rank results.\n9. Compare the intact ratio map with PMFS, the direct calibrated q0 arm, and a field-only probabilistic map learner on identical held-out histories, initial priors, fixed rivals, and the complete frozen grid of unresolved PMFS rules; output per-rule-tuple effects instead of selecting a favorable baseline setting.\n10. Report map calibration and reconstruction only as secondary diagnostics; the primary outputs are cumulative fixed-rival log-odds margin, true-source rank, and whether the destructive controls erase the intact estimator's downstream advantage. Step 5 tie rule: among permutation-test-passing checkpoints with equal development loss in stored precision, select the earliest checkpoint in training order. For Step 8's time-position control, use a seeded within-history permutation that reassigns y_tau values over the fixed ordered (x_tau,Delta_tau,c_tau,m_tau) slots while leaving the measurement multiset, slot multiset, episode length, source label, and stratum unchanged.",
+    "falsification_prediction": "Train the whole-history ratio estimator on existing source-labelled PMFS trajectories and evaluate it on held-out complete episodes across the frozen PMFS rule grid against unchanged PMFS, a calibrated direct q0(y_t|g_t(s)) arm, and a field-only probabilistic learner. If the mechanism works, cumulative true-versus-fixed-rival log-odds margin increases and final true-source rank decreases relative to direct q0 without requiring an online candidate-response provider. The single load-bearing variable is delta_theta,t(s*,r), the difference of consecutive whole-history ratio-logit increments for the true source and a fixed rival. Destructively permuting measurement time-position assignments or independently permuting source-history pairings must drive cumulative fixed-rival margin and final rank back toward the direct-q0 or product-pair control; if intact and permuted arms are indistinguishable, or the ratio-moment and exact-equivariance checks fail, the claimed whole-history source-relative mechanism is falsified.",
+    "compute_budget": "24 GPU-days on one 80GB-class GPU for prefix training, checkpoint selection, and all held-out rule-grid/control arms; $0 paid API inference because all models, labels, and scoring are local.",
+    "differentiation_from_lit": [
+      {
+        "paper_id": "semanticscholar:c930ca69d5ed8553c0638ebe60205fe9c1845e58",
+        "delta": "That method inserts a deterministic Green-function surrogate and its derivative into sparse source inversion, whereas this candidate learns an ordered-history source likelihood ratio and emits a normalized source map without online Green or candidate-response evaluation."
+      },
+      {
+        "paper_id": "dblp:journals/corr/abs-2502-12902",
+        "delta": "PNO learns a calibrated distribution over output functions with a proper field-space score, whereas this candidate's joint-versus-product objective estimates per-source history ratios whose prefix differences are evaluated directly against fixed rivals."
+      },
+      {
+        "paper_id": "dblp:journals/corr/abs-2602-13739",
+        "delta": "XIT consumes a supplied posterior mean-variance field for UCB planning, whereas this candidate replaces the updater itself with a source-relative probability map and makes no planning-improvement claim."
+      },
+      {
+        "paper_id": "dblp:journals/corr/abs-2604-06387",
+        "delta": "Abstract-only inference: that comparison selects uncertainty methods by field reconstruction and calibration, whereas this candidate trains and tests whole-history true-versus-rival likelihood-ratio increments before posterior normalization."
+      }
+    ],
+    "almost_prior_paper_id": "dblp:journals/corr/abs-2502-12902",
+    "what_step_was_missed": "It would have needed to replace field-function scoring with balanced joint-source-history versus product-of-marginals prefix classification, then prior-normalize the resulting per-source density-ratio logits and test their fixed-rival increments under destructive history permutations.",
+    "signature_terms": [
+      "whole-history source ratio maps",
+      "source-permutation contrastive likelihood",
+      "permutation-equivariant probability mapping",
+      "fixed-rival evidence increments",
+      "adaptive sparse gas histories"
+    ],
+    "alias_terms": [
+      "sequential Monte Carlo data assimilation",
+      "generalized Bayesian likelihood tempering",
+      "conformal predictive set calibration",
+      "amortized simulation based inference",
+      "classifier density ratio estimation"
+    ],
+    "composition_note": ""
+  },
+  "falsification_rewritten": false
+}
