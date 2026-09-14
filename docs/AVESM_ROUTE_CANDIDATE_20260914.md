@@ -81,3 +81,8 @@ histories contained zero nonzero gas frames. The resulting AVESM transfer
 diagnostic is therefore `CROSS_HOUSE_TRANSFER_NO_GO`: any apparent rank signal
 is a prior/model artifact, not observed source evidence. The probe is retained
 as a data-coverage failure, not counted as a negative scientific result.
+
+The explicit RNG rerun (`GADEN_RNG_SEED=20260915`, H01_SA) also produced 300
+frames with zero nonzero gas observations. This closes the bounded probe as a
+route-coverage failure: an independent seed exists, but the selected fixed
+route never interrogates plume evidence.
