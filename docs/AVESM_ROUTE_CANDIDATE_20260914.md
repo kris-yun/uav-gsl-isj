@@ -114,6 +114,12 @@ above `0.1 ppm`, and a peak of `4.466 ppm` at `(0.052, 2.000, 0.3)`. Thus the
 concentration path is capable of producing informative observations; the earlier
 all-zero result was a route-coverage defect.
 
+Using the existing pooled distance-kernel diagnostic only as a sanity check, the
+same 300-frame history gave a true-versus-fixed-wrong log-inverse-e margin of
+`202.69` in favor of the declared source. This demonstrates that the recovered
+observations carry source-discriminating information, but it is a single-case
+diagnostic and not an AVESM confirmation.
+
 However, the measured-history SHA256 is identical for metadata seeds `1234` and
 `20260915` under this simulator build. The seed field is therefore not yet
 independent-realization evidence (`SEED_SENSITIVITY_UNPROVEN_IDENTICAL_OUTPUT`).
