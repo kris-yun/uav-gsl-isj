@@ -1,0 +1,29 @@
+{
+  "contract": "AVESM_SOURCE_BLIND_COVERAGE_GATE_V1",
+  "case_id": "H01_SA_fast",
+  "house": "House01",
+  "route": "occupancy-bounds serpentine sweep; x=[-7.3,0.9], y=[-7.6,3.2], z=0.3; 301 points at 0.2 s",
+  "route_uses_source_coordinates": false,
+  "sim_time_s": 60.1,
+  "frames": 300,
+  "nonzero_gas_gt_1e-6_frames": 36,
+  "gas_gt_0.1_ppm_frames": 24,
+  "gas_gt_1_ppm_frames": 9,
+  "max_gas_ppm": 4.465822880517709,
+  "peak": {
+    "t_sim_s": 53.2,
+    "raw_iteration": 532,
+    "pose_xy": [0.051724137931, 2.0],
+    "gas_ppm": 4.465822880517709
+  },
+  "history_sha256": "5d8cc7281e52b79304dc09d9cfbd88988b3620898c0ed998ae5ba98d02b97e29",
+  "seed_metadata": 20260915,
+  "seed_sensitivity": {
+    "comparison": "same route and same canonical wind input under metadata seeds 1234 and 20260915",
+    "history_sha256_seed1234": "5d8cc7281e52b79304dc09d9cfbd88988b3620898c0ed998ae5ba98d02b97e29",
+    "history_sha256_seed20260915": "5d8cc7281e52b79304dc09d9cfbd88988b3620898c0ed998ae5ba98d02b97e29",
+    "verdict": "SEED_SENSITIVITY_UNPROVEN_IDENTICAL_OUTPUT"
+  },
+  "verdict": "COVERAGE_GATE_PASS_FOR_DIAGNOSTIC_ONLY",
+  "scope": "This proves the concentration chain can produce informative observations when a source-blind map sweep crosses the plume. It is not an independent-seed or AVESM localization result."
+}

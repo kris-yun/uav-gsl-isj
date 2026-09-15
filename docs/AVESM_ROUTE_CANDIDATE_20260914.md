@@ -104,3 +104,18 @@ is not evidence for a source-blind localization claim. The next valid experiment
 must repair or replace the route-coverage premise under a pre-registered,
 source-blind design, without changing AVESM or treating the present all-zero run
 as a mechanism failure.
+
+## Source-blind coverage control (2026-09-15)
+
+As a bounded control, a deterministic serpentine route was generated from the
+House01 occupancy bounds alone (no source coordinates) and run through the same
+current-runtime extractor. It produced 36/300 frames above `1e-6 ppm`, 24/300
+above `0.1 ppm`, and a peak of `4.466 ppm` at `(0.052, 2.000, 0.3)`. Thus the
+concentration path is capable of producing informative observations; the earlier
+all-zero result was a route-coverage defect.
+
+However, the measured-history SHA256 is identical for metadata seeds `1234` and
+`20260915` under this simulator build. The seed field is therefore not yet
+independent-realization evidence (`SEED_SENSITIVITY_UNPROVEN_IDENTICAL_OUTPUT`).
+The coverage control is retained as diagnostic evidence only; a genuine seed
+separation check is required before any held-out or cross-seed claim.
