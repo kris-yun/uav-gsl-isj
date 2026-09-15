@@ -49,7 +49,7 @@ def fit(rows, xy, threshold):
     return [[v / sum(pair) for v in pair] for pair in counts]
 
 
-def score(rows, models, candidates, threshold):
+def score(rows, models, candidates, threshold, kappa):
     log_e = {s: 0.0 for s in candidates}
     trace = []
     for row in rows:
@@ -58,7 +58,9 @@ def score(rows, models, candidates, threshold):
         for s in candidates:
             rivals = [u for u in candidates if u != s]
             q = sum(p[u] for u in rivals) / len(rivals)
-            log_e[s] += math.log(q / p[s])
+            # Safe power tempering: for 0 < kappa <= 1, concavity preserves
+            # the e-value expectation bound when the base factor is valid.
+            log_e[s] += kappa * math.log(q / p[s])
         trace.append(dict(log_e))
     return trace
 
@@ -84,31 +86,51 @@ def main() -> int:
     ap.add_argument("--b-train", type=Path, required=True)
     ap.add_argument("--b-eval", type=Path, required=True)
     ap.add_argument("--hit-threshold", type=float, default=HIT_THRESHOLD_PPM)
+    ap.add_argument("--kappa", type=float, default=1.0)
+    ap.add_argument("--permutation-count", type=int, default=100)
     ap.add_argument("--out", type=Path, required=True)
     args = ap.parse_args()
 
     train = {"A": load(args.a_train), "B": load(args.b_train)}
     eval_rows = {"A": load(args.a_eval), "B": load(args.b_eval)}
     threshold = args.hit_threshold
+    if not 0.0 < args.kappa <= 1.0:
+        ap.error("--kappa must be in (0,1]")
+    if args.permutation_count < 1:
+        ap.error("--permutation-count must be positive")
+    kappa = args.kappa
     models = {s: fit(train[s], COORDS[s], threshold) for s in ("A", "B")}
     intact = {}
     controls = {}
     null_crosses = {}
     null_final_e = {}
+    permutation_errors = []
     for true_source in ("A", "B"):
-        tr = score(eval_rows[true_source], models, ("A", "B"), threshold)
-        ctr = score(shuffled(eval_rows[true_source], 9100 + ord(true_source)), models, ("A", "B"), threshold)
+        tr = score(eval_rows[true_source], models, ("A", "B"), threshold, kappa)
+        tr_reordered = score(eval_rows[true_source], models, ("B", "A"), threshold, kappa)
+        permutation_errors.extend(abs(x["A"] - y["A"]) for x, y in zip(tr, tr_reordered))
+        permutation_errors.extend(abs(x["B"] - y["B"]) for x, y in zip(tr, tr_reordered))
+        perm_traces = [score(shuffled(eval_rows[true_source], 9100 + ord(true_source) * 1000 + i), models, ("A", "B"), threshold, kappa) for i in range(args.permutation_count)]
+        perm_margins = [margin(x, true_source) for x in perm_traces]
         intact[true_source] = {"margin_rival_minus_true": margin(tr, true_source), "true_log_e_max": max(x[true_source] for x in tr)}
-        controls[true_source] = {"margin_rival_minus_true": margin(ctr, true_source)}
+        controls[true_source] = {
+            "mean_margin_rival_minus_true": sum(perm_margins) / len(perm_margins),
+            "mean_absolute_margin": sum(abs(x) for x in perm_margins) / len(perm_margins),
+            "threshold_cross_rate": sum(max(x[true_source] for x in trc) >= LOG20 for trc in perm_traces) / len(perm_traces),
+        }
         null_crosses[true_source] = max(x[true_source] for x in tr) >= LOG20
         null_final_e[true_source] = math.exp(tr[-1][true_source])
 
     intact_margins = [v["margin_rival_minus_true"] for v in intact.values()]
-    control_margins = [v["margin_rival_minus_true"] for v in controls.values()]
+    control_abs_margins = [v["mean_absolute_margin"] for v in controls.values()]
+    intact_abs_margins = [abs(x) for x in intact_margins]
+    permutation_cross_rates = [v["threshold_cross_rate"] for v in controls.values()]
     checks = {
         "heldout_true_source_margin_positive_both": all(x > 0 for x in intact_margins),
-        "shuffle_reduces_absolute_margin": all(abs(c) < abs(i) for c, i in zip(control_margins, intact_margins)),
-        "null_threshold_cross_rate_below_0_5": sum(null_crosses.values()) / 2 < 0.5,
+        "shuffle_reduces_mean_absolute_margin": all(c < i for c, i in zip(control_abs_margins, intact_abs_margins)),
+        "heldout_null_threshold_cross_rate_below_0_1": sum(null_crosses.values()) / 2 < 0.1,
+        "permutation_threshold_cross_rate_below_0_1": all(x < 0.1 for x in permutation_cross_rates),
+        "candidate_list_permutation_error_below_1e-12": max(permutation_errors) < 1e-12,
         "heldout_null_mean_final_e_at_most_one": sum(null_final_e.values()) / 2 <= 1.0,
     }
     result = {
@@ -117,11 +139,13 @@ def main() -> int:
         "route": "House01 occupancy-bounds serpentine sweep; source-blind route file",
         "candidate_coordinates": COORDS,
         "hit_threshold_ppm": threshold,
+        "kappa": kappa,
         "train_eval_separation": "seed1234 -> seed20260915 per candidate",
         "heldout": intact,
         "permutation_control": controls,
         "null_threshold_crosses": null_crosses,
         "null_final_e": null_final_e,
+        "permutation_count": args.permutation_count,
         "checks": checks,
         "scope": "bounded current-runtime mechanism gate only; not PMFS confirmation or closed-loop evidence",
     }

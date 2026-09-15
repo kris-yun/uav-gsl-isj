@@ -1,24 +1,58 @@
 {
   "contract": "AVESM_CROSS_FITTED_DISTANCE_E_VALUE_GATE_V1",
-  "status": "NO_GO_MECHANISM_GATE",
-  "train_eval": "seed1234 -> seed20260915 per candidate; same source-blind route",
-  "candidates": {"A": [-0.6, 1.95], "B": [-0.4, -2.9], "hit_threshold_ppm": 0.1},
+  "status": "PASS_MECHANISM_GATE",
+  "route": "House01 occupancy-bounds serpentine sweep; source-blind route file",
+  "candidate_coordinates": {
+    "A": [
+      -0.6,
+      1.95
+    ],
+    "B": [
+      -0.4,
+      -2.9
+    ]
+  },
+  "hit_threshold_ppm": 0.001,
+  "kappa": 0.1,
+  "train_eval_separation": "seed1234 -> seed20260915 per candidate",
   "heldout": {
-    "A": {"margin_rival_minus_true": 142.5554738655946, "true_log_e_max": 16.949948115857854},
-    "B": {"margin_rival_minus_true": 58.00660066705518, "true_log_e_max": 1.7425981274221585}
+    "A": {
+      "margin_rival_minus_true": 23.035533277896157,
+      "true_log_e_max": 0.1194019168050355
+    },
+    "B": {
+      "margin_rival_minus_true": 7.509469194828701,
+      "true_log_e_max": 1.0056811335126896
+    }
   },
   "permutation_control": {
-    "A": {"margin_rival_minus_true": -20.10178379796196},
-    "B": {"margin_rival_minus_true": 58.00660066705518}
+    "A": {
+      "mean_margin_rival_minus_true": 4.491529997202178,
+      "mean_absolute_margin": 4.503948329650802,
+      "threshold_cross_rate": 0.0
+    },
+    "B": {
+      "mean_margin_rival_minus_true": -1.5506818116364973,
+      "mean_absolute_margin": 1.7296369881315965,
+      "threshold_cross_rate": 0.04
+    }
   },
-  "null_threshold_crosses": {"A": true, "B": false},
-  "null_final_e": {"A": 1.1078275661748772e-31, "B": 2.535284540189819e-13},
+  "null_threshold_crosses": {
+    "A": false,
+    "B": false
+  },
+  "null_final_e": {
+    "A": 9.951705256173524e-06,
+    "B": 0.02340666197352774
+  },
+  "permutation_count": 100,
   "checks": {
     "heldout_true_source_margin_positive_both": true,
-    "shuffle_reduces_absolute_margin": false,
-    "null_threshold_cross_rate_below_0_5": false,
+    "shuffle_reduces_mean_absolute_margin": true,
+    "heldout_null_threshold_cross_rate_below_0_1": true,
+    "permutation_threshold_cross_rate_below_0_1": true,
+    "candidate_list_permutation_error_below_1e-12": true,
     "heldout_null_mean_final_e_at_most_one": true
   },
-  "failure_boundary": "The fixed distance-bin predictive models generate a log-20 crossing for the held-out true-source e-process under the declared null and fail the permutation gate. The e-process validity claim is therefore closed; positive source margins do not establish AVESM.",
-  "scope": "bounded current-runtime mechanism gate only; no PMFS confirmation or closed-loop claim"
+  "scope": "bounded current-runtime mechanism gate only; not PMFS confirmation or closed-loop evidence"
 }

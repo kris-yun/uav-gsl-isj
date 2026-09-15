@@ -1,5 +1,6 @@
 {
   "contract": "AVESM_CURRENT_RUNTIME_THRESHOLD_SENSITIVITY_V1",
+  "kappa": 1.0,
   "thresholds_ppm": [1e-6, 0.001, 0.005, 0.01, 0.1],
   "all_status": "NO_GO_MECHANISM_GATE",
   "null_cross_rate_check": {
@@ -9,5 +10,5 @@
     "0.01": false,
     "0.1": false
   },
-  "interpretation": "The held-out null log-20 crossing persists across the declared threshold sensitivity range; this is a predictive-model validity failure, not merely a 0.1 ppm threshold choice."
+  "interpretation": "For the untempered base e-process (kappa=1), the held-out null log-20 crossing persists across the declared threshold sensitivity range; this is a predictive-model validity failure, not merely a 0.1 ppm threshold choice. The repaired kappa=0.1 result is recorded separately in avesm_current_runtime_gate_result.json."
 }

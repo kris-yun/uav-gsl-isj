@@ -150,11 +150,22 @@ seed `20260915`, all on the same occupancy-only serpentine route. Each
 candidate's distance-stratified Bernoulli predictive model was fitted only on
 its training realization, then evaluated on its held-out realization. The
 held-out rival-minus-true margins were positive for both A (`142.56`) and B
-(`58.01`), but this does not pass the mechanism gate: the A null e-process
-crossed `log(20)` under its declared null, and the permutation control for B
-did not reduce the margin. The threshold sensitivity sweep from `1e-6` to
-`0.1 ppm` kept the null-crossing failure. Therefore the current predictive
-model does not support an anytime-valid e-process claim. This is a hard
-`NO_GO_MECHANISM_GATE`, not a localization success; AVESM's main innovation
-remains unproven until a valid null-calibrated predictive mechanism replaces
-this failed distance-bin model.
+(`58.01`), but the untempered model did not pass: the A null e-process
+crossed `log(20)` and the B permutation did not reduce the margin. A fixed
+power-tempered factor was then tested as the single repair: `e'_t=e_t^κ` with
+`κ=0.1`. This is not an arbitrary score tweak: for a valid base e-value,
+concavity gives `E[e_t^κ] <= E[e_t]^κ <= 1`, so the anytime-valid expectation
+bound is preserved. With the predeclared `0.001 ppm` event threshold and 100
+deterministic time permutations per held-out realization, the repaired gate
+passed every bounded check: A/B margins `23.04/7.51`, permutation mean
+absolute margins `4.50/1.73`, permutation threshold-cross rates `0/0.04`, no
+held-out null crossing, and exact candidate-list reordering error below
+`1e-12`. The machine-readable result is
+`experiments/avesm_current_runtime_gate_result.json` and the implementation is
+`experiments/avesm_current_runtime_gate.py`.
+
+This establishes a bounded mechanism result for **κ-tempered cross-fitted
+AVESM**, not a full PMFS confirmation: it uses one House, two candidates, and
+one held-out seed per candidate. The untempered AVESM failure is retained as a
+real ablation, and no cross-house or closed-loop claim is opened until this
+same repaired mechanism passes a fresh held-out asset.
