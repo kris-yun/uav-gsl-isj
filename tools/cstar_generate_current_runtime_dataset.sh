@@ -14,7 +14,10 @@ PY=/usr/bin/python3
 source /opt/ros/humble/setup.bash
 source /home/zyc/PF_DEI_V3_GADEN_BUILD_REF/install/setup.bash
 set -u
-export LD_LIBRARY_PATH=/home/zyc/PF_DEI_V3_GADEN_BUILD_REF/install/gaden_common/lib:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_common/lib:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/lib:/home/zyc/ros2_ws/install/gaden_common/lib:${LD_LIBRARY_PATH:-}
+# The simulator links libgaden.so from install/lib.  Keep this build's library
+# before the older closure overlay so the compiled GADEN_RNG_SEED hook is
+# actually loaded at runtime.
+export LD_LIBRARY_PATH=/home/zyc/PF_DEI_V3_GADEN_BUILD_REF/install/lib:/home/zyc/PF_DEI_V3_GADEN_BUILD_REF/install/gaden_common/lib:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_common/lib:/home/zyc/PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/lib:/home/zyc/ros2_ws/install/gaden_common/lib:${LD_LIBRARY_PATH:-}
 export GADEN_RNG_SEED=1234
 SIM_TIME_S=${SIM_TIME_S:-60.1}
 EXPECTED_FRAMES=${EXPECTED_FRAMES:-601}
