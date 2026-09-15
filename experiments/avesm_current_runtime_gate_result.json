@@ -1,0 +1,24 @@
+{
+  "contract": "AVESM_CROSS_FITTED_DISTANCE_E_VALUE_GATE_V1",
+  "status": "NO_GO_MECHANISM_GATE",
+  "train_eval": "seed1234 -> seed20260915 per candidate; same source-blind route",
+  "candidates": {"A": [-0.6, 1.95], "B": [-0.4, -2.9], "hit_threshold_ppm": 0.1},
+  "heldout": {
+    "A": {"margin_rival_minus_true": 142.5554738655946, "true_log_e_max": 16.949948115857854},
+    "B": {"margin_rival_minus_true": 58.00660066705518, "true_log_e_max": 1.7425981274221585}
+  },
+  "permutation_control": {
+    "A": {"margin_rival_minus_true": -20.10178379796196},
+    "B": {"margin_rival_minus_true": 58.00660066705518}
+  },
+  "null_threshold_crosses": {"A": true, "B": false},
+  "null_final_e": {"A": 1.1078275661748772e-31, "B": 2.535284540189819e-13},
+  "checks": {
+    "heldout_true_source_margin_positive_both": true,
+    "shuffle_reduces_absolute_margin": false,
+    "null_threshold_cross_rate_below_0_5": false,
+    "heldout_null_mean_final_e_at_most_one": true
+  },
+  "failure_boundary": "The fixed distance-bin predictive models generate a log-20 crossing for the held-out true-source e-process under the declared null and fail the permutation gate. The e-process validity claim is therefore closed; positive source margins do not establish AVESM.",
+  "scope": "bounded current-runtime mechanism gate only; no PMFS confirmation or closed-loop claim"
+}

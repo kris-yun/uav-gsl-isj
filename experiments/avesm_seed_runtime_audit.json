@@ -6,18 +6,22 @@
     "generator_commit": "ff30740",
     "ld_library_path_prefix": "/home/zyc/PF_DEI_V3_GADEN_BUILD_REF/install/lib",
     "loaded_library_after_fix": "/home/zyc/PF_DEI_V3_GADEN_BUILD_REF/install/lib/libgaden.so",
-    "rebuilt_library_sha256": "f5aa25db0d8db802df94fd7612a9c1e447ae56db651b5e4a52d361e595ce6acc",
+    "rebuilt_library_sha256": "8c767391731dec51db27d221573a0d11f5f65ad7fc13e878b3748326067bf0ae",
+    "rebuilt_simulator_sha256": "5463d95caf89627128076afc1254e1d805a527b7944f6dcf8a65fbc9c017258b",
+    "wind_parser_source_sha256": "24dc07fbf42799fa2d5f9e1fff175ef8d374bcdf528f9e9a6712a05be918124c",
     "seed_hook_string_count": 1,
-    "build_note": "gaden target rebuilt from the patched source using a temporary empty CPU-only compute dependency; the temporary stub was removed after installation."
+    "build_note": "gaden and filament_simulator were rebuilt as an ABI-consistent pair after restoring the validated legacy VGR wind-layout parser; the temporary CPU-only compute stub was removed after installation."
   },
   "seed_comparison": {
     "route": "H01 occupancy-bounds sweep",
     "sim_time_s": 10.1,
     "seed_a": 1234,
     "seed_b": 20260915,
-    "raw_iteration_100_sha256_seed_a": "65dc11a30c65f85980604860f96e91164a1e567429c5e6ffc673392c619b6853",
-    "raw_iteration_100_sha256_seed_b": "65dc11a30c65f85980604860f96e91164a1e567429c5e6ffc673392c619b6853",
-    "verdict": "SEED_SENSITIVITY_UNPROVEN_IDENTICAL_OUTPUT"
+    "raw_iteration_100_sha256_seed_a": "e4fad6d3333ddb1379173135580b68c389f0064808cd38f33b2a6a01a1ce0a85",
+    "raw_iteration_100_sha256_seed_b": "ae3151ea8bb504d22db1966535c6eebbe1117b2842c98ce537b4a5d70d3a1284",
+    "source_query_ppm_at_iteration_100": {"seed_a": 19.42502212524414, "seed_b": 18.322711944580078},
+    "wind_query_seed_b": {"u": 0.04765300080180168, "v": -0.0045598000288009644, "w": -0.03800100088119507},
+    "verdict": "SEED_SENSITIVITY_PASS"
   },
-  "interpretation": "The runtime library-selection defect is fixed and the rebuilt library contains the seed-hook symbol, but the two controlled runs remain byte-identical at the checked raw output. No independent-seed claim is opened until a positive seed-sensitivity control is observed and explained."
+  "interpretation": "The library-selection defect and the VGR legacy wind-layout parser/ABI defect were repaired. With the rebuilt library and simulator executable loaded together, the controlled same-route runs differ in raw bytes and source concentration while the queried wind vector remains finite. The independent-realization premise is open for the bounded H01 coverage gate; it does not by itself validate AVESM."
 }

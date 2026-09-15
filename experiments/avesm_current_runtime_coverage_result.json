@@ -1,0 +1,28 @@
+{
+  "contract": "AVESM_SOURCE_BLIND_COVERAGE_GATE_V2",
+  "case_id": "H01_SA_fast",
+  "house": "House01",
+  "route": "occupancy-bounds serpentine sweep; x=[-7.3,0.9], y=[-7.6,3.2], z=0.3; 301 points at 0.2 s",
+  "route_uses_source_coordinates": false,
+  "sim_time_s": 60.1,
+  "frames": 300,
+  "seed": 20260915,
+  "history_sha256": "356aef323e263998ca4fdb9ec122c1a49748cf094a2af4f0e9694facf7390596",
+  "nonzero_gas_gt_1e-6_frames": 36,
+  "gas_gt_0.1_ppm_frames": 24,
+  "gas_gt_1_ppm_frames": 9,
+  "max_gas_ppm": 4.39869099033126,
+  "peak": {
+    "t_sim_s": 53.2,
+    "raw_iteration": 532,
+    "pose_xy": [0.051724137931, 2.0],
+    "gas_ppm": 4.39869099033126
+  },
+  "runtime_contract": {
+    "wind_values_finite": true,
+    "source_query_ppm_iteration_100": 18.322711944580078,
+    "raw_iteration_100_sha256": "ae3151ea8bb504d22db1966535c6eebbe1117b2842c98ce537b4a5d70d3a1284"
+  },
+  "verdict": "COVERAGE_GATE_PASS_FOR_DIAGNOSTIC_ONLY",
+  "scope": "This proves the repaired concentration/runtime chain can produce informative observations on a source-blind map sweep. It is not an AVESM confirmation or closed-loop result."
+}

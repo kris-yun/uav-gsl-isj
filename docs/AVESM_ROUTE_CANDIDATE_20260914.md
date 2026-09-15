@@ -128,11 +128,33 @@ separation check is required before any held-out or cross-seed claim.
 
 ## Seed-runtime audit (2026-09-15)
 
-The immediate runtime cause was found: `ldd` had selected the older closure
-`libgaden.so` because the generator's `LD_LIBRARY_PATH` omitted
-`PF_DEI_V3_GADEN_BUILD_REF/install/lib`. The generator was corrected and pushed
-as `ff30740`; the patched GADEN library was rebuilt and `ldd` now selects the
-intended build. Nevertheless, the rebuilt-runtime raw outputs for seed `1234`
-and seed `20260915` are still byte-identical at the checked iteration. This is
-now a genuine seed-sensitivity failure to explain, not a library-selection
-assumption. The independent-seed gate remains closed.
+The immediate runtime cause was twofold. First, `ldd` had selected the older
+closure `libgaden.so` because the generator's `LD_LIBRARY_PATH` omitted
+`PF_DEI_V3_GADEN_BUILD_REF/install/lib`. Second, after that library was loaded,
+the V3 source had lost the validated VGR legacy wind-layout parser and was
+reading the no-header double arrays from the wrong offset, producing `inf`
+wind vectors. The generator was corrected and pushed as `ff30740`; the
+library and `filament_simulator` were rebuilt as an ABI-consistent pair after
+restoring the parser. The same-route raw `iteration_100` hashes now differ
+(`1234`: `e4fad6...0a85`; `20260915`: `ae3151...1284`), and the source query
+changes from `19.4250` to `18.3227` ppm while the wind query remains finite.
+The bounded independent-realization premise is therefore open. The full
+runtime evidence is in `experiments/avesm_seed_runtime_audit.json` and
+`experiments/avesm_current_runtime_coverage_result.json`.
+
+## Cross-fitted current-runtime mechanism gate (2026-09-15)
+
+To test the actual AVESM object, I used four short current-runtime histories:
+candidate A and fixed rival B, each with training seed `1234` and held-out
+seed `20260915`, all on the same occupancy-only serpentine route. Each
+candidate's distance-stratified Bernoulli predictive model was fitted only on
+its training realization, then evaluated on its held-out realization. The
+held-out rival-minus-true margins were positive for both A (`142.56`) and B
+(`58.01`), but this does not pass the mechanism gate: the A null e-process
+crossed `log(20)` under its declared null, and the permutation control for B
+did not reduce the margin. The threshold sensitivity sweep from `1e-6` to
+`0.1 ppm` kept the null-crossing failure. Therefore the current predictive
+model does not support an anytime-valid e-process claim. This is a hard
+`NO_GO_MECHANISM_GATE`, not a localization success; AVESM's main innovation
+remains unproven until a valid null-calibrated predictive mechanism replaces
+this failed distance-bin model.
