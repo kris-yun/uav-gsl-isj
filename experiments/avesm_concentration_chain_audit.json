@@ -1,0 +1,34 @@
+{
+  "audit": "AVESM_CONCENTRATION_CHAIN_V1",
+  "date": "2026-09-15",
+  "case_id": "H01_SA_fast",
+  "house": "House01",
+  "gaden_rng_seed": 20260915,
+  "sim_time_s": 10.1,
+  "raw_output": "/dev/shm/cstar_current_H01_SA_fast/output",
+  "raw_output_sha256": {
+    "iteration_1": "412036a723da55d6839de9eeb3c3a3ba4ed0fe72ff45260513c6912e1c26ab3b",
+    "iteration_2": "9dd5ebca7e89615ea3452f78b2c2b42ed6d2e1597602937100ac99d2213dc006",
+    "iteration_100": "971db7e91788aaea4ea436ccf1b42ff92e0f235dd3388e675d0707f571edd28c"
+  },
+  "query_contract": "OK gas_ppm wind_u wind_v wind_w hit_count",
+  "source_probes": [
+    {"raw_iteration": 1, "xyz_m": [-0.6, 1.95, 0.4], "gas_ppm": 9.182806968688965},
+    {"raw_iteration": 10, "xyz_m": [-0.6, 1.95, 0.4], "gas_ppm": 15.268894195556641},
+    {"raw_iteration": 100, "xyz_m": [-0.6, 1.95, 0.4], "gas_ppm": 19.638673782348633}
+  ],
+  "route_probes": [
+    {"t_sim_s": 0.2, "raw_iteration": 2, "xyz_m": [-3.2, -1.6660555127546393, 0.3], "gas_ppm": 0.0},
+    {"t_sim_s": 0.4, "raw_iteration": 4, "xyz_m": [-3.2, -1.5660555127546392, 0.3], "gas_ppm": 0.0},
+    {"t_sim_s": 10.0, "raw_iteration": 100, "xyz_m": [-1.7360555127546373, 0.07, 0.3], "gas_ppm": 0.0}
+  ],
+  "reextracted_history": {
+    "frames": 50,
+    "nonzero_gas_ppm_frames": 0,
+    "first_row_mapping": {"t_sim_s": 0.2, "raw_iteration": 2, "gas_ppm": 0.0},
+    "sensor": "mcos-sensor-v1 asymmetric, dead_time=0.4 s, tau_rise=1.2 s, noise=0"
+  },
+  "verdict": "CONCENTRATION_READ_PATH_PASS_ROUTE_COVERAGE_FAIL",
+  "interpretation": "The fresh simulator output contains positive gas at the source, and the same helper returns zero at the frozen route coordinates. The zero measured history is therefore explained by the route not intersecting the plume during this bounded run, not by a concentration parsing or iteration-index error.",
+  "scope": "Diagnostic development replication only; no localization or innovation claim is opened."
+}

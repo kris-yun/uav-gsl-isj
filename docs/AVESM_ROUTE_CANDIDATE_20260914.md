@@ -86,3 +86,21 @@ The explicit RNG rerun (`GADEN_RNG_SEED=20260915`, H01_SA) also produced 300
 frames with zero nonzero gas observations. This closes the bounded probe as a
 route-coverage failure: an independent seed exists, but the selected fixed
 route never interrogates plume evidence.
+
+## Concentration-chain audit (2026-09-15)
+
+Before changing the estimator, the current-runtime path was checked end-to-end
+on a preserved 10.1-s H01_SA_fast simulator output (seed 20260915). The exact
+helper used by the extractor returned 9.18, 15.27, and 19.64 ppm at the declared
+source for raw iterations 1, 10, and 100, while returning 0 ppm at the frozen
+route points for raw iterations 2, 4, and 100. Re-extraction of the first 50
+route frames mapped `t=0.2 s -> raw_iteration=2` and produced 0 ppm for every
+frame. The raw iteration-file hashes and query values are recorded in
+`experiments/avesm_concentration_chain_audit.json`.
+
+This separates two issues: concentration parsing/iteration alignment PASS;
+route/plume coverage FAIL. A source-near query is an offline diagnostic only and
+is not evidence for a source-blind localization claim. The next valid experiment
+must repair or replace the route-coverage premise under a pre-registered,
+source-blind design, without changing AVESM or treating the present all-zero run
+as a mechanism failure.
