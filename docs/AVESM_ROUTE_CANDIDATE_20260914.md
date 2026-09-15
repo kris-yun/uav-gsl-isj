@@ -173,20 +173,32 @@ same repaired mechanism passes a fresh held-out asset.
 ## Closed-loop action/observation smoke (2026-09-15)
 
 The current ROS workspace has no AVESM call site; its online stop component is
-the older `CP_Stopping` path. I therefore ran a transparent physical-runtime
-emulator, not a disguised ROS result. The controller selected each next pose
-from the current AVESM map, queried the repaired GADEN realization at that
-pose, updated the sensor state and e-process, and applied the same stopping
-rule.
+the older `CP_Stopping` path. I therefore kept the test as a transparent
+physical-runtime emulator, not a disguised ROS result. The first launch-local
+adaptive policy failed: it selected a low-information region, read zero gas
+throughout the 300-step trace, and locked onto the wrong candidate in the
+A-source realization. This is retained as `avesm_closedloop_A_v2/B_v2` and is
+the action-policy failure that motivated the repair.
 
-The result is a hard closed-loop NO-GO. In the A-source realization
-`(-0.6,1.95)`, the controller stopped at step 23 with posterior weight 1.0 on
-the fixed wrong candidate B and final error `4.854 m`; path length was only
-`1.634 m`. It made exactly the same decision in the B-source realization, so
-it succeeds only when B is actually true. The trace and combined result are in
-`experiments/avesm_closed_loop_evidence/`, and the emulator is
-`experiments/avesm_closed_loop_emulator.py`.
+I then ran a bounded read-chain diagnostic using a fixed source-blind
+occupancy-bounds serpentine route (301 points, 0.2 s cadence), starting at its
+declared launch pose. The same raw-query helper, sensor model, κ-tempered map,
+and stopping rule were used. Both realizations produced informative readings
+and localized correctly: A had 28 positive sensor hits, maximum raw gas
+`34.435 ppm`, final weight `0.999999998`, error `1.1e-8 m`; B had 21 hits,
+maximum raw gas `0.185 ppm`, final weight `0.999534`, error `0.0023 m`.
 
-Conclusion: the κ-tempered AVESM map gate is positive offline, but its current
-action policy does not transfer to closed-loop localization. The main
-innovation cannot yet be claimed as a closed-loop performance improvement.
+These v4 traces prove the repaired concentration/runtime chain can carry
+closed-loop observations when a source-blind coverage prior reaches the plume.
+They do **not** prove an adaptive AVESM action improvement: the v4 controller is
+still a fixed coverage diagnostic, is not integrated with the ROS action server,
+and the earlier adaptive policy remains a failure. The machine-readable
+summary is `experiments/avesm_closed_loop_evidence/avesm_closed_loop_result_v4.json`;
+the emulator is `experiments/avesm_closed_loop_emulator.py`.
+
+Conclusion: concentration reading is not the primary blocker. The missing
+property is an exploration/coverage guarantee for the adaptive action policy.
+The main innovation remains unconfirmed as a closed-loop performance gain until
+one bounded adaptive-policy experiment (coverage prior followed by AVESM
+actions, with an untouched realization) passes against the fixed coverage
+baseline.

@@ -88,6 +88,38 @@ def choose_action(x, y, weights, models):
     return ax, ay
 
 
+def make_coverage_waypoints():
+    """Fixed source-blind raster around the launch point and occupancy bounds.
+
+    This is deliberately independent of either candidate source coordinate. It
+    is a short information-acquisition prior: sweep the rows nearest the
+    launch point first, then the lower rows where a second candidate may lie.
+    """
+    xs = [round(-1.8 + 0.45 * i, 3) for i in range(7)]
+    ys = (0.2, 1.0, 1.8, 2.6, -0.6, -1.4, -2.2, -3.0)
+    route = []
+    for j, yy in enumerate(ys):
+        row = xs if j % 2 == 0 else list(reversed(xs))
+        route.extend((xx, yy) for xx in row)
+    return route
+
+
+def coverage_action(x, y, route, route_index, action_step=0.4):
+    """Move at most one action step toward the next fixed raster waypoint."""
+    while route_index < len(route) - 1:
+        tx, ty = route[route_index]
+        if math.hypot(tx - x, ty - y) <= 0.42:
+            route_index += 1
+            continue
+        break
+    tx, ty = route[route_index]
+    d = math.hypot(tx - x, ty - y)
+    if d <= 1e-12:
+        return x, y, route_index
+    step = min(action_step, d)
+    return x + step * (tx - x) / d, y + step * (ty - y) / d, route_index
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--train-a", type=Path, required=True)
@@ -100,6 +132,13 @@ def main() -> int:
     ap.add_argument("--source", choices=("A", "B"), required=True)
     ap.add_argument("--output", type=Path, required=True)
     ap.add_argument("--steps", type=int, default=300)
+    ap.add_argument("--coverage-steps", type=int, default=80,
+                    help="number of initial source-blind raster steps before JS action selection")
+    ap.add_argument("--coverage-route", type=Path, default=None,
+                    help="optional CSV with x,y,z source-blind route waypoints")
+    ap.add_argument("--start-x", type=float, default=-0.9)
+    ap.add_argument("--start-y", type=float, default=0.15)
+    ap.add_argument("--coverage-action-step", type=float, default=0.4)
     args = ap.parse_args()
 
     models = {"A": fit(load_rows(args.train_a), COORDS["A"]), "B": fit(load_rows(args.train_b), COORDS["B"])}
@@ -115,7 +154,16 @@ def main() -> int:
     env["LD_LIBRARY_PATH"] = proc_env
     query = subprocess.Popen([str(args.helper), str(args.env_root), str(args.gas_results)], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1, env=env)
     logs = {"A": 0.0, "B": 0.0}
-    x, y = -0.9, 0.15
+    x, y = args.start_x, args.start_y
+    if args.coverage_route is None:
+        coverage_route = make_coverage_waypoints()
+    else:
+        import csv
+        with args.coverage_route.open(newline="", encoding="utf-8") as f:
+            coverage_route = [(float(row["x"]), float(row["y"])) for row in csv.DictReader(f)]
+        if len(coverage_route) < 2:
+            raise RuntimeError("COVERAGE_ROUTE_TOO_SHORT")
+    route_index = 0
     trace = []
     stop_step = None
     try:
@@ -123,7 +171,10 @@ def main() -> int:
             weights_raw = {s: math.exp(-logs[s]) for s in logs}
             z = sum(weights_raw.values())
             weights = {s: weights_raw[s] / z for s in logs}
-            x, y = choose_action(x, y, weights, models)
+            if step <= args.coverage_steps:
+                x, y, route_index = coverage_action(x, y, coverage_route, route_index, args.coverage_action_step)
+            else:
+                x, y = choose_action(x, y, weights, models)
             raw_iteration = 2 * step
             query.stdin.write(f"{raw_iteration} {x:.17g} {y:.17g} 0.3\n")
             query.stdin.flush()
@@ -143,7 +194,10 @@ def main() -> int:
             weights = {s: weights_raw[s] / z for s in logs}
             estimate = sum(weights[s] * COORDS[s][0] for s in weights), sum(weights[s] * COORDS[s][1] for s in weights)
             margin = abs(logs["A"] - logs["B"])
-            if stop_step is None and max(weights.values()) >= 0.95 and margin >= math.log(20.0):
+            # Do not declare a source before the fixed source-blind acquisition
+            # phase has completed; otherwise early non-detections can lock the
+            # controller onto the wrong candidate before it reaches the plume.
+            if step >= args.coverage_steps and stop_step is None and max(weights.values()) >= 0.95 and margin >= math.log(20.0):
                 stop_step = step
             trace.append({"step": step, "raw_iteration": raw_iteration, "x": x, "y": y, "gas_ppm": gas, "sensor_ppm": observed, "hit": hit, "log_e_A": logs["A"], "log_e_B": logs["B"], "weight_A": weights["A"], "weight_B": weights["B"], "estimate_x": estimate[0], "estimate_y": estimate[1], "estimate_error_m": math.hypot(estimate[0] - COORDS[args.source][0], estimate[1] - COORDS[args.source][1])})
     finally:
@@ -151,7 +205,7 @@ def main() -> int:
             query.stdin.close()
         query.wait(timeout=10)
     final = trace[-1]
-    result = {"contract": "AVESM_CLOSED_LOOP_EMULATOR_V1", "source": args.source, "steps": len(trace), "stop_step": stop_step, "final_error_m": final["estimate_error_m"], "min_error_m": min(x["estimate_error_m"] for x in trace), "path_length_m": sum(math.hypot(trace[i]["x"] - trace[i - 1]["x"], trace[i]["y"] - trace[i - 1]["y"]) for i in range(1, len(trace))), "final_weight_A": final["weight_A"], "final_weight_B": final["weight_B"], "final_log_e_A": final["log_e_A"], "final_log_e_B": final["log_e_B"], "source_blind_controller": True, "ros_action_server_integrated": False, "scope": "physical GADEN runtime closed-loop emulator; not formal ROS closed-loop performance"}
+    result = {"contract": "AVESM_CLOSED_LOOP_EMULATOR_V2", "source": args.source, "steps": len(trace), "coverage_steps": args.coverage_steps, "coverage_route": str(args.coverage_route) if args.coverage_route else "internal_local_raster", "start_xy": [args.start_x, args.start_y], "stop_step": stop_step, "final_error_m": final["estimate_error_m"], "min_error_m": min(x["estimate_error_m"] for x in trace), "path_length_m": sum(math.hypot(trace[i]["x"] - trace[i - 1]["x"], trace[i]["y"] - trace[i - 1]["y"]) for i in range(1, len(trace))), "final_weight_A": final["weight_A"], "final_weight_B": final["weight_B"], "final_log_e_A": final["log_e_A"], "final_log_e_B": final["log_e_B"], "source_blind_controller": True, "ros_action_server_integrated": False, "scope": "physical GADEN runtime closed-loop emulator; not formal ROS closed-loop performance"}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     (args.output.with_suffix(".jsonl")).write_text("\n".join(json.dumps(x) for x in trace) + "\n", encoding="utf-8")
