@@ -190,19 +190,20 @@ maximum raw gas `0.185 ppm`, final weight `0.999534`, error `0.0023 m`.
 
 These v4 traces prove the repaired concentration/runtime chain can carry
 closed-loop observations when a source-blind coverage prior reaches the plume.
-They do **not** prove an adaptive AVESM action improvement: the v4 controller is
-still a fixed coverage diagnostic, is not integrated with the ROS action server,
-and the earlier adaptive policy remains a failure. I also reran pure AVESM
-actions from the same boundary launch pose after excluding clipped zero-motion
-actions. It still produced zero gas hits, visited only 18 unique poses, and
-ended with weights A/B=`0.0936/0.9064` in both realizations (no stopping pass).
-Those traces are `avesm_closedloop_A_pure_v2/B_pure_v2`. The machine-readable
-coverage summary is `experiments/avesm_closed_loop_evidence/avesm_closed_loop_result_v4.json`;
-the emulator is `experiments/avesm_closed_loop_emulator.py`.
+Pure AVESM actions from the same boundary launch pose still fail to acquire gas
+(`avesm_closedloop_A_pure_v2/B_pure_v2`), so an exploration guarantee is needed.
 
-Conclusion: concentration reading is not the primary blocker. The missing
-property is an exploration/coverage guarantee for the adaptive action policy.
-The main innovation remains unconfirmed as a closed-loop performance gain until
-one bounded adaptive-policy experiment (coverage prior followed by AVESM
-actions, with an untouched realization) passes against the fixed coverage
-baseline.
+I then ran the predeclared handoff gate: follow the same source-blind route only
+until the first positive sensor hit, then hand control to AVESM and stop only at
+posterior >=0.95 plus absolute log-e margin >=`log(20)`. Both source placements
+passed on the same held-out House01 realization. A stopped at step 277 (first
+hit 273), with posterior A=`0.9751`, error `0.121 m`, and 7.1% shorter path
+than fixed coverage. B stopped at step 162 (first hit 150), with posterior
+B=`0.9621`, error `0.184 m`, and 44.5% shorter path. The machine-readable gate
+is `experiments/avesm_closed_loop_evidence/avesm_closed_loop_result_v5.json`;
+the traces are `avesm_closedloop_A_handoff_v2/B_handoff_v2`.
+
+This is the first bounded evidence that the actual mechanism is useful:
+source-blind coverage supplies an observability guarantee, while AVESM reduces
+post-hit search cost. It remains a physical-runtime emulator result, not a
+formal ROS action-server or cross-house claim; those are the next claim gates.

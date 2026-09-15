@@ -146,6 +146,10 @@ def main() -> int:
     ap.add_argument("--start-x", type=float, default=-0.9)
     ap.add_argument("--start-y", type=float, default=0.15)
     ap.add_argument("--coverage-action-step", type=float, default=0.4)
+    ap.add_argument("--switch-on-hit", action="store_true",
+                    help="handoff from coverage route to AVESM after first sensor hit")
+    ap.add_argument("--min-stop-steps", type=int, default=None,
+                    help="minimum steps before stopping; defaults to coverage_steps")
     args = ap.parse_args()
 
     models = {"A": fit(load_rows(args.train_a), COORDS["A"]), "B": fit(load_rows(args.train_b), COORDS["B"])}
@@ -173,12 +177,15 @@ def main() -> int:
     route_index = 0
     trace = []
     stop_step = None
+    switch_step = None
+    coverage_active = True
+    min_stop_steps = args.coverage_steps if args.min_stop_steps is None else args.min_stop_steps
     try:
         for step in range(1, args.steps + 1):
             weights_raw = {s: math.exp(-logs[s]) for s in logs}
             z = sum(weights_raw.values())
             weights = {s: weights_raw[s] / z for s in logs}
-            if step <= args.coverage_steps:
+            if coverage_active and step <= args.coverage_steps:
                 x, y, route_index = coverage_action(x, y, coverage_route, route_index, args.coverage_action_step)
             else:
                 x, y = choose_action(x, y, weights, models)
@@ -201,18 +208,23 @@ def main() -> int:
             weights = {s: weights_raw[s] / z for s in logs}
             estimate = sum(weights[s] * COORDS[s][0] for s in weights), sum(weights[s] * COORDS[s][1] for s in weights)
             margin = abs(logs["A"] - logs["B"])
-            # Do not declare a source before the fixed source-blind acquisition
-            # phase has completed; otherwise early non-detections can lock the
-            # controller onto the wrong candidate before it reaches the plume.
-            if step >= args.coverage_steps and stop_step is None and max(weights.values()) >= 0.95 and margin >= math.log(20.0):
+            if args.switch_on_hit and coverage_active and hit:
+                coverage_active = False
+                switch_step = step
+            # Do not declare a source before the configured acquisition guard;
+            # otherwise early non-detections can lock onto the wrong candidate.
+            stop_allowed = (not args.switch_on_hit) or (not coverage_active)
+            if step >= min_stop_steps and stop_allowed and stop_step is None and max(weights.values()) >= 0.95 and margin >= math.log(20.0):
                 stop_step = step
             trace.append({"step": step, "raw_iteration": raw_iteration, "x": x, "y": y, "gas_ppm": gas, "sensor_ppm": observed, "hit": hit, "log_e_A": logs["A"], "log_e_B": logs["B"], "weight_A": weights["A"], "weight_B": weights["B"], "estimate_x": estimate[0], "estimate_y": estimate[1], "estimate_error_m": math.hypot(estimate[0] - COORDS[args.source][0], estimate[1] - COORDS[args.source][1])})
+            if stop_step == step:
+                break
     finally:
         if query.stdin:
             query.stdin.close()
         query.wait(timeout=10)
     final = trace[-1]
-    result = {"contract": "AVESM_CLOSED_LOOP_EMULATOR_V2", "source": args.source, "steps": len(trace), "coverage_steps": args.coverage_steps, "coverage_route": str(args.coverage_route) if args.coverage_route else "internal_local_raster", "start_xy": [args.start_x, args.start_y], "stop_step": stop_step, "final_error_m": final["estimate_error_m"], "min_error_m": min(x["estimate_error_m"] for x in trace), "path_length_m": sum(math.hypot(trace[i]["x"] - trace[i - 1]["x"], trace[i]["y"] - trace[i - 1]["y"]) for i in range(1, len(trace))), "final_weight_A": final["weight_A"], "final_weight_B": final["weight_B"], "final_log_e_A": final["log_e_A"], "final_log_e_B": final["log_e_B"], "source_blind_controller": True, "ros_action_server_integrated": False, "scope": "physical GADEN runtime closed-loop emulator; not formal ROS closed-loop performance"}
+    result = {"contract": "AVESM_CLOSED_LOOP_EMULATOR_V3", "source": args.source, "steps": len(trace), "coverage_steps": args.coverage_steps, "switch_on_hit": args.switch_on_hit, "switch_step": switch_step, "min_stop_steps": min_stop_steps, "coverage_route": str(args.coverage_route) if args.coverage_route else "internal_local_raster", "start_xy": [args.start_x, args.start_y], "stop_step": stop_step, "final_error_m": final["estimate_error_m"], "min_error_m": min(x["estimate_error_m"] for x in trace), "path_length_m": sum(math.hypot(trace[i]["x"] - trace[i - 1]["x"], trace[i]["y"] - trace[i - 1]["y"]) for i in range(1, len(trace))), "final_weight_A": final["weight_A"], "final_weight_B": final["weight_B"], "final_log_e_A": final["log_e_A"], "final_log_e_B": final["log_e_B"], "source_blind_controller": True, "ros_action_server_integrated": False, "scope": "physical GADEN runtime closed-loop emulator; not formal ROS closed-loop performance"}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     (args.output.with_suffix(".jsonl")).write_text("\n".join(json.dumps(x) for x in trace) + "\n", encoding="utf-8")

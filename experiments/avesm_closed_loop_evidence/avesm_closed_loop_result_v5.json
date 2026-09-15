@@ -1,0 +1,37 @@
+{
+  "contract": "AVESM_CLOSED_LOOP_EMULATOR_V3_HANDOFF_GATE",
+  "status": "PASS_BOUNDED_PHYSICAL_RUNTIME_HANDOFF_GATE",
+  "realization": "H01_SA_fast_and_H01_SB_fast_seed_20260915",
+  "baseline": "fixed source-blind occupancy sweep, 300 steps",
+  "handoff": "source-blind sweep until first sensor hit, then AVESM action selection",
+  "stop_rule": "max posterior >= 0.95 and absolute log-e margin >= log(20)",
+  "A": {
+    "first_hit_step": 273,
+    "stop_step": 277,
+    "baseline_steps": 300,
+    "step_reduction": 0.07666666666666667,
+    "baseline_path_length_m": 84.54482758631006,
+    "handoff_path_length_m": 78.51034482767999,
+    "path_reduction": 0.07137242035408778,
+    "positive_sensor_hits": 5,
+    "final_weight_A": 0.9751380233706418,
+    "final_weight_B": 0.024861976629358122,
+    "final_margin": 3.6692388500557334,
+    "final_error_m": 0.12068306671903276
+  },
+  "B": {
+    "first_hit_step": 150,
+    "stop_step": 162,
+    "baseline_steps": 300,
+    "step_reduction": 0.46,
+    "baseline_path_length_m": 84.54482758631006,
+    "handoff_path_length_m": 46.93103448280997,
+    "path_reduction": 0.4447856987810355,
+    "positive_sensor_hits": 13,
+    "final_weight_A": 0.037863119834955605,
+    "final_weight_B": 0.9621368801650444,
+    "final_margin": 3.2351784636721324,
+    "final_error_m": 0.1837922014550078
+  },
+  "interpretation": "Both source placements pass the predeclared evidence threshold after a source-blind first-hit gate, and both reduce steps and path length versus fixed coverage. This is a bounded mechanism result on one repaired House01 realization; ROS action-server integration and cross-house generalization remain unclaimed."
+}
