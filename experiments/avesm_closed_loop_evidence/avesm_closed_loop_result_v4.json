@@ -1,6 +1,6 @@
 {
   "contract": "AVESM_CLOSED_LOOP_EMULATOR_V2_DIAGNOSTIC",
-  "status": "SOURCE_BLIND_COVERAGE_READ_CHAIN_PASS_ADAPTIVE_POLICY_UNPROVEN",
+  "status": "SOURCE_BLIND_COVERAGE_READ_CHAIN_PASS_ADAPTIVE_POLICY_NO_GO",
   "realization": "H01_SA_fast_and_H01_SB_fast_seed_20260915",
   "route": "occupancy-bounds serpentine route, 301 points, 0.2 s cadence",
   "route_source_blind": true,
@@ -23,5 +23,9 @@
     "positive_sensor_hits": 21,
     "max_gas_ppm": 0.18465456366539001
   },
-  "interpretation": "The repaired raw concentration/runtime chain is informative under a source-blind occupancy sweep. This does not establish that AVESM's adaptive action policy improves closed-loop performance: the earlier launch-local adaptive policy failed, and this v4 run is a fixed coverage diagnostic with no ROS action-server integration."
+  "pure_adaptive_boundary_replay": {
+    "A": {"positive_sensor_hits": 0, "unique_poses": 18, "final_weight_A": 0.09363522437742798, "final_weight_B": 0.906364775622572, "stop_step": null},
+    "B": {"positive_sensor_hits": 0, "unique_poses": 18, "final_weight_A": 0.09363522437742798, "final_weight_B": 0.906364775622572, "stop_step": null}
+  },
+  "interpretation": "The repaired raw concentration/runtime chain is informative under a source-blind occupancy sweep. Pure AVESM actions from the same boundary launch pose still fail to acquire gas and do not stop. Therefore the current evidence supports a coverage-prior read-chain diagnostic, not an adaptive AVESM closed-loop performance claim."
 }

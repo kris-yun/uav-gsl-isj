@@ -81,9 +81,16 @@ def choose_action(x, y, weights, models):
     for ax, ay in candidates:
         ax = min(max(ax, BOUNDS[0]), BOUNDS[1])
         ay = min(max(ay, BOUNDS[2]), BOUNDS[3])
+        # Clipping an action at the occupancy boundary can recreate an
+        # implicit zero-motion action. Exclude it unless every action is
+        # blocked; otherwise an information-gain tie can self-lock at launch.
+        if math.hypot(ax - x, ay - y) <= 1e-12:
+            continue
         pa = models["A"][bin_id(dist(ax, ay, COORDS["A"]))][1]
         pb = models["B"][bin_id(dist(ax, ay, COORDS["B"]))][1]
         scored.append((js_divergence(pa, pb), -math.hypot(ax - x, ay - y), ax, ay))
+    if not scored:
+        return x, y
     _, _, ax, ay = max(scored)
     return ax, ay
 

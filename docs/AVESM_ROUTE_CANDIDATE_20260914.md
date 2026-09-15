@@ -192,8 +192,12 @@ These v4 traces prove the repaired concentration/runtime chain can carry
 closed-loop observations when a source-blind coverage prior reaches the plume.
 They do **not** prove an adaptive AVESM action improvement: the v4 controller is
 still a fixed coverage diagnostic, is not integrated with the ROS action server,
-and the earlier adaptive policy remains a failure. The machine-readable
-summary is `experiments/avesm_closed_loop_evidence/avesm_closed_loop_result_v4.json`;
+and the earlier adaptive policy remains a failure. I also reran pure AVESM
+actions from the same boundary launch pose after excluding clipped zero-motion
+actions. It still produced zero gas hits, visited only 18 unique poses, and
+ended with weights A/B=`0.0936/0.9064` in both realizations (no stopping pass).
+Those traces are `avesm_closedloop_A_pure_v2/B_pure_v2`. The machine-readable
+coverage summary is `experiments/avesm_closed_loop_evidence/avesm_closed_loop_result_v4.json`;
 the emulator is `experiments/avesm_closed_loop_emulator.py`.
 
 Conclusion: concentration reading is not the primary blocker. The missing
