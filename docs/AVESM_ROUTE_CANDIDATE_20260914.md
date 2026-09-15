@@ -226,3 +226,10 @@ build fails because `gaden_msgsConfig.cmake` is missing. Therefore the present
 claim boundary is: physical GADEN closed-loop mechanism and seed
 generalization pass; ROS online integration and cross-house generalization are
 still unopened.
+
+The older fresh-seed cross-house diagnostic remains a formal boundary: its H01/H03
+artifact is `experiments/avesm_newseed_cross_house_result.json` with verdict
+`CROSS_HOUSE_TRANSFER_NO_GO` (zero nonzero-gas frames in the diagnostic and
+true-rank failures). Thus the current generalization claim is deliberately only
+House01 across two source placements and two existing seeds; H03/cross-house is
+not passed.

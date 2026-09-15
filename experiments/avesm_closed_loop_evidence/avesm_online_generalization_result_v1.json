@@ -20,5 +20,12 @@
     "verdict": "ONLINE_NOT_RUN_INFRASTRUCTURE_BLOCKED",
     "scope": "No claim of ROS action-server integration is made."
   },
+  "cross_house_boundary": {
+    "existing_artifact": "experiments/avesm_newseed_cross_house_result.json",
+    "status": "CROSS_HOUSE_TRANSFER_NO_GO",
+    "houses": ["H01", "H03"],
+    "reason": "fresh-seed H03 diagnostic had zero nonzero-gas frames and true-rank failures; it is not a handoff confirmation",
+    "claim": "House01 seed generalization passes, cross-house generalization remains failed/unopened"
+  },
   "interpretation": "The handoff mechanism generalizes across two source placements and two existing House01 runtime seeds in the physical emulator. Online ROS validation remains blocked by workspace infrastructure and absent AVESM call sites."
 }
