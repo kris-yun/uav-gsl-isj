@@ -125,3 +125,14 @@ However, the measured-history SHA256 is identical for metadata seeds `1234` and
 independent-realization evidence (`SEED_SENSITIVITY_UNPROVEN_IDENTICAL_OUTPUT`).
 The coverage control is retained as diagnostic evidence only; a genuine seed
 separation check is required before any held-out or cross-seed claim.
+
+## Seed-runtime audit (2026-09-15)
+
+The immediate runtime cause was found: `ldd` had selected the older closure
+`libgaden.so` because the generator's `LD_LIBRARY_PATH` omitted
+`PF_DEI_V3_GADEN_BUILD_REF/install/lib`. The generator was corrected and pushed
+as `ff30740`; the patched GADEN library was rebuilt and `ldd` now selects the
+intended build. Nevertheless, the rebuilt-runtime raw outputs for seed `1234`
+and seed `20260915` are still byte-identical at the checked iteration. This is
+now a genuine seed-sensitivity failure to explain, not a library-selection
+assumption. The independent-seed gate remains closed.

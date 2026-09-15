@@ -1,0 +1,23 @@
+{
+  "audit": "GADEN_SEED_RUNTIME_AUDIT_V1",
+  "date": "2026-09-15",
+  "problem": "The generator prepended PF_DEI_FORWARD_CLOSURE_20260828/gaden_install/gaden_common to LD_LIBRARY_PATH, so ldd selected the older closure libgaden.so instead of PF_DEI_V3_GADEN_BUILD_REF/install/lib/libgaden.so.",
+  "runtime_fix": {
+    "generator_commit": "ff30740",
+    "ld_library_path_prefix": "/home/zyc/PF_DEI_V3_GADEN_BUILD_REF/install/lib",
+    "loaded_library_after_fix": "/home/zyc/PF_DEI_V3_GADEN_BUILD_REF/install/lib/libgaden.so",
+    "rebuilt_library_sha256": "f5aa25db0d8db802df94fd7612a9c1e447ae56db651b5e4a52d361e595ce6acc",
+    "seed_hook_string_count": 1,
+    "build_note": "gaden target rebuilt from the patched source using a temporary empty CPU-only compute dependency; the temporary stub was removed after installation."
+  },
+  "seed_comparison": {
+    "route": "H01 occupancy-bounds sweep",
+    "sim_time_s": 10.1,
+    "seed_a": 1234,
+    "seed_b": 20260915,
+    "raw_iteration_100_sha256_seed_a": "65dc11a30c65f85980604860f96e91164a1e567429c5e6ffc673392c619b6853",
+    "raw_iteration_100_sha256_seed_b": "65dc11a30c65f85980604860f96e91164a1e567429c5e6ffc673392c619b6853",
+    "verdict": "SEED_SENSITIVITY_UNPROVEN_IDENTICAL_OUTPUT"
+  },
+  "interpretation": "The runtime library-selection defect is fixed and the rebuilt library contains the seed-hook symbol, but the two controlled runs remain byte-identical at the checked raw output. No independent-seed claim is opened until a positive seed-sensitivity control is observed and explained."
+}
