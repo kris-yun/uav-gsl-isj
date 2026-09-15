@@ -206,4 +206,23 @@ the traces are `avesm_closedloop_A_handoff_v2/B_handoff_v2`.
 This is the first bounded evidence that the actual mechanism is useful:
 source-blind coverage supplies an observability guarantee, while AVESM reduces
 post-hit search cost. It remains a physical-runtime emulator result, not a
-formal ROS action-server or cross-house claim; those are the next claim gates.
+formal ROS action-server or cross-house claim.
+
+## Online and seed generalization audit (2026-09-15)
+
+The same handoff gate was replayed against the existing House01 seed-1234
+runtime in addition to seed-20260915. All four source-placement/seed pairs
+passed the fixed posterior/e-value threshold. Seed-1234 A stopped at step 218
+(posterior A=`0.9718`, error `0.137 m`, path `61.36 m`); seed-1234 B stopped at
+step 162 (posterior B=`0.9621`, error `0.184 m`, path `46.93 m`). This is
+small but real cross-realization evidence, not a rerun on the same output.
+The complete machine-readable audit is
+`experiments/avesm_closed_loop_evidence/avesm_online_generalization_result_v1.json`.
+
+The online ROS gate is currently infrastructure-blocked, not method-positive:
+the ROS workspace has no AVESM call site; `ros2 pkg prefix gsl_server` fails;
+the normal colcon scan finds duplicate `gsl_server` packages; and an isolated
+build fails because `gaden_msgsConfig.cmake` is missing. Therefore the present
+claim boundary is: physical GADEN closed-loop mechanism and seed
+generalization pass; ROS online integration and cross-house generalization are
+still unopened.

@@ -1,0 +1,298 @@
+{
+  "arxiv": [],
+  "dblp": [],
+  "open_alex": [
+    {
+      "title": "A Mobile Sensing Approach for Regional Surveillance of Fugitive Methane Emissions in Oil and Gas Production",
+      "authors": [
+        "J. D. Albertson",
+        "Tierney A. Harvey",
+        "Greg Foderaro",
+        "Pingping Zhu",
+        "Xiaochi Zhou",
+        "Silvio Ferrari",
+        "M. Shahrooz Amin",
+        "Mark Modrak",
+        "Halley Brantley",
+        "Eben D. Thoma"
+      ],
+      "year": 2016,
+      "abstract": "This paper addresses the need for surveillance of fugitive methane emissions over broad geographical regions. Most existing techniques suffer from being either extensive (but qualitative) or quantitative (but intensive with poor scalability). A total of two novel advancements are made here. First, a recursive Bayesian method is presented for probabilistically characterizing fugitive point-sources from mobile sensor data. This approach is made possible by a new cross-plume integrated dispersion formulation that overcomes much of the need for time-averaging concentration data. The method is tested here against a limited data set of controlled methane release and shown to perform well. We then present an information-theoretic approach to plan the paths of the sensor-equipped vehicle, where the path is chosen so as to maximize expected reduction in integrated target source rate uncertainty in the region, subject to given starting and ending positions and prevailing meteorological conditions. The information-driven sensor path planning algorithm is tested and shown to provide robust results across a wide range of conditions. An overall system concept is presented for optionally piggybacking of these techniques onto normal industry maintenance operations using sensor-equipped work trucks.",
+      "url": "https://doi.org/10.1021/acs.est.5b05059",
+      "venue": "Environmental Science & Technology",
+      "citation_count": 92,
+      "publication_date": "2016-01-25",
+      "source": "open_alex",
+      "doi": "10.1021/acs.est.5b05059",
+      "arxiv_id": null
+    },
+    {
+      "title": "Coordinated Bayesian-Based Bioinspired Plume Source Term Estimation and Source Seeking for Mobile Robots",
+      "authors": [
+        "Joseph R. Bourne",
+        "Eric R. Pardyjak",
+        "Kam K. Leang"
+      ],
+      "year": 2019,
+      "abstract": "A new nonparametric Bayesian-based motion planning algorithm for autonomous plume source term estimation (STE) and source seeking (SS) is presented in this paper. The algorithm is designed for mobile robots equipped with gas concentration sensors. Specifically, robots coordinate and utilize a Gaussian-plume likelihood model in a Bayesian-based STE process, then they simultaneously search for and navigate toward the source through model based, bioinspired SS methods such as biased-random-walk and surge-casting. Compared with the state-of-the-art Bayesian- and sensor-based STE/SS motion planners, the strategy described takes advantage of coordination between multiple robots and the estimated plume model for faster and more robust SS, rather than rely on direct or filtered sensor measurements. A set of Monte Carlo simulation studies are conducted to compare the performance between the uncoordinated and coordinated algorithms for different robot team sizes and starting conditions. Additionally, the algorithms are validated experimentally through a laboratory-safe, realistic humid-air plume that behaves similar to a gas plume, to test STE and SS using mobile ground robots equipped with humidity sensors. Simulation and experimental results show consistently that the algorithm involving coordination outperforms traditional bioinspired SS algorithms and it is approximately twice as fast as the uncoordinated case. Finally, the plume source is distorted to study the algorithm's limitations and impact on STE and SS, where results show that even for distorted plumes, useful source localization information can be obtained.",
+      "url": "https://doi.org/10.1109/tro.2019.2912520",
+      "venue": "IEEE Transactions on Robotics",
+      "citation_count": 79,
+      "publication_date": "2019-05-23",
+      "source": "open_alex",
+      "doi": "10.1109/tro.2019.2912520",
+      "arxiv_id": null
+    },
+    {
+      "title": "Model-based gas source localization strategy for a cooperative multi-robot system—A probabilistic approach and experimental validation incorporating physical knowledge and model uncertainties",
+      "authors": [
+        "Thomas Wiedemann",
+        "Dmitriy Shutin",
+        "Achim J. Lilienthal"
+      ],
+      "year": 2019,
+      "abstract": "",
+      "url": "https://doi.org/10.1016/j.robot.2019.03.014",
+      "venue": "Robotics and Autonomous Systems",
+      "citation_count": 49,
+      "publication_date": "2019-04-02",
+      "source": "open_alex",
+      "doi": "10.1016/j.robot.2019.03.014",
+      "arxiv_id": null
+    },
+    {
+      "title": "Information-Driven Gas Source Localization Exploiting Gas and Wind Local Measurements for Autonomous Mobile Robots",
+      "authors": [
+        "Pepe Ojeda",
+        "Javier Monroy",
+        "Javier González-Jiménez"
+      ],
+      "year": 2021,
+      "abstract": "Gas source localization (GSL) by an olfactory robot is a research field with a great potential for applications but also with numerous unsolved challenges, particularly when the search must take place in realistic, indoor environments that feature obstacles and turbulent airflows. In this work, we present a new probabilistic GSL method for a terrestrial mobile robot that revolves around the propagation of local estimations throughout the environment. By exploiting the geometry of the environment as the basis for this propagation, we avoid relying on analytical dispersion models, eliminating the need to assume controlled environmental conditions. Simulated and real experiments are presented in different indoor environments featuring multiple rooms and turbulent flows, demonstrating the suitability of our approach for locating the emitting gas source.",
+      "url": "https://doi.org/10.1109/lra.2021.3057290",
+      "venue": "IEEE Robotics and Automation Letters",
+      "citation_count": 47,
+      "publication_date": "2021-02-05",
+      "source": "open_alex",
+      "doi": "10.1109/lra.2021.3057290",
+      "arxiv_id": null
+    },
+    {
+      "title": "Decentralized Multi-agent information-theoretic control for target estimation and localization: finding gas leaks",
+      "authors": [
+        "Joseph R. Bourne",
+        "Matthew N. Goodell",
+        "Xiang He",
+        "Jake A. Steiner",
+        "Kam K. Leang"
+      ],
+      "year": 2020,
+      "abstract": "This article presents a new decentralized multi-agent information-theoretic (DeMAIT) control algorithm for mobile sensors (agents). The algorithm leverages Bayesian estimation and information-theoretic motion planning for efficient and effective estimation and localization of a target, such as a chemical gas leak. The algorithm consists of: (1) a non-parametric Bayesian estimator, (2) an information-theoretic trajectory planner that generates “informative trajectories” for agents to follow, and (3) a controller and collision avoidance algorithm to ensure that each agent follows its trajectory as closely as possible in a safe manner. Advances include the use of a new information-gain metric and its analytical gradient, which do not depend on an infinite series like prior information metrics. Dynamic programming and multi-threading techniques are applied to efficiently compute the mutual information to minimize measurement uncertainty. The estimation and motion planning processes also take into account the dynamics of the sensors and agents. Extensive simulations are conducted to compare the performance between the DeMAIT algorithm to a traditional raster-scanning method and a clustering method with coordination. The main hypothesis that the DeMAIT algorithm outperforms the other two methods is validated, specifically where the average localization success rate for the DeMAIT algorithm is (a) higher and (b) more robust to changes in the source location, robot team size, and search area size than the raster-scanning and clustering methods. Finally, outdoor field experiments are conducted using a team of custom-built aerial robots equipped with gas concentration sensors to demonstrate efficacy of the DeMAIT algorithm to estimate and find the source of a propane gas leak.",
+      "url": "https://doi.org/10.1177/0278364920957090",
+      "venue": "The International Journal of Robotics Research",
+      "citation_count": 41,
+      "publication_date": "2020-09-21",
+      "source": "open_alex",
+      "doi": "10.1177/0278364920957090",
+      "arxiv_id": null
+    },
+    {
+      "title": "An Algorithm for Odor Source Localization based on Source Term Estimation",
+      "authors": [
+        "Faezeh Rahbar",
+        "Ali Marjovi",
+        "Alcherio Martinoli"
+      ],
+      "year": 2019,
+      "abstract": "Finding sources of airborne chemicals with mobile sensing systems finds applications across the security, safety, domestic, medical, and environmental domains. In this paper, we present an algorithm based on source term estimation for odor source localization that is coupled with a navigation method based on partially observable Markov decision processes. We propose an innovative strategy to balance exploration and exploitation in navigation. The method has been evaluated systematically through high-fidelity simulations and in a wind tunnel emulating realistic and repeatable conditions. The impact of multiple algorithmic and environmental parameters has been studied in the experiments.",
+      "url": "https://doi.org/10.1109/icra.2019.8793784",
+      "venue": "",
+      "citation_count": 28,
+      "publication_date": "2019-05-01",
+      "source": "open_alex",
+      "doi": "10.1109/icra.2019.8793784",
+      "arxiv_id": null
+    },
+    {
+      "title": "C-OPT: Coverage-Aware Trajectory Optimization Under Uncertainty",
+      "authors": [
+        "Bobby Davis",
+        "Ioannis Karamouzas",
+        "Stephen J. Guy"
+      ],
+      "year": 2016,
+      "abstract": "We introduce a new problem of continuous, coverage-aware trajectory optimization under localization and sensing uncertainty. In this problem, the goal is to plan a path from a start state to a goal state that maximizes the coverage of a user-specified region while minimizing the control costs of the robot and the probability of collision with the environment. We present a principled method for quantifying the coverage sensing uncertainty of the robot. We use this sensing uncertainty along with the uncertainty in robot localization to develop C-OPT, a coverage-optimization algorithm which optimizes trajectories over belief-space to find locally optimal coverage paths. We highlight the applicability of our approach in multiple simulated scenarios inspired by surveillance, UAV crop analysis, and search-and-rescue tasks. We also present a case study on a physical, differential-drive robot. We also provide quantitative and qualitative analysis of the paths generated by our approach.",
+      "url": "https://doi.org/10.1109/lra.2016.2530302",
+      "venue": "IEEE Robotics and Automation Letters",
+      "citation_count": 29,
+      "publication_date": "2016-02-15",
+      "source": "open_alex",
+      "doi": "10.1109/lra.2016.2530302",
+      "arxiv_id": null
+    },
+    {
+      "title": "Underwater chemical plume tracing based on partially observable Markov decision process",
+      "authors": [
+        "Jiu Hai-Feng",
+        "Yanjing Chen",
+        "Wei Deng",
+        "Shuo Pang"
+      ],
+      "year": 2019,
+      "abstract": "Chemical plume tracing based on autonomous underwater vehicle uses chemical as a guidance to navigate and search in the unknown environments. To solve the key issue of tracing and locating the source, this article proposes a path-planning strategy based on partially observable Markov decision process algorithm and artificial potential field algorithm. The partially observable Markov decision process algorithm is used to construct a source likelihood map and update it in real time with environmental information from the sensors on autonomous underwater vehicle in search area. The artificial potential field algorithm uses the source likelihood map for accurately planning tracing path and guiding the autonomous underwater vehicle to track along the path until the source is detected. This article carries out simulation experiments on the proposed algorithm. The experimental results show that the algorithms have good performance, which is suitable for chemical plume tracing via autonomous underwater vehicle. Compared with the bionic method, the simulation results show that the proposed method has higher success rate and better stability than the bionic method.",
+      "url": "https://doi.org/10.1177/1729881419831874",
+      "venue": "International Journal of Advanced Robotic Systems",
+      "citation_count": 28,
+      "publication_date": "2019-03-01",
+      "source": "open_alex",
+      "doi": "10.1177/1729881419831874",
+      "arxiv_id": null
+    }
+  ],
+  "openreview": [],
+  "semantic_scholar": [],
+  "crossref": [
+    {
+      "title": "Sequential Bayesian Optimization for Adaptive Informative Path Planning with Multimodal Sensing",
+      "authors": [
+        "Joshua Ott",
+        "Edward Balaban",
+        "Mykel J. Kochenderfer"
+      ],
+      "year": 2023,
+      "abstract": "",
+      "url": "https://doi.org/10.1109/icra48891.2023.10160859",
+      "venue": "2023 IEEE International Conference on Robotics and Automation (ICRA)",
+      "citation_count": 16,
+      "publication_date": "2023-05-29",
+      "source": "crossref",
+      "doi": "10.1109/icra48891.2023.10160859",
+      "arxiv_id": null
+    },
+    {
+      "title": "Informative Path Planning for Acoustic Source Localization With Environmental Uncertainties",
+      "authors": [
+        "Li Kexin",
+        "Mandar Chitre"
+      ],
+      "year": 2020,
+      "abstract": "",
+      "url": "https://doi.org/10.1109/ieeeconf38699.2020.9389262",
+      "venue": "Global Oceans 2020: Singapore – U.S. Gulf Coast",
+      "citation_count": 1,
+      "publication_date": "2020-10-05",
+      "source": "crossref",
+      "doi": "10.1109/ieeeconf38699.2020.9389262",
+      "arxiv_id": null
+    },
+    {
+      "title": "Cumulative Informative Path Planning for Efficient Gas Source Localization with Mobile Robots",
+      "authors": [
+        "Wanting Jin",
+        "Hugo Leroy",
+        "Nicolaj Bösel-Schmid",
+        "Alcherio Martinoli"
+      ],
+      "year": 2025,
+      "abstract": "",
+      "url": "https://doi.org/10.1109/iros60139.2025.11246224",
+      "venue": "2025 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)",
+      "citation_count": 1,
+      "publication_date": "2025-10-19",
+      "source": "crossref",
+      "doi": "10.1109/iros60139.2025.11246224",
+      "arxiv_id": null
+    },
+    {
+      "title": "GOSSIPP: Graph and Observability-Based Signal Synchronized Informative Path Planning for Active Localization of Benthic Fauna",
+      "authors": [
+        "Marta Real",
+        "Juan David Hernandez",
+        "Narcis Palomeras",
+        "Marc Carreras"
+      ],
+      "year": 2026,
+      "abstract": "",
+      "url": "https://doi.org/10.1109/lra.2026.3719196",
+      "venue": "IEEE Robotics and Automation Letters",
+      "citation_count": 0,
+      "publication_date": "2026-10",
+      "source": "crossref",
+      "doi": "10.1109/lra.2026.3719196",
+      "arxiv_id": null
+    },
+    {
+      "title": "Sequential Sensor Placement using Bayesian Compressed Sensing for Source Localization",
+      "authors": [
+        "Milan Courcoux-Caro",
+        "Charles Vanwynsberghe",
+        "Cedric Herzet",
+        "Alexandre Baussard"
+      ],
+      "year": 2021,
+      "abstract": "",
+      "url": "https://doi.org/10.23919/eusipco47968.2020.9287709",
+      "venue": "2020 28th European Signal Processing Conference (EUSIPCO)",
+      "citation_count": 1,
+      "publication_date": "2021-01-24",
+      "source": "crossref",
+      "doi": "10.23919/eusipco47968.2020.9287709",
+      "arxiv_id": null
+    },
+    {
+      "title": "Informative Path Planning for Active Field Mapping under Localization Uncertainty",
+      "authors": [
+        "Marija Popovic",
+        "Teresa Vidal-Calleja",
+        "Jen Jen Chung",
+        "Juan Nieto",
+        "Roland Siegwart"
+      ],
+      "year": 2020,
+      "abstract": "",
+      "url": "https://doi.org/10.1109/icra40945.2020.9197034",
+      "venue": "2020 IEEE International Conference on Robotics and Automation (ICRA)",
+      "citation_count": 25,
+      "publication_date": "2020-05",
+      "source": "crossref",
+      "doi": "10.1109/icra40945.2020.9197034",
+      "arxiv_id": null
+    },
+    {
+      "title": "Adaptive Informative Path Planning Using Deep Reinforcement Learning for UAV-based Active Sensing",
+      "authors": [
+        "Julius Ruckin",
+        "Liren Jin",
+        "Marija Popovic"
+      ],
+      "year": 2022,
+      "abstract": "",
+      "url": "https://doi.org/10.1109/icra46639.2022.9812025",
+      "venue": "2022 International Conference on Robotics and Automation (ICRA)",
+      "citation_count": 68,
+      "publication_date": "2022-05-23",
+      "source": "crossref",
+      "doi": "10.1109/icra46639.2022.9812025",
+      "arxiv_id": null
+    },
+    {
+      "title": "Hierarchical Informative Path Planning for Active Sensing and Field Reconstruction",
+      "authors": [
+        "Bingyu Yang",
+        "Guang Yang",
+        "Kaibo Yang",
+        "Hao Zhang",
+        "Teng Li"
+      ],
+      "year": 2024,
+      "abstract": "",
+      "url": "https://doi.org/10.1145/3679409.3679463",
+      "venue": "Proceedings of the 2024 3rd International Symposium on Control Engineering and Robotics",
+      "citation_count": 0,
+      "publication_date": "2024-05-24",
+      "source": "crossref",
+      "doi": "10.1145/3679409.3679463",
+      "arxiv_id": null
+    }
+  ]
+}

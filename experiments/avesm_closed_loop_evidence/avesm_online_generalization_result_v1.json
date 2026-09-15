@@ -1,0 +1,24 @@
+{
+  "contract": "AVESM_ONLINE_GENERALIZATION_AUDIT_V1",
+  "generalization": {
+    "training_assets": "House01 seed1234 A/B measured histories",
+    "held_out_realizations": ["House01 seed20260915", "House01 seed1234 regenerated runtime"],
+    "all_cases_passed": true,
+    "threshold": "max posterior >= 0.95 and absolute log-e margin >= log(20)",
+    "results": {
+      "seed20260915_A": {"first_hit_step": 273, "stop_step": 277, "final_weight_A": 0.9751380233706418, "final_error_m": 0.12068306671903276, "path_length_m": 78.51034482767999},
+      "seed20260915_B": {"first_hit_step": 150, "stop_step": 162, "final_weight_B": 0.9621368801650444, "final_error_m": 0.1837922014550078, "path_length_m": 46.93103448280997},
+      "seed1234_A": {"first_hit_step": 218, "stop_step": 218, "final_weight_A": 0.971827298360098, "final_error_m": 0.13675372969536437, "path_length_m": 61.358620689729825},
+      "seed1234_B": {"first_hit_step": 150, "stop_step": 162, "final_weight_B": 0.9621368801650444, "final_error_m": 0.1837922014550078, "path_length_m": 46.93103448280997}
+    }
+  },
+  "online_ros": {
+    "avesm_call_site": false,
+    "ros2_pkg_prefix_gsl_server": "FAIL_PACKAGE_NOT_FOUND",
+    "colcon_duplicate_package_check": "FAIL_duplicate_gsl_server_in_pmfs_forensic_v1_and_psec_v1",
+    "isolated_colcon_configure": "FAIL_missing_gaden_msgsConfig.cmake",
+    "verdict": "ONLINE_NOT_RUN_INFRASTRUCTURE_BLOCKED",
+    "scope": "No claim of ROS action-server integration is made."
+  },
+  "interpretation": "The handoff mechanism generalizes across two source placements and two existing House01 runtime seeds in the physical emulator. Online ROS validation remains blocked by workspace infrastructure and absent AVESM call sites."
+}
