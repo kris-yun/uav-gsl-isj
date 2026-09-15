@@ -1,0 +1,29 @@
+{
+  "contract": "AVESM_CLOSED_LOOP_EMULATOR_GATE_V1",
+  "status": "NO_GO_CLOSED_LOOP_PERFORMANCE",
+  "physical_runtime": "GADEN current runtime, repaired finite-wind ABI pair",
+  "controller": "cross-fitted distance-bin AVESM with kappa=0.1, hit threshold=0.001 ppm, JS-divergence action selection",
+  "ros_action_server_integrated": false,
+  "arms": {
+    "A": {
+      "source": [-0.6, 1.95],
+      "steps": 300,
+      "stop_step": 23,
+      "final_error_m": 4.854121959736899,
+      "path_length_m": 1.634314575050762,
+      "final_weight_A": 2.8059057823074657e-18,
+      "final_weight_B": 1.0
+    },
+    "B": {
+      "source": [-0.4, -2.9],
+      "steps": 300,
+      "stop_step": 23,
+      "final_error_m": 0.0,
+      "path_length_m": 1.634314575050762,
+      "final_weight_A": 2.8059057823074657e-18,
+      "final_weight_B": 1.0
+    }
+  },
+  "failure": "The controller stopped at the fixed wrong candidate B in both physical realizations; it succeeds only when B is the true source and mislocalizes A by 4.85 m. The map gate therefore did not transfer to closed-loop action performance.",
+  "scope": "real GADEN action/observation emulator; not a formal ROS action-server result"
+}

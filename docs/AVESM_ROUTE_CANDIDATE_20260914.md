@@ -169,3 +169,24 @@ AVESM**, not a full PMFS confirmation: it uses one House, two candidates, and
 one held-out seed per candidate. The untempered AVESM failure is retained as a
 real ablation, and no cross-house or closed-loop claim is opened until this
 same repaired mechanism passes a fresh held-out asset.
+
+## Closed-loop action/observation smoke (2026-09-15)
+
+The current ROS workspace has no AVESM call site; its online stop component is
+the older `CP_Stopping` path. I therefore ran a transparent physical-runtime
+emulator, not a disguised ROS result. The controller selected each next pose
+from the current AVESM map, queried the repaired GADEN realization at that
+pose, updated the sensor state and e-process, and applied the same stopping
+rule.
+
+The result is a hard closed-loop NO-GO. In the A-source realization
+`(-0.6,1.95)`, the controller stopped at step 23 with posterior weight 1.0 on
+the fixed wrong candidate B and final error `4.854 m`; path length was only
+`1.634 m`. It made exactly the same decision in the B-source realization, so
+it succeeds only when B is actually true. The trace and combined result are in
+`experiments/avesm_closed_loop_evidence/`, and the emulator is
+`experiments/avesm_closed_loop_emulator.py`.
+
+Conclusion: the κ-tempered AVESM map gate is positive offline, but its current
+action policy does not transfer to closed-loop localization. The main
+innovation cannot yet be claimed as a closed-loop performance improvement.
