@@ -158,3 +158,118 @@ The next required test is a learned-but-light tail-aware representation against:
 - direct encoder;
 - predictive/JEPAlike encoder;
 using identical held-wind splits.
+
+
+## 8. Auxiliary screening update — event-aware and rough-path candidates
+
+### Event-aware segmentation: NO-GO as current M2
+
+Recent remote anchor:
+- ICLR 2026 — Peng et al., *From Observations to Events: Event-Aware World Models for Reinforcement Learning*.
+
+A fixed proxy encoded:
+- event count,
+- ordered onset times,
+- durations,
+- peak/mass of the first events,
+- event-centroid timing.
+
+Matched 20 s held-wind test (36 decisions):
+- aggregate classical features: 28/36;
+- tail features: 28/36;
+- event-order features: 25/36;
+- tail + event: 27/36.
+
+Time reversal changed event features as expected but did not expose a positive source-identification increment.
+Decision:
+> event-aware segmentation is not currently load-bearing and is rejected as M2. It risks collapsing back to classical whiff segmentation.
+
+### Rough-path / path-signature representation: mathematically valid but no positive increment
+
+Recent remote anchors:
+- ICML 2025 — Lucchese et al., *Learning with Expected Signatures: Theory and Applications*.
+- NeurIPS 2025 — *Scalable Signature Kernel Computations via Local Neumann Series Expansions*.
+- ICLR 2026 — Piatti et al., *Random Controlled Differential Equations*.
+
+A level-2/3 path signature of (normalized time, log-gas) was evaluated on the same 20 s windows.
+
+Normal held-wind accuracy:
+- tail: 28/36;
+- signature: 27/36;
+- tail + signature: 28/36.
+
+Destructive time reversal:
+- tail remains 28/36, as expected because it is order-free;
+- signature falls 27/36 -> 20/36;
+- tail + signature falls 28/36 -> 23/36.
+
+Thus the signature correctly captures temporal order, but it provides **zero cases where signature corrects a tail error** in the current 36-decision set; it only introduces one extra error.
+
+Decision:
+> path signatures are useful as a destructive-control representation but are not promoted as an auxiliary innovation.
+
+## 9. New leading M2 — censoring-aware survival evidence
+
+Recent top-venue provenance:
+- ICLR 2025 — Davidov et al., *Conformalized Survival Analysis for General Right-Censored Data*.
+- ICML 2025 — Sesia & Svetnik, *Doubly Robust Conformalized Survival Analysis with Right-Censored Data*.
+- AISTATS 2025 — Alberge et al., *Survival Models: Proper Scoring Rule and Stochastic Optimization with Competing Risks*.
+
+Scientific mapping:
+- informative plume/extreme event = time-to-event;
+- no event before finite sensing horizon = right-censoring, not a negative event time.
+
+Existing controlled-history chronology using the frozen 0.1 ppm floor:
+- 120 s: H01/H02 both sources censored -> abstain; H03 distinguishes 2/2.
+- 180 s: H01 still censored -> abstain; H02 and H03 distinguish 2/2 each.
+- 240 s: H01/H02/H03 all distinguish 2/2, with censored vs observed or strongly separated arrival times.
+
+This matches the physical-support audit exactly:
+> source distinction should appear only when the finite horizon makes it observable.
+
+Why it complements EVT M1:
+- EVT explains how to retain information in observed rare/tail events.
+- survival analysis supplies correct semantics when the rare event has **not yet occurred**.
+
+## 10. Revised strongest 1+2 EVT architecture
+
+### M1 MAIN — Extreme-Value-Aware Scientific Learning
+Remote sources:
+- Nature Communications 2026 η-learning;
+- UAI 2026 max-stable representations;
+- ICLR 2026 EVEREST;
+- NeurIPS 2025 scientific long-tail recognition.
+
+### M2 AUX — Censoring-Aware Survival Evidence
+Remote sources:
+- ICLR 2025 / ICML 2025 modern right-censored survival inference.
+
+Role:
+> distinguish “event not observed yet within T” from “source contradicted”.
+
+### M3 AUX — Structured Shift-Aware Source Region
+Remote sources:
+- ICLR 2025 Wasserstein-regularized conformal prediction under shift;
+- ICML 2025 optimal-transport conformal prediction;
+- ICML 2025 volume-optimal structured prediction sets.
+
+Role:
+> convert the final PMFS-compatible probability map into a spatially calibrated region under House/simulator/real-sensor shift rather than trusting false sharpness.
+
+This 1+2 now has three different remote scientific/statistical lineages:
+- extreme-value / rare-event statistics,
+- survival / censoring statistics,
+- distribution-free conformal uncertainty.
+
+All three address distinct project failures and can be lightweight.
+
+## 11. Promotion status after current loop
+
+EVT-aware M1 is now stronger than the JEPA alternative on current project evidence, but is **not frozen**.
+
+Remaining hard gates:
+1. show η/EVT-aware training gives an incremental benefit over classical whiff/timing features, not just hand-crafted tail statistics;
+2. obtain multi-realization evidence so survival curves/hazards are estimable rather than single-realization proxies;
+3. run direct collision search for EVT/max-stable source localization through 2026;
+4. verify the same data interface on TURB-Smoke and Red:Vapor;
+5. evaluate M3 only when an actual probability map from M1/M1+M2 exists.
