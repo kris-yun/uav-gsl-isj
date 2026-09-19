@@ -462,3 +462,60 @@ Status: DEMOTED AS M1; possible interpretation of the M1 corrected state.
 3. State-First Intermediate Physical Representation — subsumed/auxiliary.
 4. Stochastic Multiscale Closure — scientifically strong but current-data blocked.
 5. Inverse Generative Modeling — collision-demoted.
+
+
+## Loop-7/8 update: learned-missing-physics survives a stronger collision and mechanism screen
+
+### Distant source-localization analogue found
+2025 underwater acoustics contains correction-based source localization:
+- JASA 2025 CrPINN-aided matched-field processing corrects imperfect propagation-model replicas using sparse measurements.
+- CISS 2025 mismatch-robust differentiable modular forward localization adapts the propagation model under environmental mismatch.
+
+Effect on decision:
+- global novelty claim “correct physics model for source localization” is forbidden;
+- the distant analogue **supports the transferability** of the paradigm;
+- GSL novelty must be turbulent-specific: candidate-conditioned transport correction + intermittency preservation + PMFS source evidence.
+
+### Existing-data mechanism sharpened
+Same-route H01 SA-fast exact-vs-estimated audit:
+- exact transport+FOPDT: true SA rank 1;
+- estimated provider: false SB rank 1.
+- approximate SA has delayed/missing intermediate support and a large spurious late tail.
+- MSE-optimal scalar correction collapses all >0.1 ppm hits and only wins by predicting blank.
+
+Therefore the target discrepancy is:
+- time structured;
+- sign changing;
+- source/candidate dependent;
+- upstream of the already-audited FOPDT sensor model.
+
+Preferred M1 implementation is now an **indirect transport-level corrector before FOPDT**, not a generic output residual.
+
+### M2 collision screen
+Recent OSL literature already uses whiff/blank timing and intermittency as informative cues.
+Therefore M2 cannot claim novelty for “use whiff statistics”.
+Its novelty must be the 2026 η-learning transfer:
+- use rare-event/intermittency statistics as a training constraint on the missing-physics corrector;
+- prevent blank-dominated regression from erasing source evidence.
+
+No direct 2025/2026 GSL η-learning application was found in the current screen.
+
+### M3 collision screen
+Conformal source-location uncertainty already exists in 2025 acoustic localization.
+Therefore M3 is auxiliary only, not a novelty centerpiece.
+Its GSL-specific role is a spatially structured, shift-aware source region attached to the PMFS map.
+
+### Cross-dataset feasibility correction
+- TURB-Smoke 2026: suitable mechanistic cross-simulator source test (5 sources, multiple winds, source-resolved DNS trajectories/fields).
+- ICASSP 2025 GSL Challenge: preferred real source-localization benchmark.
+- Red:Vapor 2026: fixed physical source across runs; useful for real plume/sensor/geometry correction transfer but NOT independent multi-source-position localization.
+
+### Current confidence
+Learned Missing Physics remains the primary M1 because it is the only screened paradigm that simultaneously explains:
+1. exact-forward source-identity success;
+2. approximate-provider rank reversal;
+3. candidate-dependent transport bias;
+4. why global correction/MSE can fail;
+5. why a lightweight correction can preserve existing PMFS semantics.
+
+No promotion to closed-loop yet.
