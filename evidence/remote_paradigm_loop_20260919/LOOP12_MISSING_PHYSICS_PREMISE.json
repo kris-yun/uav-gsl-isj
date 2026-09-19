@@ -1,0 +1,46 @@
+{
+  "date":"2026-09-19",
+  "loop":"12",
+  "candidate":"hybrid physics-ML / candidate-conditioned missing-physics correction",
+  "project_evidence":{
+    "high_fidelity_cross_transport":{
+      "source":"evidence/cstar_m1_exact_counterfactual_transfer_20260909.json",
+      "result":"12/12 true-source rank-1 across H01/H02/H03 when candidate-specific physical response is available under opposite wind",
+      "scope":"two-source offline premise only"
+    },
+    "deployable_approximate_provider":{
+      "source":"evidence/cstar_m1_h01_same_provider_20260911.json",
+      "result":"H01 same-code estimated-transport provider ranks SB for both actual SA and actual SB: 1/2 correct",
+      "SA_mse":{"SA_candidate":0.007337530185313241,"SB_candidate":0.0008060542341775312},
+      "SB_mse":{"SA_candidate":0.008173039674656126,"SB_candidate":0.000003151631107616926}
+    },
+    "residual_structure":{
+      "SA_model_error_mse":0.007337530185313241,
+      "SA_error_fraction_in_union_event_samples":0.979201527340134,
+      "SA_top5pct_samples_error_fraction":0.9868523669177753,
+      "SA_union_event_samples":48,
+      "SA_total_samples":1200,
+      "SB_model_error_mse":0.000003151631107616926,
+      "SA_SB_residual_correlation":0.008104869044374146,
+      "SA_SB_residual_cosine":-0.010076819905095805,
+      "candidate_independent_residual_copy_mse":{
+        "SA_corrected_with_SB_residual":0.0073437465740312895,
+        "SB_corrected_with_SA_residual":0.0073437465740312895
+      }
+    }
+  },
+  "interpretation":[
+    "the main failure is not absence of a useful physics prior: candidate-specific high-fidelity responses contain strong source identity",
+    "the deployable approximate transport model has structured model-form error large enough to reverse source ranking",
+    "the discrepancy is strongly candidate-dependent: SA and SB residuals are nearly orthogonal",
+    "a shared additive/global correction is falsified by the residual-copy control",
+    "for the failing SA case almost all squared log-response error is concentrated in rare/late event samples, linking missing-physics correction to extreme-event-aware learning"
+  ],
+  "verdict":"STRONG_M1_PREMISE_SURVIVOR",
+  "limits":[
+    "no learned correction has yet been trained",
+    "only H01 has the current estimated-provider candidate traces",
+    "exact cross-transport bank is evaluator/development evidence and not deployable online",
+    "closed-loop gain is not established"
+  ]
+}
