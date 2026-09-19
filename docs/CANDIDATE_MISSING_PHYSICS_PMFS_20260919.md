@@ -345,3 +345,52 @@ Conclusion:
 - M2 must constrain the correction so that rare source-support structure is preserved while spurious tail mass is removed.
 
 This strengthens the M1+M2 coupling and eliminates an easy feature-engineering substitute.
+
+
+## 17. Loop-7 collision sharpening: correction-based source localization exists in a distant modality
+
+A 2025 underwater-acoustics screen found two close remote-domain precedents:
+
+- JASA 2025, Miao et al., *Correction physics-informed neural network-aided matched field processing technique for underwater passive source range estimation*.
+  - a physics propagation model generates source replicas;
+  - a small measured-data correction network repairs environmental replica mismatch;
+  - corrected replicas improve source ranging and generalization to unseen environments.
+
+- CISS 2025, Kari et al., *Mismatch-Robust Underwater Acoustic Localization Using A Differentiable Modular Forward Model*.
+  - adapts a learned forward propagation model at inference under environmental mismatch;
+  - uses physics-inspired modularity in the forward model.
+
+Interpretation for novelty:
+- “correct an imperfect forward model to improve source localization” is **not globally novel**.
+- This does not kill the GSL transfer; it actually supplies a strong distant-domain precedent for the transfer mechanism.
+- But the GSL novelty must rely on the turbulent-gas-specific structure:
+  1. source-conditioned correction of a PMFS-compatible transport/sensor response;
+  2. correction judged by source evidence, not only field/replica fit;
+  3. event/intermittency-aware constraints because blank-dominated regression can erase source evidence;
+  4. cross-simulator / real-plume validation.
+
+The claim must never be “first correction-based source localization”.
+
+## 18. Scalar-correction falsification
+
+A scalar amplitude sweep was applied to the wrong estimated SA response in H01 SA-fast.
+
+- estimated SA baseline log1p MSE: ~0.0073375.
+- estimated SB/null MSE: ~0.0008061.
+- the global-MSE-optimal SA scale is ~0.067.
+- this lowers SA MSE to ~0.0007404 and barely restores the SA-vs-SB MSE rank.
+- however it removes **all** >0.1 ppm hits (predicted hit count 0) and peak falls below threshold (~0.0855 ppm).
+
+By contrast:
+- peak-matching scale ~0.325 retains 27 hits but MSE ~0.00149, still worse than the blank SB candidate;
+- integrated-exposure-matching scale ~0.260 retains 26 hits but MSE ~0.00118, also worse than SB.
+
+Thus no single scalar objective simultaneously restores:
+- source rank under ordinary response fit;
+- hit topology;
+- amplitude/tail statistics.
+
+Consequence:
+> the missing physics is not reducible to a simple gain calibration. A useful correction must be time/context structured, while M2 must prevent the MSE-optimal blank collapse.
+
+This is a positive necessity test for the M1+M2 composition.
