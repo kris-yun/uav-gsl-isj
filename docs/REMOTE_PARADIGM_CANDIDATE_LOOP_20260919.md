@@ -897,3 +897,84 @@ NeurIPS 2025 — Schirmer et al., *Monitoring Risks in Test-Time Adaptation* use
 This is kept as a reserve deployment mechanism, not current M3:
 - valuable for online simulator→real monitoring,
 - but less tightly integrated with the source-probability map than selective inference.
+
+
+## Loop-6: stronger project evidence + alternative-family elimination
+
+### Exact opposite-wind source identity supports a representation-first hypothesis
+
+The existing current-runtime factorial counterfactual transfer audit is stronger than the earlier heuristic proxies:
+
+- target source/wind history is scored **only** against candidate histories under the opposite wind;
+- no same-source same-wind candidate is allowed;
+- fixed log1p-FOPDT MSE, no fitted calibration;
+- H01/H02/H03: 4/4 rank-1 in every House, 12/12 overall.
+
+Interpretation:
+> the measured time history already contains a source-persistent cross-transport signature in this controlled two-source setting.
+
+This is exactly the kind of structure a predictive representation should preserve without requiring a full transport surrogate.
+
+### Surrogate-support failure strengthens the anti-reconstruction argument
+
+A separate PHIC audit finds a candidate for which:
+- 299 positive observed events exist;
+- surrogate candidate exposure is zero in every selected member row;
+- verdict: MODEL_ZERO_WITH_OBSERVED_HITS.
+
+Thus a physically structured forward surrogate can be confidently wrong at the event level even while the raw sensor stream contains real source evidence.
+
+This supports the main distinction:
+- do not make accurate full-response reconstruction a prerequisite for source inference;
+- learn a source-relevant latent predictive representation directly from observable histories, with physical support controls.
+
+### Alternative M1: Koopman / spectral dynamics
+
+Recent top-level support is strong:
+- ICML 2025 ResKoopNet;
+- ICLR 2025 Balanced Neural ODE / Koopman approximation;
+- NeurIPS 2025 COLoKe;
+- Nature Communications 2026 learnability/impossibility theory for Koopman spectral learning.
+
+However, novelty and project tests are weaker:
+- PLOS ONE 2025 already directly quantifies spectral information about source separation in multisource odor plumes and shows frequency-dependent localization information.
+- existing spectral/autocorrelation proxy on our factorial histories is not uniformly transport-stable: H02 fails at 120/180 s and H03 degrades to 1/2 held-wind identity at 240 s.
+
+Decision:
+- KOOPMAN/SPECTRAL M1 = NO-GO as primary innovation.
+- may remain as a comparator or analysis tool.
+
+### Alternative M1: neural-manifold / representation-geometry learning
+
+Nature Neuroscience 2026 gives powerful biological evidence that odor discrimination is stored in representational manifold geometry.
+But:
+- 2026 OSL already includes manifold-learning diffusion-state classification;
+- a “manifold-based GSL” claim would be too close to existing OSL framing and lacks a unique transport mechanism.
+
+Decision:
+- MANIFOLD M1 = NO-GO.
+- retain only as biological motivation for why representation geometry matters.
+
+### Alternative M1: extreme-event-aware learning
+
+Nature Communications 2026 η-learning is strong and the H01 proxy gives direct positive evidence.
+But turbulent odor localization has a long prior literature on whiff/blank timing, intermittency, frequency and mixed intensity/timing cues, including direct source-location prediction from those statistics.
+
+Decision:
+- EXTREME-EVENT AWARE LEARNING = not sufficiently collision-free as M1.
+- retain as M2 because the novelty there is not “whiffs matter”, but **constraining a predictive latent learner so that rare source-informative regimes are not erased**.
+
+## Loop-6 leader confidence
+
+Current M1 leader remains predictive latent physical representation.
+
+Independent support now comes from:
+1. ICLR 2026 physical representation learning;
+2. NeurIPS 2025 seq-JEPA predictive/invariant-equivariant world representations;
+3. 2026 noisy-sensing JEPA work (LiDAR/ultrasound);
+4. Nature Neuroscience 2026 olfactory representational geometry;
+5. our 12/12 opposite-wind counterfactual source identity audit;
+6. our surrogate-zero-with-observed-hit failure audit.
+
+This is the first candidate in the loop with convergence from machine learning, physics, biological olfaction, and project evidence.
+
