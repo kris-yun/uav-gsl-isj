@@ -1,0 +1,17 @@
+{
+  "date":"2026-09-19",
+  "loop":"10",
+  "candidate":"event-process / temporal-point-process representation",
+  "data":"12 controlled histories H01/H02/H03 x SA/SB x fast/slow",
+  "protocol":"multi-threshold whiff onset/offset counts, inter-event gaps, burst durations and derivative events; source probe trained on fast wind and evaluated on later slow wind; windows 5/10/20 s; three held-time configurations",
+  "results":{
+    "config_A":{"5s":{"raw":"53/72","event":"52/72","combo":"54/72"},"10s":{"raw":"27/36","event":"26/36","combo":"27/36"},"20s":{"raw":"14/18","event":"14/18","combo":"14/18"}},
+    "config_B":{"5s":{"raw":"46/72","event":"44/72"},"10s":{"raw":"22/36","event":"23/36"},"20s":{"raw":"10/18","event":"12/18"}},
+    "config_C":{"5s":{"raw":"27/48","event":"26/48"},"10s":{"raw":"14/24","event":"14/24"},"20s":{"raw":"6/12","event":"6/12"}}
+  },
+  "verdict":"MIXED_NO_ROBUST_ADVANTAGE",
+  "decision":[
+    "simple event summaries do not support event/TPP as the main innovation",
+    "event timing remains physically relevant but cannot be promoted without a stronger candidate-conditioned event-process likelihood"
+  ]
+}
