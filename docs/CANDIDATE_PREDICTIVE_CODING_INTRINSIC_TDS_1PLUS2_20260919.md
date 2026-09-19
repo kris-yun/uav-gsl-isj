@@ -214,3 +214,31 @@ Current preferred 1+2:
 - M3 Sequential risk monitoring of source-evidence validity.
 
 TDS and conformal calibration are retained as comparators, not preferred auxiliary innovations.
+
+
+## 14. M2 destructive pairing proxy
+
+A nonparametric pairing test was run on existing 5 s window features.
+
+Train window: 120–180 s.
+Test window: 180–240 s.
+
+Three source prototypes were compared:
+- fast-only prototype;
+- correct paired prototype using the same source across fast+slow wind;
+- destructive wrong-paired prototype that swaps the slow-wind source identity.
+
+Results:
+- H01: fast-only 0.833, correct-paired 0.833, wrong-paired 0.167.
+- H02: 0.500, 0.500, 0.500.
+- H03: fast-only 0.688, correct-paired 0.688, wrong-paired 0.354.
+
+Interpretation:
+- correct source-context pairing is semantically load-bearing in H01/H03 because wrong pairing catastrophically degrades identity.
+- however, correct pairing gives no incremental gain over fast-only prototypes.
+- H02 remains non-discriminative under this crude late-window prototype.
+
+Decision:
+- M2 has mechanism support but no demonstrated incremental benefit yet.
+- M2 remains CANDIDATE, not validated auxiliary innovation.
+- next comparison must include a stronger paired-dynamics objective and at least one alternative M2 paradigm.
