@@ -283,3 +283,47 @@ Decision:
 - this strengthens the case for an uncertainty/validity auxiliary and weakens any overly theoretical ergodic claim.
 
 The candidate remains alive because its destructive temporal-order test is positive, but finite-horizon convergence is now the main scientific risk.
+
+
+## 13. Matched baseline: marginal distribution + ordinary autocorrelation
+
+To test whether the delay-coordinate result is only a complicated version of standard temporal statistics, a matched baseline was constructed from:
+- the exact same one-point empirical quantiles used by the marginal distribution;
+- ordinary autocorrelation coefficients at 10, 20 and 30 s;
+- no source labels inside feature construction;
+- fast-wind source prototypes, slow-wind evaluation.
+
+The marginal and autocorrelation components were normalized by the fast-wind source separation before combination. This is a deliberately strong development baseline.
+
+### H01, 180 s — the key recovery case
+- marginal only: 1/2, ratio 0.759.
+- marginal + autocorrelation: **1/2**, ratio 0.686.
+- full delay-joint measure m=4, tau=10 s: **2/2**, ratio 0.477.
+
+Therefore a few low-order autocorrelations do not reproduce the delay-joint recovery.
+
+### H03, 240 s
+- marginal: 2/2, ratio 0.647.
+- marginal + autocorrelation: 1/2, ratio 0.828.
+- delay-joint: 2/2, ratio 0.471.
+
+Again, the joint delay distribution retains a distinction not captured by simple marginal + second-order temporal correlation.
+
+### H02, 180 s
+- marginal: 2/2, ratio 0.066.
+- marginal + autocorrelation: 2/2, ratio 0.117.
+- delay-joint: 2/2, ratio 0.050.
+
+Here the marginal already contains strong source identity, but the delay joint gives an incremental transport/source improvement.
+
+### Counterexample retained
+H03 120 s:
+- marginal is already 2/2;
+- both marginal+autocorrelation and long-delay joint degrade to 1/2.
+
+This is important: the delay representation is not universally superior and must be finite-horizon qualified.
+
+Decision:
+> the PRL-derived object survives the matched low-order temporal-statistics baseline in its strongest recovery case.
+
+The remaining challenge is not “does temporal structure matter?”; it is “can a source-blind finite-horizon rule choose a valid delay representation without outcome tuning?”
