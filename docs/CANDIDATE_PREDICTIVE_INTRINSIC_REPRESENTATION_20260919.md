@@ -208,3 +208,141 @@ This counterexample upgrades the necessity of M2 from optional regularization to
 - destructive wrong-pair and source-permutation controls are mandatory.
 
 This also forbids claiming that any JEPA-style predictor is automatically source-preserving.
+
+
+## 13. Loop-3 correction: rare-event failure changes Auxiliary A
+
+The H01 counterexample is more fundamental than ordinary cross-transport alignment.
+
+Observed fact:
+- H01 source evidence can arrive very late and intermittently (strong threshold crossing only near ~229 s for SA, none for SB in this controlled pair).
+- a generic predictive/smoothing proxy can suppress exactly this late source-defining event and reduce held-wind identity from 2/2 to 1/2.
+
+Therefore a pure JEPA/predictive objective is scientifically unsafe for turbulent GSL:
+> the least predictable local events may be the most source-informative events.
+
+### New Auxiliary A — Extreme-event-aware intermittency preservation
+
+Primary 2026 remote-domain provenance:
+- Nature Communications 2026 — Chang & Sapsis, *Extreme Event Aware (η-) Learning*.
+  The method constrains learning with statistics of an observable that characterizes rare/extreme regimes, specifically to avoid fitting only quiescent common behavior while remaining uncertain or wrong in rare regimes.
+
+Supporting turbulence provenance:
+- Scientific Reports 2025 — conditional POD for predicting extreme events in turbulent-flow time signals.
+- Physical Review Fluids 2026 — latent-space clustering/control of extreme events in turbulent flows.
+
+GSL transfer:
+- extreme-event observable -> plume intermittency observable;
+- rare event -> source-informative whiff / onset / upper-tail concentration excursion;
+- η statistics -> predeclared statistics such as exceedance probability, top-tail mass, onset/first-arrival structure, and burst duration.
+
+This is not a threshold planner. It is a training constraint/auxiliary representation objective that prevents M1 from erasing rare but informative plume events.
+
+### Existing-data η proxy
+
+A fixed source-blind tail-observable vector was appended to the predictable component:
+- q95, q99;
+- maximum and top-1% mean exposure;
+- exceedance fractions at fixed physical floors;
+- first arrival at the pre-existing 0.1 ppm threshold.
+
+Key outcomes:
+
+H01, 240 s, 50-sample smoothing:
+- predictive-only held-wind identity: 1/2;
+- η-tail-only: 2/2;
+- predictive + η: 2/2;
+- wind/source ratio: predictive 0.861 -> combined 0.212.
+
+H02, 180 s:
+- predictive-only: 1/2;
+- η-tail: 2/2;
+- combined: 2/2;
+- ratio approximately 0.889 -> 0.349.
+
+H02, 240 s:
+- all retain 2/2;
+- combined ratio remains very low (~0.038).
+
+H03, 180 and 240 s:
+- predictive-only and combined both retain 2/2.
+- η branch is not always lower-ratio than the predictive branch, so the mechanism is complementary rather than a universal replacement.
+
+Interpretation:
+- tail/intermittency statistics rescue source evidence precisely where generic predictive compression loses it.
+- predictable structure and rare-event structure carry complementary information.
+
+This supports replacing the former “intrinsic identity” Auxiliary A with an extreme-event-aware intermittency branch.
+
+## 14. Loop-3 Auxiliary B — preserved dynamics across environments
+
+The cross-environment problem remains distinct and still needs its own auxiliary mechanism.
+
+2025 top-venue provenance:
+- NeurIPS 2025 — Jiang et al., *Extracting task-relevant preserved dynamics from contrastive aligned neural recordings (CANDY)*.
+  Learns a shared low-dimensional dynamical representation preserved across recording sessions/subjects while improving cross-session decoding.
+- ICLR 2025 — Wu et al., *Neuron Platonic Intrinsic Representation From Dynamics Using Contrastive Learning*.
+  Learns time-invariant intrinsic identity from multiple dynamical segments observed under different peripheral conditions.
+
+GSL transfer:
+- source = persistent hidden identity;
+- wind/House/simulator = peripheral/session condition;
+- plume segment dynamics = observed activity segment;
+- desired representation = source-relevant dynamics preserved across transport contexts.
+
+Hard restriction from project evidence:
+- this alignment cannot be imposed before source support exists.
+- it must be reliability/support weighted, because early H02/H03 source effect can be zero or comparable to transport interaction.
+
+## 15. Revised 1+2 candidate
+
+### M1 MAIN — Predictive Self-Supervised Physical Representation
+Primary anchor: ICLR 2026 *Representation Learning for Spatiotemporal Physical Systems*.
+
+Main thesis:
+> learn the latent physical structure that predicts plume evolution and encodes governing source information, instead of reconstructing the full stochastic plume or directly classifying source from raw samples.
+
+### M2 AUX — Extreme-Event-Aware Intermittency Preservation
+Primary anchor: Nature Communications 2026 η-learning.
+
+Role:
+> stop the predictive objective from washing out rare source-informative whiffs/bursts.
+
+### M3 AUX — Cross-Context Preserved Source Dynamics
+Primary anchors: NeurIPS 2025 CANDY + ICLR 2025 intrinsic dynamics.
+
+Role:
+> align the source-relevant dynamical identity across wind/House/simulator contexts after support is present.
+
+### Output
+A lightweight source head maps the fused representation to the same PMFS-compatible source-location probability map.
+
+Conformal calibration is demoted to evaluation/deployment reliability tooling, not counted as one of the three innovations.
+
+## 16. Collision status after loop 3
+
+Direct 2025/2026 OSL/GSL search found:
+- 2026 diffusion-state classification using UMAP/K-means;
+- Scensory 2025/2026 preprint using supervised spatiotemporal neural decoding of short VOC sequences for identity/direction/distance;
+- LLM, RL, Mamba, PINN, probabilistic/random-search, multi-robot and plume-patch approaches.
+
+Important collision boundary:
+- “spatiotemporal representation learning for olfaction” by itself is no longer novel because Scensory explicitly uses that framing.
+- the surviving novelty must therefore be the specific **predictive self-supervised + extreme-intermittency-preserving + cross-context preserved-dynamics** decomposition, evaluated as a source-probability-map inference mechanism across heterogeneous plume datasets.
+- no direct JEPA/predictive-latent OSL result was found in the current search.
+- no direct η-learning / extreme-event-aware OSL result was found.
+- no direct CANDY-style preserved-dynamics cross-transport OSL result was found.
+
+## 17. Current verdict
+
+The previous M1 label “JEPA alone” is too weak.
+The stronger candidate is:
+
+**Predictive–Intermittency Representation Learning for Turbulent Source Inference**
+
+with:
+- M1 predictive latent physical representation,
+- M2 rare/intermittent-event preservation,
+- M3 preserved source dynamics across transport contexts.
+
+Status remains OFFLINE FALSIFICATION ONLY.
