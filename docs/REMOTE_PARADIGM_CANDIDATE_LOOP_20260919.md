@@ -854,3 +854,46 @@ Current leading 1+2:
 - M3: structured shift-aware conformal source region.
 
 No promotion to validated main innovation yet.
+
+
+## Loop-7 — M3 conformal collision and replacement search
+
+### Structured conformal source region: collision-downgraded
+
+New direct/near-direct collisions:
+- AAAI 2026 — Jian et al., *Conformal Prediction for Multi-Source Detection on a Network*.
+  Provides statistically valid source-set detection guarantees for single/multi-source diffusion on networks.
+- ICASSP 2025 — Rozenfeld & Laufer Goldshtein, *Conformal Prediction for Manifold-based Source Localization with Gaussian Processes*.
+  Provides conformal uncertainty intervals for acoustic source localization.
+
+Decision:
+> “apply conformal prediction to a source-location output” is no longer sufficiently remote or unique to count as our third innovation.
+
+Shift-aware/Wasserstein conformal remains a strong evaluation baseline/tool, but M3 is demoted from innovation status.
+
+### New M3 candidate — Neyman–Pearson selective source inference under shift
+
+Primary latest anchor:
+- ICLR 2026 — Heng & Soh, *Know When to Abstain: Optimal Selective Classification with Likelihood Ratios*.
+
+Core transferred object:
+- distinguish the distribution of **correct source-map decisions** from **wrong source-map decisions**;
+- accept a localization only when a likelihood-ratio selector supports the “correct-decision” hypothesis;
+- otherwise retain the probability map but explicitly abstain from source declaration.
+
+Why this is different from entropy/margin stopping:
+- historical PMFS already uses entropy/margin-like confidence, and project evidence contains confident-wrong maps;
+- the ICLR-26 selector is derived from Neyman–Pearson optimality and targets correct-vs-wrong decision distributions under covariate shift, rather than thresholding confidence alone.
+
+Current status:
+- literature fit: strong;
+- direct GSL collision: none found in current search beyond a 2025 Mamba-GSL paper that uses heuristic entropy/top-two-margin abstention;
+- offline project test required before promotion.
+
+### Risk-monitoring reserve
+
+NeurIPS 2025 — Schirmer et al., *Monitoring Risks in Test-Time Adaptation* uses sequential testing/confidence sequences to detect model-performance degradation under unlabeled deployment shift.
+
+This is kept as a reserve deployment mechanism, not current M3:
+- valuable for online simulator→real monitoring,
+- but less tightly integrated with the source-probability map than selective inference.
