@@ -13,7 +13,7 @@ Turbulent gas-source localization should infer source location from the **predic
 ### Predictive latent representation / JEPA
 
 Primary provenance:
-- ICLR 2026 — Qu et al., *Representation Learning for Spatiotemporal Physical Systems*.
+- ICLR 2026 Workshop on AI & PDE — Qu et al., *Representation Learning for Spatiotemporal Physical Systems* (workshop, not ICLR main conference).
 - ICML 2025 — Lei et al., *M3-JEPA*.
 - CVPR 2025 — Astruc et al., *AnySat*.
 
@@ -297,7 +297,7 @@ Hard restriction from project evidence:
 ## 15. Revised 1+2 candidate
 
 ### M1 MAIN — Predictive Self-Supervised Physical Representation
-Primary anchor: ICLR 2026 *Representation Learning for Spatiotemporal Physical Systems*.
+Primary anchor: ICLR 2026 Workshop on AI & PDE *Representation Learning for Spatiotemporal Physical Systems* (supporting evidence only; not main-conference provenance).
 
 Main thesis:
 > learn the latent physical structure that predicts plume evolution and encodes governing source information, instead of reconstructing the full stochastic plume or directly classifying source from raw samples.
@@ -397,8 +397,8 @@ Status: ACTIVE AUXILIARY B.
 ## 20. Current 1+2 after four screening loops
 
 ### M1 MAIN — Predictive Self-Supervised Physical Representation
-Primary anchor:
-- ICLR 2026, *Representation Learning for Spatiotemporal Physical Systems*.
+Primary physical-specific anchor:
+- ICLR 2026 Workshop on AI & PDE, *Representation Learning for Spatiotemporal Physical Systems* — supporting evidence only, not a top-main-conference anchor.
 
 Main scientific claim:
 > source-relevant physical structure should be learned through latent prediction rather than full plume reconstruction or direct raw-signal classification.
@@ -439,3 +439,10 @@ Kill the whole 1+2 if any of the following occurs:
 - structured conformal regions become nearly map-wide under the intended shifts;
 - TURB-Smoke and Red:Vapor cannot supply compatible trajectory windows and source labels for the same model interface.
 
+
+
+## 23. Provenance correction
+
+Web verification on 2026-09-19 found that Qu et al., *Representation Learning for Spatiotemporal Physical Systems* is associated with the **ICLR 2026 Workshop on AI & PDE**, not the ICLR main conference. It must not be used to satisfy the hard “2025/2026 top-main-venue M1” provenance gate.
+
+Main-conference support for predictive/context representation remains available from adjacent domains (e.g. CVPR 2025 physical-parameter inference and NeurIPS 2025 contextual dynamics), but the physical-specific JEPA anchor is workshop-level. This lowers the provenance score of the JEPA line and reinforces its reserve status behind learned missing physics.
