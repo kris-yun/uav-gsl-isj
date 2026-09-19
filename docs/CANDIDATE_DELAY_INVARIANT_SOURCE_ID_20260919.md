@@ -201,3 +201,46 @@ Next step:
 - matched baseline test: ordinary marginal distribution vs delay-coordinate joint distribution with identical one-point statistics;
 - finite-horizon convergence test;
 - direct collision screen.
+
+
+## 11. Destructive time-permutation control
+
+A deterministic within-trace permutation was applied that preserves every one-point concentration value exactly while destroying local temporal ordering. The same delay-measure construction was then recomputed.
+
+This control directly tests whether the apparent advantage of delay-coordinate measures is truly dynamical or only inherited from marginal concentration statistics.
+
+Key results:
+
+### H01, 180 s
+- state-coordinate m=1: 1/2 source identity, ratio 0.759; unchanged by permutation as expected.
+- ordered m=4, tau=10 s: **2/2**, ratio **0.472**.
+- time-permuted m=4, tau=10 s: **1/2**, ratio **0.696**.
+
+The main H01 recovery disappears when temporal order is destroyed while marginal values are preserved.
+
+### H01, 240 s
+- ordered m=2, tau=5 s ratio 0.186.
+- permuted ratio 0.217, nearly returning to the m=1 marginal baseline 0.218.
+
+### H02, 180 s
+- ordered m=4, tau=5 s ratio 0.0473.
+- permuted ratio 0.0574.
+- both retain 2/2 identity, but temporal ordering provides an incremental reduction in transport/source ratio.
+
+### H03, 240 s
+- ordered m=4, tau=10 s ratio 0.475.
+- permuted ratio 0.691, worse than the ordered representation and close to / above the marginal baseline 0.647.
+
+### H03, 120 s counterexample
+- ordered long-delay m=4, tau=10 s hurts: 1/2, ratio 0.380.
+- permutation restores 2/2, ratio 0.130.
+
+This confirms two nontrivial facts simultaneously:
+1. temporal ordering is genuinely load-bearing in the successful H01/H03 long-horizon cases;
+2. delay dynamics can also hurt when the finite horizon does not support the chosen embedding.
+
+Decision:
+- the delay-coordinate candidate passes the theory-name-removal/destructive-control test better than a generic temporal feature proposal;
+- however, adaptive/qualified delay selection is mandatory and cannot be tuned on held outcomes.
+
+Status upgraded to **STRONG M1 ALTERNATIVE**, still not GO.
