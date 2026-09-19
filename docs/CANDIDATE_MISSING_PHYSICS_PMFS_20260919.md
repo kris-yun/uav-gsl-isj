@@ -717,3 +717,61 @@ This is important for both novelty and lightweight design:
 - M2 is not cosmetic: it selects among response corrections that may have similar/better average fit but very different source-event fidelity.
 
 The final learned corrector must reproduce this behavior on held conditions without oracle tuning. If it cannot, the candidate is killed.
+
+
+## 30. Independent cross-domain localization convergence
+
+The same structural problem has now been verified in a remote **source-localization** domain, not only in generic scientific ML.
+
+### Underwater acoustics, JASA 2025
+Miao et al., *Correction physics-informed neural network-aided matched field processing technique for underwater passive source range estimation*, JASA 158(1), 235–258, DOI 10.1121/10.0037090.
+
+Core structure:
+- trusted acoustic propagation model generates source replicas;
+- environmental mismatch makes those replicas inaccurate;
+- a compact learned corrector uses sparse measured data to correct the replica before matched-field source ranging;
+- experiments include unseen environments and sparse sampling.
+
+### Underwater acoustics, CISS 2025
+Kari, Zhuang & Singer, *Mismatch-Robust Underwater Acoustic Localization Using A Differentiable Modular Forward Model*, CISS 2025, DOI 10.1109/CISS64860.2025.10944684.
+
+Core structure:
+- source localization uses a learned physical forward model;
+- environmental mismatch is handled by adapting/correcting the forward model;
+- physics-inspired modularity is used to preserve interpretable propagation structure.
+
+### Relevance and collision boundary
+
+These papers materially strengthen the scientific plausibility of M1:
+> in inverse localization, correcting the **forward evidence model** under environmental mismatch can be more principled than replacing the inverse estimator.
+
+But they also prohibit a broad novelty claim. We cannot claim:
+- first forward-model correction for source localization;
+- first learned mismatch correction in localization;
+- first gray-box localization.
+
+The GSL-specific novelty must remain:
+1. turbulent gas transport;
+2. mobile sparse/intermittent sensing;
+3. **candidate-conditioned** missing-transport correction;
+4. correction inserted upstream of the frozen sensor likelihood;
+5. rare-event-aware objective because blanks dominate ordinary fit;
+6. output is the PMFS source-probability map.
+
+## 31. Independent-lineage convergence test
+
+Current M1 is now supported by four independent research lineages:
+
+| Lineage | 2025/2026 evidence | Shared principle |
+|---|---|---|
+| scientific ML / legacy simulators | Nature Communications 2026 ANI | reuse trusted prior, learn unresolved physics |
+| hybrid numerical PDE/turbulence | NeurIPS 2025 INC / DeltaPhi | learn structured corrections/residual physical states instead of replacing solver |
+| stochastic multiscale physics | NeurIPS 2025 stochastic multiscale models | represent unresolved dynamics explicitly on top of coarse state |
+| remote source localization | JASA 2025 / CISS 2025 underwater localization | correct mismatched forward replicas before source inversion |
+
+This is not an expert-voting claim. It is **independent literature convergence** around the same scientific pattern.
+
+The GSL literature simultaneously confirms the need but uses a different remedy:
+- Journal of Turbulence 2025 *many wrong models* blends multiple imperfect turbulent odor models rather than learning the missing discrepancy.
+
+This makes the current candidate a plausible transfer rather than an isolated analogy.
