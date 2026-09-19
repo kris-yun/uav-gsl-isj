@@ -409,3 +409,56 @@ Before promotion:
 3. test event-aware correction objectives against global MSE correction;
 4. include many-wrong-model blending as a direct GSL comparator;
 5. reject the line if learned correction only improves forward fit without improving source evidence.
+
+
+## Loop-6 challenger: Learned Stochastic Multiscale Closure
+
+### Remote provenance
+- NeurIPS 2025 — *Learning Stochastic Multiscale Models*: resolved macrostate plus latent unresolved microscale SDE dynamics.
+- Nature Machine Intelligence 2025 — *Learning cell dynamics with neural differential equations*: explicit state-dependent drift/diffusion rather than treating stochasticity as a constant residual.
+- classical turbulence closure is a genuine remote scientific lineage, not an architecture trick.
+
+### GSL hypothesis
+A coarse transport prior predicts the resolved plume tendency, while unresolved turbulent intermittency is represented by a learned stochastic latent closure. Candidate source evidence is obtained by marginalizing over the closure-generated response distribution.
+
+### Existing-project screen
+Negative evidence is substantial:
+- historical uniform transport-member marginalization is already NO-GO and can let a random member dominate;
+- current frozen R3B/source×wind caches contain only one qualified stochastic realization per source×wind, so a new learned stochastic closure cannot be identified cleanly from those assets;
+- the project’s strongest H01 failure is a systematic candidate-dependent tail/support bias, not merely missing variance.
+
+Decision:
+- stochastic closure is scientifically credible but not currently the best M1.
+- it may become a subcomponent of learned missing physics only if new independent simulator realizations are generated under a preregistered seed contract.
+- do not spend new simulations on it before the deterministic/structured discrepancy gate is passed.
+
+Status: DEMOTED / DATA-SEMANTICS BLOCKED.
+
+## Loop-6 challenger: State-First Intermediate Physical Representation
+
+### Remote provenance
+- Nature Machine Intelligence 2026 — *Current-diffusion model for metasurface structure discoveries with spatial-frequency dynamics*.
+- Nature Machine Intelligence News & Views 2026 — *Learning intermediate physical states for inverse metasurface design*.
+
+### GSL hypothesis
+Infer a physically meaningful transport-response state before source location, instead of mapping sparse measurements directly to source.
+
+### Existing-project screen
+Mixed:
+- exact candidate response state is highly source-identifying;
+- coarse/estimated response state can be catastrophically wrong;
+- handcrafted intermediate summaries are not uniformly better across Houses.
+
+Decision:
+- “state first” identifies a useful architectural principle but does not by itself solve the core model–reality gap.
+- it is subsumed more naturally by the learned-missing-physics candidate, where the corrected response itself is the intermediate physical state.
+
+Status: DEMOTED AS M1; possible interpretation of the M1 corrected state.
+
+## Loop-6 updated ordering
+
+1. Learned Missing Physics / Gray-Box Prior Correction — current leader.
+2. Predictive Latent Physical Representation — reserve challenger.
+3. State-First Intermediate Physical Representation — subsumed/auxiliary.
+4. Stochastic Multiscale Closure — scientifically strong but current-data blocked.
+5. Inverse Generative Modeling — collision-demoted.
