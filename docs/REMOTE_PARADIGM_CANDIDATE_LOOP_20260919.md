@@ -553,3 +553,98 @@ If the missing-physics corrector later reveals a stable low-dimensional correcti
 3. Equation discovery — rejected by current identifiability/data.
 4. State-first — subsumed.
 5. Stochastic closure — ensemble-data blocked.
+
+
+## Loop-10 — literature verification + composition test
+
+### M1 provenance now independently convergent
+
+Verified primary/independent 2025–2026 lineages:
+
+1. **Nature Communications 2026** — Wang et al., *Learning missing physics from legacy simulators with alternating neural integrators*.
+   - published 23 June 2026, DOI 10.1038/s41467-026-74002-2;
+   - explicitly targets model–reality gaps from unresolved physics/structural incompleteness;
+   - non-intrusive reuse-and-correct around a fixed callable prior;
+   - demonstrates effective subgrid correction in turbulence.
+
+2. **NeurIPS 2025 Main Conference** — Wei et al., *INC: An Indirect Neural Corrector for Auto-Regressive Hybrid PDE Solvers*.
+   - correction is integrated inside the physical evolution rather than appended to outputs;
+   - includes formal error-amplification analysis;
+   - evaluated through 3-D turbulence.
+
+3. **NeurIPS 2025 Main Conference** — Yue et al., *DeltaPhi: Physical States Residual Learning for Neural Operators in Data-Limited PDE Solving*.
+
+4. **NeurIPS 2025 Main Conference** — Ilersich & Nair, *Learning Stochastic Multiscale Models*.
+   - explicitly represents unresolved microscale dynamics on top of a resolved coarse state.
+
+These are independent scientific-ML groups and methods converging on the same high-level principle:
+**retain useful coarse physics, model only the unresolved discrepancy/dynamics.**
+
+### Direct GSL novelty boundary strengthened
+
+A current search finds:
+- 2019 GSL already studies probabilistic robustness to model mismatch;
+- Journal of Turbulence 2025 uses *many wrong models* and model blending for turbulent odor-source inference;
+- 2026 deep probabilistic indoor GSL uses physical dependency-guided sequential inference;
+- 2025/2026 odor-source learning includes PINN/ML/RL, LLM, Mamba and other direct estimators.
+
+No current search result directly implements:
+**a learned candidate-conditioned missing-physics correction inserted upstream of the PMFS sensor likelihood, trained to restore source-discriminative event structure while preserving the final source probability map.**
+
+Therefore forbidden novelty claims remain:
+- not first to consider mismatch;
+- not first hybrid physics+ML;
+- not first probabilistic source localization.
+
+The surviving claim is narrower and more defensible:
+**learn the structured, source-conditioned discrepancy of an existing GSL physical prior, because that discrepancy is experimentally shown to reverse source evidence.**
+
+### M1+M2 capacity gate
+
+A two-segment scalar corrector on H01 SA-fast was used as an oracle-only capacity test.
+
+- false SB/null MSE ~0.0008061;
+- uncorrected SA prior MSE ~0.0073375;
+- a tiny time-structured correction can reduce true-SA MSE below false SB while retaining event topology;
+- η-regularized choice preserves substantially more hits/top-tail/integrated response than the pure-MSE optimum.
+
+This establishes that:
+1. correction need not be a full plume surrogate;
+2. average loss alone is unsafe;
+3. M2 can be load-bearing rather than decorative.
+
+### Challenger: multi-fidelity learning
+
+Nature Communications 2026 MFTabPFN gives recent high-level multi-fidelity/UQ support.
+However, generic multi-fidelity fusion does not specify the missing physical object, and source-independent cross-fidelity correction is contradicted by current data.
+Decision: **demoted to training strategy**, not M1.
+
+### M3 alternative screened: risk monitoring
+
+NeurIPS 2025 *Monitoring Risks in Test-Time Adaptation* provides a strong recent framework for detecting silent model failure under distribution shift with sequential risk monitoring.
+
+Potential GSL use:
+- monitor whether the learned missing-physics corrector leaves its validity domain;
+- gate/fallback to the frozen prior when risk exceeds a threshold.
+
+Current limitation:
+- present project assets do not yet provide enough independent labeled shifts to calibrate a meaningful runtime risk monitor;
+- a hand-designed correction-magnitude gate would be unsupported.
+
+Decision:
+- keep as reserve M3;
+- structured shift-aware conformal source regions remain the more directly defined output-level auxiliary for public-dataset validation.
+
+### Current leading 1+2
+
+M1: **Source-Conditioned Learned Missing Physics / Gray-Box Prior Correction**
+
+M2: **Extreme-Event-Aware Intermittency Preservation (η-learning transfer)**
+
+M3: **Structured Shift-Aware Source Regions**
+
+Current state:
+**ACTIVE PRIMARY CANDIDATE / NOT YET VALIDATED**
+
+Next hard gate:
+a learned lightweight corrector must improve held-condition source margin/ranking, not merely forward MSE, and M2 must provide incremental value over M1.
