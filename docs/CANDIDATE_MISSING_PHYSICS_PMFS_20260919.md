@@ -598,3 +598,71 @@ What remains missing:
 - the estimated-provider rank-reversal evidence itself is currently H01-specific;
 - no trained learned corrector has yet passed a held-House / held-wind source-margin gate;
 - therefore M1 remains **ACTIVE PRIMARY CANDIDATE / NOT VALIDATED MAIN INNOVATION**.
+
+
+## 27. M2 necessity strengthened: η-aware objective separates useful correction from blank collapse
+
+A fixed scalar-correction family was evaluated on the H01 SA-fast **estimated sensor response** against the observed sensor history. This is not proposed as the final corrector; it is a mechanism test asking whether rare-event/intermittency statistics discriminate physically useful corrections that ordinary MSE cannot.
+
+Observed event statistics:
+- first >0.1 ppm: 228.8 s;
+- hit fraction: 0.01333;
+- q99: ~0.1399 ppm;
+- peak: ~0.4141 ppm;
+- top-1% mean: ~0.2811 ppm;
+- integrated response: ~1.405 ppm·s.
+
+Five fixed correction families were compared:
+
+1. unscaled estimated response:
+   - log1p MSE ~0.007338;
+   - large tail/event-statistic mismatch.
+
+2. MSE-optimal scalar (~0.06755):
+   - log1p MSE improves to ~0.000740;
+   - but **all >0.1 ppm hits disappear**;
+   - peak falls to ~0.086 ppm;
+   - this is a classic blank-dominated optimum.
+
+3. peak-matching scalar (~0.32453):
+   - preserves nonzero event topology much better;
+   - MSE ~0.001491.
+
+4. integral-matching scalar (~0.26030):
+   - preserves event/top-tail structure best in this probe;
+   - MSE ~0.001184;
+   - first hit ~231.6 s, hit fraction ~0.0217, peak ~0.332 ppm, integral exactly matched.
+
+5. null response:
+   - MSE ~0.000806;
+   - no events at all.
+
+A predeclared composite η-distance over first-arrival, hit fraction, q99, peak, top-1% mean and integrated exposure gives:
+- unscaled ~2.364;
+- MSE-optimal ~1.153;
+- peak-match ~0.281;
+- integral-match ~0.122;
+- null ~1.663.
+
+Interpretation:
+> ordinary forward MSE and event-preserving correction rank the candidate correction families differently.
+
+This is exactly the mechanism needed for the 2026 η-learning transfer:
+- M1 learns the structured missing-physics correction;
+- M2 constrains that correction by rare/intermittency observables so it cannot win by collapsing to the dominant blank regime.
+
+M2 is therefore no longer justified only by qualitative “whiff importance”; it has an explicit existing-data failure mode and a discriminating objective-level premise.
+
+## 28. Primary M1 citation verified
+
+The principal remote-domain source was rechecked against the Nature version of record:
+
+- Wang, H., Wang, Q., Yuan, C. & Wu, K.
+  *Learning missing physics from legacy simulators with alternating neural integrators*.
+  **Nature Communications 17, 7877 (2026)**.
+  Published 23 June 2026.
+  DOI: **10.1038/s41467-026-74002-2**.
+
+The article explicitly defines the target regime as a **model–reality gap** caused by unresolved physics or structural incompleteness, and explicitly positions ANI as a non-intrusive **reuse-and-correct** framework around a fixed callable prior. It also demonstrates effective subgrid correction in turbulence.
+
+This is the strongest current paradigm-level provenance for M1.
