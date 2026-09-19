@@ -285,3 +285,51 @@ Next required step:
 - test rate-vs-threshold-count equivalence;
 - search direct 2025/2026 large-deviation/rare-event GSL collisions;
 - test on independent evidence assets before any closed loop.
+
+
+## 14. Fatal equivalence check: rate transform vs plain exceedance probabilities
+
+A required theory-name-removal test was run.
+
+The current finite-horizon “rate” vector is
+
+I_hat_tau(c) = -(1/tau) log p_hat_c
+
+at a fixed block scale tau.
+
+At fixed tau this is only a component-wise monotone transform (and common scaling) of the threshold-exceedance probability vector p_hat_c.
+
+Matched test:
+- same thresholds;
+- same 5 s blocks;
+- same 24 cross-wind source decisions;
+- compare three representations:
+  1. plain exceedance probabilities p;
+  2. -log p;
+  3. logit(p).
+
+Result:
+- probability vector: 19/24 = 79.2%;
+- -log p: 19/24 = 79.2%;
+- logit(p): 19/24 = 79.2%;
+- House/horizon decision pattern is exactly the same for all three.
+
+This is a **fatal conceptual warning**.
+
+The current positive result is explained by the threshold-exceedance curve itself, not by a uniquely large-deviation object.
+
+Since intermittency/exceedance/whiff statistics are already established in odor-plume localization literature, merely renaming the exceedance curve a “rate function” would fail the theory-name-removal test.
+
+### Revised decision
+
+M1 large-deviation / rate-function inference: **DOWNGRADED / NO-GO IN CURRENT FORM**.
+
+Large-deviation theory may only reopen if a genuinely LDT-specific object adds information beyond threshold probabilities, for example:
+- a validated block-size scaling law;
+- a nontrivial SCGF/rate-function collapse;
+- instanton/action structure;
+- a cross-scale rate function that predicts unseen tail probabilities.
+
+The current SCGF proxy was already mixed/weak in H03 and therefore does not rescue the claim.
+
+η-learning remains scientifically interesting as a possible auxiliary training principle, but “rare-event rate function” is not authorized as the paper's main innovation from existing evidence.
