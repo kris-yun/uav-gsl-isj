@@ -170,3 +170,41 @@ M3 = ACTIVE AUXILIARY CANDIDATE.
 
 No closed-loop run is authorized.
 Next action is stronger linear predictive-state / CCA-style falsification on existing histories plus a direct 2025/2026 collision search.
+
+
+## 12. Stronger linear predictive-state proxy (second falsification)
+
+A stronger source-blind proxy was run on the same 12 controlled histories.
+
+Procedure:
+- 5 s windows;
+- window features = mean log gas, standard deviation, hit fraction, within-window trend, mean wind magnitude;
+- train a ridge next-window predictor only on the fast-wind histories of SA and SB inside each House;
+- evaluate the predicted window representation on slow wind;
+- compare source separation against same-source wind separation.
+
+Results:
+
+H02:
+- 180 s: raw wind/source ratio 0.293 -> predictive representation 0.157; held-wind identity remains 2/2.
+- 240 s: 0.376 -> 0.177; held-wind identity remains 2/2.
+
+H03:
+- 120 s: 0.720 -> 0.592; identity 2/2.
+- 180 s: 0.663 -> 0.654; identity 2/2.
+- 240 s: 0.601 -> 0.544; identity 2/2.
+
+H01 is the counterexample:
+- at 120 s raw held-wind identity is 2/2 but predictive representation drops to 1/2.
+- at 240 s raw remains 2/2 but predictive representation remains 1/2.
+- source contrast is partially collapsed by the generic predictor.
+
+Scientific consequence:
+> predictive compression alone is not sufficient. It can suppress transport nuisance while also suppressing source identity.
+
+This counterexample upgrades the necessity of M2 from optional regularization to a distinct auxiliary mechanism:
+- M1 should retain only predictively meaningful structure;
+- M2 must explicitly preserve persistent source identity across transport contexts;
+- destructive wrong-pair and source-permutation controls are mandatory.
+
+This also forbids claiming that any JEPA-style predictor is automatically source-preserving.
