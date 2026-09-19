@@ -480,3 +480,121 @@ Current preferred placement:
 3. score source likelihood afterward.
 
 This keeps the already-audited sensor physics fixed and assigns the learned component only to the unresolved transport discrepancy.
+
+
+## 21. Provenance verification — top-level anchors confirmed
+
+Web verification on 2026-09-19 confirmed:
+
+- **Nature Communications 2026** — Hao Wang, Qinghe Wang, Caiyou Yuan et al., *Learning missing physics from legacy simulators with alternating neural integrators*, published 23 June 2026, DOI 10.1038/s41467-026-74002-2.
+  - explicitly frames the scientific problem as a model–reality gap caused by unresolved physics / structural incompleteness;
+  - provides a non-intrusive reuse-and-correct framework around a fixed callable prior;
+  - includes effective subgrid correction in turbulence.
+- **NeurIPS 2025 Main Conference** — Hao Wei et al., *INC: An Indirect Neural Corrector for Auto-Regressive Hybrid PDE Solvers*.
+  - correction is inserted into governing dynamics rather than appended only to outputs;
+  - evaluated through 3-D turbulence.
+- **NeurIPS 2025 Main Conference** — Xihang Yue et al., *DeltaPhi: Physical States Residual Learning for Neural Operators in Data-Limited PDE Solving*.
+- **NeurIPS 2025 Main Conference** — Andrew F. Ilersich & Prasanth Nair, *Learning Stochastic Multiscale Models*.
+
+This gives the M1 paradigm one 2026 high-level journal anchor plus several independent 2025 top-conference SciML lineages.
+
+## 22. Cross-House positive premise: exact physics survives transport shift
+
+The frozen exact counterfactual transfer audit is stronger than a same-wind replay:
+
+- target source/wind is scored **only with candidate traces from the opposite wind**;
+- same-source same-wind trace is forbidden;
+- true source ranks first in **12/12 cases**:
+  - H01: 4/4;
+  - H02: 4/4;
+  - H03: 4/4.
+
+The calibrated confidence gate was correctly withdrawn later, but the ranking fact remains.
+
+Interpretation:
+> transport change by itself does not destroy source identity when the candidate-conditioned physical response family is faithful enough.
+
+Combined with the H01 estimated-provider rank reversal, this isolates the scientific target more sharply:
+> the key failure is not merely “different wind”; it is **structural error in the deployable candidate forward response**.
+
+## 23. Candidate-conditioning necessity test
+
+A source-independent fast↔slow correction was tested using the existing exact measured histories on the identical source-blind route.
+
+Protocol:
+- learn the complete log-response wind residual on source SA and add it to the opposite-wind response of source SB;
+- repeat with SB-trained residual applied to SA;
+- test both fast→slow and slow→fast directions;
+- no localization metric is used to fit the correction.
+
+Results:
+- only 2 of 12 cross-source transfers give even a tiny MSE improvement;
+- the other 10 worsen;
+- catastrophic examples include:
+  - H01 SA-trained slow→fast correction applied to SB: error ×~446;
+  - H02 SB-trained slow→fast correction applied to SA: error ×~5262;
+  - H02 SB-trained fast→slow correction applied to SA: error ×~3992;
+  - H03 all four source-independent transfers worsen.
+
+Conclusion:
+> a transport correction learned independently of source/candidate is empirically invalid.
+
+This directly supports the M1 requirement that the learned discrepancy be **candidate-conditioned**, not a global wind calibration or context-only adaptation.
+
+## 24. Lightweight-corrector feasibility: discrepancy is structured, not white noise
+
+For H01 SA-fast upstream exposure, define
+
+[
+d_t = y_t^{exact} - y_t^{estimated}.
+]
+
+Existing-data analysis gives:
+- RMS discrepancy ≈ 0.150 ppm;
+- lag-1 autocorrelation ≈ 0.954;
+- lag-2 ≈ 0.890;
+- lag-5 ≈ 0.674;
+- only 3 sign changes across the 1200-sample trace;
+- low-frequency spectral energy fraction:
+  - first 20 Fourier bins ≈ 52.6%;
+  - first 50 ≈ 85.1%;
+  - first 100 ≈ 95.2%.
+
+This matters for the lightweight requirement:
+> the missing-physics signal is temporally organized enough that a compact temporal corrector is plausible; the evidence does not look like unlearnable white stochastic error.
+
+At the same time, the SA and SB correction residuals have essentially zero cross-source correlation (~0.004), again ruling out a single global discrepancy trace.
+
+## 25. Meta-context alternative challenged and demoted
+
+A separate 2025 top-venue paradigm was screened:
+
+- ICLR 2025 — *Neural Context Flows for Meta-Learning of Dynamical Systems*;
+- NeurIPS 2025 — *MaNGO — Adaptable Graph Network Simulators via Meta-Learning*;
+- NeurIPS 2025 — *Dynamics-Aligned Latent Imagination in Contextual World Models for Zero-Shot Generalization*.
+
+Candidate thesis:
+> infer a latent transport/environment context and adapt one shared source model to the new context.
+
+The cross-source residual transfer test above is a direct negative control for its simplest physical premise:
+- the same wind/context change does **not** induce a source-independent response correction;
+- discrepancy is strongly source×transport dependent.
+
+A context-adaptive model could still condition jointly on source, but once that interaction is made explicit it converges conceptually toward the current **candidate-conditioned missing-physics** M1 rather than remaining a distinct context-only paradigm.
+
+Decision:
+- latent-context/meta-adaptation is not promoted above M1;
+- retain only as a possible implementation tool for rapid adaptation of the candidate-conditioned corrector.
+
+## 26. Updated confidence boundary
+
+Current positive support for M1 now comes from three independent kinds of evidence:
+
+1. **remote SciML theory/paradigm** — verified Nature Communications 2026 + NeurIPS 2025 hybrid-correction work;
+2. **cross-House exact-physics premise** — opposite-wind exact candidate responses give 12/12 correct two-source ranks across H01–H03;
+3. **deployable-provider failure anatomy** — H01 estimated transport reverses source rank, with structured, sign-changing and candidate-dependent discrepancy.
+
+What remains missing:
+- the estimated-provider rank-reversal evidence itself is currently H01-specific;
+- no trained learned corrector has yet passed a held-House / held-wind source-margin gate;
+- therefore M1 remains **ACTIVE PRIMARY CANDIDATE / NOT VALIDATED MAIN INNOVATION**.
