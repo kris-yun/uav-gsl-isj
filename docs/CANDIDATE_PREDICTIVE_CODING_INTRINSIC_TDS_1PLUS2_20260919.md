@@ -182,3 +182,35 @@ The scientific transfer must remain the stronger TDS principle:
 - reject when that validity cannot be certified/qualified.
 
 A naive global mean-shift proxy was already falsified as sufficient; task-localized discrepancy is required.
+
+
+## 13. M3 revision after practical screening
+
+TDS remains an important theory baseline, but the primary M3 candidate is revised to **Sequential Risk Monitoring of Predictive Evidence**.
+
+Recent top-venue / strong-conference provenance:
+- NeurIPS 2025: *Monitoring Risks in Test-Time Adaptation* — sequential testing with confidence sequences to raise alarms when deployed predictive performance becomes unsafe under shift.
+- UAI 2025: *On Continuous Monitoring of Risk Violations under Unknown Shift* — testing-by-betting risk monitoring under evolving shifts with false-alarm control.
+- 2026 follow-up: prediction-powered risk monitoring extends the same line toward limited-label deployment.
+
+Why this is a better fit than generic conformal/TDS:
+- M1 already produces an online self-supervised prediction error when the next gas/wind observation arrives.
+- therefore validity monitoring can use the model's own predictive-evidence loss stream, without source truth at deployment.
+- this is lightweight and genuinely sequential.
+
+Offline boundary:
+- H01 held-slow next-window prediction MSE is not larger than fast-wind MSE even though the generic predictive representation can lose source identity.
+- H02 held-slow prediction MSE rises (~1.18x), while source identity remains usable.
+Thus prediction-error monitoring alone cannot guarantee source identity.
+
+Consequence:
+- M2 is responsible for preserving source identity.
+- M3 is responsible only for detecting degradation of the predictive evidence model itself.
+- final M3 must monitor a source-evidence-aware risk statistic, not raw prediction MSE alone.
+
+Current preferred 1+2:
+- M1 Predictive Coding / predictive latent physical representation.
+- M2 Intrinsic source identity from dynamics.
+- M3 Sequential risk monitoring of source-evidence validity.
+
+TDS and conformal calibration are retained as comparators, not preferred auxiliary innovations.
