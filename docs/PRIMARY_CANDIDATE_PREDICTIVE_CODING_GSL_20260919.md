@@ -296,3 +296,105 @@ This is the first candidate in the loop whose main thesis is supported simultane
 - the project's own positive and destructive offline evidence.
 
 It is still not promoted to validated main innovation until a trained lightweight predictive model beats matched baselines.
+
+
+## 13. Independent 2025/2026 convergence around the main idea
+
+The main idea is no longer supported by only one JEPA paper.
+
+### Olfactory neuroscience — Trends in Cognitive Sciences 2025
+Lyons & Gottfried explicitly develop predictive coding as a theory of human olfaction:
+- anticipatory sensory prediction;
+- prediction-error signaling;
+- a predictive-map hypothesis.
+
+### Systems neuroscience — Nature Neuroscience 2026
+Tsukano et al., *Orbitofrontal cortex drives predictive filtering of sensory responses*:
+- experimentally distinguishes predictive filtering from a novelty-only account;
+- identifies top-down signals that grow with experience and suppress predicted sensory responses;
+- describes prediction as a “negative image” that cancels expected sensory input.
+
+Although the experiment is auditory rather than olfactory, it independently supports the core computation:
+[
+	ext{sensory input} - 	ext{predicted input} ightarrow 	ext{residual evidence}.
+]
+
+### Scientific machine learning — ICLR 2026
+Qu et al. show in physical systems that latent-space prediction can produce representations better suited to downstream governing-parameter inference than pixel-level reconstruction.
+
+These are three independent communities:
+- olfactory neuroscience;
+- systems neuroscience;
+- scientific representation learning.
+
+They converge on the same high-level principle without being GSL papers.
+
+## 14. Important theoretical caution from Annual Review of Neuroscience 2026
+
+Furutachi & Hofer, *Rethinking Predictive Processing* (Annual Review of Neuroscience 2026), emphasize that:
+- “prediction error” is not a single unambiguous biological quantity;
+- superficially similar error responses can arise from different computations;
+- predictive-coding claims require operational definitions and mechanism-specific evidence.
+
+This review is treated as a constraint, not supporting decoration.
+
+For this project, “prediction error” is therefore frozen operationally as:
+[
+e_{t+Delta}=z_{t+Delta}-P(z_t,c_t)
+]
+or the corresponding observation-space residual in a matched proxy.
+
+The paper must not claim a biological neural mechanism.
+It transfers the computation:
+- build a prediction from context;
+- represent what the prediction fails to explain;
+- test whether the residual contributes independent source evidence.
+
+## 15. Prediction-error proxy strengthens M2 necessity
+
+A source-blind proxy split each trace into a predicted channel and an extreme prediction-error (“surprise”) channel.
+
+Examples:
+
+### H03, 240 s, 50-sample predictor
+- predicted-only identity: 1/2;
+- surprise-only: 2/2;
+- combined: 2/2.
+- wind/source ratio: predicted ~0.801, surprise ~0.590, combined ~0.674.
+
+### H03, 120 s
+- predicted ~0.308;
+- surprise ~0.145;
+- combined ~0.210;
+- all 2/2.
+
+### H01, 120 s
+- predicted ~0.233;
+- surprise ~0.160;
+- combined ~0.187;
+- all 2/2.
+
+### H02, 180 s
+The direction reverses:
+- predicted component can be very source-dominant (~0.030 ratio);
+- surprise is much less clean (~0.449).
+
+Therefore:
+> expected structure and prediction-error structure are complementary; neither channel is universally superior.
+
+This is stronger support for predictive coding than for “JEPA compression” alone.
+
+It also gives M2 a precise target:
+- not raw high concentration;
+- not all residuals;
+- preserve **extreme source-informative prediction errors** that the primary predictive objective can otherwise underweight.
+
+## 16. Updated reviewer-proof novelty sentence
+
+Do not write:
+> “We use a temporal latent representation for plume localization.”
+
+Use:
+> “We reformulate turbulent source evidence as a predictive-coding pair: a source-blind latent predictor captures expected plume structure, while an extreme-event-aware auxiliary preserves source-informative prediction errors that the predictor cannot explain; the resulting evidence is mapped to a calibrated spatial source probability field.”
+
+This sentence remains conditional on trained-model falsification.
