@@ -14,201 +14,206 @@ A final 1+2 design must satisfy all of the following:
 6. Lightweight implementation is required but is not counted as an innovation.
 7. The design must remain definable across VGR/GADEN, a public DNS/plume dataset, and real wind-tunnel data.
 
-## Candidate families screened
+## Loop-2 literature result: inverse-generative line collision
 
-### C1 — Inverse Generative Modeling
-Main idea: treat source localization as inverse generation under latent transport rather than direct source classification.
+The initial leading M1, inverse generative modeling, has been downgraded after a stronger 2026 collision screen.
 
-2025/2026 remote-domain anchors:
-- ICML 2025: Wang, Dauwels, Du, *Compositional Scene Understanding through Inverse Generative Modeling*.
-- ICML 2025: Zhang & Zhou, *Inverse Flow and Consistency Models*.
-- ICML 2025 Spotlight: Feng et al., *On the Guidance of Flow Matching*.
-- NeurIPS 2025: Yao et al., *Guided Diffusion Sampling on Function Spaces with Applications to PDEs*.
-- Nature Communications 2026: Wang et al., *FunDiff: diffusion models over function spaces for physics-informed generative modeling*.
-- Communications Physics 2026: diffusion regularization for inverse PDE problems.
+Direct/near-direct 2026 collisions:
+- *NeuPlume: Probabilistic inversion of atmospheric point-source emissions from sparse observations* (EGUsphere 2026 preprint): diffusion posterior sampling over sparse plume observations jointly infers source/emission parameters, wind/turbulence parameters and the full concentration field, with a UAV methane field-transfer check.
+- *Diffusion models for multivariate subsurface generation and efficient probabilistic inversion* (Computers & Geosciences 2026): diffusion posterior sampling for scientific inversion.
+- *D-Flow SGLD: Source-space posterior sampling for scientific inverse problems with flow matching* (JCP 2026, forthcoming issue): flow-matching priors for source-space posterior sampling.
 
-Why it survives:
-- paradigm-level thesis is clear: infer the hidden generative factors that explain observations, instead of training a direct source classifier.
-- naturally outputs a posterior / sample distribution over source location.
-- matches the project fact that exact candidate-specific forward responses can preserve source identity while approximate transport models can destroy it.
-- can be implemented in latent/function space and with flow/consistency models for light inference.
+Decision:
+- “use diffusion/flow posterior sampling to infer source under transport uncertainty” is no longer sufficiently collision-free to carry the paper.
+- inverse generative models remain an implementation/comparator family, but not the preferred M1.
 
-Primary risk:
-- novelty collapses if implemented as a generic diffusion posterior sampler with no GSL-specific latent structure.
+Status C1: DEMOTED FROM M1.
 
-Status: STRONG SURVIVOR.
+## New M1 family: Predictive Latent Physical Representation (JEPA-class)
 
-### C2 — Physical World Models
-2025 anchors include NeurIPS DALI contextual world models, persistent embodied world models, structured world models, ICLR SGF.
+### Remote-field top-venue anchors
 
-Why demoted:
-- source localization target is a static hidden cause/probability map, not primarily action-conditioned long-horizon planning.
-- adds rollout/policy machinery that is not needed for the inference claim.
-- high risk of sliding into RL/agent framing, explicitly outside the desired main line.
+- ICLR 2026: Qu et al., *Representation Learning for Spatiotemporal Physical Systems*.
+  - evaluates general self-supervised objectives on active matter, shear flow and Rayleigh–Bénard systems.
+  - latent-space JEPA prediction outperforms pixel-level reconstruction objectives for estimating governing physical parameters.
+  - central lesson: for downstream scientific inference, learning physically relevant predictive latent structure can be superior to reconstructing every field detail.
 
-Status: DEMOTED AS M1; possible representation inspiration only.
+- ICML 2025: Lei et al., *M3-JEPA: Multimodal Alignment via Multi-gate MoE based on the Joint-Embedding Predictive Architecture*.
+  - latent predictive alignment, unseen-domain generalization, computational efficiency.
 
-### C3 — Physics-informed Self-Supervised Representation
-2025 anchors include ICLR self-supervised world/physical representations and ICLR EulerFlow-style self-supervised continuous fields.
+- CVPR 2025: Astruc et al., *AnySat: One Earth Observation Model for Many Resolutions, Scales, and Modalities*.
+  - JEPA-based self-supervision across heterogeneous sensors/resolutions and external environmental datasets.
 
-Why demoted:
-- powerful training strategy but weak paper-level scientific thesis by itself.
-- likely reduces to pretraining + source head.
-- 2026 GSL already contains unsupervised diffusion-state classification, increasing collision risk.
+- ICLR 2025: D-JEPA demonstrates that JEPA is an active predictive architecture family rather than a single application.
 
-Status: AUXILIARY/TRAINING STRATEGY ONLY.
+- 2026 physical-dynamics supporting work includes JEPA state-space modeling and JEPA PDE control preprints; these are supporting context only, not primary provenance.
 
-### C4 — State-first / Intermediate-physical-state Inference
-Remote-domain anchors:
-- Nature Machine Intelligence 2026: Li et al., *Current-diffusion model for metasurface structure discoveries with spatial-frequency dynamics*.
-- Nature Machine Intelligence 2026 News & Views: *Learning intermediate physical states for inverse metasurface design*.
-- Nature Machine Intelligence 2025: differentiable reconstruction of high-dimensional physical fields from sparse sensors.
+### Scientific translation to GSL
 
-Scientific principle:
-- do not invert sparse observations directly to the final design/parameter; reconstruct a physically meaningful intermediate state that bridges measurement and hidden cause.
+Turbulent plume samples contain:
+1. a persistent hidden cause — source location;
+2. transport-dependent but partly predictable structure;
+3. high-frequency stochastic/intermittent details that are expensive or impossible to reconstruct exactly.
 
-Project evidence:
-- exact candidate-specific transport+sensor response gives clean source identity in the controlled microbank.
-- deployable local-wind approximation creates physically wrong continuous exposure and destroys source evidence.
-- native timing can carry information that coarse HIT compression destroys.
+Main thesis:
+> For turbulent GSL, the learning objective should not reconstruct the realized plume or directly classify the source. It should learn the latent structure that is predictive across time/space and therefore preserves governing source information while discarding unpredictable transport detail.
 
-Counter-evidence:
-- a handcrafted compact exposure-state signature improved transport/source separation in H01/H03 but worsened the wind/source ratio in H02.
-- therefore “any intermediate state is better” is false; the state must be physically sufficient.
+This is a different claim from world-model planning and from generative plume inversion.
 
-Status: STRONG AUXILIARY CANDIDATE, NOT M1.
+### Existing-data proxy test
 
-### C5 — Causal/Invariance Factorization
-Remote anchor:
-- ICLR 2025: *Unifying Causal Representation Learning with the Invariance Principle*.
-- ICLR 2025: *Identifiable Exchangeable Mechanisms for Causal Structure and Representation Learning*.
+A conservative proxy separated each log-concentration trace into:
+- a locally predictable component (causal moving-average proxy at several windows);
+- an innovation/residual component.
 
-Project evidence against using it as M1:
-- historical causal localization line failed to identify source uniquely.
-- cross-House candidate-dependent transport bias survives simple centering/variance pooling.
-- early source/transport interaction can be as large as the source main effect.
+Across the existing H01/H02/H03 × {SA,SB} × {fast,slow} controlled histories:
 
-Current-runtime factorial proxy from existing controlled histories:
-- H01 source/interaction RMS ratio at 180 s ≈ 2.76.
-- H02 ≈ 6.85.
-- H03 ≈ 2.67.
-- at early horizons H02/H03 can collapse toward ratio ≈ 1 or zero source effect.
+- after source support appears, the predictable component generally has a lower wind/source separation ratio than the innovation residual.
+- H02 at 180 s:
+  - predictable ratio approximately 0.046–0.077 depending on smoothing window;
+  - residual ratio approximately 0.128–0.229.
+- H03 at 180 s:
+  - predictable ratio approximately 0.329–0.336;
+  - residual ratio approximately 0.491–0.507.
+- H01 at 240 s:
+  - predictable ratio approximately 0.144–0.301;
+  - residual ratio approximately 0.338–0.414.
+- before physical support appears, neither component creates source information; H02 remains zero at 60 s and source≈wind at 120 s.
 
-Status: REJECT AS M1. Retain only as a possible regularizer if a future generative model needs mechanism separation.
+Interpretation:
+- source signal is disproportionately represented in the temporally predictable part once it becomes physically observable.
+- unpredictable innovations remain more transport-contaminated.
+- crucially, predictive representation cannot manufacture information before support exists, matching the physical-support audits.
 
-### C6 — Test-Time Adaptation
-2025 anchors:
-- NeurIPS 2025 SNAP (sparse low-latency TTA).
-- NeurIPS 2025 ReservoirTTA.
-- NeurIPS 2025 risk monitoring for TTA.
+This is a positive premise for a JEPA-class M1, not a trained-model result.
 
-Why not M1:
-- deployment adaptation is secondary to the source-inference mechanism.
-- unlabeled adaptation can corrupt the source model under intermittent plume shifts.
+Status C8: STRONG SURVIVOR / CURRENT M1 LEADER.
 
-Status: OPTIONAL DEPLOYMENT STRATEGY, NOT INNOVATION CORE.
+## Auxiliary candidate A: Intrinsic Dynamic Identity Representation
 
-### C7 — Shift-aware Conformal / Testable Uncertainty
+### Remote-field anchor
+- ICLR 2025: Wu et al., *Neuron Platonic Intrinsic Representation From Dynamics Using Contrastive Learning*.
+  - treats one neuron as a dynamical system observed in different peripheral conditions.
+  - learns a time-invariant intrinsic representation from multiple activity segments.
+  - same-system segments should be more similar than different-system segments and generalize to unseen animals.
+- ICML 2024 Platonic Representation Hypothesis is the conceptual predecessor; 2025 work makes the dynamics/intrinsic-identity transfer concrete.
+
+### GSL mapping
+- one source location = one persistent system identity;
+- wind/turbulence/route/sensor context = peripheral conditions;
+- different plume histories from the same source should retain an intrinsic source representation after physically observable support exists.
+
+Distinct role relative to M1:
+- M1 learns what part of plume history is predictively meaningful.
+- this auxiliary binds predictive histories from the same source across transport contexts into a persistent source identity while preserving transport-specific degrees of freedom.
+
+Existing-data compatibility:
+- paired current-runtime source×wind histories become much more source-dominant after support emerges;
+- early source≈transport cases mean this module must not impose unconditional early invariance.
+- therefore identity alignment must be support/reliability weighted rather than global.
+
+Status: STRONG AUXILIARY CANDIDATE.
+
+## Auxiliary candidate B: Shift-aware calibrated source regions
+
 2025 anchors:
 - ICLR 2025 *Wasserstein-Regularized Conformal Prediction under General Distribution Shift*.
 - ICLR 2025 *Error-quantified Conformal Inference for Time Series*.
 - ICLR 2025 *Learning Neural Networks with Distribution Shift: Efficiently Certifiable Guarantees*.
 - NeurIPS 2025 conformal time series with change points.
 
-Project evidence:
-- H02/H03 examples show entropy collapse can coexist with wrong localization.
-- source-map sharpness therefore cannot be treated as reliability.
-- public-dataset validation explicitly requires a principled response to simulator/house/tunnel shift.
+Project necessity:
+- existing PMFS/M1 histories include entropy collapse with incorrect localization;
+- a sharp map is not a reliability guarantee;
+- cross-house, DNS and simulator-to-real validation require explicit reliability under shift.
+
+Distinct role:
+- M1 produces a source-probability map from predictive latent evidence.
+- M2 makes source identity persistent across transport contexts.
+- M3 calibrates when that map can be trusted under unseen distribution shift and can output a larger source region / abstention state when it cannot.
 
 Status: STRONG AUXILIARY CANDIDATE.
 
-## Existing-data discrimination performed
+## Other candidates
 
-### Factorial source-vs-transport audit
-Using the 12 existing H01/H02/H03 × {SA,SB} × {fast,slow} measured histories:
+### State-first / intermediate physical state
+Nature Machine Intelligence 2025/2026 gives strong remote support, but existing handcrafted-state tests are mixed across Houses. It remains a reserve M2, not current leader.
 
-- raw continuous responses show source-vs-transport separability is strongly horizon dependent.
-- H02 has essentially no source main effect at 60 s and only source≈interaction at 120 s, then becomes strongly source-dominant by 180 s.
-- H03 is close to source≈interaction at 60–120 s and only separates later.
-- binary HIT representation can remove all early source signal entirely.
+### Koopman / spectral dynamics
+ICLR 2025 and ICML 2025 contain modern Koopman representation work; Communications Physics 2025 applies deep Koopman operators to causal discovery.
+Potential mapping: stationary source as slow/invariant dynamical content, turbulent realization as faster modes.
+Not promoted because a specific source-identifying spectral object has not yet beaten the predictive-latent premise in existing evidence.
 
-Consequence:
-- a direct discriminative source classifier is not authorized as the conceptual core.
-- preserving continuous generative/temporal structure is necessary.
-- a mechanism-separation auxiliary must not assume early invariance.
+### World models
+Demoted because planning/rollout machinery is unnecessary for the current inference target.
 
-### Representation proxy audit
-Compared raw/log/block/HIT and a compact exposure-state signature across paired winds.
+### Causal/invariance
+Rejected as M1 by project evidence; unconditional source invariance fails under early/source-dependent transport mismatch.
 
-- raw/log traces retain cross-wind source identity in the controlled 2-source set.
-- coarse binary HIT can lose source identity or all early signal.
-- intermediate exposure summaries can reduce wind/source ratio in H01/H03 but are not uniformly superior in H02.
+### Test-time adaptation
+Retained as deployment strategy only.
 
-Consequence:
-- state-first is viable only if the intermediate state is learned/physics-grounded, not a handcrafted statistic.
+## Current leading 1+2 under second screening
 
-## Current leading 1+2 architecture under SECOND SCREEN
+### M1 — Predictive Latent Physical Representation
+Working paradigm: JEPA-class predictive representation learning on sparse gas/wind/pose histories.
 
-### M1 — Compositional Inverse Generative Modeling
 Scientific thesis:
-> Explain sparse gas/wind histories by inferring the hidden source and transport factors that could have generated them, rather than mapping observations directly to source labels.
+> infer source from the latent structure of plume observations that is predictive across context, rather than from raw stochastic realizations or their reconstruction.
 
-Candidate implementation family:
-- latent conditional flow / inverse flow / consistency model;
-- transport latent marginalized to obtain the source-location probability map.
+Output:
+- a lightweight source probe produces PMFS-compatible source-location logits/probabilities.
 
-### M2 — Physically Meaningful Intermediate-State Reconstruction
-Remote inspiration:
-- 2025/2026 Nature Machine Intelligence state-first inverse design / sparse field reconstruction.
+### M2 — Intrinsic Source Representation from Dynamics
+Working principle:
+> bind multiple transport-conditioned predictive histories of the same source into a persistent source-identity representation, inspired by intrinsic representations of dynamical systems across peripheral conditions.
 
-Role:
-- reconstruct a compact transport-response state (not necessarily the full 3-D plume) that preserves arrival/support/intensity structure before source inversion.
+### M3 — Shift-aware calibrated probability map
+Working principle:
+> calibrate the final source map/region under House, simulator and real-sensor shift, and abstain/expand when reliability is unsupported.
 
-Hard condition:
-- must outperform direct raw-history inversion on held transport while surviving destructive temporal/coarsening controls.
+## Lightweight implementation constraint
 
-### M3 — Shift-aware Calibrated Source Region
-Remote inspiration:
-- 2025 ICLR shift-aware conformal/time-series UQ.
+Not counted as innovation:
+- small temporal encoder rather than a large vision foundation model;
+- masked/segment latent prediction;
+- no full 3-D plume decoder;
+- frozen/shared encoder with a small source head;
+- paired-context identity regularizer only where training pairs exist;
+- post-hoc calibration as M3.
 
-Role:
-- prevent false sharpness under new House/simulator/real-tunnel shift;
-- accompany the PMFS-style probability map with a calibrated source region / abstention state.
+## Public-data compatibility
 
-## Lightweight requirement
+The three-module definitions need only:
+- sparse/trajectory gas observations;
+- timestamps / positions and optional wind;
+- source labels for supervised probe/evaluation;
+- paired same-source contexts only for M2 training where available.
 
-Not counted as a contribution:
-- latent-space flow rather than full 3-D diffusion;
-- consistency/few-step inversion where possible;
-- one shared backbone;
-- M2 as a compact latent field head;
-- M3 as post-hoc calibration;
-- optional sparse test-time normalization only after offline qualification.
+They do not require privileged full CFD fields at deployment.
+This is compatible in principle with:
+1. VGR/GADEN;
+2. DNS plume trajectory/field data sampled along synthetic robot paths;
+3. real wind-tunnel trajectory data.
 
-## Public-dataset target ladder
+## Provisional scorecard v2
 
-1. VGR/GADEN: cross-house / cross-wind simulation.
-2. DNS turbulent plume dataset (e.g. TURB-Smoke-type public data): simulator-mechanism shift.
-3. real wind-tunnel gas+wind dataset / challenge: simulator-to-real robustness.
+| Candidate M1 | Paradigm strength | 25/26 top-venue provenance | Project-mechanism fit | GSL novelty room | Lightweight fit | Public-data fit | Collision penalty | Adjusted /60 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Predictive Latent Representation / JEPA | 10 | 10 | 9 | 9 | 9 | 10 | 0 | 57 |
+| Inverse Generative Modeling | 10 | 10 | 9 | 5 | 7 | 10 | -5 | 46 |
+| State-first Inverse Inference | 8 | 10 | 9 | 8 | 7 | 9 | 0 | 51 |
+| Physical World Models | 9 | 10 | 6 | 8 | 5 | 8 | 0 | 46 |
+| Koopman/Spectral Representation | 8 | 9 | 7 | 8 | 8 | 8 | 0 | 48 |
+| Causal/Invariance Factorization | 9 | 10 | 5 | 4 | 8 | 8 | -2 | 42 |
 
-## Provisional scorecard (10 = strongest)
+Current M1 survivor threshold: >=54 with no fatal collision.
+Current leader: Predictive Latent Representation / JEPA.
 
-| Candidate M1 | Paradigm strength | 25/26 provenance | Project-mechanism fit | Novelty room in GSL | Lightweight fit | Public-data fit | Total /60 |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Inverse Generative Modeling | 10 | 10 | 9 | 8 | 8 | 10 | 55 |
-| Physical World Models | 9 | 10 | 6 | 8 | 5 | 8 | 46 |
-| Self-Supervised Physical Representation | 7 | 9 | 7 | 6 | 9 | 9 | 47 |
-| State-first Inverse Inference | 8 | 10 | 9 | 8 | 7 | 9 | 51 |
-| Causal/Invariance Factorization | 9 | 10 | 5 | 4 | 8 | 8 | 44 |
-| Test-Time Adaptation | 7 | 10 | 6 | 7 | 9 | 9 | 48 |
+## Next loop before any external promotion
 
-M1 selection threshold: >=52 and no hard collision.
-Current M1 survivor: Inverse Generative Modeling only.
-
-## Next loop before promotion
-
-1. Novelty collision screen specifically for generative/flow/diffusion GSL through 2026.
-2. Verify whether M2 can be defined on all three public-data levels without requiring privileged full fields.
-3. Test a minimal factorized generative proxy on existing factorial histories; reject if transport latent does not improve held-condition likelihood/ranking.
-4. Compare M3 candidates: shift-aware conformal vs risk-monitored TTA; keep only the lighter and more defensible one.
-5. Require at least three independent top-venue/peer-reviewed literature lineages supporting the M1 scientific pattern, and at least two independent project evidence families supporting its necessity.
+1. Search direct GSL/OSL collision specifically for JEPA, predictive latent representation, masked predictive physical representations and intrinsic dynamic identity.
+2. Build a stronger existing-data proxy than smoothing: latent-predictive linear/CCA or Hankel predictive-state representation, with source-blind training and held-wind evaluation.
+3. Compare M2 intrinsic-identity alignment against state-first intermediate reconstruction using exactly the same latent base.
+4. Test whether source support / early non-identifiability requires a lightweight validity gate or can be handled by M3 calibration without adding a fourth contribution.
+5. Screen 2026 ICLR/CVPR/NeurIPS accepted papers for alternative paradigm-level M1 candidates before freezing.
