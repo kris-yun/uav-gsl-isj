@@ -1,0 +1,35 @@
+{
+  "date":"2026-09-19",
+  "branch":"research/remote-paradigm-loop-20260919",
+  "loop":"9",
+  "tests":[
+    {
+      "candidate":"Platonic / anchor-relative representation",
+      "protocol":"source-independent anchors from fast-wind windows; train source probe on fast windows; evaluate later slow-wind windows; K=4/6/8 anchors; window sizes 5/10/20 s; three held-time configurations",
+      "result_summary":{
+        "config_A_10s":{"direct":"27/36","relative_best":"28/36"},
+        "config_B_10s":{"direct":"22/36","relative_best":"24/36"},
+        "config_B_20s":{"direct":"10/18","relative_best":"12/18"},
+        "config_C_10s":{"direct":"14/24","relative_best":"14/24"},
+        "config_C_20s":{"direct":"6/12","relative_best":"6/12"}
+      },
+      "verdict":"MODEST_INCONSISTENT_GAIN_NOT_M1"
+    },
+    {
+      "candidate":"Koopman / spectral-dynamics representation",
+      "protocol":"AR coefficients + autocorrelation + low-frequency spectral power as a lightweight Koopman/spectral proxy; same fast-train/slow-held protocol",
+      "result_summary":{
+        "config_A_10s":{"raw":"27/36","koopman_proxy":"24/36"},
+        "config_B_10s":{"raw":"22/36","koopman_proxy":"23/36"},
+        "config_B_20s":{"raw":"10/18","koopman_proxy":"12/18"},
+        "config_C_10s":{"raw":"14/24","koopman_proxy":"13/24"}
+      },
+      "verdict":"NO_ROBUST_ADVANTAGE"
+    }
+  ],
+  "decision":[
+    "Platonic/relative geometry remains an interesting auxiliary representation idea but lacks a strong enough existing-data discriminator for M1.",
+    "Koopman/spectral dynamics is rejected as current M1 because source location behaves more like a forcing/input than a transport operator and the proxy is not robustly superior.",
+    "Search loop reopens."
+  ]
+}
