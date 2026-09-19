@@ -519,3 +519,37 @@ Learned Missing Physics remains the primary M1 because it is the only screened p
 5. why a lightweight correction can preserve existing PMFS semantics.
 
 No promotion to closed-loop yet.
+
+
+## Loop-9 challenger: Equation / Missing-Law Discovery
+
+### Remote provenance
+- Nature Computational Science 2025 — *Bi-level identification of governing equations for nonlinear physical systems*.
+- Nature Communications 2025 — *Generative discovery of partial differential equations by learning from math handbooks*.
+- Nature Communications 2025 — *Learning interpretable network dynamics via universal neural symbolic regression*.
+- Nature Communications 2026 — *From data chaos to physically interpretable deterministic mapping*.
+
+### Candidate GSL thesis
+Instead of learning a black-box correction, identify an interpretable missing transport/sensor correction law that upgrades the coarse PMFS forward model.
+
+### Existing-data gate
+The current project does **not** support this as M1:
+- the strongest discrepancy evidence is route-local and candidate-dependent;
+- the estimated-vs-exact H01 discrepancy changes sign in time and depends on plume support;
+- current qualified stochastic data do not provide enough repeated field-state/derivative observations to identify a universal correction PDE or closure term;
+- a symbolic law discovered from one/few route traces would be underidentified and likely geometry-specific.
+
+Cross-dataset risk is also high:
+- an equation fitted to GADEN indoor geometry may not remain meaningful under DNS TURB-Smoke or real wind-tunnel sensor dynamics.
+
+Decision:
+**REJECT AS CURRENT M1 / DATA-IDENTIFIABILITY NO-GO.**
+If the missing-physics corrector later reveals a stable low-dimensional correction across Houses and datasets, symbolic distillation may become a post-hoc interpretability analysis, not one of the three core innovations.
+
+## Loop-9 ranking
+
+1. Learned Missing Physics / gray-box prior correction — remains leader.
+2. Predictive latent representation — reserve.
+3. Equation discovery — rejected by current identifiability/data.
+4. State-first — subsumed.
+5. Stochastic closure — ensemble-data blocked.
