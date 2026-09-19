@@ -196,3 +196,51 @@ Scorecard (provisional):
 
 It is not yet preferred over Predictive–Intermittency Representation Learning.
 Next gate: held-context / time-order destructive tests plus a context-parroting baseline on the exact same histories.
+
+
+## 11. Destructive temporal-order gate
+
+A stronger mechanism test separated the SDE-like fingerprint into:
+- state occupancy histogram;
+- drift only;
+- diffusion only;
+- drift + diffusion;
+- full dynamics + occupancy.
+
+A deterministic affine time permutation was then applied to each trace. This preserves the concentration marginal distribution while destroying the original local temporal ordering.
+
+Key finding:
+
+### H03, 240 s
+Original:
+- occupancy only: 2/2 held-wind identity;
+- drift only: 1/2;
+- diffusion only: 2/2;
+- dynamics (drift+diffusion): 2/2;
+- full: 2/2.
+
+After temporal permutation:
+- occupancy only: 2/2;
+- dynamics: **drops to 1/2**;
+- full remains 2/2 because occupancy still carries the source distinction.
+
+### H01/H02
+- occupancy alone already retains most of the available same-source cross-wind discrimination.
+- destroying temporal ordering does not consistently destroy the full fingerprint's source identity.
+- in several cases the shuffled drift/diffusion ratio is not worse and can even improve.
+
+Interpretation:
+> the apparent H03-240 rescue in the previous SDE fingerprint is not clean evidence that inferred dynamics are the load-bearing source object. A large part of the source signal is distributional occupancy/support, and the full fingerprint can survive time destruction through that static component.
+
+This is a direct failure of the required mechanism gate.
+
+## 12. Revised verdict
+
+The zero-shot dynamical-system inference idea has excellent 2025/2026 provenance, but the current GSL evidence does **not** show that identifying the temporal stochastic law is more source-specific than simpler distribution/support statistics.
+
+The ICLR 2026 context-parroting result strengthens this concern: apparent sophisticated dynamics inference must beat very cheap context/statistics baselines before it can carry the paper.
+
+**Status changed from ACTIVE SECOND M1 CANDIDATE to RESERVE / NO-GO FOR PROMOTION.**
+
+Reopening condition:
+- an independent dataset or trained source-blind FIM/DynaMix-style proxy must show a held-environment source gain that disappears under time-order destruction and cannot be matched by marginal/intermittency statistics.
