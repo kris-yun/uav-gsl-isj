@@ -244,3 +244,42 @@ Decision:
 - however, adaptive/qualified delay selection is mandatory and cannot be tuned on held outcomes.
 
 Status upgraded to **STRONG M1 ALTERNATIVE**, still not GO.
+
+
+## 12. Finite-horizon convergence audit
+
+Because an invariant-measure argument is asymptotic in spirit, the candidate must survive a finite-mission convergence test.
+
+For each trace, compare the empirical delay measure from a prefix H to the same trace's 240 s measure. Normalize this prefix-to-240 drift by the 240 s cross-source separation.
+
+### H02
+For m=4, tau=5 s:
+- 120 s relative drift ≈ 0.50 while source separation is essentially zero.
+- 180 s relative drift drops to ≈ 0.115.
+- 210 s drops further to ≈ 0.061.
+
+Interpretation: once source support appears, the empirical measure stabilizes rapidly enough to be plausible for finite-horizon use.
+
+### H03
+For m=4, tau=5 s:
+- 120 s relative drift ≈ 1.10.
+- 150 s ≈ 1.04.
+- 180 s ≈ 0.81.
+- 210 s ≈ 0.64.
+
+For m=4, tau=10 s:
+- 120 s ≈ 0.93.
+- 180 s ≈ 0.72.
+- 210 s ≈ 0.51.
+
+Interpretation: H03 is a serious finite-horizon warning. The measure remains substantially non-converged over much of a 150–210 s mission even though source classification can already be correct.
+
+### H01
+Prefix drift remains roughly 0.40–0.58 of the 240 s source separation through 60–210 s, consistent with late/intermittent source evidence.
+
+Decision:
+- do **not** claim an asymptotic invariant measure is observed inside a short robot mission.
+- if retained, the method must be framed as a finite-horizon empirical delay-measure estimator with an explicit reliability/convergence diagnostic.
+- this strengthens the case for an uncertainty/validity auxiliary and weakens any overly theoretical ergodic claim.
+
+The candidate remains alive because its destructive temporal-order test is positive, but finite-horizon convergence is now the main scientific risk.
