@@ -217,3 +217,37 @@ Current leader: Predictive Latent Representation / JEPA.
 3. Compare M2 intrinsic-identity alignment against state-first intermediate reconstruction using exactly the same latent base.
 4. Test whether source support / early non-identifiability requires a lightweight validity gate or can be handled by M3 calibration without adding a fourth contribution.
 5. Screen 2026 ICLR/CVPR/NeurIPS accepted papers for alternative paradigm-level M1 candidates before freezing.
+
+
+## Loop-3 auxiliary screening notes
+
+### Predictive-coding precision weighting — literature strong, empirical proxy mixed
+
+Remote support:
+- Nature Communications 2025: *Uncertainty estimation with prediction-error circuits*.
+- Nature Neuroscience 2026: *Human hippocampal ripples tune cortical responses based on predicted uncertainty*.
+
+A simple inverse-local-variance weighting of plume windows was tested as a proxy for precision-weighted prediction/error assimilation.
+
+Outcome:
+- small improvements in some late cases;
+- clear degradation of source/wind ratio in H02 180 s and H03 120/180 s;
+- H01 240 s held-wind identity drops from 2/2 to 1/2.
+
+Decision:
+- generic precision weighting is NOT supported as an auxiliary innovation.
+- do not promote “downweight noisy plume segments” without a source-specific precision mechanism.
+
+### Simple wind-invariance / adversarial-removal proxy — no incremental evidence
+
+A linear source-identity direction was trained on 120–180 s windows and evaluated on 180–240 s windows.
+Explicit orthogonalization/penalization against the wind direction did not improve accuracy:
+- H01 ~0.833 unchanged;
+- H02 ~0.750 unchanged;
+- H03 ~0.708 unchanged or slightly worse for naive orthogonalization.
+
+Decision:
+- M2 cannot be justified as generic wind removal/domain invariance.
+- if intrinsic-source representation remains, it must be demonstrated by a stronger paired-dynamics objective with destructive pairing controls; otherwise replace it.
+
+This keeps the main predictive-coding candidate alive while reopening the auxiliary-M2 search.
