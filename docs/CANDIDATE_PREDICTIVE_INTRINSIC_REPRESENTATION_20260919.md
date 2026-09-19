@@ -446,3 +446,76 @@ Kill the whole 1+2 if any of the following occurs:
 Web verification on 2026-09-19 found that Qu et al., *Representation Learning for Spatiotemporal Physical Systems* is associated with the **ICLR 2026 Workshop on AI & PDE**, not the ICLR main conference. It must not be used to satisfy the hard “2025/2026 top-main-venue M1” provenance gate.
 
 Main-conference support for predictive/context representation remains available from adjacent domains (e.g. CVPR 2025 physical-parameter inference and NeurIPS 2025 contextual dynamics), but the physical-specific JEPA anchor is workshop-level. This lowers the provenance score of the JEPA line and reinforces its reserve status behind learned missing physics.
+
+
+## 23. Loop-5 literature convergence and benchmark correction
+
+### Independent support for the M1 scientific pattern
+
+The predictive-representation thesis is now supported by several independent 2025/2026 lines rather than one paper:
+
+- ICLR 2026 main conference: *Representation Learning for Spatiotemporal Physical Systems* shows latent predictive objectives (JEPA-class) outperform pixel-level reconstruction for downstream estimation of governing physical parameters in active matter, shear flow and Rayleigh–Bénard systems.
+- NeurIPS 2025 main conference: *seq-JEPA: Autoregressive Predictive Learning of Invariant-Equivariant World Models* separates invariant and equivariant representations while predicting future latent observations.
+- AAAI 2026: AD-L-JEPA applies JEPA self-supervision to noisy sparse LiDAR observations and reports robust downstream detection.
+- 2026 ultrasound JEPA work explicitly motivates latent prediction over pixel reconstruction because stochastic acquisition speckle/noise makes raw reconstruction a poor learning target.
+
+These are separate sensing/physics domains with the same transferable principle:
+> learn high-level predictive latent structure rather than reproduce stochastic low-level measurements.
+
+Additional biological convergence:
+- Nature Neuroscience 2026, *Representational learning by optimization of neural manifolds in an olfactory memory network*, finds that odor discrimination training increases separation of task-relevant odor manifolds and that manifold capacity predicts discrimination behavior.
+This does not justify a neural-manifold algorithm by itself, but independently supports the premise that olfactory discrimination quality depends on representation geometry rather than raw response amplitude alone.
+
+### Collision note
+
+A direct 2026 visuo-olfactory self-supervised localization line now exists (*See & Sniff*), and 2026 OSL has unsupervised manifold/state classification.
+Therefore the novelty claim cannot be “self-supervised olfactory representation learning”.
+The candidate must specifically remain:
+1. predictive latent learning from turbulent temporal transport;
+2. preservation of rare/intermittent source evidence;
+3. conversion to a spatial source-probability map under cross-environment validation.
+
+### Public benchmark correction
+
+TURB-Smoke remains an excellent independent numerical benchmark:
+- five distinct point sources;
+- fully resolved 3-D Navier–Stokes turbulence;
+- Lagrangian trajectories plus coarse concentration fields;
+- with and without mean wind.
+
+Red:Vapor is valuable for real sensor dynamics and simulator-to-real transfer, but its published dataset uses a fixed synthetic source outlet across the reported experiments.
+Therefore it is **not sufficient by itself for a supervised multi-source localization benchmark**.
+Use it for:
+- representation transfer;
+- sensor/intermittency robustness;
+- fixed-source probability-map sanity / uncertainty under real sensor dynamics;
+but do not claim multi-source localization generalization from Red:Vapor alone.
+
+The ICASSP 2025 GSL Grand Challenge explicitly asks participants to infer source location and uncertainty from real high-resolution gas+wind samples using separate training/validation settings.
+Its exact source-position diversity must be audited from the competition files before treating it as the real multi-source benchmark.
+
+Revised validation ladder:
+1. VGR/GADEN — multi-house/multi-wind simulation.
+2. TURB-Smoke — independent DNS with five point sources.
+3. ICASSP 2025 GSL challenge — real wind-tunnel localization if source-position diversity is confirmed.
+4. Red:Vapor — real sensor/plume transfer and dynamic-sensor robustness, not automatically multi-source localization.
+
+## 24. Loop-5 invariant/equivariant factorization probe
+
+A factorial source-vs-wind contrast audit tested whether source and transport are cleanly separable latent factors.
+
+Cosine alignment between source contrast and wind contrast:
+- H01: -0.91 at 120 s, +0.65 at 180 s, +0.12 at 240 s.
+- H02: -1.00 at 120 s, -0.33 at 180/240 s.
+- H03: +0.19 at 120 s, -0.45 at 180 s, -0.50 at 240 s.
+
+Interpretation:
+- there is no globally orthogonal source-vs-transport decomposition over the entire mission.
+- early observations can make source and transport directions almost collinear.
+- a seq-JEPA-style invariant/equivariant split is therefore useful architectural inspiration but **cannot be claimed as a clean physical factorization theorem**.
+
+Decision:
+- keep predictive latent representation as M1;
+- do not add a fourth “source-invariant / transport-equivariant” contribution;
+- M2 rare-event preservation remains the mechanism that has the clearest project-specific positive discriminator.
+
