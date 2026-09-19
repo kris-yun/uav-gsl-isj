@@ -294,3 +294,54 @@ This candidate is currently stronger than the JEPA/predictive-representation lin
 - it preserves the PMFS probability-map semantics instead of replacing the problem.
 
 Status: ACTIVE PRIMARY CANDIDATE / OFFLINE FALSIFICATION ONLY.
+
+
+## 15. Same-route exact-vs-estimated evidence audit
+
+A cleaner H01 SA-fast same-route comparison was performed using:
+- observed measured history;
+- exact candidate-forward GADEN inputs for SA and SB on the identical 1200-step route;
+- exact frozen FOPDT replay;
+- estimated-transport provider responses for SA and SB on that same observed route.
+
+Route audit:
+- H01 SA-fast and H01 SB-fast candidate-forward assets have identical timestamps and zero pose discrepancy.
+
+Observed SA-fast:
+- 16 sensor samples >0.1 ppm;
+- first hit ~228.8 s;
+- peak ~0.414 ppm;
+- integrated response ~1.405 ppm·s.
+
+Exact candidate responses:
+- exact SA reproduces the observed sensor history to serialization-level precision;
+- exact SA log1p MSE ~4.3e-31;
+- exact SB log1p MSE ~8.09e-4;
+- correct rank = SA.
+
+Estimated provider:
+- estimated SA log1p MSE ~7.34e-3;
+- estimated SA has 44 >0.1 ppm samples, peak ~1.276 ppm and integrated response ~5.398 ppm·s;
+- estimated SB is identically zero, MSE ~8.06e-4;
+- wrong rank = SB.
+
+This is a direct source-ranking reversal caused by the approximate forward provider while the exact physical response on the same route identifies the source correctly.
+
+This is currently the strongest project-specific premise for M1.
+
+## 16. Why generic residual regression is insufficient
+
+Error decomposition for estimated SA:
+- ~4.2% of squared log error occurs on the 16 observed hit samples;
+- ~95.8% occurs on observed blank samples because the approximate provider produces an excessive late tail.
+
+A global regression objective is therefore encouraged to minimize the dominant blank error and can obtain a deceptively low MSE by collapsing toward zero, which is exactly the wrong behavior for source identity.
+
+A fixed four-statistic event-distance proxy (hit fraction, normalized first-arrival, log peak, log integrated exposure) was also tested and still preferred the wrong blank SB candidate because amplitude/tail mismatch remained too large.
+
+Conclusion:
+- merely changing the scoring metric to “event features” is not enough;
+- M1 must actually correct the candidate response;
+- M2 must constrain the correction so that rare source-support structure is preserved while spurious tail mass is removed.
+
+This strengthens the M1+M2 coupling and eliminates an easy feature-engineering substitute.
