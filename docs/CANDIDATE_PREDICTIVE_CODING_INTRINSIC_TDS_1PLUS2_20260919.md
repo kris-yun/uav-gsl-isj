@@ -142,3 +142,43 @@ Kill M3 if localized validation cannot separate reliable from unreliable target 
 - M2 necessity: POSITIVE (H01 generic-predictor counterexample).
 - M3 principle: LITERATURE-STRONG; SIMPLE GLOBAL-SHIFT PROXY FAILED; localized test still required.
 - final 1+2: NOT YET VALIDATED.
+
+
+## Literature triangulation update
+
+### M1 now has three independent 2025/2026 lineages
+
+1. **Olfactory neuroscience**
+   - Trends in Cognitive Sciences 2025: *Predictive Coding in the Human Olfactory System*.
+   - Proposes olfactory perception as predictive rather than purely reactive, including prediction errors and a predictive-map hypothesis.
+   - This is directly relevant to chemical sensing but does not address robotic gas-source localization.
+
+2. **General neuroscience / predictive processing**
+   - Annual Review of Neuroscience 2026: *Rethinking Predictive Processing*.
+   - Nature Reviews Neuroscience 2025: predictive cerebellar computation.
+   - ICLR 2026: *Bidirectional Predictive Coding*.
+   - These establish predictive coding as an active computational paradigm rather than a one-off JEPA architecture.
+
+3. **Scientific machine learning**
+   - ICLR 2026: *Representation Learning for Spatiotemporal Physical Systems*.
+   - Predictive latent JEPA representations are explicitly tested by their ability to recover governing physical parameters and outperform reconstruction objectives across multiple physical systems.
+   - AAAI 2026: *Koopman Invariants as Drivers of Emergent Time-Series Clustering in Joint-Embedding Predictive Architectures* gives a dynamical-systems explanation for why JEPA objectives can recover invariant regime structure.
+
+Direct collision search for robotic GSL/OSL found no predictive-coding or JEPA-based source-localization method through the current 2026 search. Existing 2026 OSL diffusion-state classification is unsupervised manifold clustering rather than predictive latent source inference.
+
+### M2 provenance strengthened
+
+In addition to ICLR 2025 NeurPIR:
+- NeurIPS 2025: *Generalized and Invariant Single-Neuron In-Vivo Activity Representation Learning*.
+- Its explicit target is a stable functional identity from dynamic activity despite changes in animal, stimulus, experimental design and recording platform.
+- This independently strengthens the transfer: stable source identity should be distilled from plume dynamics despite wind/simulator/sensor context.
+
+### M3 collision status
+
+Search found no use of Testable Learning with Distribution Shift (TDS) in gas/odor source localization.
+However, heuristic uncertainty/entropy abstention already appears in a 2025 GSL Mamba paper, so M3 cannot be described merely as abstention.
+The scientific transfer must remain the stronger TDS principle:
+- use unlabeled target data to test whether the predictor/source evidence is valid under shift;
+- reject when that validity cannot be certified/qualified.
+
+A naive global mean-shift proxy was already falsified as sufficient; task-localized discrepancy is required.
