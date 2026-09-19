@@ -666,3 +666,54 @@ The principal remote-domain source was rechecked against the Nature version of r
 The article explicitly defines the target regime as a **model–reality gap** caused by unresolved physics or structural incompleteness, and explicitly positions ANI as a non-intrusive **reuse-and-correct** framework around a fixed callable prior. It also demonstrates effective subgrid correction in turbulence.
 
 This is the strongest current paradigm-level provenance for M1.
+
+
+## 29. M1+M2 composition capacity test — structured correction can beat the false candidate without erasing events
+
+A deliberately tiny oracle family was used only as a representational-capacity test on H01 SA-fast:
+
+[
+hat y_t =
+egin{cases}
+a_1,	ilde y_t,&t<t_c,\
+a_2,	ilde y_t,&tge t_c .
+end{cases}
+]
+
+This is **not** a deployable fitted model and uses the observed target only to test whether a lightweight time-structured correction family can simultaneously:
+1. restore the true-candidate response rank against the false SB/null candidate; and
+2. preserve source-informative event statistics.
+
+Baseline:
+- false SB/null log1p MSE: ~0.0008061.
+- uncorrected estimated SA MSE: ~0.0073375.
+
+Grid-search mechanism results:
+
+**Pure MSE optimum**
+- (t_capprox231.5) s, (a_1approx0.775), (a_2approx0.05);
+- MSE ~0.0004056, comfortably better than false SB;
+- but only 8 hits survive, so it still under-represents the event structure.
+
+**η-regularized optimum**
+- (t_capprox232.0) s, (a_1approx0.775), (a_2approx0.125);
+- MSE ~0.0005443, still better than false SB;
+- 21 hits survive;
+- peak ~0.372 ppm and integral ~1.347 ppm·s, both close to observation.
+
+**Best event-feasible correction that still beats false SB**
+- (t_capprox233.0) s, (a_1approx0.70), (a_2approx0.075);
+- MSE ~0.0007908 < false-SB ~0.0008061;
+- 14 hits vs observed 16;
+- peak ~0.435 vs observed ~0.414 ppm;
+- integrated response ~1.424 vs observed ~1.405 ppm·s;
+- top-1% mean ~0.282 vs observed ~0.281 ppm.
+
+Interpretation:
+> a **very low-capacity, time-structured** corrector is already expressive enough to cross the source-ranking boundary without destroying the rare-event topology, whereas one global scalar cannot.
+
+This is important for both novelty and lightweight design:
+- M1 does not need to become a surrogate CFD model;
+- M2 is not cosmetic: it selects among response corrections that may have similar/better average fit but very different source-event fidelity.
+
+The final learned corrector must reproduce this behavior on held conditions without oracle tuning. If it cannot, the candidate is killed.
