@@ -327,3 +327,63 @@ Decision:
 > the PRL-derived object survives the matched low-order temporal-statistics baseline in its strongest recovery case.
 
 The remaining challenge is not “does temporal structure matter?”; it is “can a source-blind finite-horizon rule choose a valid delay representation without outcome tuning?”
+
+
+## 14. New auxiliary candidate: finite-resolution distinguishability
+
+Primary remote-field source:
+- **Physical Review X 16, 031015 (2026)** — Aguilar, Muñoz, Azaele,
+  *Limits of Inference in Complex Systems: When Stochastic Models Become Indistinguishable*.
+
+Core transferable object:
+> competing stochastic models can become empirically indistinguishable at finite sampling resolution, even when they are mathematically different.
+
+The intended transfer is not experiment design.
+It is an **inference qualification layer**:
+- before allowing a source-probability map to sharpen, estimate whether source-conditioned path measures are distinguishable at the actually available horizon/cadence;
+- if finite resolution cannot support the distinction, preserve ambiguity / abstain from the corresponding update.
+
+### Existing-data downsampling test
+
+The m=4, tau=10 s delay-measure representation was re-evaluated after deterministic subsampling from the native 0.2 s trace to 0.4, 1, 2, 5 and 10 s. All sampling phases were enumerated.
+
+H01, 180 s:
+- 0.4 s: perfect source identity in 100% of sampling phases.
+- 1 s: 60%.
+- 2 s: 50%.
+- 5 s: 68%.
+- 10 s: 42%.
+- median wind/source ratio rises from roughly 0.50 at fine cadence to 0.61 at 10 s, with some phases near complete indistinguishability.
+
+H01, 240 s:
+- 0.4–2 s: 100% perfect.
+- 5 s: 96%.
+- 10 s: 82%.
+
+H02:
+- after source support appears, identity remains 100% across tested cadences/phases.
+- this is a useful negative control: coarsening does not automatically create collapse.
+
+H03:
+- identity remains 100%, but median wind/source ratio worsens with coarse cadence at 180 s:
+  about 0.156 at 0.4 s -> 0.214 at 10 s.
+
+Interpretation:
+- finite resolution changes source distinguishability in a source/environment-specific way;
+- H01 shows strong phase/cadence sensitivity because evidence is intermittent;
+- H02 shows a robust regime, so the effect is not a trivial sample-count artifact.
+
+This matches the PRX scientific principle more closely than a generic confidence threshold.
+
+### Proposed role as Auxiliary B
+
+Define a finite-resolution distinguishability statistic from:
+- between-source delay-measure distance;
+- within-source / cross-context empirical variability;
+- finite-horizon convergence uncertainty.
+
+Only source contrasts that clear this qualification enter strong PMFS probability updates.
+
+Status: **STRONG AUXILIARY CANDIDATE**.
+
+This replaces generic conformal calibration as the preferred scientific auxiliary for M1-B; conformal methods remain an evaluation/calibration baseline.
