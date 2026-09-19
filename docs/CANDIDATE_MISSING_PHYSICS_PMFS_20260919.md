@@ -440,3 +440,43 @@ Therefore:
 - source-location ranking across multiple ground-truth source positions requires another real dataset such as the ICASSP challenge.
 
 This correction prevents overstating cross-dataset localization validation.
+
+
+## 20. Correction placement audit: discrepancy is upstream and sign-changing
+
+The exact candidate-forward concentration input was compared directly with the estimated-provider concentration **before** the frozen FOPDT sensor law.
+
+H01 SA-fast:
+- exact raw candidate exposure:
+  - 94 nonzero samples;
+  - 19 samples >0.1 ppm;
+  - first >0.1 ppm at ~186.4 s;
+  - peak ~0.747 ppm;
+  - integrated exposure ~1.406 ppm·s.
+- estimated-provider raw exposure:
+  - 128 nonzero samples;
+  - 35 samples >0.1 ppm;
+  - first >0.1 ppm only at ~228.6 s;
+  - peak ~2.002 ppm;
+  - integrated exposure ~5.429 ppm·s.
+
+The discrepancy is not a constant gain and not even one-signed in time:
+- 180–210 s: exact exposure mass ~0.224 vs estimated ~0.025 ppm·s — **missing support** dominates.
+- 210–228 s: exact ~0.050 vs estimated ~0.006 — still missing support.
+- 228–240 s: exact ~0.937 vs estimated ~4.944 — **spurious tail mass** dominates.
+
+Across the full trace the discrepancy contains both:
+- positive missing exact mass;
+- negative/excess estimated mass.
+
+Scientific consequence:
+> the correction must alter the transport-response dynamics, not merely rescale the final sensor output.
+
+This makes the NeurIPS 2025 INC distinction between direct state correction and indirect/physics-level correction directly relevant.
+
+Current preferred placement:
+1. correct the candidate exposure/transport trace upstream;
+2. then pass the corrected exposure through the frozen exact FOPDT sensor model;
+3. score source likelihood afterward.
+
+This keeps the already-audited sensor physics fixed and assigns the learned component only to the unresolved transport discrepancy.
