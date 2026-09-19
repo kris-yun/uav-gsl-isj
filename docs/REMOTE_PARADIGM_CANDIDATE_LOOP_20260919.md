@@ -978,3 +978,74 @@ Independent support now comes from:
 
 This is the first candidate in the loop with convergence from machine learning, physics, biological olfaction, and project evidence.
 
+
+
+# Loop-5 update — finalists broadened and venue correction
+
+## Venue correction for predictive-JEPA line
+
+The directly physical paper *Representation Learning for Spatiotemporal Physical Systems* is an **ICLR 2026 Workshop on AI & PDE** paper, not an ICLR 2026 main-conference paper.
+
+Therefore:
+- the JEPA paradigm still has strong 2025/2026 main-conference provenance;
+- but the most direct physical-parameter evidence is workshop-level;
+- its previous top-venue provenance score is reduced.
+
+## New finalist M1-B — Delay-coordinate invariant measures
+
+Primary source:
+- **Physical Review Letters 135, 167202 (2025)** — Botvinick-Greenhouse, Martin, Yang, *Invariant Measures in Time-Delay Coordinates for Unique Dynamical System Identification*.
+
+Independent lineage:
+- ICML 2025 long-time-statistics/ergodic learning in chaotic prediction;
+- ICML 2025 modern Koopman representation;
+- Nature Communications 2026 learnability/impossibility boundaries for Koopman spectral learning;
+- NeurIPS ergodic/invariant-measure learning literature.
+
+Existing-data evidence:
+- H01 180 s marginal distribution: 1/2 source identity, wind/source ratio 0.759.
+- delay measure m=4, tau=10 s: **2/2**, ratio 0.472.
+- destroying temporal order while preserving every one-point value returns it to 1/2, ratio 0.696.
+- H03 240 s ordered long-delay ratio 0.475; time-permuted 0.691.
+- H02 120 s remains 0/2 for all delay choices, so the representation does not manufacture source support.
+
+Risk:
+- finite-horizon empirical measures can remain far from the 240 s reference, especially H03.
+- delay dimension/lag cannot be held-out tuned.
+
+Status: **STRONG M1 FINALIST**.
+
+## New finalist M1-C — Non-intrusive missing-physics correction
+
+Primary source:
+- **Nature Communications 2026** — Wang et al., *Learning missing physics from legacy simulators with alternating neural integrators*.
+
+Project evidence:
+- exact candidate-conditioned physical response gives true-source rank1 in 12/12 crossed source/wind cases.
+- approximate PHIC provider has a candidate with 299 exported positive events but zero modeled exposure in all three members; first conflict is 0.1134 ppm measured vs zero model support.
+- evaluator-only affine calibration on H01-SA-fast drastically rescales the prior but leaves only a small held-tail SA-vs-SB advantage and cannot reconstruct support/timing.
+
+Risk:
+- direct collision with physics-guided/source-surrogate GSL is substantial.
+- must be a genuinely non-intrusive structured prior-corrector, not a residual neural network.
+
+Status: **STRONG MECHANISM-FIT / NOVELTY-AT-RISK**.
+
+## Updated provisional finalist score
+
+| M1 | Scientific/paradigm depth | Direct 25/26 strong venue | Existing-data mechanism evidence | GSL novelty room | Lightweight | Cross-public-data portability | Main risk | Adjusted /60 |
+|---|---:|---:|---:|---:|---:|---:|---|---:|
+| Delay-coordinate invariant measures | 10 | 10 | 9 | 9 | 10 | 8 | finite-horizon convergence | **56** |
+| Predictive latent / JEPA | 9 | 8 | 8 | 8 | 9 | 10 | direct physical anchor is workshop; representation-learning collision | **52** |
+| Missing-physics prior-corrector | 9 | 10 | 10 | 6 | 9 | 6 | hybrid-GSL collision / prior portability | **50** |
+| Inverse generative modeling | 10 | 10 | 9 | 5 | 7 | 10 | direct 2026 inversion collision | **46** |
+
+Current order is not frozen.
+The delay-invariant candidate is the first to pass a destructive temporal-order control with a primary 2025 PRL theory source.
+
+## Next loop
+
+- search for a third/alternative 2025–2026 paradigm with equally strong primary science provenance;
+- run matched dynamic baselines against M1-B to determine whether the PRL object adds more than autocorrelation/event statistics;
+- continue collision screen for time-delay/invariant-measure source localization;
+- only after that choose auxiliary innovations.
