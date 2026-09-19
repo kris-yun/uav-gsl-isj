@@ -648,3 +648,95 @@ Current state:
 
 Next hard gate:
 a learned lightweight corrector must improve held-condition source margin/ranking, not merely forward MSE, and M2 must provide incremental value over M1.
+
+
+## Loop-5 — Main-candidate reversal test: predictive latent vs extreme-event-aware learning
+
+A stricter matched-window held-wind test was run on the same 12 controlled histories.
+
+Protocol:
+- fixed 10 s windows from 120–240 s;
+- fast-wind histories provide source prototypes;
+- slow-wind histories are held transport;
+- dimensions are standardized only from fast-wind windows;
+- compare three fixed source-blind representations:
+  1. predictable bulk summaries,
+  2. η/extreme-intermittency summaries,
+  3. their concatenation.
+
+Held-wind source identity across 72 source-window decisions:
+
+| Representation | Correct | Accuracy |
+|---|---:|---:|
+| predictive bulk | 50/72 | 0.694 |
+| η/extreme-intermittency | 53/72 | 0.736 |
+| predictive + η | 53/72 | 0.736 |
+
+By House:
+- H01: predictive 14/24, η 15/24, combined 15/24.
+- H02: all 15/24.
+- H03: predictive 21/24, η 23/24, combined 23/24.
+
+Interpretation:
+- in this linear/handcrafted premise test, the predictive branch is **not load-bearing** once the rare/intermittency observable is present.
+- therefore a paper whose main claim is simply “predictive latent structure is the source-information carrier” is not yet justified.
+- the current data are at least as compatible with a stronger thesis: **source evidence is disproportionately concentrated in sparse tail/intermittency events, while average-risk/predictive objectives can wash it out**.
+
+### New paradigm-level M1 candidate C10 — Extreme-Value-Aware Scientific Learning
+
+Large-science source:
+- classical Extreme Value Theory (EVT): peaks-over-threshold, tail laws, max-stability.
+- Nature Communications 2026: Chang & Sapsis, *Extreme Event Aware (η-) Learning*.
+- UAI 2026: Hasan et al., *Learning Max-Stable Representations that Extrapolate*.
+- ICLR 2026: *EVEREST: A Transformer for Probabilistic Rare-Event Anomaly Detection with Evidential and Tail-Aware Uncertainty*.
+- NeurIPS 2025: *Deciphering the Extremes: A Novel Approach for Pathological Long-tailed Recognition in Scientific Discovery*.
+
+Scientific GSL thesis:
+> turbulent source evidence is not uniformly distributed over observations; a small set of intermittent tail events can carry disproportionate source identity, while ordinary empirical-risk and reconstruction objectives are dominated by blanks/common regimes.
+
+This is different from the old odor-literature statement “whiffs and blanks are informative”.
+The transferred object is **tail-aware learning/extrapolation under scarce extreme evidence**, not a handcrafted whiff feature.
+
+Potential M1 form:
+- shared lightweight temporal encoder;
+- an EVT/η constraint shapes the latent/source-evidence distribution so that tail observables remain statistically represented;
+- source probability map is computed from bulk + tail-conditioned evidence, with a calibrated mechanism that does not let common blank regimes dominate the posterior.
+
+Novelty risk:
+- eLife 2022 and related turbulent-odor literature already establish that timing/intermittency features carry source-location information.
+- therefore novelty cannot be “use whiff duration / intermittency”.
+- it must be a true transfer of modern rare-event learning (η-statistical regularization / max-stable representation / tail-aware uncertainty) into source-probability inference.
+
+Status C10: STRONG SURVIVOR; currently tied with / possibly stronger than predictive-JEPA M1.
+
+### Evolution-operator candidate C9 — screened and not promoted
+
+Top provenance:
+- ICLR 2026: Turri et al., *Self-Supervised Evolution Operator Learning for High-Dimensional Dynamical Systems*.
+- NeurIPS 2025: DynaMix zero-shot dynamical-system reconstruction.
+
+Existing-data proxy:
+- AR/evolution fingerprints can improve held-wind source discrimination in several cases:
+  - H01 240 s AR10 wind/source ratio ~0.112 vs static ~0.617;
+  - H02 240 s AR10 ~0.081 vs static ~0.161.
+- but the operator representation fails or becomes transport-dominated in other regimes:
+  - H01 180 s AR10 ratio >1 and identity falls to 1/2;
+  - H03 240 s AR10 ratio ~0.727 and identity 1/2.
+
+Physical objection:
+- in the advection–diffusion equation, source location is primarily a forcing/source term, while the evolution operator is governed by transport/geometry.
+- treating the operator itself as source identity risks encoding the wrong physical object.
+
+Decision:
+- C9 is rejected as M1 despite recent top-venue provenance.
+- operator ideas may remain implementation tools, not the scientific thesis.
+
+### Current M1 competition after Loop-5
+
+1. C10 Extreme-Value-Aware Scientific Learning — strongest project-specific mechanism fit.
+2. C8 Predictive Latent Physical Representation / JEPA — strongest generic physical-representation provenance, but no longer empirically load-bearing in the current linear proxy.
+3. C4 State-first inverse inference — reserve.
+4. C1 inverse generative — collision-demoted.
+5. C9 evolution operator — physics-object mismatch.
+
+No M1 is frozen yet.
