@@ -740,3 +740,117 @@ Decision:
 5. C9 evolution operator — physics-object mismatch.
 
 No M1 is frozen yet.
+
+
+## Loop-6 — auxiliary search and direct sequence-model falsification
+
+### Event-aware representation learning (ICLR 2026): not promoted
+
+Remote anchor:
+- ICLR 2026 — Peng et al., *From Observations to Events: Event-Aware World Models for Reinforcement Learning*.
+
+Existing-history proxy:
+- fixed 20 s windows;
+- explicit ordered event onset/duration/peak/mass features;
+- fast-wind prototypes, slow-wind held transport.
+
+Accuracy (36 held-wind source decisions):
+- aggregate classical features: 28/36;
+- tail features: 28/36;
+- event-order features: 25/36;
+- tail + event: 27/36.
+
+Time reversal changes event representation but does not yield a positive source-localization increment.
+Decision: NO-GO as current auxiliary.
+
+### Rough-path signatures: order-sensitive but not source-useful here
+
+2025/2026 top anchors:
+- ICML 2025 — *Learning with Expected Signatures: Theory and Applications*.
+- NeurIPS 2025 — *Scalable Signature Kernel Computations via Local Neumann Series Expansions*.
+- ICLR 2026 — *Random Controlled Differential Equations*.
+
+Level-2/3 signatures of (time, log gas):
+- normal held-wind: signature 27/36, tail 28/36, tail+signature 28/36.
+- time-reversed slow traces: signature 20/36, tail unchanged 28/36, tail+signature 23/36.
+- complementarity audit: signature corrects **0** tail errors; tail corrects 1 signature error.
+
+Conclusion:
+- path signature genuinely captures temporal order (destructive reversal works),
+- but order information does not add source discrimination on this controlled set.
+Decision: retain as negative/destructive control only; not an innovation module.
+
+### Modern marked temporal point process (MTPP): screened, not promoted
+
+Recent top anchors:
+- NeurIPS 2025 — *Deep Continuous-Time State-Space Models for Marked Event Sequences* (Spotlight).
+- NeurIPS 2025 — *Transformers for Mixed-type Event Sequences*.
+- NeurIPS 2025 — *Addressing Mark Imbalance in Integration-free Marked Temporal Point Processes*.
+- ICLR 2026 — *Edit-Based Flow Matching for Temporal Point Processes*.
+
+A minimal marked Poisson-process proxy used threshold-crossing arrivals with duration/peak/mass marks and the no-event survival term.
+
+Whole 120–240 s held-wind:
+- H01: MTPP proxy 2/2; tail 2/2.
+- H02: 2/2; tail 2/2.
+- H03: MTPP 1/2; tail 2/2.
+
+Held 180–240 s 10 s windows:
+- H01: MTPP 6/12 vs tail 9/12.
+- H02: 6/12 vs 6/12.
+- H03: 7/12 vs 7/12.
+
+Decision:
+- a point-process framing is scientifically natural but is not presently supported as the main innovation.
+- it also risks reducing to a sophisticated re-expression of known whiff timing.
+Status C11: DEMOTED/NO-GO.
+
+### Censoring-aware survival evidence: promoted as auxiliary candidate
+
+Remote top anchors:
+- ICLR 2025 — *Conformalized Survival Analysis for General Right-Censored Data*.
+- ICML 2025 — *Doubly Robust Conformalized Survival Analysis with Right-Censored Data*.
+- AISTATS 2025 — proper scoring for censored survival/competing risks.
+
+Existing data with frozen 0.1 ppm arrival event:
+- T=120 s: H01/H02 both source hypotheses censored -> no distinction; H03 distinguishes.
+- T=180 s: H01 remains censored -> abstain; H02/H03 distinguish.
+- T=240 s: all three Houses distinguish the two held-wind source identities.
+- the first-arrival/censoring pattern is highly stable across fast/slow winds in this controlled bank.
+
+This matches the project's physical-support logic exactly:
+no event by finite horizon is a right-censored time-to-event observation, not proof that a source is impossible.
+
+Status: ACTIVE M2 candidate for EVT-aware M1.
+
+## Direct EVT novelty collision screen through 2026
+
+Targeted searches for:
+- gas/odor source localization + extreme value theory,
+- max-stable source localization,
+- generalized Pareto plume source localization,
+- tail-aware GSL/OSL,
+- EVT turbulent source inference
+
+did not surface a direct recent GSL method using EVT/max-stable/η-learning for source probability inference.
+
+Collision remains with **classical intermittency/whiff statistics**, not with modern EVT-aware learning.
+Therefore the novelty statement must remain:
+- NOT “extreme concentrations/whiffs matter”;
+- YES candidate: modern extreme-event-aware statistical learning for source evidence under sparse turbulent observations.
+
+## Current ranking after Loop-6
+
+1. **C10 Extreme-Value-Aware Scientific Learning** — current main leader.
+2. **C8 Predictive Latent Physical Representation / JEPA** — reserve; linear premise tests weak/negative.
+3. State-first inverse inference — reserve.
+4. Inverse generative — collision-demoted.
+5. Evolution operator — physical-object mismatch.
+6. MTPP/event-aware/path-signature — no positive incremental gate.
+
+Current leading 1+2:
+- M1: EVT / η / max-stable source-evidence learning.
+- M2: censoring-aware survival evidence.
+- M3: structured shift-aware conformal source region.
+
+No promotion to validated main innovation yet.
