@@ -166,3 +166,52 @@ Next:
 - quantify whether the observed forward discrepancy is low-dimensional / structured enough to learn;
 - compare source-independent calibration vs candidate-dependent correction;
 - search 2025/2026 hybrid-inverse literature for direct source-estimation collisions.
+
+## 10. Simple global-calibration diagnostic
+
+A deliberately favorable evaluator-only diagnostic was run on the existing H01-SA-fast estimated-transport traces.
+
+Inputs:
+- observed H01-SA-fast measured gas history;
+- approximate estimated-transport candidate sensor traces for SA and SB on the same route;
+- fit a single affine calibration y = a * y_model + b on the first 180 s using the true SA candidate only;
+- test both candidates on the held final 60 s.
+
+This is not deployable and is intentionally biased in favor of the simple-calibration hypothesis.
+
+Fit:
+- a = 0.05497
+- b = 0.000931 ppm
+
+Held final 60 s:
+- raw SA MSE = 0.05927
+- raw SB-zero-trace MSE = 0.004032
+- affine-calibrated SA MSE = 0.003722
+- affine-calibrated SB MSE = 0.003995
+
+Observed tail:
+- mean = 0.02021 ppm
+- 16 samples exceed 0.1 ppm
+- maximum = 0.4141 ppm
+
+Interpretation:
+- a source-independent affine calibration can shrink the gross amplitude error enough to reverse SA vs SB in this one evaluator-only case, but only by collapsing the modeled amplitude by ~18x.
+- it does not reconstruct event timing/support; the SB trace remains a constant offset because its physical prior is identically zero.
+- the resulting SA-vs-SB tail MSE margin is very small despite using the true candidate to fit the calibration.
+- therefore this diagnostic does not support a claim that scalar recalibration solves the forward mismatch.
+
+Combined with MODEL_ZERO_WITH_OBSERVED_HITS:
+> the important missing object is candidate- and history-dependent support/timing, not only a global concentration scale.
+
+Caveat:
+- this is one H01 route and an evaluator-only fit, so it establishes a mechanism warning, not a general PASS.
+
+## 11. Updated M1-C decision
+
+M1-C survives the simple-calibration kill test provisionally.
+
+However, novelty remains the major risk:
+- if the corrector is only a residual MLP, reject;
+- a viable contribution must expose a physically interpretable correction state (transport support, timing/memory, or unresolved closure) and demonstrate that it repairs candidate evidence before posterior updating.
+
+Status: STRONG MECHANISM-FIT / NOVELTY-AT-RISK.
