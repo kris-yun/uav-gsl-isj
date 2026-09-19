@@ -1049,3 +1049,34 @@ The delay-invariant candidate is the first to pass a destructive temporal-order 
 - run matched dynamic baselines against M1-B to determine whether the PRL object adds more than autocorrelation/event statistics;
 - continue collision screen for time-delay/invariant-measure source localization;
 - only after that choose auxiliary innovations.
+
+
+# Loop-6 rejection — rough-path/path-signature M1
+
+A third paradigm was screened from:
+- ICLR 2025 *Deep Signature: Characterization of Large-Scale Molecular Dynamics*;
+- ICLR 2026 *Random Controlled Differential Equations*;
+- NeurIPS 2025 signature-kernel work.
+
+A low-order path-signature proxy on [time, log-gas, cumulative exposure] looked initially promising:
+- H01 180 s: 2/2 held-wind identity;
+- H02 early unsupported regime remained 0/2;
+- H03 120 s remained a failure, preserving a finite-horizon warning.
+
+However, a deliberately simple physically interpretable baseline using:
+- total exposure,
+- first three concentration-weighted time moments,
+- temporal spread/skew,
+- first threshold crossing,
+- hit fraction,
+- peak time and peak amplitude
+
+matched or exceeded the signature proxy:
+- H01 180 s: moment baseline 2/2, wind/source ratio 0.142 versus signature ~0.18–0.20.
+- H03 180 s: moment baseline ratio 0.081 versus signature ~0.31–0.35.
+- H03 120 s: moment baseline 2/2 while signature remained 1/2.
+
+Decision:
+> rough-path signatures are mathematically elegant but do not currently earn a main-innovation role; their apparent benefit is explainable by much simpler event-timing moments on the available data.
+
+Status: **M1 REJECTED / no module slot**.
