@@ -519,3 +519,64 @@ Decision:
 - do not add a fourth “source-invariant / transport-equivariant” contribution;
 - M2 rare-event preservation remains the mechanism that has the clearest project-specific positive discriminator.
 
+
+
+## 25. Loop-6 window-level held-wind classifier proxy
+
+A small source classifier was used only as an evaluator of representation quality.
+
+Protocol:
+- 10 s windows from the existing 12 controlled histories;
+- train ridge classifier on fast-wind windows;
+- test on slow-wind windows;
+- compare raw statistics, predictive temporal statistics, tail/η statistics, and predictive+η.
+
+Same-time held-wind total across H01/H02/H03:
+- raw: 52/72 correct;
+- predictive: 56/72;
+- η-only: 51/72;
+- predictive+η: 56/72.
+
+Future-time + held-wind (train fast 120–180 s; test slow 180–240 s):
+- raw: 23/36;
+- predictive: 26/36;
+- η-only: 24/36;
+- predictive+η: 26/36.
+
+House-level pattern:
+- H02 benefits most from predictive representation (future held-wind 6/12 -> 9/12).
+- H03 η-only helps one future-time decision (8/12 raw -> 9/12), while predictive retains 8/12 but with larger positive margins.
+- H01 predictive improves same-time held-wind 16/24 -> 18/24 but does not improve the harder future-time count.
+
+Decision:
+- M1 receives an additional weak-to-moderate positive proxy.
+- fixed η features are **not** a general standalone improvement; M2 remains conditional on implementing the actual η-learning principle as a constraint on the learned representation, not simply appending tail statistics.
+
+## 26. Generic conformal-localization collision and M3 refinement
+
+New collision screen:
+- ICASSP 2025 already contains *Conformal Prediction for Manifold-based Source Localization with Gaussian Processes* in acoustic localization.
+- AAAI 2026 contains *Conformal Prediction for Multi-Source Detection on a Network* with statistically valid source-set recall guarantees.
+
+Therefore:
+> “add conformal prediction to source localization” is not a defensible auxiliary novelty.
+
+M3 is refined to a newer, narrower mechanism:
+
+### M3 — Distribution-Informed Online Calibration of Spatial Source Maps
+
+Primary provenance:
+- ICLR 2026 — *Distribution-informed Online Conformal Prediction*.
+  It uses predictable structure in the sequence of nonconformity distributions to produce tighter online sets while retaining coverage control even when the distribution estimate is wrong.
+
+GSL-specific transfer:
+- PMFS produces a sequential source probability map as evidence arrives;
+- map reliability and nonconformity distribution change over time with plume encounter regime, House and sensor dynamics;
+- M3 updates a spatial source region online from the evolving map rather than applying one static post-hoc calibration threshold.
+
+Novelty boundary:
+- no claim that conformal localization itself is new;
+- the proposed auxiliary would be the **online distribution-informed calibration of a sequential turbulent-source probability field under regime shift**.
+
+Status:
+- M3 = CONDITIONAL SURVIVOR; requires a source-map replay with sequential calibration before final promotion.
