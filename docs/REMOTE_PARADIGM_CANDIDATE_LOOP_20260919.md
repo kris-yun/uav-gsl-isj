@@ -320,3 +320,92 @@ Training concept:
 - source probability map consumes the common/source channel; private transport channel is retained for prediction and uncertainty, not forcibly erased.
 
 NeurPIR remains a supporting analogy; PID/Gray-Wyner common-information decomposition is now the preferred mathematical basis for M2.
+
+
+## Loop-5 M1 challenger: Learned Missing Physics / Gray-Box Prior Correction
+
+### Remote provenance
+- Nature Communications 2026: Wang et al., *Learning missing physics from legacy simulators with alternating neural integrators*.
+  - non-intrusive reuse-and-correct paradigm;
+  - frozen callable prior + learned structured discrepancy;
+  - operator-splitting foundation;
+  - effective subgrid correction in turbulence and correction under parameter shift.
+- NeurIPS 2025: Wei et al., *INC: An Indirect Neural Corrector for Auto-Regressive Hybrid PDE Solvers*.
+  - shows that correction placement matters; indirect physics-level correction controls error amplification better than naive direct updates.
+- NeurIPS 2025: Yue et al., *DeltaPhi: Physical States Residual Learning for Neural Operators in Data-Limited PDE Solving*.
+- NeurIPS 2025: Ilersich & Nair, *Learning Stochastic Multiscale Models*.
+
+### Project-mechanism match
+This line directly matches the strongest project asymmetry:
+- exact candidate-conditioned physical responses preserve source identity in the controlled factorial microbank;
+- estimated/deployable transport providers can be candidate-dependently wrong;
+- H01 SA approximate response is worse than a null response under ordinary log1p MSE;
+- PHIC can predict zero exposure where observed hits exist;
+- local transport/wind providers show systematic predictive deficiencies.
+
+Thus the premise is not “physics is useless”.
+It is:
+> the coarse prior contains useful inductive bias, but missing/unresolved transport physics corrupt the candidate evidence.
+
+### Existing-data negative control
+A global affine correction is NOT sufficient:
+- it can lower response MSE by collapsing toward the dominant blank state;
+- cross-source transfer can worsen an already-correct near-zero response;
+- therefore M1 must be judged by source discrimination, support, onset and calibration, not forward MSE alone.
+
+### Discrepancy anatomy
+H01 SA-fast approximate provider:
+- observed >0.1 ppm samples = 16;
+- predicted >0.1 ppm samples = 44;
+- overlap = 12;
+- first arrival timing is relatively close, but the provider creates an excessive late tail;
+- ~95.8% of total squared log-response error occurs on observed blank samples.
+
+This explains why a generic regression objective can prefer “predict zero” and motivates an event-aware auxiliary rather than ordinary MSE fitting.
+
+### Direct GSL collision boundary
+2025 Journal of Turbulence, Piro et al., *Many wrong models approach to localise an odour source in turbulence with static sensors*:
+- already addresses inaccurate turbulent source models by ranking/blending multiple wrong stochastic models.
+
+Therefore novelty cannot be “model mismatch robustness” or “ensemble of approximate models”.
+The surviving contribution must learn structured, candidate-conditioned missing physics relative to an executable prior and demonstrate restored source evidence.
+
+### Comparative M1 decision
+The JEPA/predictive-representation line is downgraded:
+- linear temporal-order destructive tests did not show ordering/prediction as consistently load-bearing in H02/H03;
+- source identity can live in rare events that a generic predictive objective suppresses.
+
+Learned missing physics is elevated because it explains both:
+1. the exact-forward positive premise; and
+2. the estimated-provider negative premise.
+
+### Provisional score v3
+
+| M1 family | Paradigm strength | 25/26 provenance | Direct project fit | Novelty room after collision | Lightweight fit | Cross-dataset fit | Falsifiable now | Adjusted /70 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Learned Missing Physics / Gray-Box Correction | 10 | 10 | 10 | 8 | 9 | 9 | 10 | 66 |
+| Predictive Latent Representation / JEPA | 10 | 10 | 7 | 8 | 9 | 10 | 7 | 61 |
+| State-first Inverse Inference | 8 | 10 | 9 | 8 | 7 | 9 | 8 | 59 |
+| Common-vs-Unique Information Decomposition | 8 | 10 | 8 | 8 | 8 | 8 | 8 | 58 |
+| Inverse Generative Modeling | 10 | 10 | 9 | 5 | 7 | 10 | 7 | 58 |
+
+Current primary challenger:
+**Learned Missing Physics / Gray-Box Prior Correction**.
+
+Dedicated candidate file:
+`docs/CANDIDATE_MISSING_PHYSICS_PMFS_20260919.md`
+
+### Preferred 1+2 attached to this M1
+- M1: source-conditioned learned missing physics.
+- M2: extreme-event-aware intermittency preservation (Nature Communications 2026 η-learning) to prevent blank-dominated correction.
+- M3: structured shift-aware source regions (ICLR/ICML 2025 conformal-under-shift / structured prediction sets).
+
+The previous common-information/PID M2 remains on reserve for the JEPA branch, not automatically carried into the missing-physics branch.
+
+### Next hard gate
+Before promotion:
+1. pair exact/reference and approximate candidate responses on the same histories;
+2. quantify whether discrepancy correction improves true-vs-wrong candidate margins;
+3. test event-aware correction objectives against global MSE correction;
+4. include many-wrong-model blending as a direct GSL comparator;
+5. reject the line if learned correction only improves forward fit without improving source evidence.
