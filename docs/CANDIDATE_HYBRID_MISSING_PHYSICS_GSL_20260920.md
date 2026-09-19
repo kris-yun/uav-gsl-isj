@@ -203,3 +203,88 @@ Relative to prior candidates:
 - unlike causal invariance, explicitly allows candidate-dependent transport discrepancy rather than assuming it can be removed globally.
 
 No closed-loop run is authorized.
+
+## 12. Loop-10: symbolic and temporal-correction screen
+
+### 12.1 Symbolic residual discovery — useful, but not yet a separate contribution
+
+Recent remote-domain anchors:
+- Nature Computational Science 2026 — Yu, Ding & Li, *Discovering network dynamics with neural symbolic regression*.
+- Nature Computational Science 2026 — Ruan et al., *Discovering physical laws with parallel symbolic enumeration*.
+- Nature Communications 2025 — Hu et al., *Learning interpretable network dynamics via universal neural symbolic regression*.
+
+Direct web collision search did not find symbolic-regression gas/odor source-localization work.
+
+However, the 2026 ANI paper already includes post-hoc symbolic distillation/write-back of learned discrepancy in selected controlled systems. Therefore “ANI + symbolic distillation” would be too close to the source paper if counted as an independent auxiliary innovation without a GSL-specific mechanism gain.
+
+Decision:
+- retain symbolic residual discovery as a lightweight interpretability/compression option;
+- DO NOT count it as M2/M3 yet.
+
+### 12.2 Prefix-to-future phase/amplitude correction
+
+The H01 SA-fast approximate-provider trace was used for a strictly diagnostic temporal split.
+
+Fixed diagnostic:
+- fit only on observed/predicted log-response from 226–232 s;
+- choose a constant phase shift plus scalar amplitude from that prefix;
+- apply the frozen correction to 232–240 s.
+
+Prefix fit:
+- learned phase shift: -4.2 s in the implemented sign convention, i.e. advance the delayed prior response by ~4.2 s;
+- log-amplitude factor: 0.280.
+
+Held future tail:
+- uncorrected prior log-MSE: 0.20698;
+- zero/null-response log-MSE: 0.000995;
+- prefix-fitted corrected SA log-MSE: 0.000194;
+- reduction versus prior: ~99.91%;
+- crucially, the corrected true-SA response now beats the null/SB response on the held tail, whereas the uncorrected prior does not.
+
+This is still one development case and is not a deployable PASS, but it is stronger than an all-data oracle fit because the correction parameters are frozen before the future tail is scored.
+
+Interpretation:
+> a large part of the candidate-dependent model discrepancy can be expressed as a low-dimensional **phase + amplitude correction**, and correcting it can reverse the wrong-source preference caused by the incomplete prior.
+
+### 12.3 Probabilistic time-warping auxiliary collision
+
+Remote anchor:
+- ICLR 2026 — *Perturbed Dynamic Time Warping: A Probabilistic Framework and Generalized Variants*.
+
+The idea is a natural match to the measured phase error, but direct collision search found:
+- Sensors and Actuators B: Chemical 2026 — *Exploring pre-ignition source localization using a 3D network of semiconducting metal oxide gas sensors*, where a DTW separability score is already used for source-localization sensor selection.
+
+Therefore:
+- plain DTW/soft-DTW cannot be claimed as a new GSL auxiliary;
+- if temporal registration is retained, its novelty must be inside the missing-physics correction operator, not “we use DTW for localization”.
+
+### 12.4 Consequence for M2
+
+The old M2 label “generic continuous-time correction” is too broad and is weakened by the historical CTT neural first-passage NO-GO.
+
+The data now point to a narrower object:
+> **adaptive phase–amplitude discrepancy state** inside the prior-corrector.
+
+A future M2 must show:
+1. phase/amplitude discrepancy is estimable from a past prefix;
+2. the frozen correction improves future candidate likelihood/rank;
+3. it beats static scalar calibration;
+4. the effect survives more than H01 SA-fast;
+5. it is not equivalent to a DTW similarity score.
+
+Until those gates pass, M2 remains conditional.
+
+## 13. Current candidate status after loop-10
+
+M1 — Non-Intrusive Missing-Physics Correction:
+**STRONG ACTIVE PRIMARY CANDIDATE.**
+
+M2 — Adaptive Phase–Amplitude Discrepancy State:
+**CONDITIONAL AUXILIARY CANDIDATE.**
+The H01 prefix-to-future result is a strong premise, but cross-case replication is missing.
+
+M3 — Extreme-Event-Aware η-Regularization:
+**ACTIVE AUXILIARY CANDIDATE.**
+
+Symbolic residual discovery:
+**RESERVE LIGHTWEIGHT/INTERPRETABILITY TOOL, not counted as an innovation.**
