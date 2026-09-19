@@ -1080,3 +1080,74 @@ Decision:
 > rough-path signatures are mathematically elegant but do not currently earn a main-innovation role; their apparent benefit is explainable by much simpler event-timing moments on the available data.
 
 Status: **M1 REJECTED / no module slot**.
+
+
+## Loop-8 alternative-M1 search after JEPA downgrade
+
+The search was reopened because the matched linear predictive-state test did not distinguish predictive latent learning from PCA/reconstruction.
+
+### C9 — Koopman / operator-geometry source identity
+
+Recent remote-domain anchors:
+- ICLR 2025 — *MamKO: Mamba-based Koopman operator for modeling and predictive control*.
+- NeurIPS 2025 — *MetaKoopman: Bayesian Meta-Learning of Koopman Operators for Modeling Structured Dynamics under Distribution Shifts*.
+- Communications Physics 2025 — *Deep Koopman operators for causal discovery*.
+- ICLR 2026 — *A Spectral-Grassmann Wasserstein metric for operator representations of dynamical systems*.
+- Nature Communications 2026 — *Adversarial dynamical systems characterize when data-driven learning succeeds or fails*.
+
+Potential GSL thesis:
+> represent each plume observation stream through an operator/dynamical signature and infer source from source-specific dynamics rather than raw concentration values.
+
+Existing-data proxy:
+- fit source-blind AR/finite-dimensional Koopman proxies to log-concentration histories;
+- compare same-source across wind against cross-source distances.
+
+Result:
+- H01 is strong after 150 s: wind/source ratios ~0.116–0.129, 2/2 held-wind identity.
+- H02 is good over 120–240 s (~0.28–0.32, 2/2) but collapses on the late 180–240 s interval: ratio ~1.0 and only 0–1/2 identity.
+- H03 is inconsistent: 120–240 s ratio ~0.94–1.01 with only 1/2 identity; late 180–240 s improves to ~0.67–0.79 and 2/2.
+
+Decision:
+- operator dynamics can expose useful source structure in some regimes but is not stable enough across Houses/horizons to support the main claim.
+- the strongest recent operator papers also frame operator comparison as a general system-classification tool, making a plain “Koopman signature for source ID” conceptually too close to a generic feature substitution.
+
+Status: RESERVE / NO-GO AS M1.
+
+### C10 — Rough-path / path-signature representation
+
+Recent remote-domain anchors:
+- ICLR 2026 — *Random Controlled Differential Equations*, including rough-path/log-signature variants.
+- NeurIPS 2024 — *Rough Transformers: Lightweight and Continuous Time Series Modelling through Signature Patching*.
+- SIAM JCO 2025 — *Stochastic Control with Signatures*.
+- ICLR 2025 physical coarse-graining work already uses path signatures to represent temporal interactions.
+
+Potential GSL thesis:
+> treat gas+wind+time observations as a continuous rough path and infer source from ordered iterated-integral geometry rather than marginal statistics.
+
+Existing-data proxy:
+- construct 4-D paths [time, log gas, wind_u, wind_v];
+- compute exact piecewise-linear signatures through level 2 and level 3;
+- compare held-wind same-source identity against simple path statistics.
+
+Result:
+- H01: level-2/3 signatures reduce or lose held-wind identity in all tested intervals (mostly 1/2 vs simple-stat 2/2).
+- H02: signatures retain 2/2 on long intervals but have much worse wind/source ratios (e.g. 120–240: ~7–8 vs ~0.63 for simple stats); late interval is only 1/2.
+- H03: signatures are usually more wind-contaminated and often drop to 1/2 while simple statistics retain 2/2.
+
+Decision:
+- raw path geometry is dominated by transport/wind variation rather than stable source identity in this evidence.
+- rough-path theory remains mathematically elegant but fails the project-mechanism gate.
+
+Status: NO-GO AS M1.
+
+## Loop-8 consequence
+
+Three high-level alternatives have now failed or weakened under matched existing-data screens:
+1. inverse generative modeling — direct 2026 scientific-inversion collision;
+2. predictive/JEPA representation — no matched linear advantage over PCA;
+3. Koopman/operator identity — unstable across House/horizon;
+4. rough-path signatures — transport contamination dominates source identity.
+
+The next search must prioritize a paradigm whose **unique scientific object** is directly tied to the one project property that remains strongest across audits:
+> source evidence appears only in specific physically supported, intermittent transport events, while average/global representations repeatedly mix source and transport.
+
