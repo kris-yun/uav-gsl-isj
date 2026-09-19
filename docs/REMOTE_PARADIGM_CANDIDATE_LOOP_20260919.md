@@ -251,3 +251,72 @@ Decision:
 - if intrinsic-source representation remains, it must be demonstrated by a stronger paired-dynamics objective with destructive pairing controls; otherwise replace it.
 
 This keeps the main predictive-coding candidate alive while reopening the auxiliary-M2 search.
+
+
+## Loop-4 M2 challenger: Common-vs-Unique Information Decomposition
+
+### Remote provenance
+
+Top-venue 2025/2026:
+- NeurIPS 2025: *Partial Information Decomposition via Normalizing Flows in Latent Gaussian Distributions*.
+  - decomposes target information into redundant, unique and synergistic components and makes PID practical for high-dimensional non-Gaussian representations.
+- ICLR 2026: *Lossy Common Information in a Learnable Gray-Wyner Network*.
+  - explicitly separates common information from task-specific/private information in a learnable representation.
+- ICLR 2026: *Coupled Transformer Autoencoder for Disentangling Multi-Region Neural Latent Dynamics*.
+  - separates shared and private temporal dynamics rather than conflating them.
+- Nature Neuroscience 2026: *Neural population geometry and optimal coding of tasks with shared latent structure*.
+  - independent neuroscience support for cross-context readout of shared latent structure.
+- Nature 2025: *Inter-brain neural dynamics in biological and artificial intelligence systems*.
+  - empirical shared-vs-unique dynamical subspaces across interacting individuals.
+
+### GSL translation
+
+For paired observations of the same source under different transport contexts:
+- information about source that is redundant/shared across transport views is a candidate source-identifying signal;
+- information unique to one wind/transport view is more likely transport-context specific;
+- synergy is retained as a diagnostic rather than assumed useful.
+
+This differs from generic domain invariance:
+- unique transport information is not forced away;
+- the representation is explicitly factorized into common/source and private/transport channels;
+- no source information is assumed before physical support exists.
+
+### Existing-data common-vs-unique proxy
+
+Using aligned 5 s windows from fast and slow histories for the same source:
+- COMMON proxy = mean of paired feature vectors.
+- UNIQUE proxy = half-difference of paired feature vectors.
+- train 120–180 s, evaluate source separation on 180–240 s.
+
+Results:
+- H01:
+  - train source separation: common 0.121 vs unique 0.052.
+  - test source separation: common 0.230 vs unique 0.010.
+  - source classification: common 0.833 vs unique 0.458.
+- H02:
+  - train source separation: common 0.464 vs unique 0.014.
+  - test: common 0.166 vs unique 0.032.
+  - classification: common 0.500 vs unique 0.458; physical support remains the limiting issue.
+- H03:
+  - train source separation: common 0.577 vs unique 0.073.
+  - test: common 0.232 vs unique 0.093.
+  - classification: common 0.667 vs unique 0.667.
+
+Interpretation:
+- across all three Houses, source separation is concentrated much more strongly in the cross-transport common component than the transport-unique component.
+- H02 confirms that common-information decomposition cannot manufacture source identity when support is weak.
+- this premise is stronger than the previous generic wind-invariance and paired-prototype tests.
+
+### Decision
+
+M2 challenger status: STRONGER THAN GENERIC INTRINSIC-IDENTITY ALIGNMENT.
+
+Preferred M2 working concept:
+**Transport-Redundant Source Information (TRSI)**
+
+Training concept:
+- M1 predictive latent segments are produced independently for each transport context.
+- M2 decomposes their source-target information into common/redundant and context-private components.
+- source probability map consumes the common/source channel; private transport channel is retained for prediction and uncertainty, not forcibly erased.
+
+NeurPIR remains a supporting analogy; PID/Gray-Wyner common-information decomposition is now the preferred mathematical basis for M2.
