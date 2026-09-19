@@ -580,3 +580,49 @@ Novelty boundary:
 
 Status:
 - M3 = CONDITIONAL SURVIVOR; requires a source-map replay with sequential calibration before final promotion.
+
+
+## 23. Loop-5 direct GSL collision screen
+
+A direct 2025/2026 search was run for:
+- JEPA / joint-embedding predictive architecture in gas or odor source localization;
+- self-supervised predictive plume representations;
+- contrastive source representation learning;
+- predictive coding for electronic-nose source localization.
+
+Found nearby work:
+- 2026 odor diffusion-state classification using UMAP + K-means on multi-directional sensors; this is unsupervised state clustering, not predictive latent source inference.
+- 2025/2026 electronic-nose drift work using contrastive/domain-adaptation objectives; these address sensor calibration drift, not turbulent source probability maps.
+- 2025 Robotic OSL with LLMs; unrelated paradigm.
+- older eLife turbulent-plume target prediction ranks hand-designed intensity/intermittency features, which makes plain “use intermittency” non-novel but does not implement predictive self-supervised representation learning.
+
+No direct 2025/2026 GSL/OSL paper was found that combines:
+1. source-blind latent prediction on plume histories,
+2. extreme-event-aware preservation of rare plume evidence, and
+3. a PMFS-compatible source probability map under cross-environment shift.
+
+Novelty boundary is therefore narrowed to that combination and its mechanism tests.
+The contribution must not be described generically as “spatiotemporal representation learning for olfaction”.
+
+## 24. External physical-science support beyond ML venue papers
+
+Independent physical-science evidence also supports the premise that sparse observations can reveal governing dynamics without reconstructing every realized detail:
+- Nature Communications 2025: Zhai, Stern & Lai reconstruct unseen nonlinear dynamics from one-time sparse observations using a transformer trained on different synthetic systems.
+- Nature Machine Intelligence 2025: differentiable sparse-field reconstruction emphasizes the ill-posed nature of inferring high-dimensional physical fields from sparse sensors.
+- Nature Machine Intelligence 2026 News & Views: state-first inverse design argues for learning physically meaningful intermediate states rather than direct inverse maps.
+
+These works support the scientific motivation but are not counted as direct novelty provenance for M1.
+
+## 25. Reviewer-risk note
+
+The strongest reviewer attack on the current M1 is now clear:
+
+> “Why is JEPA/predictive representation necessary rather than a generic temporal encoder plus hand-engineered intermittency statistics?”
+
+Required answer before promotion:
+- trained predictive objective must beat an architecture-matched autoencoder/reconstruction objective and a direct supervised encoder on held transport;
+- M2 must show incremental benefit beyond raw whiff/intermittency features;
+- predictive-target time permutation must destroy the M1 benefit;
+- rare-event permutation/truncation must specifically destroy the M2 benefit.
+
+Until those gates are run, the candidate stays provisional.
