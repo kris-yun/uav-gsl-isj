@@ -394,3 +394,49 @@ Consequence:
 > the missing physics is not reducible to a simple gain calibration. A useful correction must be time/context structured, while M2 must prevent the MSE-optimal blank collapse.
 
 This is a positive necessity test for the M1+M2 composition.
+
+
+## 19. Public-data feasibility correction
+
+The validation ladder was re-audited against 2026 public dataset documentation.
+
+### TURB-Smoke — strong mechanistic cross-simulator test
+Scientific Data 2026 provides:
+- DNS of fully resolved 3-D Navier–Stokes turbulence;
+- five distinct point sources;
+- multiple mean-wind strengths;
+- source-resolved Lagrangian particle trajectories;
+- source-resolved 3-D concentration fields and 2-D concentration products.
+
+Use:
+- define a frozen coarse prior (e.g. reduced puff/advection model) before test evaluation;
+- sample DNS along synthetic robot trajectories;
+- test whether the learned discrepancy transfers across wind and source while preserving source rank.
+
+Status: SUITABLE.
+
+### ICASSP 2025 GSL Challenge — preferred real localization benchmark
+The challenge is explicitly built around:
+- real wind-tunnel gas-source localization;
+- high-resolution 3-D gas and wind measurements;
+- controlled train/validation data.
+
+Use:
+- preferred real-data source-localization benchmark, subject to actual dataset access/license and exact split semantics.
+
+Status: SUITABLE IN PRINCIPLE; ACCESS/SPLIT DETAILS MUST BE AUDITED BEFORE FREEZE.
+
+### Red:Vapor 2026 — useful but NOT a multi-source-location localization benchmark
+Scientific Data 2026 documents:
+- 39 wind-tunnel runs;
+- 8 dense raster scans;
+- 22 fly-through trajectories;
+- multiple sensors and four obstacle/landscape setups.
+However, the synthetic source is the same physical outlet in all experiments; its location on the turntable remains fixed (although the turntable/setup orientation changes).
+
+Therefore:
+- do not claim Red:Vapor as an independent multi-source-position localization benchmark;
+- use it for real-plume response correction, sensor-dynamics transfer, obstacle/geometry shift, and route/fly-through robustness;
+- source-location ranking across multiple ground-truth source positions requires another real dataset such as the ICASSP challenge.
+
+This correction prevents overstating cross-dataset localization validation.
