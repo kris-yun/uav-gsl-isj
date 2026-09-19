@@ -1,0 +1,20 @@
+{
+  "date": "2026-09-19",
+  "test": "linear predictive proxy with tail-statistics increment",
+  "data": "12 controlled histories: H01/H02/H03 x SA/SB x fast/slow",
+  "protocol": "fit source-independent current-window to next-window ridge predictor on fast-wind 0-180 s; train two-source nearest-centroid probe on fast 120-180 s; evaluate slow 180-240 s",
+  "aggregate": {
+    "5s": {"direct":"44/66","predictive":"41/66","tail":"40/66","predictive_plus_tail":"40/66"},
+    "10s":{"direct":"18/30","predictive":"20/30","tail":"20/30","predictive_plus_tail":"19/30"},
+    "20s":{"direct":"8/12","predictive":"8/12","tail":"8/12","predictive_plus_tail":"8/12"}
+  },
+  "verdict": {
+    "predictive_representation": "NO_STRONG_PROXY_ADVANTAGE",
+    "tail_increment": "NO_INCREMENTAL_ADVANTAGE_IN_THIS_PROXY"
+  },
+  "interpretation": [
+    "predictive proxy is window-scale sensitive rather than uniformly superior",
+    "tail statistics do not add a robust increment to predictive features here",
+    "the earlier H01 tail-feature rescue is insufficient for a general auxiliary-innovation claim"
+  ]
+}
