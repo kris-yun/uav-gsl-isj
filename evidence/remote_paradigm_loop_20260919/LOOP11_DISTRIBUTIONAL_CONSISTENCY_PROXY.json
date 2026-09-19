@@ -1,0 +1,18 @@
+{
+  "date":"2026-09-19",
+  "loop":"11",
+  "candidate":"distributional consistency / distribution-level data fidelity",
+  "data":"12 controlled histories H01/H02/H03 x SA/SB x fast/slow",
+  "protocol":"same-time slow-wind observation windows matched against fast-wind source-conditioned windows; compare pointwise RMSE with 1D Wasserstein, quantile distance and empirical CDF/KS distance; windows 5/10/20 s; three time configurations",
+  "results":{
+    "config_A":{"5s":{"rmse":"102/144","w1":"102/144","qdist":"102/144","ks":"101/144"},"10s":{"rmse":"52/72","w1":"52/72","qdist":"52/72","ks":"52/72"},"20s":{"rmse":"27/36","w1":"28/36","qdist":"28/36","ks":"25/36"}},
+    "config_B":{"5s":{"rmse":"99/144","w1":"99/144","qdist":"99/144","ks":"96/144"},"10s":{"rmse":"51/72","w1":"51/72","qdist":"51/72","ks":"52/72"},"20s":{"rmse":"27/36","w1":"28/36","qdist":"28/36","ks":"26/36"}},
+    "config_C":{"5s":{"rmse":"85/120","w1":"85/120","qdist":"85/120","ks":"83/120"},"10s":{"rmse":"44/60","w1":"44/60","qdist":"44/60","ks":"45/60"},"20s":{"rmse":"23/30","w1":"23/30","qdist":"23/30","ks":"22/30"}}
+  },
+  "verdict":"NO_STRONG_UNIVERSAL_ADVANTAGE",
+  "decision":[
+    "distribution-level matching occasionally helps longer windows but is mostly equivalent to pointwise matching",
+    "the current proxy does not justify distributional consistency as the paper-defining M1",
+    "ICLR 2026 distributional-consistency loss remains possible auxiliary tooling only if a stochastic forward model later needs calibrated data fidelity"
+  ]
+}
