@@ -346,3 +346,96 @@ with:
 - M3 preserved source dynamics across transport contexts.
 
 Status remains OFFLINE FALSIFICATION ONLY.
+
+
+## 18. Loop-4: preserved-dynamics alignment falsified in its simple form
+
+A fixed held-time proxy was used to test whether explicit cross-wind alignment is safe.
+
+Protocol:
+- 120–180 s used only to estimate a same-source fast-minus-slow nuisance direction from fixed 10 s windows.
+- 180–240 s used as held time.
+- the predictive+tail feature was projected orthogonally to the learned nuisance direction.
+- no posterior or localization outcome was used to fit the direction.
+
+Results:
+- H01 pair identity: raw 12/12 -> projected 9/12; same-source/cross-source distance ratio 0.212 -> 0.407.
+- H02: 10/12 -> 10/12; ratio 0.981 -> 0.977 (essentially neutral).
+- H03: 12/12 -> 11/12; ratio 0.305 -> 0.383.
+
+A second context-conditioning proxy that appended local wind to a source-blind next-window predictor did not provide a consistent improvement and generally increased the held-wind/source separation ratio.
+
+Decision:
+> direct nuisance removal, global identity alignment, or naive explicit wind conditioning is not supported as Auxiliary B.
+
+This agrees with prior project evidence that candidate-dependent transport effects cannot simply be centered/projection-removed.
+
+Therefore the CANDY / intrinsic-identity idea is retained as literature context but **rejected as a current auxiliary innovation** unless a future mechanism shows an actual positive gate.
+
+## 19. Loop-4 replacement Auxiliary B — structured shift-aware source regions
+
+Recent top-venue provenance:
+- ICLR 2025 — *Wasserstein-Regularized Conformal Prediction under General Distribution Shift*.
+- ICML 2025 — *Optimal transport-based conformal prediction*.
+- ICML 2025 — *Volume Optimality in Conformal Prediction with Structured Prediction Sets*.
+- ICML 2025 — *Online Conformal Prediction via Online Optimization*.
+
+Project mechanism:
+- PMFS/M1 can become sharply confident while wrong.
+- raw physical ordering can be useful while the probability-map adapter degrades truth rank.
+- simulator/House/real-sensor shift is a primary intended validation axis.
+
+Scientific transfer:
+- the source probability map remains the inference output;
+- the auxiliary constructs a **spatially structured source region** from that map with explicit coverage calibration;
+- under distribution shift the region expands / abstains rather than converting unsupported confidence into a false point source.
+
+This is more compatible with project evidence than trying to force transport invariance.
+
+Status: ACTIVE AUXILIARY B.
+
+## 20. Current 1+2 after four screening loops
+
+### M1 MAIN — Predictive Self-Supervised Physical Representation
+Primary anchor:
+- ICLR 2026, *Representation Learning for Spatiotemporal Physical Systems*.
+
+Main scientific claim:
+> source-relevant physical structure should be learned through latent prediction rather than full plume reconstruction or direct raw-signal classification.
+
+### M2 AUX — Extreme-Event-Aware Intermittency Preservation
+Primary anchor:
+- Nature Communications 2026, *Extreme Event Aware (η-) Learning*.
+
+Why necessary:
+- generic predictive compression loses H01-style rare source-defining events.
+- fixed tail observables restore held-wind source identity in the existing proxy.
+
+### M3 AUX — Structured Shift-Aware Source Region
+Primary anchors:
+- ICLR/ICML 2025 conformal-under-shift and structured/OT conformal prediction.
+
+Why necessary:
+- project evidence contains confident-wrong posteriors and raw-rank→probability-map degradation.
+- cross-dataset robustness requires uncertainty that reacts to shift.
+
+## 21. Current evidence score
+
+Main candidate passes four distinct project checks:
+
+1. **physical support sanity** — predictive representation creates no source identity before support exists.
+2. **transport nuisance test** — predictable components are often more source-dominant than innovations after support.
+3. **rare-event destructive test** — generic prediction can destroy H01 identity; M2 tail preservation rescues it.
+4. **alignment negative control** — simple nuisance removal/alignment worsens H01/H03, preventing an unjustified invariance module.
+
+This is a stronger scientific chain than the previous inverse-generative and causal candidates because it contains both positive and negative discriminators from existing data.
+
+## 22. Remaining kill conditions before promotion
+
+Kill the whole 1+2 if any of the following occurs:
+- direct 2025/2026 GSL work already implements predictive self-supervised latent plume learning with rare-event preservation and cross-environment source-map inference;
+- a trained lightweight JEPA proxy fails to beat reconstruction/direct-encoding on held wind/source ranking;
+- η-style tail preservation only duplicates raw amplitude features and gives no incremental source evidence after a learned predictive encoder;
+- structured conformal regions become nearly map-wide under the intended shifts;
+- TURB-Smoke and Red:Vapor cannot supply compatible trajectory windows and source labels for the same model interface.
+
