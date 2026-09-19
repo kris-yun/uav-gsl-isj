@@ -626,3 +626,41 @@ Required answer before promotion:
 - rare-event permutation/truncation must specifically destroy the M2 benefit.
 
 Until those gates are run, the candidate stays provisional.
+
+
+## 27. Loop-7 stronger predictive-vs-reconstruction falsification
+
+A linear latent-prediction baseline was built to test the core M1 claim against an architecture-matched reconstruction baseline.
+
+Protocol:
+- source labels were not used to learn either representation;
+- 5 s past log-concentration windows predicted the next 5 s;
+- training used both sources under fast wind;
+- predictive subspace = leading eigenvectors of C_xy C_yx (future-predictive PLS/PSR proxy);
+- reconstruction subspace = leading eigenvectors of C_xx (PCA proxy);
+- held evaluation used slow-wind windows;
+- source identity was evaluated only after the unsupervised subspaces were frozen.
+
+Results, latent dimension 4:
+- H01: PRED 0.607 accuracy, PCA 0.607; mean margins essentially identical.
+- H02: PRED 0.598, PCA 0.598; margins essentially identical.
+- H03: PRED 0.750, PCA 0.750; margins essentially identical.
+
+Dimension sweep k=1,2,3,4,6:
+- no reproducible predictive advantage over PCA.
+- H03 k=1 has a tiny accuracy edge (0.768 vs 0.759), but H01 k=1 is slightly worse and H02 is identical.
+- the two subspaces become nearly equivalent because the dominant variance modes in these short controlled traces are also the dominant linearly predictable modes.
+
+Decision:
+> the present evidence does **not** justify “predictive latent learning beats reconstruction” as a validated mechanism.
+
+This is a hard downgrade of the current M1.
+
+The earlier moving-average and classifier proxies showed that predictive structure can be useful, but the stronger matched linear comparison fails to separate the predictive objective from generic reconstruction.
+
+### Revised status
+
+- Predictive/JEPA M1: CONDITIONAL / NOT YET PRIMARY.
+- It may survive only if a nonlinear masked-prediction model produces a mechanism-specific gain that survives architecture-matched autoencoding and direct supervised baselines.
+- Because this would require a new trained-model experiment rather than a clear existing-data premise, the search loop must reopen for alternative M1 paradigms with stronger evidence on current data.
+
