@@ -1301,3 +1301,105 @@ Current auxiliary ranking:
 1. M2 extreme-event-aware intermittency preservation — STRONG.
 2. M3 structured shift-aware source region — STRONG.
 3. multiscale partial-observability memory — RESERVE IMPLEMENTATION IDEA ONLY.
+
+
+## 28. Loop-7: temporal-transformation auxiliary from CVPR 2026
+
+A newer top-conference idea was screened as a replacement for the mixed multiscale-memory auxiliary.
+
+Remote-domain provenance:
+- **CVPR 2026 — TimeBridge: Self-Supervised Video Representation Learning via Start-End Joint Embedding and In-Between Frame Prediction**.
+  - learns temporal transformations rather than only static frame identity;
+  - uses start/end representations plus prediction of the in-between evolution;
+  - explicitly targets temporal consistency and lightweight decoding.
+
+GSL translation:
+- start/end gas states alone may be ambiguous;
+- the **shape of the transition between them** can contain source-dependent transport information;
+- a lightweight bridge head should encode the in-between temporal evolution without reconstructing the full plume field.
+
+### Existing-data bridge proxy
+
+For each held 180–240 s segment:
+- split into fixed 5/10/20 s windows;
+- represent endpoints separately;
+- compute the residual temporal shape relative to linear start-end interpolation (“bridge” feature);
+- compare source separation against same-source wind separation.
+
+Key results:
+
+**H02**
+- 5 s windows:
+  - endpoint-only: wind/source ratio 1.014, held-wind identity 1/2;
+  - bridge-only: ratio 0.536, identity 2/2;
+  - endpoint+bridge: ratio 0.582, identity 2/2.
+- 10/20 s bridge windows do not help, indicating a short-timescale effect.
+
+**H03**
+- 5 s:
+  - endpoint-only ratio 0.602, identity 1/2;
+  - bridge-only ratio 0.462, identity 2/2.
+- 10 s:
+  - endpoint-only ratio 0.792, identity 1/2;
+  - bridge-only ratio 0.309, identity 2/2.
+- 20 s:
+  - endpoint-only ratio 0.769, identity 1/2;
+  - bridge-only ratio 0.450, identity 2/2.
+
+**H01**
+- bridge features remain 2/2 at all tested widths;
+- at 20 s the bridge ratio improves from endpoint 0.210 to 0.091.
+
+Interpretation:
+- temporal transition shape contains source information not present in endpoints alone;
+- the effect is strongest at short windows in H02/H03 and a longer window in H01;
+- this is consistent with the project's earlier first-passage/timing evidence;
+- the timescale is environment-dependent, so the final module must not hard-code one window.
+
+Status:
+**Temporal bridge / transformation representation = STRONG AUXILIARY CANDIDATE.**
+
+## 29. Revised auxiliary ranking after loop 7
+
+1. **M2 Extreme-event-aware intermittency preservation** — strong, supported by Nature Communications 2026 and existing H01/H02 rescue tests.
+2. **M3 Temporal bridge representation** — strong, supported by CVPR 2026 and positive held-time source-discrimination proxies in H01/H02/H03.
+3. Structured shift-aware conformal source regions — reserve reliability layer, not currently counted among the three main innovations.
+4. Multiscale partial-observability memory — demoted to implementation option.
+
+## 30. Current leading 1+2
+
+### Main innovation — Intrinsic / Preserved Source Dynamics
+Top-venue roots:
+- ICLR 2025 intrinsic dynamical identity;
+- NeurIPS 2025 Spotlight preserved dynamics across sessions.
+
+Main thesis:
+> a source is a persistent hidden dynamical identity observed through changing transport contexts; localization should infer this preserved identity rather than classify raw plume realizations.
+
+### Auxiliary 1 — Extreme-event-aware intermittency preservation
+Top-journal root:
+- Nature Communications 2026 η-learning.
+
+Role:
+> preserve rare, source-informative whiffs/onsets that a representation optimized for average/predictable dynamics can erase.
+
+### Auxiliary 2 — Temporal transformation / bridge representation
+Top-conference root:
+- CVPR 2026 TimeBridge.
+
+Role:
+> encode the in-between transition geometry of short plume segments, because endpoint values alone can remain source-ambiguous.
+
+### Output
+A lightweight source head converts the fused representation into the PMFS-compatible source-location probability map.
+
+## 31. Next hard gate
+
+Before any closed-loop or heavy network training:
+- construct a fixed lightweight learned proxy that jointly uses:
+  1. source-intrinsic metric learning,
+  2. η/tail constraints,
+  3. bridge-transition features;
+- train only on frozen development source×transport histories;
+- test held time and held wind;
+- require each auxiliary to produce an incremental improvement over the previous arm, with destructive controls.
