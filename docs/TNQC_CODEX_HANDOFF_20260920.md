@@ -237,7 +237,40 @@ Theory/search records:
 
 ---
 
-## 5. Codex execution order — do not tune before truth evaluation
+## 5. Codex execution order — VGR 300-s offline gate before closed loop
+
+### Stage 0 — full-budget native VGR export and fixed-trajectory TNQC replay
+
+Run the repository-level offline gate first:
+
+```bash
+python3 reference/test_tnqc_vgr_fixed_trajectory_replay.py
+bash reference/run_tnqc_vgr_offline_gate_20260920.sh
+```
+
+The driver runs only native PMFS online (`TNQC_MODE=off`) on
+House01/02/03 x seed0/1 for the full 300-s budget.  The resulting trajectory,
+measurements, wind estimate, PMFS candidate bank and quadtree refinement are
+then frozen.  `tnqc_vgr_fixed_trajectory_replay.py` reconstructs the native
+PMFS posterior from the exported candidate-support alignment, validates that
+reconstruction against the exported native posterior, and only then computes
+the counterfactual TNQC-fused posterior.
+
+This is the project-level offline localization gate.  Orebro is not used in
+the GO decision.
+
+The aggregate file is:
+
+```
+<run-root>/tnqc_vgr_300s_offline_gate.json
+```
+
+Closed loop is authorized only when all six native-reconstruction audits pass
+and `go_for_closed_loop=true`.  The frozen criterion is >=10% pooled final
+top-5% error reduction, >=4/6 improved pairs, <=25% worst single-pair
+degradation, and no false-confident collapse.
+
+If the gate is HOLD, stop without tuning from House truth.
 
 ### Stage A — checkout/build/sanity
 
@@ -381,11 +414,11 @@ Key commits already on `main`:
 
 The scientifically correct status at handoff is:
 
-**TNQC OFFLINE POSITIVE / CLOSED-LOOP PENDING.**
+**TNQC MECHANISM/CODE PATH READY / VGR 300-S LOCALIZATION SIGN PENDING.**
 
 
 ## 9. Corrected handoff status
 
 Do not interpret the Orebro classification-style probe as a localization result. The project endpoint is the final 300-s PMFS top-5% expected-location error on VGR/GADEN House01/02/03.
 
-**Handoff status: VGR 300-S OFFLINE GATE PENDING — CLOSED LOOP NOT AUTHORIZED YET.**
+**Handoff status: RUN THE IMPLEMENTED VGR 300-S OFFLINE GATE; CLOSED LOOP ONLY AFTER AN EXPLICIT GO RESULT.**
