@@ -1292,3 +1292,51 @@ The main-candidate search remains open.
 The next M1 challenger must satisfy a stricter criterion:
 > its unique remote-field scientific object must outperform matched simple temporal/event baselines across the existing House/horizon panel, not only on selected positive cases.
 
+
+
+## Loop-13 — extreme-event-aware learning tested as a possible M1
+
+Primary remote source:
+- Nature Communications 2026, Chang & Sapsis, *Extreme Event Aware (η-) Learning*.
+
+Direct odor/plume collision boundary:
+- turbulent-odor literature already uses whiff/blank duration, intermittency, concentration tails and timing to infer source distance or drive source search;
+- a 2024 Royal Society study shows source distance can be predicted from integrated odor statistics over 5–10 s in large outdoor plumes;
+- eLife work on turbulent odor plumes already compares intensity, blanks, whiffs and intermittency for target localization.
+
+Therefore the novelty cannot be “rare whiffs contain source information” or “use intermittency statistics”.
+The transferable 2026 novelty is specifically η-learning: impose statistics of an extreme-regime observable during representation/model learning so that rare regimes are not erased by the dominant quiescent data.
+
+### Matched existing-data screen
+
+Fixed source-blind representations were compared on the same H01/H02/H03 × {SA,SB} × {fast,slow} panel at 120/180/240 s:
+- tail/intermittency vector: q95, q99, max, top-1% mean, fixed-threshold exceedance fractions, first arrival;
+- central-distribution vector;
+- full physically interpretable event/exposure moments.
+
+Key results:
+- H02 180 s: tail ratio 0.038 vs central 0.418 and full moments 0.252; all tail 2/2.
+- H02 240 s: tail 2/2, ratio 0.102; central/full moments each only 1/2.
+- H03 120 s: tail 2/2, ratio 0.169 vs central 0.401.
+- H01 240 s: tail 2/2, ratio 0.152 vs central 0.510.
+- but H01 180 s: tail only 1/2 while full moments are 2/2.
+- H03 240 s: tail only 1/2 while central/full moments are 2/2.
+- H02 120 s: all methods collapse to 0/2, preserving the no-support control.
+
+### Decision
+
+EXTREME_EVENT_AWARE_LEARNING_AS_M1 = NO-GO.
+
+Reason:
+- the rare/intermittent branch is strongly useful in specific sparse-plume regimes but is not sufficient to carry source identity across all Houses/horizons;
+- its raw observable family has substantial prior odor-plume precedent;
+- its strongest value is as a **second innovation that protects M1 from rare-event erasure**, not as the full inference paradigm.
+
+M2_EXTREME_EVENT_AWARE_ETA = RETAINED / STRONG AUXILIARY.
+
+The M2 novelty claim, if retained, must be:
+> η-style distributional regularization of the learned source representation using physically defined intermittency/extreme observables,
+
+not:
+> whiff statistics are useful.
+
