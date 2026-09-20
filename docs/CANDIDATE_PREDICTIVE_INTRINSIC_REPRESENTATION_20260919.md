@@ -862,3 +862,64 @@ Consensus status:
 - M3 structured shift-aware source regions: 3/4 positive; empirical feasibility still untested with sufficient independent calibration cases.
 
 No GO decision yet.
+
+
+## 29. Loop-8: M3 upgraded to 2026 structured/adaptive conformal source areas
+
+Newer 2026 top-venue support strengthens the uncertainty auxiliary:
+
+- ICLR 2026 — *JAPAN: Joint Adaptive Prediction Areas with Normalising Flow*.
+  - constructs compact, potentially disjoint, context-adaptive prediction areas;
+  - retains finite-sample conformal coverage;
+  - specifically targets multimodal predictive geometry where simple residual balls/convex regions are inefficient.
+
+- ICLR 2026 — *Distribution-informed Online Conformal Prediction*.
+  - incorporates predictable score-distribution structure into online conformal updating;
+  - retains valid coverage while avoiding overly conservative sets under evolving distributions.
+
+- ICLR 2026 — robust conformal methods under corrupted labels / covariate shift provide additional evidence that calibration can be adapted to non-i.i.d. deployment conditions.
+
+Revised M3:
+> **Adaptive Structured Conformal Source Areas**
+
+Mapping:
+- model output = spatial source probability map;
+- nonconformity = probability/density/rank score attached to candidate source cells;
+- conformal set = a compact, potentially disconnected spatial region of plausible sources;
+- online/shift-aware update = calibration adapts as House/simulator/sensor distribution changes.
+
+Why this is a better auxiliary than generic confidence calibration:
+- GSL posteriors can be multimodal because obstacles/transport create several plausible source regions;
+- a single radius/ellipse is physically inappropriate;
+- disconnected conformal source areas preserve the map's geometry while attaching a statistical reliability layer.
+
+Existing project limitation:
+- the repository does not currently expose enough independent full per-case source maps on the research branch to run a valid conformal coverage study without pretending time samples are independent.
+- therefore M3 receives literature/architectural PASS but empirical calibration remains PENDING until independent maps/cases are assembled.
+
+Status M3: STRONG AUXILIARY CANDIDATE / EMPIRICAL PENDING.
+
+## 30. Current evidence-backed architecture after eight loops
+
+M1 MAIN:
+**Predictive Coding for Turbulent Source Inference**
+- scientific mother idea: predictive coding / predictive processing;
+- latest physical-ML realization: latent predictive representation learning (ICLR 2026);
+- evidence object: candidate-specific prediction error / predictive latent compatibility.
+
+M2 AUX:
+**Extreme-Event-Aware Intermittency Preservation**
+- scientific source: η-learning, Nature Communications 2026;
+- role: prevent M1 from fitting common/quiescent dynamics while erasing rare source-defining plume events;
+- final mechanism must regularize the learned representation with extremeness statistics, not simply concatenate old whiff/blank features.
+
+M3 AUX:
+**Adaptive Structured Conformal Source Areas**
+- source: ICLR 2026 structured/adaptive conformal prediction;
+- role: turn the PMFS-compatible probability map into a calibrated, possibly disconnected source region under dataset/environment shift.
+
+Current hierarchy:
+- M1 supplies the paper-level main narrative.
+- M2 repairs a demonstrated failure of M1 on rare/intermittent evidence.
+- M3 repairs reliability under distribution shift without changing the source inference core.
+
