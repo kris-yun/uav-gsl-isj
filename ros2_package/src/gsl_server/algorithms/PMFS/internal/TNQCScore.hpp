@@ -116,15 +116,20 @@ namespace GSL::PMFS_internal::TNQC
         if (edgeWeightSum > 0.0)
             out.localOrderAgreement = std::clamp(signedAgreement / edgeWeightSum, -1.0, 1.0);
 
-        // Equal-weight fusion deliberately has no fitted parameter. The
-        // confidence-weighted support factor makes evidence accumulate with
-        // independent support; the cap is numerical protection only.
+        // Equal-weight fusion deliberately has no fitted parameter.
+        //
+        // Do NOT multiply this effect by sqrt(effectiveSupport): PMFS hit-map
+        // cells are spatially smoothed/correlated and therefore are not
+        // independent observations.  Treating cell count as an iid sample
+        // size would create pseudo-replication and can make a quotient score
+        // overwhelm the native likelihood.  Confidence still enters through
+        // the weighted means/cosine and local-edge weights; effectiveSupport
+        // is retained as a diagnostic.  The online likelihood modifier is
+        // consequently bounded to exp([-1,1]).
         out.combinedEffect = out.edgeCount >= 2
             ? 0.5 * (out.canonicalCosine + out.localOrderAgreement)
             : out.canonicalCosine;
-        out.standardizedEvidence = std::clamp(
-            std::sqrt(std::max(1.0, out.effectiveSupport)) * out.combinedEffect,
-            -8.0, 8.0);
+        out.standardizedEvidence = out.combinedEffect;
         out.valid = std::isfinite(out.standardizedEvidence);
         return out;
     }
