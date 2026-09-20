@@ -1,8 +1,8 @@
-# TNQC offline advancement gate — 2026-09-20
+# TNQC external representation stress test — 2026-09-20
 
 ## Frozen claim boundary
 
-This file records the last offline gate before any new House01/02/03 closed-loop run. No House source truth may be used to change the equations below after this checkpoint.
+This file records an **external auxiliary representation stress test only**. It is not the project-level offline advancement gate for House01/02/03 localization. The required project gate is the VGR/GADEN 300-s final localization replay recorded in `docs/TNQC_VGR_300S_CORRECTION_20260920.md`.
 
 Main candidate: **Transport-Nuisance Quotient Canonicalization (TNQC)**.
 
@@ -80,6 +80,10 @@ The local-order component is therefore an auxiliary robustness mechanism, not th
 
 shadow computes TNQC diagnostics while preserving the native PMFS score. fused multiplies the native candidate score by exp(TNQC evidence). only removes the native likelihood and is a mechanism ablation.
 
+## Historical closed-loop proposal — superseded by VGR offline hold
+
+The matrix proposal below remains useful as the eventual closed-loop protocol, but it is **not authorized to start** until the VGR/GADEN fixed-trajectory 300-s offline localization replay produces an explicit GO.
+
 ## Pre-registered closed-loop decision gate
 
 Run House01/02/03, seeds 0/1 with the same 300 s budget and stepsSourceUpdate=3.
@@ -112,3 +116,10 @@ Closed-loop matrix after the installed launch overlay exposes tnqc_mode:
 ## Local implementation sanity check
 
 The standalone TNQC score test was compiled with C++20 and `-Wall -Wextra -Wpedantic -Werror` against the frozen header and passed all assertions for affine invariance, monotone local-order invariance, negative reversed-field evidence, and insufficient-support abstention.
+
+
+## Corrected status
+
+The 2/5/10-min Orebro numbers establish only an external representation signal. They do not establish 300-s gas-source localization gain on the project's VGR House benchmark.
+
+**Status: AUXILIARY EXTERNAL SIGNAL ONLY / VGR 300-S OFFLINE GATE PENDING / CLOSED LOOP HOLD.**
