@@ -151,3 +151,56 @@ Next gate:
 - reconstruct the source-update evidence sequence from archived PMFS/M1 runs;
 - quantify whether native map multiplication produces evidence growth unsupported by genuinely new completed sensing blocks;
 - build the smallest event-level e-process proxy and run duplicate/spatial-replication/null-support destructive controls before integrating it with M1/M2.
+
+## 11. Existing closed-loop evidence for the counting problem
+
+The repository already contains a particularly strong falsification/repair sequence.
+
+### CORE-M1S seed11
+
+docs/PMFS_CORE_M1S_HOUSE123_SEED11_RESULT_20260908.md reports:
+- preregistered majority gate PASS (H01/H02 improved, H03 failed);
+- in H03, posterior entropy collapsed to 0.694881 over two candidates while localization slightly worsened;
+- runtime attribution found that one chosen sensing position was held for eight internal 2 s measurement blocks;
+- M1S treated all eight as independent position interventions;
+- a typical source window therefore used **24 likelihood factors for only three newly executed sensing positions**.
+
+The project diagnosis was explicit: **temporal composite-likelihood overconfidence**.
+
+This is exactly the type of evidence-accounting pathology that an event-filtration formulation must prevent.
+
+### Existing partial repair
+
+The frozen follow-up M1P retained the event-time contrast but recorded only the terminal measurement block of each completed physical sensing stop.
+
+Separately, CORE-M1E used disjoint sequential event windows and achieved:
+- H01 final +0.480 m, AUC +82.279 m s;
+- H02 final -1.503 m, AUC +0.440 m s;
+- H03 final +2.279 m, AUC +105.469 m s;
+- mean final +0.419 m and mean AUC +62.730 m s.
+
+This does not validate an e-process. It does show that **changing the evidential unit from repeated internal blocks toward disjoint genuinely new events materially changes closed-loop behavior**.
+
+### Consequence
+
+The M3 premise is no longer merely source-code suspicion.
+
+There are now three independent project facts:
+1. native PMFS spatially propagates one observation and later multiplies per-cell compatibility factors;
+2. M1S explicitly overcounted 24 likelihood factors for three physical sensing positions and produced an overconfident H03 failure;
+3. disjoint sequential event windows are already technically feasible and have produced real cross-House development gains.
+
+Therefore the remaining research question is not whether evidence duplication can occur; it can.
+The open question is whether a **formally anytime-valid event-level evidence process** gives an incremental advantage over the already implemented disjoint sequential likelihood baseline.
+
+## 12. Updated gate
+
+M3 advances only if, on the same frozen event scores:
+
+- duplicate internal blocks cannot increase evidence;
+- three physical stops produce at most three admissible evidence increments;
+- arbitrary source-update stopping times remain valid;
+- candidate elimination or map contraction is less overconfident than ordinary composite-likelihood accumulation;
+- and the method improves calibration/rank without simply flattening every map.
+
+If ordinary disjoint sequential likelihood already matches the e-process on all these controls, M3 is rejected as unnecessary theory.
