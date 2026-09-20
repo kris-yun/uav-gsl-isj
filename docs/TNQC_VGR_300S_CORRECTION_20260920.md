@@ -29,7 +29,7 @@ The main paired development set remains:
 - House02 seed0/1;
 - House03 seed0/1.
 
-The existing frozen reference matrix for the prior ME-ACI V10 work is:
+The existing frozen reference matrix for the prior ME-ACI V10 work is shown below **only as a historical first-identifiable-intervention snapshot**. These values were evaluated at the first accepted ME-ACI source update (72.851–217.811 simulation seconds depending on case), not at the final 300-s endpoint:
 
 | House | seed | native PMFS top-5% error m | ME-ACI V10 top-5% error m |
 |---|---:|---:|---:|
@@ -40,7 +40,7 @@ The existing frozen reference matrix for the prior ME-ACI V10 work is:
 | H03 | 0 | 6.652648 | 2.863832 |
 | H03 | 1 | 5.219942 | 2.982003 |
 
-Those values are reference endpoints only; they do not imply anything about TNQC.
+Those values must **not** be used as the 300-s baseline for TNQC and must not be mixed into the VGR 300-s gate. They are historical ME-ACI development evidence only. The new TNQC gate regenerates native PMFS trajectories through the full 300-s budget and evaluates the last source posterior at or before that budget.
 
 ## Required offline TNQC gate before Codex closed loop
 
