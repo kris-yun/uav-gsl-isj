@@ -1248,3 +1248,56 @@ Current strongest 1+2 candidate:
 This combination now satisfies the requested venue standard more cleanly than the earlier JEPA-only framing.
 
 Still OFFLINE FALSIFICATION ONLY.
+
+
+## 26. Loop-6 multiscale partial-observability proxy
+
+The NeurIPS 2025 multiscale partial-observability idea was tested with a fixed equal-dimensional history representation.
+
+Protocol:
+- compare 12 uniform history bins against 12 multiscale bins;
+- multiscale bins allocate finer resolution to the latest 60 s, medium resolution to the previous 60 s, and coarse resolution to older history;
+- no source labels, no outcome tuning.
+
+Results:
+
+H02:
+- 180 s wind/source ratio: 0.055 (uniform) -> 0.029 (multiscale), both 2/2 held-wind identity.
+- 240 s: 0.029 -> 0.033, no improvement.
+
+H03:
+- 180 s: 0.289 -> 0.251, both 2/2.
+- 240 s: 0.392 -> 0.427, worse.
+
+H01:
+- 180 s: 0.339 -> 0.330, small improvement.
+- 240 s: 0.146 -> 0.212, worse.
+
+At 120 s, H02 remains non-identifiable under both representations.
+
+Decision:
+> the multiscale partial-observability principle is useful as an implementation option, but the current evidence does not support it as a stable auxiliary innovation.
+
+Status M3-multiscale: DEMOTED.
+
+## 27. Auxiliary B restored to structured shift-aware uncertainty
+
+Because the multiscale-memory proxy is mixed, the stronger third contribution candidate returns to:
+
+**Structured shift-aware source-region calibration**
+
+Top-venue provenance:
+- ICLR 2025 — *Wasserstein-Regularized Conformal Prediction Under General Distribution Shift*.
+- ICML 2025 — *Volume Optimality in Conformal Prediction with Structured Prediction Sets*.
+- NeurIPS 2025 — *Conformal Prediction for Time-series Forecasting with Change Points*.
+
+Why this survives the project evidence better:
+- it does not assume transport nuisance can be removed;
+- it does not create source information before support exists;
+- it directly addresses the documented confident-wrong posterior failure;
+- it is naturally lightweight and can be attached to any source probability map.
+
+Current auxiliary ranking:
+1. M2 extreme-event-aware intermittency preservation — STRONG.
+2. M3 structured shift-aware source region — STRONG.
+3. multiscale partial-observability memory — RESERVE IMPLEMENTATION IDEA ONLY.
