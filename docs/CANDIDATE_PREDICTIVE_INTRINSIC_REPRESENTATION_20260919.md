@@ -923,3 +923,58 @@ Current hierarchy:
 - M2 repairs a demonstrated failure of M1 on rare/intermittent evidence.
 - M3 repairs reliability under distribution shift without changing the source inference core.
 
+
+
+## 31. Loop-9 destructive temporal control: simple AR proxy is NOT sufficient evidence
+
+A time-order destructive control was run on the source-conditioned AR proxy:
+- forward slow-wind trace;
+- fully time-reversed held window;
+- 5 s block-reversed held window.
+
+Result:
+- source ranking was largely unchanged under reversal in H01/H02 and in the informative H03 120–180 s window.
+- prediction error magnitude often increased, but candidate ranking often survived.
+
+Decision:
+> the simple AR result is partly driven by source-specific amplitude/distribution structure and does NOT by itself establish a load-bearing temporal predictive mechanism.
+
+Therefore the AR proxy is downgraded from positive mechanism evidence to a weak sanity check.
+
+### Stronger existing evidence already in the repository
+
+The frozen CTT H01 audit provides a substantially cleaner temporal premise:
+
+Native 0.2 s first-passage observable over 1280 leave-one-transport-member-out cases:
+- full first-passage mean normalized rank = 0.1417109;
+- survival-only = 0.2564070;
+- TIME-PERMUTE = 0.1573191;
+- phase-label shuffle = 0.3040221;
+- full vs survival: 788 wins / 283 losses / 209 ties, p = 6.56e-56;
+- full vs TIME-PERMUTE: 346 / 175 / 759, p = 2.84e-14;
+- full vs phase-label shuffle: 781 / 322 / 177, p = 7.69e-45.
+
+This establishes that **native temporal phase / first-passage structure is genuinely source-informative**.
+
+Equally important, the same audit contains a negative result:
+- compressing 80 native samples into eight coarse HIT bits destroys the phase mechanism;
+- multiple small neural first-passage surrogates failed to preserve the native temporal source information under held conditions.
+
+Scientific implication for M1:
+> the problem is not merely to “use temporal prediction”; it is to learn a latent predictive representation that preserves native source-relevant phase while avoiding reconstruction of stochastic detail.
+
+This is a much better match to the ICLR 2026 physical-representation result than the AR toy proxy:
+- full low-level reconstruction is unnecessary/fragile;
+- coarse event compression loses source information;
+- the desired object is a compact latent predictive state that retains governing/source-relevant temporal structure.
+
+Scientific implication for M2:
+> η-learning-style rare/intermittent constraints should be evaluated specifically by whether they preserve the CTT-native phase advantage under compression, not by whether they reproduce old whiff/blank features.
+
+Revised evidence status:
+- M1 literature foundation: STRONG.
+- M1 physical premise from native temporal data: STRONG.
+- M1 current learned realization: UNVALIDATED.
+- M2 rationale: STRONG, because learned surrogates demonstrably lose rare/phase information.
+- M3: literature STRONG, empirical PENDING.
+
