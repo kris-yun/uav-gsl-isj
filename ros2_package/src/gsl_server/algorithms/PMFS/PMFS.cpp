@@ -81,6 +81,11 @@ namespace GSL
             pfdiMode != "ec_edcl_shadow")
             throw std::invalid_argument("pfdi_mode must be off, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
         tadmEnabled = pfdiMode != "off";
+
+        tnqcMode = getParam<std::string>("tnqc_mode", "off");
+        if (tnqcMode != "off" && tnqcMode != "shadow" && tnqcMode != "fused" && tnqcMode != "only")
+            throw std::invalid_argument("tnqc_mode must be off, shadow, fused, or only");
+
         posteriorGuidanceWeight = std::clamp(getParam<double>("posterior_guidance_weight", 0.0), 0.0, 1.0);
         tadmDirectory = getParam<std::string>("tadm_directory", "");
         tadmPriorSet = getParam<int>("tadm_prior_set", 0);
@@ -205,6 +210,7 @@ namespace GSL
         simulations.configureNativeDeterminism(
             static_cast<uint64_t>(getParam<int64_t>("seed", 0)),
             0x4E4154495645504DULL);
+        simulations.configureTNQC(tnqcMode);
 
         // set all variables to the prior probability
         for (HitProbability& h : hitProbability)
