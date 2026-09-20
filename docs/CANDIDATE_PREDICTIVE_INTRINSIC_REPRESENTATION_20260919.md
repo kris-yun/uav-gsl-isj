@@ -768,3 +768,97 @@ Current M1 premise:
 - NOT sufficient alone;
 - M2 remains load-bearing.
 
+
+
+## 25. Loop-7 collision refinement: old odor-dynamics work narrows M2 novelty
+
+A direct precedent must be treated as a hard boundary:
+
+- Rigolli et al., eLife 2022, *Learning to predict target location with turbulent odor plumes*:
+  - uses high-resolution turbulent odor simulations;
+  - explicitly compares intensity vs timing/intermittency features for source-location prediction;
+  - shows that timing and intensity are complementary;
+  - finds timing becomes more useful in sparse/dilute regimes;
+  - combines intensity/timing features for robust prediction.
+
+Therefore the following are NOT novel enough for this project:
+- “use whiff/blank/intermittency features”;
+- “combine timing and intensity features”;
+- “rare plume events contain source information”;
+- a hand-designed tail-feature branch by itself.
+
+What remains potentially novel in M2 is the **2026 η-learning mechanism**:
+> constrain the learned predictive representation with statistics of a predeclared extremeness/intermittency observable so that rare source-relevant regimes are preserved even when underrepresented in the training set.
+
+Thus the existing tail-feature proxy is only a mechanism screen. Final M2 must alter the training objective/distribution, not merely concatenate old odor statistics.
+
+## 26. Loop-7 collision refinement: Predictive Coding vs ordinary target prediction
+
+The 2022 eLife precedent predicts target location from hand-designed odor features. It does NOT implement the current M1 object:
+- source-conditioned internal prediction;
+- latent prediction of future sensory structure;
+- source evidence defined by candidate-specific prediction error;
+- self-supervised physical representation before source supervision.
+
+The distinction is therefore:
+
+Old:
+    odor statistics -> supervised target coordinate
+
+Candidate M1:
+    history -> latent predictive state
+    candidate source -> predicted future latent
+    observed future latent - predicted future latent -> source evidence
+    accumulated evidence -> PMFS-compatible source probability map
+
+This difference must survive ablation:
+- if a supervised timing/intensity feature regressor matches the proposed M1 on held environments, the M1 novelty/mechanism claim is weakened.
+
+## 27. Public-data qualification
+
+### VGR/GADEN
+- 120 gas-dispersion cases across 30 realistic house models.
+- appropriate for cross-house/cross-condition training and held-environment tests.
+
+### TURB-Smoke (Scientific Data 2026)
+- fully resolved 3-D DNS;
+- five distinct point sources;
+- zero/intermediate/strong mean-wind cases;
+- Lagrangian particle trajectories plus 2-D/3-D coarse-grained concentration fields.
+- suitable for generating source-blind mobile trajectories and testing whether the learned predictive representation transfers from GADEN/RANS-style data to DNS turbulence.
+
+### Red:Vapor (Scientific Data 2026)
+- real wind-tunnel plume data in a complex scale-model landscape;
+- 8 dense raster scans, 22 fly-through experiments, 9 purge runs;
+- multiple real gas sensors plus environmental measurements.
+- suitable for simulator-to-real and sensor-dynamics shift.
+
+Hard rule:
+The three-module method may not require a privileged dense CFD field at deployment; all deployable inputs must be derivable from sparse/mobile time series and available local context.
+
+## 28. Independent review lenses (not external reviewers)
+
+The current candidate is evaluated independently from four domain perspectives:
+
+1. Olfactory neuroscience / predictive processing
+   - positive: 2025 Trends in Cognitive Sciences explicitly proposes predictive coding as a unifying theory of olfaction.
+   - caveat: biological circuit claims are not transferable; only prediction/error/precision semantics are.
+
+2. Scientific ML / physical representation learning
+   - positive: ICLR 2026 physical-system study supports latent predictive representations for governing-parameter estimation.
+   - caveat: JEPA is implementation, not novelty by itself.
+
+3. Turbulence / rare-event modeling
+   - positive: Nature Communications 2026 η-learning supplies a modern mechanism for preserving underrepresented extreme regimes.
+   - caveat: old plume literature already uses whiff/blank/timing statistics, so M2 must be a training principle, not a feature list.
+
+4. Robotic GSL / deployability
+   - positive: current searches found supervised spatiotemporal decoding, manifold state classification, PINN/RL/Bayesian/random-search methods, but no direct predictive-coding + η-learning source-map pipeline.
+   - caveat: recent Advanced Materials 2026 AROMA and Scensory show that temporal plume dynamics are already an active localization direction; our novelty cannot be “temporal neural decoding”.
+
+Consensus status:
+- M1 predictive-coding semantics: 4/4 lenses see a defensible scientific role.
+- M2 η-learning: 3/4 positive, with novelty conditional on objective-level implementation rather than hand-crafted features.
+- M3 structured shift-aware source regions: 3/4 positive; empirical feasibility still untested with sufficient independent calibration cases.
+
+No GO decision yet.
