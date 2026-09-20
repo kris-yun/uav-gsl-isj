@@ -26,9 +26,25 @@ These are VM-side datasets. The GitHub repository contains the frozen code and s
 
 ## Required order before a planner-coupled closed loop
 
-### Gate V0 — build / invariance sanity
+### Gate V0 — build / invariance / project-data mechanism sanity
 
-Run the standalone TNQC quotient test and confirm exact affine invariance, monotone local-order invariance, negative reversed-field evidence, and insufficient-support abstention.
+Run the standalone TNQC quotient test and confirm exact affine invariance,
+monotone local-order invariance, the symmetry-hierarchy fallback when the two
+channels disagree, negative reversed-field evidence, and insufficient-support
+abstention.
+
+Then reproduce the frozen project-data mechanism record:
+
+```bash
+python3 reference/tnqc_vgr_offline_240s.py \
+  --json-out /tmp/tnqc_vgr_240s_spatial.json
+```
+
+It must agree with
+`evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json`.  In particular,
+affine and hierarchy-guarded source identity are 12/12 at 240 s and remain
+12/12 under all 100 frozen source-blind positive-scale stress seeds.  This is
+a mechanism sanity check, not the 300-s GO.
 
 ### Gate V1 — 300 s native-trajectory shadow test
 
@@ -70,8 +86,11 @@ all under the same 300 s contract.
 
 ## Status
 
-As of this correction, **Orebro external falsification is positive, but the authoritative VGR House 300 s feasibility gate has not yet been executed in this ChatGPT environment.**
+As of this checkpoint, **the VGR project-data spatial mechanism screen is
+positive, while the authoritative VGR House 300-s localization gate has not
+yet been executed in this ChatGPT environment.**  Orebro remains auxiliary
+external evidence only.
 
 Therefore the scientifically valid project status is:
 
-**TNQC EXTERNAL-PROXY POSITIVE / VGR-300S PRIMARY GATE PENDING / CLOSED-LOOP PENDING.**
+**TNQC VGR-MECHANISM POSITIVE / VGR-300S PRIMARY GATE PENDING / CLOSED-LOOP HOLD.**
