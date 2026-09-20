@@ -1,0 +1,86 @@
+name: TNQC archive audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/tnqc_archive_audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract frozen VGR archive
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/tnqc_archive
+          mkdir -p /tmp/tnqc_archive
+          unzip -q evidence/MEACI_V10_MAIN_INNOVATION_HOUSE123_SEED01_6OF6_20260824.zip -d /tmp/tnqc_archive
+          echo "ARCHIVE_TOP"
+          find /tmp/tnqc_archive -maxdepth 3 -type d | sort | head -100
+      - name: Replay TNQC on archived VGR candidate banks
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+
+          root = Path('/tmp/tnqc_archive')
+          cases = [
+              ('H01',0,-0.40,-2.90),('H01',1,-0.40,-2.90),
+              ('H02',0,0.00,-1.00),('H02',1,0.00,-1.00),
+              ('H03',0,-0.45,1.90),('H03',1,-0.45,1.90),
+          ]
+          results=[]
+          for house,seed,tx,ty in cases:
+              patt=f'{house}_seed{seed}_inverse_v10_reservoir'
+              matches=[p for p in root.rglob(patt) if p.is_dir()]
+              if len(matches)!=1:
+                  raise SystemExit(f'{patt}: expected 1 run dir, found {matches}')
+              run=matches[0]
+              out=run/'tnqc_archive_snapshot_eval.json'
+              cmd=[
+                  'python3','reference/tnqc_vgr_fixed_trajectory_replay.py',
+                  '--run-dir',str(run),
+                  '--truth-x',str(tx),'--truth-y',str(ty),
+                  '--budget-s','300',
+                  '--source-discrimination-power','1.0',
+                  '--json-out',str(out),
+              ]
+              cp=subprocess.run(cmd,text=True,capture_output=True)
+              if cp.returncode:
+                  print(cp.stdout)
+                  print(cp.stderr)
+                  raise SystemExit(f'replay failed for {patt}: {cp.returncode}')
+              p=json.loads(out.read_text())
+              results.append({
+                  'house':house,'seed':seed,
+                  'selected_source_update_id':p['selected_source_update_id'],
+                  'selected_source_update_sim_time':p['selected_source_update_sim_time'],
+                  'native_reconstruction_audit':p['native_reconstruction_audit'],
+                  'native_error_m':p['native_exported']['pmfs_top5_error_m'],
+                  'fused_error_m':p['tnqc_fused']['pmfs_top5_error_m'],
+                  'only_error_m':p['tnqc_only']['pmfs_top5_error_m'],
+                  'fused_improvement_fraction':p['fused_improvement_fraction_vs_native'],
+                  'evidence':p['tnqc_evidence'],
+              })
+          native=sum(r['native_error_m'] for r in results)/len(results)
+          fused=sum(r['fused_error_m'] for r in results)/len(results)
+          summary={
+              'contract':'TNQC_VGR_ARCHIVE_SNAPSHOT_DIAGNOSTIC_V1',
+              'warning':'Historical first-identifiable-intervention snapshots, NOT 300-s endpoint.',
+              'cases':results,
+              'pooled_native_error_m':native,
+              'pooled_fused_error_m':fused,
+              'pooled_improvement_fraction':(native-fused)/native,
+              'improved_pairs':sum(r['fused_error_m']<r['native_error_m'] for r in results),
+              'all_native_reconstruction_pass':all(r['native_reconstruction_audit']['pass'] for r in results),
+          }
+          print('TNQC_ARCHIVE_AUDIT_JSON_BEGIN')
+          print(json.dumps(summary,indent=2,sort_keys=True))
+          print('TNQC_ARCHIVE_AUDIT_JSON_END')
+          PY
