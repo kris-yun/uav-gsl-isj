@@ -10,8 +10,10 @@ set -Eeo pipefail
 #   - TNQC evidence only: tnqc_mode=only
 #
 # This script never changes source truth, PMFS cadence, sensor model, planner
-# parameters, or timeout between arms.  The shadow arm is a determinism gate:
-# it must reproduce the OFF trajectory/result before fused/only are interpreted.
+# parameters, or timeout between arms.  It is blocked by default until the
+# VGR/GADEN fixed-trajectory 300-s offline gate returns GO.  The shadow arm is
+# still a determinism gate and must reproduce OFF before fused/only are
+# scientifically interpreted.
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CASE_RUNNER="${CASE_RUNNER:-${ROOT_DIR}/reference/run_meaci_case_20260824.sh}"
@@ -24,6 +26,21 @@ BASE_DOMAIN_ID="${BASE_DOMAIN_ID:-250}"
 STEPS_SOURCE_UPDATE="${STEPS_SOURCE_UPDATE:-3}"
 TIMEOUT_SEC="${TIMEOUT_SEC:-300.0}"
 OUTER_DEADLINE_SEC="${OUTER_DEADLINE_SEC:-900}"
+OFFLINE_GO_FILE="${OFFLINE_GO_FILE:-/dev/shm/tnqc_vgr_300s_offline_20260920/tnqc_vgr_300s_offline_gate.json}"
+ALLOW_UNCONFIRMED_DIAGNOSTIC="${ALLOW_UNCONFIRMED_DIAGNOSTIC:-0}"
+
+if [[ "${ALLOW_UNCONFIRMED_DIAGNOSTIC}" != "1" ]]; then
+  if [[ ! -s "${OFFLINE_GO_FILE}" ]]; then
+    echo "TNQC closed loop blocked: missing offline GO file ${OFFLINE_GO_FILE}" >&2
+    exit 5
+  fi
+  python3 - "${OFFLINE_GO_FILE}" <<'PY'
+import json, sys
+p=json.load(open(sys.argv[1], encoding="utf-8"))
+if not p.get("go_for_closed_loop", False):
+    raise SystemExit("TNQC closed loop blocked: VGR 300-s offline gate is HOLD")
+PY
+fi
 
 mkdir -p "${RUN_ROOT}"
 summary="${RUN_ROOT}/tnqc_matrix.tsv"
