@@ -80,3 +80,138 @@ Therefore the next implementation task is to expose/materialize the required fix
 **Orebro: auxiliary external representation evidence only.**
 **VGR 300-s offline localization signal: not yet established.**
 **Closed loop: HOLD.**
+
+
+---
+
+## Implemented fixed-trajectory replay — 2026-09-20
+
+The required House-level offline gate is now implemented in the repository.
+
+### Files
+
+- `reference/tnqc_vgr_fixed_trajectory_replay.py`
+- `reference/aggregate_tnqc_vgr_offline_gate.py`
+- `reference/run_tnqc_vgr_offline_gate_20260920.sh`
+- `reference/test_tnqc_vgr_fixed_trajectory_replay.py`
+
+### Why the existing context-bank export is sufficient
+
+A native PMFS update already exports, for every evaluated quadtree source
+candidate:
+
+1. the candidate rectangle and native score in `candidate_manifest.csv`;
+2. measured probability/confidence and the same candidate's simulated hit
+   probability at every supported free cell in
+   `candidate_support_alignment.csv`;
+3. the exact measured log-odds field in `measured_hit_probability.csv`;
+4. the normalized native source posterior in `source_posterior.csv`;
+5. source-update simulation time in `source_update_timing.csv`.
+
+Therefore no source truth and no TNQC-generated trajectory are needed to test
+the TNQC likelihood itself on VGR.  The native run supplies the frozen
+trajectory and frozen PMFS candidate bank.
+
+### Replay equations
+
+For each native candidate (s), the replay reconstructs the native PMFS
+likelihood in log space from the exact current PMFS cell score
+
+[
+\ell_{\rm PMFS}(s)=
+\sum_{i\in\mathcal S}
+\log\!\left[
+1-w_i\,|p_i-\hat p_i(s)|\,\gamma
+\right],
+]
+
+where (w_i) is PMFS confidence, (p_i) is measured hit probability,
+(hat p_i(s)) is the native simulated hit probability and
+(gamma=1) is the frozen `sourceDiscriminationPower`.
+
+TNQC evidence is computed with the same equations as
+`TNQCScore.hpp`:
+
+[
+q_{\rm aff}(s)=
+\frac{\sum_i w_i(x_i-\bar x_w)(y_{s,i}-\bar y_{s,w})}
+{\sqrt{\sum_iw_i(x_i-\bar x_w)^2}
+ \sqrt{\sum_iw_i(y_{s,i}-\bar y_{s,w})^2}},
+]
+
+[
+q_{\rm ord}(s)=
+\frac{\sum_{(i,j)\in E}\min(w_i,w_j)
+\operatorname{sgn}(x_i-x_j)
+\operatorname{sgn}(y_{s,i}-y_{s,j})}
+{\sum_{(i,j)\in E}\min(w_i,w_j)},
+]
+
+and
+
+[
+e_s=\tfrac12(q_{\rm aff}+q_{\rm ord})
+]
+
+when at least two valid local edges exist, otherwise (e_s=q_{\rm aff}).
+The evidence remains bounded in ([-1,1]).
+
+The fixed-bank counterfactual likelihood is
+
+[
+\ell_{\rm TNQC}(s)=\ell_{\rm PMFS}(s)+e_s.
+]
+
+No coefficient is fitted.
+
+### Exact native reconstruction audit
+
+The replay does **not** assume its reconstruction is correct.  Before TNQC is
+evaluated, it rebuilds the final native quadtree partition: for each free grid
+cell, the smallest evaluated candidate rectangle covering that cell is the
+last PMFS refinement value assigned there.  It normalizes those native
+candidate likelihoods and compares the result cell-by-cell with the exported
+`source_posterior.csv`.
+
+Default validity limits:
+
+- maximum absolute cell-probability discrepancy <= (5\times10^{-6});
+- posterior L1 discrepancy <= (5\times10^{-4}).
+
+If either limit fails, that House/seed replay is invalid and the six-case gate
+cannot return GO.  This audit is important because it detects any mismatch in
+candidate refinement, support, PMFS likelihood reconstruction or file
+alignment before a TNQC result is interpreted.
+
+### Correct 300-s experiment command
+
+On the VGR VM, after building the current repository binary:
+
+```bash
+bash reference/run_tnqc_vgr_offline_gate_20260920.sh
+```
+
+This command runs **native PMFS only** for House01/02/03 x seed0/1 for the
+full 300-s budget, exports context banks, then performs the counterfactual
+TNQC replay.  It exits non-zero when the frozen GO criterion is not met.
+
+Only after
+`tnqc_vgr_300s_offline_gate.json` contains
+
+```json
+{"go_for_closed_loop": true}
+```
+
+may the separate TNQC closed-loop matrix be started.
+
+### Important interpretation
+
+This replay tests whether TNQC improves **final VGR localization inference on
+the actual 300-s benchmark while trajectory and PMFS candidate refinement are
+held fixed**.  It is intentionally not equivalent to the online fused arm:
+online TNQC can additionally change quadtree refinement and future robot
+motion.  The offline replay is the lower-risk causal screen required before
+allowing those feedback paths.
+
+The Orebro 2/5/10-min result remains auxiliary and is not used in the GO
+decision.
