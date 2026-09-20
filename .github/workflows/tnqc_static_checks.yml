@@ -55,17 +55,13 @@ jobs:
           echo "overall_rc=$overall" >> "$out"
           cat "$out"
 
-      - name: Commit diagnostic record
+      - name: Upload diagnostic record
         if: always()
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add evidence/TNQC_STATIC_CHECKS_20260920.txt
-          if ! git diff --cached --quiet; then
-            git commit -m "evidence: record TNQC static scientific checks"
-            git push
-          fi
+        uses: actions/upload-artifact@v4
+        with:
+          name: tnqc-static-checks
+          path: evidence/TNQC_STATIC_CHECKS_20260920.txt
+          if-no-files-found: error
 
       - name: Enforce pass
         run: |
