@@ -11,8 +11,17 @@ SEED="${SEED:?set SEED=0 or 1}"
 ARM="${ARM:?set ARM=off or on}"
 RUN_ROOT="${RUN_ROOT:?set RUN_ROOT=/dev/shm/meaci_runs_20260824}"
 PFDI_MODE="${PFDI_MODE:-off}"
-RUN_DIR="${RUN_ROOT}/${HOUSE}_seed${SEED}_${ARM}_${PFDI_MODE}"
-RUN_ID="${RUN_ID:-PFDI_${HOUSE}_S${SEED}_${ARM}_${PFDI_MODE}_$(date -u +%Y%m%dT%H%M%SZ)}"
+TNQC_MODE="${TNQC_MODE:-off}"
+case "${TNQC_MODE}" in
+  off|shadow|fused|only) ;;
+  *) echo "unsupported TNQC_MODE=${TNQC_MODE}; use off, shadow, fused, or only" >&2; exit 2 ;;
+esac
+TNQC_SUFFIX=""
+if [[ "${TNQC_MODE}" != "off" ]]; then
+  TNQC_SUFFIX="_tnqc_${TNQC_MODE}"
+fi
+RUN_DIR="${RUN_ROOT}/${HOUSE}_seed${SEED}_${ARM}_${PFDI_MODE}${TNQC_SUFFIX}"
+RUN_ID="${RUN_ID:-PFDI_${HOUSE}_S${SEED}_${ARM}_${PFDI_MODE}${TNQC_SUFFIX}_$(date -u +%Y%m%dT%H%M%SZ)}"
 DOMAIN_ID="${DOMAIN_ID:-230}"
 TADM_REPLICAS="${TADM_REPLICAS:-8}"
 OUTER_DEADLINE_SEC="${OUTER_DEADLINE_SEC:-900}"
@@ -95,6 +104,7 @@ cat > "${RUN_DIR}/runtime_manifest.json" <<EOF
   "seed": ${SEED},
   "arm": "${ARM}",
   "pfdi_mode": "${PFDI_MODE}",
+  "tnqc_mode": "${TNQC_MODE}",
   "ros_domain_id": ${DOMAIN_ID},
   "vm_hostname": "${HOSTNAME_VALUE}",
   "provenance_utc": "${PROVENANCE_UTC}",
@@ -232,8 +242,14 @@ ARGS=(
   "temperature_tau:=1.0" "tau_adaptive:=0" "tau_ess_target_ratio:=0.5" "tau_alpha:=0.3"
   "infoTaxis:=false" "use_infotaxis:=false" "use_gui:=false"
 )
+# Keep the historical launch contract untouched for TNQC_MODE=off. The TNQC
+# argument is appended only for an explicit experimental arm so old installed
+# launch files remain usable for the frozen baseline.
+if [[ "${TNQC_MODE}" != "off" ]]; then
+  ARGS+=("tnqc_mode:=${TNQC_MODE}")
+fi
 
-echo "PFDI_CASE_START HOUSE=${HOUSE} SEED=${SEED} ARM=${ARM} PFDI_MODE=${PFDI_MODE} DOMAIN=${ROS_DOMAIN_ID} RUN_DIR=${RUN_DIR}"
+echo "PFDI_CASE_START HOUSE=${HOUSE} SEED=${SEED} ARM=${ARM} PFDI_MODE=${PFDI_MODE} TNQC_MODE=${TNQC_MODE} DOMAIN=${ROS_DOMAIN_ID} RUN_DIR=${RUN_DIR}"
 set +e
 setsid ros2 launch "${LAUNCH}" "${ARGS[@]}" >"${RUN_DIR}/launch.log" 2>&1 &
 launch_pid=$!
