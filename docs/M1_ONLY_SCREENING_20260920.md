@@ -323,3 +323,100 @@ M1 is not yet frozen. Before promotion, require:
 6. confirm the method can be defined on VGR/GADEN, DNS turbulent plume data and real wind-tunnel trajectories.
 
 M2/M3 remain frozen.
+
+
+## Loop 3 — M1 challenger comparison: η-learning vs adaptive olfactory coding vs spectral dynamics
+
+### Challenger F — Adaptive olfactory coding / sensory habituation
+
+2026 remote-domain support is strong:
+- Nature Communications 2026 — *Fast efficient coding and sensory adaptation in gain-adaptive recurrent networks*: fast gain adaptation dynamically reallocates sensory coding resources under changing stimulus priors.
+- Nature Communications 2026 — *Intelligent artificial olfactory nervous system with sensory adaptation capabilities*: adaptive artificial receptor neurons filter background interference and improve gas identity recognition across environments.
+- PRX Life 2026 — *Manifold Learning for Olfactory Habituation to Strongly Fluctuating Backgrounds*: in turbulent stochastic backgrounds, manifold habituation outperforms predictive filtering and mean-background subtraction.
+
+However, the GSL novelty collision is severe:
+- J. Neurosci. 2019 *Olfactory Navigation and the Receptor Nonlinearity* already derives an encoding strategy optimized specifically for source-location information and explicitly notes that rare high concentrations can deserve disproportionate coding resources.
+- biological olfactory-navigation literature already treats adaptation/intermittency as navigation-relevant.
+- 2026 npj Robotics directly transfers insect adaptive behavior to robotic odor-source localization, albeit at the behavior/policy layer.
+
+Existing-data adaptation proxy:
+- causal percentile/rank coding and divisive normalization were tested at fixed 25 s and 60 s adaptation windows.
+- H01: rank coding modestly reduces same-source wind/source confusion.
+- H02: rank coding destroys an otherwise clean 2/2 source identity at 180 and 240 s (drops to 1/2; ratio rises from ~0.08 to ~0.83–0.95).
+- H03: adaptive coding is mixed and does not repair the early 120 s failure.
+- simple exponential adaptation previously rescued some H03/H01 cases but worsened other conditions.
+
+Decision:
+**Adaptive olfactory coding = REJECTED AS PRIMARY M1.**
+The paradigm is scientifically rich, but both direct olfactory-navigation precedent and the H02 destructive counterexample make it a poor paper-defining main innovation for this project.
+
+### Challenger G — Koopman / latent transfer-operator dynamics
+
+Latest remote-domain support:
+- ICML 2025 — *ResKoopNet: Learning Koopman Representations for Complex Dynamics with Spectral Residuals*.
+- UAI 2026 — *Deep Spectral Learning of Embedded Latent Transfer Operators for Stochastic Dynamical Systems*.
+- Nature Communications 2026 — *Adversarial dynamical systems characterize when data-driven learning succeeds or fails*, with convergent Koopman spectral learning and high-dimensional fluid examples.
+- Physical Review Fluids 2025 — deep Koopman latent dynamics for complex mixing.
+
+A fixed Hankel-spectrum proxy was tested:
+- H01: source-stable spectra across winds at 120–240 s.
+- H02: unresolved at 120 s; mixed at 180 s; good only after strong source support by 240 s.
+- H03: good at 120–180 s, but at 240 s the source spectra become less separated than the wind-induced change (0/2–1/2 depending fixed delay length).
+
+Decision:
+**Koopman / transfer-operator M1 = REJECTED.**
+The source is not expressed as a stable transport spectral fingerprint across all Houses/horizons; the apparent early success is often exposure/no-exposure structure rather than a source-specific operator invariant.
+
+### η-learning collision audit tightened
+
+Two important pre-existing GSL facts limit the claim:
+- eLife 2022 already shows that intensity and timing statistics of intermittent odor bursts predict source location and that mixed intensity+timing features can outperform either family alone.
+- J. Neurosci. 2019 already argues that rare high concentrations can be especially valuable localizing cues and derives a source-location-oriented receptor coding allocation.
+
+Therefore the M1 claim **cannot** be:
+- rare whiffs are informative;
+- use tail statistics;
+- weight high concentrations more;
+- use whiff/blank timing.
+
+The only surviving cross-domain novelty is the 2026 η-learning mechanism itself:
+
+> standard empirical-risk learning can fit the dominant quiescent regime while being statistically wrong in the rare-event regime; constrain the learned source-evidence model by the push-forward distribution of a physically chosen intermittency/extreme observable.
+
+The theory-specific object is not a hand-crafted feature vector. It is the reference observable law
+
+[
+\nu_{\eta}
+]
+
+and a distributional constraint such as
+
+[
+W_1((g\circ f_\theta)_\#\mu,\nu_{\eta}),
+]
+
+which is justified in η-learning as a way to control tail approximation error under rare-event data scarcity.
+
+This distinction is mandatory for novelty.
+
+### Current M1 score after Loop 3
+
+| M1 candidate | Remote 25/26 strength | Unique theory object | GSL collision room | Existing-data support | Cross-dataset/lightweight | Decision |
+|---|---:|---:|---:|---:|---:|---|
+| Extreme-event-aware / η-learning | 10 | 10 | 7 | 9 | 9 | ACTIVE |
+| Adaptive olfactory coding | 10 | 8 | 3 | 5 | 9 | REJECT |
+| Koopman/transfer operators | 10 | 10 | 9 | 4 | 7 | REJECT |
+| Predictive latent / JEPA | 10 | 7 | 8 | 5 | 9 | DEMOTED |
+
+### M1 is still not frozen
+
+η-learning remains the only active candidate, but promotion now requires a stricter test:
+
+1. formulate an η-constrained **candidate source-evidence model**, not a feature concatenation;
+2. the same base model with λ=0 is the comparator;
+3. the η reference law must be frozen from simulator-only or unlabeled physical data and must not use localization error;
+4. evaluate held-wind candidate ranking / proper score;
+5. prove the effect is not equivalent to simple high-concentration reweighting by matching a tail-weighted ERM baseline;
+6. preserve the zero-support behavior: η regularization must not fabricate source evidence when no plume reaches the sensing history.
+
+M2/M3 remain frozen.
