@@ -65,6 +65,22 @@ for house in House01 House02 House03; do
       exit 20
     fi
 
+    # Full-budget audit.  The scientific endpoint is 300 simulation seconds,
+    # not the first accepted source update.  Require the PMFS terminal result
+    # to be emitted near the configured 300-s budget before replaying it.
+    result_line="$(grep -F 'RESULT IS:' "${run_dir}/launch.log" | tail -n 1 || true)"
+    if [[ -z "${result_line}" ]]; then
+      echo "missing final PMFS RESULT IS line for ${house} seed ${seed}" >&2
+      exit 21
+    fi
+    search_t="$(printf '%s\n' "${result_line}" | sed -n 's/.*Search_t=\([0-9.]*\).*/\1/p')"
+    python3 - "${search_t}" <<'PY'
+import sys
+t = float(sys.argv[1])
+if not (295.0 <= t <= 330.0):
+    raise SystemExit(f"full-budget audit failed: Search_t={t}, expected about 300 s")
+PY
+
     echo "TNQC_VGR_OFFLINE_REPLAY_START house=${house} seed=${seed}"
     python3 "${REPLAY}" \
       --run-dir "${run_dir}" \
