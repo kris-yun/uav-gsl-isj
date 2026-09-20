@@ -5,11 +5,15 @@ Branch: `main`
 
 ## 0. Status that must not be overstated
 
-**External source-identity representation signal: positive.**
+**VGR/GADEN project-data mechanism signal: positive.**
 **VGR/GADEN 300-s offline localization gain: not yet established.**
 **Closed-loop localization gain: not yet established.**
 
-Correction: the Orebro 2/5/10-min experiments are auxiliary only and cannot serve as the project's offline GO. Codex must not start the House closed-loop matrix until `docs/TNQC_VGR_300S_CORRECTION_20260920.md` is satisfied and a new explicit GO is committed.
+The VGR project-data mechanism screen is frozen in
+`evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json`.  Orebro is
+auxiliary only. Codex must not start the planner-coupled House matrix until
+`docs/TNQC_VGR_300S_CORRECTION_20260920.md` is satisfied and the 300-s gate
+returns an explicit GO.
 
 Codex is being handed a pre-registered closed-loop test, not permission to tune the method after seeing House truth.
 
@@ -92,19 +96,24 @@ q_{\rm ord}(g(x),h(y_s))=q_{\rm ord}(x,y_s).
 
 This is deliberately **local adjacency order**, not global concentration ranking.
 
-### Frozen fusion
+### Secondary innovation: symmetry-hierarchy consistency guard
 
-No fitted fusion coefficient is allowed in the first closed-loop screen:
+The VGR spatial screen falsified unconditional 1:1 fusion: in H02/fast/SA,
+the exact affine quotient selected the correct source while the broader local
+order channel reversed it.  The frozen repair is parameter-free:
 
 [
 e_s=
 \begin{cases}
-\tfrac12(q_{\rm aff}+q_{\rm ord}), & \text{at least 2 valid local edges},\\
-q_{\rm aff}, & \text{otherwise}.
+\tfrac12(q_{\rm aff}(s)+q_{\rm ord}(s)),
+& |E_s|\ge2\ \text{and}\ q_{\rm aff}(s)q_{\rm ord}(s)\ge0,\\
+q_{\rm aff}(s), & \text{otherwise}.
 \end{cases}
 ]
 
-By construction (e_s\in[-1,1]). The online arms are
+The hierarchy is deliberate: the broader monotone quotient may corroborate the
+exact physical affine quotient, but may not reverse it. By construction
+(e_s\in[-1,1]). The online arms are
 
 [
 L_{\rm fused}(s)=L_{\rm native}(s)\exp(e_s),
@@ -169,39 +178,60 @@ The novelty boundary of this branch is the combined construction:
 
 ---
 
-## 3. Auxiliary external evidence (not the VGR localization gate)
+## 3. VGR project-data mechanism evidence
 
-Dataset: public Orebro3DSEN, 27 calibrated MOX sensors in a 3x3x3 array, 2 Hz.
+The frozen VGR mechanism screen uses
+`project/research-master-20260914` at
+`26e89a99532e4268c5022dca2e938bf1473377b1` and the 12 archived histories
+under `evidence/cstar_current_runtime_assets240_20260907/realizations`:
+H01/H02/H03 x SA/SB x fast/slow, 1200 samples each to 240 s.
 
-Repeated-source group:
-`Exp01/Exp02/Exp06/Exp08/Exp09` share the same source coordinate while release strength and airflow conditions vary. Other experiments supply alternative source positions.
+The probe now bins `pose_xy + gas_ppm` onto the actual reduced PMFS grid
+(cell size 0.3 m, using the native House map origins) and constructs local
+order only on spatially adjacent PMFS cells.  It no longer uses consecutive
+timestamps as a proxy for spatial adjacency.
 
-No source truth enters feature construction; labels are used only after representation construction for evaluation.
+At 240 s:
 
-Frozen interval: 40–90 min.
+| representation | cross-transport source accuracy |
+|---|---:|
+| raw | 12/12 |
+| affine quotient | **12/12** |
+| local spatial order | 11/12 |
+| unconditional equal fusion | 11/12 |
+| symmetry-hierarchy guarded | **12/12** |
 
-Conservative results:
+Nominal raw is already perfect, so the positive signal is not a nominal
+accuracy claim.  Under 100 source-blind independent positive-scale
+perturbation seeds, raw falls to 10/12 while affine and guarded remain 12/12
+for all 100 seeds.  Under 200 source-blind monotone-compression seeds, raw
+mean accuracy is 0.7833 (min 0.6667), while affine and guarded remain 12/12
+for all 200 seeds.
 
-| window | affine quotient AUC / LOCO acc | local-order AUC / LOCO acc | equal fusion AUC / LOCO acc |
-|---|---|---|---|
-| 2 min | 0.806 / 0.600 | 0.696 / 0.696 | 0.791 / 0.616 |
-| 5 min | 0.789 / 0.620 | 0.681 / 0.680 | 0.791 / 0.700 |
-| 10 min | 0.789 / 0.600 | 0.723 / 0.680 | 0.823 / 0.680 |
-
-At 5 min raw sensor means are about AUC 0.486 / LOCO acc 0.20. A fresh independent recheck against the current public blobs and the current frozen probe logic was used to reconcile the affine-only numbers above before any House closed-loop TNQC result was available.
-
-Condition-specific monotone compression
-(g_a(c)=\operatorname{asinh}(ac)/a)
-changes the affine channel but leaves the local-order representation exactly unchanged. This is the empirical reason the local spatial partial-order channel is retained as the secondary innovation.
+The exact failure that rejected unconditional fusion is H02/fast/SA:
+`q_aff=[-0.02142,-0.03821]` correctly prefers SA, while
+`q_ord=[0.75758,0.87879]` prefers SB and equal averaging flips the result.
+The hierarchy guard falls back to the exact affine quotient.
 
 Reproduction:
+
 ```bash
-python3 reference/tnqc_orebro_offline.py --window-minutes 2
-python3 reference/tnqc_orebro_offline.py --window-minutes 5
-python3 reference/tnqc_orebro_offline.py --window-minutes 10
+python3 reference/tnqc_vgr_offline_240s.py \
+  --json-out /tmp/tnqc_vgr_240s_spatial.json
 ```
 
-Primary record: `docs/TNQC_OFFLINE_GATE_20260920.md`.
+Frozen record:
+`evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json`.
+
+This is still a fixed-route mechanism test, not the 300-s PMFS localization
+endpoint.
+
+### Auxiliary external evidence
+
+Orebro3DSEN remains an independent sensor-array falsification only. Its AUC /
+LOCO metrics are not used in the House GO decision. Reproduction remains
+`reference/tnqc_orebro_offline.py`.
+
 
 ---
 
@@ -220,8 +250,17 @@ Standalone invariance test:
 - `ros2_package/test/test_tnqc_score.cpp`
 - wired into `ros2_package/CMakeLists.txt`
 
-Offline measured-data probe:
+Project-data mechanism probe:
+- `reference/tnqc_vgr_offline_240s.py`
+- `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json`
+
+Auxiliary external probe:
 - `reference/tnqc_orebro_offline.py`
+
+Authoritative 300-s fixed-trajectory replay:
+- `reference/tnqc_vgr_fixed_trajectory_replay.py`
+- `reference/aggregate_tnqc_vgr_offline_gate.py`
+- `reference/run_tnqc_vgr_offline_gate_20260920.sh`
 
 Closed-loop case runner:
 - `reference/run_meaci_case_20260824.sh`
@@ -277,7 +316,9 @@ If the gate is HOLD, stop without tuning from House truth.
 1. Pull current `main`.
 2. Build the ROS package with the existing VM toolchain.
 3. Run the standalone `tnqc_score` test.
-4. Re-run the Orebro 2/5/10-min probe and confirm the JSON outputs match the frozen gate within numerical precision.
+4. Re-run `reference/tnqc_vgr_offline_240s.py` and confirm the VGR spatial
+   mechanism record matches the frozen evidence.
+5. Orebro may be rerun only as an auxiliary external sanity check.
 
 Do not change equations because of any House result.
 
@@ -354,7 +395,7 @@ This separates “beats baseline PMFS” from “adds value beyond the already s
 ## 6. No-touch list before the first House matrix is complete
 
 Do not change:
-- 1:1 fusion weight;
+- symmetry-hierarchy guard (local order can corroborate but not reverse q_aff);
 - evidence bound ([-1,1]);
 - support rule (<4 supported cells => invalid);
 - local-edge definition;
@@ -364,7 +405,8 @@ Do not change:
 - 300 s budget;
 - planner/sensor/wind settings;
 - House source truth or start points;
-- Orebro source groups or evaluation interval.
+- VGR spatial cell size/origins, source groups, stress generator, or 240-s mechanism protocol;
+- Orebro source groups or evaluation interval (auxiliary only).
 
 Any alteration after looking at House truth creates a new method version and requires a new pre-registration file.
 
@@ -412,9 +454,16 @@ Key commits already on `main`:
 - `4e6188bc` — bound TNQC evidence against spatial pseudo-replication
 - `123436d1` — advance to frozen closed-loop candidate
 
+Additional frozen VGR commits:
+- `92b1d9f5` — align VGR mechanism screen to the real PMFS 0.3 m spatial grid
+- `595d8fba` — symmetry-hierarchy guard in online TNQC score
+- `e14699fc` — make the 300-s replay use the identical guarded equation
+- `4e0d1f06` — standalone hierarchy-guard test
+- `a921ac14` — freeze the VGR spatial mechanism evidence
+
 The scientifically correct status at handoff is:
 
-**TNQC MECHANISM/CODE PATH READY / VGR 300-S LOCALIZATION SIGN PENDING.**
+**TNQC VGR MECHANISM POSITIVE / VGR 300-S LOCALIZATION SIGN PENDING.**
 
 
 ## 9. Corrected handoff status
