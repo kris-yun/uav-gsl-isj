@@ -13,7 +13,7 @@ on:
       - 'ros2_package/test/test_tnqc_score.cpp'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   scientific-static:
@@ -21,20 +21,52 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Python syntax
+      - name: Run checks and persist diagnostics
+        shell: bash
         run: |
-          set -euo pipefail
-          python3 -m py_compile             reference/tnqc_vgr_offline_240s.py             reference/tnqc_vgr_fixed_trajectory_replay.py             reference/test_tnqc_vgr_fixed_trajectory_replay.py             reference/aggregate_tnqc_vgr_offline_gate.py             reference/evaluate_tnqc_closed_loop_300s.py
+          set +e
+          out="evidence/TNQC_STATIC_CHECKS_20260920.txt"
+          : > "$out"
+          overall=0
 
-      - name: Synthetic fixed-trajectory replay audit
-        env:
-          PYTHONPATH: reference
-        run: |
-          set -euo pipefail
-          python3 reference/test_tnqc_vgr_fixed_trajectory_replay.py
+          echo "## python-pycompile" >> "$out"
+          python3 -m py_compile             reference/tnqc_vgr_offline_240s.py             reference/tnqc_vgr_fixed_trajectory_replay.py             reference/test_tnqc_vgr_fixed_trajectory_replay.py             reference/aggregate_tnqc_vgr_offline_gate.py             reference/evaluate_tnqc_closed_loop_300s.py             >> "$out" 2>&1
+          rc=$?
+          echo "rc=$rc" >> "$out"
+          (( rc == 0 )) || overall=1
 
-      - name: Standalone TNQC quotient and hierarchy-guard test
+          echo "## synthetic-fixed-trajectory" >> "$out"
+          PYTHONPATH=reference python3 reference/test_tnqc_vgr_fixed_trajectory_replay.py             >> "$out" 2>&1
+          rc=$?
+          echo "rc=$rc" >> "$out"
+          (( rc == 0 )) || overall=1
+
+          echo "## cpp-tnqc-score" >> "$out"
+          g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -Werror -UNDEBUG             -Iros2_package/src             ros2_package/test/test_tnqc_score.cpp             -o /tmp/test_tnqc_score             >> "$out" 2>&1
+          rc=$?
+          echo "compile_rc=$rc" >> "$out"
+          if (( rc == 0 )); then
+            /tmp/test_tnqc_score >> "$out" 2>&1
+            rc=$?
+            echo "run_rc=$rc" >> "$out"
+          fi
+          (( rc == 0 )) || overall=1
+
+          echo "overall_rc=$overall" >> "$out"
+          cat "$out"
+
+      - name: Commit diagnostic record
+        if: always()
         run: |
           set -euo pipefail
-          g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -Werror -UNDEBUG             -Iros2_package/src             ros2_package/test/test_tnqc_score.cpp             -o /tmp/test_tnqc_score
-          /tmp/test_tnqc_score
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evidence/TNQC_STATIC_CHECKS_20260920.txt
+          if ! git diff --cached --quiet; then
+            git commit -m "evidence: record TNQC static scientific checks"
+            git push
+          fi
+
+      - name: Enforce pass
+        run: |
+          grep -q '^overall_rc=0$' evidence/TNQC_STATIC_CHECKS_20260920.txt
