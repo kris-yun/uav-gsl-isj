@@ -5,8 +5,11 @@ Branch: `main`
 
 ## 0. Status that must not be overstated
 
-**Offline source-identity signal: positive and frozen.**
+**External source-identity representation signal: positive.**
+**VGR/GADEN 300-s offline localization gain: not yet established.**
 **Closed-loop localization gain: not yet established.**
+
+Correction: the Orebro 2/5/10-min experiments are auxiliary only and cannot serve as the project's offline GO. Codex must not start the House closed-loop matrix until `docs/TNQC_VGR_300S_CORRECTION_20260920.md` is satisfied and a new explicit GO is committed.
 
 Codex is being handed a pre-registered closed-loop test, not permission to tune the method after seeing House truth.
 
@@ -166,7 +169,7 @@ The novelty boundary of this branch is the combined construction:
 
 ---
 
-## 3. Independent offline evidence already frozen
+## 3. Auxiliary external evidence (not the VGR localization gate)
 
 Dataset: public Orebro3DSEN, 27 calibrated MOX sensors in a 3x3x3 array, 2 Hz.
 
@@ -258,7 +261,11 @@ If absent, modify only the installed launch overlay so that:
 
 Do **not** change PMFS scoring equations, weights, thresholds, source truth, wind settings, planner settings, timeout, or update cadence in this step.
 
-### Stage C — determinism gate first
+### Stage C — HOLD
+
+Do not execute the House closed-loop stages below yet. First complete the VGR/GADEN fixed-trajectory 300-s offline localization replay specified in `docs/TNQC_VGR_300S_CORRECTION_20260920.md`.
+
+### Stage D — determinism gate after explicit VGR offline GO
 
 Run only:
 ```bash
@@ -272,7 +279,7 @@ For all House01/02/03 × seed0/1 pairs:
 
 Any mismatch invalidates the batch. Fix plumbing/determinism only; do not alter TNQC mathematics.
 
-### Stage D — primary closed-loop screen
+### Stage E — primary closed-loop screen
 
 After Stage C passes:
 ```bash
@@ -289,7 +296,7 @@ Frozen run contract:
 - `fused` is the primary TNQC arm;
 - `only` is a mechanism ablation.
 
-### Stage E — frozen advancement gate
+### Stage F — frozen advancement gate
 
 Against native PMFS OFF:
 - pooled PMFS top-5%-expected-location error reduction >= 10%;
@@ -299,7 +306,7 @@ Against native PMFS OFF:
 
 This is a **development** gate only. Passing it authorizes the next experimental cycle; it is not sufficient for a paper claim.
 
-### Stage F — comparison with the previously frozen method
+### Stage G — comparison with the previously frozen method
 
 Only if Stage E passes, run the same six House/seed conditions for the frozen ME-ACI V10 arm (`ARM=on, PFDI_MODE=me_aci, TNQC_MODE=off`) and then test the combined arm (`TNQC_MODE=fused`) without retuning either component. Report:
 - native PMFS;
@@ -375,3 +382,10 @@ Key commits already on `main`:
 The scientifically correct status at handoff is:
 
 **TNQC OFFLINE POSITIVE / CLOSED-LOOP PENDING.**
+
+
+## 9. Corrected handoff status
+
+Do not interpret the Orebro classification-style probe as a localization result. The project endpoint is the final 300-s PMFS top-5% expected-location error on VGR/GADEN House01/02/03.
+
+**Handoff status: VGR 300-S OFFLINE GATE PENDING — CLOSED LOOP NOT AUTHORIZED YET.**
