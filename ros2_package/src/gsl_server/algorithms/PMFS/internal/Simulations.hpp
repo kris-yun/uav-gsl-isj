@@ -73,6 +73,11 @@ namespace GSL::PMFS_internal
             bool valid = false;
             std::vector<float> hitMap;
             long double sourceProb;
+            bool tnqcValid = false;
+            double tnqcCanonicalCosine = 0.0;
+            double tnqcLocalOrderAgreement = 0.0;
+            double tnqcCombinedEffect = 0.0;
+            double tnqcEvidence = 0.0;
         };
 
     public:
@@ -84,6 +89,7 @@ namespace GSL::PMFS_internal
         void initializeMap(const std::vector<std::vector<uint8_t>>& occupancyMap);
         void configureNativeDeterminism(uint64_t globalSeed, uint64_t transportSubstream);
         void setNativeSourceUpdateId(uint64_t sourceUpdateId);
+        void configureTNQC(const std::string& mode);
         void updateSourceProbability(float refineFraction);
         void makeSimulationImage(const SimulationSource& source);
         // Read-only HOVER export: uses the unmodified PMFS filament simulator.
@@ -202,6 +208,16 @@ namespace GSL::PMFS_internal
         uint64_t nativeSourceUpdateId = 0;
         uint64_t nativeTransportSubstream = 0x4E4154495645504DULL;
         bool nativeDeterministicRng = false;
+
+        // Transport-Nuisance Quotient Canonicalization. This is independent
+        // from the older TADM/PFDI modes so baseline and frozen ME-ACI paths
+        // remain byte-for-byte inactive when tnqc_mode=off.
+        std::string tnqcMode = "off";
+        std::vector<double> tnqcObservedLogits;
+        std::vector<double> tnqcWeights;
+        std::vector<unsigned char> tnqcSupport;
+        std::vector<std::pair<size_t, size_t>> tnqcLocalEdges;
+
         double tadmSimTime = 0.0;
         // SD-TFEI support expansion is a sequential inference decision.  A
         // single stochastic plume realization may produce a coherent but
