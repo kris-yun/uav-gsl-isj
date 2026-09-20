@@ -337,3 +337,72 @@ M1 premise: **CROSS-HOUSE PASS at structural-discrepancy level**.
 M1 correction efficacy: **H01-only development evidence so far**.
 
 No held-House learned-corrector claim is authorized.
+
+
+## 15. Auxiliary M2 provenance and isolated phase-correction gate
+
+### Remote-domain source
+
+- Shapira Weber et al., *TimePoint: Accelerated Time Series Alignment via Self-Supervised Keypoint and Descriptor Learning*, ICML 2025.
+
+The transferable object is not DTW itself.
+TimePoint learns sparse temporal keypoints/descriptors under synthetic diffeomorphic time warps, then performs alignment in that sparse representation.
+
+Potential GSL use:
+> estimate a compact local time reparameterization for the candidate forward response before the residual-amplitude corrector is applied.
+
+This is upstream forward-evidence correction, not trajectory classification.
+
+### H01 estimated-provider timing anatomy
+
+Observed SA-fast:
+- first >0.01 ppm ≈135.6 s;
+- first >0.1 ppm ≈229.0 s;
+- dominant peak ≈230.2 s at 0.414 ppm.
+
+Estimated SA sensor response:
+- first >0.01 ppm ≈125.2 s;
+- first >0.1 ppm ≈229.8 s;
+- dominant peak ≈234.6 s at 1.276 ppm;
+- additional late peaks at ~232.8 and 234.6 s.
+
+Thus the discrepancy is not one constant delay:
+- early onset is too early by ~10 s;
+- late threshold onset is nearly aligned;
+- dominant late peak is too late by ~4.4 s.
+
+This supports a local/nonlinear phase discrepancy rather than one global sensor lag.
+
+### Isolated time-warp negative control
+
+On the full 240 s H01 SA-fast trace:
+- uncorrected true-SA log1p MSE: ~0.0073375;
+- false-SB/null MSE: ~0.0008061;
+- best oracle global time shift over ±20 s: +12.0 s;
+- shifted true-SA MSE: ~0.0008639.
+
+Therefore time alignment alone reduces the mismatch by ~88%, but **does not flip the incorrect source ranking**.
+
+This is an important module boundary:
+- M2 phase alignment is real and useful;
+- M2 cannot replace M1;
+- amplitude/support discrepancy remains load-bearing.
+
+The existing prefix-to-future phase+amplitude probe, in contrast, can cross the false-source ranking boundary, so the required correction is genuinely joint:
+1. temporal registration;
+2. candidate-conditioned amplitude/support correction.
+
+### Current M2 definition
+
+**Sparse Self-Supervised Temporal Registration**
+
+Role:
+- detect candidate-response key events / local descriptors;
+- estimate a low-capacity monotone local time warp;
+- hand the registered response to M1's learned missing-physics corrector.
+
+Hard kill gate:
+- if a source-blind keypoint model trained on design cases cannot improve held-condition candidate likelihood beyond the no-registration M1, M2 is removed.
+
+M2 is not counted as “DTW source matching”; its contribution is correction of the mechanistic prior's timing before source likelihood.
+
