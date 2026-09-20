@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+set -Eeo pipefail
+
+# Project-level offline gate for TNQC.
+#
+# Stage 1: run native PMFS only (TNQC_MODE=off) for the full 300-s budget on
+# House01/02/03 x seed0/1 and export the context bank.
+# Stage 2: replay TNQC on the frozen native candidate bank/trajectory.
+# Stage 3: aggregate the six final top-5%-ExpectedValue errors.
+#
+# No TNQC online feedback occurs in this script.
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CASE_RUNNER="${CASE_RUNNER:-${ROOT_DIR}/reference/run_meaci_case_20260824.sh}"
+REPLAY="${REPLAY:-${ROOT_DIR}/reference/tnqc_vgr_fixed_trajectory_replay.py}"
+AGGREGATE="${AGGREGATE:-${ROOT_DIR}/reference/aggregate_tnqc_vgr_offline_gate.py}"
+PFDI_INSTALL_ROOT="${PFDI_INSTALL_ROOT:-/dev/shm/meaci_online_20260824}"
+RUN_ROOT="${RUN_ROOT:-/dev/shm/tnqc_vgr_300s_offline_20260920}"
+BASE_DOMAIN_ID="${BASE_DOMAIN_ID:-270}"
+STEPS_SOURCE_UPDATE="${STEPS_SOURCE_UPDATE:-3}"
+TIMEOUT_SEC="${TIMEOUT_SEC:-300.0}"
+OUTER_DEADLINE_SEC="${OUTER_DEADLINE_SEC:-900}"
+
+mkdir -p "${RUN_ROOT}"
+
+truth_for_house() {
+  case "$1" in
+    House01) echo "-0.40 -2.90" ;;
+    House02) echo "0.00 -1.00" ;;
+    House03) echo "-0.45 1.90" ;;
+    *) echo "unsupported house $1" >&2; return 2 ;;
+  esac
+}
+
+idx=0
+for house in House01 House02 House03; do
+  read -r truth_x truth_y <<<"$(truth_for_house "${house}")"
+  for seed in 0 1; do
+    domain=$((BASE_DOMAIN_ID + idx))
+    idx=$((idx + 1))
+    run_dir="${RUN_ROOT}/${house}_seed${seed}_off_off"
+
+    # Prevent stale artifacts from contaminating the fixed-trajectory gate.
+    rm -rf "${run_dir}"
+
+    echo "TNQC_VGR_OFFLINE_NATIVE_START house=${house} seed=${seed} domain=${domain}"
+    HOUSE="${house}" \
+    SEED="${seed}" \
+    ARM=off \
+    PFDI_MODE=off \
+    TNQC_MODE=off \
+    RUN_CONTRACT=TNQC_VGR_FIXED_TRAJECTORY_EXPORT_V1 \
+    RUN_ROOT="${RUN_ROOT}" \
+    DOMAIN_ID="${domain}" \
+    STEPS_SOURCE_UPDATE="${STEPS_SOURCE_UPDATE}" \
+    TIMEOUT_SEC="${TIMEOUT_SEC}" \
+    OUTER_DEADLINE_SEC="${OUTER_DEADLINE_SEC}" \
+    TARGET_SOURCE_UPDATES=0 \
+    TARGET_ACCEPTED_UPDATES=0 \
+    PFDI_INSTALL_ROOT="${PFDI_INSTALL_ROOT}" \
+    bash "${CASE_RUNNER}"
+
+    if [[ ! -s "${run_dir}/context_bank/source_update_timing.csv" ]]; then
+      echo "missing context bank for ${house} seed ${seed}: ${run_dir}" >&2
+      exit 20
+    fi
+
+    echo "TNQC_VGR_OFFLINE_REPLAY_START house=${house} seed=${seed}"
+    python3 "${REPLAY}" \
+      --run-dir "${run_dir}" \
+      --truth-x "${truth_x}" \
+      --truth-y "${truth_y}" \
+      --budget-s 300 \
+      --source-discrimination-power 1.0
+    echo "TNQC_VGR_OFFLINE_REPLAY_DONE house=${house} seed=${seed}"
+  done
+done
+
+python3 "${AGGREGATE}" --run-root "${RUN_ROOT}"
+echo "TNQC_VGR_300S_GATE_RESULT=${RUN_ROOT}/tnqc_vgr_300s_offline_gate.json"
+
+# Exit nonzero when the frozen GO criterion is not met so an automated caller
+# cannot accidentally continue into the closed-loop matrix.
+python3 - "${RUN_ROOT}/tnqc_vgr_300s_offline_gate.json" <<'PY'
+import json, sys
+p = json.load(open(sys.argv[1], encoding="utf-8"))
+if not p.get("go_for_closed_loop", False):
+    print("TNQC_VGR_300S_OFFLINE_HOLD")
+    raise SystemExit(10)
+print("TNQC_VGR_300S_OFFLINE_GO")
+PY
