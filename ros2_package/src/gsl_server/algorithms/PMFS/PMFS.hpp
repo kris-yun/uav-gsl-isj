@@ -82,6 +82,7 @@ namespace GSL
         uint64_t completedMeasurementBlockId = 0;
         bool tadmEnabled = false;
         std::string pfdiMode = "off";
+        std::string tnqcMode = "off";
         // Optional inference-to-control coupling.  The frozen OFF path keeps
         // this at zero; the protected ON path can use the PFDI posterior when
         // ranking the next measurement goal.
