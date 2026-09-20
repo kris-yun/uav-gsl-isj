@@ -1,125 +1,249 @@
-# TNQC external representation stress test — 2026-09-20
+# TNQC offline evidence gate — VGR first
+Date: 2026-09-20
 
-## Frozen claim boundary
+## Claim boundary
 
-This file records an **external auxiliary representation stress test only**. It is not the project-level offline advancement gate for House01/02/03 localization. The required project gate is the VGR/GADEN 300-s final localization replay recorded in `docs/TNQC_VGR_300S_CORRECTION_20260920.md`.
+The project data are authoritative. The current status is:
+
+- **VGR/GADEN House mechanism signal: positive.**
+- **Full 300-s VGR localization gate: pending.**
+- **Planner-coupled closed loop: HOLD until the 300-s gate returns GO.**
+
+The public Orebro experiment is retained only as an external falsification appendix. It is not used to authorize closed loop.
 
 Main candidate: **Transport-Nuisance Quotient Canonicalization (TNQC)**.
 
-The online score compares the measured and candidate-predicted spatial fields only after quotienting independent positive affine actions in logit space. The candidate prediction remains conditioned on the PMFS transport model and the current wind field; the quotient removes non-identifying global release/background/gain coordinates rather than trying to learn them.
+---
 
-Secondary mechanism: **confidence-weighted local-order quotient**.
+## 1. VGR/GADEN mechanism screen on the project archive
 
-The local-order channel compares only adjacent free-cell order relations. It is invariant to arbitrary strictly increasing pointwise sensor transfer functions. It is fused 1:1 with the continuous affine-quotient cosine; the weight is not fitted.
+Data are read from the frozen historical project branch:
 
-## Independent measured-data signal
+```
+ref:  project/research-master-20260914
+sha:  26e89a99532e4268c5022dca2e938bf1473377b1
+root: evidence/cstar_current_runtime_assets240_20260907/realizations
+```
 
-Dataset: public Orebro3DSEN (27 calibrated MOX sensors, 3x3x3 grid, 2 Hz). Exp01/02/06/08/09 share a physical source location while release and airflow conditions vary; the remaining experiments provide different source locations. Only 40–90 min data are used by the frozen probe.
+Design:
 
-A deliberately low-capacity 5 min window test gives:
+- House01 / House02 / House03;
+- two source locations per House, SA/SB;
+- fast / slow transport condition;
+- 12 histories total;
+- 1200 samples per history;
+- 0.2 s sampling, ending at 240 s;
+- all SA/SB × fast/slow histories within one House use the same geometry-only pose sequence.
 
-| representation | same/different AUC | leave-condition-out repeated-source accuracy |
-|---|---:|---:|
-| raw sensor means | 0.486 | 0.20 |
-| affine-quotient spatial shape | 0.789 | 0.62 |
-| local neighbour order | 0.681 | 0.68 |
-| equal continuous + local-order fusion | 0.791 | 0.70 |
+This is a fixed-route **mechanism** test. It is not the final PMFS localization endpoint.
 
-The local-order channel remains non-trivial across window scales:
+### Spatial alignment to the actual PMFS grid
 
-| window | affine quotient AUC / acc | local order AUC / acc | equal fusion AUC / acc |
-|---|---|---|---|
-| 2 min | 0.806 / 0.600 | 0.696 / 0.696 | 0.791 / 0.616 |
-| 5 min | 0.789 / 0.620 | 0.681 / 0.680 | 0.791 / 0.700 |
-| 10 min | 0.789 / 0.600 | 0.723 / 0.680 | 0.823 / 0.680 |
+The old VGR route-order proxy has been superseded. The current probe bins `pose_xy + gas_ppm` onto the same reduced PMFS grid used by the native benchmark.
 
-These numbers use a simple cosine/order prototype test and are intentionally more conservative than the earlier transductive/cross-standardized screen.
+Historical native PMFS logs give:
 
-### Reproducibility reconciliation
+| House | raw map resolution | PMFS scale | reduced cell | map origin |
+|---|---:|---:|---:|---|
+| H01 | 0.1 m | 3 | 0.3 m | (-7.55, -7.88) |
+| H02 | 0.1 m | 3 | 0.3 m | (-5.39, -7.45) |
+| H03 | 0.1 m | 3 | 0.3 m | (-0.85, -1.86) |
 
-A fresh independent re-evaluation against the current public Orebro3DSEN blobs and the current `reference/tnqc_orebro_offline.py` logic found that an earlier draft of this gate understated the affine-only LOCO accuracy at 2 and 5 min (and shifted its AUC slightly at 2/10 min). The table above has been corrected to the current reproducible values. The local-order and equal-fusion headline values are unchanged. The correction was made before any House closed-loop TNQC result was available and changes no online equation or threshold.
+At 240 s the common route covers about 228 / 227 / 232 PMFS bins in H01/H02/H03, with 252 / 252 / 251 structural 4-neighbour spatial edges.
 
-## Nonlinear monotone stress
+Thus the auxiliary order channel is now evaluated on **spatially adjacent PMFS cells**, not adjacent timestamps.
 
-Each experiment is subjected to a different fixed compressive transform g_a(c) = asinh(a c) / a, a > 0, with transform strength assigned without source truth.
+Reproduction:
 
-5 min result:
+```bash
+python3 reference/tnqc_vgr_offline_240s.py \
+  --json-out /tmp/tnqc_vgr_240s_spatial.json
+```
 
-| representation | original AUC / acc | nonlinear-stress AUC / acc |
-|---|---|---|
-| affine quotient | 0.789 / 0.62 | 0.760 / 0.66 |
-| local neighbour order | 0.681 / 0.68 | 0.681 / 0.68 |
-| equal fusion | 0.791 / 0.70 | 0.743 / 0.64 |
+Frozen record:
 
-The local-order representation is exactly unchanged for every tested window. This is the intended role of the secondary channel: preserve a source-bearing signal when the continuous affine quotient is no longer exact.
+`evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json`
 
-## Novelty boundary
+---
 
-Do **not** claim monotone/rank invariance alone as novel.
+## 2. Main quotient
 
-Jin et al., ICRA 2026, *Calibration-Free Gas Source Localization with Mobile Robots: Source Term Estimation Based on Concentration Measurement Ranking* already performs probabilistic source estimation by comparing global ranking sequences of measured and modeled concentrations.
+For an observed logit field (x), candidate-predicted field (y_s), and confidence weights (w_i),
 
-The current defensible distinction is the full TNQC construction:
+[
+mu_w(x)=rac{sum_iw_ix_i}{sum_iw_i},
+]
 
-1. explicit nuisance-group quotient formulation;
-2. continuous affine-quotient spatial field comparison;
-3. transport-conditioned candidate prediction from PMFS;
-4. local **spatial adjacency** partial-order channel rather than a global trajectory rank sequence;
-5. support/confidence weighting and identifiability abstention;
-6. direct insertion into the PMFS candidate likelihood, with a shadow arm that must leave the native trajectory unchanged.
+[
+q_{m aff}(x,y_s)=
+rac{sum_iw_i(x_i-mu_w(x))(y_{s,i}-mu_w(y_s))}
+{sqrt{sum_iw_i(x_i-mu_w(x))^2}
+ sqrt{sum_iw_i(y_{s,i}-mu_w(y_s))^2}}.
+]
 
-The local-order component is therefore an auxiliary robustness mechanism, not the paper-level novelty by itself.
+For independent positive-affine nuisance actions
 
-## Code frozen for first closed-loop screen
+[
+x'=a x+b{f 1},qquad y'_s=c y_s+d{f 1},qquad a,c>0,
+]
 
-- ros2_package/src/gsl_server/algorithms/PMFS/internal/TNQCScore.hpp
-- PMFS modes: tnqc_mode={off,shadow,fused,only}
-- ros2_package/test/test_tnqc_score.cpp
-- reference/tnqc_orebro_offline.py
-- reference/run_tnqc_closed_loop_matrix_20260920.sh
+[
+q_{m aff}(x',y'_s)=q_{m aff}(x,y_s)
+]
 
-shadow computes TNQC diagnostics while preserving the native PMFS score. fused multiplies the native candidate score by exp(TNQC evidence). only removes the native likelihood and is a mechanism ablation.
+exactly.
 
-## Historical closed-loop proposal — superseded by VGR offline hold
+The candidate prediction remains PMFS transport-conditioned. The quotient removes non-identifying global amplitude/background coordinates; it does not claim that wind is a global affine nuisance.
 
-The matrix proposal below remains useful as the eventual closed-loop protocol, but it is **not authorized to start** until the VGR/GADEN fixed-trajectory 300-s offline localization replay produces an explicit GO.
+---
 
-## Pre-registered closed-loop decision gate
+## 3. VGR result
 
-Run House01/02/03, seeds 0/1 with the same 300 s budget and stepsSourceUpdate=3.
+Cross-transport source identification compares each fast history with the two slow source templates, and vice versa. Source truth is used only for the final accuracy/error calculation.
 
-Before interpreting fused or only:
+| accumulated VGR history | raw | affine quotient | local spatial order | old equal fusion | hierarchy-guarded |
+|---|---:|---:|---:|---:|---:|
+| 60 s | 8/12 | 8/12 | 8/12 | 8/12 | 8/12 |
+| 120 s | 8/12 | 8/12 | 8/12 | 8/12 | 8/12 |
+| 180 s | 12/12 | 10/12 | 9/12 | 9/12 | 10/12 |
+| **240 s** | **12/12** | **12/12** | **11/12** | **11/12** | **12/12** |
 
-1. OFF and SHADOW must produce the same final native PMFS result under the deterministic RNG contract. A mismatch invalidates the batch.
-2. No parameter, fusion weight, evidence cap, support rule, PMFS cadence, or planner setting may be changed after reading source truth.
-3. fused is the primary TNQC arm; only is diagnostic.
+The nominal 240-s result does **not** show an advantage over raw amplitude; raw is also 12/12. The positive scientific signal is nuisance robustness below.
 
-Advancement threshold for a first closed-loop development screen:
+### Source-blind positive-scale stress
 
-- pooled top-5%-expected-location error reduction versus native PMFS >= 10%;
-- at least 4 of 6 House/seed pairs improve;
-- no pair degrades by more than 25%;
-- no false confident collapse.
+Each episode is independently multiplied by a positive factor drawn log-uniformly from [0.1, 10], using only episode ID + deterministic stress seed. Across 100 stress seeds:
 
-A stronger result is required before a paper claim; this gate only decides whether TNQC deserves the next experimental cycle.
+| representation | mean accuracy | min | perfect runs |
+|---|---:|---:|---:|
+| raw | 0.8333 | 0.8333 | 0/100 |
+| **affine quotient** | **1.0000** | **1.0000** | **100/100** |
+| local spatial order | 0.9167 | 0.9167 | 0/100 |
+| old equal fusion | 0.9167 | 0.9167 | 0/100 |
+| **hierarchy-guarded** | **1.0000** | **1.0000** | **100/100** |
 
-## Reproduction
+This stress corresponds directly to the exact positive-scale nuisance removed by the main quotient.
 
-Public-data probe:
+### Source-blind monotone compression stress
 
-    python3 reference/tnqc_orebro_offline.py --window-minutes 5
+Each episode receives an independent strictly increasing compressive response
+(g(c)=log(1+alpha c)/alpha), with (alpha) assigned without source truth. Across 200 seeds:
 
-Closed-loop matrix after the installed launch overlay exposes tnqc_mode:
+| representation | mean accuracy | min | max | perfect runs |
+|---|---:|---:|---:|---:|
+| raw | 0.7833 | 0.6667 | 0.9167 | 0/200 |
+| **affine quotient** | **1.0000** | **1.0000** | **1.0000** | **200/200** |
+| local spatial order | 0.9167 | 0.9167 | 0.9167 | 0/200 |
+| old equal fusion | 0.9167 | 0.9167 | 0.9167 | 0/200 |
+| **hierarchy-guarded** | **1.0000** | **1.0000** | **1.0000** | **200/200** |
 
-    bash reference/run_tnqc_closed_loop_matrix_20260920.sh
+The affine quotient is not mathematically invariant to arbitrary nonlinear monotone transforms; its 200/200 result here is an empirical VGR robustness observation, not an invariance claim.
 
-## Local implementation sanity check
+---
 
-The standalone TNQC score test was compiled with C++20 and `-Wall -Wextra -Wpedantic -Werror` against the frozen header and passed all assertions for affine invariance, monotone local-order invariance, negative reversed-field evidence, and insufficient-support abstention.
+## 4. Secondary innovation was falsified and repaired before the 300-s House gate
 
+The original unconditional 1:1 fusion is **rejected**.
 
-## Corrected status
+The falsifying case is H02 / fast / source SA at 240 s:
 
-The 2/5/10-min Orebro numbers establish only an external representation signal. They do not establish 300-s gas-source localization gain on the project's VGR House benchmark.
+[
+q_{m aff}(SA)=-0.02142,quad q_{m aff}(SB)=-0.03821,
+]
 
-**Status: AUXILIARY EXTERNAL SIGNAL ONLY / VGR 300-S OFFLINE GATE PENDING / CLOSED LOOP HOLD.**
+so the exact affine quotient correctly selects SA. But
+
+[
+q_{m ord}(SA)=0.75758,quad q_{m ord}(SB)=0.87879,
+]
+
+and unconditional averaging flips the result to SB.
+
+This is scientifically useful: a broader symmetry quotient discards more information and must not be allowed to override a more physically exact quotient.
+
+### Symmetry-Hierarchy Consistency Guard
+
+The repaired auxiliary has no learned coefficient and no fitted threshold:
+
+[
+e_s=
+egin{cases}
+rac12(q_{m aff}(s)+q_{m ord}(s)),
+& |E_s|ge2 	ext{ and }q_{m aff}(s)q_{m ord}(s)ge0,\
+q_{m aff}(s),&	ext{otherwise}.
+end{cases}
+]
+
+Interpretation:
+
+- (q_{m aff}) is the privileged exact physical quotient;
+- (q_{m ord}) is a broader monotone-invariant corroboration channel;
+- the broader channel may reinforce the exact quotient only when directionally consistent;
+- disagreement triggers analytic fallback, not learned arbitration.
+
+On the frozen VGR screen this restores 12/12 at 240 s and remains 12/12 in all 100 scale-stress and 200 monotone-stress runs.
+
+This guarded equation is now implemented identically in:
+
+- `ros2_package/src/gsl_server/algorithms/PMFS/internal/TNQCScore.hpp`;
+- `reference/tnqc_vgr_fixed_trajectory_replay.py`;
+- `ros2_package/test/test_tnqc_score.cpp`.
+
+---
+
+## 5. External Orebro result is auxiliary only
+
+The earlier Orebro3DSEN repeated-source experiment remains useful as an independent sensor-array falsification. It showed that quotient/canonical spatial information can persist under release/fan changes while raw amplitude is weak. It does **not** measure the project's 300-s localization endpoint and is not part of the GO rule.
+
+Reproduction remains:
+
+```bash
+python3 reference/tnqc_orebro_offline.py --window-minutes 5
+```
+
+Do not substitute its AUC/LOCO metrics for House localization error.
+
+---
+
+## 6. Authoritative next gate: fixed-trajectory VGR 300 s localization
+
+The project-level offline gate is:
+
+```bash
+python3 reference/test_tnqc_vgr_fixed_trajectory_replay.py
+bash reference/run_tnqc_vgr_offline_gate_20260920.sh
+```
+
+For House01/02/03 × seed0/1 the driver:
+
+1. runs native PMFS to the full 300-s budget;
+2. exports the exact native trajectory and PMFS candidate/context bank;
+3. reconstructs the native posterior and requires a cell-wise audit to pass;
+4. reweights the same frozen candidate bank with the guarded TNQC equation;
+5. evaluates the final PMFS top-5% expected-location error;
+6. aggregates the six paired cases.
+
+Closed-loop GO requires:
+
+- pooled final error reduction >= 10%;
+- >=4/6 paired cases improve;
+- no pair degrades by >25%;
+- no false confident collapse;
+- all native posterior reconstruction audits pass.
+
+Until the resulting `tnqc_vgr_300s_offline_gate.json` contains
+`"go_for_closed_loop": true`, planner-coupled TNQC remains on HOLD.
+
+---
+
+## 7. Current status
+
+The VGR project data now support the **mechanism**:
+
+- exact affine quotient: survives the frozen spatial cross-transport screen and exact scale nuisance;
+- unconditional broad-symmetry fusion: falsified;
+- symmetry-hierarchy guard: survives the corrected VGR screen without a fitted parameter.
+
+They do **not yet** establish final 300-s localization improvement.
+
+**Status: VGR MECHANISM POSITIVE / VGR 300-S LOCALIZATION GATE PENDING / CLOSED LOOP HOLD.**
