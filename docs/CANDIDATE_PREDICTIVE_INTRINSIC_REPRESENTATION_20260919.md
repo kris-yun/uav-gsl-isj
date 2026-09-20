@@ -1465,3 +1465,72 @@ Next search target:
 1. 2025/2026 top-venue work on persistent identity / preserved dynamics across domain/session conditions;
 2. direct OSL/GSL collisions involving domain-invariant or contrastive source identity;
 3. a lightweight objective that can be tested with current source×transport pairs without assuming early observability.
+
+
+## 35. Loop-9: source-specific destructive control strengthens preserved-identity premise
+
+The strongest Fisher/LDA-style intrinsic-representation proxy was subjected to a source-blind temporal-phase destructive control.
+
+Protocol:
+- training data: fast-wind windows, 120–180 s;
+- test data: slow-wind windows, 180–240 s;
+- same fixed gas-only feature vector for all arms;
+- **source-LDA** learns the discriminative direction SA vs SB;
+- **phase-control LDA** ignores source and instead learns early (120–150 s) vs late (150–180 s) dynamics;
+- source prototypes are then evaluated in the learned 1-D space;
+- physical-support-qualified results are reported separately.
+
+Results:
+
+### H01
+5 s windows:
+- source-LDA supported accuracy = 1.00, margin = +0.234;
+- phase-control supported accuracy = 0.25, margin = -0.070.
+
+10 s:
+- source-LDA = 1.00, margin +0.202;
+- phase-control = 0.667, margin +0.046.
+
+20 s:
+- source-LDA = 1.00, margin +1.906;
+- phase-control = 0.00, margin -0.274.
+
+### H03
+5 s:
+- source-LDA supported accuracy = 0.632, margin +4.402;
+- phase-control = 0.368, margin -0.096.
+
+10 s:
+- source-LDA = 0.60, margin +6.407;
+- phase-control = 0.30, margin -0.184.
+
+20 s:
+- source-LDA = 0.60, margin +6.631;
+- phase-control = 0.20, margin -0.124.
+
+### H02
+The held slow-wind 180–240 s interval has no >0.01 ppm support. Results from either source-LDA or phase-control are not admitted as localization evidence.
+
+Interpretation:
+- the held-time/wind margin gain is not reproduced by an arbitrary temporal discrimination direction;
+- the useful projection is specifically tied to **source identity** rather than generic time progression;
+- the signal remains imperfect in H03, so no final PASS is claimed;
+- lack of support in H02 is correctly handled as an abstention condition.
+
+This is the strongest current offline evidence for the main scientific object:
+**a source-specific intrinsic representation that is preserved across a change in transport condition and time.**
+
+## 36. Current M1 evidence grade
+
+M1 preserved-source-dynamics now has:
+
+1. positive paired-context margin evidence in H01/H02/H03 development histories;
+2. held-wind + held-time improvement in H01 and H03 when physical support exists;
+3. a temporal-phase destructive control that fails to reproduce the source-specific gain;
+4. a physical-support negative control in H02 where no inference claim is admitted;
+5. direct literature provenance from ICLR 2025 and NeurIPS 2025 Spotlight on intrinsic/preserved dynamical representations.
+
+Status:
+**M1 = PROMISING, NOT YET VALIDATED.**
+
+The next gate must use a learned nonlinear lightweight representation or an independent public plume dataset. No closed-loop PMFS run is authorized yet.
