@@ -6,6 +6,7 @@
 #include <gsl_server/algorithms/PMFS/PMFSLib.hpp>
 #include <gsl_server/algorithms/PMFS/internal/Simulations.hpp>
 #include <gsl_server/algorithms/PMFS/internal/MEACIParams.hpp>
+#include <gsl_server/algorithms/PMFS/internal/TNQCScore.hpp>
 #include <gsl_server/core/Logging.hpp>
 
 #include <opencv2/core/hal/interface.h>
@@ -350,6 +351,13 @@ namespace GSL::PMFS_internal
         nativeSourceUpdateId = sourceUpdateId;
     }
 
+    void Simulations::configureTNQC(const std::string& mode)
+    {
+        if (mode != "off" && mode != "shadow" && mode != "fused" && mode != "only")
+            throw std::invalid_argument("TNQC mode must be off, shadow, fused, or only");
+        tnqcMode = mode;
+    }
+
     void Simulations::updateSourceProbability(float refineFraction)
     {
         ZoneScoped;
@@ -366,6 +374,51 @@ namespace GSL::PMFS_internal
         {
             std::lock_guard<std::mutex> guard(nativeCandidateHitMapsMutex);
             nativeCandidateHitMaps.clear();
+        }
+
+        // Freeze one observation-side canonical field per source update. Every
+        // candidate is then scored against exactly the same quotient
+        // representative. No source truth, posterior rank, or candidate ID is
+        // used in this construction.
+        tnqcObservedLogits.clear();
+        tnqcWeights.clear();
+        tnqcSupport.clear();
+        tnqcLocalEdges.clear();
+        if (tnqcMode != "off")
+        {
+            const size_t cellCount = measuredHitProb.data.size();
+            tnqcObservedLogits.assign(cellCount, 0.0);
+            tnqcWeights.assign(cellCount, 0.0);
+            tnqcSupport.assign(cellCount, 0);
+            for (size_t cell = 0; cell < cellCount; ++cell)
+            {
+                if (measuredHitProb.occupancy[cell] != Occupancy::Free ||
+                    measuredHitProb.data[cell].confidence <= 0.0 ||
+                    !std::isfinite(measuredHitProb.data[cell].logOdds))
+                    continue;
+                tnqcObservedLogits[cell] = measuredHitProb.data[cell].logOdds;
+                tnqcWeights[cell] = measuredHitProb.data[cell].confidence;
+                tnqcSupport[cell] = 1;
+            }
+
+            const int width = measuredHitProb.metadata.dimensions.x;
+            const int height = measuredHitProb.metadata.dimensions.y;
+            tnqcLocalEdges.reserve(static_cast<size_t>(2 * width * height));
+            for (int x = 0; x < width; ++x)
+                for (int y = 0; y < height; ++y)
+                {
+                    const size_t a = measuredHitProb.metadata.indexOf({x, y});
+                    if (x + 1 < width)
+                    {
+                        const size_t b = measuredHitProb.metadata.indexOf({x + 1, y});
+                        tnqcLocalEdges.emplace_back(a, b);
+                    }
+                    if (y + 1 < height)
+                    {
+                        const size_t b = measuredHitProb.metadata.indexOf({x, y + 1});
+                        tnqcLocalEdges.emplace_back(a, b);
+                    }
+                }
         }
         std::unordered_set<std::string> p2CandidateIDs;
         const auto recordP2Candidates = [&](const std::vector<LeafScore>& candidateScores)
@@ -449,6 +502,34 @@ namespace GSL::PMFS_internal
         }
 
         recordP2Candidates(scores);
+
+        if (tnqcMode != "off")
+        {
+            size_t validTNQC = 0;
+            double sumCosine = 0.0;
+            double sumOrder = 0.0;
+            double sumEvidence = 0.0;
+            double maxEvidence = -std::numeric_limits<double>::infinity();
+            for (const SimulationResult& result : resultsFirstLevel)
+            {
+                if (!result.tnqcValid)
+                    continue;
+                ++validTNQC;
+                sumCosine += result.tnqcCanonicalCosine;
+                sumOrder += result.tnqcLocalOrderAgreement;
+                sumEvidence += result.tnqcEvidence;
+                maxEvidence = std::max(maxEvidence, result.tnqcEvidence);
+            }
+            if (validTNQC > 0)
+                GSL_INFO("TNQC update {} mode={} valid_candidates={} mean_cos={:.6g} mean_order={:.6g} mean_evidence={:.6g} max_evidence={:.6g}",
+                         nativeSourceUpdateId, tnqcMode, validTNQC,
+                         sumCosine / static_cast<double>(validTNQC),
+                         sumOrder / static_cast<double>(validTNQC),
+                         sumEvidence / static_cast<double>(validTNQC),
+                         maxEvidence);
+            else
+                GSL_WARN("TNQC update {} mode={} has no valid candidate score", nativeSourceUpdateId, tnqcMode);
+        }
 
 // update the variance thing (for the movement strategy)
 #pragma omp parallel for
@@ -661,8 +742,37 @@ namespace GSL::PMFS_internal
         }
         exportCandidateHitMap(stableID, candidatePoint, result.hitMap);
 
-        result.sourceProb = sourceProbFromMaps(measuredHitProb, result.hitMap);
-        exportNativeCandidateRecord(stableID, candidatePoint, source.firstSampledSourcePoint(), result.sourceProb, result.hitMap);
+        const long double nativeSourceProb = sourceProbFromMaps(measuredHitProb, result.hitMap);
+        result.sourceProb = nativeSourceProb;
+
+        if (tnqcMode != "off" && tnqcObservedLogits.size() == result.hitMap.size())
+        {
+            std::vector<double> predictedLogits(result.hitMap.size(), 0.0);
+            for (size_t cell = 0; cell < result.hitMap.size(); ++cell)
+                predictedLogits[cell] = TNQC::safeLogit(static_cast<double>(result.hitMap[cell]));
+
+            const TNQC::Score quotient = TNQC::score(
+                tnqcObservedLogits, predictedLogits, tnqcWeights, tnqcSupport, tnqcLocalEdges);
+            result.tnqcValid = quotient.valid;
+            result.tnqcCanonicalCosine = quotient.canonicalCosine;
+            result.tnqcLocalOrderAgreement = quotient.localOrderAgreement;
+            result.tnqcCombinedEffect = quotient.combinedEffect;
+            result.tnqcEvidence = quotient.standardizedEvidence;
+
+            if (quotient.valid)
+            {
+                const long double modifier = std::exp(
+                    static_cast<long double>(quotient.standardizedEvidence));
+                if (tnqcMode == "fused")
+                    result.sourceProb = nativeSourceProb * modifier;
+                else if (tnqcMode == "only")
+                    result.sourceProb = modifier;
+                // shadow computes the exact same diagnostics but preserves the
+                // native PMFS score and therefore the native trajectory.
+            }
+        }
+
+        exportNativeCandidateRecord(stableID, candidatePoint, source.firstSampledSourcePoint(), nativeSourceProb, result.hitMap);
 
         scores[index].score = result.sourceProb;
 
