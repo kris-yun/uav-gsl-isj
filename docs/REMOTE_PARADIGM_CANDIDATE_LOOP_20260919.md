@@ -1209,3 +1209,86 @@ Current ordering after direct literature collision + existing-data tests:
 5. Sensory adaptation — SUPPORTING/DEPLOYMENT mechanism only.
 
 Predictive Coding remains leader not because JEPA is fashionable, but because it uniquely matches the strongest frozen project fact: native temporal phase/first-passage information is source-informative while coarse or learned surrogates can erase it.
+
+
+## Loop-12 — matched falsification of delay-coordinate invariant-measure M1
+
+Date: 2026-09-20
+
+### Literature / collision check
+
+Primary source remains strong:
+- Physical Review Letters 135, 167202 (2025), Botvinick-Greenhouse, Martin, Yang, *Invariant Measures in Time-Delay Coordinates for Unique Dynamical System Identification*.
+- The paper proves that invariant measures in time-delay coordinates can identify dynamics up to topological conjugacy, with multiple observables resolving the remaining ambiguity under assumptions.
+- Its public code demonstrates Lorenz, Kuramoto–Sivashinsky, and partially observed cylinder-wake flow.
+- Targeted searches did not find a direct gas/odor-source-localization implementation of this 2025 delay-measure object. This is a positive novelty signal only.
+
+### Frozen matched project test
+
+Data:
+- existing H01/H02/H03 × {SA,SB} × {fast,slow} controlled histories;
+- no new simulator runs.
+
+Protocol:
+- train/reference wind = fast; held wind = slow;
+- horizons = 120, 180, 240 s;
+- delay measure fixed before inspection at m=4 and tau=10 s (50 samples at 0.2 s);
+- empirical delay-coordinate measure compared by a deterministic sliced-Wasserstein proxy over fixed coordinate/mixed directions;
+- same protocol applied to four comparators:
+  1. one-point marginal empirical measure;
+  2. autocorrelation vector;
+  3. physically interpretable event-time/exposure moments;
+  4. destructive time-order controls.
+
+Primary diagnostics:
+- held-wind same-source nearest-prototype count out of 2;
+- same-source wind distance / cross-source distance (lower is better).
+
+### Results
+
+| House | Horizon | Delay correct | Delay ratio | Marginal correct | Marginal ratio | ACF correct | ACF ratio | Event-moment correct | Event-moment ratio |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| H01 | 120 | 2/2 | 0.127 | 2/2 | 0.127 | 2/2 | 0.021 | 2/2 | 0.017 |
+| H01 | 180 | 2/2 | 0.495 | 1/2 | 0.422 | 2/2 | 0.281 | 2/2 | 0.072 |
+| H01 | 240 | 2/2 | 0.233 | 2/2 | 0.153 | 2/2 | 0.548 | 2/2 | 0.060 |
+| H02 | 120 | 0/2 | 1.000 | 0/2 | 1.000 | 0/2 | 1.000 | 0/2 | 1.000 |
+| H02 | 180 | 2/2 | 0.058 | 2/2 | 0.072 | 1/2 | 0.491 | 2/2 | 0.103 |
+| H02 | 240 | 2/2 | 0.066 | 2/2 | 0.080 | 2/2 | 0.044 | 2/2 | 0.135 |
+| H03 | 120 | 1/2 | 0.435 | 2/2 | 0.197 | 2/2 | 0.130 | 2/2 | 0.136 |
+| H03 | 180 | 2/2 | 0.157 | 2/2 | 0.171 | 2/2 | 0.097 | 2/2 | 0.074 |
+| H03 | 240 | 2/2 | 0.310 | 2/2 | 0.419 | 0/2 | 1.010 | 2/2 | 0.551 |
+
+Important positive controls:
+- H02 120 s remains 0/2 and ratio ≈1 for every representation: the delay measure does not manufacture source support.
+- H03 240 s is a genuine case where the delay-coordinate measure is substantially better than marginal/event-moment/ACF alternatives.
+
+Important negative controls:
+- H03 120 s delay measure is worse than all simple comparators and drops to 1/2.
+- Across the 9 House×horizon conditions, delay-coordinate measures are not uniformly better than the physically interpretable event-moment baseline.
+- Full deterministic time permutation does **not** consistently destroy the delay-measure advantage; in H03 120 s it actually improves held-wind identity from 1/2 to 2/2.
+- Time reversal changes little in most cases, consistent with the fact that an empirical delay measure can retain substantial distributional structure without uniquely encoding chronological direction.
+
+### Decision
+
+The PRL object is scientifically deep and has attractive novelty room, but the project's matched evidence does not show that its unique object is consistently load-bearing.
+
+The earlier 56/60 score was too optimistic because it was based on selected positive horizons rather than a matched multi-House baseline.
+
+New status:
+
+DELAY_COORDINATE_INVARIANT_MEASURE_M1 = DEMOTED_TO_RESERVE / NO-GO AS CURRENT MAIN
+
+Reason:
+- no consistent advantage over simple event-time moments;
+- destructive order controls are mixed rather than decisive;
+- finite-horizon and sparse-support effects are large enough to defeat the invariant-measure premise in some relevant cases.
+
+It remains a useful comparator and possible diagnostic for H03-like regimes, but it no longer outranks the current predictive/intermittency line.
+
+### Consequence for the search loop
+
+The main-candidate search remains open.
+
+The next M1 challenger must satisfy a stricter criterion:
+> its unique remote-field scientific object must outperform matched simple temporal/event baselines across the existing House/horizon panel, not only on selected positive cases.
+
