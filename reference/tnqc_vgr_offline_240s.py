@@ -26,7 +26,6 @@ budget on House01/02/03 x seed0/1.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import math
 import statistics
@@ -196,10 +195,17 @@ def classify(hist: Dict[str, List[dict]], end_s: float, transformed=None) -> dic
     }
 
 
-def seed_rng(seed: int, key: str):
-    # Tiny deterministic source-blind LCG.  Only episode id + stress seed enter.
-    h = int(hashlib.sha256(f"{seed}:{key}".encode()).hexdigest()[:8], 16)
-    state = h & 0xFFFFFFFF
+def fnv1a32(text: str) -> int:
+    h = 2166136261
+    for b in text.encode("utf-8"):
+        h ^= b
+        h = (h * 16777619) & 0xFFFFFFFF
+    return h
+
+
+def seed_rng(seed: int, key: str, salt: int = 0):
+    # Deterministic source-blind LCG. Only episode id + stress seed enter.
+    state = (seed ^ fnv1a32(key) ^ salt) & 0xFFFFFFFF
 
     def rand() -> float:
         nonlocal state
@@ -219,11 +225,11 @@ def scale_stress(seed: int):
 
 def monotone_stress(seed: int):
     def f(key: str, x: List[float]) -> List[float]:
-        r = seed_rng(seed, key)
+        r = seed_rng(seed, key, 0x9E3779B9)
         factor = math.exp(
             math.log(1e-2) + r() * (math.log(1e4) - math.log(1e-2))
         )
-        scale = max(max(x) - min(x), 1e-9)
+        scale = max(max(x), 1e-9)
         alpha = factor / scale
         return [math.log1p(alpha * max(v, 0.0)) / alpha for v in x]
     return f
