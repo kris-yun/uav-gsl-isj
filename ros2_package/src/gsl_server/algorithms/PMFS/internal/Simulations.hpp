@@ -10,6 +10,7 @@
 #include <mutex>
 #include <memory>
 #include <cstdint>
+#include <utility>
 #include "gsl_server/algorithms/PMFS/internal/EventKeyedRng.hpp"
 
 namespace GSL
