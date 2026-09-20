@@ -1,6 +1,6 @@
 # Codex start here — TNQC VGR 300 s feasibility first
 
-The current frozen candidate is **TNQC (Transport-Nuisance Quotient Canonicalization)**.
+The current frozen candidate is **TNQC (Transport-Nuisance Quotient Canonicalization)** with the VGR-tested **symmetry-hierarchy consistency guard**.
 
 ## Important correction
 
@@ -14,18 +14,19 @@ The primary gate is the user's VGR/GADEN House benchmark:
 
 Read first:
 1. `docs/VGR_300S_PRIMARY_GATE_20260920.md` — authoritative evaluation contract and gate order.
-2. `docs/TNQC_CODEX_HANDOFF_20260920.md` — theory, equations, literature lineage, novelty boundary, implementation map.
-3. `docs/TNQC_OFFLINE_GATE_20260920.md` — external Orebro falsification only.
-4. `docs/CANDIDATE_SYMMETRY_QUOTIENT_20260920.md` — research lineage and rejected predecessor branches.
+2. `docs/TNQC_CODEX_HANDOFF_20260920.md` — current guarded equation, theory, literature lineage, novelty boundary, implementation map.
+3. `docs/TNQC_OFFLINE_GATE_20260920.md` — VGR 0.3-m spatial mechanism screen and falsification of unconditional fusion.
+4. `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json` — frozen project-data mechanism record.
+5. `docs/CANDIDATE_SYMMETRY_QUOTIENT_20260920.md` — research lineage and rejected predecessor branches.
 
 ## Execution order
 
-1. Build and run `test_tnqc_score`.
-2. Reproduce Orebro only as a sanity/falsification check; do not use it to accept the method.
-3. On the VM House datasets, first run full-300 s native PMFS + `tnqc_mode=shadow`.
-4. Verify OFF == SHADOW in trajectory/final native result.
-5. Produce a read-only TNQC-rescored posterior on the same native 300 s trajectory and evaluate its final top-5% error.
-6. Only if the frozen VGR 300 s gate passes may planner-coupled `fused` closed-loop testing begin.
+1. Pull current `main`, build, and run `test_tnqc_score`.
+2. Reproduce `reference/tnqc_vgr_offline_240s.py`; it must match the frozen VGR spatial mechanism evidence. Do not retune.
+3. Run `reference/run_tnqc_vgr_offline_gate_20260920.sh` on the VM House datasets. This is the authoritative full-300 s fixed-trajectory gate.
+4. Require all native-reconstruction audits to pass and inspect `tnqc_vgr_300s_offline_gate.json`.
+5. Only when `go_for_closed_loop=true`, run OFF vs SHADOW and require exact determinism.
+6. Only after that may planner-coupled `fused` closed-loop testing begin.
 
 Authoritative VGR roots used by the frozen runner:
 - `/mnt/hgfs/workspace/GADEN_files/scenarios/House01`
@@ -40,4 +41,4 @@ Do not tune TNQC after viewing House truth.
 
 Current scientifically valid status:
 
-**EXTERNAL-PROXY POSITIVE / VGR-300S PRIMARY GATE PENDING / CLOSED-LOOP PENDING.**
+**VGR MECHANISM POSITIVE / VGR-300S PRIMARY GATE PENDING / CLOSED-LOOP HOLD.**
