@@ -726,3 +726,45 @@ Status of M1 after loop-5:
 - predictive coding = stronger paper-level mother idea than “JEPA”.
 - latent prediction remains the lightweight implementation path.
 - candidate survives, but requires M2 to pass H03/rare-event robustness rather than hiding that failure.
+
+
+## 24. Loop-6: predictive evidence vs static observation model
+
+A stricter comparator was added to test whether the predictive-coding premise is doing anything beyond static amplitude matching.
+
+Protocol:
+- training condition: fast-wind trace for each source;
+- held condition: slow-wind trace;
+- static baseline: per-source i.i.d. Gaussian log-concentration model;
+- predictive baseline: per-source AR(10) one-step model;
+- score: average held-window negative log likelihood under each candidate source model.
+
+Results:
+
+H01:
+- 120–180 s: static 2/2, predictive 2/2.
+- 180–240 s: static 2/2, predictive 2/2.
+- no unique predictive advantage in this House.
+
+H02:
+- 120–180 s: both 2/2.
+- 180–240 s: both 1/2.
+- 120–240 s: both 2/2.
+- predictive modeling does not rescue the late H02 low-support ambiguity.
+
+H03:
+- 120–180 s: static model fails 0/2 while predictive model succeeds 2/2.
+- 180–240 s: static 1/2, predictive 0/2.
+- 120–240 s: both 1/2.
+
+Interpretation:
+1. There is at least one real regime (H03 120–180 s) where source identity exists in temporal predictive dynamics while static distributional/amplitude matching gives the wrong source for both held-wind cases.
+2. Predictive evidence is not universally better; late H03 reverses.
+3. This is exactly the kind of non-monotone failure that requires an intermittency/extreme-event-aware auxiliary rather than claiming prediction error alone is sufficient.
+4. The result strengthens Predictive Coding as a scientifically distinct M1 over generic representation learning, because the discriminating object is **candidate-specific prediction error across time**, not merely an embedding.
+
+Current M1 premise:
+- PASS as a mechanism candidate;
+- NOT sufficient alone;
+- M2 remains load-bearing.
+
