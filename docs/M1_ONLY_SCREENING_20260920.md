@@ -188,3 +188,138 @@ Before promoting M1:
 6. if this fails, reject predictive representation M1 and restart the remote-paradigm search.
 
 M2/M3 remain frozen until this gate is resolved.
+
+
+## Loop 2 — predictive-representation M1 does not clear the data gate
+
+A source-blind linear predictive-subspace proxy was added to directly compare latent future-predictive directions against PCA/reconstruction-style directions.
+
+Protocol:
+- 5 s and 10 s windows from 120–240 s;
+- training uses fast-wind histories from both source interventions without source labels;
+- predictive subspace = top eigen-directions of context→future cross-covariance;
+- reconstruction baseline = top PCA directions of context covariance;
+- frozen representations evaluated on slow wind by source-prototype separation.
+
+Result:
+- H01: predictive and PCA are essentially tied; only small differences.
+- H02: predictive and PCA are essentially identical across 2/4/8 latent dimensions.
+- H03: predictive gives only a marginal 5 s gain and is otherwise tied.
+- no 3/3 House advantage over reconstruction/PCA appears.
+
+Combined with the earlier ridge future-predictor results (mixed and sometimes worse than raw context), the present evidence does **not** support claiming that latent prediction itself is the unique load-bearing source-identification mechanism on current data.
+
+Decision:
+**Physical-Parameter Predictive Representation Learning = DEMOTED FROM ACTIVE M1.**
+It remains a possible implementation component, not the paper-defining innovation.
+
+## Loop 2 new M1 search — Extreme-Event-Aware Learning
+
+### Primary 2026 remote-domain anchor
+
+- Nature Communications 2026 — Kai Chang & Themistoklis P. Sapsis, *Extreme Event Aware (η-) Learning*.
+  Core principle: rare/extreme regimes are underrepresented in finite data; ordinary learning fits quiescent/common regimes and remains uncertain or wrong in extremes. η-learning injects statistics of an observable that characterizes extremeness as a training constraint, with optimal-transport theory supporting the construction.
+
+Independent recent support:
+- Physical Review Fluids 2026 — data-driven latent-space modeling/control of extreme events in turbulent flows.
+- ICML 2025 — extreme-value learning/optimization explicitly argues that expectation-based objectives can ignore rare but high-impact tail events.
+- The modern turbulence literature continues to treat intermittent bursts as the scientifically distinct events that standard mean behavior fails to capture.
+
+### Why this maps to the project
+
+The current project repeatedly shows a rare-event structure:
+- H01 source evidence can arrive only very late (~229 s in the controlled pair);
+- H02 has no usable source signal at early horizons and becomes strongly identifiable only after plume exposure appears;
+- native first-passage timing is strongly source-informative, while coarse HIT compression removes much of that information;
+- standard predictive compression can erase H01's late source-defining event;
+- therefore mean/reconstruction/prediction objectives can emphasize the common zero/quiescent regime and underweight the rare observations that actually distinguish source hypotheses.
+
+### GSL novelty collision boundary
+
+Not novel:
+- plume intermittency;
+- whiff/blank statistics;
+- intensity/timing features for odor localization.
+
+Those are established, including eLife 2022 work showing both intensity and timing of turbulent odor bursts predict source location.
+
+Potentially novel:
+> import **extreme-event-aware learning as the training principle** for source-probability inference: preserve/regularize source-informative tail and intermittent-event statistics so the learned likelihood/map cannot optimize the dominant quiescent regime by washing out rare source evidence.
+
+Current search did not find η-learning / extreme-event-aware statistical regularization applied to robotic gas/odor source localization.
+
+### Existing-data fixed η-observable screen
+
+Using only the existing 12 factorial histories, a source-blind fixed feature split was evaluated.
+
+Bulk features:
+- mean, standard deviation and central quartiles of log concentration.
+
+Extreme/intermittency observables:
+- q95, q99, maximum and top-1% mean;
+- fixed-threshold exceedance fractions;
+- first arrival at the pre-existing 0.1 ppm floor;
+- whiff/blank duration and burst-count statistics.
+
+Held-wind source identity:
+
+H01:
+- 180 s: bulk 1/2; η 1/2; bulk+η 2/2.
+- 240 s: bulk 1/2; η 2/2; bulk+η 2/2.
+- wind/cross-source distance ratio at 240 s: bulk 0.568; η 0.159.
+
+H02:
+- 60 s: all zero — no method fabricates source information.
+- 120 s: all unresolved — source and transport remain tied.
+- 180 s: bulk 2/2, η 2/2; ratio 0.382 vs 0.037.
+- 240 s: bulk 2/2, η 2/2; ratio 0.649 vs 0.146.
+
+H03:
+- 120 s: bulk 1/2; η 2/2; ratio 0.451 vs 0.210.
+- 180 s: both 2/2; η ratio 0.179 vs bulk 0.294.
+- 240 s: bulk 2/2; η 1/2; combined bulk+η restores 2/2.
+
+Interpretation:
+- extreme/intermittency observables are markedly more transport-stable than bulk statistics in the key H01/H02 late-support cases and H03 120–180 s;
+- η-only is not universally sufficient (H03 240 s), so the scientific claim must be “do not let learning ignore the rare-event channel”, not “only extremes matter”;
+- zero-support cases remain zero, satisfying the physical-support constraint.
+
+### Amplitude-tail vs temporal-extreme split
+
+The η vector was split without tuning:
+
+Amplitude-tail branch:
+- upper quantiles, maximum/top-tail mean, threshold occupancy.
+
+Temporal-extreme branch:
+- first arrival, whiff/blank durations, burst count.
+
+Result:
+- H01 240 s: both branches identify 2/2 sources; temporal ratio 0.153, amplitude ratio 0.164.
+- H02 180–240 s: both branches identify 2/2; amplitude branch is especially stable.
+- H03 120–180 s: both branches identify 2/2.
+- H03 240 s: amplitude branch falls to 1/2 while temporal branch retains 2/2.
+
+Thus no single hand-engineered extreme statistic explains all Houses. Tail amplitude and event timing carry complementary source evidence — exactly the condition under which an η-learning objective over a vector observable is scientifically more appropriate than a fixed feature heuristic.
+
+## Current M1 ranking after Loop 2
+
+1. **Extreme-Event-Aware Source Learning / η-GSL** — ACTIVE PRIMARY CANDIDATE.
+2. Predictive self-supervised physical representation — DEMOTED; possible implementation.
+3. Self-supervised nonlinear system identification — REJECTED.
+4. Context/meta dynamics — DEMOTED.
+5. Temporal point-process / first-passage — REJECTED as primary due project-history collision.
+6. Causal/invariant-function discovery — REJECTED as primary.
+
+## Final confirmation still required for η-GSL
+
+M1 is not yet frozen. Before promotion, require:
+
+1. a minimal η-regularized source estimator on existing data, not just hand-crafted η features;
+2. compare against the same estimator without η regularization;
+3. require no worse source ranking in H01/H02/H03 and a clear gain in at least the known rare-event failure cases;
+4. time/order destructive controls must show that the gain is not just concentration amplitude reweighting;
+5. direct 2025/2026 GSL collision search for EVT, tail-risk, rare-event regularization and extreme-aware learning;
+6. confirm the method can be defined on VGR/GADEN, DNS turbulent plume data and real wind-tunnel trajectories.
+
+M2/M3 remain frozen.
