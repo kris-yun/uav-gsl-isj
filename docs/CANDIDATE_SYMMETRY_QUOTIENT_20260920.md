@@ -133,3 +133,20 @@ When observations remain self-symmetric or insufficiently identifying, delay com
 3. Confirm that the quotient likelihood is invariant to synthetic common logit shifts / release-amplitude perturbations while native PMFS likelihood is not.
 4. Search the 2024–2026 GSL literature specifically for Lie-group, quotient-space, or canonicalization formulations; reject this branch if an essentially identical formulation already exists.
 5. Only after these gates pass, elevate symmetry quotienting from “candidate” to the paper's main organizing principle.
+
+
+## 2026-09-20 late-cycle status
+
+The offline branch has now advanced to a frozen closed-loop candidate.
+
+Additional conservative measured-data probes confirm that a local spatial-adjacency order channel carries repeated-source signal across 2/5/10 min windows and is exactly preserved under condition-specific strictly monotone sensor transforms. It is retained only as an auxiliary robustness channel because ICRA 2026 already establishes global concentration-ranking GSL.
+
+The online implementation now uses:
+- centered confidence-weighted logit-field cosine for the affine quotient;
+- confidence-weighted local adjacency order agreement for the monotone auxiliary;
+- fixed 1:1 fusion with no fitted coefficient;
+- bounded quotient evidence in [-1,1], explicitly avoiding sqrt(cell-count) scaling because PMFS map cells are spatially correlated.
+
+The bounded evidence choice is frozen before House truth evaluation. Public-data reproduction and the closed-loop decision gate are recorded in docs/TNQC_OFFLINE_GATE_20260920.md.
+
+Status: **OFFLINE POSITIVE; CLOSED-LOOP PENDING.**
