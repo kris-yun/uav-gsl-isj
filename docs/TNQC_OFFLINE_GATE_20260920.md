@@ -21,7 +21,7 @@ A deliberately low-capacity 5 min window test gives:
 | representation | same/different AUC | leave-condition-out repeated-source accuracy |
 |---|---:|---:|
 | raw sensor means | 0.486 | 0.20 |
-| affine-quotient spatial shape | 0.789 | 0.56 |
+| affine-quotient spatial shape | 0.789 | 0.62 |
 | local neighbour order | 0.681 | 0.68 |
 | equal continuous + local-order fusion | 0.791 | 0.70 |
 
@@ -29,11 +29,15 @@ The local-order channel remains non-trivial across window scales:
 
 | window | affine quotient AUC / acc | local order AUC / acc | equal fusion AUC / acc |
 |---|---|---|---|
-| 2 min | 0.797 / 0.528 | 0.696 / 0.696 | 0.791 / 0.616 |
-| 5 min | 0.789 / 0.560 | 0.681 / 0.680 | 0.791 / 0.700 |
-| 10 min | 0.786 / 0.600 | 0.723 / 0.680 | 0.823 / 0.680 |
+| 2 min | 0.806 / 0.600 | 0.696 / 0.696 | 0.791 / 0.616 |
+| 5 min | 0.789 / 0.620 | 0.681 / 0.680 | 0.791 / 0.700 |
+| 10 min | 0.789 / 0.600 | 0.723 / 0.680 | 0.823 / 0.680 |
 
 These numbers use a simple cosine/order prototype test and are intentionally more conservative than the earlier transductive/cross-standardized screen.
+
+### Reproducibility reconciliation
+
+A fresh independent re-evaluation against the current public Orebro3DSEN blobs and the current `reference/tnqc_orebro_offline.py` logic found that an earlier draft of this gate understated the affine-only LOCO accuracy at 2 and 5 min (and shifted its AUC slightly at 2/10 min). The table above has been corrected to the current reproducible values. The local-order and equal-fusion headline values are unchanged. The correction was made before any House closed-loop TNQC result was available and changes no online equation or threshold.
 
 ## Nonlinear monotone stress
 
@@ -43,7 +47,7 @@ Each experiment is subjected to a different fixed compressive transform g_a(c) =
 
 | representation | original AUC / acc | nonlinear-stress AUC / acc |
 |---|---|---|
-| affine quotient | 0.789 / 0.56 | 0.754 / 0.52 |
+| affine quotient | 0.789 / 0.62 | 0.760 / 0.66 |
 | local neighbour order | 0.681 / 0.68 | 0.681 / 0.68 |
 | equal fusion | 0.791 / 0.70 | 0.743 / 0.64 |
 
