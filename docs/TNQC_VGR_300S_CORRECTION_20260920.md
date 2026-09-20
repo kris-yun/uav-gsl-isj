@@ -147,14 +147,21 @@ q_{\rm ord}(s)=
 {\sum_{(i,j)\in E}\min(w_i,w_j)},
 ]
 
-and
+and the frozen symmetry-hierarchy guard
 
 [
-e_s=\tfrac12(q_{\rm aff}+q_{\rm ord})
+e_s=
+\begin{cases}
+\tfrac12(q_{\rm aff}(s)+q_{\rm ord}(s)),
+& |E_s|\ge2\ \text{and}\ q_{\rm aff}(s)q_{\rm ord}(s)\ge0,\\
+q_{\rm aff}(s),&\text{otherwise}.
+\end{cases}
 ]
 
-when at least two valid local edges exist, otherwise (e_s=q_{\rm aff}).
-The evidence remains bounded in ([-1,1]).
+The broader monotone/order channel may corroborate the exact affine quotient
+but may not reverse it. This repair was frozen after the VGR 0.3-m spatial
+mechanism screen falsified unconditional 1:1 fusion, before the authoritative
+300-s House gate. The evidence remains bounded in ([-1,1]).
 
 The fixed-bank counterfactual likelihood is
 
@@ -213,5 +220,9 @@ online TNQC can additionally change quadtree refinement and future robot
 motion.  The offline replay is the lower-risk causal screen required before
 allowing those feedback paths.
 
+The VGR 240-s spatial mechanism screen is recorded in
+`evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json`: the affine and
+hierarchy-guarded representations are 12/12 at 240 s and remain 12/12 across
+100 source-blind positive-scale stresses.  This is mechanism evidence only.
 The Orebro 2/5/10-min result remains auxiliary and is not used in the GO
 decision.
