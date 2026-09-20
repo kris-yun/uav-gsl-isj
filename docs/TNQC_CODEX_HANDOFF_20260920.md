@@ -181,11 +181,11 @@ Conservative results:
 
 | window | affine quotient AUC / LOCO acc | local-order AUC / LOCO acc | equal fusion AUC / LOCO acc |
 |---|---|---|---|
-| 2 min | 0.797 / 0.528 | 0.696 / 0.696 | 0.791 / 0.616 |
-| 5 min | 0.789 / 0.560 | 0.681 / 0.680 | 0.791 / 0.700 |
-| 10 min | 0.786 / 0.600 | 0.723 / 0.680 | 0.823 / 0.680 |
+| 2 min | 0.806 / 0.600 | 0.696 / 0.696 | 0.791 / 0.616 |
+| 5 min | 0.789 / 0.620 | 0.681 / 0.680 | 0.791 / 0.700 |
+| 10 min | 0.789 / 0.600 | 0.723 / 0.680 | 0.823 / 0.680 |
 
-At 5 min raw sensor means are about AUC 0.486 / LOCO acc 0.20.
+At 5 min raw sensor means are about AUC 0.486 / LOCO acc 0.20. A fresh independent recheck against the current public blobs and the current frozen probe logic was used to reconcile the affine-only numbers above before any House closed-loop TNQC result was available.
 
 Condition-specific monotone compression
 (g_a(c)=\operatorname{asinh}(ac)/a)
