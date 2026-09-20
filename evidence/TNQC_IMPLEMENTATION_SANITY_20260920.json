@@ -1,0 +1,29 @@
+{
+  "contract": "TNQC_IMPLEMENTATION_SANITY_V2",
+  "date": "2026-09-20",
+  "cpp_standalone": {
+    "source_header": "ros2_package/src/gsl_server/algorithms/PMFS/internal/TNQCScore.hpp",
+    "source_test": "ros2_package/test/test_tnqc_score.cpp",
+    "command": "g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -Werror -UNDEBUG -I<repo>/ros2_package/src test_tnqc_score.cpp && ./test_tnqc_score",
+    "result": "TNQC_SCORE_TEST_PASS",
+    "checks": [
+      "positive-affine quotient invariance",
+      "strictly monotone local-order invariance",
+      "negative reversed-field evidence",
+      "symmetry-hierarchy fallback when q_aff and q_ord disagree",
+      "insufficient-support abstention"
+    ]
+  },
+  "vgr_project_mechanism": {
+    "record": "evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json",
+    "status": "positive",
+    "caveat": "fixed-route 240-s mechanism screen; not the authoritative 300-s localization endpoint"
+  },
+  "python_fixed_trajectory_replay": {
+    "source": "reference/tnqc_vgr_fixed_trajectory_replay.py",
+    "parity_test": "reference/test_tnqc_vgr_fixed_trajectory_replay.py",
+    "status": "ready_for_VM_execution",
+    "caveat": "requires VGR context-bank artifacts/full 300-s native runs for authoritative localization gate"
+  },
+  "github_actions_note": "Repository GitHub Actions jobs were not allocated a runner (jobs returned with empty step lists/runner_id=0); workflows were therefore left manual-only. This is infrastructure status, not a scientific pass/fail."
+}
