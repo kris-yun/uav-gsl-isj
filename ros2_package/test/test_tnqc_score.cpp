@@ -84,6 +84,23 @@ int main()
     assert(reverseScore.localOrderAgreement < -0.5);
     assert(reverseScore.standardizedEvidence < 0.0);
 
+    // Symmetry-hierarchy guard: a broader local-order relation may not
+    // reverse the exact affine quotient.  This synthetic field is globally
+    // anti-correlated while the selected local edges preserve order.
+    const std::vector<double> guardObserved{0, 1, 2, 3, 4, 5};
+    const std::vector<double> guardPredicted{0, 1, 2, -10, -11, -12};
+    const std::vector<double> guardWeights(guardObserved.size(), 1.0);
+    const std::vector<unsigned char> guardSupport(guardObserved.size(), 1);
+    const std::vector<std::pair<std::size_t, std::size_t>> guardEdges{
+        {0,1}, {1,2}};
+    const TNQC::Score guarded = TNQC::score(
+        guardObserved, guardPredicted, guardWeights, guardSupport, guardEdges);
+    assert(guarded.valid);
+    assert(guarded.canonicalCosine < -0.8);
+    assert(guarded.localOrderAgreement > 0.99);
+    assert(close(guarded.combinedEffect, guarded.canonicalCosine));
+    assert(close(guarded.standardizedEvidence, guarded.canonicalCosine));
+
     // Fewer than four supported cells is intentionally non-identifying.
     std::vector<unsigned char> weakSupport(observed.size(), 0);
     weakSupport[0] = weakSupport[1] = weakSupport[2] = 1;
