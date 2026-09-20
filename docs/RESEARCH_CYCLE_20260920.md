@@ -68,3 +68,120 @@ Status: NEXT EXECUTION STEP.
 5. Compute Fisher/sensitivity representation and cross-window identity consistency.
 6. Compare against TimeBridge-inspired multiscale features and simple raw-statistic baselines.
 7. If both TimeBridge and ARX/Fisher fail the frozen discrimination gates, reject this branch and resume 2025/2026 remote-domain search rather than forcing a method.
+
+
+---
+
+## Cycle update — public-data falsification and symmetry pivot
+
+### Measured-data testbed
+
+Public Orebro3DSEN measurements were used as an external falsification set. The repository provides a 3x3x3 array of 27 calibrated MOX sensors sampled at 2 Hz together with wind speed/direction. Following the dataset's own analysis convention, source-discrimination probes use the 40–90 min interval; the first 15 min is available as an early baseline.
+
+The experiment table contains repeated measurements at the same physical source location under different release/airflow conditions. In table row order, Exp01/Exp02/Exp06/Exp08/Exp09 share source coordinate (2.70, 0.50, 0.90) while varying beaker size and airflow (off / DC fan / tower fan). Exp03/04/05/07/10 provide alternative source locations. This makes the dataset useful for a same-source/different-nuisance test.
+
+### Frozen low-capacity probe results
+
+Windows: 2, 5, and 10 min within 40–90 min.
+
+Representations:
+- raw: 27 sensor means;
+- spatial shape: per-window affine canonicalization across sensors, `z=(c-mean(c))/std(c)`;
+- dynamics: autocorrelation / block-variance descriptors;
+- ARX: low-order gas response coefficients using current/lagged wind terms;
+- operator proxy: multiscale lagged cross-correlation operators inspired by Koopman/KoopSTD, with temporal-shuffle control.
+
+At 5 min, using experiment centroids and repeated source-location identity:
+- raw concentration: same-vs-different AUC 0.489, leave-condition-out accuracy 0.20;
+- affine spatial shape: AUC 0.880, accuracy 0.82;
+- dynamics: AUC about 0.486, accuracy 0.36;
+- ARX: AUC about 0.549, accuracy 0.54;
+- multiscale operator proxy: AUC 0.403, accuracy 0.14;
+- shuffled-time operator control: AUC 0.406, accuracy 0.26.
+
+The affine spatial result is stable across scales:
+- 2 min: AUC 0.891, leave-condition-out accuracy 0.808;
+- 5 min: AUC 0.880, accuracy 0.820;
+- 10 min: AUC 0.880, accuracy 0.800.
+
+A baseline-subtracted affine shape is similar (5 min AUC 0.883, accuracy 0.86); rank-only and centered-log-ratio alternatives also retain useful identity but do not clearly dominate the simple affine quotient.
+
+### Critical rejection
+
+**Physics-guided transport-operator invariance is demoted/rejected as the main idea.**
+
+Reason: on measured data, ARX/dynamical/operator descriptors do not outperform the much simpler affine spatial canonical form. More importantly, temporal shuffling is as good as or better than the operator proxy, so the observed discrimination cannot be defended as evidence for a source-specific dynamical transport operator.
+
+TimeBridge-style multiscale temporal modeling is therefore also demoted from main-theme status. Its high-level non-stationarity lesson may remain useful for auxiliary window design, but the data do not justify making temporal dynamics the paper's organizing principle.
+
+### Strong surviving phenomenon: nuisance quotient / canonicalization
+
+The robust empirical phenomenon is spatial source identity after removing a shared offset and positive scale.
+
+For concentration vector `c in R^n`, define
+
+`
+P = I - (1/n) 11^T,
+kappa(c) = P c / ||P c||.
+`
+
+For nuisance action
+
+`
+c' = a c + b 1,   a > 0,
+`
+
+we have exactly
+
+`
+kappa(c') = kappa(c).
+`
+
+Thus unknown common background offset and positive concentration/release/sensor gain are quotiented out analytically, while the spatial plume shape remains. This is not a learned black-box invariance.
+
+The measured-data result is consistent with this mechanism: raw amplitude does not preserve repeated-source identity, whereas the quotient representation does.
+
+### Recent remote-domain scientific lineage
+
+This branch now has a stronger 2025/2026 theoretical lineage than the operator branch:
+
+1. Tahmasebi & Jegelka, **Generalization Bounds for Canonicalization: A Comparative Study with Group Averaging**, ICLR 2025. Canonicalization projects data onto a reduced input space representing invariance classes and gives explicit generalization/sample-complexity regimes.
+2. Shumaylov et al., **Lie Algebra Canonicalization: Equivariant Neural Operators under Arbitrary Lie Groups**, ICLR 2025. Canonicalization aligns inputs under continuous/non-compact symmetries before ordinary model inference.
+3. Urbano et al., **RECON: Robust Symmetry Discovery via Explicit Canonical Orientation Normalization**, ICLR 2026. Data-aligned canonicalization addresses unknown, instance-specific symmetries and test-time distribution shift.
+4. Lin & Levie, **Adaptive Canonicalization with Application to Invariant Anisotropic Geometric Networks**, ICLR 2026. Canonicalization is allowed to depend on the input/model; continuity and universal-approximation results are established.
+5. **Quotient-Space Diffusion Models**, ICLR 2026. The general principle is that when group-related observations are equivalent, learning can be performed on the quotient rather than wasting capacity on movement inside equivalence classes.
+
+### New main candidate
+
+**Working theme: Transport-Nuisance Quotient Canonicalization (TNQC).**
+
+Paper-level statement:
+> Gas-source inference should be performed on equivalence classes of observations under physically non-identifying nuisance transformations, rather than on raw concentration fields.
+
+The first exact quotient is affine concentration nuisance. The unresolved hard nuisance is airflow.
+
+A fixed global linear wind residualizer looked very strong when fit transductively, but failed a stricter leave-one-condition-out test. With the canonical affine shape and cross-fitted wind regression, repeated-source accuracy was only about 0.60 at 2/5/10 min: Exp01/02/06 generalized, but the held-out tower-fan Exp08/09 conditions failed. Therefore **wind cannot be declared a simple global linear nuisance**.
+
+This failure is useful: it points directly to the second-innovation requirement. We need a physics-conditioned/adaptive canonicalizer, not another generic residualization layer.
+
+### Revised architecture hypothesis
+
+Main innovation:
+- **Nuisance quotient inference**: exact analytic quotient for release/background amplitude nuisance, with posterior inference performed in the canonical space.
+
+Auxiliary innovation candidate 1:
+- **Context-conditioned transport canonicalizer**: use observed wind/transport context to map airflow-dependent plume realizations to a common source representation. This should be adaptive/contextual, inspired by 2026 adaptive canonicalization, but physically constrained rather than a free network.
+
+Auxiliary innovation candidate 2:
+- **Orbit-consistency identifiability gate**: release posterior evidence only when disjoint windows agree after canonicalization. This converts cross-window canonical consistency into an identifiability condition and may connect naturally to the already successful ME-ACI sequential-replication gate.
+
+### Next hard gate
+
+Do not promote TNQC yet. The branch advances only if a source-blind context-conditioned canonicalizer:
+1. improves held-out DC/tower airflow conditions without seeing their source truth;
+2. preserves the exact affine nuisance invariance;
+3. beats raw concentration, affine-only canonicalization, and shuffled/temporal controls;
+4. transfers to House/VGR data or a second measured dataset;
+5. yields an online statistic compatible with the PMFS/ME-ACI posterior rather than only an offline classifier.
+
+Status: **TNQC promoted to primary candidate; operator-invariance and TimeBridge demoted. Airflow canonicalization is now the decisive falsification test.**
