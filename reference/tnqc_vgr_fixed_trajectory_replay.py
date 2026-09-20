@@ -212,11 +212,17 @@ def tnqc_score(alignment, cells, edges):
         ew += w
         ec += 1
     qo = max(-1.0, min(1.0, signed / ew)) if ew > 0.0 else 0.0
-    e = 0.5 * (qa + qo) if ec >= 2 else qa
+
+    # Symmetry-hierarchy guard, exactly matching TNQCScore.hpp: the broader
+    # monotone/order quotient may corroborate the exact affine quotient but
+    # may not reverse it.  No threshold or fitted coefficient is introduced.
+    order_consistent = ec >= 2 and qa * qo >= 0.0
+    e = 0.5 * (qa + qo) if order_consistent else qa
     e = max(-1.0, min(1.0, e))
     return dict(valid=True, support_count=len(support), edge_count=ec,
                 effective_support=(sw * sw) / sw2,
-                canonical_cosine=qa, local_order_agreement=qo, evidence=e)
+                canonical_cosine=qa, local_order_agreement=qo,
+                order_consistent=order_consistent, evidence=e)
 
 
 def final_partition(cells, candidates):
