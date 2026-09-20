@@ -1089,3 +1089,50 @@ The next gate must identify the event-level filtration and a betting/likelihood-
 Current exact searches for e-process / anytime-valid gas- or odor-source localization returned no direct matching source-localization method. This is only a positive novelty signal, not proof of novelty.
 
 Status: M3 CONFORMAL = REJECTED AS INNOVATION; GAME-THEORETIC ANYTIME-VALID EVIDENCE = ACTIVE CANDIDATE / THEORY QUALIFICATION REQUIRED.
+
+
+## 34. Loop-14: direct M1+M2 additive synergy test — NO-GO for naive fusion
+
+Date: 2026-09-20
+
+A fixed candidate-specific predictive score and a fixed η-style intermittency score were evaluated on the same 12 controlled histories.
+
+Protocol:
+- train/reference condition = fast wind;
+- held condition = slow wind;
+- windows = 120–180 s, 180–240 s, 120–240 s;
+- M1 proxy = per-source AR(10) predictive negative log likelihood on log concentration;
+- M2 proxy = fixed tail/intermittency distance using q95, q99, max, top-1% mean, exceedance fractions, and first arrival;
+- naive fusion = equal-weight standardized sum of the two candidate scores;
+- no localization output or truth-conditioned parameter tuning was used.
+
+Results:
+- H01: predictive 2/2, η 2/2, fusion 2/2 in all three windows.
+- H02: all methods 2/2 in 120–180 and 120–240; all remain 1/2 in the low-support 180–240 window.
+- H03 120–180: all 2/2.
+- H03 180–240: predictive 1/2, η 1/2, fusion 1/2.
+- H03 120–240: predictive 1/2, η 2/2, but naive equal-weight fusion falls back to 1/2.
+
+Decision:
+> M1+M2 synergy is NOT established by simple score concatenation or equal-weight fusion.
+
+Important implication:
+- M2 cannot be a bolt-on tail-feature branch whose score is simply added to predictive error.
+- the η-learning paper's actual scientific mechanism is training-time distributional regularization of the learned model/representation; the next valid test must implement that mechanism directly.
+- H03 provides a hard negative case: when predictive and rare-event evidence disagree, arbitrary fusion can destroy the correct rare-event signal.
+
+Current closed-loop status after Loop-14:
+- MAIN_CANDIDATE = Predictive Coding / latent predictive physical representation.
+- AUX_2 = η-learning-style extreme-event-aware representation regularization.
+- AUX_3 = game-theoretic anytime-valid event evidence, theory qualification pending.
+- LEARNED_M1_REALIZATION = UNVALIDATED.
+- M1_PLUS_M2_INCREMENT = NOT YET ESTABLISHED.
+- CLOSED_LOOP_AUTHORIZATION = NO.
+
+Next decisive experiment:
+1. train a lightweight source-blind latent predictive encoder on existing histories;
+2. compare plain predictive loss vs η-regularized predictive loss using identical encoder/head capacity;
+3. evaluate candidate-source rank on held wind and destructive target-time permutations;
+4. require η-regularization to rescue the H03/H01 rare-event failures without harming supported H02/H03 regimes;
+5. only after this passes, construct the event-level predictive score needed to test the anytime-valid M3.
+
