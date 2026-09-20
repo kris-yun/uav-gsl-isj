@@ -89,6 +89,27 @@ def main():
         assert audit["max_abs"] < 1e-15
         assert audit["l1"] < 1e-15
         assert replay.choose_final_update(bank, 300.0) == (1, 295.0)
+
+        # Python replay must implement the same symmetry-hierarchy guard as
+        # TNQCScore.hpp: broader local order cannot reverse q_aff.
+        guard_observed = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
+        guard_predicted = [0.0, 1.0, 2.0, -10.0, -11.0, -12.0]
+        guard_cells = {}
+        guard_align = {}
+        for idx, (xo, xp) in enumerate(zip(guard_observed, guard_predicted)):
+            p_obs = 1.0 / (1.0 + math.exp(-xo))
+            p_pred = 1.0 / (1.0 + math.exp(-xp))
+            guard_cells[idx] = replay.Cell(
+                idx, idx, 0, float(idx), 0.0, xo, p_obs, 1.0)
+            guard_align[idx] = (p_obs, 1.0, p_pred)
+        guard = replay.tnqc_score(
+            guard_align, guard_cells, [(0, 1), (1, 2)])
+        assert guard["valid"]
+        assert guard["canonical_cosine"] < -0.8
+        assert guard["local_order_agreement"] > 0.99
+        assert guard["order_consistent"] is False
+        assert abs(guard["evidence"] - guard["canonical_cosine"]) < 1e-12
+
         print("TNQC_VGR_FIXED_TRAJECTORY_REPLAY_TEST_PASS")
     finally:
         shutil.rmtree(root, ignore_errors=True)
