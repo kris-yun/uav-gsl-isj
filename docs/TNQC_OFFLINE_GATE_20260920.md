@@ -104,3 +104,7 @@ Public-data probe:
 Closed-loop matrix after the installed launch overlay exposes tnqc_mode:
 
     bash reference/run_tnqc_closed_loop_matrix_20260920.sh
+
+## Local implementation sanity check
+
+The standalone TNQC score test was compiled with C++20 and `-Wall -Wextra -Wpedantic -Werror` against the frozen header and passed all assertions for affine invariance, monotone local-order invariance, negative reversed-field evidence, and insufficient-support abstention.
