@@ -204,3 +204,32 @@ M3 advances only if, on the same frozen event scores:
 - and the method improves calibration/rank without simply flattening every map.
 
 If ordinary disjoint sequential likelihood already matches the e-process on all these controls, M3 is rejected as unnecessary theory.
+
+## 13. Important negative control: naive deduplication is not the solution
+
+The M1P follow-up corrected the physical-stop mismatch exactly, reducing source-update windows from 32/24/24/24 internal blocks to 4/3/3/3 physical-stop events.
+
+However, H01 seed10 returned:
+- endpoint improvement +0.373 m;
+- AUC worsening -339.973 m s;
+- formal early-screen NO-GO.
+
+The project diagnosis was that terminal-only stop evidence discards useful within-stop temporal information.
+
+This changes the M3 interpretation:
+
+> M3 must not mean 'one stop = one scalar observation'. It must mean 'every increment must be valid relative to the filtration and dependence structure actually available at that time'.
+
+Eight within-stop blocks may contain real chronological information, but they cannot automatically be reinterpreted as eight independent position interventions.
+
+This is a stronger fit to e-process theory than simple deduplication because the theory is designed around sequential conditional validity rather than a hard count of spatial actions.
+
+Additional counterevidence:
+- unchanged M1S flipped from a large H01 seed11 gain to a large seed10 loss, exposing unintegrated transport Monte-Carlo nuisance;
+- M1E retained disjoint event-time windows and added transport marginalization, improving the exposed House123 development gate but still not providing an anytime-valid guarantee.
+
+Updated M3 target:
+1. preserve informative within-stop temporal blocks;
+2. condition each block on the complete preceding filtration;
+3. avoid treating correlated temporal/spatial reuse as independent replicated evidence;
+4. remain valid under adaptive source-update stopping.
