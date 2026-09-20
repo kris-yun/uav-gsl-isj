@@ -116,17 +116,27 @@ namespace GSL::PMFS_internal::TNQC
         if (edgeWeightSum > 0.0)
             out.localOrderAgreement = std::clamp(signedAgreement / edgeWeightSum, -1.0, 1.0);
 
-        // Equal-weight fusion deliberately has no fitted parameter.
+        // Symmetry-hierarchy guard.
+        //
+        // q_aff is the exact physical quotient for independent positive
+        // affine logit nuisance. q_ord is deliberately broader (any strictly
+        // increasing pointwise transform) but discards more information.  A
+        // broader symmetry channel may corroborate the exact quotient, but it
+        // may not reverse it.  Hence local order is averaged in only when the
+        // two effects have the same sign; otherwise we fall back to q_aff.
+        // This is parameter-free and was frozen after the VGR 0.3 m spatial
+        // mechanism screen showed that unconditional 1:1 fusion can flip an
+        // otherwise correct affine decision.
         //
         // Do NOT multiply this effect by sqrt(effectiveSupport): PMFS hit-map
         // cells are spatially smoothed/correlated and therefore are not
-        // independent observations.  Treating cell count as an iid sample
-        // size would create pseudo-replication and can make a quotient score
-        // overwhelm the native likelihood.  Confidence still enters through
-        // the weighted means/cosine and local-edge weights; effectiveSupport
-        // is retained as a diagnostic.  The online likelihood modifier is
-        // consequently bounded to exp([-1,1]).
-        out.combinedEffect = out.edgeCount >= 2
+        // independent observations. Treating cell count as an iid sample
+        // size would create pseudo-replication. The modifier stays bounded to
+        // exp([-1,1]).
+        const bool orderConsistent =
+            out.edgeCount >= 2 &&
+            out.canonicalCosine * out.localOrderAgreement >= 0.0;
+        out.combinedEffect = orderConsistent
             ? 0.5 * (out.canonicalCosine + out.localOrderAgreement)
             : out.canonicalCosine;
         out.standardizedEvidence = out.combinedEffect;
