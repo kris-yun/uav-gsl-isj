@@ -1151,3 +1151,61 @@ Three high-level alternatives have now failed or weakened under matched existing
 The next search must prioritize a paradigm whose **unique scientific object** is directly tied to the one project property that remains strongest across audits:
 > source evidence appears only in specific physically supported, intermittent transport events, while average/global representations repeatedly mix source and transport.
 
+
+
+## Loop-11 competing M1 paradigms: system identification and Koopman
+
+### C9 — Self-supervised nonlinear system identification
+2025 top-venue anchor:
+- ICLR 2025, Gonzalez Laiz et al., Self-supervised contrastive learning performs non-linear system identification. The paper proves that temporal SSL can identify latent linear, switching-linear and nonlinear dynamics under nonlinear observations.
+
+Strength:
+- stronger theoretical identifiability than generic SSL;
+- naturally treats observed plume histories as nonlinear observations of hidden dynamics.
+
+Collision / fit problem:
+- contaminant-source inference has already been explicitly formulated as system identification/model-class selection in adjacent transport domains;
+- source location is a persistent hidden cause/parameter rather than the full dynamical state;
+- adopting DynCL verbatim would risk becoming a representation-learning wrapper without a source-specific scientific object.
+
+Status: RESERVE M1, below Predictive Coding.
+
+### C10 — Koopman / operator-spectral source identity
+2025/2026 anchors:
+- ICML 2025 ResKoopNet: Koopman representations with spectral residuals.
+- ICLR 2026 Spectral-Grassmann Wasserstein metric for operator representations of dynamical systems.
+- Automatica 2026 stable Koopman embeddings for identification and control.
+
+Direct novelty collision:
+- Sustainable Cities and Society 2024 already applies Dynamic Mode Decomposition to source-term estimation in unsteady flow.
+- contaminant inversion literature already contains Koopman/DMD surrogate inversion and 2026 sparse-plume DMD reconstruction.
+
+Existing-data spectral proxy:
+- normalized PSD/autocorrelation signatures separate SA/SB across winds in many H01/H02/H03 horizons;
+- H02 at 120 s correctly collapses to 0/2 when physical source support is absent;
+- however H03 240 s autocorrelation gives 0/2 and combined spectral-dynamics gives 1/2.
+
+More importantly, power spectra and ordinary autocorrelation are invariant or nearly invariant to destructive time reversal/permutation and therefore cannot represent the native first-passage phase object already proven load-bearing by CTT.
+
+Status: REJECT AS M1. Useful comparator only.
+
+### C11 — biological/artificial sensory adaptation
+2026 strong journal anchor:
+- Nature Communications 2026, Jung et al., Intelligent artificial olfactory nervous system with sensory adaptation capabilities. The system adapts receptor sensitivity and filters background interference to identify gases across changing environments from limited training settings.
+
+Why not promoted:
+- excellent supporting evidence that adaptation is central to robust olfaction, but it is close to the gas-sensing domain and its primary task is gas identity rather than source localization;
+- a software adaptation module risks duplicating sensor preprocessing/test-time adaptation rather than changing source evidence semantics.
+
+Status: supporting biological/olfactory evidence, not current innovation slot.
+
+## Loop-11 competitive decision
+
+Current ordering after direct literature collision + existing-data tests:
+1. Predictive Coding / latent predictive physical representation — CURRENT LEADER.
+2. Self-supervised nonlinear system identification — RESERVE.
+3. State-first intermediate physical inference — RESERVE auxiliary/main fallback.
+4. Koopman spectral representation — REJECT as main due direct source-estimation collision and phase-information mismatch.
+5. Sensory adaptation — SUPPORTING/DEPLOYMENT mechanism only.
+
+Predictive Coding remains leader not because JEPA is fashionable, but because it uniquely matches the strongest frozen project fact: native temporal phase/first-passage information is source-informative while coarse or learned surrogates can erase it.
