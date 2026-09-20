@@ -20,7 +20,22 @@ The frozen online implementation passed the requested development boundary on th
 - Worst individual reduction: **22.378%**.
 - First accepted update: **72.851–217.811 simulation seconds**, within the 300 s budget.
 
-These are real online closed-loop, first-identifiable-intervention comparisons on an identical trajectory up to posterior release. They are strong mechanism/development evidence, not yet an unseen-seed population-level paper claim. The next confirmatory experiment must keep the formula, source, binary, cadence, metric and stopping rule frozen.
+These are real online closed-loop, **first-identifiable-intervention** comparisons on an identical trajectory up to posterior release. **They are not final-300-s endpoint values**: each case was evaluated at its first accepted ME-ACI source update (72.851–217.811 simulation seconds). They are strong mechanism/development evidence, not yet an unseen-seed population-level paper claim. Any new method comparison that claims a 300-s endpoint must run through the full 300-s budget and must not reuse this table as its final-300-s baseline.
+
+## Current 2026-09-20 research-cycle candidate
+
+A separate candidate, **TNQC (Transport-Nuisance Quotient Canonicalization)**,
+is under a new development cycle.  Its external Orebro representation test is
+auxiliary only.  The project-level gate is now an audited **VGR/GADEN
+House01/02/03 × seed0/1 fixed-trajectory replay through the full 300-s
+budget**, evaluated with the same PMFS top-5% expected-location error.
+
+Start at [CODEX_START_HERE.md](CODEX_START_HERE.md).  The replay implementation
+is in `reference/tnqc_vgr_fixed_trajectory_replay.py` and the six-case driver
+is `reference/run_tnqc_vgr_offline_gate_20260920.sh`.
+
+Current TNQC status: **mechanism/code path ready; VGR 300-s localization sign
+not yet claimed until that gate is actually run.**
 
 ## Method
 
