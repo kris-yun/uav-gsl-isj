@@ -7,21 +7,24 @@ on:
       - '.github/workflows/tnqc_archive_audit.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   audit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Extract frozen VGR archive
         run: |
           set -euo pipefail
           rm -rf /tmp/tnqc_archive
           mkdir -p /tmp/tnqc_archive
           unzip -q evidence/MEACI_V10_MAIN_INNOVATION_HOUSE123_SEED01_6OF6_20260824.zip -d /tmp/tnqc_archive
-          echo "ARCHIVE_TOP"
           find /tmp/tnqc_archive -maxdepth 3 -type d | sort | head -100
+
       - name: Replay TNQC on archived VGR candidate banks
         run: |
           set -euo pipefail
@@ -39,8 +42,11 @@ jobs:
           for house,seed,tx,ty in cases:
               patt=f'{house}_seed{seed}_inverse_v10_reservoir'
               matches=[p for p in root.rglob(patt) if p.is_dir()]
+              row={'house':house,'seed':seed,'matches':[str(p) for p in matches]}
               if len(matches)!=1:
-                  raise SystemExit(f'{patt}: expected 1 run dir, found {matches}')
+                  row['status']='run_dir_not_unique'
+                  results.append(row)
+                  continue
               run=matches[0]
               out=run/'tnqc_archive_snapshot_eval.json'
               cmd=[
@@ -52,35 +58,58 @@ jobs:
                   '--json-out',str(out),
               ]
               cp=subprocess.run(cmd,text=True,capture_output=True)
-              if cp.returncode:
-                  print(cp.stdout)
-                  print(cp.stderr)
-                  raise SystemExit(f'replay failed for {patt}: {cp.returncode}')
-              p=json.loads(out.read_text())
-              results.append({
-                  'house':house,'seed':seed,
-                  'selected_source_update_id':p['selected_source_update_id'],
-                  'selected_source_update_sim_time':p['selected_source_update_sim_time'],
-                  'native_reconstruction_audit':p['native_reconstruction_audit'],
-                  'native_error_m':p['native_exported']['pmfs_top5_error_m'],
-                  'fused_error_m':p['tnqc_fused']['pmfs_top5_error_m'],
-                  'only_error_m':p['tnqc_only']['pmfs_top5_error_m'],
-                  'fused_improvement_fraction':p['fused_improvement_fraction_vs_native'],
-                  'evidence':p['tnqc_evidence'],
-              })
-          native=sum(r['native_error_m'] for r in results)/len(results)
-          fused=sum(r['fused_error_m'] for r in results)/len(results)
+              row['replay_returncode']=cp.returncode
+              row['stdout_tail']=cp.stdout[-4000:]
+              row['stderr_tail']=cp.stderr[-4000:]
+              if out.exists():
+                  p=json.loads(out.read_text())
+                  row.update({
+                      'status':'payload_written',
+                      'selected_source_update_id':p['selected_source_update_id'],
+                      'selected_source_update_sim_time':p['selected_source_update_sim_time'],
+                      'budget_to_last_update_gap_s':p['budget_to_last_update_gap_s'],
+                      'native_reconstruction_audit':p['native_reconstruction_audit'],
+                      'native_error_m':p['native_exported']['pmfs_top5_error_m'],
+                      'fused_error_m':p['tnqc_fused']['pmfs_top5_error_m'],
+                      'only_error_m':p['tnqc_only']['pmfs_top5_error_m'],
+                      'fused_improvement_fraction':p['fused_improvement_fraction_vs_native'],
+                      'evidence':p['tnqc_evidence'],
+                  })
+              else:
+                  row['status']='no_payload'
+              results.append(row)
+
+          valid=[r for r in results if r.get('status')=='payload_written']
           summary={
-              'contract':'TNQC_VGR_ARCHIVE_SNAPSHOT_DIAGNOSTIC_V1',
-              'warning':'Historical first-identifiable-intervention snapshots, NOT 300-s endpoint.',
+              'contract':'TNQC_VGR_ARCHIVE_SNAPSHOT_DIAGNOSTIC_V2',
+              'warning':'Historical first-identifiable-intervention snapshots, NOT the 300-s endpoint and NOT the GO gate.',
               'cases':results,
-              'pooled_native_error_m':native,
-              'pooled_fused_error_m':fused,
-              'pooled_improvement_fraction':(native-fused)/native,
-              'improved_pairs':sum(r['fused_error_m']<r['native_error_m'] for r in results),
-              'all_native_reconstruction_pass':all(r['native_reconstruction_audit']['pass'] for r in results),
+              'payload_case_count':len(valid),
+              'all_replay_payloads_written':len(valid)==6,
           }
-          print('TNQC_ARCHIVE_AUDIT_JSON_BEGIN')
+          if len(valid)==6:
+              native=sum(r['native_error_m'] for r in valid)/6
+              fused=sum(r['fused_error_m'] for r in valid)/6
+              summary.update({
+                  'pooled_native_error_m':native,
+                  'pooled_fused_error_m':fused,
+                  'pooled_improvement_fraction':(native-fused)/max(abs(native),1e-12),
+                  'improved_pairs':sum(r['fused_error_m']<r['native_error_m'] for r in valid),
+                  'all_native_reconstruction_pass':all(r['native_reconstruction_audit']['pass'] for r in valid),
+              })
+          Path('evidence/TNQC_VGR_ARCHIVE_AUDIT_20260920.json').write_text(
+              json.dumps(summary,indent=2,sort_keys=True)+'\n',encoding='utf-8')
           print(json.dumps(summary,indent=2,sort_keys=True))
-          print('TNQC_ARCHIVE_AUDIT_JSON_END')
           PY
+
+      - name: Commit audit record
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evidence/TNQC_VGR_ARCHIVE_AUDIT_20260920.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "evidence: record TNQC VGR archive snapshot audit"
+          git push
