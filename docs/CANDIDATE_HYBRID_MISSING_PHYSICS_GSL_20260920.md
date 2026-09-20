@@ -288,3 +288,52 @@ M3 — Extreme-Event-Aware η-Regularization:
 
 Symbolic residual discovery:
 **RESERVE LIGHTWEIGHT/INTERPRETABILITY TOOL, not counted as an innovation.**
+
+
+## 14. Cross-House structural-mismatch expansion
+
+The approximate temporal provider failure is not H01-only at the response-shape level.
+
+Frozen evidence:
+`evidence/cstar_m1_temporal_provider_alignment_20260909.json`
+
+Across all 12 controlled source×wind cases:
+
+### H01
+- mean log-shape correlation: 0.234.
+- approximate provider nonzero fraction minus GADEN nonzero fraction: mean +0.912.
+- support inflation factors across the four cases: ~7.3×, 12.4×, 61.2×, 232×.
+
+### H02
+- mean log-shape correlation: 0.183.
+- mean nonzero-support gap: +0.881.
+- support inflation factors: ~5.3×, 7.2×, 63.2×, 94.8×.
+
+### H03
+- mean log-shape correlation: 0.159.
+- mean nonzero-support gap: +0.497.
+- support inflation factors: ~1.33×, 1.35×, 6.27×, 6.34×.
+
+Thus the simplified provider systematically transforms sparse/intermittent physical support into a much denser response family in **all three Houses**, not only H01.
+
+This does not yet prove that a learned correction improves source ranking in H02/H03, because stored deployable rank-reversal traces are available only for H01.
+But it upgrades the M1 premise from:
+> “one H01 bad fit”
+
+to:
+> “a repeated cross-House structural model-reality gap, with one directly demonstrated localization rank reversal.”
+
+The cross-House exact counterfactual bank remains the complementary positive control:
+- exact candidate-conditioned responses give true-source rank 1 in 12/12 cross-wind tests.
+
+Therefore the central contrast is now present in every House:
+- high-fidelity candidate-conditioned physics preserves source identity;
+- the cheap deployable provider has strongly distorted temporal support/shape.
+
+### Updated M1 evidence boundary
+
+M1 premise: **CROSS-HOUSE PASS at structural-discrepancy level**.
+
+M1 correction efficacy: **H01-only development evidence so far**.
+
+No held-House learned-corrector claim is authorized.
