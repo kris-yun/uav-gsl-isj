@@ -141,12 +141,15 @@ The offline branch has now advanced to a frozen closed-loop candidate.
 
 Additional conservative measured-data probes confirm that a local spatial-adjacency order channel carries repeated-source signal across 2/5/10 min windows and is exactly preserved under condition-specific strictly monotone sensor transforms. It is retained only as an auxiliary robustness channel because ICRA 2026 already establishes global concentration-ranking GSL.
 
-The online implementation now uses:
-- centered confidence-weighted logit-field cosine for the affine quotient;
-- confidence-weighted local adjacency order agreement for the monotone auxiliary;
-- fixed 1:1 fusion with no fitted coefficient;
-- bounded quotient evidence in [-1,1], explicitly avoiding sqrt(cell-count) scaling because PMFS map cells are spatially correlated.
+The VGR project-data screen has now corrected the online combination rule:
+- centered confidence-weighted logit-field cosine is the privileged exact affine quotient;
+- local spatial adjacency order is a broader monotone-invariant corroboration channel;
+- unconditional 1:1 fusion was falsified on H02/fast/SA because it overrode a correct affine decision;
+- the frozen **symmetry-hierarchy guard** averages the two channels only when their signs agree, otherwise it falls back to the exact affine quotient;
+- quotient evidence remains bounded in [-1,1], avoiding sqrt(cell-count) pseudo-replication.
 
-The bounded evidence choice is frozen before House truth evaluation. Public-data reproduction and the closed-loop decision gate are recorded in docs/TNQC_OFFLINE_GATE_20260920.md.
+On the actual VGR 0.3-m PMFS spatial grid, affine and guarded source identity are 12/12 at 240 s. Across 100 source-blind positive-scale stresses and 200 source-blind monotone-compression stresses, the guarded rule remains 12/12 in every run. This is a fixed-route mechanism result, not the final localization endpoint.
 
-Status: **OFFLINE POSITIVE; CLOSED-LOOP PENDING.**
+Frozen record: `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json`.
+
+Status: **VGR MECHANISM POSITIVE; 300-S VGR LOCALIZATION GATE PENDING; CLOSED LOOP HOLD.**
