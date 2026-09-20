@@ -1,0 +1,212 @@
+{
+  "contract": "TNQC_VGR_240S_SPATIAL_MECHANISM_V2",
+  "created_utc": "2026-09-20",
+  "data": {
+    "repository": "kris-yun/uav-gsl-isj",
+    "ref": "project/research-master-20260914",
+    "ref_commit": "26e89a99532e4268c5022dca2e938bf1473377b1",
+    "root": "evidence/cstar_current_runtime_assets240_20260907/realizations",
+    "cases": 12,
+    "samples_per_case": 1200,
+    "terminal_time_s": 240,
+    "design": "H01/H02/H03 x SA/SB x fast/slow; same geometry-only pose sequence within each House"
+  },
+  "pmfs_spatial_alignment": {
+    "raw_map_resolution_m": 0.1,
+    "scale": 3,
+    "cell_size_m": 0.3,
+    "origins": {
+      "H01": [
+        -7.55,
+        -7.88
+      ],
+      "H02": [
+        -5.39,
+        -7.45
+      ],
+      "H03": [
+        -0.85,
+        -1.86
+      ]
+    },
+    "provenance": "native historical PMFS [MAP-DEBUG] logs on VGR Houses",
+    "occupied_common_bins_240s": {
+      "H01": 228,
+      "H02": 227,
+      "H03": 232
+    },
+    "structural_local_edges_240s": {
+      "H01": 252,
+      "H02": 252,
+      "H03": 251
+    }
+  },
+  "checkpoint_accuracy": {
+    "60s": {
+      "raw": 0.6666666666666666,
+      "affine": 0.6666666666666666,
+      "local_spatial_order": 0.6666666666666666,
+      "unconditional_equal_fusion": 0.6666666666666666,
+      "symmetry_hierarchy_guard": 0.6666666666666666
+    },
+    "120s": {
+      "raw": 0.6666666666666666,
+      "affine": 0.6666666666666666,
+      "local_spatial_order": 0.6666666666666666,
+      "unconditional_equal_fusion": 0.6666666666666666,
+      "symmetry_hierarchy_guard": 0.6666666666666666
+    },
+    "180s": {
+      "raw": 1,
+      "affine": 0.8333333333333334,
+      "local_spatial_order": 0.75,
+      "unconditional_equal_fusion": 0.75,
+      "symmetry_hierarchy_guard": 0.8333333333333334
+    },
+    "240s": {
+      "raw": 1,
+      "affine": 1,
+      "local_spatial_order": 0.9166666666666666,
+      "unconditional_equal_fusion": 0.9166666666666666,
+      "symmetry_hierarchy_guard": 1
+    }
+  },
+  "checkpoint_mean_two_source_error_m": {
+    "60s": {
+      "raw": 1.8048063087702673,
+      "affine": 1.8048063087702673,
+      "local_spatial_order": 1.8048063087702673,
+      "unconditional_equal_fusion": 1.8048063087702673,
+      "symmetry_hierarchy_guard": 1.8048063087702673
+    },
+    "120s": {
+      "raw": 1.8048063087702673,
+      "affine": 1.8048063087702673,
+      "local_spatial_order": 1.8048063087702673,
+      "unconditional_equal_fusion": 1.8048063087702673,
+      "symmetry_hierarchy_guard": 1.8048063087702673
+    },
+    "180s": {
+      "raw": 0,
+      "affine": 1.5314526509893218,
+      "local_spatial_order": 1.6681294798797943,
+      "unconditional_equal_fusion": 1.6681294798797943,
+      "symmetry_hierarchy_guard": 1.5314526509893218
+    },
+    "240s": {
+      "raw": 0,
+      "affine": 0,
+      "local_spatial_order": 0.1366768288904727,
+      "unconditional_equal_fusion": 0.1366768288904727,
+      "symmetry_hierarchy_guard": 0
+    }
+  },
+  "source_blind_scale_stress_100_seeds": {
+    "transform": "independent per-episode positive scale a in [0.1,10], log-uniform, deterministic source-blind seed",
+    "raw": {
+      "mean_accuracy": 0.833333333333333,
+      "min_accuracy": 0.8333333333333334,
+      "max_accuracy": 0.8333333333333334,
+      "perfect_runs": 0,
+      "runs": 100
+    },
+    "affine": {
+      "mean_accuracy": 1,
+      "min_accuracy": 1,
+      "max_accuracy": 1,
+      "perfect_runs": 100,
+      "runs": 100
+    },
+    "local_spatial_order": {
+      "mean_accuracy": 0.9166666666666674,
+      "min_accuracy": 0.9166666666666666,
+      "max_accuracy": 0.9166666666666666,
+      "perfect_runs": 0,
+      "runs": 100
+    },
+    "unconditional_equal_fusion": {
+      "mean_accuracy": 0.9166666666666674,
+      "min_accuracy": 0.9166666666666666,
+      "max_accuracy": 0.9166666666666666,
+      "perfect_runs": 0,
+      "runs": 100
+    },
+    "symmetry_hierarchy_guard": {
+      "mean_accuracy": 1,
+      "min_accuracy": 1,
+      "max_accuracy": 1,
+      "perfect_runs": 100,
+      "runs": 100
+    }
+  },
+  "source_blind_monotone_stress_200_seeds": {
+    "transform": "independent per-episode g(c)=log1p(alpha*max(c,0))/alpha, alpha log-uniform [1e-2,1e4], deterministic source-blind seed",
+    "raw": {
+      "mean_accuracy": 0.7833333333333343,
+      "min_accuracy": 0.6666666666666666,
+      "max_accuracy": 0.9166666666666666,
+      "perfect_runs": 0,
+      "runs": 200
+    },
+    "affine": {
+      "mean_accuracy": 1,
+      "min_accuracy": 1,
+      "max_accuracy": 1,
+      "perfect_runs": 200,
+      "runs": 200
+    },
+    "local_spatial_order": {
+      "mean_accuracy": 0.9166666666666652,
+      "min_accuracy": 0.9166666666666666,
+      "max_accuracy": 0.9166666666666666,
+      "perfect_runs": 0,
+      "runs": 200
+    },
+    "unconditional_equal_fusion": {
+      "mean_accuracy": 0.9166666666666652,
+      "min_accuracy": 0.9166666666666666,
+      "max_accuracy": 0.9166666666666666,
+      "perfect_runs": 0,
+      "runs": 200
+    },
+    "symmetry_hierarchy_guard": {
+      "mean_accuracy": 1,
+      "min_accuracy": 1,
+      "max_accuracy": 1,
+      "perfect_runs": 200,
+      "runs": 200
+    }
+  },
+  "failure_diagnosis": {
+    "unconditional_fusion_failure": {
+      "house": "H02",
+      "wind": "fast",
+      "truth": "SA",
+      "affine_scores_SA_SB": [
+        -0.021419394043216917,
+        -0.038214101447083815
+      ],
+      "local_order_scores_SA_SB": [
+        0.7575757575757576,
+        0.8787878787878788
+      ],
+      "equal_fusion_scores_SA_SB": [
+        0.36807818176627033,
+        0.4202868886703975
+      ],
+      "affine_prediction": "SA",
+      "local_order_prediction": "SB",
+      "equal_fusion_prediction": "SB",
+      "interpretation": "the broader monotone/order quotient overrode the exact affine quotient; this falsifies unconditional 1:1 fusion"
+    },
+    "symmetry_hierarchy_guard": "if q_aff*q_ord < 0 for a candidate, use q_aff; otherwise average. The H02 conflict falls back to affine and the 240s 12/12 result is recovered."
+  },
+  "frozen_interpretation": {
+    "main_affine_quotient_mechanism_positive": true,
+    "unconditional_equal_fusion_rejected": true,
+    "guarded_monotone_corroboration_positive": true,
+    "authoritative_300s_localization_gate_executed": false,
+    "closed_loop_authorized_by_this_file": false,
+    "next_required_gate": "reference/run_tnqc_vgr_offline_gate_20260920.sh on VGR VM; House01/02/03 x seed0/1 full 300s top-5%-ExpectedValue"
+  }
+}
