@@ -296,7 +296,7 @@ Hard restriction from project evidence:
 
 ## 15. Revised 1+2 candidate
 
-### M1 MAIN — Predictive Self-Supervised Physical Representation
+### M1 MAIN — Intrinsic / Preserved Source-Dynamics Representation
 Primary anchor: ICLR 2026 Workshop on AI & PDE *Representation Learning for Spatiotemporal Physical Systems* (supporting evidence only; not main-conference provenance).
 
 Main thesis:
@@ -1136,3 +1136,115 @@ Next decisive experiment:
 4. require η-regularization to rescue the H03/H01 rare-event failures without harming supported H02/H03 regimes;
 5. only after this passes, construct the event-level predictive score needed to test the anytime-valid M3.
 
+
+
+## 23. Loop-5 provenance correction and stronger intrinsic-dynamics proxy
+
+### Provenance correction
+
+The prior document over-promoted the 2026 physical-representation paper. It is published at the **ICLR 2026 Workshop on AI & PDE**, not the ICLR main conference. It is retained only as supporting evidence that latent prediction can preserve physical parameters better than pixel reconstruction in several physical systems.
+
+The main top-venue provenance is therefore shifted to the 2025 preserved/intrinsic-dynamics line:
+
+1. **ICLR 2025** — Wu et al., *Neuron Platonic Intrinsic Representation From Dynamics Using Contrastive Learning*.
+   - treats each neuron as a dynamical system observed under different peripheral conditions;
+   - learns a time-invariant intrinsic representation from multiple segments;
+   - same-system segments should be closer than different-system segments;
+   - emphasizes out-of-domain generalization.
+
+2. **NeurIPS 2025 Spotlight** — Jiang et al., *Extracting task-relevant preserved dynamics from contrastive aligned neural recordings (CANDY)*.
+   - aligns high-dimensional recordings from different sessions into a shared low-dimensional space;
+   - fits preserved latent dynamics;
+   - improves cross-session decoding and generalizes to new sessions/subjects.
+
+3. **CVPR 2025** — Astruc et al., *AnySat*.
+   - JEPA-based self-supervision across heterogeneous Earth-observation sensors/resolutions;
+   - supports the use of latent predictive objectives for heterogeneous environmental sensing, but is not the main scientific source.
+
+### Revised main thesis
+
+> A fixed gas source should be represented by a persistent dynamical identity that survives changes in transport context, while source inference should be based on this preserved dynamics rather than on raw plume realizations.
+
+This is stronger and more defensible than “JEPA for GSL”.
+
+### Held-time intrinsic-metric proxy
+
+A second offline test was run on the existing 12 controlled histories.
+
+Protocol:
+- 10 s windows;
+- features include log-concentration moments, upper quantiles, hit fraction, short-lag autocorrelation, derivative energy and mean wind magnitude;
+- 120–180 s is used to learn feature weights that maximize source separation relative to within-source variation across fast/slow winds;
+- 180–240 s is held out in time;
+- no localization outcome is used for fitting.
+
+Results:
+
+- **H01**:
+  - uniform metric: 10/12 held-time same-source pair decisions, mean margin 0.186;
+  - source-intrinsic metric: 10/12, margin 0.217;
+  - transport-label destructive control: 9/12, margin 0.212.
+
+- **H02**:
+  - uniform: 8/12, margin 0.101;
+  - source-intrinsic metric: 8/12, margin 0.112;
+  - transport control: 8/12, margin 0.058.
+
+- **H03**:
+  - uniform: 11/12, margin 0.409;
+  - source-intrinsic metric: 11/12, margin 0.561;
+  - transport control: 11/12, margin 0.361.
+
+Interpretation:
+- the simple source-stability weighting does not improve discrete accuracy, so this is **not a PASS for the final method**;
+- however it increases held-time source margin in all three Houses;
+- the transport-label control does not reproduce the margin gain, especially in H02/H03;
+- this is positive evidence that a source-specific preserved representation is a meaningful target, but a learned nonlinear model is still required.
+
+This result is materially stronger than the earlier nuisance-projection test, which worsened H01/H03. It suggests that “preserve source identity” is more promising than “remove wind nuisance”.
+
+## 24. Revised architecture candidate after provenance audit
+
+### M1 — Intrinsic / Preserved Source-Dynamics Representation
+Remote sources:
+- ICLR 2025 intrinsic dynamical identity;
+- NeurIPS 2025 Spotlight preserved dynamics across sessions.
+
+GSL translation:
+- source location = persistent latent system identity;
+- wind / turbulence / House / simulator = peripheral recording context;
+- gas/wind history segments = observations of the same hidden dynamical identity.
+
+### M2 — Extreme-Event-Aware Intermittency Preservation
+Remote source:
+- Nature Communications 2026, *Extreme Event Aware (η-) Learning*.
+
+Reason:
+- a generic preserved/predictive representation can erase late rare whiffs that are source-defining;
+- fixed tail/arrival statistics already rescued H01/H02 proxy failures.
+
+### M3 — Multiscale Partial-Observability Memory
+Remote source:
+- NeurIPS 2025, *Predicting partially observable dynamical systems via diffusion models with a multiscale inference scheme*.
+
+Transferred principle:
+- when the current observation sees only a small fraction of the hidden state, fine recent history and progressively coarser long history can preserve long-range dependencies at controlled computational cost.
+
+GSL role:
+- recent plume events retain fine timing;
+- older history is compressed more coarsely;
+- this supplies M1 with long-memory context without a full recurrent world model or full plume reconstruction.
+
+Structured conformal calibration is retained as an evaluation/reliability layer, not counted among the three innovations unless the multiscale module later fails.
+
+## 25. Current status after loop 5
+
+Current strongest 1+2 candidate:
+
+**Main:** intrinsic/preserved source dynamics (ICLR 2025 + NeurIPS 2025 Spotlight)  
+**Aux 1:** extreme-event-aware intermittency preservation (Nature Communications 2026)  
+**Aux 2:** multiscale memory for partially observable dynamics (NeurIPS 2025)
+
+This combination now satisfies the requested venue standard more cleanly than the earlier JEPA-only framing.
+
+Still OFFLINE FALSIFICATION ONLY.
