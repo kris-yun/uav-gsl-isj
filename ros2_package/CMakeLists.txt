@@ -163,6 +163,20 @@ if(BUILD_TESTING)
     NAME opgsl_scientific_v31_vertical_gate
     COMMAND test_opgsl_scientific_v31_vertical_gate
   )
+
+  add_executable(
+    test_tnqc_score
+    test/test_tnqc_score.cpp
+  )
+  target_compile_features(test_tnqc_score PRIVATE cxx_std_20)
+  target_compile_options(
+    test_tnqc_score PRIVATE
+    -Wall -Wextra -Wpedantic -Werror -UNDEBUG
+  )
+  add_test(
+    NAME tnqc_score
+    COMMAND test_tnqc_score
+  )
 endif()
 
 install(
