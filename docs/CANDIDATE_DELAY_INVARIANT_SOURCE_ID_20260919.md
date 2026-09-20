@@ -387,3 +387,40 @@ Only source contrasts that clear this qualification enter strong PMFS probabilit
 Status: **STRONG AUXILIARY CANDIDATE**.
 
 This replaces generic conformal calibration as the preferred scientific auxiliary for M1-B; conformal methods remain an evaluation/calibration baseline.
+
+
+## 15. Source-blind delay-selection stress test
+
+The strongest delay-measure examples previously used a small frozen candidate bank of (m,tau) values and reported the useful cases. To remove outcome-guided lag selection, a source-blind rule was tested:
+
+- pool only fast-wind histories;
+- ignore source labels while selecting the lag;
+- choose the first lag at which mean absolute autocorrelation falls below 1/e (otherwise the minimum within the fixed search range);
+- freeze m=4;
+- evaluate slow-wind source identity.
+
+Result:
+- H02: correctly remains unresolved at 120/150 s, then 2/2 at 180/210/240 s.
+- H03: 2/2 from 150 s onward, but the automatically chosen lag can become excessively long at short horizons.
+- H01: **fails the key 180/210 s recovery** (1/2), even though the previously identified m=4,tau=10 s representation could recover H01 at 180 s.
+
+A second no-tuning strategy averaged a fixed multi-delay bank tau={1,2,5,10}s:
+- it is stable in H02/H03;
+- but it also fails to recover H01 at 180/210 s.
+
+Decision:
+> the useful H01 delay scale is not yet recoverable by a principled source-blind rule.
+
+This is a major downgrade relative to the earlier 56/60 score. The PRL object remains scientifically genuine and passes destructive temporal-order controls, but the current method would still risk outcome-dependent delay selection.
+
+### Revised status
+
+M1-B Delay-coordinate invariant measures:
+**STRONG SCIENTIFIC CANDIDATE / METHOD NOT YET QUALIFIED.**
+
+Promotion now requires one of:
+1. a theory-derived finite-horizon delay choice that does not use source outcomes;
+2. a learned multi-frame measure whose weighting is fixed on design environments and succeeds on a genuinely held transport/environment;
+3. independent public-data evidence showing a stable delay frame before GSL outcome tuning.
+
+Until then it remains a finalist, not the preferred implementation.
