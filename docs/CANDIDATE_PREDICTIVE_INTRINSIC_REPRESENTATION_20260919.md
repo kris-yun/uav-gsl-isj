@@ -978,3 +978,61 @@ Revised evidence status:
 - M2 rationale: STRONG, because learned surrogates demonstrably lose rare/phase information.
 - M3: literature STRONG, empirical PENDING.
 
+
+
+## 32. Loop-10 window-level comparison against classical odor-dynamics features
+
+A fixed 20 s matched-time held-wind diagnostic was run over 120–240 s.
+For each slow-wind source window, the representation was compared with the same-time fast-wind windows of SA and SB.
+
+Representations:
+1. ELIFE_LIKE: approximate classical odor-dynamics features (whiff intensity, slope, blank/whiff duration, intermittency), motivated by Rigolli et al. 2022.
+2. PRED: source-blind future-summary predictor from the first 10 s to the next 10 s.
+3. ETA: fixed rare/intermittent tail-observable vector.
+4. PRED+ETA: concatenation.
+
+Diagnostic decisions (not independent replications):
+
+H01, 12 source-window decisions:
+- ELIFE_LIKE: 2/12
+- PRED: 7/12
+- ETA: 9/12
+- PRED+ETA: 9/12
+
+H02:
+- ELIFE_LIKE: 5/12
+- PRED: 6/12
+- ETA: 7/12
+- PRED+ETA: 7/12
+
+H03:
+- ELIFE_LIKE: 12/12
+- PRED: 10/12
+- ETA: 12/12
+- PRED+ETA: 12/12
+
+Aggregate diagnostic:
+- ELIFE_LIKE: 19/36
+- PRED: 23/36
+- ETA: 28/36
+- PRED+ETA: 28/36
+
+Interpretation:
+- predictive structure outperforms this classical-feature proxy in H01/H02 but not H03.
+- η-style tail/intermittency observables are the strongest simple proxy overall.
+- importantly, PRED+ETA does not improve over ETA alone in this handcrafted diagnostic.
+
+Consequence:
+> the current data do NOT yet establish incremental value of M1 over M2 in a simple feature space.
+
+This is a critical non-promotion result. The paper cannot become “η features + predictive branding”.
+M1 must demonstrate a unique gain on the CTT-native phase/predictive-state task or on an independent dataset where tail statistics alone are insufficient.
+
+New hard M1 gate:
+- compare a learned latent-predictive encoder against classical timing/intensity features, η-only constrained representation, and reconstruction/self-encoding baselines;
+- require incremental held-context source rank / calibration gain that disappears under destructive target-time permutation.
+
+Until then:
+- M1 = PROMISING BUT NOT VALIDATED
+- M2 = STRONG MECHANISM CANDIDATE
+- M1+M2 SYNERGY = NOT YET ESTABLISHED
