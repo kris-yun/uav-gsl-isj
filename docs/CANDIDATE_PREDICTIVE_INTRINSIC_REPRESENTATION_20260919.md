@@ -1036,3 +1036,56 @@ Until then:
 - M1 = PROMISING BUT NOT VALIDATED
 - M2 = STRONG MECHANISM CANDIDATE
 - M1+M2 SYNERGY = NOT YET ESTABLISHED
+
+
+## 33. Loop-12: conformal auxiliary rejected; replace with anytime-valid sequential evidence candidate
+
+### Conformal collision — reject as innovation slot
+
+Direct recent precedents make generic conformal source regions too close to existing source-localization work:
+- AAAI 2026 — Jian et al., *Conformal Prediction for Multi-Source Detection on a Network*: statistically valid source-set detection with calibrated coverage/recall.
+- ICASSP 2025 — Rozenfeld & Laufer Goldshtein, *Conformal Prediction for Manifold-based Source Localization with Gaussian Processes*: conformal prediction intervals for source localization across acoustic conditions.
+
+Decision:
+> conformal calibration may remain an evaluation/deployment baseline, but it no longer qualifies as Auxiliary Innovation 3.
+
+### New Auxiliary-3 candidate — Game-Theoretic Anytime-Valid Source Evidence
+
+Remote-field provenance:
+- NeurIPS 2025 — Kilian, Cortinovis & Caron, *Anytime-valid, Bayes-assisted, Prediction-Powered Inference*: prediction-powered confidence sequences valid uniformly over time.
+- JRSSB 2026 — Koning & van Meer, *Anytime validity is free: inducing sequential tests*: classical terminal tests can be converted into anytime-valid sequential tests, valid under data-dependent stopping.
+- JRSSB 2026 — Choe & Ramdas, *Combining evidence across filtrations*: e-processes quantify accumulated evidence against composite hypotheses at arbitrary stopping times and can be combined across different information filtrations with validity corrections.
+
+Mother idea:
+> In sequential inference, evidence should be accumulated by a process whose validity survives continuous monitoring and adaptive stopping, rather than by repeatedly multiplying correlated compatibility scores as if every propagated quantity were independent evidence.
+
+### Why this maps to PMFS
+
+Existing project facts already identify the relevant failure mode:
+- native PMFS multiplies cell-wise compatibility factors, but those factors are not established calibrated observation likelihoods;
+- one physical observation can affect multiple map cells, so multiplying cell contributions can recount correlated evidence;
+- the failure-first audit explicitly warns that repeated map propagation may change posterior odds without a new sensor event;
+- in the 30-case CPIR audit, A0 becomes more confident while true-source ranking worsens: entropy 3.27 -> 1.57, max posterior 0.19 -> 0.46, while mean normalized true-source rank changes 0.720 -> 0.767.
+
+### Candidate role
+
+M1 would provide one candidate-conditioned predictive score/residual per distinct sensor event.
+M3 would convert/accumulate those event-level scores using an anytime-valid evidence process, so that:
+- each distinct physical observation enters once;
+- adaptive stopping does not invalidate the evidence threshold;
+- map contraction/elimination is authorized only by accumulated valid sequential evidence;
+- spatial propagation may redistribute an event spatially but may not multiply its evidential mass as independent observations.
+
+The final output remains a source-location probability map. The e-process/test-martingale object is an auxiliary gate/weight on source-evidence accumulation, not a replacement output.
+
+### Hard validity warning
+
+No valid e-process has yet been constructed for PMFS.
+A product of arbitrary predictive scores is NOT automatically an e-process.
+The next gate must identify the event-level filtration and a betting/likelihood-ratio factor with the required conditional expectation bound under each candidate-source null. If this cannot be established, this candidate is rejected rather than renamed.
+
+### Collision screen
+
+Current exact searches for e-process / anytime-valid gas- or odor-source localization returned no direct matching source-localization method. This is only a positive novelty signal, not proof of novelty.
+
+Status: M3 CONFORMAL = REJECTED AS INNOVATION; GAME-THEORETIC ANYTIME-VALID EVIDENCE = ACTIVE CANDIDATE / THEORY QUALIFICATION REQUIRED.
