@@ -1,96 +1,43 @@
-# Codex start here — TNQC VGR 300-s offline gate first
+# Codex start here — TNQC VGR 300 s feasibility first
 
-The current candidate is **TNQC (Transport-Nuisance Quotient Canonicalization)**.
+The current frozen candidate is **TNQC (Transport-Nuisance Quotient Canonicalization)**.
 
-## Required order
+## Important correction
 
-Do **not** start the TNQC closed-loop matrix first.
+Do **not** treat the Orebro 2/5/10-minute source-identity probe as the project feasibility result. It is external measured-data falsification only.
 
-The project-level offline gate is now the actual VGR/GADEN localization task:
-House01/02/03 × seed0/1, full 300-s budget, final PMFS
-`ExpectedValue(sourceProbability, 0.05)` error.
+The primary gate is the user's VGR/GADEN House benchmark:
+- House01 / House02 / House03;
+- seeds 0 / 1;
+- full 300 simulation seconds;
+- primary endpoint: PMFS `ExpectedValue(sourceProbability, 0.05)` terminal localization error.
 
-The Orebro3DSEN 2/5/10-min experiments are only an external representation
-stress test. They are not a localization GO criterion.
+Read first:
+1. `docs/VGR_300S_PRIMARY_GATE_20260920.md` — authoritative evaluation contract and gate order.
+2. `docs/TNQC_CODEX_HANDOFF_20260920.md` — theory, equations, literature lineage, novelty boundary, implementation map.
+3. `docs/TNQC_OFFLINE_GATE_20260920.md` — external Orebro falsification only.
+4. `docs/CANDIDATE_SYMMETRY_QUOTIENT_20260920.md` — research lineage and rejected predecessor branches.
 
-Read in this order:
+## Execution order
 
-1. `docs/TNQC_VGR_300S_CORRECTION_20260920.md`
-2. `docs/TNQC_CODEX_HANDOFF_20260920.md`
-3. `docs/TNQC_OFFLINE_GATE_20260920.md` — auxiliary Orebro evidence only
+1. Build and run `test_tnqc_score`.
+2. Reproduce Orebro only as a sanity/falsification check; do not use it to accept the method.
+3. On the VM House datasets, first run full-300 s native PMFS + `tnqc_mode=shadow`.
+4. Verify OFF == SHADOW in trajectory/final native result.
+5. Produce a read-only TNQC-rescored posterior on the same native 300 s trajectory and evaluate its final top-5% error.
+6. Only if the frozen VGR 300 s gate passes may planner-coupled `fused` closed-loop testing begin.
 
-## Stage 0 — build and replay self-test
+Authoritative VGR roots used by the frozen runner:
+- `/mnt/hgfs/workspace/GADEN_files/scenarios/House01`
+- `/mnt/hgfs/workspace/GADEN_files/scenarios/House02`
+- `/mnt/hgfs/workspace/GADEN_files/scenarios/House03`
 
-Build the current `main` code with the existing VGR ROS2 toolchain, then run:
+External launch prerequisite:
+`/dev/shm/meaci_online_20260824/launch/vgr_gsl_pmfs_pfdi.launch.py`
+must declare and forward `tnqc_mode` to the PMFS node. If absent, change launch plumbing only.
 
-```bash
-python3 reference/test_tnqc_vgr_fixed_trajectory_replay.py
-```
+Do not tune TNQC after viewing House truth.
 
-Expected:
+Current scientifically valid status:
 
-```text
-TNQC_VGR_FIXED_TRAJECTORY_REPLAY_TEST_PASS
-```
-
-## Stage 1 — native full-budget VGR export + fixed-trajectory TNQC replay
-
-Run:
-
-```bash
-bash reference/run_tnqc_vgr_offline_gate_20260920.sh
-```
-
-This deliberately runs `TNQC_MODE=off` only.  It uses the native 300-s
-trajectory and native PMFS quadtree candidate bank, then applies TNQC
-counterfactually offline.
-
-Each House/seed replay must first pass the exact native-posterior reconstruction
-audit.  Then the six-case aggregator applies the frozen GO rule:
-
-- pooled final 300-s top-5% error improvement >= 10%;
-- at least 4/6 paired cases improve;
-- no pair degrades by more than 25%;
-- no false-confident collapse;
-- no native reconstruction audit failure.
-
-The result is:
-
-```
-<run-root>/tnqc_vgr_300s_offline_gate.json
-```
-
-## Stage 2 — hard branch
-
-If and only if the JSON contains:
-
-```json
-{"go_for_closed_loop": true}
-```
-
-commit the raw six replay JSONs plus the aggregate gate JSON and create a short
-GO record.  Then proceed to the OFF/SHADOW determinism gate followed by the
-full `off/shadow/fused/only` closed-loop matrix.
-
-If it contains `false`, stop.  Do not tune TNQC from House truth and do not run
-the closed-loop matrix as if the method had passed.
-
-## No-touch list before Stage 1 finishes
-
-Do not change:
-
-- TNQC 1:1 continuous/local-order fusion;
-- evidence bound ([-1,1]);
-- local-edge definition;
-- support rule;
-- confidence weights;
-- `exp(e_s)` modifier;
-- `sourceDiscriminationPower=1.0`;
-- `stepsSourceUpdate=3`;
-- 300-s budget;
-- PMFS planner, sensor or wind settings;
-- House truth, starts or seed assignment.
-
-Current scientific status before Stage 1 result:
-
-**TNQC MECHANISM/CODE PATH READY — VGR 300-S LOCALIZATION SIGN NOT YET CLAIMED.**
+**EXTERNAL-PROXY POSITIVE / VGR-300S PRIMARY GATE PENDING / CLOSED-LOOP PENDING.**
