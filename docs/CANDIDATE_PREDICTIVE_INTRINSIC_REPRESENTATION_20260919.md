@@ -664,3 +664,65 @@ The earlier moving-average and classifier proxies showed that predictive structu
 - It may survive only if a nonlinear masked-prediction model produces a mechanism-specific gain that survives architecture-matched autoencoding and direct supervised baselines.
 - Because this would require a new trained-model experiment rather than a clear existing-data premise, the search loop must reopen for alternative M1 paradigms with stronger evidence on current data.
 
+
+
+## 23. Loop-5: broaden M1 from JEPA architecture to Predictive Coding as the mother paradigm
+
+### 2025 scientific-theory provenance
+
+A 2025 Trends in Cognitive Sciences review, *Predictive Coding in the Human Olfactory System* (Lyons & Gottfried), develops predictive coding specifically as a unifying theory of olfaction:
+- higher-level internal models issue predictions before sensory input arrives;
+- sensory input is evaluated through prediction error rather than passive stimulus-response processing;
+- prediction precision/context determines how much an error should influence belief;
+- olfactory perception is described in terms of predictions, prediction errors, precision and predictive maps.
+
+A second 2025 Trends in Cognitive Sciences review, *Predictive coding: a more cognitive process than we thought?*, highlights an important caveat: prediction-error-like responses alone do not prove the canonical neural mechanism. The transferred object must therefore be the **prediction/prediction-error inference principle**, not a biological-circuit claim.
+
+### 2026 machine-learning realization
+
+- ICLR 2026, *Representation Learning for Spatiotemporal Physical Systems*, shows that latent predictive objectives (JEPA-class) can yield representations better suited to governing-parameter estimation than pixel-level reconstruction.
+- ICLR 2026, *Rethinking JEPA*, provides a simpler compute-efficient masked-latent realization.
+- ICML 2025 M3-JEPA and NeurIPS 2025 latent-predictive work supply additional implementation support.
+
+Revised hierarchy:
+- mother paradigm = predictive coding / predictive processing;
+- M1 computational realization = lightweight latent predictive representation;
+- JEPA is an implementation family, not the paper-level scientific idea.
+
+### GSL translation
+
+For each source hypothesis s, robot history h_t induces an internal predictive state z_t(s).
+The central evidence object becomes a source-conditioned predictive discrepancy:
+
+    e_t(s) = d( z_target(y_{t:t+Δ}), g(z_context(h_t), s) )
+
+The source map should accumulate evidence from which source-conditioned internal model best predicts future observation structure, instead of comparing only instantaneous concentration compatibility.
+
+This retains the PMFS output while changing the semantics of evidence:
+- old: “does the current measurement look compatible with source s?”
+- new: “does source s support a predictive internal model that anticipates the next sensory state?”
+
+### Offline source-conditioned AR proxy
+
+To test whether source-specific prediction error contains source identity across transport changes, a simple candidate-specific autoregressive proxy was fit:
+- train one AR model per source using the fast-wind trace;
+- evaluate one-step log-concentration prediction error on the slow-wind trace;
+- choose the source model with lower predictive error.
+
+Results:
+- H01: 2/2 correct for 120–180 s, 180–240 s and 120–240 s across lags 5/10/25.
+- H02: 2/2 correct in all windows/lags; large margin appears specifically in the source-exposed window.
+- H03: 2/2 correct at 120–180 s, but degrades to 1/2 in 180–240 s and the full 120–240 s window.
+
+Interpretation:
+- source-conditioned prediction error is a genuine source cue in H01/H02 and early H03;
+- it is not universally stable under late H03 transport variation;
+- this prevents a simplistic “prediction error alone solves GSL” claim.
+
+This directly motivates M2:
+> predictive coding must be made intermittency/extreme-event aware, because source-relevant rare plume structure can make ordinary prediction error unstable.
+
+Status of M1 after loop-5:
+- predictive coding = stronger paper-level mother idea than “JEPA”.
+- latent prediction remains the lightweight implementation path.
+- candidate survives, but requires M2 to pass H03/rare-event robustness rather than hiding that failure.
