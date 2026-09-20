@@ -1,31 +1,22 @@
-# Codex start here — TNQC closed-loop screen
+# Codex start here — HOLD before closed loop
 
-The current frozen candidate is **TNQC (Transport-Nuisance Quotient Canonicalization)**.
+The current candidate is **TNQC (Transport-Nuisance Quotient Canonicalization)**.
 
-Read first:
-1. `docs/TNQC_CODEX_HANDOFF_20260920.md` — complete theory, equations, verified literature lineage, novelty boundary, implementation map, no-touch list, and execution protocol.
-2. `docs/TNQC_OFFLINE_GATE_20260920.md` — frozen offline measured-data evidence and pre-registered advancement gate.
-3. `docs/CANDIDATE_SYMMETRY_QUOTIENT_20260920.md` — research lineage and rejected predecessor branches.
+## Important correction — 2026-09-20
 
-Then execute in this order:
+Do **not** start the TNQC House closed-loop matrix yet.
 
-```bash
-# public-data sanity
-python3 reference/tnqc_orebro_offline.py --window-minutes 2
-python3 reference/tnqc_orebro_offline.py --window-minutes 5
-python3 reference/tnqc_orebro_offline.py --window-minutes 10
+The Orebro3DSEN 2/5/10-min source-identity experiments are only an **external auxiliary representation stress test**. They are not the project’s required offline gate because this project’s target benchmark is the VGR/GADEN House01/02/03 localization task with a 300 s budget and the final PMFS top-5% expected-location error.
 
-# first: OFF vs SHADOW determinism only
-TNQC_MODES="off shadow" bash reference/run_tnqc_closed_loop_matrix_20260920.sh
+The earlier status “OFFLINE POSITIVE / CLOSED-LOOP PENDING” was too strong. Correct status:
 
-# only after OFF == SHADOW for all 6 House/seed pairs
-TNQC_MODES="off shadow fused only" bash reference/run_tnqc_closed_loop_matrix_20260920.sh
-```
+**EXTERNAL REPRESENTATION SIGNAL POSITIVE / VGR 300-S OFFLINE LOCALIZATION GATE NOT YET PASSED / CLOSED LOOP ON HOLD.**
 
-External VM prerequisite:
-`/dev/shm/meaci_online_20260824/launch/vgr_gsl_pmfs_pfdi.launch.py`
-must declare and forward `tnqc_mode` to the PMFS node. If absent, change launch plumbing only.
+Read:
+1. `docs/TNQC_VGR_300S_CORRECTION_20260920.md`
+2. `docs/TNQC_CODEX_HANDOFF_20260920.md`
+3. `docs/TNQC_OFFLINE_GATE_20260920.md` (Orebro auxiliary evidence only)
 
-**Do not tune TNQC after viewing House truth.** The first matrix is frozen at 1:1 continuous/local-order fusion, bounded evidence ([-1,1]), `exp(e)` likelihood modifier, `stepsSourceUpdate=3`, and 300 s.
+Do not run `reference/run_tnqc_closed_loop_matrix_20260920.sh` until the VGR 300-s fixed-trajectory/offline localization replay has produced a positive final-error signal and a new explicit GO document has been committed.
 
-Current scientific status: **OFFLINE POSITIVE / CLOSED-LOOP PENDING.**
+No TNQC formula, weight, threshold, or House truth may be tuned while this hold is active.
