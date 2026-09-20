@@ -1403,3 +1403,65 @@ Before any closed-loop or heavy network training:
 - train only on frozen development source×transport histories;
 - test held time and held wind;
 - require each auxiliary to produce an incremental improvement over the previous arm, with destructive controls.
+
+
+## 32. Loop-8 combined-arm gate: current 1+2 does NOT yet pass
+
+A stricter sequential proxy was run to test whether the three candidate ideas add value incrementally rather than only in isolated diagnostics.
+
+Protocol:
+- train only on fast-wind windows from 120–180 s;
+- test on slow-wind windows from 180–240 s;
+- no wind feature is used in the corrected version;
+- M1 = intrinsic source metric over basic temporal dynamics;
+- M2 = append fixed extreme/tail observables;
+- M3 = append bridge-transition observables;
+- evaluation reports held-wind classification and source margin, with a separate physical-support flag.
+
+Result:
+- H01 informative windows are already correctly separated by M1; naïve M2/M3 concatenation does not improve margin and often reduces it.
+- H03 shows the same pattern: accuracy is unchanged while naïve concatenation reduces the margin.
+- H02 slow-wind test windows in 180–240 s have no >0.01 ppm support in this controlled asset; any above-chance classifier result is not admissible source evidence and must be treated as abstention, not localization success.
+
+Decision:
+> The current “M1 + tail features + bridge features” implementation fails the required incremental module gate.
+
+This does **not** invalidate the remote ideas themselves; it invalidates naïve feature concatenation as the way to combine them.
+
+Consequences:
+- M2 must act as an η-style training/statistical constraint, not just extra tail features.
+- M3 TimeBridge-style dynamics must be tested as a predictive auxiliary objective, not just appended bridge statistics.
+- no three-module paper architecture is authorized yet.
+
+## 33. 2026 novelty collision: plume-dynamics latent localization already exists
+
+A new high-impact collision was identified:
+
+- **Advanced Materials 2026 — “Receptor-Mimetic Stereo Olfaction for Simultaneous Odor Recognition and Spatial Localization” (AROMA).**
+- It explicitly treats odor plumes as chemophysical fields coupling molecular identity with transport.
+- receptor-mimetic stereo sensors encode onset, rise and amplitude dynamics;
+- a multi-task Transformer decodes mixture identity and 3-D source location;
+- the paper describes a unified latent representation of evolving plume dynamics and includes room-scale mobile-robot tracking.
+
+Implication:
+> “use plume dynamics / latent temporal representation for localization” is already too generic to support our novelty claim.
+
+The surviving main idea must be narrower and stronger:
+
+**preserved source identity across changing transport contexts**, not simply “spatiotemporal plume representation”.
+
+No evidence was found in the current search that AROMA learns one source-intrinsic dynamical representation across wind/House/simulator changes; that distinction remains open but must be screened aggressively.
+
+## 34. Revised status after loop 8
+
+- Generic JEPA / predictive plume representation: DEMOTED.
+- Generic plume-dynamics latent localization: COLLIDED by Advanced Materials 2026 AROMA.
+- **Intrinsic / preserved source identity across transport contexts:** remains the active M1 hypothesis.
+- Extreme-event-aware η-learning: remains a candidate auxiliary principle, but not as feature concatenation.
+- TimeBridge temporal transformation: reserve auxiliary objective; isolated proxy positive, combined proxy not yet additive.
+- Structured shift-aware conformal source regions: strong fallback auxiliary because it addresses unsupported/confident-wrong cases without fabricating source information.
+
+Next search target:
+1. 2025/2026 top-venue work on persistent identity / preserved dynamics across domain/session conditions;
+2. direct OSL/GSL collisions involving domain-invariant or contrastive source identity;
+3. a lightweight objective that can be tested with current source×transport pairs without assuming early observability.
