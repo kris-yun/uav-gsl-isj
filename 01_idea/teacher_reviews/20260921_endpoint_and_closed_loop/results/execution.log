@@ -1,0 +1,49 @@
+{
+  "scope": "NEW exact mathematical sanity tests; NOT a new House/GADEN/native PMFS performance run",
+  "finite_policy": {
+    "scope": "Exact discrete toy; independent source/nuisance prior; equal unit costs; not gas physics or PMFS",
+    "one_step_source_mi_bits": {
+      "calibrate_nuisance": 0.0,
+      "confounded_probe": 0.0,
+      "direct_noisy_source": 0.18872187554086717
+    },
+    "greedy_source_mi_horizon2": {
+      "first_action": "direct_noisy_source",
+      "exact_error": 0.25
+    },
+    "optimal_terminal_risk_horizon2": {
+      "first_action": "calibrate_nuisance",
+      "exact_error": 0.0
+    },
+    "joint_vs_source_one_step": {
+      "nuisance_only_2bits": {
+        "source_mi_bits": 0.0,
+        "joint_mi_bits": 2.0,
+        "expected_source_error": 0.5
+      },
+      "source_noisy_10pct": {
+        "source_mi_bits": 0.5310044064107188,
+        "joint_mi_bits": 0.5310044064107187,
+        "expected_source_error": 0.09999999999999998
+      }
+    }
+  },
+  "local_information": {
+    "noise_variance": 1.0,
+    "first_probe_information": 0.0,
+    "second_probe_information": 0.0,
+    "joint_two_probe_information": 1.9999999999999998,
+    "random_trials": 1000,
+    "max_profile_identity_error": 5.684341886080802e-14,
+    "max_schur_identity_error": 1.0658141036401503e-14,
+    "max_information_when_source_in_nuisance_span": 6.639554120125576e-27
+  },
+  "nuisance_coherence": {
+    "observed": [1.0, -1.0],
+    "coherent_A_sse": 4.0,
+    "coherent_B_sse": 0.0,
+    "counterexample_coherent_sse": 4.0,
+    "counterexample_independent_per_cell_sse": 0.0,
+    "explanation": "min_theta sum != sum_theta; per-cell nuisance switching fits a nonexistent world"
+  }
+}
