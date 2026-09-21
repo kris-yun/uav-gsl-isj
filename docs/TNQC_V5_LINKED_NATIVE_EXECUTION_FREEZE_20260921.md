@@ -85,13 +85,15 @@ must:
 1. verify the machine-readable TNQC manifest;
 2. verify the complete committed `ros2_package` Git tree SHA;
 3. reject tracked or untracked working-tree changes under `ros2_package`;
-4. run the standalone `test_tnqc_score.cpp` core test;
-5. delete the previous TNQC build workspace;
-6. copy the frozen `ros2_package` tree into a clean colcon workspace;
-7. build `gsl_server` in Release mode;
-8. require both
+4. run Python syntax checks, the full standalone synthetic fixed-trajectory
+   replay, and shell syntax checks for the execution runners;
+5. run the standalone `test_tnqc_score.cpp` core test;
+6. delete the previous TNQC build workspace;
+7. copy the frozen `ros2_package` tree into a clean colcon workspace;
+8. build `gsl_server` in Release mode;
+9. require both
    `gsl_actionserver_node` and `tnqc_expected_value_native`;
-9. record SHA-256 provenance for both binaries.
+10. record SHA-256 provenance for both binaries.
 
 The external VGR launch Python file is **plumbing only**. Its SHA-256 is
 captured before the batch, copied into the run root, and every case runtime
