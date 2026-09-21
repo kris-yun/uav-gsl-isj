@@ -116,9 +116,9 @@ def main():
         assert proc.returncode == 0, proc.stdout + "\n" + proc.stderr
         payload = json.loads(out_json.read_text(encoding="utf-8"))
         assert payload["contract"] == (
-            "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V3_FINAL_LEAF_GATE")
+            "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V4_PARTITION_MEASURE_GATE")
         assert payload["candidate_gate_scope"] == (
-            "final_partition_leaf_candidates_only")
+            "final_partition_leaf_candidates_free_cell_measure_weighted")
         assert payload["native_reconstruction_audit"]["pass"]
         assert payload["native_cpp_endpoint_audit"]["pass"]
         assert payload["valid_for_gate"]
@@ -159,6 +159,23 @@ def main():
         assert final_leaf_gate["valid"]
         assert final_leaf_gate["strength"] == 1.0
         assert all_evaluated_gate["strength"] < final_leaf_gate["strength"]
+
+        # Partition-measure weighting is exactly equivalent to expanding each
+        # terminal leaf into the number of identical free-cell hypotheses it
+        # represents. Within-leaf duplicate pairs are ties and are ignored.
+        measure = {"a": 3, "b": 1, "c": 2}
+        weighted_gate = replay.candidate_order_concordance(
+            diag, ["a", "b", "c"], measure)
+        expanded = {}
+        for cid, count in measure.items():
+            for k in range(count):
+                expanded[f"{cid}_{k}"] = dict(diag[cid])
+        expanded_gate = replay.candidate_order_concordance(expanded)
+        assert weighted_gate["valid"] and expanded_gate["valid"]
+        assert abs(weighted_gate["concordance"] -
+                   expanded_gate["concordance"]) < 1e-12
+        assert abs(weighted_gate["pair_weight"] -
+                   expanded_gate["pair_count"]) < 1e-12
 
         print("TNQC_VGR_FIXED_TRAJECTORY_REPLAY_TEST_PASS")
     finally:
