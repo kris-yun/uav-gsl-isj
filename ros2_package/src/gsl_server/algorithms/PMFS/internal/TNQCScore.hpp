@@ -17,8 +17,19 @@ namespace GSL::PMFS_internal::TNQC
         double effectiveSupport = 0.0;
         double canonicalCosine = 0.0;
         double localOrderAgreement = 0.0;
+        // Candidate-local provisional evidence.  The final online TNQC
+        // evidence is obtained only after applying the candidate-bank
+        // concordance gate below.
         double combinedEffect = 0.0;
         double standardizedEvidence = 0.0;
+    };
+
+    struct BankGate
+    {
+        bool valid = false;
+        std::size_t pairCount = 0;
+        double concordance = 0.0;
+        double strength = 0.0;
     };
 
     inline double safeLogit(double probability, double eps = 1e-6)
@@ -116,31 +127,69 @@ namespace GSL::PMFS_internal::TNQC
         if (edgeWeightSum > 0.0)
             out.localOrderAgreement = std::clamp(signedAgreement / edgeWeightSum, -1.0, 1.0);
 
-        // Symmetry-hierarchy guard.
-        //
         // q_aff is the exact physical quotient for independent positive
-        // affine logit nuisance. q_ord is deliberately broader (any strictly
-        // increasing pointwise transform) but discards more information.  A
-        // broader symmetry channel may corroborate the exact quotient, but it
-        // may not reverse it.  Hence local order is averaged in only when the
-        // two effects have the same sign; otherwise we fall back to q_aff.
-        // This is parameter-free and was frozen after the VGR 0.3 m spatial
-        // mechanism screen showed that unconditional 1:1 fusion can flip an
-        // otherwise correct affine decision.
+        // affine logit nuisance.  q_ord is deliberately broader and is kept
+        // as an independent corroboration channel.  Do not mix it into a
+        // candidate score here: candidate-wise averaging can preserve each
+        // candidate's sign yet still reverse the ordering between two source
+        // hypotheses.  The candidate-bank gate below fixes that failure mode.
         //
-        // Do NOT multiply this effect by sqrt(effectiveSupport): PMFS hit-map
-        // cells are spatially smoothed/correlated and therefore are not
-        // independent observations. Treating cell count as an iid sample
-        // size would create pseudo-replication. The modifier stays bounded to
-        // exp([-1,1]).
-        const bool orderConsistent =
-            out.edgeCount >= 2 &&
-            out.canonicalCosine * out.localOrderAgreement >= 0.0;
-        out.combinedEffect = orderConsistent
-            ? 0.5 * (out.canonicalCosine + out.localOrderAgreement)
-            : out.canonicalCosine;
-        out.standardizedEvidence = out.combinedEffect;
+        // Do NOT multiply by sqrt(effectiveSupport): PMFS hit-map cells are
+        // spatially smoothed/correlated and are not iid observations.
+        out.combinedEffect = out.canonicalCosine;
+        out.standardizedEvidence = out.canonicalCosine;
         out.valid = std::isfinite(out.standardizedEvidence);
         return out;
+    }
+
+    // Candidate-bank quotient-channel concordance gate.
+    //
+    // Compare candidate orderings induced by the exact affine quotient and
+    // by the broader local-order quotient.  The gate is one shared,
+    // non-negative scalar for the entire candidate bank:
+    //
+    //   C = mean_{i<j} sign(a_i-a_j) sign(o_i-o_j)
+    //   g = max(0, C)
+    //   e_i = g a_i
+    //
+    // Because the same g >= 0 multiplies every affine score, the local-order
+    // channel can attenuate/abstain but can never reverse the affine ranking.
+    // Ties in either channel are ignored.  No source truth, candidate rank,
+    // fitted coefficient, or threshold is used.
+    inline BankGate candidateOrderConcordance(const std::vector<Score>& scores)
+    {
+        BankGate out;
+        double signedPairs = 0.0;
+        for (std::size_t i = 0; i < scores.size(); ++i)
+        {
+            if (!scores[i].valid || scores[i].edgeCount < 2)
+                continue;
+            for (std::size_t j = i + 1; j < scores.size(); ++j)
+            {
+                if (!scores[j].valid || scores[j].edgeCount < 2)
+                    continue;
+                const int sa = signum(scores[i].canonicalCosine - scores[j].canonicalCosine);
+                const int so = signum(scores[i].localOrderAgreement - scores[j].localOrderAgreement);
+                if (sa == 0 || so == 0)
+                    continue;
+                signedPairs += static_cast<double>(sa * so);
+                ++out.pairCount;
+            }
+        }
+        if (out.pairCount == 0)
+            return out;
+
+        out.concordance = std::clamp(
+            signedPairs / static_cast<double>(out.pairCount), -1.0, 1.0);
+        out.strength = std::max(0.0, out.concordance);
+        out.valid = std::isfinite(out.strength);
+        return out;
+    }
+
+    inline double bankEvidence(const Score& score, const BankGate& gate)
+    {
+        if (!score.valid || !gate.valid)
+            return 0.0;
+        return std::clamp(gate.strength * score.canonicalCosine, -1.0, 1.0);
     }
 } // namespace GSL::PMFS_internal::TNQC
