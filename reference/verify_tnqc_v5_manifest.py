@@ -36,7 +36,7 @@ def main() -> None:
         manifest_path = root / manifest_path
     payload = json.loads(manifest_path.read_text(encoding="utf-8"))
 
-    expected_contract = "TNQC_V5_IMPLEMENTATION_MANIFEST_V2_CPP_ENDPOINT_PARITY"
+    expected_contract = "TNQC_V5_IMPLEMENTATION_MANIFEST_V3_LINKED_NATIVE_EXECUTION"
     if payload.get("contract") != expected_contract:
         raise SystemExit(
             f"TNQC manifest contract mismatch: {payload.get('contract')!r} "
