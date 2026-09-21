@@ -76,34 +76,40 @@ requires them, such as:
 Do not silently mix historical binaries, old launch overlays, R2 overlays, or
 different runtime trees across cases.
 
-## 4. Pre-matrix repeatability gate
+## 4. Pre-matrix stochasticity characterization
 
-Before the full matrix, repeat House01/seed0 once with:
+A second House01/seed0 R2 run was executed with identical scientific
+parameters, exact R2 binaries/overlays and a fresh ROS domain. It did **not**
+reproduce the first run point-for-point.
 
-- exact R2 code;
-- exact R2 launch/runtime overlay;
-- exact scientific parameters;
-- fresh output directory;
-- new ROS domain only.
+This does not invalidate the fixed-trajectory offline gate.
 
-Compare against the first valid R2 House01/seed0 run.
+The current ROS/GADEN/navigation stack is empirically stochastic/asynchronous
+at the closed-loop trajectory level: the second run first diverged around
+15.4 s, after which pose, sampled gas/wind, source-update timing, candidate
+bank and posterior naturally diverged. Both runs independently passed:
 
-Scientific quantities that should match under the frozen deterministic
-contract include:
+- complete 300-s execution;
+- native context-bank reconstruction;
+- linked-native terminal endpoint parity;
+- V7 replay integrity.
 
-- measurement timestamps/values;
-- robot pose trajectory;
-- source-update ids/times;
-- candidate geometry;
-- candidate-support rows;
-- native posterior;
-- native linked endpoint;
-- TNQC replay endpoint.
+Therefore cross-run exact trajectory equality is now a **characterization
+audit**, not a blocking validity criterion for the offline gate.
 
-Run UUID, absolute paths and wall-clock timestamps are not scientific equality
-fields.
+The authoritative offline comparison is paired **within each native run**:
 
-Any unexplained scientific mismatch blocks the six-case matrix.
+native PMFS posterior vs TNQC replay on the exact same frozen trajectory,
+measurements, candidate bank and support alignment.
+
+No cross-run deterministic equality is required for that comparison.
+
+The stochasticity audit remains important for later closed-loop experiments:
+separate native and fused runs cannot be interpreted as deterministic
+counterfactuals merely because they use the same nominal seed. Closed-loop
+effect sizes must be interpreted against observed run-to-run variability or
+evaluated with a deterministic exogenous replay harness if one is built
+prospectively.
 
 ## 5. Authoritative six-case offline matrix
 
@@ -156,9 +162,17 @@ Two distinct follow-ups must not be confused.
 
 ### If TNQC V5 offline gate is GO
 
-1. OFF vs SHADOW determinism under R2.
-2. Then FUSED closed-loop House01/02/03 x seed0/1.
-3. Compare final 300-s linked-native endpoint under the same R2 contract.
+1. Verify SHADOW leaves the **within-run scientific computation path**
+   unchanged apart from diagnostics; do not require two separately launched
+   ROS/GADEN runs to have identical trajectories, because the R2 stochasticity
+   audit already falsified that assumption.
+2. Run FUSED closed loop on House01/02/03 x seed0/1 under the same R2 contract.
+3. Compare final 300-s linked-native endpoints against native runs using the
+   same scenario/seed design, while explicitly reporting the observed native
+   run-to-run variability as a noise floor.
+4. If the fused effect is comparable to that variability, treat the six-case
+   closed-loop result as exploratory and add repeats/seeds before making a
+   strong performance claim.
 
 ### If TNQC V5 offline gate is HOLD
 
