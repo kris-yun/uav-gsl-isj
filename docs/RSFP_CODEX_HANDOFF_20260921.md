@@ -79,13 +79,22 @@ Required variants:
 - `fine_only`: factor-1 canonical score;
 - `coarse_only`: factor-8 canonical score;
 - `mean_only`: equal arithmetic mean over factors 1/2/4/8;
-- `fixed_only`: minimum/lower envelope over factors 1/2/4/8.
+- `lower_envelope_only`: minimum candidate canonical score over factors 1/2/4/8;
+- `fixed_only`: **scale-stable pairwise dominance**.
+
+For `fixed_only`, every active candidate pair is compared at factors 1/2/4/8:
+
+- same nonzero ordering sign at all four scales -> stable signed pair evidence;
+- sign crossing at any scale -> abstain for that pair;
+- tie at any scale -> non-comparable pair;
+- pair weight = product of the two candidates' represented final-partition free-cell counts;
+- candidate score = signed stable-pair weight / comparable reference-pair weight.
 
 Scientific primary:
 
 `fixed_only/only`
 
-The lower envelope is deliberate: evidence must survive every predeclared scale. It is not legal to choose the best scale after seeing truth.
+This definition directly tests a source-ranking fixed point. It is not legal to choose the best scale or a preferred stable interval after seeing truth.
 
 Also record each variant's `tilt` version, but do not substitute it for the primary after seeing results.
 
@@ -110,14 +119,16 @@ The primary must beat all three pooled controls:
 
 - `fine_only/only`;
 - `coarse_only/only`;
-- `mean_only/only`.
+- `mean_only/only`;
+- `lower_envelope_only/only`.
 
 Interpretation:
 
 - if `fine_only` wins, there is no load-bearing renormalization contribution;
 - if `coarse_only` wins, the effect is ordinary coarse smoothing;
 - if `mean_only` wins, the effect is naive multiscale fusion;
-- only a positive `fixed_only` advantage supports the scale-stability thesis.
+- if `lower_envelope_only` wins, robust per-candidate worst-scale scoring is sufficient and pairwise scale stability is not load-bearing;
+- only a positive `fixed_only` advantage supports the scale-stable-ranking thesis.
 
 The already-frozen TNQC V5 result remains an external negative reference:
 
@@ -181,7 +192,8 @@ RSFP may proceed to closed-loop implementation only if all are true:
 - pooled `fixed_only/only` error is strictly lower than:
   - `fine_only/only`,
   - `coarse_only/only`,
-  - `mean_only/only`.
+  - `mean_only/only`,
+  - `lower_envelope_only/only`.
 
 If any condition fails:
 
@@ -197,7 +209,9 @@ Do not change any of the following after inspecting any House result:
 - block construction;
 - confidence weighting;
 - canonical cosine equation;
-- lower-envelope definition;
+- scale-stable pairwise definition;
+- crossing/tie abstention semantics;
+- physical pair-mass weighting;
 - primary variant;
 - evidence coefficient;
 - endpoint;
@@ -207,7 +221,9 @@ Do not change any of the following after inspecting any House result:
 - 25% degradation cap;
 - false-collapse rule.
 
-Do not replace `min(q_1,q_2,q_4,q_8)` with max, median, selected scale, fitted weights, or a truth-selected plateau.
+Do not replace the all-scales pairwise sign-consistency rule with a selected scale, fitted weights, a truth-selected plateau, or a post-hoc stability threshold.
+
+The per-candidate `min(q_1,q_2,q_4,q_8)` lower envelope is a frozen control only; it must not be promoted to the primary after seeing results.
 
 If the frozen result is negative, record the negative result and resume the main-innovation search under a new method/version.
 
