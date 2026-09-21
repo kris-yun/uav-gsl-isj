@@ -90,6 +90,13 @@ def main():
         assert audit["l1"] < 1e-15
         assert replay.choose_final_update(bank, 300.0) == (1, 295.0)
 
+        (root / "launch.log").write_text(
+            "fixture RESULT IS: Success=0, Search_t=300.00, Error=1.23\n",
+            encoding="utf-8")
+        native_result = replay.native_result_line(root)
+        assert native_result["search_t"] == 300.0
+        assert native_result["reported_top5_error_m"] == 1.23
+
         # Candidate-wise sign consistency is insufficient: naive averaging
         # can reverse the ordering between two positive candidates.  The
         # shared candidate-bank gate must detect this and abstain.
