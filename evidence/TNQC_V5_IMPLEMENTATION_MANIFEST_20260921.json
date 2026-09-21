@@ -1,12 +1,16 @@
 {
-  "contract": "TNQC_V5_IMPLEMENTATION_MANIFEST_V1",
+  "contract": "TNQC_V5_IMPLEMENTATION_MANIFEST_V2_CPP_ENDPOINT_PARITY",
+  "manifest_revision": 2,
   "created_utc": "2026-09-21",
   "repository": "kris-yun/uav-gsl-isj",
   "branch": "main",
-  "branch_head_at_manifest_creation": "8c2d194e61eee5de808191be6874963e59d8b401",
-  "source_behavior_checkpoint": "15e7ce5da7a8204771126e46c5a0d60253262e9c",
+  "freeze_parent_head_before_manifest_update": "5738b97ff176fa3d6871e529a1ddfcd5012402af",
+  "method_version": "TNQC_V5_SUPPORT_COVERAGE_GATE",
+  "method_equation_changed_by_endpoint_revision": false,
+  "house_300s_truth_used_before_freeze": false,
   "authoritative_entrypoint": "CODEX_START_HERE.md",
   "authoritative_docs": [
+    "docs/TNQC_V5_CPP_ENDPOINT_PARITY_20260921.md",
     "docs/TNQC_V5_SUPPORT_COVERAGE_GATE_20260921.md",
     "docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md",
     "docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md",
@@ -19,7 +23,7 @@
     "main_score": "confidence-weighted centered cosine q_aff",
     "exact_invariance_scope": "positive-affine transformations of supported hit-logit fields with fixed support and weights",
     "auxiliary_score": "confidence-weighted adjacent-cell local-order agreement q_ord",
-    "native_refinement": "PMFS native likelihood only",
+    "native_refinement": "PMFS native likelihood only within every source update",
     "gate_candidates": "terminal active free leaves only",
     "leaf_measure": "represented free-cell count m_i",
     "reference_pair_mass": "W_main=sum m_i*m_j over non-tied q_aff pairs",
@@ -33,14 +37,24 @@
     "source_truth_used_in_inference": false,
     "fitted_gate_coefficients": false
   },
-  "replay_contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V5_SUPPORT_COVERAGE_GATE",
-  "aggregate_contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_GATE_V4_SUPPORT_COVERAGE",
+  "endpoint_contract": {
+    "primary_metric": "PMFS ExpectedValue(sourceProbability,0.05) localization error",
+    "authoritative_counterfactual_engine": "reference/tnqc_expected_value_eval.cpp",
+    "engine_semantics": "native-parity C++ std::sort clone of PMFS ExpectedValue(...,0.05), including equal-probability cutoff behavior",
+    "native_parity_abs_tolerance_m": 0.011,
+    "python_top5_role": "diagnostic_only",
+    "same_validated_cpp_binary_required_for_native_and_tnqc_counterfactual": true,
+    "replay_contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V6_CPP_ENDPOINT_PARITY",
+    "aggregate_contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_GATE_V5_CPP_ENDPOINT_PARITY"
+  },
   "required_gate_scope": "final_partition_leaf_candidates_free_cell_measure_support_coverage_weighted",
   "per_case_integrity": {
     "native_posterior_max_abs": 0.000005,
     "native_posterior_l1": 0.0005,
-    "native_cpp_top5_endpoint_rounding_tolerance_m": 0.011,
-    "v5_gate_scope_required": true
+    "standalone_cpp_native_endpoint_vs_pmfs_log_abs_tolerance_m": 0.011,
+    "same_cpp_endpoint_engine_for_counterfactual": true,
+    "v5_gate_scope_required": true,
+    "v6_replay_contract_required": true
   },
   "development_go_rule": {
     "pooled_top5_error_reduction_min_fraction": 0.1,
@@ -53,7 +67,8 @@
     "exclude subdivided quadtree ancestors from terminal gate",
     "weight terminal leaves by represented free-cell hypothesis measure",
     "attenuate local-order gate by informative pair coverage",
-    "anchor Python native endpoint to C++ ExpectedValue(sourceProbability,0.05)"
+    "replace Python top-5 tie breaking with a native-parity C++ ExpectedValue endpoint clone",
+    "require the standalone C++ endpoint clone to reproduce actual native PMFS before evaluating TNQC"
   ],
   "encoded_tests": [
     "positive-affine q_aff invariance",
@@ -64,9 +79,22 @@
     "leaf-measure versus explicit cell-expansion equivalence in C++",
     "leaf-measure versus explicit cell-expansion equivalence in Python",
     "sparse local-order support coverage attenuation: 1 informative of 3 reference pairs gives strength 1/3",
-    "full synthetic replay CLI contract and native endpoint anchor",
+    "full synthetic replay CLI contract",
+    "standalone C++ endpoint evaluator strict compilation",
+    "native endpoint parity requirement",
     "runner shell syntax checks"
   ],
+  "local_evaluation_audit": {
+    "endpoint_evaluator_compile_pass": true,
+    "compiler": "g++ (Debian 14.2.0-19) 14.2.0",
+    "compile_flags": "-std=c++20 -O2 -Wall -Wextra -Wpedantic -Werror",
+    "equal_probability_40_cell_falsification": {
+      "old_python_index_tie_error_m": 0.5,
+      "cpp_std_sort_error_m": 2.5495097567963922,
+      "conclusion": "old Python tie rule can materially change the 5% endpoint"
+    },
+    "full_ros_gaden_six_case_executed_in_this_chat": false
+  },
   "execution_status": {
     "vgr_300s_replay_executed_in_this_chat": false,
     "reason": "Authoritative House scenarios and ROS/GADEN runtime are VM-side.",
@@ -78,16 +106,19 @@
     "ros2_package/src/gsl_server/algorithms/PMFS/internal/TNQCScore.hpp": "6706850d1f888b6f8d1ecedcba26cdc23e11b134",
     "ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp": "0ff3ca647dea1ecc96905e2ea651d9df932357cf",
     "ros2_package/test/test_tnqc_score.cpp": "ab70fd449dca696fe419be5882493c7951fe1f86",
-    "reference/tnqc_vgr_fixed_trajectory_replay.py": "feca90121164472d961644e6f943bc6d598e900e",
-    "reference/test_tnqc_vgr_fixed_trajectory_replay.py": "253c4fe91337ff92afd8464dac4b6e90b355da81",
-    "reference/aggregate_tnqc_vgr_offline_gate.py": "11063288c695a5e57e52e5b60c875ca28ae70bab",
-    "reference/run_tnqc_vgr_offline_gate_20260920.sh": "057becf15b4c06ed89a2c5617c3c1b462f420e0f",
-    ".github/workflows/tnqc_static_checks.yml": "071db6016f78a02ba9211d2601ecb90b85c0f975",
-    "docs/TNQC_V5_SUPPORT_COVERAGE_GATE_20260921.md": "d69b678dd2fe1d79002e4b56009d07fc29c4e812",
+    "reference/tnqc_expected_value_eval.cpp": "d0c1caef7397d723284b7f2533cd61a6d606d643",
+    "reference/tnqc_vgr_fixed_trajectory_replay.py": "ee434c7a6433df86d2c7879b4ad74400ab0e5d1e",
+    "reference/test_tnqc_vgr_fixed_trajectory_replay.py": "1568509c82f93896841d5dcf80fdf520c9d58bdf",
+    "reference/aggregate_tnqc_vgr_offline_gate.py": "ec8821703e76e4c383515e2a2fa64102a289d1fa",
+    "reference/run_tnqc_vgr_offline_gate_20260920.sh": "c0cf74a6b1f33dcfe71b7888787554faecf51d74",
+    ".github/workflows/tnqc_static_checks.yml": "d2fb7f8f2d70c5d30f87ce4b6f779e61e68d64f4",
+    "docs/TNQC_V5_CPP_ENDPOINT_PARITY_20260921.md": "e490704d23830255a5cdd2d71f4dd0b656705945",
+    "docs/TNQC_V5_SUPPORT_COVERAGE_GATE_20260921.md": "eea5270ca70408e080363ed18dc3048d8b71d7c7",
     "docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md": "2b04517615bc25dd549949574a03c31a1dc289ab",
     "docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md": "7d35885a2a537c77c2fa7ec6a5740715712f1296",
-    "docs/TNQC_VGR_300S_CORRECTION_20260920.md": "3c853ce9dc09c1f0383882e6d69df01751d4f63b",
-    "docs/VGR_300S_PRIMARY_GATE_20260920.md": "974612a499eeedc16bd3577847ee5abb9de99beb",
-    "CODEX_START_HERE.md": "944a1f7ed7627487917cf2b132621c81437cad2e"
+    "docs/TNQC_VGR_300S_CORRECTION_20260920.md": "2f7e77b9c1dc4b8891c826e0ea1d2c9f9a3efafe",
+    "docs/VGR_300S_PRIMARY_GATE_20260920.md": "553140c70d672b6c724288a4d9e772c539be293d",
+    "CODEX_START_HERE.md": "687ab4c42c4fb9638cd3b0450ab53002fc56a483",
+    "evidence/TNQC_CPP_ENDPOINT_PARITY_AUDIT_20260921.json": "fdd1d6874e6523f7acc29261b4fb4e0f8a96ccd4"
   }
 }
