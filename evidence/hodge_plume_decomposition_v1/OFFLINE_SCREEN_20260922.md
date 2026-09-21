@@ -1,50 +1,46 @@
-# Hodge / Helmholtz Plume Decomposition V1 — cheap screen
+# Hodge / Helmholtz Plume Decomposition V1 — offline screen
 
 Date: 2026-09-22
 Status: **NO-GO AS MAIN INNOVATION**
 
 ## Hypothesis
 
-Construct a transport vector field
-`q = rank(gas) * unit_wind`
-on the visited spatial grid and test whether source identity is primarily carried by the divergence / potential-like component, while curl-like circulation acts as turbulent nuisance.
+Construct a transport field q = c * unit(wind) and ask whether source identity is specifically carried by the divergence / potential-like component while curl-like circulation is turbulent nuisance.
 
-This would motivate a Hodge/Helmholtz decomposition as the paper-level mother idea.
+A load-bearing Hodge result would require the source signal to weaken materially when the true wind topology is removed.
 
-## Proxy
+## First screen
 
-Controlled 240-s VGR asset:
-H01/H02/H03 × SA/SB × fast/slow.
+On the frozen 240-s VGR asset (H01/H02/H03 × SA/SB × fast/slow):
 
-On interior visited grid cells:
-- divergence = d(q_x)/dx + d(q_y)/dy;
-- scalar curl = d(q_y)/dx - d(q_x)/dy;
-- compare each episode with opposite-wind SA/SB templates using centered cosine.
+- signed divergence: 8/12
+- absolute divergence: 12/12
+- signed curl: 10/12
+- absolute curl: 9/12
+- transport magnitude: 11/12
 
-Gas amplitude is replaced by empirical rank and wind speed by unit direction to suppress simple scale cues.
+The 12/12 absolute-divergence result initially looked positive.
 
-## Result
+## Load-bearing controls
 
-At 240 s:
-- divergence: **8/12 = 66.7%**
-- curl: **6/12 = 50%**
-- flow-aligned gas-gradient control: **6/12 = 50%**
+That apparent positive result does **not** depend on Hodge physics:
 
-Divergence does outperform curl slightly, but is far below the already-established affine-quotient 12/12 source-identity signal.
+- true wind absolute-divergence: 12/12
+- replace each episode by its mean wind direction: 12/12
+- replace all wind directions by fixed +x: 12/12
+- pure concentration-gradient magnitude: 12/12
+- concentration Laplacian: 11/12
+- spatially shuffle wind directions, 100 deterministic source-blind seeds:
+  - mean accuracy 91.08%
+  - median 11/12
+  - 38/100 runs remain 12/12
 
-The result is also unstable over time:
-- 160 s divergence 6/12
-- 176 s 9/12
-- 200 s 7/12
-- 220 s 8/12
-- 240 s 8/12
-
-Disjoint checkerboard support at 240 s does not rescue the mechanism: valid subsets are around 50% conditional accuracy.
+Thus the strong discrimination is already present in the concentration spatial shape. The vector-field decomposition is not load-bearing.
 
 ## Decision
 
-The necessary premise is not supported strongly enough.
+**NO-GO.**
 
-Do not implement a full graph-Poisson Hodge projection or promote a gradient/curl decomposition as the new main innovation.
+Do not implement a full graph-Poisson Hodge projection and do not promote Hodge/Helmholtz, divergence-vs-curl separation, or vector-field topology as the paper-level main innovation.
 
-The data do not justify the claim that source information lives mainly in the potential component while turbulent circulation is nuisance.
+The correct scientific interpretation is that the 240-s asset contains strong distributed spatial source identity, not that this identity specifically lives in a potential-flow component.
