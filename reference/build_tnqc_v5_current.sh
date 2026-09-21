@@ -16,6 +16,23 @@ MANIFEST_REL="evidence/TNQC_V5_IMPLEMENTATION_MANIFEST_20260921.json"
 
 python3 "${MANIFEST_VERIFY}" --root "${ROOT_DIR}" --manifest "${MANIFEST_REL}"
 
+EXPECTED_ROS2_TREE="$(python3 - "${ROOT_DIR}/${MANIFEST_REL}" <<'PY'
+import json, sys
+p = json.load(open(sys.argv[1], encoding="utf-8"))
+print(p["source_tree_git_sha"]["ros2_package"])
+PY
+)"
+ACTUAL_ROS2_TREE="$(git -C "${ROOT_DIR}" rev-parse HEAD:ros2_package)"
+if [[ "${ACTUAL_ROS2_TREE}" != "${EXPECTED_ROS2_TREE}" ]]; then
+  echo "ros2_package tree mismatch: actual=${ACTUAL_ROS2_TREE} expected=${EXPECTED_ROS2_TREE}" >&2
+  exit 73
+fi
+if [[ -n "$(git -C "${ROOT_DIR}" status --porcelain --untracked-files=all -- ros2_package)" ]]; then
+  echo "ros2_package working tree is dirty; refusing confirmatory TNQC build" >&2
+  git -C "${ROOT_DIR}" status --short --untracked-files=all -- ros2_package >&2
+  exit 74
+fi
+
 # A dependency-free compile/run of the frozen TNQC score core catches header
 # regressions before the heavier ROS build.
 TNQC_CORE_TEST="${BUILD_ROOT}.tnqc_score_test"
