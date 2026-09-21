@@ -1,11 +1,11 @@
 # TNQC V3 quotient foundation and claim boundary
 Date: 2026-09-21
 
-> **Superseded gate measure:** V3 established the correct online variable,
-> quotient theorem, final-leaf hypothesis scope, and C++ endpoint audit.
-> The latest gate weighting is V4:
-> `docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md`.
-> V4 is authoritative for execution.
+> **Foundation retained; gate superseded:** V3 established the correct online
+> variable, quotient theorem, final-leaf hypothesis scope, and C++ endpoint
+> audit. V4 added the terminal-leaf free-cell measure, and V5 added
+> support-coverage attenuation. The authoritative gate is:
+> `docs/TNQC_V5_SUPPORT_COVERAGE_GATE_20260921.md`.
 
 V3 code/evaluator correction checkpoint:
 `3024ff349c37105aee1816f6648db3e81c178202`
@@ -179,5 +179,5 @@ https://proceedings.iclr.cc/paper_files/paper/2026/hash/2774a3b52d436b5930da660d
 
 ## 9. Status
 
-**V3 FOUNDATION RETAINED / V4 GATE MEASURE AUTHORITATIVE /
+**V3 FOUNDATION RETAINED / V5 GATE AUTHORITATIVE /
 VGR 300-S ONLINE-REPRESENTATION TEST PENDING / CLOSED LOOP HOLD.**
