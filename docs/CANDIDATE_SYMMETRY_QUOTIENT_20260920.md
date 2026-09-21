@@ -141,15 +141,17 @@ The offline branch has now advanced to a frozen closed-loop candidate.
 
 Additional conservative measured-data probes confirm that a local spatial-adjacency order channel carries repeated-source signal across 2/5/10 min windows and is exactly preserved under condition-specific strictly monotone sensor transforms. It is retained only as an auxiliary robustness channel because ICRA 2026 already establishes global concentration-ranking GSL.
 
-The VGR project-data screen has now corrected the online combination rule:
+The VGR project-data screen has now corrected the online combination rule twice:
 - centered confidence-weighted logit-field cosine is the privileged exact affine quotient;
 - local spatial adjacency order is a broader monotone-invariant corroboration channel;
 - unconditional 1:1 fusion was falsified on H02/fast/SA because it overrode a correct affine decision;
-- the frozen **symmetry-hierarchy guard** averages the two channels only when their signs agree, otherwise it falls back to the exact affine quotient;
+- the first per-candidate sign guard was later rejected by a ranking counterexample: candidate signs can be preserved while the order between two hypotheses is still reversed;
+- the current **candidate-bank quotient-channel concordance gate** computes one shared non-negative strength (g_u=max(0,C_u)) from pairwise agreement between the affine and local-order candidate rankings, then uses (e_i=g_u q_{aff,i});
+- because the same (g_u>=0) multiplies every candidate, the auxiliary channel may attenuate/abstain but cannot reverse affine candidate ordering;
 - quotient evidence remains bounded in [-1,1], avoiding sqrt(cell-count) pseudo-replication.
 
-On the actual VGR 0.3-m PMFS spatial grid, affine and guarded source identity are 12/12 at 240 s. Across 100 source-blind positive-scale stresses and 200 source-blind monotone-compression stresses, the guarded rule remains 12/12 in every run. This is a fixed-route mechanism result, not the final localization endpoint.
+On the actual VGR 0.3-m PMFS spatial grid, the affine quotient is 12/12 at 240 s. The corrected bank gate releases 11/12 cases and is 11/11 correct; across all 100 source-blind positive-scale and 200 source-blind monotone-compression stress seeds it retains 11/12 coverage with 100% conditional accuracy. This is a fixed-route mechanism result, not the final localization endpoint.
 
-Frozen record: `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json`.
+Frozen record: `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json`.
 
 Status: **VGR MECHANISM POSITIVE; 300-S VGR LOCALIZATION GATE PENDING; CLOSED LOOP HOLD.**
