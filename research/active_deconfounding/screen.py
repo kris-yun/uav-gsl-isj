@@ -140,13 +140,23 @@ def evaluate(design,bank,selection,truth_path,out):
     for name,s in sel['strategies'].items():
         acts=[s['pair']['a'],s['pair']['b']];sep,rival=heldout_metrics(p,h,true,acts)
         single,_=heldout_metrics(p,h,true,acts[:1])
-        # Expected entropy under heldout truth, scored with training world mixture.
+        # Expected entropy/error under heldout truth, using training-world mixture.
         likelihood_train=likelihood(p,acts).mean(axis=1);joint=np.array(sel['prior'])[:,None]*likelihood_train
         pred=joint.sum(axis=0);post=joint/np.maximum(pred,1e-300)
         ent=entropy(post.T);qt=likelihood(h[true:true+1],acts)[0]
+        xy=np.array([[d['sources'][i]['x'],d['sources'][i]['y']] for i in leaf])
+        point_errors=np.linalg.norm((xy.T@post).T-np.array(truth),axis=1)
+        unsupported=qt[:,pred<=0].sum(axis=1)
+        # An impossible training outcome does not have a valid posterior.
+        # Do not manufacture a zero-entropy posterior by epsilon division.
+        expected_entropy=[float(x) if m==0 else None for x,m in zip(qt@ent,unsupported)]
+        expected_error=[float(x) if m==0 else None for x,m in zip(qt@point_errors,unsupported)]
         results[name]={'heldout_min_separation':sep.tolist(),'fixed_rival_ids':[ids[int(x)] for x in rival],
                        'first_min_separation':single.tolist(),'pair_minus_single':(sep-single).tolist(),
-                       'expected_source_entropy_nats':(qt@ent).tolist(),'mean_min_separation':float(sep.mean())}
+                       'expected_source_entropy_nats':expected_entropy,
+                       'expected_two_observation_posterior_mean_error_m':expected_error,
+                       'unsupported_outcome_mass':unsupported.tolist(),
+                       'mean_min_separation':float(sep.mean())}
     a=np.array(results['two_step_deconfounding']['heldout_min_separation']);b=np.array(results['one_step_source_MI']['heldout_min_separation'])
     pass_world=(a-b>=1e-4)&(a>=1.1*b)
     source=d['sources'][leaf[true]];distance=float(np.hypot(source['x']-truth[0],source['y']-truth[1]))
@@ -155,7 +165,15 @@ def evaluate(design,bank,selection,truth_path,out):
     if np.any(a<1e-12):reasons.append('TRUE_SOURCE_HAS_ZERO_SEPARATION_FROM_A_FALSE_SOURCE')
     if np.mean(a-b)<-max(.05*float(b.mean()),1e-4):reasons.append('CASE_MEAN_SEPARATION_DEGRADATION')
     if sel['strategies']['two_step_deconfounding']['pair']==sel['strategies']['one_step_source_MI']['pair']:reasons.append('SAME_ACTION_PAIR_AS_GREEDY_SOURCE_MI')
+    # True representative against the fixed highest native-mass false source.
+    false=max((i for i in range(len(leaf)) if i!=true),key=lambda i:d['sources'][leaf[i]]['native_score']*d['sources'][leaf[i]]['measure'])
+    support=[r['cell_index'] for r in d['confidence'] if r['confidence']>0]
+    weights=np.sqrt([r['confidence'] for r in d['confidence'] if r['confidence']>0]);weights/=np.linalg.norm(weights)
+    z=np.clip(np.asarray(full[:27,leaf,:][:,:,support],float),1e-6,1-1e-6);z=np.log(z/(1-z))
+    bmat=np.stack([(z[22,true]-z[4,true])/2,(z[16,true]-z[10,true])/2,(z[14,true]-z[12,true])/2],axis=-1)*weights[:,None]
+    frac,rank=projected_fraction((z[13,false]-z[13,true])*weights,bmat)
     dump(out,{'case':d['case'],'house':d['house'],'true_owner':owner,'true_representative_distance_m':distance,
+              'fixed_native_false_rival':ids[false],'true_vs_native_false_residual_fraction':frac,'true_nuisance_rank':rank,
               'selection_sha256_before_truth':sha(selection),'strategies':results,'passing_heldout_worlds':int(pass_world.sum()),
               'necessary_case_gate':int(pass_world.sum())>=6,'case_mean_degradation':np.mean(a-b)<-max(.05*float(b.mean()),1e-4),
               'two_step_minus_source_mi':(a-b).tolist(),'reasons':reasons,
