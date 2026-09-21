@@ -149,7 +149,8 @@ q_{\rm ord}(s)=
 
 and the corrected candidate-bank quotient-channel concordance gate.
 
-For all valid candidates in one frozen update, write
+For all valid **terminal active leaf candidates in the reconstructed final
+PMFS partition** of one frozen update, write
 (a_i=q_{\rm aff}(s_i)) and (o_i=q_{\rm ord}(s_i)), then compute
 
 [
@@ -160,8 +161,10 @@ C_u=
 \operatorname{sgn}(o_i-o_j),
 ]
 
-ignoring ties and candidates without enough local-order support. The shared
-source-blind gate and candidate evidence are
+ignoring ties and candidates without enough local-order support. Subdivided
+ancestors and other evaluated-but-nonterminal candidates are retained only
+for a source-blind sensitivity audit; they cannot control the V3 gate. The
+shared source-blind gate and candidate evidence are
 
 [
 g_u=\max(0,C_u),
@@ -196,12 +199,15 @@ candidate likelihoods and compares the result cell-by-cell with the exported
 Default validity limits:
 
 - maximum absolute cell-probability discrepancy <= (5\times10^{-6});
-- posterior L1 discrepancy <= (5\times10^{-4}).
+- posterior L1 discrepancy <= (5\times10^{-4});
+- Python native top-5% error must match the native C++ `RESULT IS: Error=`
+  endpoint within 0.011 m (the C++ log is printed to two decimals);
+- gate scope must be `final_partition_leaf_candidates_only`.
 
-If either limit fails, that House/seed replay is invalid and the six-case gate
-cannot return GO.  This audit is important because it detects any mismatch in
-candidate refinement, support, PMFS likelihood reconstruction or file
-alignment before a TNQC result is interpreted.
+If any integrity condition fails, that House/seed replay is invalid and the
+six-case gate cannot return GO. These audits detect mismatches in candidate
+refinement/support, PMFS likelihood reconstruction, terminal endpoint
+semantics, or final-hypothesis selection before a TNQC gain is interpreted.
 
 ### Correct 300-s experiment command
 
