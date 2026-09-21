@@ -12,9 +12,11 @@ all posteriors are constructed.
 
 The replay audits itself by reconstructing native PMFS from the exported
 candidate alignment/rectangles and comparing it with source_posterior.csv.
-The authoritative top-5% endpoint is evaluated by a standalone C++ clone of
-PMFS ExpectedValue(..., 0.05), and that clone must reproduce the native PMFS
-logged endpoint before any TNQC counterfactual is accepted.
+The authoritative top-5% endpoint is evaluated by
+`tnqc_expected_value_native`, which is linked against the same GSL_common
+library and directly calls PMFS `GSL::Utils::ExpectedValue(..., 0.05)`.
+The tool must reproduce the native PMFS logged endpoint before any TNQC
+counterfactual is accepted. A standalone std::sort clone remains test-only.
 """
 from __future__ import annotations
 
@@ -533,7 +535,8 @@ def main():
     # Evaluator-only truth enters only below this line.
     # Python metrics remain diagnostics for MAP/mean/variance and for exposing
     # any tie-cutoff sensitivity. The authoritative top-5% endpoint is
-    # evaluated by a small C++ clone of PMFS ExpectedValue(..., 0.05).
+    # evaluated by the C++ tool linked to the native PMFS
+    # GSL::Utils::ExpectedValue(..., 0.05) implementation.
     nm_py = metrics(native_export, cells, args.truth_x, args.truth_y)
     nr = metrics(native_replay, cells, args.truth_x, args.truth_y)
     fm_py = metrics(fused, cells, args.truth_x, args.truth_y)
@@ -573,11 +576,10 @@ def main():
     fm = {**fm_py, **fm_cpp}
     om = {**om_py, **om_cpp}
 
-    # The standalone evaluator is accepted only if it reproduces the actual
-    # PMFS C++ endpoint for the native posterior. The PMFS log prints Error to
-    # two decimals, hence the frozen 0.011 m tolerance. Once this parity check
-    # passes, the same std::sort implementation is used for the counterfactual
-    # TNQC posterior, including equal-probability cutoff ties.
+    # The linked-native evaluator is accepted only if it reproduces the
+    # actual PMFS endpoint emitted by the running node. The PMFS log prints
+    # Error to two decimals, hence the frozen 0.011 m tolerance. The same
+    # built evaluator binary then evaluates every counterfactual posterior.
     native_cpp = native_result_line(args.run_dir)
     endpoint_delta = abs(
         nm_cpp["pmfs_top5_error_m"] - native_cpp["reported_top5_error_m"])
@@ -612,7 +614,7 @@ def main():
         },
         "native_cpp_endpoint_audit": {
             "cpp_result": native_cpp,
-            "standalone_cpp_native_top5_error_m":
+            "linked_native_top5_error_m":
                 nm_cpp["pmfs_top5_error_m"],
             "python_diagnostic_native_top5_error_m":
                 nm_py["pmfs_top5_error_m"],
