@@ -2,8 +2,8 @@
 
 The current frozen candidate is **TNQC V5 (Transport-Nuisance Quotient Canonicalization)** with a **support-coverage-aware, partition-measure-weighted final-active-leaf quotient-channel gate**.
 
-Read `docs/TNQC_V5_CPP_ENDPOINT_PARITY_20260921.md` first for the
-authoritative 300-s evaluator, then
+Read `docs/TNQC_V5_LINKED_NATIVE_EXECUTION_FREEZE_20260921.md` first for
+the authoritative clean-build + linked-native 300-s execution contract, then
 `docs/TNQC_V5_SUPPORT_COVERAGE_GATE_20260921.md` for the frozen V5 method.
 Read `docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md` for the cell-measure
 proof and `docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md` for the quotient
@@ -23,11 +23,11 @@ The primary gate is the user's VGR/GADEN House benchmark:
 - primary endpoint: PMFS `ExpectedValue(sourceProbability, 0.05)` terminal localization error.
 
 Read first:
-1. `docs/TNQC_V5_CPP_ENDPOINT_PARITY_20260921.md` — authoritative 300-s endpoint: validated C++ clone of PMFS `ExpectedValue(...,0.05)`; Python top-5% is diagnostic only.
+1. `docs/TNQC_V5_LINKED_NATIVE_EXECUTION_FREEZE_20260921.md` — authoritative execution: clean current-source build plus an endpoint executable that links GSL_common and calls the original `GSL::Utils::ExpectedValue`.
 2. `docs/TNQC_V5_SUPPORT_COVERAGE_GATE_20260921.md` — authoritative method/gate normalization: unsupported/tied local-order pairs attenuate rather than disappear from the denominator.
 3. `docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md` — terminal-leaf free-cell measure and exact cell-expansion equivalence.
 4. `docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md` — quotient theorem, exact online variable, claim boundary, and native endpoint anchor rationale.
-5. `docs/VGR_300S_PRIMARY_GATE_20260920.md` — evaluation contract and gate order, subject to the C++ endpoint-parity correction above.
+5. `docs/VGR_300S_PRIMARY_GATE_20260920.md` — evaluation contract and gate order, subject to the linked-native execution freeze above.
 6. `docs/TNQC_RANKING_SAFETY_CORRECTION_20260921.md` — historical ranking-safety rationale; V5 is authoritative wherever the gate formula differs.
 7. `docs/TNQC_CODEX_HANDOFF_20260920.md` — older full handoff; V5 endpoint/method corrections above are authoritative.
 8. `docs/TNQC_OFFLINE_GATE_20260920.md` — VGR 0.3-m concentration-space mechanism screen and falsification history; auxiliary only.
@@ -40,10 +40,10 @@ Read first:
 
 ## Execution order
 
-1. Pull current `main`, build, and run `test_tnqc_score`.
+1. Pull the frozen `main` and do not edit any manifest-locked file. The authoritative runner itself verifies the manifest, checks the complete `ros2_package` tree, runs `test_tnqc_score`, and performs a clean current-source colcon build.
 2. Reproduce `reference/tnqc_vgr_offline_240s.py` only as an auxiliary concentration-space mechanism check. Do not use it as proof of the online hit-logit score.
 3. Run `reference/run_tnqc_vgr_offline_gate_20260920.sh` on the VM House datasets. This is the authoritative full-300 s fixed-trajectory gate for the online representation.
-4. Require, for all six cases: native posterior reconstruction PASS; the standalone C++ endpoint evaluator reproduces native PMFS `ExpectedValue(...,0.05)` within 0.011 m; the same C++ binary evaluates the TNQC counterfactual; and `candidate_gate_scope=final_partition_leaf_candidates_free_cell_measure_support_coverage_weighted`. Then inspect `tnqc_vgr_300s_offline_gate.json`.
+4. Require, for all six cases: native posterior reconstruction PASS; engine `gsl_utils_expected_value_linked_native_v1`; the linked-native endpoint reproduces the actual PMFS terminal error within 0.011 m; the same built endpoint binary evaluates TNQC; and `candidate_gate_scope=final_partition_leaf_candidates_free_cell_measure_support_coverage_weighted`. Then inspect `tnqc_vgr_300s_offline_gate.json`.
 5. Only when `go_for_closed_loop=true`, run OFF vs SHADOW and require exact determinism.
 6. Only after that may planner-coupled `fused` closed-loop testing begin.
 
@@ -82,7 +82,7 @@ not directly validate the V5 online hit-logit gate.
 
 Current scientifically valid status:
 
-**CONCENTRATION-SPACE MECHANISM POSITIVE / V5 METHOD FROZEN / NATIVE-PARITY C++ 300-S ENDPOINT FROZEN / ONLINE HIT-LOGIT VGR-300S PRIMARY GATE PENDING / CLOSED-LOOP HOLD.**
+**CONCENTRATION-SPACE MECHANISM POSITIVE / V5 METHOD FROZEN / LINKED-NATIVE 300-S ENDPOINT + CLEAN CURRENT-SOURCE BUILD FROZEN / ONLINE HIT-LOGIT VGR-300S PRIMARY GATE PENDING / CLOSED-LOOP HOLD.**
 
 The next command is therefore the 300-s **offline VGR localization gate**, not
 the closed-loop matrix:
