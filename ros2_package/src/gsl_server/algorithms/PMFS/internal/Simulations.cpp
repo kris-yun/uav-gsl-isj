@@ -373,8 +373,10 @@ namespace GSL::PMFS_internal
         // Therefore both the gate and the posterior reweighting below use
         // exactly the final active free leaves: value==1 && isLeaf.
         std::vector<TNQC::Score> quotientScores;
+        std::vector<double> hypothesisMeasure;
         std::vector<std::size_t> activeIndices;
         quotientScores.reserve(nodes.size());
+        hypothesisMeasure.reserve(nodes.size());
         activeIndices.reserve(nodes.size());
         for (std::size_t i = 0; i < nodes.size(); ++i)
         {
@@ -388,10 +390,18 @@ namespace GSL::PMFS_internal
             q.canonicalCosine = node.tnqcCanonicalCosine;
             q.localOrderAgreement = node.tnqcLocalOrderAgreement;
             quotientScores.push_back(q);
+            // A terminal free leaf represents every free source cell in its
+            // rectangle. Weighting the concordance by this multiplicity
+            // makes the leaf-level statistic identical to a cell-expanded
+            // hypothesis bank (within-leaf duplicate pairs are ties).
+            hypothesisMeasure.push_back(
+                static_cast<double>(node.leaf->size.x) *
+                static_cast<double>(node.leaf->size.y));
             activeIndices.push_back(i);
         }
 
-        const TNQC::BankGate gate = TNQC::candidateOrderConcordance(quotientScores);
+        const TNQC::BankGate gate =
+            TNQC::candidateOrderConcordance(quotientScores, hypothesisMeasure);
         tnqcBankGateValid = gate.valid;
         tnqcBankPairCount = gate.pairCount;
         tnqcBankConcordance = gate.concordance;
@@ -422,10 +432,10 @@ namespace GSL::PMFS_internal
                     sourceProbInternal[sourceProb.metadata.indexOf({cellI, cellJ})] = score;
         }
 
-        GSL_INFO("TNQC final-leaf gate update {} mode={} valid={} final_leaf_candidates={} total_evaluated_candidates={} pairs={} concordance={:.6g} strength={:.6g}",
+        GSL_INFO("TNQC partition-measure final-leaf gate update {} mode={} valid={} final_leaf_candidates={} total_evaluated_candidates={} pairs={} pair_weight={:.6g} concordance={:.6g} strength={:.6g}",
                  nativeSourceUpdateId, tnqcMode, tnqcBankGateValid,
                  activeIndices.size(), nodes.size(), tnqcBankPairCount,
-                 tnqcBankConcordance, tnqcBankGateStrength);
+                 gate.pairWeight, tnqcBankConcordance, tnqcBankGateStrength);
     }
 
     void Simulations::updateSourceProbability(float refineFraction)
