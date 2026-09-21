@@ -1,0 +1,61 @@
+{
+  "contract": "TNQC_CPP_ENDPOINT_PARITY_AUDIT_V1",
+  "date": "2026-09-21",
+  "purpose": "pre-truth audit of the 300-s PMFS ExpectedValue(sourceProbability,0.05) endpoint semantics",
+  "method_version": "TNQC_V5_SUPPORT_COVERAGE_GATE",
+  "method_equation_changed": false,
+  "evaluation_correction_only": true,
+  "original_pmfs_semantics": {
+    "source": "ros2_package/src/gsl_server/algorithms/Common/Utils/Math.cpp::ExpectedValue",
+    "construction_order": "y outer loop, x inner loop, free cells only",
+    "sort": "std::sort with comparator probability descending only",
+    "proportion": 0.05,
+    "selected_count_semantics": "for(int i=0; i<data.size()*0.05; ++i), equivalent to ceil(0.05*N) for N>0",
+    "tie_break": "unspecified by comparator; therefore Python cell-index tie breaking is not authoritative"
+  },
+  "context_bank_coordinate_provenance": {
+    "measured_csv": "measured_hit_probability.csv",
+    "export_code": "Simulations.cpp::exportContextBankState",
+    "grid_indices": "measuredHitProb.metadata.indices2D(i)",
+    "coordinates": "measuredHitProb.metadata.indexToCoordinates(i)",
+    "same_coordinate_source_as_expected_value": true
+  },
+  "standalone_evaluator": {
+    "path": "reference/tnqc_expected_value_eval.cpp",
+    "blob_sha": "d0c1caef7397d723284b7f2533cd61a6d606d643",
+    "local_source_sha256": "758dc3b81d0fcec9f0d058e60e2804defbd87d696cbd819f8ce99891359f6896",
+    "compiler": "g++ (Debian 14.2.0-19) 14.2.0",
+    "compile_flags": "-std=c++20 -O2 -Wall -Wextra -Wpedantic -Werror",
+    "compile_pass": true,
+    "local_binary_sha256": "bb61b10bc7d35893f408a07c50ec9429a7bd4f72a31b9ec6144ca767a7bc789f"
+  },
+  "synthetic_unique_probability_check": {
+    "free_cells": 20,
+    "selected_cells": 1,
+    "highest_probability_coordinate": [4.0, 3.0],
+    "cpp_top5_coordinate": [4.0, 3.0000000000000004],
+    "truth_coordinate": [4.0, 3.0],
+    "cpp_error_m": 4.440892098500626e-16,
+    "pass": true
+  },
+  "synthetic_equal_probability_tie_falsification": {
+    "free_cells": 40,
+    "all_probabilities": 0.025,
+    "selected_cells": 2,
+    "old_python_index_tie_coordinate": [0.5, 0.0],
+    "old_python_index_tie_error_m_to_origin": 0.5,
+    "cpp_std_sort_coordinate": [0.5, 2.5],
+    "cpp_std_sort_error_m_to_origin": 2.5495097567963922,
+    "conclusion": "the old Python tie rule can materially disagree with the native C++ endpoint on flat posterior regions"
+  },
+  "authoritative_replay_contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V6_CPP_ENDPOINT_PARITY",
+  "authoritative_aggregate_contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_GATE_V5_CPP_ENDPOINT_PARITY",
+  "required_case_rule": {
+    "native_posterior_reconstruction": "PASS",
+    "standalone_cpp_native_endpoint_vs_pmfs_logged_error_abs_tolerance_m": 0.011,
+    "counterfactual_endpoint_engine": "same validated standalone C++ binary",
+    "candidate_gate_scope": "final_partition_leaf_candidates_free_cell_measure_support_coverage_weighted"
+  },
+  "house_300s_truth_used": false,
+  "closed_loop_status": "HOLD"
+}
