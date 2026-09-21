@@ -5,6 +5,8 @@ on:
   push:
     branches: [main]
     paths:
+      - "ros2_package/CMakeLists.txt"
+      - "ros2_package/tools/tnqc_expected_value_native.cpp"
       - "ros2_package/src/gsl_server/algorithms/PMFS/internal/TNQCScore.hpp"
       - "ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.hpp"
       - "ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp"
@@ -13,6 +15,8 @@ on:
       - "reference/tnqc_vgr_fixed_trajectory_replay.py"
       - "reference/tnqc_expected_value_eval.cpp"
       - "reference/verify_tnqc_v5_manifest.py"
+      - "reference/build_tnqc_v5_current.sh"
+      - "reference/run_meaci_case_20260824.sh"
       - "reference/test_tnqc_vgr_fixed_trajectory_replay.py"
       - "reference/aggregate_tnqc_vgr_offline_gate.py"
       - "reference/evaluate_tnqc_closed_loop_300s.py"
@@ -38,7 +42,7 @@ jobs:
           overall=0
 
           echo "## python-pycompile" >> "$out"
-          python3 -m py_compile             reference/tnqc_vgr_offline_240s.py             reference/tnqc_vgr_fixed_trajectory_replay.py             reference/test_tnqc_vgr_fixed_trajectory_replay.py             reference/aggregate_tnqc_vgr_offline_gate.py             reference/evaluate_tnqc_closed_loop_300s.py             >> "$out" 2>&1
+          python3 -m py_compile             reference/tnqc_vgr_offline_240s.py             reference/tnqc_vgr_fixed_trajectory_replay.py             reference/verify_tnqc_v5_manifest.py             reference/test_tnqc_vgr_fixed_trajectory_replay.py             reference/aggregate_tnqc_vgr_offline_gate.py             reference/evaluate_tnqc_closed_loop_300s.py             >> "$out" 2>&1
           rc=$?
           echo "rc=$rc" >> "$out"
           (( rc == 0 )) || overall=1
@@ -69,6 +73,8 @@ jobs:
           echo "## shell-syntax" >> "$out"
           rc=0
           for script in \
+            reference/build_tnqc_v5_current.sh \
+            reference/run_meaci_case_20260824.sh \
             reference/run_tnqc_vgr_offline_gate_20260920.sh \
             reference/run_tnqc_closed_loop_matrix_20260920.sh
           do
