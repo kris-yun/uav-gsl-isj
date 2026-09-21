@@ -363,16 +363,32 @@ namespace GSL::PMFS_internal
         if (tnqcMode == "off")
             return;
 
+        // The quotient-channel gate is a statement about the candidate
+        // hypotheses that actually form the final PMFS partition.  A node
+        // that was evaluated and then subdivided is search history, not a
+        // terminal source hypothesis.  Including such ancestors would make
+        // the shared gate depend on quadtree refinement history and would let
+        // hypotheses absent from the final posterior alter every leaf weight.
+        //
+        // Therefore both the gate and the posterior reweighting below use
+        // exactly the final active free leaves: value==1 && isLeaf.
         std::vector<TNQC::Score> quotientScores;
+        std::vector<std::size_t> activeIndices;
         quotientScores.reserve(nodes.size());
-        for (const LeafScore& node : nodes)
+        activeIndices.reserve(nodes.size());
+        for (std::size_t i = 0; i < nodes.size(); ++i)
         {
+            const LeafScore& node = nodes[i];
+            if (node.leaf == nullptr || node.leaf->value != 1 || !node.leaf->isLeaf)
+                continue;
+
             TNQC::Score q;
             q.valid = node.tnqcValid;
             q.edgeCount = node.tnqcEdgeCount;
             q.canonicalCosine = node.tnqcCanonicalCosine;
             q.localOrderAgreement = node.tnqcLocalOrderAgreement;
             quotientScores.push_back(q);
+            activeIndices.push_back(i);
         }
 
         const TNQC::BankGate gate = TNQC::candidateOrderConcordance(quotientScores);
@@ -381,11 +397,9 @@ namespace GSL::PMFS_internal
         tnqcBankConcordance = gate.concordance;
         tnqcBankGateStrength = gate.strength;
 
-        for (std::size_t i = 0; i < nodes.size(); ++i)
+        for (const std::size_t i : activeIndices)
         {
             LeafScore& node = nodes[i];
-            if (node.leaf == nullptr || node.leaf->value != 1)
-                continue;
             TNQC::Score q;
             q.valid = node.tnqcValid;
             q.edgeCount = node.tnqcEdgeCount;
@@ -408,9 +422,10 @@ namespace GSL::PMFS_internal
                     sourceProbInternal[sourceProb.metadata.indexOf({cellI, cellJ})] = score;
         }
 
-        GSL_INFO("TNQC candidate-bank gate update {} mode={} valid={} pairs={} concordance={:.6g} strength={:.6g}",
+        GSL_INFO("TNQC final-leaf gate update {} mode={} valid={} final_leaf_candidates={} total_evaluated_candidates={} pairs={} concordance={:.6g} strength={:.6g}",
                  nativeSourceUpdateId, tnqcMode, tnqcBankGateValid,
-                 tnqcBankPairCount, tnqcBankConcordance, tnqcBankGateStrength);
+                 activeIndices.size(), nodes.size(), tnqcBankPairCount,
+                 tnqcBankConcordance, tnqcBankGateStrength);
     }
 
     void Simulations::updateSourceProbability(float refineFraction)
