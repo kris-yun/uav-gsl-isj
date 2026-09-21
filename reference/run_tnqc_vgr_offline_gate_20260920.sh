@@ -82,13 +82,25 @@ if not (295.0 <= t <= 330.0):
 PY
 
     echo "TNQC_VGR_OFFLINE_REPLAY_START house=${house} seed=${seed}"
-    python3 "${REPLAY}" \
+    # Exit code 3 is a scientific integrity INVALID (the replay writes its
+    # JSON first). Keep running the remaining frozen cases so the aggregate
+    # report contains the complete six-case diagnosis. Any other replay
+    # error is an execution failure and still aborts immediately.
+    if python3 "${REPLAY}" \
       --run-dir "${run_dir}" \
       --truth-x "${truth_x}" \
       --truth-y "${truth_y}" \
       --budget-s 300 \
-      --source-discrimination-power 1.0
-    echo "TNQC_VGR_OFFLINE_REPLAY_DONE house=${house} seed=${seed}"
+      --source-discrimination-power 1.0; then
+      echo "TNQC_VGR_OFFLINE_REPLAY_DONE house=${house} seed=${seed} integrity=PASS"
+    else
+      replay_rc=$?
+      if [[ "${replay_rc}" -ne 3 ]]; then
+        echo "TNQC replay execution failure house=${house} seed=${seed} rc=${replay_rc}" >&2
+        exit "${replay_rc}"
+      fi
+      echo "TNQC_VGR_OFFLINE_REPLAY_DONE house=${house} seed=${seed} integrity=INVALID"
+    fi
   done
 done
 
