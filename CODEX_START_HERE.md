@@ -19,6 +19,7 @@ Read first:
 4. `docs/TNQC_OFFLINE_GATE_20260920.md` — VGR 0.3-m spatial mechanism screen and falsification history.
 5. `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json` — corrected project-data mechanism record.
 6. `docs/CANDIDATE_SYMMETRY_QUOTIENT_20260920.md` — research lineage and rejected predecessor branches.
+7. `evidence/TNQC_IMPLEMENTATION_SANITY_20260921.json` — current source SHAs, standalone C++/Python sanity results, online native-bank contract audit.
 
 ## Execution order
 
@@ -59,3 +60,14 @@ On the archived VGR 240-s cross-transport screen this gate releases 11/12 cases 
 Current scientifically valid status:
 
 **VGR MECHANISM POSITIVE / RANKING-SAFETY FIXED / VGR-300S PRIMARY GATE PENDING / CLOSED-LOOP HOLD.**
+
+The next command is therefore the 300-s **offline VGR localization gate**, not
+the closed-loop matrix:
+
+```bash
+bash reference/run_tnqc_vgr_offline_gate_20260920.sh
+```
+
+Do not change the TNQC equation based on House truth. If this returns HOLD,
+stop and report the six paired errors; do not tune. If it returns GO, proceed
+to OFF/SHADOW determinism and then the frozen closed-loop matrix.
