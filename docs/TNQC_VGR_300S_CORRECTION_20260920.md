@@ -1,6 +1,10 @@
 # TNQC VGR 300-s correction and required offline gate
 Date: 2026-09-20
 
+> **Endpoint correction (2026-09-21):**
+> `docs/TNQC_V5_CPP_ENDPOINT_PARITY_20260921.md` is authoritative for the
+> terminal top-5% evaluator. TNQC V5 itself is unchanged.
+
 ## Correction
 
 The Orebro3DSEN 2/5/10-min experiments are **not** the project-level offline gate for TNQC.
@@ -199,8 +203,11 @@ Default validity limits:
 
 - maximum absolute cell-probability discrepancy <= (5\times10^{-6});
 - posterior L1 discrepancy <= (5\times10^{-4});
-- Python native top-5% error must match the native C++ `RESULT IS: Error=`
-  endpoint within 0.011 m (the C++ log is printed to two decimals);
+- the standalone C++ PMFS-`ExpectedValue(...,0.05)` clone must reproduce
+  the native C++ `RESULT IS: Error=` endpoint within 0.011 m (the native
+  log is printed to two decimals);
+- that **same validated C++ binary** must evaluate the TNQC counterfactual
+  posterior; Python top-5% is diagnostic only;
 - gate scope must be
   `final_partition_leaf_candidates_free_cell_measure_support_coverage_weighted`.
 
@@ -233,11 +240,13 @@ may the separate TNQC closed-loop matrix be started.
 ### Important interpretation
 
 This replay tests whether TNQC improves **final VGR localization inference on
-the actual 300-s benchmark while trajectory and PMFS candidate refinement are
-held fixed**.  It is intentionally not equivalent to the online fused arm:
-online TNQC can additionally change quadtree refinement and future robot
-motion.  The offline replay is the lower-risk causal screen required before
-allowing those feedback paths.
+the actual 300-s benchmark while trajectory and native PMFS candidate
+refinement are held fixed**. It is intentionally not equivalent to the online
+fused arm: online TNQC can alter posterior-derived planner state/variance and
+therefore future robot motion. **Within the same source update, quadtree
+candidate generation/refinement remains driven by native PMFS in every TNQC
+mode.** The offline replay is the lower-risk inference screen required before
+allowing the later planner-feedback path.
 
 The VGR 240-s spatial mechanism screen is recorded in
 `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json`: the affine representation is 12/12 at 240 s. The corrected candidate-bank
