@@ -907,10 +907,13 @@ namespace GSL::PMFS_internal
             scores[index].tnqcCanonicalCosine = quotient.canonicalCosine;
             scores[index].tnqcLocalOrderAgreement = quotient.localOrderAgreement;
 
-            // The first/coarse level establishes one shared candidate-bank
-            // concordance strength.  Refined levels reuse that same
-            // non-negative scalar, so the broader local-order channel can
-            // attenuate/abstain but cannot reverse affine candidate ordering.
+            // During native candidate generation tnqcBankGateValid is
+            // intentionally false: quadtree refinement is driven only by the
+            // historical PMFS score.  Once the complete native bank has been
+            // evaluated, updateSourceProbability() freezes one shared gate
+            // and retroactively applies it to the final partition.  This
+            // branch is retained for defensive consistency if a pre-frozen
+            // gate is ever supplied by a future caller.
             if (quotient.valid && tnqcBankGateValid)
             {
                 const double evidence = std::clamp(
