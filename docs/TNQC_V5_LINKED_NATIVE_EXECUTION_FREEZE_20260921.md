@@ -35,12 +35,11 @@ The method remains:
 - signed informative mass (S);
 - coverage-aware shared gate
 
-[
-g = max(0,S/W_{main})
-  = max(0,C_{cond}),ho ,
-quad
-ho=W_{info}/W_{main};
-]
+  `g = max(0, S / W_main) = max(0, C_cond) * rho`
+
+  with
+
+  `rho = W_info / W_main`;
 
 - bounded evidence (e_i=gq_{aff,i});
 - fused generalized-loss tilt (L_i^{fused}=L_i^{PMFS}exp(e_i)).
@@ -51,11 +50,7 @@ No method term above is changed by this execution freeze.
 
 The primary 300-s endpoint remains the historical PMFS metric:
 
-[
-left|
-operatorname{ExpectedValue}(P_{300},0.05)-s^*
-ight|_2.
-]
+`|| ExpectedValue(P_300, 0.05) - s* ||_2`.
 
 The authoritative counterfactual evaluator is now:
 
