@@ -84,22 +84,45 @@ int main()
     assert(reverseScore.localOrderAgreement < -0.5);
     assert(reverseScore.standardizedEvidence < 0.0);
 
-    // Symmetry-hierarchy guard: a broader local-order relation may not
-    // reverse the exact affine quotient.  This synthetic field is globally
-    // anti-correlated while the selected local edges preserve order.
-    const std::vector<double> guardObserved{0, 1, 2, 3, 4, 5};
-    const std::vector<double> guardPredicted{0, 1, 2, -10, -11, -12};
-    const std::vector<double> guardWeights(guardObserved.size(), 1.0);
-    const std::vector<unsigned char> guardSupport(guardObserved.size(), 1);
-    const std::vector<std::pair<std::size_t, std::size_t>> guardEdges{
-        {0,1}, {1,2}};
-    const TNQC::Score guarded = TNQC::score(
-        guardObserved, guardPredicted, guardWeights, guardSupport, guardEdges);
-    assert(guarded.valid);
-    assert(guarded.canonicalCosine < -0.8);
-    assert(guarded.localOrderAgreement > 0.99);
-    assert(close(guarded.combinedEffect, guarded.canonicalCosine));
-    assert(close(guarded.standardizedEvidence, guarded.canonicalCosine));
+    // Candidate-wise sign checks are not enough: two positive candidates can
+    // still have their relative order reversed by naive 1:1 averaging.  The
+    // bank gate must detect this contradiction and abstain globally.
+    TNQC::Score c0;
+    c0.valid = true; c0.edgeCount = 4;
+    c0.canonicalCosine = 0.51; c0.localOrderAgreement = 0.01;
+    TNQC::Score c1;
+    c1.valid = true; c1.edgeCount = 4;
+    c1.canonicalCosine = 0.50; c1.localOrderAgreement = 1.00;
+    const TNQC::BankGate disagree = TNQC::candidateOrderConcordance({c0, c1});
+    assert(disagree.valid);
+    assert(disagree.pairCount == 1);
+    assert(close(disagree.concordance, -1.0));
+    assert(close(disagree.strength, 0.0));
+    assert(close(TNQC::bankEvidence(c0, disagree), 0.0));
+    assert(close(TNQC::bankEvidence(c1, disagree), 0.0));
+
+    // When the two quotient channels induce the same candidate ordering, the
+    // shared gate is one and the exact affine ranking is preserved exactly.
+    c0.localOrderAgreement = 0.90;
+    c1.localOrderAgreement = 0.20;
+    const TNQC::BankGate agree = TNQC::candidateOrderConcordance({c0, c1});
+    assert(agree.valid);
+    assert(close(agree.concordance, 1.0));
+    assert(close(agree.strength, 1.0));
+    assert(TNQC::bankEvidence(c0, agree) > TNQC::bankEvidence(c1, agree));
+
+    // With more candidates the shared non-negative strength may attenuate the
+    // exact quotient but cannot invert any affine pair ordering.
+    TNQC::Score c2;
+    c2.valid = true; c2.edgeCount = 4;
+    c2.canonicalCosine = -0.20; c2.localOrderAgreement = -0.40;
+    const TNQC::BankGate mixed = TNQC::candidateOrderConcordance({c0, c1, c2});
+    assert(mixed.valid);
+    const double e0 = TNQC::bankEvidence(c0, mixed);
+    const double e1 = TNQC::bankEvidence(c1, mixed);
+    const double e2 = TNQC::bankEvidence(c2, mixed);
+    assert(e0 >= e1);
+    assert(e1 >= e2);
 
     // Fewer than four supported cells is intentionally non-identifying.
     std::vector<unsigned char> weakSupport(observed.size(), 0);
