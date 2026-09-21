@@ -1,12 +1,17 @@
 # TNQC V4 partition-measure final-leaf gate
 Date: 2026-09-21
 
-Authoritative V4 code checkpoint:
+> **Historical correction retained.** V4's terminal-leaf free-cell measure and
+> exact cell-expansion equivalence remain part of the current method, but V5
+> supersedes the V4 normalization of local-order support:
+> `docs/TNQC_V5_SUPPORT_COVERAGE_GATE_20260921.md`.
+
+V4 code checkpoint:
 `725dae6de2f58b766bc309fd40a9c5722429fb8a`
 
-V4 supersedes only the **gate measure** of V3. The main quotient
-representation, claim boundary, final-leaf restriction, endpoint audits, and
-300-s benchmark remain unchanged.
+V4 superseded the **gate measure** of V3. The main quotient representation,
+claim boundary, final-leaf restriction, endpoint audits, and 300-s benchmark
+remain unchanged.
 
 No House01/02/03 300-s truth outcome was inspected before this correction.
 
@@ -159,7 +164,5 @@ frozen. Those feedback effects are tested only after an explicit offline GO.
 
 ## 9. Status
 
-**TNQC V4 METHOD FROZEN BEFORE 300-S TRUTH /
-PARTITION-MEASURE FINAL-LEAF GATE IMPLEMENTED /
-AUTHORITATIVE VGR 300-S REPLAY PENDING /
-CLOSED LOOP HOLD.**
+**V4 PARTITION-MEASURE RESULT RETAINED / V5 SUPPORT-COVERAGE NORMALIZATION
+AUTHORITATIVE / VGR 300-S REPLAY PENDING / CLOSED LOOP HOLD.**
