@@ -1,16 +1,16 @@
 {
-  "contract": "TNQC_V5_IMPLEMENTATION_MANIFEST_V2_CPP_ENDPOINT_PARITY",
-  "manifest_revision": 2,
+  "contract": "TNQC_V5_IMPLEMENTATION_MANIFEST_V3_LINKED_NATIVE_EXECUTION",
+  "manifest_revision": 3,
   "created_utc": "2026-09-21",
   "repository": "kris-yun/uav-gsl-isj",
   "branch": "main",
-  "freeze_parent_head_before_manifest_update": "a8e8b59f62dfb129e6d18f12db4806b4f0d978e5",
+  "freeze_parent_head_before_manifest_update": "d8e847fdb86fcc76840047954d874c5fe2e5097b",
   "method_version": "TNQC_V5_SUPPORT_COVERAGE_GATE",
   "method_equation_changed_by_endpoint_revision": false,
   "house_300s_truth_used_before_freeze": false,
   "authoritative_entrypoint": "CODEX_START_HERE.md",
   "authoritative_docs": [
-    "docs/TNQC_V5_CPP_ENDPOINT_PARITY_20260921.md",
+    "docs/TNQC_V5_LINKED_NATIVE_EXECUTION_FREEZE_20260921.md",
     "docs/TNQC_V5_SUPPORT_COVERAGE_GATE_20260921.md",
     "docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md",
     "docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md",
@@ -39,22 +39,28 @@
   },
   "endpoint_contract": {
     "primary_metric": "PMFS ExpectedValue(sourceProbability,0.05) localization error",
-    "authoritative_counterfactual_engine": "reference/tnqc_expected_value_eval.cpp",
-    "engine_semantics": "native-parity C++ std::sort clone of PMFS ExpectedValue(...,0.05), including equal-probability cutoff behavior",
+    "authoritative_counterfactual_engine": "ros2_package/tools/tnqc_expected_value_native.cpp",
+    "engine_id": "gsl_utils_expected_value_linked_native_v1",
+    "engine_semantics": "linked executable calls the original GSL::Utils::ExpectedValue(grid,0.05) from GSL_common built in the same colcon build as gsl_actionserver_node",
     "native_parity_abs_tolerance_m": 0.011,
     "python_top5_role": "diagnostic_only",
-    "same_validated_cpp_binary_required_for_native_and_tnqc_counterfactual": true,
-    "replay_contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V6_CPP_ENDPOINT_PARITY",
-    "aggregate_contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_GATE_V5_CPP_ENDPOINT_PARITY"
+    "same_built_linked_native_binary_required_for_native_anchor_and_tnqc_counterfactual": true,
+    "replay_contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V7_LINKED_NATIVE_ENDPOINT",
+    "aggregate_contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_GATE_V6_LINKED_NATIVE_ENDPOINT",
+    "historical_standalone_clone": "reference/tnqc_expected_value_eval.cpp",
+    "historical_clone_role": "test/audit only; not accepted by authoritative aggregate"
   },
   "required_gate_scope": "final_partition_leaf_candidates_free_cell_measure_support_coverage_weighted",
   "per_case_integrity": {
     "native_posterior_max_abs": 0.000005,
     "native_posterior_l1": 0.0005,
-    "standalone_cpp_native_endpoint_vs_pmfs_log_abs_tolerance_m": 0.011,
-    "same_cpp_endpoint_engine_for_counterfactual": true,
+    "linked_native_endpoint_vs_pmfs_log_abs_tolerance_m": 0.011,
+    "endpoint_engine_required": "gsl_utils_expected_value_linked_native_v1",
+    "same_linked_native_endpoint_binary_for_counterfactual": true,
     "v5_gate_scope_required": true,
-    "v6_replay_contract_required": true
+    "v7_replay_contract_required": true,
+    "clean_build_algorithm_binary_provenance_required": true,
+    "frozen_launch_overlay_provenance_required": true
   },
   "development_go_rule": {
     "pooled_top5_error_reduction_min_fraction": 0.1,
@@ -67,8 +73,9 @@
     "exclude subdivided quadtree ancestors from terminal gate",
     "weight terminal leaves by represented free-cell hypothesis measure",
     "attenuate local-order gate by informative pair coverage",
-    "replace Python top-5 tie breaking with a native-parity C++ ExpectedValue endpoint clone",
-    "require the standalone C++ endpoint clone to reproduce actual native PMFS before evaluating TNQC"
+    "replace Python top-5 tie breaking with native C++ ExpectedValue semantics",
+    "upgrade from standalone std::sort clone to an executable linked to the original GSL::Utils::ExpectedValue implementation",
+    "require clean current-source ros2_package build and per-case binary/launch provenance"
   ],
   "encoded_tests": [
     "positive-affine q_aff invariance",
@@ -80,8 +87,11 @@
     "leaf-measure versus explicit cell-expansion equivalence in Python",
     "sparse local-order support coverage attenuation: 1 informative of 3 reference pairs gives strength 1/3",
     "full synthetic replay CLI contract",
-    "standalone C++ endpoint evaluator strict compilation",
-    "native endpoint parity requirement",
+    "standalone C++ endpoint tie falsification audit",
+    "linked-native endpoint engine identity requirement",
+    "linked-native native endpoint parity requirement",
+    "complete ros2_package tree SHA lock",
+    "clean-build binary provenance",
     "runner shell syntax checks",
     "working-tree Git blob SHA manifest verification"
   ],
@@ -101,27 +111,36 @@
     "reason": "Authoritative House scenarios and ROS/GADEN runtime are VM-side.",
     "github_actions_push_result_visible_to_connector": false,
     "next_command": "bash reference/run_tnqc_vgr_offline_gate_20260920.sh",
-    "closed_loop": "HOLD until go_for_closed_loop=true",
-    "pre_execution_guard": "reference/verify_tnqc_v5_manifest.py must pass before endpoint build or House execution"
+    "closed_loop": "HOLD until valid=true and go_for_closed_loop=true in the V6 linked-native aggregate",
+    "pre_execution_guard": "reference/verify_tnqc_v5_manifest.py must pass, then reference/build_tnqc_v5_current.sh must clean-build the locked ros2_package tree"
   },
   "file_blob_sha": {
+    "ros2_package/CMakeLists.txt": "d7b647921b126f3cf91f07eb11a4ec34f3b6937a",
+    "ros2_package/tools/tnqc_expected_value_native.cpp": "d5eef5e128f90d3d2501605b81179a7b52003674",
     "ros2_package/src/gsl_server/algorithms/PMFS/internal/TNQCScore.hpp": "6706850d1f888b6f8d1ecedcba26cdc23e11b134",
+    "ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.hpp": "7f07fb268f3a0589421a04110394b8eac9539a29",
     "ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp": "0ff3ca647dea1ecc96905e2ea651d9df932357cf",
     "ros2_package/test/test_tnqc_score.cpp": "ab70fd449dca696fe419be5882493c7951fe1f86",
-    "reference/tnqc_expected_value_eval.cpp": "d0c1caef7397d723284b7f2533cd61a6d606d643",
-    "reference/tnqc_vgr_fixed_trajectory_replay.py": "ee434c7a6433df86d2c7879b4ad74400ab0e5d1e",
-    "reference/test_tnqc_vgr_fixed_trajectory_replay.py": "1568509c82f93896841d5dcf80fdf520c9d58bdf",
-    "reference/aggregate_tnqc_vgr_offline_gate.py": "ec8821703e76e4c383515e2a2fa64102a289d1fa",
-    "reference/run_tnqc_vgr_offline_gate_20260920.sh": "2b5d5b5e079fef206a17fe859d8a57cf4df4bf38",
-    ".github/workflows/tnqc_static_checks.yml": "7bac839a78d60127d28e3af5ef09a9fb914ce20f",
-    "docs/TNQC_V5_CPP_ENDPOINT_PARITY_20260921.md": "e490704d23830255a5cdd2d71f4dd0b656705945",
-    "docs/TNQC_V5_SUPPORT_COVERAGE_GATE_20260921.md": "eea5270ca70408e080363ed18dc3048d8b71d7c7",
+    "reference/tnqc_vgr_fixed_trajectory_replay.py": "0b67ee1148c7f86b108f75eae658c0cf3107d676",
+    "reference/tnqc_expected_value_eval.cpp": "b4b7577c18e34ca434f6d9a3af9b7548f8e52c66",
+    "reference/test_tnqc_vgr_fixed_trajectory_replay.py": "f4b98909d7f8b23356a4e3c465d119ccbd0f9a88",
+    "reference/aggregate_tnqc_vgr_offline_gate.py": "73b61b61e777fc928512dcefa864889bbfca7f00",
+    "reference/run_tnqc_vgr_offline_gate_20260920.sh": "6d7f4fa2f3e1dea7c3fdecde3095286ed22f8fd3",
+    "reference/run_tnqc_closed_loop_matrix_20260920.sh": "7541c31c0aea323e34e5fec0a6d7fdcd35ab3878",
+    "reference/run_meaci_case_20260824.sh": "de6b371868883cc0a2297a3723ae55ed807ac698",
+    "reference/build_tnqc_v5_current.sh": "ac9b7bc98afac578e306382e371b7e733afd75d3",
+    "reference/verify_tnqc_v5_manifest.py": "5713453369521ee14c1546da8fd7bce1f0ab38bb",
+    ".github/workflows/tnqc_static_checks.yml": "343f8d8c14337b51306e7dabb5a3bc8bdc4c4707",
+    "docs/TNQC_V5_LINKED_NATIVE_EXECUTION_FREEZE_20260921.md": "24e70543a8fc439816b36cf41b17dbea4f5c9fa2",
+    "docs/TNQC_V5_SUPPORT_COVERAGE_GATE_20260921.md": "6a7383ef35bcf7bb5f7b203de1f41fba3716456f",
     "docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md": "2b04517615bc25dd549949574a03c31a1dc289ab",
     "docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md": "7d35885a2a537c77c2fa7ec6a5740715712f1296",
     "docs/TNQC_VGR_300S_CORRECTION_20260920.md": "2f7e77b9c1dc4b8891c826e0ea1d2c9f9a3efafe",
     "docs/VGR_300S_PRIMARY_GATE_20260920.md": "553140c70d672b6c724288a4d9e772c539be293d",
-    "CODEX_START_HERE.md": "687ab4c42c4fb9638cd3b0450ab53002fc56a483",
-    "evidence/TNQC_CPP_ENDPOINT_PARITY_AUDIT_20260921.json": "fdd1d6874e6523f7acc29261b4fb4e0f8a96ccd4",
-    "reference/verify_tnqc_v5_manifest.py": "419ced9929cba0a34489c95dd96d917ede24ec64"
+    "CODEX_START_HERE.md": "16f7986c91a798ca34e83e2acef7a74096eb0263",
+    "evidence/TNQC_CPP_ENDPOINT_PARITY_AUDIT_20260921.json": "fdd1d6874e6523f7acc29261b4fb4e0f8a96ccd4"
+  },
+  "source_tree_git_sha": {
+    "ros2_package": "e54c247d4244f5b19f90b19832dd497e7f2d6c69"
   }
 }
