@@ -1,0 +1,74 @@
+{
+  "contract": "TNQC_V4_IMPLEMENTATION_MANIFEST_V1",
+  "created_utc": "2026-09-21",
+  "repository": "kris-yun/uav-gsl-isj",
+  "branch": "main",
+  "branch_head_at_manifest_creation": "d021e4cfeb4f9dd7cde3fbe6b615f2ab14c4d914",
+  "behavior_checkpoint": "725dae6de2f58b766bc309fd40a9c5722429fb8a",
+  "authoritative_entrypoint": "CODEX_START_HERE.md",
+  "authoritative_method_docs": [
+    "docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md",
+    "docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md",
+    "docs/VGR_300S_PRIMARY_GATE_20260920.md",
+    "docs/TNQC_VGR_300S_CORRECTION_20260920.md"
+  ],
+  "source_blind_method_contract": {
+    "online_observed_variable": "PMFS measured hit-probability logOdds on free positive-confidence support",
+    "candidate_variable": "logit of native PMFS simulated candidate hit probability",
+    "main_score": "confidence-weighted centered cosine (positive-affine quotient representative match)",
+    "auxiliary_score": "confidence-weighted adjacent-cell local-order agreement",
+    "gate_scope": "terminal active free quadtree leaves only",
+    "hypothesis_measure": "free-cell multiplicity represented by each terminal leaf",
+    "pair_weight": "m_i * m_j",
+    "gate": "g=max(0,C_cell)",
+    "evidence": "e_i=g*q_aff_i, clamped to [-1,1]",
+    "fused_score": "L_PMFS(s_i) * exp(e_i)",
+    "native_quadtree_refinement_changed_by_tnqc": false,
+    "source_truth_used_in_inference": false
+  },
+  "replay_contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V4_PARTITION_MEASURE_GATE",
+  "aggregate_contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_GATE_V3_PARTITION_MEASURE",
+  "required_candidate_gate_scope": "final_partition_leaf_candidates_free_cell_measure_weighted",
+  "per_case_integrity": {
+    "native_posterior_reconstruction_max_abs": 0.000005,
+    "native_posterior_reconstruction_l1": 0.0005,
+    "native_cpp_top5_endpoint_rounding_tolerance_m": 0.011,
+    "final_leaf_partition_measure_scope_required": true
+  },
+  "development_go_rule": {
+    "pooled_top5_error_reduction_min_fraction": 0.1,
+    "improved_pairs_min": 4,
+    "worst_pair_degradation_max_fraction": 0.25,
+    "false_confident_collapse_forbidden": true
+  },
+  "encoded_static_checks": [
+    "Python py_compile for replay/test/aggregate/closed-loop evaluator",
+    "full synthetic V4 fixed-trajectory replay CLI fixture",
+    "candidate-order reversal abstention counterexample",
+    "ancestor-contamination exclusion counterexample",
+    "partition-measure == explicit cell-expansion concordance equivalence in Python",
+    "partition-measure == explicit cell-expansion concordance equivalence in C++",
+    "C++ exact positive-affine quotient invariance test",
+    "runner bash syntax checks"
+  ],
+  "execution_status": {
+    "authoritative_vgr_300s_replay_executed_in_this_chat": false,
+    "reason": "VGR House scenarios and ROS/GADEN runtime are VM-side; this chat does not have that runtime.",
+    "github_push_workflow_result_observed_via_connector": false,
+    "required_next_execution": "On the VGR VM build current main, run static/synthetic tests, then bash reference/run_tnqc_vgr_offline_gate_20260920.sh",
+    "closed_loop_status": "HOLD until aggregate go_for_closed_loop=true"
+  },
+  "file_blob_sha": {
+    "ros2_package/src/gsl_server/algorithms/PMFS/internal/TNQCScore.hpp": "ae98479486c2320fccaf762c2c0dabd0f180f416",
+    "ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp": "6e82eac139205030307551345fa47ab59c55cf88",
+    "ros2_package/test/test_tnqc_score.cpp": "6383b19d9ad19e8f8a46ba48827fabd90b97f464",
+    "reference/tnqc_vgr_fixed_trajectory_replay.py": "3cb6a71b91b2a3a06d4099374f33b5fc6040baad",
+    "reference/test_tnqc_vgr_fixed_trajectory_replay.py": "7a3b950e4ae64a1aabe27a7877f36813ce453a3f",
+    "reference/aggregate_tnqc_vgr_offline_gate.py": "3c5eec3b67dedab4abdbfa6fc0ded7b09745c833",
+    "reference/run_tnqc_vgr_offline_gate_20260920.sh": "057becf15b4c06ed89a2c5617c3c1b462f420e0f",
+    ".github/workflows/tnqc_static_checks.yml": "071db6016f78a02ba9211d2601ecb90b85c0f975",
+    "docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md": "79e437b36a0bd6cdbab544452f11e652017b9ab8",
+    "docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md": "1f49c830f334f5d7dbd4bf71e0a6e0c5e045b6d6",
+    "CODEX_START_HERE.md": "37a70e9001772eb4d9a2f567c55360066d4d6e37"
+  }
+}
