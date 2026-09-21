@@ -1,10 +1,60 @@
-# UAV Gas Source Localization — ME-ACI V10
+# UAV Gas Source Localization — Research Repository
 
-This repository contains the frozen **ME-ACI V10** main-innovation implementation for PMFS-based single-UAV gas-source localization. It replaces the previous DQA-AS/SDR/TDC/MHC development version; that version remains recoverable from Git history at commit `647b0bb94a23cbd75dd4cca6377bd8be5c85a887`.
+This repository contains two clearly separated research layers for
+PMFS-based single-UAV gas-source localization:
 
-## Current scientific status
+1. the frozen historical **ME-ACI V10** development result;
+2. the newer **TNQC (Transport-Nuisance Quotient Canonicalization)** research
+   cycle, whose authoritative full-300-s feasibility result is still pending.
 
-The frozen online implementation passed the requested development boundary on three real VGR/GADEN House datasets and two seeds per House. The primary endpoint is the original PMFS top-5% probability-weighted source-location error, `ExpectedValue(sourceProbability, 0.05)`.
+The repository has been reorganized around three top-level entry points
+without moving frozen executable/evidence files:
+
+| Start here | Purpose |
+|---|---|
+| [01_idea/](01_idea/) | Research philosophy, module-discovery loop, theory hierarchy, current TNQC thesis |
+| [02_code/](02_code/) | Online ROS/PMFS code, replay/evaluator code, tests and execution map |
+| [03_data/](03_data/) | Evidence/data provenance, external House-data boundary, endpoint definitions |
+
+For public-release provenance and upstream/licensing notes, see
+[PUBLIC_RELEASE_NOTES.md](PUBLIC_RELEASE_NOTES.md).
+
+---
+
+## Core research philosophy
+
+The project does **not** start from “add another module and see if the score
+improves.”
+
+The working doctrine is:
+
+**recent cross-domain scientific idea**
+→ **structural/physical mapping to GSL**
+→ **minimal mathematical formulation**
+→ **source-blind offline falsification on existing VGR data**
+→ **keep/reject based on signal**
+→ **add only subordinate auxiliary mechanisms**
+→ **freeze before authoritative truth**
+→ **full 300-s localization gate**
+→ **closed loop only after offline GO**
+
+The main innovation must carry a paper-level scientific thesis—such as
+causality, symmetry/canonicalization, quotient-space inference, or another
+similarly general principle—rather than being an engineering patch stack.
+
+The complete formulation is in [01_idea/README.md](01_idea/README.md).
+
+---
+
+## Historical frozen result — ME-ACI V10
+
+ME-ACI V10 is the previous frozen main-innovation implementation. It treats
+gas-source localization as conditional inverse transport with sequential
+replication gating.
+
+Its development evidence used three VGR/GADEN House datasets and two seeds
+per House. The metric is PMFS top-5% probability-weighted source-location
+error.
 
 | House | Seed | Native PMFS (m) | ME-ACI V10 (m) | Reduction |
 |---|---:|---:|---:|---:|
@@ -15,56 +65,143 @@ The frozen online implementation passed the requested development boundary on th
 | H03 | 0 | 6.652648 | 2.863832 | 56.952% |
 | H03 | 1 | 5.219942 | 2.982003 | 42.873% |
 
-- Pass rate: **6/6** at the frozen `>=10%` individual-improvement threshold.
+- Pass rate: **6/6** at the frozen >=10% individual-improvement threshold.
 - Pooled error: **4.782312 m -> 2.822042 m** (**40.990% reduction**).
 - Worst individual reduction: **22.378%**.
-- First accepted update: **72.851–217.811 simulation seconds**, within the 300 s budget.
+- First accepted update: **72.851–217.811 simulation seconds**.
 
-These are real online closed-loop, **first-identifiable-intervention** comparisons on an identical trajectory up to posterior release. **They are not final-300-s endpoint values**: each case was evaluated at its first accepted ME-ACI source update (72.851–217.811 simulation seconds). They are strong mechanism/development evidence, not yet an unseen-seed population-level paper claim. Any new method comparison that claims a 300-s endpoint must run through the full 300-s budget and must not reuse this table as its final-300-s baseline.
+Important limitation: these are **first-identifiable-intervention**
+comparisons, not final-300-s endpoint values. They are historical
+mechanism/development evidence and must not be reused as the terminal 300-s
+baseline for a new method.
 
-## Current 2026-09-20 research-cycle candidate
-
-A separate candidate, **TNQC (Transport-Nuisance Quotient Canonicalization)**,
-is under a new development cycle.  Its external Orebro representation test is
-auxiliary only.  The project-level gate is now an audited **VGR/GADEN
-House01/02/03 × seed0/1 fixed-trajectory replay through the full 300-s
-budget**, evaluated with the same PMFS top-5% expected-location error.
-
-Start at [CODEX_START_HERE.md](CODEX_START_HERE.md).  The replay implementation
-is in `reference/tnqc_vgr_fixed_trajectory_replay.py` and the six-case driver
-is `reference/run_tnqc_vgr_offline_gate_20260920.sh`.
-
-Current TNQC status: **mechanism/code path ready; VGR 300-s localization sign
-not yet claimed until that gate is actually run.**
-
-## Method
-
-ME-ACI treats gas-source localization as conditional inverse transport. It stores completed hit/miss events in a sequential reservoir, splits them into two disjoint temporal folds, and releases source evidence only when both folds contain hit/miss contrast and hits replicate at at least two occupied locations. Conditioning on the observed hit count removes an unknown release/sensor intercept. A fixed 54-member transport-discrepancy family is marginalized, the two temporal rank channels are combined, and the resulting likelihood updates an independent causal source posterior. Rejected windows are retained and do not alter that posterior.
-
-The validated role of SD-TFEI is therefore a **sequential temporal-replication inference channel**, rather than the earlier stand-alone generalized-eigenvector feature.
-
-## Frozen identifiers
+Frozen identifiers:
 
 - Run contract: `MEACI_SEQUENTIAL_SPATIAL_REPLICATION_V4`
 - Formula marker: `inverse_transport_sequential_replication_v3`
 - Source-update cadence: `stepsSourceUpdate=3`
 - Runtime budget: `300 simulation seconds`
-- Online binary SHA-256: `14133117b9d24502acc8e45ad7c72fbd668fbe867fd73aeee17b70e52cfbe938`
-- `Simulations.cpp` SHA-256: `6f3955eef884f804df725eb0b39d39c3abe1c436b9f9cbb6419e6df881ef5198`
-- `Simulations.hpp` SHA-256: `ea358f1f23cefb807d7daf0f4efc31dd91e29c45717277f976955aa7109a8e00`
+- Qualified online binary SHA-256:
+  `14133117b9d24502acc8e45ad7c72fbd668fbe867fd73aeee17b70e52cfbe938`
 
-## Repository layout
+Historical evidence lives under `evidence/` and `artifacts/`.
 
-- `ros2_package/` — captured ROS 2 `gsl_server` package; the frozen implementation is in `src/gsl_server/algorithms/PMFS/internal/Simulations.{cpp,hpp}`.
-- `reference/` — frozen runner, evaluator and PMFS metric reference files.
-- `docs/METHOD_AND_RESULTS.md` — mathematical contract, results and scientific limits.
-- `docs/THEORY_LINEAGE.md` — PMFS, inverse-causal and robust-inference lineage.
-- `evidence/RESULT_MATRIX.csv` — compact six-case result matrix.
-- `evidence/cases/` — per-case manifests, evaluations and update summaries.
-- `evidence/MEACI_V10_MAIN_INNOVATION_HOUSE123_SEED01_6OF6_20260824.zip` — complete frozen evidence package with raw traces and original verifier.
-- `artifacts/gsl_actionserver_node` — exact qualified Linux binary.
+---
 
-See [REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md) before rebuilding or running. Do not silently replace the frozen binary with a new build when reproducing the reported 6/6 result.
+## Current research-cycle candidate — TNQC V5
 
-Run `python3 verify_repository.py` for a repository-level integrity check.
+The current candidate is **TNQC: Transport-Nuisance Quotient
+Canonicalization**.
 
+Its main idea is to compare measured and transport-predicted PMFS spatial
+fields after canonicalizing nuisance coordinates, so source inference is
+performed in a nuisance-reduced representation rather than raw amplitude
+coordinates.
+
+Current V5 ingredients:
+
+- confidence-weighted centered cosine in PMFS hit-logit space;
+- local spatial-order corroboration as an auxiliary channel;
+- terminal active PMFS leaves only;
+- free-cell hypothesis-measure weighting;
+- local-order support-coverage attenuation;
+- a ranking-safe shared nonnegative gate;
+- bounded exponential/Gibbs-style evidence tilt;
+- linked-native PMFS `ExpectedValue(...,0.05)` endpoint evaluation.
+
+The exact invariance claim is intentionally narrow: it applies to
+positive-affine transformations of the supported hit-logit representation
+with fixed support/weights. It is not an unqualified claim of exact
+invariance to arbitrary raw physical sensor/release transformations.
+
+### Current TNQC scientific status
+
+- concentration-space VGR mechanism evidence: **positive**;
+- implementation/evaluator integrity: **frozen and audited**;
+- full-300-s hit-logit fixed-trajectory House gate: **pending**;
+- closed loop: **HOLD until offline GO**.
+
+A recent execution attempt did **not** produce a scientific result: it stopped
+before experiment start because of WSL/VM launch infrastructure loss.
+Therefore TNQC is currently neither GO nor HOLD on the 300-s gate.
+
+Authoritative entry point:
+
+[CODEX_START_HERE.md](CODEX_START_HERE.md)
+
+---
+
+## Repository map
+
+### 01 — Idea
+
+[01_idea/README.md](01_idea/README.md)
+
+Contains:
+
+- the module-discovery philosophy;
+- “big idea first” selection criteria;
+- evidence hierarchy;
+- main-vs-auxiliary innovation rules;
+- rejection criteria;
+- current TNQC conceptual formulation;
+- freeze discipline.
+
+### 02 — Code
+
+[02_code/README.md](02_code/README.md)
+
+Primary executable trees remain:
+
+- `ros2_package/` — online ROS/PMFS implementation;
+- `reference/` — replay, evaluator, build, runner and tests;
+- `artifacts/` — selected frozen qualified binaries.
+
+Files were intentionally **not physically moved**, because exact paths and
+bytes are part of the scientific manifests and reproduction contracts.
+
+### 03 — Data / evidence
+
+[03_data/README.md](03_data/README.md)
+
+Primary evidence tree:
+
+- `evidence/`
+
+Raw VGR/GADEN House scenario datasets are external and are not redistributed
+in this repository.
+
+---
+
+## Reproducibility
+
+For the historical frozen result, see:
+
+[docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md)
+
+For current TNQC execution, start at:
+
+[CODEX_START_HERE.md](CODEX_START_HERE.md)
+
+Repository-level historical integrity checker:
+
+```bash
+python3 verify_repository.py
+```
+
+TNQC uses additional manifest/tree/binary integrity guards documented in the
+current execution contract.
+
+---
+
+## Upstream / licensing note
+
+The captured `ros2_package/package.xml` declares the upstream
+`gsl_server` package as **GPLv3** and names its upstream maintainer. The ROS
+tree includes upstream/third-party-derived components.
+
+Public availability of this repository is not a claim that every line in the
+captured ROS package was authored by this project, and it does not relicense
+external VGR/GADEN datasets.
+
+See [PUBLIC_RELEASE_NOTES.md](PUBLIC_RELEASE_NOTES.md).
