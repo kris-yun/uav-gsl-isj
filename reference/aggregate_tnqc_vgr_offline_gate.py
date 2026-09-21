@@ -50,10 +50,12 @@ def main():
             "case_valid_for_gate": bool(p.get("valid_for_gate", False)),
             "cpp_endpoint_engine_pass":
                 p.get("endpoint_evaluator", {}).get("engine") ==
-                "cpp_std_sort_clone_of_PMFS_ExpectedValue_0p05",
+                "gsl_utils_expected_value_linked_native_v1"
+                and bool(p.get("endpoint_evaluator", {}).get(
+                    "engine_integrity_pass", False)),
             "replay_contract_pass":
                 p.get("contract") ==
-                "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V6_CPP_ENDPOINT_PARITY",
+                "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V7_LINKED_NATIVE_ENDPOINT",
             "selected_source_update_id": p["selected_source_update_id"],
             "selected_source_update_sim_time": p["selected_source_update_sim_time"],
             "budget_to_last_update_gap_s": p["budget_to_last_update_gap_s"],
@@ -100,7 +102,7 @@ def main():
         and not false_collapse
     )
     out = {
-        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_GATE_V5_CPP_ENDPOINT_PARITY",
+        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_GATE_V6_LINKED_NATIVE_ENDPOINT",
         "cases": rows,
         "pooled_native_error_m": native_pooled,
         "pooled_tnqc_fused_error_m": fused_pooled,
@@ -114,8 +116,8 @@ def main():
             "max_pair_degradation_fraction": args.max_pair_degradation,
             "native_reconstruction_required": True,
             "native_cpp_expected_value_endpoint_match_required": True,
-            "same_cpp_expected_value_engine_required_for_tnqc_counterfactual": True,
-            "v6_replay_contract_required": True,
+            "linked_native_expected_value_engine_required_for_tnqc_counterfactual": True,
+            "v7_replay_contract_required": True,
             "partition_measure_final_leaf_gate_scope_required": True,
             "local_order_support_coverage_attenuation_required": True,
             "no_false_confident_collapse": True,
