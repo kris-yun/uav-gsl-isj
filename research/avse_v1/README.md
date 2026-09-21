@@ -2,7 +2,7 @@
 
 Date: 2026-09-21  
 Branch: `research/anytime-valid-source-elimination-v1`  
-Status: **MAIN-INNOVATION CANDIDATE / OFFLINE FALSIFICATION ONLY**
+Status: **DEMOTED / INTERNAL COLLISION FOUND**
 
 ## 1. Previous line is closed
 
@@ -135,10 +135,17 @@ Promotion bar before closed loop:
 
 No 2/5/10-minute substitute endpoint.
 
-## 9. Current decision
+## 9. Internal collision audit and decision
 
-**AVSE = STAGE-1 PASS / GO FOR CHEAP OFFLINE FALSIFICATION.**
+A repository-wide collision search found that the project already contains:
 
-It is not yet a validated main innovation and is not authorized for closed-loop ROS.
+- `OPGSL/CP_Stopping.hpp`: an explicit Hoeffding-supermartingale **E-Process Stopping Rule** with anytime-valid inference;
+- `OPGSLScientificV31`: a time-uniform prequential source-model skill verifier.
 
-It currently ranks above a TPSD convex-fusion rescue because it changes the semantics of evidence accumulation rather than optimizing weights on already-failed evidence channels.
+The old e-process is used primarily for convergence/stopping rather than candidate-wise source elimination, so the exact proposed construction is not identical.
+
+However, this is still too close to an already-used project idea to support the clean new main thesis now required.
+
+**AVSE = DEMOTED / DO NOT PROMOTE AS THE NEW MAIN INNOVATION.**
+
+Candidate-wise induced sequential source tests may remain a future auxiliary mechanism, but the project should continue searching for a different mother idea.
