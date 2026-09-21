@@ -16,10 +16,12 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import math
 import re
 import statistics
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Mapping, Sequence, Tuple, List
@@ -351,6 +353,36 @@ def diff(a, b):
     return dict(l1=sum(ds), max_abs=max(ds) if ds else 0.0)
 
 
+def write_endpoint_posterior(path: Path, p, cells):
+    """Write one posterior in the controlled format consumed by C++."""
+    with path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f, lineterminator="\n")
+        w.writerow(["cell_index", "grid_i", "grid_j", "x", "y",
+                    "source_probability"])
+        ordered = sorted(cells.items(),
+                         key=lambda kv: (kv[1].grid_j, kv[1].grid_i))
+        for idx, cell in ordered:
+            w.writerow([idx, cell.grid_i, cell.grid_j,
+                        format(cell.x, ".17g"), format(cell.y, ".17g"),
+                        format(max(float(p.get(idx, 0.0)), 0.0), ".17g")])
+
+
+def cpp_endpoint_metrics(evaluator: Path, posterior_csv: Path, tx, ty):
+    proc = subprocess.run(
+        [str(evaluator), str(posterior_csv), repr(float(tx)), repr(float(ty))],
+        check=False, capture_output=True, text=True)
+    if proc.returncode != 0:
+        raise RuntimeError(
+            f"C++ endpoint evaluator failed rc={proc.returncode}: "
+            f"{proc.stdout}\n{proc.stderr}")
+    out = json.loads(proc.stdout)
+    required = {"pmfs_top5_x", "pmfs_top5_y", "pmfs_top5_error_m",
+                "pmfs_top5_cell_count"}
+    if not required.issubset(out):
+        raise ValueError(f"incomplete C++ endpoint output: {out}")
+    return out
+
+
 def metrics(p, cells, tx, ty):
     rr = [(idx, cells[idx].x, cells[idx].y, max(v, 0.0))
           for idx, v in p.items()]
@@ -387,6 +419,7 @@ def main():
     ap.add_argument("--native-reconstruction-l1", type=float, default=5e-4)
     ap.add_argument("--native-endpoint-rounding-tolerance-m",
                     type=float, default=0.011)
+    ap.add_argument("--cpp-endpoint-evaluator", type=Path, required=True)
     ap.add_argument("--json-out", type=Path)
     args = ap.parse_args()
 
@@ -443,19 +476,45 @@ def main():
         and audit["l1"] <= args.native_reconstruction_l1)
 
     # Evaluator-only truth enters only below this line.
-    nm = metrics(native_export, cells, args.truth_x, args.truth_y)
+    # Python metrics remain diagnostics for MAP/mean/variance and for exposing
+    # any tie-cutoff sensitivity. The authoritative top-5% endpoint is
+    # evaluated by a small C++ clone of PMFS ExpectedValue(..., 0.05).
+    nm_py = metrics(native_export, cells, args.truth_x, args.truth_y)
     nr = metrics(native_replay, cells, args.truth_x, args.truth_y)
-    fm = metrics(fused, cells, args.truth_x, args.truth_y)
-    om = metrics(only, cells, args.truth_x, args.truth_y)
+    fm_py = metrics(fused, cells, args.truth_x, args.truth_y)
+    om_py = metrics(only, cells, args.truth_x, args.truth_y)
 
-    # Anchor the Python endpoint implementation to the actual C++
-    # ExpectedValue(sourceProbability, 0.05) result emitted by PMFS.  The
-    # launch log prints Error to two decimals, hence the frozen 0.011 m
-    # tolerance.  This catches ranking/tie-handling or coordinate mismatches
-    # before a replay can influence the GO decision.
+    evaluator = args.cpp_endpoint_evaluator.resolve()
+    if not evaluator.is_file():
+        raise FileNotFoundError(evaluator)
+    endpoint_dir = args.run_dir / "tnqc_endpoint_posteriors"
+    endpoint_dir.mkdir(parents=True, exist_ok=True)
+    native_csv = endpoint_dir / "native_exported.csv"
+    fused_csv = endpoint_dir / "tnqc_fused.csv"
+    only_csv = endpoint_dir / "tnqc_only.csv"
+    write_endpoint_posterior(native_csv, native_export, cells)
+    write_endpoint_posterior(fused_csv, fused, cells)
+    write_endpoint_posterior(only_csv, only, cells)
+
+    nm_cpp = cpp_endpoint_metrics(
+        evaluator, native_csv, args.truth_x, args.truth_y)
+    fm_cpp = cpp_endpoint_metrics(
+        evaluator, fused_csv, args.truth_x, args.truth_y)
+    om_cpp = cpp_endpoint_metrics(
+        evaluator, only_csv, args.truth_x, args.truth_y)
+
+    nm = {**nm_py, **nm_cpp}
+    fm = {**fm_py, **fm_cpp}
+    om = {**om_py, **om_cpp}
+
+    # The standalone evaluator is accepted only if it reproduces the actual
+    # PMFS C++ endpoint for the native posterior. The PMFS log prints Error to
+    # two decimals, hence the frozen 0.011 m tolerance. Once this parity check
+    # passes, the same std::sort implementation is used for the counterfactual
+    # TNQC posterior, including equal-probability cutoff ties.
     native_cpp = native_result_line(args.run_dir)
     endpoint_delta = abs(
-        nm["pmfs_top5_error_m"] - native_cpp["reported_top5_error_m"])
+        nm_cpp["pmfs_top5_error_m"] - native_cpp["reported_top5_error_m"])
     endpoint_pass = (
         endpoint_delta <= args.native_endpoint_rounding_tolerance_m)
     audit_pass = reconstruction_pass and endpoint_pass
@@ -464,7 +523,7 @@ def main():
           if diag[cid]["valid"]]
 
     payload = {
-        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V5_SUPPORT_COVERAGE_GATE",
+        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V6_CPP_ENDPOINT_PARITY",
         "run_dir": str(args.run_dir),
         "budget_s": args.budget_s,
         "selected_source_update_id": uid,
@@ -487,11 +546,30 @@ def main():
         },
         "native_cpp_endpoint_audit": {
             "cpp_result": native_cpp,
-            "python_native_top5_error_m": nm["pmfs_top5_error_m"],
+            "standalone_cpp_native_top5_error_m":
+                nm_cpp["pmfs_top5_error_m"],
+            "python_diagnostic_native_top5_error_m":
+                nm_py["pmfs_top5_error_m"],
             "absolute_error_difference_m": endpoint_delta,
             "rounding_tolerance_m":
                 args.native_endpoint_rounding_tolerance_m,
             "pass": endpoint_pass,
+        },
+        "endpoint_evaluator": {
+            "engine": "cpp_std_sort_clone_of_PMFS_ExpectedValue_0p05",
+            "binary": str(evaluator),
+            "sha256": hashlib.sha256(evaluator.read_bytes()).hexdigest(),
+            "native_posterior_csv": str(native_csv),
+            "fused_posterior_csv": str(fused_csv),
+            "only_posterior_csv": str(only_csv),
+        },
+        "endpoint_tie_diagnostics": {
+            "native_cpp_minus_python_error_m":
+                nm_cpp["pmfs_top5_error_m"] - nm_py["pmfs_top5_error_m"],
+            "fused_cpp_minus_python_error_m":
+                fm_cpp["pmfs_top5_error_m"] - fm_py["pmfs_top5_error_m"],
+            "only_cpp_minus_python_error_m":
+                om_cpp["pmfs_top5_error_m"] - om_py["pmfs_top5_error_m"],
         },
         "tnqc_candidate_bank_gate": bank_gate,
         "tnqc_final_leaf_unweighted_gate_audit":
@@ -524,7 +602,8 @@ def main():
         "valid_for_gate": audit_pass,
         "gate_validity_requires":
             ["native_posterior_reconstruction",
-             "native_cpp_expected_value_endpoint_match",
+             "standalone_cpp_expected_value_matches_native_pmfs",
+             "same_cpp_expected_value_engine_for_tnqc_counterfactual",
              "partition_measure_final_leaf_gate_scope",
              "local_order_support_coverage_attenuation"],
     }
