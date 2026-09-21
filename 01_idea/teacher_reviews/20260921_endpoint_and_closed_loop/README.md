@@ -22,14 +22,3 @@ python verify_package.py
 没有执行：ROS/C++、当前 V7 replay、恢复 launch 的原始性核验、六例 300s、真实闭环。
 
 当前 GitHub 获取失败；本轮 runtime 细节以用户提供的信息为条件。出处与文献状态在两份文档末尾。本包不重新打包上一轮 22 MB 合成数据，避免混淆新旧执行范围。
-
-## Repository note
-
-This directory preserves the teacher-review package as research-review material.
-It is **not** part of the frozen TNQC V5 method contract.
-
-Original package:
-`TNQC_终点合同与闭环创新路线_20260921.zip`
-
-Original ZIP SHA-256:
-`f88c6720e43937153348b9c76907465040c4e9c1bca585108d28f53a93fe1a6f`
