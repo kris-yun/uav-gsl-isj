@@ -151,20 +151,21 @@ and the corrected candidate-bank quotient-channel concordance gate.
 
 For all valid **terminal active leaf candidates in the reconstructed final
 PMFS partition** of one frozen update, write
-(a_i=q_{\rm aff}(s_i)) and (o_i=q_{\rm ord}(s_i)), then compute
+(a_i=q_{\rm aff}(s_i)), (o_i=q_{\rm ord}(s_i)), and let (m_i) be the
+number of free source cells represented by leaf i. V4 computes
 
 [
 C_u=
-\frac{1}{|\mathcal P_u|}
-\sum_{(i,j)\in\mathcal P_u}
+\frac{\sum_{i<j}m_i m_j
 \operatorname{sgn}(a_i-a_j)
-\operatorname{sgn}(o_i-o_j),
+\operatorname{sgn}(o_i-o_j)}
+{\sum_{i<j}m_i m_j},
 ]
 
 ignoring ties and candidates without enough local-order support. Subdivided
-ancestors and other evaluated-but-nonterminal candidates are retained only
-for a source-blind sensitivity audit; they cannot control the V3 gate. The
-shared source-blind gate and candidate evidence are
+ancestors are search-history audit only, and an unweighted final-leaf gate is
+also recorded only as a sensitivity audit. Neither can control the V4 gate.
+The shared source-blind gate and candidate evidence are
 
 [
 g_u=\max(0,C_u),
@@ -202,7 +203,8 @@ Default validity limits:
 - posterior L1 discrepancy <= (5\times10^{-4});
 - Python native top-5% error must match the native C++ `RESULT IS: Error=`
   endpoint within 0.011 m (the C++ log is printed to two decimals);
-- gate scope must be `final_partition_leaf_candidates_only`.
+- gate scope must be
+  `final_partition_leaf_candidates_free_cell_measure_weighted`.
 
 If any integrity condition fails, that House/seed replay is invalid and the
 six-case gate cannot return GO. These audits detect mismatches in candidate
