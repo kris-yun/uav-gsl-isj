@@ -1,0 +1,15 @@
+VM: zyc@192.168.111.128
+Dataset output: /home/zyc/ros2_ws/mipo_probe_v1_20260921
+Definition: 2e21a5927b6e4ec1838017481165b0496bab2770
+Runtime: b24da77fd24bd5ea2cbb33caf856f80b9d7670e4
+
+python3 /home/zyc/ros2_ws/mipo_probe_v1_20260921/scripts/export_mipo_patch.py prepare --out /home/zyc/ros2_ws/mipo_probe_v1_20260921
+nohup bash /home/zyc/ros2_ws/mipo_probe_v1_20260921/scripts/run_export.sh > /home/zyc/ros2_ws/mipo_probe_v1_20260921/logs/export.log 2>&1 < /dev/null &
+
+Only after QUERY_EXPORT_COMPLETE:
+PYTHONDONTWRITEBYTECODE=1 python3 /home/zyc/ros2_ws/mipo_probe_v1_20260921/scripts/finalize_metadata.py /home/zyc/ros2_ws/mipo_probe_v1_20260921
+PYTHONDONTWRITEBYTECODE=1 python3 /home/zyc/ros2_ws/mipo_probe_v1_20260921/scripts/write_truth_sidecar.py /home/zyc/ros2_ws/mipo_probe_v1_20260921
+python3 /home/zyc/ros2_ws/mipo_probe_v1_20260921/scripts/checksums.py create /home/zyc/ros2_ws/mipo_probe_v1_20260921
+python3 /home/zyc/ros2_ws/mipo_probe_v1_20260921/scripts/checksums.py verify /home/zyc/ros2_ws/mipo_probe_v1_20260921
+
+Transfer all outputs to repository evidence/mipo_probe_v1/, verify checksums again, then commit/push research/mipo-active-observability-v1. No scientific analysis follows.
