@@ -4,7 +4,7 @@
   "created_utc": "2026-09-21",
   "repository": "kris-yun/uav-gsl-isj",
   "branch": "main",
-  "freeze_parent_head_before_manifest_update": "7cd9758eb8a831e419b3e8b1e8e0833ea8102e54",
+  "freeze_parent_head_before_manifest_update": "4028e8637e5c9418c1c66f5cc00efe2697a17c1d",
   "method_version": "TNQC_V5_SUPPORT_COVERAGE_GATE",
   "method_equation_changed_by_endpoint_revision": false,
   "house_300s_truth_used_before_freeze": false,
@@ -123,7 +123,18 @@
       "representative_latest_job_state": "completed/failure with runner_id=0 and steps=[]",
       "interpretation": "workflow jobs did not acquire a runner; no static/synthetic/C++ step executed, so these red checks are infrastructure/non-execution and are not scientific test failures",
       "authoritative_replacement": "the VGR VM runner invokes manifest verification, standalone TNQC core compile/run, clean colcon build, binary provenance checks, and the six-case gate"
-    }
+    },
+    "authoritative_vm_preflight": [
+      "manifest blob verification",
+      "complete ros2_package tree SHA verification",
+      "clean ros2_package working-tree requirement",
+      "Python py_compile",
+      "full synthetic fixed-trajectory replay CLI",
+      "runner bash syntax checks",
+      "standalone TNQC C++ core compile/run",
+      "clean Release colcon build",
+      "algorithm and linked-native endpoint binary provenance"
+    ]
   },
   "file_blob_sha": {
     "ros2_package/CMakeLists.txt": "d7b647921b126f3cf91f07eb11a4ec34f3b6937a",
@@ -139,10 +150,10 @@
     "reference/run_tnqc_vgr_offline_gate_20260920.sh": "6d7f4fa2f3e1dea7c3fdecde3095286ed22f8fd3",
     "reference/run_tnqc_closed_loop_matrix_20260920.sh": "7541c31c0aea323e34e5fec0a6d7fdcd35ab3878",
     "reference/run_meaci_case_20260824.sh": "de6b371868883cc0a2297a3723ae55ed807ac698",
-    "reference/build_tnqc_v5_current.sh": "ac9b7bc98afac578e306382e371b7e733afd75d3",
+    "reference/build_tnqc_v5_current.sh": "e5b31dd300de9909d5f87ddd1457c2b0fd786faa",
     "reference/verify_tnqc_v5_manifest.py": "5713453369521ee14c1546da8fd7bce1f0ab38bb",
     ".github/workflows/tnqc_static_checks.yml": "343f8d8c14337b51306e7dabb5a3bc8bdc4c4707",
-    "docs/TNQC_V5_LINKED_NATIVE_EXECUTION_FREEZE_20260921.md": "d997af9bac214421bc091e094423663077b394fe",
+    "docs/TNQC_V5_LINKED_NATIVE_EXECUTION_FREEZE_20260921.md": "5a21998459fe877c88271d93232df95808b60339",
     "docs/TNQC_V5_SUPPORT_COVERAGE_GATE_20260921.md": "6a7383ef35bcf7bb5f7b203de1f41fba3716456f",
     "docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md": "2b04517615bc25dd549949574a03c31a1dc289ab",
     "docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md": "7d35885a2a537c77c2fa7ec6a5740715712f1296",
