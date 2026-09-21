@@ -14,10 +14,11 @@ The primary gate is the user's VGR/GADEN House benchmark:
 
 Read first:
 1. `docs/VGR_300S_PRIMARY_GATE_20260920.md` — authoritative evaluation contract and gate order.
-2. `docs/TNQC_CODEX_HANDOFF_20260920.md` — current guarded equation, theory, literature lineage, novelty boundary, implementation map.
-3. `docs/TNQC_OFFLINE_GATE_20260920.md` — VGR 0.3-m spatial mechanism screen, falsification of unconditional fusion, and the later ranking-safety correction.
-4. `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json` — corrected project-data mechanism record.
-5. `docs/CANDIDATE_SYMMETRY_QUOTIENT_20260920.md` — research lineage and rejected predecessor branches.
+2. `docs/TNQC_RANKING_SAFETY_CORRECTION_20260921.md` — read this before any run; it rejects the old per-candidate sign guard and freezes the bank-level ranking-safe equation.
+3. `docs/TNQC_CODEX_HANDOFF_20260920.md` — current equation, theory, literature lineage, novelty boundary, implementation map.
+4. `docs/TNQC_OFFLINE_GATE_20260920.md` — VGR 0.3-m spatial mechanism screen and falsification history.
+5. `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json` — corrected project-data mechanism record.
+6. `docs/CANDIDATE_SYMMETRY_QUOTIENT_20260920.md` — research lineage and rejected predecessor branches.
 
 ## Execution order
 
@@ -46,6 +47,12 @@ The earlier per-candidate sign guard was insufficient: averaging two channels ca
 The current secondary mechanism computes one source-blind candidate-bank concordance
 `C = mean sign(q_aff_i-q_aff_j) sign(q_ord_i-q_ord_j)`, then
 `g=max(0,C)`, and uses `e_i=g*q_aff_i`. Because the same `g>=0` multiplies every candidate, local order may attenuate/abstain but cannot reverse affine candidate ordering.
+
+Within each source update the quadtree candidate bank is now generated and
+refined **only with native PMFS scores**. TNQC is applied after the complete
+native bank is frozen. This is intentional: the online implementation and the
+300-s fixed-trajectory replay now operate on the same candidate-bank contract,
+and TNQC cannot select the evidence bank it is scored on.
 
 On the archived VGR 240-s cross-transport screen this gate releases 11/12 cases and is 11/11 correct; under all 100 positive-scale and 200 monotone-compression stress seeds, coverage remains 11/12 and conditional accuracy remains 100%. This is mechanism evidence only; the 300-s localization gate is still authoritative.
 
