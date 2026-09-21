@@ -1,0 +1,92 @@
+{
+  "contract": "TNQC_VGR_240S_SPATIAL_MECHANISM_V3",
+  "created_utc": "2026-09-21",
+  "data": {
+    "repository": "kris-yun/uav-gsl-isj",
+    "ref": "project/research-master-20260914",
+    "ref_commit": "26e89a99532e4268c5022dca2e938bf1473377b1",
+    "root": "evidence/cstar_current_runtime_assets240_20260907/realizations",
+    "cases": 12,
+    "samples_per_case": 1200,
+    "terminal_time_s": 240,
+    "design": "H01/H02/H03 x SA/SB x fast/slow; same geometry-only pose sequence within each House"
+  },
+  "evaluation_scope": {
+    "purpose": "project-data spatial mechanism falsification only",
+    "not_authoritative_endpoint": true,
+    "authoritative_next_gate": "House01/02/03 x seed0/1, full 300 simulation seconds, PMFS ExpectedValue(sourceProbability,0.05) localization error"
+  },
+  "pmfs_spatial_alignment": {
+    "raw_map_resolution_m": 0.1,
+    "scale": 3,
+    "cell_size_m": 0.3,
+    "origins": {
+      "H01": [-7.55, -7.88],
+      "H02": [-5.39, -7.45],
+      "H03": [-0.85, -1.86]
+    }
+  },
+  "base_240s": {
+    "raw_accuracy": 1.0,
+    "affine_quotient_accuracy": 1.0,
+    "local_spatial_order_accuracy": 0.9166666666666666,
+    "unconditional_equal_fusion_accuracy": 0.9166666666666666,
+    "candidate_bank_concordance_gate": {
+      "released_cases": 11,
+      "total_cases": 12,
+      "coverage": 0.9166666666666666,
+      "conditional_accuracy": 1.0,
+      "abstained_case": {
+        "house": "H02",
+        "wind": "fast",
+        "truth": "SA",
+        "affine_scores_SA_SB": [-0.02141939404321708, -0.03821410144708386],
+        "local_order_scores_SA_SB": [0.7575757575757576, 0.8787878787878788],
+        "affine_prediction": "SA",
+        "channel_candidate_order_concordance": -1.0,
+        "gate_strength": 0.0
+      }
+    }
+  },
+  "source_blind_scale_stress_100_seeds": {
+    "transform": "independent per-episode positive scale a in [0.1,10], log-uniform, deterministic source-blind seed",
+    "affine_quotient_min_accuracy": 1.0,
+    "candidate_bank_concordance_gate": {
+      "coverage_mean": 0.9166666666666674,
+      "coverage_min": 0.9166666666666666,
+      "coverage_max": 0.9166666666666666,
+      "conditional_accuracy_min": 1.0,
+      "conditional_accuracy_mean": 1.0
+    }
+  },
+  "source_blind_monotone_stress_200_seeds": {
+    "transform": "independent per-episode g(c)=log1p(alpha*max(c,0))/alpha, alpha log-uniform [1e-2,1e4], deterministic source-blind seed",
+    "affine_quotient_min_accuracy": 1.0,
+    "candidate_bank_concordance_gate": {
+      "coverage_mean": 0.9166666666666652,
+      "coverage_min": 0.9166666666666666,
+      "coverage_max": 0.9166666666666666,
+      "conditional_accuracy_min": 1.0,
+      "conditional_accuracy_mean": 1.0
+    }
+  },
+  "ranking_safety_correction": {
+    "rejected_rule": "candidate-wise sign guard followed by per-candidate 1:1 affine/order averaging",
+    "rejection_reason": "preserving each candidate score sign does not guarantee preservation of ordering between source hypotheses",
+    "current_rule": {
+      "concordance": "C = mean_{i<j} sign(q_aff_i-q_aff_j) sign(q_ord_i-q_ord_j), ignoring ties and candidates with insufficient order support",
+      "shared_strength": "g = max(0,C)",
+      "candidate_evidence": "e_i = g * q_aff_i"
+    },
+    "guarantee": "the local-order channel may attenuate or abstain but cannot reverse affine candidate ordering because the same non-negative scalar multiplies all candidates"
+  },
+  "frozen_interpretation": {
+    "main_affine_quotient_mechanism_positive": true,
+    "unconditional_equal_fusion_rejected": true,
+    "old_per_candidate_sign_guard_rejected": true,
+    "candidate_bank_concordance_gate_positive_as_abstention_mechanism": true,
+    "authoritative_300s_localization_gate_executed": false,
+    "closed_loop_authorized_by_this_file": false,
+    "next_required_gate": "reference/run_tnqc_vgr_offline_gate_20260920.sh on VGR VM"
+  }
+}
