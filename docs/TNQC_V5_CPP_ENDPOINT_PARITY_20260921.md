@@ -1,6 +1,12 @@
 # TNQC V5 — C++ endpoint parity freeze
 Date: 2026-09-21
 
+> **Superseded for authoritative execution by**
+> `docs/TNQC_V5_LINKED_NATIVE_EXECUTION_FREEZE_20260921.md`.
+> This document remains the historical/source-blind falsification record that
+> exposed Python tie-breaking and motivated direct linkage to the native
+> `GSL::Utils::ExpectedValue` implementation.
+
 This document is an **evaluation correction only**. The frozen TNQC V5
 support-coverage / partition-measure / final-leaf method is unchanged.
 
