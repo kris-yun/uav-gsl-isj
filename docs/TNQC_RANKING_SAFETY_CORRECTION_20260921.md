@@ -1,10 +1,11 @@
 # TNQC ranking-safety correction — 2026-09-21
 
 > **Historical correction retained for rationale.** The non-reversal idea in
-> this document remains valid, but its unweighted candidate-bank measure is
-> superseded by `docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md`.
-> V4 applies the same shared non-negative gate only to terminal active leaves
-> and weights leaf pairs by represented free-cell measure.
+> this document remains valid, but its bank normalization is superseded by
+> `docs/TNQC_V5_SUPPORT_COVERAGE_GATE_20260921.md`. V4 first restricted the
+> gate to terminal active leaves and free-cell measure; V5 additionally keeps
+> unsupported/tied local-order pairs in the affine reference mass so sparse
+> corroboration attenuates rather than normalizes to full strength.
 
 ## Why this correction exists
 
