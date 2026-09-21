@@ -265,3 +265,10 @@ The 2026-09-21 endpoint-contract and next-generation closed-loop review is prese
 `teacher_reviews/20260921_endpoint_and_closed_loop/`
 
 It is research-review material, not part of the frozen TNQC V5 equations.
+
+
+## Innovation module inventory
+
+Current V5 modules and the separate next-generation active-deconfounding direction are summarized in:
+
+`INNOVATION_MODULES_20260921.md`
