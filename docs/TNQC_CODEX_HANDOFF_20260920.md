@@ -5,7 +5,14 @@ Branch: `main`
 
 ## 0. Status that must not be overstated
 
-**VGR/GADEN project-data mechanism signal: positive.**
+> **V3 correction (2026-09-21):** `docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md`
+> is authoritative over this earlier handoff wherever wording differs. V3
+> restricts the bank gate to terminal active PMFS leaves, anchors the Python
+> endpoint to the native C++ `ExpectedValue(...,0.05)` result, and explicitly
+> distinguishes the archived 240-s `gas_ppm` mechanism screen from the online
+> PMFS hit-logit variable.
+
+**VGR/GADEN concentration-space mechanism signal: positive.**
 **VGR/GADEN 300-s offline localization gain: not yet established.**
 **Closed-loop localization gain: not yet established.**
 
@@ -133,11 +140,11 @@ truth, fitted coefficient, candidate rank, or post-hoc threshold is used.
 
 Within each source update, PMFS candidate generation and quadtree refinement
 are intentionally driven by the historical native likelihood only. TNQC
-collects the complete native-evaluated candidate bank, computes one bank gate
-after native refinement finishes, and then reweights the final partition.
-Thus TNQC cannot choose the evidence bank on which its own quotient score is
-evaluated. This is also what makes the online equation and the 300-s
-fixed-trajectory replay use the same candidate-bank contract.
+retains the evaluation history for audit, but after refinement it computes the
+shared gate only on terminal active free leaves of the final PMFS partition.
+Subdivided ancestors are search history and cannot alter the gate. The 300-s
+fixed-trajectory replay reconstructs and uses the identical final-leaf
+hypothesis set.
 
 The online arms remain
 
@@ -199,7 +206,7 @@ Wanting Jin, Agatha Duranceau, İzzet Kağan Erünsal & Alcherio Martinoli,
 That work uses global relative concentration ranking to obtain calibration-free probabilistic GSL. Therefore **do not claim rank invariance, monotone invariance, or calibration-free ranking itself as the novelty**.
 
 The novelty boundary of this branch is the combined construction:
-- explicit physical nuisance quotient formulation;
+- explicit positive-affine nuisance quotient of the PMFS hit-logit representation;
 - continuous affine-quotient field match;
 - PMFS transport-conditioned candidate fields;
 - local spatial-adjacency partial-order robustness channel;
@@ -216,10 +223,15 @@ The frozen VGR mechanism screen uses
 under `evidence/cstar_current_runtime_assets240_20260907/realizations`:
 H01/H02/H03 x SA/SB x fast/slow, 1200 samples each to 240 s.
 
-The probe now bins `pose_xy + gas_ppm` onto the actual reduced PMFS grid
+The probe bins `pose_xy + gas_ppm` onto the actual reduced PMFS grid
 (cell size 0.3 m, using the native House map origins) and constructs local
-order only on spatially adjacent PMFS cells.  It no longer uses consecutive
+order only on spatially adjacent PMFS cells. It no longer uses consecutive
 timestamps as a proxy for spatial adjacency.
+
+**V3 claim boundary:** this probe acts on spatially binned concentration,
+whereas online TNQC acts on PMFS measured/simulated hit-probability logits.
+Therefore the 240-s result is physical/mechanism motivation, not direct
+validation of the online TNQC score.
 
 At 240 s:
 
@@ -428,6 +440,7 @@ This separates “beats baseline PMFS” from “adds value beyond the already s
 
 Do not change:
 - candidate-bank concordance rule `g=max(0,C)` and `e_i=g*q_aff_i`;
+- V3 gate scope: terminal active free leaves of the final PMFS partition only; subdivided ancestors are audit/search history only;
 - evidence bound ([-1,1]);
 - support rule (<4 supported cells => invalid);
 - local-edge definition;
