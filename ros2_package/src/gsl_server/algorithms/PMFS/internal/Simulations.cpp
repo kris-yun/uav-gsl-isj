@@ -504,7 +504,7 @@ namespace GSL::PMFS_internal
                 P2ShadowCandidate candidate;
                 candidate.stableID = stableID;
                 candidate.point = point;
-                candidate.nativeScore = item.score;
+                candidate.nativeScore = item.nativeScore;
                 candidate.rect = {node->origin.x, node->origin.y, node->size.x, node->size.y};
                 candidate.persistentCarrier = false;
                 candidate.nativeHitMap = std::move(nativeHitMap);
