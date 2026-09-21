@@ -1,0 +1,74 @@
+{
+  "contract": "TNQC_IMPLEMENTATION_SANITY_V3",
+  "date": "2026-09-21",
+  "status": "RANKING_SAFETY_CORRECTED_READY_FOR_VGR_VM_GATE",
+  "claim_boundary": {
+    "vgr_240s_mechanism_positive": true,
+    "candidate_order_reversal_bug_fixed": true,
+    "authoritative_300s_localization_gain_established": false,
+    "closed_loop_authorized": false
+  },
+  "source_snapshot": {
+    "TNQCScore.hpp": "260b9d325a44a752fe683448c770885dcad598fb",
+    "test_tnqc_score.cpp": "a2719c2620b3096e9d0a06602668c8672477b82b",
+    "Simulations.hpp": "7f07fb268f3a0589421a04110394b8eac9539a29",
+    "Simulations.cpp": "31a25eb467bf07a16a0f6f81d0801ac0e4925f0a",
+    "tnqc_vgr_fixed_trajectory_replay.py": "4ee9302a6257dc62f98601cf267b91d635650ad7",
+    "test_tnqc_vgr_fixed_trajectory_replay.py": "98f00933e7f1c0f9e5cd38eabd0d0e5d05b27775",
+    "tnqc_vgr_offline_240s.py": "33cafbb8286a5ca7016d039fa3903736a1fcb48a"
+  },
+  "cpp_standalone": {
+    "command": "g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -Werror -UNDEBUG -I<repo>/ros2_package/src ros2_package/test/test_tnqc_score.cpp -o /tmp/test_tnqc_score && /tmp/test_tnqc_score",
+    "result": "TNQC_SCORE_TEST_PASS",
+    "checks": [
+      "positive-affine quotient invariance",
+      "strictly monotone local-order invariance",
+      "negative reversed-field evidence",
+      "explicit two-candidate ranking-reversal counterexample",
+      "bank-level disagreement => g=0 abstention",
+      "bank-level agreement => g=1",
+      "shared non-negative gate preserves affine ordering across multiple candidates",
+      "insufficient-support abstention"
+    ]
+  },
+  "python_fixed_trajectory_synthetic": {
+    "py_compile": "PASS",
+    "synthetic_test": "TNQC_VGR_FIXED_TRAJECTORY_REPLAY_TEST_PASS",
+    "checks": [
+      "native posterior reconstruction exact on synthetic fixture",
+      "final update selection at 295 s under 300 s budget",
+      "candidate-order reversal counterexample detected",
+      "bank gate abstains on ranking conflict",
+      "bank gate preserves affine ordering on agreement"
+    ]
+  },
+  "online_contract_audit": {
+    "native_quadtree_refinement_frozen_within_each_source_update": true,
+    "complete_native_evaluated_candidate_bank_collected_before_tnqc_reweighting": true,
+    "one_shared_bank_gate_applied_after_native_refinement": true,
+    "shadow_keeps_native_source_scores": true,
+    "shadow_keeps_historical_first_level_variance_accumulation_path": true,
+    "context_bank_native_score_field_kept_native_under_tnqc_modes": true,
+    "fixed_trajectory_replay_uses_same_complete_native_candidate_bank_rule": true
+  },
+  "vgr_project_mechanism": {
+    "record": "evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json",
+    "affine_240s_accuracy": "12/12",
+    "bank_gate_release": "11/12",
+    "bank_gate_conditional_accuracy": "11/11",
+    "positive_scale_stress_100_seeds": "11/12 coverage and 100% conditional accuracy in every seed",
+    "monotone_stress_200_seeds": "11/12 coverage and 100% conditional accuracy in every seed",
+    "caveat": "fixed-route 240-s mechanism evidence only; not the 300-s localization endpoint"
+  },
+  "ci": {
+    "workflow": ".github/workflows/tnqc_static_checks.yml",
+    "trigger": "workflow_dispatch plus push on TNQC core/replay files",
+    "note": "The connector available in this session cannot enumerate push-triggered workflow runs. Codex/VM should verify CI or run the listed checks locally before the 300-s gate."
+  },
+  "required_next_step": {
+    "command": "bash reference/run_tnqc_vgr_offline_gate_20260920.sh",
+    "environment": "VGR/GADEN VM with House01/House02/House03 scenario roots",
+    "endpoint": "final 300-s PMFS ExpectedValue(sourceProbability,0.05) localization error",
+    "closed_loop_rule": "do not start closed-loop TNQC unless tnqc_vgr_300s_offline_gate.json has go_for_closed_loop=true"
+  }
+}
