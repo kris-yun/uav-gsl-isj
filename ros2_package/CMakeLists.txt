@@ -108,6 +108,13 @@ ament_target_dependencies( send_pose
 
 include(src/gsl_server/algorithms/Common/CMakeLists.txt) # Required
 
+# TNQC endpoint audit tool. This links the exact Common/Utils/Math.cpp
+# ExpectedValue implementation used by PMFS and is built by the same colcon
+# invocation as gsl_actionserver_node.
+add_executable(tnqc_expected_value_native tools/tnqc_expected_value_native.cpp)
+target_link_libraries(tnqc_expected_value_native GSL_common)
+target_compile_features(tnqc_expected_value_native PRIVATE cxx_std_20)
+
 # You can disable the compilation of any of these algorithms by commenting them out here (useful if you don't want to install their dependencies)
 ###############################################################################################################################################
 include(src/gsl_server/algorithms/PMFS/CMakeLists.txt)
@@ -180,7 +187,7 @@ if(BUILD_TESTING)
 endif()
 
 install(
-  TARGETS gsl_actionserver_node  gsl_actionserver_call send_pose
+  TARGETS gsl_actionserver_node gsl_actionserver_call send_pose tnqc_expected_value_native
   DESTINATION lib/${PROJECT_NAME}
 )
 
