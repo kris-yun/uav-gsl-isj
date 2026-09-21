@@ -2,7 +2,7 @@
 
 Date: 2026-09-22  
 Branch: `research/alternating-transport-corrector-v1`  
-Status: **PRIMARY MAIN-INNOVATION CANDIDATE / DECISIVE DATA GATE PENDING**
+Status: **DEMOTED AS DIRECT ANI TRANSFER / STATIC DISCREPANCY PROBE RETAINED**
 
 ## 1. Mother idea
 
@@ -166,10 +166,31 @@ Only after this passes: SHADOW parity, then a closed-loop matrix interpreted aga
 
 The full R2 context-bank archive is not present in the normal Git repository or currently accessible Library artifacts; available reports contain summaries but not the complete paired candidate fields required for a scientifically valid correction test.
 
-## 8. Decision
+## 8. Implementation-semantics audit and revised decision
 
-**ATC V1 = KEEP AS CURRENT PRIMARY CANDIDATE.**
+A source audit of PMFS `simulateSourceInPosition(...)` changes the direct ANI interpretation.
 
-Do not run closed loop.
+The callable accepts `timesteps` and `deltaTime`, but each invocation:
+- creates fresh filament vectors;
+- performs a fresh warm-up;
+- evolves those filaments internally;
+- normalizes accumulated hit counts;
+- returns only the terminal hit-frequency field.
 
-The next decisive action is a cheap leave-one-House-out correction screen on the existing authoritative candidate bank. If that screen cannot repair true-source candidate ordering beyond an additive residual baseline, reject ATC immediately and resume the remote-domain search.
+It does **not** accept a previous plume/filament state and does not return a state that can be advanced by a later call.
+
+Therefore the existing PMFS forward routine is not directly a composable state map `P_tau(u)` of the kind required by ANI alternating/operator-splitting semantics.
+
+Two consequences follow:
+
+1. putting a learned map outside the terminal hit map would be ordinary gray-box discrepancy correction, not a valid direct transfer of ANI's alternating integrator;
+2. refactoring PMFS to expose persistent filament state could create a genuine step map, but would become intrusive and substantially weaken the original legacy-simulator motivation.
+
+**Revised status: direct ANI/ATC is DEMOTED from the main-innovation slot.**
+
+The Stage-A House-holdout script is retained because it cheaply answers a still-important diagnostic question: is the PMFS source-conditioned field discrepancy transferable across Houses and strong enough to repair candidate ordering?
+
+- If Stage-A fails: close this line completely.
+- If Stage-A passes: retain simulator correction as a possible auxiliary or reopen a new, explicitly stateful transport-correction method under a different theory; do not retroactively call the static correction ANI.
+
+Do not run closed loop from this branch.
