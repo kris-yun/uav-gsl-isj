@@ -38,6 +38,7 @@ namespace GSL
         virtual void OnUpdate();
 
         bool HasEnded();
+        void FinalizeTimeBudget(); // terminal I/O only; never advances scientific state
         GSLResult GetResult();
 
         template <typename T> T getParam(const std::string& name, T defaultValue)

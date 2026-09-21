@@ -78,6 +78,9 @@ namespace GSL
     void Algorithm::OnUpdate()
     {
         rclcpp::spin_some(node);
+        // At a frozen simulation deadline, drain no more scientific work.
+        if ((node->now() - startTime).seconds() >= resultLogging.maxSearchTime)
+            return;
         stateMachine.getCurrentState()->OnUpdate();
         // Run anything that was submitted to main thread from the UI or a callback
         functionQueue.run();
@@ -85,13 +88,24 @@ namespace GSL
 
     bool Algorithm::HasEnded()
     {
-        if ((node->now() - startTime).seconds() > resultLogging.maxSearchTime)
+        if (GetResult() != GSLResult::Running)
+            return true;
+        if ((node->now() - startTime).seconds() >= resultLogging.maxSearchTime)
         {
-            saveResultsToFile(GSLResult::Failure);
+            FinalizeTimeBudget();
             return true;
         }
+        return false;
+    }
 
-        return GetResult() != GSLResult::Running;
+    void Algorithm::FinalizeTimeBudget()
+    {
+        if (currentResult != GSLResult::Running)
+            return;
+        GSL_INFO("BUDGET_FINALIZE elapsed={:.9f} budget={:.9f}",
+                 (node->now() - startTime).seconds(), resultLogging.maxSearchTime);
+        saveResultsToFile(GSLResult::Failure);
+        currentResult = GSLResult::Failure;
     }
 
     GSLResult Algorithm::GetResult()

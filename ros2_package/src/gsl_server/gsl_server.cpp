@@ -73,6 +73,11 @@ GSLResult GSLServer::runMethod(std::shared_ptr<GSL::Algorithm> algorithm)
 #if ENABLE_OPGSL_SCIM_V1
             if (scim) scim->forceSimulationTimeBudgetReached();
 #endif
+            // This second budget check must not bypass native PMFS terminal I/O.
+#if ENABLE_PMFS
+            if (std::dynamic_pointer_cast<GSL::PMFS>(algorithm))
+                algorithm->FinalizeTimeBudget();
+#endif
             break;
         }
         algorithm->OnUpdate();
