@@ -432,10 +432,12 @@ namespace GSL::PMFS_internal
                     sourceProbInternal[sourceProb.metadata.indexOf({cellI, cellJ})] = score;
         }
 
-        GSL_INFO("TNQC partition-measure final-leaf gate update {} mode={} valid={} final_leaf_candidates={} total_evaluated_candidates={} pairs={} pair_weight={:.6g} concordance={:.6g} strength={:.6g}",
+        GSL_INFO("TNQC support-coverage partition-measure gate update {} mode={} valid={} final_leaf_candidates={} total_evaluated_candidates={} informative_pairs={} informative_pair_weight={:.6g} reference_pairs={} reference_pair_weight={:.6g} coverage={:.6g} conditional_concordance={:.6g} strength={:.6g}",
                  nativeSourceUpdateId, tnqcMode, tnqcBankGateValid,
                  activeIndices.size(), nodes.size(), tnqcBankPairCount,
-                 gate.pairWeight, tnqcBankConcordance, tnqcBankGateStrength);
+                 gate.pairWeight, gate.referencePairCount,
+                 gate.referencePairWeight, gate.informativeCoverage,
+                 tnqcBankConcordance, tnqcBankGateStrength);
     }
 
     void Simulations::updateSourceProbability(float refineFraction)
