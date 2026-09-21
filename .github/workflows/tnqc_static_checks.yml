@@ -14,6 +14,7 @@ on:
       - "reference/test_tnqc_vgr_fixed_trajectory_replay.py"
       - "reference/aggregate_tnqc_vgr_offline_gate.py"
       - "reference/evaluate_tnqc_closed_loop_300s.py"
+      - "reference/run_tnqc_vgr_offline_gate_20260920.sh"
       - ".github/workflows/tnqc_static_checks.yml"
 
 permissions:
@@ -41,6 +42,14 @@ jobs:
 
           echo "## synthetic-fixed-trajectory" >> "$out"
           PYTHONPATH=reference python3 reference/test_tnqc_vgr_fixed_trajectory_replay.py             >> "$out" 2>&1
+          rc=$?
+          echo "rc=$rc" >> "$out"
+          (( rc == 0 )) || overall=1
+
+          echo "## shell-syntax" >> "$out"
+          bash -n reference/run_tnqc_vgr_offline_gate_20260920.sh \
+                  reference/run_tnqc_closed_loop_matrix_20260920.sh \
+                  >> "$out" 2>&1
           rc=$?
           echo "rc=$rc" >> "$out"
           (( rc == 0 )) || overall=1
