@@ -77,6 +77,13 @@ def main():
     gm = base.cpp_endpoint_metrics(
         evaluator, gcsi_csv, args.truth_x, args.truth_y, grid_meta)
 
+    native_py = base.metrics(
+        native_export, cells, args.truth_x, args.truth_y)
+    tempered_py = base.metrics(
+        tempered, cells, args.truth_x, args.truth_y)
+    gcsi_py = base.metrics(
+        gcsi_posterior, cells, args.truth_x, args.truth_y)
+
     payload = {
         "contract": "GCSI_V1_FIXED_TRAJECTORY_300S_COUNTERFACTUAL",
         "run_dir": str(args.run_dir),
@@ -97,6 +104,11 @@ def main():
                 gm["pmfs_top5_error_m"] - nm["pmfs_top5_error_m"],
             "gcsi_minus_scalar_tempered_error_m":
                 gm["pmfs_top5_error_m"] - tm["pmfs_top5_error_m"],
+        },
+        "posterior_diagnostics": {
+            "native": native_py,
+            "scalar_tempered_control": tempered_py,
+            "gcsi": gcsi_py,
         },
         "posterior_csv": {
             "native": str(native_csv),
