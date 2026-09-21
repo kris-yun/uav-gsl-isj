@@ -115,6 +115,18 @@ def main():
         assert (gate["strength"] * diag["a"]["canonical_cosine"] >
                 gate["strength"] * diag["b"]["canonical_cosine"])
 
+        # Evaluated ancestors must not influence the gate over terminal
+        # hypotheses.  Here final leaves a/b agree, while a synthetic
+        # subdivided ancestor c would flip the all-evaluated concordance.
+        diag["c"] = {"valid": True, "edge_count": 4,
+                     "canonical_cosine": 0.10,
+                     "local_order_agreement": 0.95}
+        final_leaf_gate = replay.candidate_order_concordance(diag, ["a", "b"])
+        all_evaluated_gate = replay.candidate_order_concordance(diag)
+        assert final_leaf_gate["valid"]
+        assert final_leaf_gate["strength"] == 1.0
+        assert all_evaluated_gate["strength"] < final_leaf_gate["strength"]
+
         print("TNQC_VGR_FIXED_TRAJECTORY_REPLAY_TEST_PASS")
     finally:
         shutil.rmtree(root, ignore_errors=True)
