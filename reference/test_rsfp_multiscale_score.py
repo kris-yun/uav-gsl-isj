@@ -8,7 +8,7 @@ from rsfp_vgr_fixed_trajectory_replay import (
     DEFAULT_FACTORS,
     candidate_multiscale,
     evidence_variants,
-    scale_stable_pairwise_scores,
+    pairwise_variant_scores,
 )
 from tnqc_vgr_fixed_trajectory_replay import Cell
 
@@ -60,10 +60,10 @@ def main():
 
     ev = evidence_variants(ms, DEFAULT_FACTORS)
     assert ev["valid_all_scales"]
-    assert abs(ev["fine_only"] - 1.0) < 1e-10
-    assert abs(ev["coarse_only"] - 1.0) < 1e-10
-    assert abs(ev["mean_only"] - 1.0) < 1e-10
-    assert abs(ev["lower_envelope_only"] - 1.0) < 1e-10
+    assert abs(ev["fine_scalar"] - 1.0) < 1e-10
+    assert abs(ev["coarse_scalar"] - 1.0) < 1e-10
+    assert abs(ev["mean_scalar"] - 1.0) < 1e-10
+    assert abs(ev["lower_envelope_scalar"] - 1.0) < 1e-10
 
     # Primary RSFP evidence is candidate ordering fixed across all scales.
     cells_bad, reversed_alignment = build(
@@ -74,12 +74,14 @@ def main():
     )
     ev_bad = evidence_variants(ms_bad, DEFAULT_FACTORS)
     diag = {"A": ev, "B": ev_bad}
-    fixed = scale_stable_pairwise_scores(
+    fixed = pairwise_variant_scores(
         diag, ["A", "B"], {"A": 1, "B": 1}, DEFAULT_FACTORS
     )
-    assert abs(fixed["scores"]["A"] - 1.0) < 1e-12
-    assert abs(fixed["scores"]["B"] + 1.0) < 1e-12
-    assert fixed["global_stable_pair_count"] == 1
+    assert abs(fixed["scores"]["fixed_only"]["A"] - 1.0) < 1e-12
+    assert abs(fixed["scores"]["fixed_only"]["B"] + 1.0) < 1e-12
+    assert abs(fixed["scores"]["fine_only"]["A"] - 1.0) < 1e-12
+    assert abs(fixed["scores"]["coarse_only"]["A"] - 1.0) < 1e-12
+    assert fixed["global_fixed_stable_pair_count"] == 1
 
     # A scale crossing must abstain rather than be silently averaged.
     crossing = {
@@ -98,16 +100,19 @@ def main():
             for f in DEFAULT_FACTORS
         },
     }
-    abstain = scale_stable_pairwise_scores(
+    abstain = pairwise_variant_scores(
         {"A": crossing, "B": baseline},
         ["A", "B"],
         {"A": 1, "B": 1},
         DEFAULT_FACTORS,
     )
-    assert abstain["scores"]["A"] == 0.0
-    assert abstain["scores"]["B"] == 0.0
+    assert abstain["scores"]["fixed_only"]["A"] == 0.0
+    assert abstain["scores"]["fixed_only"]["B"] == 0.0
+    # Fine-scale control still ranks the pair; only RSFP abstains.
+    assert abstain["scores"]["fine_only"]["A"] == 1.0
+    assert abstain["scores"]["fine_only"]["B"] == -1.0
     assert abstain["global_reference_pair_count"] == 1
-    assert abstain["global_stable_pair_count"] == 0
+    assert abstain["global_fixed_stable_pair_count"] == 0
 
     # Reversing the canonical field should reverse evidence at every scale.
     cells2, reversed_alignment2 = build(sign=-1.0, scale=1.3, offset=-0.7)
@@ -120,9 +125,9 @@ def main():
 
     ev2 = evidence_variants(ms2, DEFAULT_FACTORS)
     assert (
-        ev2["lower_envelope_only"] <= ev2["mean_only"] + 1e-15
+        ev2["lower_envelope_scalar"] <= ev2["mean_scalar"] + 1e-15
     )
-    assert -1.0 <= ev2["lower_envelope_only"] <= 1.0
+    assert -1.0 <= ev2["lower_envelope_scalar"] <= 1.0
 
     print("RSFP_MULTISCALE_SCORE_TEST_PASS")
 
