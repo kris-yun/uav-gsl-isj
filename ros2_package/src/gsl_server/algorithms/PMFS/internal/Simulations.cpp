@@ -521,6 +521,16 @@ namespace GSL::PMFS_internal
         for (int leafIndex = 0; leafIndex < scores.size(); leafIndex++)
             scores[leafIndex].leaf = &localCopyLeaves[leafIndex];
 
+        // TNQC deliberately freezes the native PMFS refinement policy within
+        // each source update.  All native-evaluated leaves are collected and
+        // quotient-reweighted only after refinement is complete.  This makes
+        // the online candidate bank exactly compatible with the read-only
+        // fixed-trajectory replay and prevents TNQC from selecting its own
+        // evidence bank.
+        std::vector<LeafScore> tnqcCandidateBank;
+        if (tnqcMode != "off")
+            tnqcCandidateBank.reserve(scores.size() * 2);
+
         // this is used to calculate how much the state of this cell depends on where the source is. It is used for the movemente strategy
         struct VarianceCalculationData
         {
@@ -546,100 +556,42 @@ namespace GSL::PMFS_internal
             {
                 resultsFirstLevel.push_back(std::move(result));
                 numberOfSimulations++;
+                if (tnqcMode == "off")
+                {
+                    const SimulationResult& stored = resultsFirstLevel.back();
+                    for (int cell = 0; cell < static_cast<int>(stored.hitMap.size()); ++cell)
+                    {
+                        auto& var = varianceCalculationData[cell];
+                        weighted_incremental_variance(stored.hitMap[cell],
+                                                      stored.sourceProb,
+                                                      var.mean,
+                                                      var.weight_sum,
+                                                      var.weight_squared_sum,
+                                                      var.variance);
+                    }
+                }
             }
         }
 
-        // The coarse candidate bank defines one source-blind corroboration
-        // strength for the entire source update.  This retroactively rescales
-        // the first-level TNQC evidence and all refined levels reuse the same
-        // gate, so local order never changes affine candidate ordering.
         if (tnqcMode != "off")
-        {
-            applyTNQCBankGate(scores);
-            for (SimulationResult& result : resultsFirstLevel)
-            {
-                if (!result.tnqcValid)
-                {
-                    result.sourceProb = result.nativeSourceProb;
-                    result.tnqcCombinedEffect = 0.0;
-                    result.tnqcEvidence = 0.0;
-                    continue;
-                }
-                const double evidence = tnqcBankGateValid
-                    ? std::clamp(tnqcBankGateStrength * result.tnqcCanonicalCosine, -1.0, 1.0)
-                    : 0.0;
-                result.tnqcCombinedEffect = evidence;
-                result.tnqcEvidence = evidence;
-                if (tnqcMode == "fused")
-                    result.sourceProb = result.nativeSourceProb *
-                        std::exp(static_cast<long double>(evidence));
-                else if (tnqcMode == "only")
-                    result.sourceProb = std::exp(static_cast<long double>(evidence));
-                else
-                    result.sourceProb = result.nativeSourceProb;
-            }
-        }
+            tnqcCandidateBank.insert(
+                tnqcCandidateBank.end(), scores.begin(), scores.end());
 
         recordP2Candidates(scores);
 
-        // Update the variance data only after the bank gate has been frozen,
-        // so the planner sees the same first-level candidate weights as the
-        // posterior/refinement path in fused/only modes.
-        for (const SimulationResult& result : resultsFirstLevel)
-        {
-            if (!result.valid)
-                continue;
-            for (int cell = 0; cell < static_cast<int>(result.hitMap.size()); ++cell)
-            {
-                auto& var = varianceCalculationData[cell];
-                weighted_incremental_variance(result.hitMap[cell],
-                                              result.sourceProb,
-                                              var.mean,
-                                              var.weight_sum,
-                                              var.weight_squared_sum,
-                                              var.variance);
-            }
-        }
-
-        if (tnqcMode != "off")
-        {
-            size_t validTNQC = 0;
-            double sumCosine = 0.0;
-            double sumOrder = 0.0;
-            double sumEvidence = 0.0;
-            double maxEvidence = -std::numeric_limits<double>::infinity();
-            for (const SimulationResult& result : resultsFirstLevel)
-            {
-                if (!result.tnqcValid)
-                    continue;
-                ++validTNQC;
-                sumCosine += result.tnqcCanonicalCosine;
-                sumOrder += result.tnqcLocalOrderAgreement;
-                sumEvidence += result.tnqcEvidence;
-                maxEvidence = std::max(maxEvidence, result.tnqcEvidence);
-            }
-            if (validTNQC > 0)
-                GSL_INFO("TNQC update {} mode={} valid_candidates={} bank_pairs={} bank_concordance={:.6g} bank_strength={:.6g} mean_cos={:.6g} mean_order={:.6g} mean_evidence={:.6g} max_evidence={:.6g}",
-                         nativeSourceUpdateId, tnqcMode, validTNQC,
-                         tnqcBankPairCount, tnqcBankConcordance, tnqcBankGateStrength,
-                         sumCosine / static_cast<double>(validTNQC),
-                         sumOrder / static_cast<double>(validTNQC),
-                         sumEvidence / static_cast<double>(validTNQC),
-                         maxEvidence);
-            else
-                GSL_WARN("TNQC update {} mode={} has no valid candidate score", nativeSourceUpdateId, tnqcMode);
-        }
-
 // update the variance thing (for the movement strategy)
-#pragma omp parallel for
-        for (int cellI = 0; cellI < measuredHitProb.data.size(); cellI++)
+        if (tnqcMode == "off")
         {
-            if (measuredHitProb.occupancy[cellI] == Occupancy::Free)
+#pragma omp parallel for
+            for (int cellI = 0; cellI < measuredHitProb.data.size(); cellI++)
             {
-                const auto& var = varianceCalculationData[cellI];
-                varianceOfHitProb[cellI] = var.weight_sum > 0.0
-                    ? var.variance / var.weight_sum
-                    : 0.0;
+                if (measuredHitProb.occupancy[cellI] == Occupancy::Free)
+                {
+                    const auto& var = varianceCalculationData[cellI];
+                    varianceOfHitProb[cellI] = var.weight_sum > 0.0
+                        ? var.variance / var.weight_sum
+                        : 0.0;
+                }
             }
         }
 
@@ -709,9 +661,97 @@ namespace GSL::PMFS_internal
             for (int leafIndex = 0; leafIndex < scores.size(); leafIndex++)
                 SimulationResult result = runSimulation(scores, leafIndex);
 
+            if (tnqcMode != "off")
+                tnqcCandidateBank.insert(
+                    tnqcCandidateBank.end(), scores.begin(), scores.end());
+
             recordP2Candidates(scores);
 
             GSL_TRACE("Simulation level {} done", numberOfLevelsSimulated);
+        }
+
+        // Freeze one gate over the complete native-evaluated candidate bank.
+        // Refinement above was driven by native PMFS scores in every mode.
+        // Applying the bank only here guarantees parity with the offline
+        // fixed-bank replay and keeps OFF/SHADOW candidate generation equal.
+        if (tnqcMode != "off")
+        {
+            applyTNQCBankGate(tnqcCandidateBank);
+
+            varianceCalculationData.assign(
+                measuredHitProb.data.size(), VarianceCalculationData{});
+            size_t validTNQC = 0;
+            double sumCosine = 0.0;
+            double sumOrder = 0.0;
+            double sumEvidence = 0.0;
+            double maxEvidence = -std::numeric_limits<double>::infinity();
+            for (SimulationResult& result : resultsFirstLevel)
+            {
+                if (!result.tnqcValid)
+                {
+                    result.sourceProb = result.nativeSourceProb;
+                    result.tnqcCombinedEffect = 0.0;
+                    result.tnqcEvidence = 0.0;
+                }
+                else
+                {
+                    ++validTNQC;
+                    const double evidence = tnqcBankGateValid
+                        ? std::clamp(
+                            tnqcBankGateStrength * result.tnqcCanonicalCosine,
+                            -1.0, 1.0)
+                        : 0.0;
+                    result.tnqcCombinedEffect = evidence;
+                    result.tnqcEvidence = evidence;
+                    if (tnqcMode == "fused")
+                        result.sourceProb = result.nativeSourceProb *
+                            std::exp(static_cast<long double>(evidence));
+                    else if (tnqcMode == "only")
+                        result.sourceProb =
+                            std::exp(static_cast<long double>(evidence));
+                    else
+                        result.sourceProb = result.nativeSourceProb;
+
+                    sumCosine += result.tnqcCanonicalCosine;
+                    sumOrder += result.tnqcLocalOrderAgreement;
+                    sumEvidence += evidence;
+                    maxEvidence = std::max(maxEvidence, evidence);
+                }
+
+                for (int cell = 0;
+                     cell < static_cast<int>(result.hitMap.size()); ++cell)
+                {
+                    auto& var = varianceCalculationData[cell];
+                    weighted_incremental_variance(
+                        result.hitMap[cell], result.sourceProb,
+                        var.mean, var.weight_sum, var.weight_squared_sum,
+                        var.variance);
+                }
+            }
+
+#pragma omp parallel for
+            for (int cellI = 0; cellI < measuredHitProb.data.size(); ++cellI)
+            {
+                if (measuredHitProb.occupancy[cellI] != Occupancy::Free)
+                    continue;
+                const auto& var = varianceCalculationData[cellI];
+                varianceOfHitProb[cellI] = var.weight_sum > 0.0
+                    ? var.variance / var.weight_sum
+                    : 0.0;
+            }
+
+            if (validTNQC > 0)
+                GSL_INFO("TNQC update {} mode={} valid_candidates={} bank_candidates={} bank_pairs={} bank_concordance={:.6g} bank_strength={:.6g} mean_cos={:.6g} mean_order={:.6g} mean_evidence={:.6g} max_evidence={:.6g}",
+                         nativeSourceUpdateId, tnqcMode, validTNQC,
+                         tnqcCandidateBank.size(), tnqcBankPairCount,
+                         tnqcBankConcordance, tnqcBankGateStrength,
+                         sumCosine / static_cast<double>(validTNQC),
+                         sumOrder / static_cast<double>(validTNQC),
+                         sumEvidence / static_cast<double>(validTNQC),
+                         maxEvidence);
+            else
+                GSL_WARN("TNQC update {} mode={} has no valid candidate score",
+                         nativeSourceUpdateId, tnqcMode);
         }
 
         GSL_INFO("Number of levels in the simulation: {0}", numberOfLevelsSimulated);
