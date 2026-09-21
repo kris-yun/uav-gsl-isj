@@ -116,9 +116,9 @@ def main():
         assert proc.returncode == 0, proc.stdout + "\n" + proc.stderr
         payload = json.loads(out_json.read_text(encoding="utf-8"))
         assert payload["contract"] == (
-            "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V4_PARTITION_MEASURE_GATE")
+            "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V5_SUPPORT_COVERAGE_GATE")
         assert payload["candidate_gate_scope"] == (
-            "final_partition_leaf_candidates_free_cell_measure_weighted")
+            "final_partition_leaf_candidates_free_cell_measure_support_coverage_weighted")
         assert payload["native_reconstruction_audit"]["pass"]
         assert payload["native_cpp_endpoint_audit"]["pass"]
         assert payload["valid_for_gate"]
@@ -176,6 +176,26 @@ def main():
                    expanded_gate["concordance"]) < 1e-12
         assert abs(weighted_gate["pair_weight"] -
                    expanded_gate["pair_count"]) < 1e-12
+        assert abs(weighted_gate["reference_pair_weight"] -
+                   expanded_gate["reference_pair_count"]) < 1e-12
+
+        # Sparse local-order support must attenuate rather than renormalize to
+        # full strength. q_aff orders all three pairs, but only a/b has local
+        # order support, so coverage and positive strength are 1/3.
+        sparse = {
+            "a": dict(diag["a"]),
+            "b": dict(diag["b"]),
+            "d": {"valid": True, "edge_count": 0,
+                  "canonical_cosine": -0.80,
+                  "local_order_agreement": 0.0},
+        }
+        sparse_gate = replay.candidate_order_concordance(sparse)
+        assert sparse_gate["valid"]
+        assert sparse_gate["reference_pair_count"] == 3
+        assert sparse_gate["pair_count"] == 1
+        assert abs(sparse_gate["informative_coverage"] - 1.0/3.0) < 1e-12
+        assert abs(sparse_gate["concordance"] - 1.0) < 1e-12
+        assert abs(sparse_gate["strength"] - 1.0/3.0) < 1e-12
 
         print("TNQC_VGR_FIXED_TRAJECTORY_REPLAY_TEST_PASS")
     finally:
