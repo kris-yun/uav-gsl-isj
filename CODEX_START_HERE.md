@@ -20,6 +20,8 @@ Read first:
 5. `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json` — corrected project-data mechanism record.
 6. `docs/CANDIDATE_SYMMETRY_QUOTIENT_20260920.md` — research lineage and rejected predecessor branches.
 7. `evidence/TNQC_IMPLEMENTATION_SANITY_20260921.json` — current source SHAs, standalone C++/Python sanity results, online native-bank contract audit.
+8. `docs/TNQC_LOCALITY_AUDIT_AND_DISTRIBUTED_SUPPORT_20260921.md` — supplemental VGR audit addressing the “local patch only” critique; it does not alter the frozen 300-s gate.
+9. `evidence/TNQC_VGR_DISTRIBUTED_SUPPORT_AUDIT_20260921.json` — disjoint-support, far-field, and source-blind nuisance stress results.
 
 ## Execution order
 
