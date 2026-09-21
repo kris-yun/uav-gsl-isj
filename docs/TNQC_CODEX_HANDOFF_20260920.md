@@ -5,13 +5,12 @@ Branch: `main`
 
 ## 0. Status that must not be overstated
 
-> **V4/V3 corrections (2026-09-21):**
-> `docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md` is authoritative for
-> the gate measure and `docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md` is
-> authoritative for the online-variable/quotient claim boundary. V4 uses
-> terminal active PMFS leaves weighted by represented free-cell count. V3
-> anchors the Python endpoint to native C++ `ExpectedValue(...,0.05)` and
-> distinguishes the archived 240-s `gas_ppm` screen from online hit-logits.
+> **V5/V4/V3 corrections (2026-09-21):**
+> `docs/TNQC_V5_SUPPORT_COVERAGE_GATE_20260921.md` is authoritative for
+> gate normalization; `docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md`
+> is authoritative for terminal-leaf free-cell measure; and
+> `docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md` is authoritative for the
+> online-variable/quotient claim boundary and C++ endpoint anchor.
 
 **VGR/GADEN concentration-space mechanism signal: positive.**
 **VGR/GADEN 300-s offline localization gain: not yet established.**
@@ -111,32 +110,31 @@ counterexample exposed a deeper flaw in the first per-candidate sign guard:
 keeping every candidate score on the same side of zero does **not** guarantee
 that the relative ordering of two source hypotheses is preserved.
 
-The corrected secondary mechanism therefore acts once per candidate bank,
-not independently per candidate. For valid terminal leaves (s_i), let
-(a_i=q_{\rm aff}(s_i)), (o_i=q_{\rm ord}(s_i)), and let (m_i) be the
-number of free source cells represented by leaf i. V4 defines
+The corrected secondary mechanism acts once per terminal hypothesis bank,
+not independently per candidate. For terminal leaf i, let a_i=q_aff(s_i),
+o_i=q_ord(s_i), and m_i be the represented free-cell count.
 
-[
-C_u=
-\frac{\sum_{i<j}m_i m_j
-\operatorname{sgn}(a_i-a_j)
-\operatorname{sgn}(o_i-o_j)}
-{\sum_{i<j}m_i m_j},
-]
+V5 separates two pair measures. W_main contains every m_i*m_j pair for which
+the main affine quotient gives a non-tied ordering. W_info is the subset for
+which both candidates have sufficient local-edge support and local order is
+also non-tied. Let S be the signed informative mass:
 
-where ties and candidates without sufficient local-order support are omitted.
-The shared gate is
+`S = sum_info m_i*m_j*sign(a_i-a_j)*sign(o_i-o_j)`.
 
-[
-g_u=\max(0,C_u),
-\qquad
-e_i=g_u a_i.
-]
+The diagnostic conditional concordance and coverage are
+`C_cond=S/W_info` (0 when W_info=0) and `rho=W_info/W_main`.
+The actual shared gate is
 
-The same non-negative (g_u) multiplies every affine candidate score.
-Therefore local order can attenuate or abstain when the two quotient channels
-disagree, but it **cannot reverse any affine candidate ordering**. No source
-truth, fitted coefficient, candidate rank, or post-hoc threshold is used.
+`g=max(0,S/W_main)=max(0,C_cond)*rho`,
+
+and `e_i=g*a_i`.
+
+Thus a local-order tie or lack of support is a genuine abstention: it
+contributes zero signed evidence while remaining in the affine reference
+mass. The same non-negative g still multiplies every affine score, so local
+order cannot reverse any affine candidate ordering. No source truth, fitted
+coefficient, candidate rank, coverage threshold, or post-hoc parameter is
+used.
 
 ### Native-bank freeze
 
@@ -144,9 +142,10 @@ Within each source update, PMFS candidate generation and quadtree refinement
 are intentionally driven by the historical native likelihood only. TNQC
 retains the evaluation history for audit, but after refinement it computes the
 shared gate only on terminal active free leaves of the final PMFS partition,
-with leaf measure equal to represented free-cell count. Subdivided ancestors
-are search history and cannot alter the gate. The 300-s fixed-trajectory
-replay reconstructs the identical final-leaf hypothesis measure.
+with leaf measure equal to represented free-cell count and V5
+support-coverage attenuation. Subdivided ancestors are search history and
+cannot alter the gate. The 300-s fixed-trajectory replay reconstructs the
+identical final-leaf hypothesis measure and pair-coverage normalization.
 
 The online arms remain
 
@@ -442,7 +441,7 @@ This separates “beats baseline PMFS” from “adds value beyond the already s
 
 Do not change:
 - candidate-bank concordance rule `g=max(0,C)` and `e_i=g*q_aff_i`;
-- V4 gate scope: terminal active free leaves only, pair-weighted by represented free-cell measure; subdivided ancestors and unweighted-leaf gates are audit only;
+- V5 gate scope: terminal active free leaves only, pair-weighted by represented free-cell measure, with unsupported/tied local-order pairs retained in affine reference mass as zero-evidence abstentions; subdivided ancestors and older normalizations are audit only;
 - evidence bound ([-1,1]);
 - support rule (<4 supported cells => invalid);
 - local-edge definition;
