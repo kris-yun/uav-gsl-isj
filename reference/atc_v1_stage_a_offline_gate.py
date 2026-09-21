@@ -249,6 +249,18 @@ def case_result(case: Case, scalar_beta: np.ndarray,
 
     native_ep = endpoint_for(
         case, case.native_export, args.cpp_endpoint_evaluator, native_csv)
+    native_logged = replay.native_result_line(case.run_dir)
+    native_endpoint_delta = abs(
+        native_ep["pmfs_top5_error_m"]
+        - native_logged["reported_top5_error_m"])
+    if native_ep.get("engine") != "gsl_utils_expected_value_linked_native_v1":
+        raise ValueError(
+            f"{case.house}/seed{case.seed}: non-authoritative endpoint engine "
+            f"{native_ep.get('engine')}")
+    if native_endpoint_delta > args.native_endpoint_rounding_tolerance_m:
+        raise ValueError(
+            f"{case.house}/seed{case.seed}: linked-native endpoint parity failed: "
+            f"{native_endpoint_delta} m")
     scalar_ep = endpoint_for(
         case, scalar_p, args.cpp_endpoint_evaluator, scalar_csv)
     structured_ep = endpoint_for(
@@ -269,6 +281,10 @@ def case_result(case: Case, scalar_beta: np.ndarray,
         "truth_owner": case.truth_owner,
         "final_leaf_candidate_count": len(case.active_ids),
         "native_reconstruction": dict(case.native_reconstruction),
+        "native_logged_result": native_logged,
+        "native_endpoint_parity_abs_m": native_endpoint_delta,
+        "native_endpoint_parity_tolerance_m":
+            args.native_endpoint_rounding_tolerance_m,
         "native_rank": native_rank,
         "scalar_rank": scalar_rank,
         "structured_rank": structured_rank,
@@ -314,6 +330,8 @@ def main():
                     type=float, default=5e-6)
     ap.add_argument("--native-reconstruction-l1",
                     type=float, default=5e-4)
+    ap.add_argument("--native-endpoint-rounding-tolerance-m",
+                    type=float, default=0.011)
     ap.add_argument("--json-out", type=Path)
     args = ap.parse_args()
 
