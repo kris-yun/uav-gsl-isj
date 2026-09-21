@@ -17,6 +17,16 @@ import tnqc_vgr_fixed_trajectory_replay as replay
 def main():
     root = Path(tempfile.mkdtemp(prefix="tnqc_vgr_replay_test_"))
     try:
+        evaluator_src = Path(replay.__file__).with_name(
+            "tnqc_expected_value_eval.cpp")
+        evaluator = root / "tnqc_expected_value_eval"
+        build = subprocess.run(
+            ["g++", "-std=c++20", "-O2", "-Wall", "-Wextra",
+             "-Wpedantic", "-Werror", str(evaluator_src),
+             "-o", str(evaluator)],
+            check=False, capture_output=True, text=True)
+        assert build.returncode == 0, build.stdout + "\n" + build.stderr
+
         bank = root / "context_bank"
         d = bank / "source_update_0001"
         d.mkdir(parents=True)
@@ -93,8 +103,12 @@ def main():
         assert audit["l1"] < 1e-15
         assert replay.choose_final_update(bank, 300.0) == (1, 295.0)
 
-        fixture_metrics = replay.metrics(native, cells, 0.0, 0.0)
-        reported = fixture_metrics["pmfs_top5_error_m"]
+        fixture_csv = root / "fixture_native_posterior.csv"
+        replay.write_endpoint_posterior(fixture_csv, native, cells)
+        fixture_cpp = replay.cpp_endpoint_metrics(
+            evaluator, fixture_csv, 0.0, 0.0)
+        fixture_python = replay.metrics(native, cells, 0.0, 0.0)
+        reported = fixture_cpp["pmfs_top5_error_m"]
         (root / "launch.log").write_text(
             "fixture RESULT IS: Success=0, Search_t=300.00, "
             f"Error={reported:.2f}\n",
@@ -102,6 +116,8 @@ def main():
         native_result = replay.native_result_line(root)
         assert native_result["search_t"] == 300.0
         assert abs(native_result["reported_top5_error_m"] - reported) <= 0.011
+        assert fixture_cpp["pmfs_top5_cell_count"] == math.ceil(0.05 * len(cells))
+        assert math.isfinite(fixture_python["pmfs_top5_error_m"])
 
         # Exercise the full replay CLI, not only helper functions.  This locks
         # the endpoint anchor, final-leaf scope, reconstruction audit and JSON
@@ -111,16 +127,19 @@ def main():
             [sys.executable, str(Path(replay.__file__)),
              "--run-dir", str(root),
              "--truth-x", "0.0", "--truth-y", "0.0",
+             "--cpp-endpoint-evaluator", str(evaluator),
              "--json-out", str(out_json)],
             check=False, capture_output=True, text=True)
         assert proc.returncode == 0, proc.stdout + "\n" + proc.stderr
         payload = json.loads(out_json.read_text(encoding="utf-8"))
         assert payload["contract"] == (
-            "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V5_SUPPORT_COVERAGE_GATE")
+            "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V6_CPP_ENDPOINT_PARITY")
         assert payload["candidate_gate_scope"] == (
             "final_partition_leaf_candidates_free_cell_measure_support_coverage_weighted")
         assert payload["native_reconstruction_audit"]["pass"]
         assert payload["native_cpp_endpoint_audit"]["pass"]
+        assert payload["endpoint_evaluator"]["engine"] == (
+            "cpp_std_sort_clone_of_PMFS_ExpectedValue_0p05")
         assert payload["valid_for_gate"]
 
         # Candidate-wise sign consistency is insufficient: naive averaging
