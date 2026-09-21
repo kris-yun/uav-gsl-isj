@@ -1,0 +1,118 @@
+{
+  "contract": "TNQC_VGR_DISTRIBUTED_SUPPORT_AUDIT_V1",
+  "created_utc": "2026-09-21",
+  "data": {
+    "repository": "kris-yun/uav-gsl-isj",
+    "ref": "project/research-master-20260914",
+    "ref_commit": "26e89a99532e4268c5022dca2e938bf1473377b1",
+    "root": "evidence/cstar_current_runtime_assets240_20260907/realizations",
+    "cases": 12,
+    "samples_per_case": 1200,
+    "terminal_time_s": 240,
+    "design": "H01/H02/H03 x SA/SB x fast/slow; identical geometry-only pose and timing sequence within each House"
+  },
+  "claim_boundary": {
+    "purpose": "falsify the claim that the existing 240 s TNQC source-identity signal is confined to a local or near-source patch",
+    "not_authoritative_300s_localization_gate": true,
+    "two_source_candidate_set_only": true,
+    "distance_masks_use_evaluator_truth_only": true,
+    "does_not_authorize_closed_loop": true
+  },
+  "route_identity_audit": {
+    "H01": {"max_pose_difference_m": 0.0, "max_time_difference_s": 0.0, "sample_count_each": [1200,1200,1200,1200]},
+    "H02": {"max_pose_difference_m": 0.0, "max_time_difference_s": 0.0, "sample_count_each": [1200,1200,1200,1200]},
+    "H03": {"max_pose_difference_m": 0.0, "max_time_difference_s": 0.0, "sample_count_each": [1200,1200,1200,1200]}
+  },
+  "time_to_identifiability": {
+    "first_full_12_of_12_affine_coverage_and_accuracy_s": 240,
+    "selected": {
+      "80": {"coverage": 0.0, "accuracy_on_valid": null},
+      "120": {"coverage": 0.0, "accuracy_on_valid": null},
+      "160": {"coverage": 0.4166666666666667, "accuracy_on_valid": 0.6, "min_margin": -0.04051752467277632, "min_support_bins": 157},
+      "176": {"coverage": 0.4166666666666667, "accuracy_on_valid": 1.0, "min_margin": 0.9096904387803908, "min_support_bins": 173},
+      "200": {"coverage": 0.4166666666666667, "accuracy_on_valid": 1.0, "min_margin": 0.8175031800083253, "min_support_bins": 193},
+      "220": {"coverage": 0.75, "accuracy_on_valid": 1.0, "min_margin": 0.8002554987893118, "min_support_bins": 205},
+      "240": {"coverage": 1.0, "accuracy_on_valid": 1.0, "min_margin": 0.009191521162661462, "min_support_bins": 227}
+    },
+    "interpretation": "The quotient signal is not an early-window signal on this asset. It becomes fully identifiable across all 12 cross-transport cases only at the 240 s endpoint."
+  },
+  "spatial_destructive_audit_240s": {
+    "all_support": {
+      "affine_accuracy": 1.0,
+      "raw_accuracy": 1.0,
+      "affine_min_support_bins": 227
+    },
+    "checkerboard_even": {
+      "affine_accuracy": 1.0,
+      "raw_accuracy": 1.0,
+      "affine_min_support_bins": 112
+    },
+    "checkerboard_odd": {
+      "affine_accuracy": 1.0,
+      "raw_accuracy": 1.0,
+      "affine_min_support_bins": 112
+    },
+    "exclude_within_1m_of_either_source_evaluator_only": {
+      "affine_accuracy": 1.0,
+      "raw_accuracy": 1.0,
+      "affine_min_support_bins": 209
+    },
+    "exclude_within_2m_of_either_source_evaluator_only": {
+      "affine_accuracy": 0.9166666666666666,
+      "raw_accuracy": 0.9166666666666666,
+      "affine_min_support_bins": 169,
+      "affine_failure": "H02_SA_slow"
+    },
+    "exclude_within_3m_of_either_source_evaluator_only": {
+      "affine_accuracy": 0.9166666666666666,
+      "raw_accuracy": 0.6666666666666666,
+      "affine_min_support_bins": 117,
+      "affine_failure": "H02_SA_fast"
+    },
+    "far_only_gt4m_from_either_source_evaluator_only": {
+      "affine_accuracy": 0.9166666666666666,
+      "raw_accuracy": 0.75,
+      "affine_min_support_bins": 80,
+      "affine_failure": "H02_SA_slow"
+    }
+  },
+  "source_blind_disjoint_support_consensus_240s": {
+    "checkerboard_2fold": {
+      "coverage": 1.0,
+      "conditional_accuracy": 1.0,
+      "result": "both disjoint parity halves independently rank the true source in all 12 cases"
+    },
+    "fixed_4fold_hash": {
+      "coverage": 0.8333333333333334,
+      "conditional_accuracy": 1.0,
+      "abstentions": ["H02_SA_fast", "H02_SA_slow"]
+    },
+    "random_hash_4fold_100_source_blind_seeds": {
+      "coverage_min": 0.9166666666666666,
+      "coverage_mean": 0.969166666666667,
+      "coverage_max": 1.0,
+      "conditional_accuracy_min": 1.0,
+      "conditional_accuracy_mean": 1.0
+    }
+  },
+  "source_blind_nuisance_stress_240s": {
+    "independent_positive_scale_loguniform_0p05_to_20_100_seeds": {
+      "affine": {"min_accuracy": 1.0, "mean_accuracy": 1.0, "perfect_runs": 100},
+      "raw": {"min_accuracy": 0.5833333333333334, "mean_accuracy": 0.7508333333333337, "max_accuracy": 0.9166666666666666, "perfect_runs": 0}
+    },
+    "independent_positive_background_offset_0_to_5ppm_100_seeds": {
+      "affine": {"min_accuracy": 1.0, "mean_accuracy": 1.0, "perfect_runs": 100},
+      "raw": {"min_accuracy": 0.08333333333333333, "mean_accuracy": 0.6233333333333335, "max_accuracy": 1.0, "perfect_runs": 1}
+    }
+  },
+  "frozen_interpretation": {
+    "local_only_hypothesis_supported": false,
+    "distributed_spatial_signal_supported_on_this_two_source_asset": true,
+    "near_source_peak_is_not_required_for_most_cases": true,
+    "main_affine_quotient_has_clear_nuisance_advantage_over_raw_amplitude": true,
+    "early_identifiability_is_weak": true,
+    "full_multi_candidate_localization_gain_established": false,
+    "authoritative_next_gate": "reference/run_tnqc_vgr_offline_gate_20260920.sh on the VGR VM"
+  },
+  "reproduction": "python3 reference/tnqc_vgr_distributed_support_audit.py --json-out evidence/TNQC_VGR_DISTRIBUTED_SUPPORT_AUDIT_20260921.json"
+}
