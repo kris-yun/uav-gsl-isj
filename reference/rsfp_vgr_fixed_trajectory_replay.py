@@ -15,10 +15,14 @@ Variants evaluated without truth-dependent selection:
   fine_only      : factor-1 canonical score only
   coarse_only    : factor-8 canonical score only
   mean_only      : equal mean over all four scales
-  fixed_only     : lower envelope (minimum) over all four scales
+  lower_envelope_only : minimum candidate score over all four scales
+  fixed_only     : scale-stable pairwise dominance score; a candidate pair
+                   contributes only when its ordering has the same nonzero
+                   sign at every predeclared scale
   *_tilt         : same bounded score added once to native candidate log score
 
-The scientific primary is fixed_only.  fine/coarse/mean are required controls.
+The scientific primary is fixed_only.  fine/coarse/mean/lower-envelope are
+required controls.
 """
 from __future__ import annotations
 
@@ -31,9 +35,7 @@ from pathlib import Path
 from typing import Dict, Mapping, Sequence
 
 from tnqc_vgr_fixed_trajectory_replay import (
-    EPS,
     Cell,
-    candidate_order_concordance,
     choose_final_update,
     cpp_endpoint_metrics,
     diff,
@@ -46,7 +48,6 @@ from tnqc_vgr_fixed_trajectory_replay import (
     metrics,
     native_log_score,
     native_result_line,
-    normalize,
     posterior,
     safe_logit,
     write_endpoint_posterior,
@@ -160,10 +161,10 @@ def evidence_variants(ms, factors: Sequence[int]):
     if valid_all:
         qs = [q[f] for f in factors]
         mean = statistics.fmean(qs)
-        fixed = min(qs)
+        lower = min(qs)
         q_range = max(qs) - min(qs)
     else:
-        mean = fixed = 0.0
+        mean = lower = 0.0
         q_range = None
 
     return {
@@ -171,9 +172,107 @@ def evidence_variants(ms, factors: Sequence[int]):
         "fine_only": bounded(fine),
         "coarse_only": bounded(coarse),
         "mean_only": bounded(mean),
-        "fixed_only": bounded(fixed),
+        "lower_envelope_only": bounded(lower),
         "scale_range": q_range,
         "per_scale": {str(f): ms[f] for f in factors},
+    }
+
+
+def scale_stable_pairwise_scores(
+        diag,
+        active_ids,
+        hypothesis_measure,
+        factors: Sequence[int],
+):
+    """Candidate-wise source evidence from ordering fixed across all scales.
+
+    For each active candidate pair (a,b), inspect sign(q_a(f)-q_b(f)) at every
+    predeclared scale.  A pair is comparable only when neither candidate is
+    invalid and no scale is tied.  Comparable pairs enter the reference mass.
+    They contribute signed evidence only when the sign is identical at every
+    scale; a sign flip is an explicit abstention but remains in the denominator.
+
+    Pair mass is the product of represented final-partition free-cell counts,
+    matching the physical source-space measure rather than treating adaptive
+    leaves as equal-mass hypotheses.
+    """
+    factors = tuple(int(x) for x in factors)
+    stats = {
+        cid: {
+            "signed_weight": 0.0,
+            "reference_weight": 0.0,
+            "stable_pair_count": 0,
+            "reference_pair_count": 0,
+        }
+        for cid in active_ids
+    }
+    global_reference = 0.0
+    global_stable = 0.0
+    global_pairs = 0
+    global_stable_pairs = 0
+
+    for i in range(len(active_ids)):
+        for j in range(i + 1, len(active_ids)):
+            a, b = active_ids[i], active_ids[j]
+            da, db = diag[a], diag[b]
+            if not (da["valid_all_scales"] and db["valid_all_scales"]):
+                continue
+
+            signs = []
+            tied = False
+            for factor in factors:
+                qa = da["per_scale"][str(factor)]["canonical_cosine"]
+                qb = db["per_scale"][str(factor)]["canonical_cosine"]
+                s = (qa > qb) - (qa < qb)
+                if not s:
+                    tied = True
+                    break
+                signs.append(s)
+            if tied or not signs:
+                continue
+
+            ma = float(hypothesis_measure[a])
+            mb = float(hypothesis_measure[b])
+            pair_weight = ma * mb
+            for cid in (a, b):
+                stats[cid]["reference_weight"] += pair_weight
+                stats[cid]["reference_pair_count"] += 1
+            global_reference += pair_weight
+            global_pairs += 1
+
+            if not all(s == signs[0] for s in signs[1:]):
+                continue
+
+            winner, loser = (a, b) if signs[0] > 0 else (b, a)
+            stats[winner]["signed_weight"] += pair_weight
+            stats[loser]["signed_weight"] -= pair_weight
+            stats[winner]["stable_pair_count"] += 1
+            stats[loser]["stable_pair_count"] += 1
+            global_stable += pair_weight
+            global_stable_pairs += 1
+
+    scores = {}
+    for cid in active_ids:
+        ref = stats[cid]["reference_weight"]
+        score = stats[cid]["signed_weight"] / ref if ref > 0.0 else 0.0
+        score = bounded(score)
+        stats[cid]["score"] = score
+        stats[cid]["stable_weight_fraction"] = (
+            abs(stats[cid]["signed_weight"]) / ref if ref > 0.0 else None
+        )
+        scores[cid] = score
+
+    return {
+        "scores": scores,
+        "candidate_stats": stats,
+        "global_reference_pair_count": global_pairs,
+        "global_stable_pair_count": global_stable_pairs,
+        "global_reference_weight": global_reference,
+        "global_stable_weight": global_stable,
+        "global_stable_weight_fraction": (
+            global_stable / global_reference
+            if global_reference > 0.0 else None
+        ),
     }
 
 
@@ -290,6 +389,14 @@ def main():
     for cid in part.values():
         active_measure[cid] = active_measure.get(cid, 0) + 1
 
+    fixed = scale_stable_pairwise_scores(
+        diag, active_ids, active_measure, factors
+    )
+    for cid in candidates:
+        diag[cid]["fixed_only"] = (
+            fixed["scores"].get(cid, 0.0) if cid in active_set else 0.0
+        )
+
     stability = scale_order_stability(diag, active_ids, factors)
 
     native_replay = posterior(part, native_s)
@@ -301,7 +408,13 @@ def main():
     )
 
     variants = {}
-    for key in ("fine_only", "coarse_only", "mean_only", "fixed_only"):
+    for key in (
+        "fine_only",
+        "coarse_only",
+        "mean_only",
+        "lower_envelope_only",
+        "fixed_only",
+    ):
         only_scores = make_scores(native_s, diag, active_set, key, tilt=False)
         tilt_scores = make_scores(native_s, diag, active_set, key, tilt=True)
         variants[key] = {
@@ -381,7 +494,11 @@ def main():
                 grid_meta.cell_size * f for f in factors
             ],
             "fixed_point_score":
-                "minimum canonical cosine across all predeclared scales",
+                "candidate-wise pairwise dominance retained only when the "
+                "candidate ordering has the same nonzero sign at every "
+                "predeclared scale; crossing pairs abstain",
+            "lower_envelope_control":
+                "minimum candidate canonical cosine across scales",
             "mean_control":
                 "equal arithmetic mean canonical cosine across scales",
             "coarse_control":
@@ -395,6 +512,7 @@ def main():
         "active_all_scale_valid_candidate_count": all_scale_valid_active,
         "final_leaf_hypothesis_measure_cells": active_measure,
         "scale_order_stability": stability,
+        "fixed_point_pairwise": fixed,
         "candidate_diagnostics": {
             cid: diag[cid] for cid in active_ids
         },
