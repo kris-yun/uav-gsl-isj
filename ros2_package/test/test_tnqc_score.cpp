@@ -136,6 +136,23 @@ int main()
     assert(close(weighted.concordance, expanded.concordance));
     assert(close(weighted.pairWeight,
                  static_cast<double>(expanded.pairCount)));
+    assert(close(weighted.referencePairWeight,
+                 static_cast<double>(expanded.referencePairCount)));
+
+    // If local order can resolve only one of three affine-ordered pairs, its
+    // conditional concordance may be one but the actual shared gate must be
+    // attenuated by one-third coverage.
+    TNQC::Score c3;
+    c3.valid = true; c3.edgeCount = 0;
+    c3.canonicalCosine = -0.80; c3.localOrderAgreement = 0.0;
+    const TNQC::BankGate sparse =
+        TNQC::candidateOrderConcordance({c0, c1, c3});
+    assert(sparse.valid);
+    assert(sparse.referencePairCount == 3);
+    assert(sparse.pairCount == 1);
+    assert(close(sparse.informativeCoverage, 1.0 / 3.0));
+    assert(close(sparse.concordance, 1.0));
+    assert(close(sparse.strength, 1.0 / 3.0));
 
     // Fewer than four supported cells is intentionally non-identifying.
     std::vector<unsigned char> weakSupport(observed.size(), 0);
