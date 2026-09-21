@@ -18,7 +18,13 @@ freeze=json.loads((evidence/'PRE_RESPONSE_FREEZE.json').read_text())
 for case in freeze['cases']:
     design=evidence/(case['case']+'.json')
     assert hashlib.sha256(design.read_bytes()).hexdigest()==case['design_sha256']
-    d=json.loads(design.read_text()); out=r/'run'/d['case'];out.mkdir(parents=True,exist_ok=True)
+    d=json.loads(design.read_text()); out=r/'run'/d['case']
+    if (out/'COMPLETE.json').exists():
+        print('PRESERVE_COMPLETED',d['case'],flush=True);continue
+    if (out/'responses.f32').exists():
+        archived=out.with_name(out.name+'_incomplete_obstacle_counter_check')
+        assert not archived.exists();out.rename(archived)
+    out.mkdir(parents=True,exist_ok=True)
     src=out/'sources.csv'
     with src.open('w',newline='') as f:
         w=csv.DictWriter(f,fieldnames=list(d['sources'][0]));w.writeheader();w.writerows(d['sources'])

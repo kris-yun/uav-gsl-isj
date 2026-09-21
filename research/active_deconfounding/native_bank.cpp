@@ -73,7 +73,16 @@ int main(int argc, char** argv) {
                 std::vector<float> hit(n,0.);
                 auto start=std::chrono::steady_clock::now();
                 sim.runPointForwardReplay(Vector2(s.x,s.y),hit,200,.2f,.5f*noise,&rng);
-                for(float p:hit) if(!std::isfinite(p)||p<0||p>1) throw std::runtime_error("bad response");
+                for(size_t j=0;j<hit.size();++j) {
+                    // The frozen kernel normalizes only free cells. Obstacle
+                    // entries are unused filament counters, not probabilities.
+                    if(occ[j]!=Occupancy::Free) {
+                        if(hit[j]>1) std::cerr << "OBSTACLE_RAW_COUNTER " << world << ' ' << s.id << ' ' << j << ' ' << hit[j] << '\n';
+                        hit[j]=0;
+                    } else if(!std::isfinite(hit[j])||hit[j]<0||hit[j]>1) {
+                        throw std::runtime_error("invalid FREE-cell response: "+world+" "+s.id+" cell="+std::to_string(j)+" p="+std::to_string(hit[j]));
+                    }
+                }
                 binary.write(reinterpret_cast<char*>(hit.data()),hit.size()*sizeof(float));
                 times << world << ',' << s.id << ',' << std::setprecision(17)
                       << std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count() << '\n';
