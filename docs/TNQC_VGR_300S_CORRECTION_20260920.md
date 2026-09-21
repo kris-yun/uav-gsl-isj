@@ -147,26 +147,39 @@ q_{\rm ord}(s)=
 {\sum_{(i,j)\in E}\min(w_i,w_j)},
 ]
 
-and the frozen symmetry-hierarchy guard
+and the corrected candidate-bank quotient-channel concordance gate.
+
+For all valid candidates in one frozen update, write
+(a_i=q_{\rm aff}(s_i)) and (o_i=q_{\rm ord}(s_i)), then compute
 
 [
-e_s=
-\begin{cases}
-\tfrac12(q_{\rm aff}(s)+q_{\rm ord}(s)),
-& |E_s|\ge2\ \text{and}\ q_{\rm aff}(s)q_{\rm ord}(s)\ge0,\\
-q_{\rm aff}(s),&\text{otherwise}.
-\end{cases}
+C_u=
+\frac{1}{|\mathcal P_u|}
+\sum_{(i,j)\in\mathcal P_u}
+\operatorname{sgn}(a_i-a_j)
+\operatorname{sgn}(o_i-o_j),
 ]
 
-The broader monotone/order channel may corroborate the exact affine quotient
-but may not reverse it. This repair was frozen after the VGR 0.3-m spatial
-mechanism screen falsified unconditional 1:1 fusion, before the authoritative
-300-s House gate. The evidence remains bounded in ([-1,1]).
+ignoring ties and candidates without enough local-order support. The shared
+source-blind gate and candidate evidence are
+
+[
+g_u=\max(0,C_u),
+\qquad
+e_i=g_u a_i.
+]
+
+This replaces the earlier per-candidate sign guard. That older rule was
+falsified by a ranking counterexample: preserving the sign of each candidate
+score does not guarantee preservation of the ordering between candidates.
+With one shared non-negative (g_u), local order may attenuate or abstain but
+cannot reverse any affine candidate ordering. Evidence remains bounded in
+([-1,1]).
 
 The fixed-bank counterfactual likelihood is
 
 [
-\ell_{\rm TNQC}(s)=\ell_{\rm PMFS}(s)+e_s.
+\ell_{\rm TNQC}(s_i)=\ell_{\rm PMFS}(s_i)+e_i.
 ]
 
 No coefficient is fitted.
@@ -221,8 +234,10 @@ motion.  The offline replay is the lower-risk causal screen required before
 allowing those feedback paths.
 
 The VGR 240-s spatial mechanism screen is recorded in
-`evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json`: the affine and
-hierarchy-guarded representations are 12/12 at 240 s and remain 12/12 across
-100 source-blind positive-scale stresses.  This is mechanism evidence only.
+`evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json`: the affine representation is 12/12 at 240 s. The corrected candidate-bank
+gate releases 11/12 cases with 100% conditional accuracy, and preserves that
+11/12 coverage / 100% conditional accuracy across all 100 positive-scale and
+200 monotone-compression source-blind stress seeds. This is mechanism evidence
+only.
 The Orebro 2/5/10-min result remains auxiliary and is not used in the GO
 decision.
