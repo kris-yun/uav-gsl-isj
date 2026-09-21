@@ -28,6 +28,9 @@ namespace GSL::PMFS_internal::TNQC
     {
         bool valid = false;
         std::size_t pairCount = 0;
+        // Sum of hypothesis-measure products over non-tied valid pairs.
+        // With unit hypothesis weights this equals pairCount.
+        double pairWeight = 0.0;
         double concordance = 0.0;
         double strength = 0.0;
     };
@@ -148,22 +151,45 @@ namespace GSL::PMFS_internal::TNQC
     // by the broader local-order quotient.  The gate is one shared,
     // non-negative scalar for the entire candidate bank:
     //
-    //   C = mean_{i<j} sign(a_i-a_j) sign(o_i-o_j)
+    //   C = [sum_{i<j} m_i m_j sign(a_i-a_j) sign(o_i-o_j)]
+    //       / [sum_{i<j} m_i m_j]
     //   g = max(0, C)
     //   e_i = g a_i
+    //
+    // m_i is the hypothesis measure represented by candidate i.  Passing an
+    // empty vector uses m_i=1.  In PMFS V4, terminal leaf m_i is its covered
+    // free-cell count. This is exactly equivalent to expanding every leaf
+    // into m_i identical cell-level hypotheses and computing ordinary
+    // concordance after ignoring within-leaf ties.
     //
     // Because the same g >= 0 multiplies every affine score, the local-order
     // channel can attenuate/abstain but can never reverse the affine ranking.
     // Ties in either channel are ignored.  No source truth, candidate rank,
     // fitted coefficient, or threshold is used.
-    inline BankGate candidateOrderConcordance(const std::vector<Score>& scores)
+    inline BankGate candidateOrderConcordance(
+        const std::vector<Score>& scores,
+        const std::vector<double>& hypothesisMeasure = {})
     {
+        if (!hypothesisMeasure.empty() && hypothesisMeasure.size() != scores.size())
+            throw std::invalid_argument(
+                "TNQC hypothesis measure must be empty or match score count");
+
         BankGate out;
         double signedPairs = 0.0;
+        const auto measureAt = [&hypothesisMeasure](std::size_t i)
+        {
+            const double m = hypothesisMeasure.empty() ? 1.0 : hypothesisMeasure[i];
+            if (!(m > 0.0) || !std::isfinite(m))
+                throw std::invalid_argument(
+                    "TNQC hypothesis measure must be finite and positive");
+            return m;
+        };
+
         for (std::size_t i = 0; i < scores.size(); ++i)
         {
             if (!scores[i].valid || scores[i].edgeCount < 2)
                 continue;
+            const double mi = measureAt(i);
             for (std::size_t j = i + 1; j < scores.size(); ++j)
             {
                 if (!scores[j].valid || scores[j].edgeCount < 2)
@@ -172,15 +198,17 @@ namespace GSL::PMFS_internal::TNQC
                 const int so = signum(scores[i].localOrderAgreement - scores[j].localOrderAgreement);
                 if (sa == 0 || so == 0)
                     continue;
-                signedPairs += static_cast<double>(sa * so);
+                const double pairWeight = mi * measureAt(j);
+                signedPairs += pairWeight * static_cast<double>(sa * so);
+                out.pairWeight += pairWeight;
                 ++out.pairCount;
             }
         }
-        if (out.pairCount == 0)
+        if (out.pairCount == 0 || !(out.pairWeight > 0.0))
             return out;
 
         out.concordance = std::clamp(
-            signedPairs / static_cast<double>(out.pairCount), -1.0, 1.0);
+            signedPairs / out.pairWeight, -1.0, 1.0);
         out.strength = std::max(0.0, out.concordance);
         out.valid = std::isfinite(out.strength);
         return out;
