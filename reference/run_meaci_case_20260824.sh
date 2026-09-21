@@ -29,6 +29,7 @@ TARGET_SOURCE_UPDATES="${TARGET_SOURCE_UPDATES:-0}"
 TARGET_ACCEPTED_UPDATES="${TARGET_ACCEPTED_UPDATES:-0}"
 POSTERIOR_GUIDANCE_WEIGHT="${POSTERIOR_GUIDANCE_WEIGHT:-0}"
 PFDI_INSTALL_ROOT="${PFDI_INSTALL_ROOT:-/dev/shm/meaci_online_20260824}"
+LAUNCH_FILE="${LAUNCH_FILE:-${PFDI_INSTALL_ROOT}/launch/vgr_gsl_pmfs_pfdi.launch.py}"
 GMRF_INSTALL_ROOT="${GMRF_INSTALL_ROOT:-}"
 GMRF_UPDATE_ON_NEW_OBSERVATION_ONLY="${GMRF_UPDATE_ON_NEW_OBSERVATION_ONLY:-false}"
 GMRF_PREFIX=""
@@ -95,7 +96,10 @@ PROVENANCE_UTC="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 PROVENANCE_LOCAL="$(date +%Y-%m-%dT%H:%M:%S%z)"
 HOSTNAME_VALUE="$(hostname)"
 ALGORITHM_BINARY="${PFDI_INSTALL_ROOT}/install/gsl_server/lib/gsl_server/gsl_actionserver_node"
-ALGORITHM_SHA256="$(sha256sum "${ALGORITHM_BINARY}" 2>/dev/null | awk '{print $1}' || true)"
+[[ -x "${ALGORITHM_BINARY}" ]] || { echo "missing algorithm binary: ${ALGORITHM_BINARY}" >&2; exit 67; }
+[[ -f "${LAUNCH_FILE}" ]] || { echo "missing launch file: ${LAUNCH_FILE}" >&2; exit 68; }
+ALGORITHM_SHA256="$(sha256sum "${ALGORITHM_BINARY}" | awk '{print $1}')"
+LAUNCH_SHA256="$(sha256sum "${LAUNCH_FILE}" | awk '{print $1}')"
 cat > "${RUN_DIR}/runtime_manifest.json" <<EOF
 {
   "contract": "${RUN_CONTRACT:-MEACI_CLOSED_LOOP_V1}",
@@ -111,6 +115,8 @@ cat > "${RUN_DIR}/runtime_manifest.json" <<EOF
   "provenance_local": "${PROVENANCE_LOCAL}",
   "algorithm_binary": "${ALGORITHM_BINARY}",
   "algorithm_sha256": "${ALGORITHM_SHA256}",
+  "launch_file": "${LAUNCH_FILE}",
+  "launch_sha256": "${LAUNCH_SHA256}",
   "timeout_sec": "${TIMEOUT_SEC:-300.0}",
   "outer_deadline_sec": "${OUTER_DEADLINE_SEC}",
   "target_source_updates": "${TARGET_SOURCE_UPDATES}",
@@ -200,7 +206,7 @@ if [[ "${HOUSE}" == "House02" || "${HOUSE}" == "House03" ]]; then
   echo "PFDI_GADEN_FRAME_QUERY_READY DOMAIN=${ROS_DOMAIN_ID}"
 fi
 
-LAUNCH="${PFDI_INSTALL_ROOT}/launch/vgr_gsl_pmfs_pfdi.launch.py"
+LAUNCH="${LAUNCH_FILE}"
 
 ARGS=(
   "vgr_data_path:=${VGR_DATA}" "config_id:=${CONFIG_ID}" "algorithm:=PMFS"
