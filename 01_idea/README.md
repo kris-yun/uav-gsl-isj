@@ -237,9 +237,7 @@ Rules after freeze:
 - HOLD is a scientific result, not permission to tune V5;
 - an infrastructure failure is not HOLD and not GO.
 
-The current 300-s TNQC batch has **not yet produced a scientific result**;
-the latest attempted execution stopped before experiment start because of
-environment/VM launch infrastructure.
+The full six-case 300-s TNQC batch has **not yet produced a scientific verdict**. A repaired House01/seed0 execution has now passed the terminal endpoint, context-bank reconstruction and linked-native endpoint audits; its TNQC fused endpoint was essentially neutral/slightly worse than native. This single case is pipeline validation and one observed case, not the six-case GO/HOLD verdict.
 
 ## 10. What counts as success
 
@@ -258,3 +256,12 @@ The project prefers a method that is:
 - simple enough that an expert can understand why it works.
 
 That is the core research philosophy of this repository.
+
+
+## Teacher-review material
+
+The 2026-09-21 endpoint-contract and next-generation closed-loop review is preserved under:
+
+`teacher_reviews/20260921_endpoint_and_closed_loop/`
+
+It is research-review material, not part of the frozen TNQC V5 equations.
