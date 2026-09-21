@@ -1,6 +1,9 @@
-# Codex start here — TNQC VGR 300 s feasibility first
+# Codex start here — TNQC V3 VGR 300 s feasibility first
 
-The current frozen candidate is **TNQC (Transport-Nuisance Quotient Canonicalization)** with the **candidate-bank quotient-channel concordance gate**.
+The current frozen candidate is **TNQC V3 (Transport-Nuisance Quotient Canonicalization)** with a **final-active-leaf quotient-channel concordance gate**.
+
+V3 code/evaluator correction freeze: `3024ff349c37105aee1816f6648db3e81c178202`.
+Read `docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md` before running anything.
 
 ## Important correction
 
@@ -13,22 +16,23 @@ The primary gate is the user's VGR/GADEN House benchmark:
 - primary endpoint: PMFS `ExpectedValue(sourceProbability, 0.05)` terminal localization error.
 
 Read first:
-1. `docs/VGR_300S_PRIMARY_GATE_20260920.md` — authoritative evaluation contract and gate order.
-2. `docs/TNQC_RANKING_SAFETY_CORRECTION_20260921.md` — read this before any run; it rejects the old per-candidate sign guard and freezes the bank-level ranking-safe equation.
-3. `docs/TNQC_CODEX_HANDOFF_20260920.md` — current equation, theory, literature lineage, novelty boundary, implementation map.
-4. `docs/TNQC_OFFLINE_GATE_20260920.md` — VGR 0.3-m spatial mechanism screen and falsification history.
-5. `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json` — corrected project-data mechanism record.
-6. `docs/CANDIDATE_SYMMETRY_QUOTIENT_20260920.md` — research lineage and rejected predecessor branches.
-7. `evidence/TNQC_IMPLEMENTATION_SANITY_20260921.json` — current source SHAs, standalone C++/Python sanity results, online native-bank contract audit.
-8. `docs/TNQC_LOCALITY_AUDIT_AND_DISTRIBUTED_SUPPORT_20260921.md` — supplemental VGR audit addressing the “local patch only” critique; it does not alter the frozen 300-s gate.
-9. `evidence/TNQC_VGR_DISTRIBUTED_SUPPORT_AUDIT_20260921.json` — disjoint-support, far-field, and source-blind nuisance stress results.
+1. `docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md` — latest correction: exact online variable, quotient theorem/claim boundary, final-leaf gate, C++ endpoint audit, and frozen 300-s V3 protocol.
+2. `docs/VGR_300S_PRIMARY_GATE_20260920.md` — authoritative evaluation contract and gate order.
+3. `docs/TNQC_RANKING_SAFETY_CORRECTION_20260921.md` — historical ranking-safety correction; V3 further restricts its bank to terminal leaves.
+4. `docs/TNQC_CODEX_HANDOFF_20260920.md` — method lineage and execution handoff, subject to the V3 correction above.
+5. `docs/TNQC_OFFLINE_GATE_20260920.md` — VGR 0.3-m concentration-space mechanism screen and falsification history; auxiliary only.
+6. `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json` — corrected concentration-space mechanism record.
+7. `docs/CANDIDATE_SYMMETRY_QUOTIENT_20260920.md` — research lineage and rejected predecessor branches.
+8. `evidence/TNQC_IMPLEMENTATION_SANITY_20260921.json` — pre-V3 implementation sanity record; use current CI plus V3 gate for authoritative integrity.
+9. `docs/TNQC_LOCALITY_AUDIT_AND_DISTRIBUTED_SUPPORT_20260921.md` — supplemental concentration-space locality audit; distributed-support is not enabled in V3.
+10. `evidence/TNQC_VGR_DISTRIBUTED_SUPPORT_AUDIT_20260921.json` — auxiliary disjoint-support/far-field evidence.
 
 ## Execution order
 
 1. Pull current `main`, build, and run `test_tnqc_score`.
-2. Reproduce `reference/tnqc_vgr_offline_240s.py`; it must match the corrected VGR spatial mechanism evidence. The old per-candidate sign guard is rejected and must not be restored.
-3. Run `reference/run_tnqc_vgr_offline_gate_20260920.sh` on the VM House datasets. This is the authoritative full-300 s fixed-trajectory gate.
-4. Require all native-reconstruction audits to pass and inspect `tnqc_vgr_300s_offline_gate.json`.
+2. Reproduce `reference/tnqc_vgr_offline_240s.py` only as an auxiliary concentration-space mechanism check. Do not use it as proof of the online hit-logit score.
+3. Run `reference/run_tnqc_vgr_offline_gate_20260920.sh` on the VM House datasets. This is the authoritative full-300 s fixed-trajectory gate for the online representation.
+4. Require, for all six cases: native posterior reconstruction PASS, native C++ `ExpectedValue(...,0.05)` endpoint anchor PASS, and `candidate_gate_scope=final_partition_leaf_candidates_only`. Then inspect `tnqc_vgr_300s_offline_gate.json`.
 5. Only when `go_for_closed_loop=true`, run OFF vs SHADOW and require exact determinism.
 6. Only after that may planner-coupled `fused` closed-loop testing begin.
 
@@ -55,17 +59,17 @@ The current secondary mechanism computes one source-blind candidate-bank concord
 `C = mean sign(q_aff_i-q_aff_j) sign(q_ord_i-q_ord_j)`, then
 `g=max(0,C)`, and uses `e_i=g*q_aff_i`. Because the same `g>=0` multiplies every candidate, local order may attenuate/abstain but cannot reverse affine candidate ordering.
 
-Within each source update the quadtree candidate bank is now generated and
-refined **only with native PMFS scores**. TNQC is applied after the complete
-native bank is frozen. This is intentional: the online implementation and the
-300-s fixed-trajectory replay now operate on the same candidate-bank contract,
-and TNQC cannot select the evidence bank it is scored on.
+Within each source update the quadtree is generated and refined **only with
+native PMFS scores**. After refinement, V3 computes the TNQC concordance gate
+only over the **terminal active free leaves that form the final posterior
+partition**. Subdivided ancestors remain search history and cannot change the
+gate. The 300-s replay reconstructs the same terminal hypothesis set.
 
 On the archived VGR 240-s cross-transport screen this gate releases 11/12 cases and is 11/11 correct; under all 100 positive-scale and 200 monotone-compression stress seeds, coverage remains 11/12 and conditional accuracy remains 100%. This is mechanism evidence only; the 300-s localization gate is still authoritative.
 
 Current scientifically valid status:
 
-**VGR MECHANISM POSITIVE / RANKING-SAFETY FIXED / VGR-300S PRIMARY GATE PENDING / CLOSED-LOOP HOLD.**
+**CONCENTRATION-SPACE MECHANISM POSITIVE / V3 FINAL-LEAF INTEGRITY FIXED / ONLINE HIT-LOGIT VGR-300S PRIMARY GATE PENDING / CLOSED-LOOP HOLD.**
 
 The next command is therefore the 300-s **offline VGR localization gate**, not
 the closed-loop matrix:
