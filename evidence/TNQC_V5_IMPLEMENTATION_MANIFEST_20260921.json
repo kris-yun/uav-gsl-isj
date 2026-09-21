@@ -109,10 +109,21 @@
   "execution_status": {
     "vgr_300s_replay_executed_in_this_chat": false,
     "reason": "Authoritative House scenarios and ROS/GADEN runtime are VM-side.",
-    "github_actions_push_result_visible_to_connector": false,
+    "github_actions_push_result_visible_to_connector": true,
     "next_command": "bash reference/run_tnqc_vgr_offline_gate_20260920.sh",
     "closed_loop": "HOLD until valid=true and go_for_closed_loop=true in the V6 linked-native aggregate",
-    "pre_execution_guard": "reference/verify_tnqc_v5_manifest.py must pass, then reference/build_tnqc_v5_current.sh must clean-build the locked ros2_package tree"
+    "pre_execution_guard": "reference/verify_tnqc_v5_manifest.py must pass, then reference/build_tnqc_v5_current.sh must clean-build the locked ros2_package tree",
+    "github_actions_observation": {
+      "workflow": "TNQC static scientific checks",
+      "observed_runs": 50,
+      "observed_successes": 0,
+      "runner_execution_observed": false,
+      "representative_latest_run_id": 35562988931,
+      "representative_latest_job_id": 106219253138,
+      "representative_latest_job_state": "completed/failure with runner_id=0 and steps=[]",
+      "interpretation": "workflow jobs did not acquire a runner; no static/synthetic/C++ step executed, so these red checks are infrastructure/non-execution and are not scientific test failures",
+      "authoritative_replacement": "the VGR VM runner invokes manifest verification, standalone TNQC core compile/run, clean colcon build, binary provenance checks, and the six-case gate"
+    }
   },
   "file_blob_sha": {
     "ros2_package/CMakeLists.txt": "d7b647921b126f3cf91f07eb11a4ec34f3b6937a",
