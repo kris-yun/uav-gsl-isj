@@ -1,0 +1,71 @@
+{
+  "contract": "DRPE_V1_OFFLINE_DEVELOPMENT_SCREEN_20260921",
+  "base_commit": "b24da77fd24bd5ea2cbb33caf856f80b9d7670e4",
+  "status": "POSITIVE_DEVELOPMENT_SIGNAL_CLOSED_LOOP_PILOT_AUTHORIZED",
+  "constants": {
+    "threshold_ppm": 0.1,
+    "dt_s": 0.2,
+    "periods_s": [
+      1,
+      5,
+      20
+    ],
+    "decay_cycles": 2,
+    "ridge_alpha": 1,
+    "beta": 2,
+    "clip": 3
+  },
+  "native_mean_m": 5.555060292166666,
+  "exponential_onset_mean_m": 5.524817071481902,
+  "drpe_onset_mean_m": 5.502544743198627,
+  "drpe_pooled_reduction_vs_native_fraction": 0.009453595353540768,
+  "drpe_improved_vs_native_cases": 6,
+  "drpe_better_than_exponential_cases": 5,
+  "ablations": {
+    "drpe_hit_onset_blank_mean_m": 5.522770874900085,
+    "drpe_distance_only_mean_m": 5.528133385425309,
+    "branch_pruning": "rejected",
+    "refractory": "rejected",
+    "adaptive_threshold": "rejected",
+    "fractional_memory": "rejected_on_native_endpoint",
+    "difference_predictive_coding": "rejected_cross_house"
+  },
+  "cases": [
+    {
+      "case": "House01_seed0",
+      "native": 5.527347155,
+      "exp_onset": 5.483334089043892,
+      "drpe": 5.441234760444091
+    },
+    {
+      "case": "House01_seed1",
+      "native": 4.001642364,
+      "exp_onset": 3.968738734097381,
+      "drpe": 3.956581812699798
+    },
+    {
+      "case": "House02_seed0",
+      "native": 4.107022746,
+      "exp_onset": 4.045324957957286,
+      "drpe": 4.034832886109734
+    },
+    {
+      "case": "House02_seed1",
+      "native": 3.700743269,
+      "exp_onset": 3.683478150609355,
+      "drpe": 3.689225685746103
+    },
+    {
+      "case": "House03_seed0",
+      "native": 7.782054929,
+      "exp_onset": 7.76759773731138,
+      "drpe": 7.747248202094789
+    },
+    {
+      "case": "House03_seed1",
+      "native": 8.21155129,
+      "exp_onset": 8.20042875987212,
+      "drpe": 8.146145112097257
+    }
+  ]
+}
