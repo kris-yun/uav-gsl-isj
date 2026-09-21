@@ -16,8 +16,9 @@ The screen asks:
   * does an affine quotient retain source identity across fast/slow transport?
   * does it survive source-blind release/gain perturbations?
   * does the broader monotone local-spatial-order channel help or hurt?
-  * can a parameter-free symmetry-hierarchy guard prevent the broader channel
-    from overriding the exact affine quotient when the two disagree?
+  * can a parameter-free candidate-bank concordance gate use the broader
+    channel only as source-blind corroboration without ever reversing the
+    affine candidate ordering?
 
 The authoritative feasibility gate remains:
   House01/02/03 x seed0/1, full 300 simulation seconds,
@@ -187,20 +188,11 @@ def pair_score(
     # Old experimental fusion, retained only as a destructive/control arm.
     equal_fusion = 0.5 * (a + o)
 
-    # Symmetry-hierarchy guard:
-    # the broader monotone/order quotient may corroborate the exact physical
-    # affine quotient, but may not reverse it.  No fitted coefficient or
-    # threshold is introduced.  When signs disagree, fall back to q_aff.
-    order_consistent = valid_edges >= 2 and a * o >= 0.0
-    guarded = 0.5 * (a + o) if order_consistent else a
-
     return {
         "raw": -rmse(q, t),
         "affine": a,
         "order": o,
         "equal_fusion": equal_fusion,
-        "guarded": guarded,
-        "order_consistent": order_consistent,
         "common_bins": len(keys),
         "valid_local_edges": valid_edges,
         "total_local_edges": total_edges,
@@ -220,9 +212,11 @@ def classify(
                 transform = transform_family(key) if transform_family else None
                 fields[key] = field(house, hist[key], end_s, transform)
 
-    methods = ("raw", "affine", "order", "equal_fusion", "guarded")
+    methods = ("raw", "affine", "order", "equal_fusion")
     hits = {k: 0 for k in methods}
     errors = {k: 0.0 for k in methods}
+    gate_covered = 0
+    gate_correct = 0
     cases = []
 
     for house in HOUSES:
@@ -239,6 +233,22 @@ def classify(
                     hits[method] += int(pred == truth)
                     if pred != truth:
                         errors[method] += source_distance(house)
+
+                # Two-candidate instance of the online bank-level concordance
+                # gate.  The local-order channel can only decide whether the
+                # affine quotient is released; it cannot change affine order.
+                da = sa["affine"] - sb["affine"]
+                do = sa["order"] - sb["order"]
+                sda = (da > 0.0) - (da < 0.0)
+                sdo = (do > 0.0) - (do < 0.0)
+                concordance = float(sda * sdo) if sda and sdo else 0.0
+                gate_strength = max(0.0, concordance)
+                gate_prediction = (
+                    "SA" if da >= 0.0 else "SB"
+                ) if gate_strength > 0.0 else None
+                gate_covered += int(gate_prediction is not None)
+                gate_correct += int(gate_prediction == truth)
+
                 cases.append(
                     {
                         "house": house,
@@ -249,18 +259,23 @@ def classify(
                             m: [sa[m], sb[m]]
                             for m in methods
                         },
+                        "candidate_bank_concordance_gate": {
+                            "concordance": concordance,
+                            "strength": gate_strength,
+                            "prediction_if_released": gate_prediction,
+                        },
                         "sa_meta": {
                             k: sa[k]
                             for k in (
-                                "order_consistent", "common_bins",
-                                "valid_local_edges", "total_local_edges"
+                                "common_bins", "valid_local_edges",
+                                "total_local_edges"
                             )
                         },
                         "sb_meta": {
                             k: sb[k]
                             for k in (
-                                "order_consistent", "common_bins",
-                                "valid_local_edges", "total_local_edges"
+                                "common_bins", "valid_local_edges",
+                                "total_local_edges"
                             )
                         },
                     }
@@ -272,6 +287,13 @@ def classify(
         "case_count": n,
         "accuracy": {k: hits[k] / n for k in methods},
         "mean_two_source_error_m": {k: errors[k] / n for k in methods},
+        "candidate_bank_concordance_gate": {
+            "coverage": gate_covered / n,
+            "released_case_count": gate_covered,
+            "conditional_accuracy": (
+                gate_correct / gate_covered if gate_covered else None
+            ),
+        },
         "cases": cases,
     }
 
@@ -327,12 +349,35 @@ def summarize_runs(runs: Sequence[dict], method: str) -> dict:
     }
 
 
+def summarize_gate(runs: Sequence[dict]) -> dict:
+    coverage = sorted(
+        float(r["candidate_bank_concordance_gate"]["coverage"]) for r in runs
+    )
+    conditional = sorted(
+        float(r["candidate_bank_concordance_gate"]["conditional_accuracy"])
+        for r in runs
+        if r["candidate_bank_concordance_gate"]["conditional_accuracy"] is not None
+    )
+    return {
+        "coverage_mean": statistics.fmean(coverage),
+        "coverage_min": coverage[0],
+        "coverage_median": statistics.median(coverage),
+        "coverage_max": coverage[-1],
+        "conditional_accuracy_mean": statistics.fmean(conditional),
+        "conditional_accuracy_min": conditional[0],
+        "conditional_accuracy_max": conditional[-1],
+        "run_count": len(runs),
+    }
+
+
 def compact(result: dict) -> dict:
     return {
         "end_s": result["end_s"],
         "case_count": result["case_count"],
         "accuracy": result["accuracy"],
         "mean_two_source_error_m": result["mean_two_source_error_m"],
+        "candidate_bank_concordance_gate":
+            result["candidate_bank_concordance_gate"],
     }
 
 
@@ -353,9 +398,9 @@ def main() -> None:
         classify(hist, 240.0, monotone_stress(i)) for i in range(1, 201)
     ]
 
-    methods = ("raw", "affine", "order", "equal_fusion", "guarded")
+    methods = ("raw", "affine", "order", "equal_fusion")
     payload = {
-        "contract": "TNQC_VGR_240S_SPATIAL_MECHANISM_V2",
+        "contract": "TNQC_VGR_240S_SPATIAL_MECHANISM_V3",
         "data_ref": args.ref,
         "data_root": ROOT,
         "pmfs_grid": {
@@ -371,10 +416,12 @@ def main() -> None:
         },
         "base_240s_cases": checkpoints["240"]["cases"],
         "scale_nuisance_100_source_blind_seeds": {
-            m: summarize_runs(scale_runs, m) for m in methods
+            **{m: summarize_runs(scale_runs, m) for m in methods},
+            "candidate_bank_concordance_gate": summarize_gate(scale_runs),
         },
         "monotone_compression_200_source_blind_seeds": {
-            m: summarize_runs(monotone_runs, m) for m in methods
+            **{m: summarize_runs(monotone_runs, m) for m in methods},
+            "candidate_bank_concordance_gate": summarize_gate(monotone_runs),
         },
         "frozen_interpretation": {
             "affine_quotient_positive": (
@@ -385,11 +432,11 @@ def main() -> None:
                 checkpoints["240"]["accuracy"]["equal_fusion"]
                 < checkpoints["240"]["accuracy"]["affine"]
             ),
-            "symmetry_hierarchy_guard_survives": (
-                checkpoints["240"]["accuracy"]["guarded"]
-                == checkpoints["240"]["accuracy"]["affine"]
-                and summarize_runs(scale_runs, "guarded")["min"] == 1.0
-                and summarize_runs(monotone_runs, "guarded")["min"] == 1.0
+            "candidate_bank_concordance_gate_positive": (
+                checkpoints["240"]["candidate_bank_concordance_gate"]
+                ["conditional_accuracy"] == 1.0
+                and summarize_gate(scale_runs)["conditional_accuracy_min"] == 1.0
+                and summarize_gate(monotone_runs)["conditional_accuracy_min"] == 1.0
             ),
         },
     }
