@@ -225,8 +225,17 @@ def tnqc_score(alignment, cells, edges):
                 canonical_cosine=qa, local_order_agreement=qo)
 
 
-def candidate_order_concordance(diag):
-    valid = [q for q in diag.values() if q.get("valid") and q.get("edge_count", 0) >= 2]
+def candidate_order_concordance(diag, candidate_ids=None):
+    """Shared quotient-channel gate over a specified hypothesis bank.
+
+    The authoritative bank is the set of candidates that form the final PMFS
+    partition.  Evaluated ancestors that were later subdivided are search
+    history and must not influence the terminal posterior gate.
+    """
+    ids = list(diag) if candidate_ids is None else list(candidate_ids)
+    valid = [diag[cid] for cid in ids
+             if cid in diag and diag[cid].get("valid")
+             and diag[cid].get("edge_count", 0) >= 2]
     signed = 0.0
     pairs = 0
     for i in range(len(valid)):
@@ -327,12 +336,19 @@ def main():
             alignment[cid], args.source_discrimination_power)
         diag[cid] = tnqc_score(alignment[cid], cells, edges)
 
-    bank_gate = candidate_order_concordance(diag)
+    # Only candidates that own at least one cell in the final partition are
+    # terminal source hypotheses.  The all-evaluated-candidate gate is kept
+    # below as a source-blind audit only; it must not control TNQC evidence.
+    active_candidate_ids = sorted(set(part.values()))
+    bank_gate = candidate_order_concordance(diag, active_candidate_ids)
+    all_evaluated_gate_audit = candidate_order_concordance(diag)
+
     fused_s, only_s = {}, {}
+    active_set = set(active_candidate_ids)
     for cid in candidates:
         q = diag[cid]
         e = (bank_gate["strength"] * q["canonical_cosine"]
-             if bank_gate["valid"] and q["valid"] else 0.0)
+             if cid in active_set and bank_gate["valid"] and q["valid"] else 0.0)
         e = max(-1.0, min(1.0, e))
         q["bank_evidence"] = e
         fused_s[cid] = native_s[cid] + e
@@ -351,10 +367,11 @@ def main():
     nr = metrics(native_replay, cells, args.truth_x, args.truth_y)
     fm = metrics(fused, cells, args.truth_x, args.truth_y)
     om = metrics(only, cells, args.truth_x, args.truth_y)
-    ev = [q["bank_evidence"] for q in diag.values() if q["valid"]]
+    ev = [diag[cid]["bank_evidence"] for cid in active_candidate_ids
+          if diag[cid]["valid"]]
 
     payload = {
-        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V2",
+        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V3_FINAL_LEAF_GATE",
         "run_dir": str(args.run_dir),
         "budget_s": args.budget_s,
         "selected_source_update_id": uid,
@@ -363,6 +380,9 @@ def main():
         "truth": [args.truth_x, args.truth_y],
         "free_cell_count": len(cells),
         "candidate_count": len(candidates),
+        "total_evaluated_candidate_count": len(candidates),
+        "final_leaf_candidate_count": len(active_candidate_ids),
+        "candidate_gate_scope": "final_partition_leaf_candidates_only",
         "local_edge_count": len(edges),
         "native_reconstruction_audit": {
             **audit,
@@ -371,6 +391,12 @@ def main():
             "pass": audit_pass,
         },
         "tnqc_candidate_bank_gate": bank_gate,
+        "tnqc_all_evaluated_candidate_gate_audit": all_evaluated_gate_audit,
+        "tnqc_gate_scope_audit": {
+            "all_evaluated_gate_differs_from_final_leaf_gate":
+                all_evaluated_gate_audit != bank_gate,
+            "final_leaf_candidate_ids": active_candidate_ids,
+        },
         "tnqc_evidence": {
             "valid_candidate_count": len(ev),
             "min": min(ev) if ev else None,
