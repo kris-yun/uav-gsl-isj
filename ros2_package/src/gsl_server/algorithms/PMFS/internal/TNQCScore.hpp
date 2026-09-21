@@ -27,11 +27,20 @@ namespace GSL::PMFS_internal::TNQC
     struct BankGate
     {
         bool valid = false;
+        // Informative pairs: main affine ordering exists and the local-order
+        // channel has enough support and is non-tied.
         std::size_t pairCount = 0;
-        // Sum of hypothesis-measure products over non-tied valid pairs.
-        // With unit hypothesis weights this equals pairCount.
         double pairWeight = 0.0;
+        // Reference pairs: all non-tied affine-order pairs among valid main
+        // quotient candidates. Unsupported/tied local-order pairs remain in
+        // this reference mass and therefore act as abstentions.
+        std::size_t referencePairCount = 0;
+        double referencePairWeight = 0.0;
+        double informativeCoverage = 0.0;
+        // Conditional concordance on informative pairs.
         double concordance = 0.0;
+        // Actual shared evidence strength. This equals
+        // max(0, concordance) * informativeCoverage.
         double strength = 0.0;
     };
 
@@ -152,16 +161,25 @@ namespace GSL::PMFS_internal::TNQC
     // by the broader local-order quotient.  The gate is one shared,
     // non-negative scalar for the entire candidate bank:
     //
-    //   C = [sum_{i<j} m_i m_j sign(a_i-a_j) sign(o_i-o_j)]
-    //       / [sum_{i<j} m_i m_j]
-    //   g = max(0, C)
-    //   e_i = g a_i
+    // Let W_main be the hypothesis-pair measure over all valid pairs whose
+    // affine quotient has a non-tied ordering. Let W_info be the subset for
+    // which local order also has sufficient support and a non-tied ordering.
     //
-    // m_i is the hypothesis measure represented by candidate i.  Passing an
-    // empty vector uses m_i=1.  In PMFS V4, terminal leaf m_i is its covered
-    // free-cell count. This is exactly equivalent to expanding every leaf
-    // into m_i identical cell-level hypotheses and computing ordinary
-    // concordance after ignoring within-leaf ties.
+    //   C_cond = [sum_info m_i m_j sign(a_i-a_j) sign(o_i-o_j)] / W_info
+    //   rho    = W_info / W_main
+    //   g      = max(0, C_cond) * rho
+    //          = max(0, signed_info / W_main)
+    //   e_i    = g a_i
+    //
+    // Thus a local-order tie or lack of local-order support is a real
+    // abstention: it contributes zero signed evidence but remains in the
+    // reference main-order mass, so sparse corroboration cannot normalize
+    // itself back to unit strength.
+    //
+    // m_i is the hypothesis measure represented by candidate i. Passing an
+    // empty vector uses m_i=1. In PMFS V5, terminal leaf m_i is its covered
+    // free-cell count. This remains exactly equivalent to cell-expanding the
+    // leaf bank for both reference and informative pair masses.
     //
     // Because the same g >= 0 multiplies every affine score, the local-order
     // channel can attenuate/abstain but can never reverse the affine ranking.
@@ -188,29 +206,55 @@ namespace GSL::PMFS_internal::TNQC
 
         for (std::size_t i = 0; i < scores.size(); ++i)
         {
-            if (!scores[i].valid || scores[i].edgeCount < 2)
+            if (!scores[i].valid)
                 continue;
             const double mi = measureAt(i);
             for (std::size_t j = i + 1; j < scores.size(); ++j)
             {
-                if (!scores[j].valid || scores[j].edgeCount < 2)
+                if (!scores[j].valid)
                     continue;
-                const int sa = signum(scores[i].canonicalCosine - scores[j].canonicalCosine);
-                const int so = signum(scores[i].localOrderAgreement - scores[j].localOrderAgreement);
-                if (sa == 0 || so == 0)
+
+                const int sa = signum(
+                    scores[i].canonicalCosine - scores[j].canonicalCosine);
+                if (sa == 0)
                     continue;
+
                 const double pairWeight = mi * measureAt(j);
+                out.referencePairWeight += pairWeight;
+                ++out.referencePairCount;
+
+                // The main quotient orders this pair, but local order cannot
+                // corroborate it without support on both candidates. Keep
+                // the pair in the reference mass and contribute zero.
+                if (scores[i].edgeCount < 2 || scores[j].edgeCount < 2)
+                    continue;
+
+                const int so = signum(
+                    scores[i].localOrderAgreement -
+                    scores[j].localOrderAgreement);
+                if (so == 0)
+                    continue;
+
                 signedPairs += pairWeight * static_cast<double>(sa * so);
                 out.pairWeight += pairWeight;
                 ++out.pairCount;
             }
         }
-        if (out.pairCount == 0 || !(out.pairWeight > 0.0))
+
+        if (!(out.referencePairWeight > 0.0))
             return out;
 
-        out.concordance = std::clamp(
-            signedPairs / out.pairWeight, -1.0, 1.0);
-        out.strength = std::max(0.0, out.concordance);
+        out.informativeCoverage = std::clamp(
+            out.pairWeight / out.referencePairWeight, 0.0, 1.0);
+        if (out.pairWeight > 0.0)
+            out.concordance = std::clamp(
+                signedPairs / out.pairWeight, -1.0, 1.0);
+        else
+            out.concordance = 0.0;
+
+        const double signedPerReference =
+            signedPairs / out.referencePairWeight;
+        out.strength = std::max(0.0, signedPerReference);
         out.valid = std::isfinite(out.strength);
         return out;
     }
