@@ -5,12 +5,13 @@ Branch: `main`
 
 ## 0. Status that must not be overstated
 
-> **V3 correction (2026-09-21):** `docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md`
-> is authoritative over this earlier handoff wherever wording differs. V3
-> restricts the bank gate to terminal active PMFS leaves, anchors the Python
-> endpoint to the native C++ `ExpectedValue(...,0.05)` result, and explicitly
-> distinguishes the archived 240-s `gas_ppm` mechanism screen from the online
-> PMFS hit-logit variable.
+> **V4/V3 corrections (2026-09-21):**
+> `docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md` is authoritative for
+> the gate measure and `docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md` is
+> authoritative for the online-variable/quotient claim boundary. V4 uses
+> terminal active PMFS leaves weighted by represented free-cell count. V3
+> anchors the Python endpoint to native C++ `ExpectedValue(...,0.05)` and
+> distinguishes the archived 240-s `gas_ppm` screen from online hit-logits.
 
 **VGR/GADEN concentration-space mechanism signal: positive.**
 **VGR/GADEN 300-s offline localization gain: not yet established.**
@@ -111,15 +112,16 @@ keeping every candidate score on the same side of zero does **not** guarantee
 that the relative ordering of two source hypotheses is preserved.
 
 The corrected secondary mechanism therefore acts once per candidate bank,
-not independently per candidate. For valid candidates (s_i), let
-(a_i=q_{\rm aff}(s_i)) and (o_i=q_{\rm ord}(s_i)). Define
+not independently per candidate. For valid terminal leaves (s_i), let
+(a_i=q_{\rm aff}(s_i)), (o_i=q_{\rm ord}(s_i)), and let (m_i) be the
+number of free source cells represented by leaf i. V4 defines
 
 [
 C_u=
-\frac{1}{|\mathcal P_u|}
-\sum_{(i,j)\in\mathcal P_u}
+\frac{\sum_{i<j}m_i m_j
 \operatorname{sgn}(a_i-a_j)
-\operatorname{sgn}(o_i-o_j),
+\operatorname{sgn}(o_i-o_j)}
+{\sum_{i<j}m_i m_j},
 ]
 
 where ties and candidates without sufficient local-order support are omitted.
@@ -141,10 +143,10 @@ truth, fitted coefficient, candidate rank, or post-hoc threshold is used.
 Within each source update, PMFS candidate generation and quadtree refinement
 are intentionally driven by the historical native likelihood only. TNQC
 retains the evaluation history for audit, but after refinement it computes the
-shared gate only on terminal active free leaves of the final PMFS partition.
-Subdivided ancestors are search history and cannot alter the gate. The 300-s
-fixed-trajectory replay reconstructs and uses the identical final-leaf
-hypothesis set.
+shared gate only on terminal active free leaves of the final PMFS partition,
+with leaf measure equal to represented free-cell count. Subdivided ancestors
+are search history and cannot alter the gate. The 300-s fixed-trajectory
+replay reconstructs the identical final-leaf hypothesis measure.
 
 The online arms remain
 
@@ -440,7 +442,7 @@ This separates “beats baseline PMFS” from “adds value beyond the already s
 
 Do not change:
 - candidate-bank concordance rule `g=max(0,C)` and `e_i=g*q_aff_i`;
-- V3 gate scope: terminal active free leaves of the final PMFS partition only; subdivided ancestors are audit/search history only;
+- V4 gate scope: terminal active free leaves only, pair-weighted by represented free-cell measure; subdivided ancestors and unweighted-leaf gates are audit only;
 - evidence bound ([-1,1]);
 - support rule (<4 supported cells => invalid);
 - local-edge definition;
