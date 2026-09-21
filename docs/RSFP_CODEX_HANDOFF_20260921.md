@@ -82,6 +82,10 @@ Required variants:
 - `lower_envelope_only`: minimum candidate canonical score over factors 1/2/4/8;
 - `fixed_only`: **scale-stable pairwise dominance**.
 
+All five variants are converted to the **same final-partition-measure-weighted signed pairwise dominance score in [-1,1]** before constructing the counterfactual source map. The variants differ only in how a candidate pair is decided.
+
+For `fine_only`, `coarse_only`, `mean_only`, and `lower_envelope_only`, pair ordering is taken from the named scalar statistic.
+
 For `fixed_only`, every active candidate pair is compared at factors 1/2/4/8:
 
 - same nonzero ordering sign at all four scales -> stable signed pair evidence;
@@ -89,6 +93,8 @@ For `fixed_only`, every active candidate pair is compared at factors 1/2/4/8:
 - tie at any scale -> non-comparable pair;
 - pair weight = product of the two candidates' represented final-partition free-cell counts;
 - candidate score = signed stable-pair weight / comparable reference-pair weight.
+
+Because the output score map is common across primary and controls, any primary advantage is attributable to the cross-scale ordering rule rather than to a different score scale or posterior mapping.
 
 Scientific primary:
 
@@ -115,7 +121,7 @@ This choice is frozen before inspecting RSFP 300-s outcomes.
 
 RSFP is not promoted merely because a coarse map works.
 
-The primary must beat all three pooled controls:
+The primary must beat all four pooled controls:
 
 - `fine_only/only`;
 - `coarse_only/only`;
