@@ -32,8 +32,10 @@ def main():
         d.mkdir(parents=True)
         with (bank / "source_update_timing.csv").open("w", newline="") as f:
             w = csv.writer(f)
-            w.writerow(["run_uuid", "source_update_id", "sim_time"])
-            w.writerow(["fixture", 1, 295.0])
+            w.writerow(["run_uuid", "source_update_id", "sim_time",
+                        "grid_width", "grid_height", "cell_size",
+                        "origin_x", "origin_y"])
+            w.writerow(["fixture", 1, 295.0, 4, 4, 1.0, -0.5, -0.5])
 
         probs = {}
         with (d / "measured_hit_probability.csv").open("w", newline="") as f:
@@ -106,7 +108,8 @@ def main():
         fixture_csv = root / "fixture_native_posterior.csv"
         replay.write_endpoint_posterior(fixture_csv, native, cells)
         fixture_cpp = replay.cpp_endpoint_metrics(
-            evaluator, fixture_csv, 0.0, 0.0)
+            evaluator, fixture_csv, 0.0, 0.0,
+            replay.GridMetadata(4, 4, 1.0, -0.5, -0.5))
         fixture_python = replay.metrics(native, cells, 0.0, 0.0)
         reported = fixture_cpp["pmfs_top5_error_m"]
         (root / "launch.log").write_text(
@@ -128,18 +131,20 @@ def main():
              "--run-dir", str(root),
              "--truth-x", "0.0", "--truth-y", "0.0",
              "--cpp-endpoint-evaluator", str(evaluator),
+             "--allow-standalone-endpoint-for-test",
              "--json-out", str(out_json)],
             check=False, capture_output=True, text=True)
         assert proc.returncode == 0, proc.stdout + "\n" + proc.stderr
         payload = json.loads(out_json.read_text(encoding="utf-8"))
         assert payload["contract"] == (
-            "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V6_CPP_ENDPOINT_PARITY")
+            "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V7_LINKED_NATIVE_ENDPOINT")
         assert payload["candidate_gate_scope"] == (
             "final_partition_leaf_candidates_free_cell_measure_support_coverage_weighted")
         assert payload["native_reconstruction_audit"]["pass"]
         assert payload["native_cpp_endpoint_audit"]["pass"]
         assert payload["endpoint_evaluator"]["engine"] == (
-            "cpp_std_sort_clone_of_PMFS_ExpectedValue_0p05")
+            "standalone_std_sort_clone_v2")
+        assert payload["endpoint_evaluator"]["engine_integrity_pass"]
         assert payload["valid_for_gate"]
 
         # Candidate-wise sign consistency is insufficient: naive averaging
