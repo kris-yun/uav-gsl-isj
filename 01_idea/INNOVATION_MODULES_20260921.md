@@ -100,13 +100,16 @@ Current evidence ladder:
 1. algebra/unit tests — passed;
 2. concentration-space mechanism evidence — positive;
 3. House01/seed0 300-s pipeline validation — passed;
-4. House01/seed0 TNQC localization effect — approximately neutral/slightly
-   worse in the first valid case;
-5. six-case House01/02/03 x seed0/1 verdict — pending;
-6. closed-loop TNQC effect — pending and prohibited until the six-case
-   offline gate is complete.
+4. six-case House01/02/03 x seed0/1 fixed-trajectory integrity — 6/6 passed;
+5. six-case scientific verdict — **HOLD**;
+6. pooled improvement — **-0.009162%**;
+7. improved cases — **1/6**;
+8. false-confident-collapse cases — **6/6**;
+9. TNQC V5 FUSED closed loop — **not run by design after HOLD**.
 
-Do not tune V5 after observing individual House results.
+TNQC V5 is now closed as a frozen negative result. Do not tune it on these
+six cases. The next-generation active-deconfounding line is a new method,
+not V5.1.
 
 ## C. Next-generation research direction — Active Source–Transport
 Deconfounding
