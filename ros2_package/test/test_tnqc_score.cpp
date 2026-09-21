@@ -124,6 +124,19 @@ int main()
     assert(e0 >= e1);
     assert(e1 >= e2);
 
+    // Hypothesis-measure weighting must equal explicit expansion to the
+    // represented cell-level hypothesis bank. Duplicate copies of one leaf
+    // tie with each other and therefore contribute no within-leaf pairs.
+    const TNQC::BankGate weighted =
+        TNQC::candidateOrderConcordance({c0, c1, c2}, {3.0, 1.0, 2.0});
+    const TNQC::BankGate expanded =
+        TNQC::candidateOrderConcordance({c0, c0, c0, c1, c2, c2});
+    assert(weighted.valid);
+    assert(expanded.valid);
+    assert(close(weighted.concordance, expanded.concordance));
+    assert(close(weighted.pairWeight,
+                 static_cast<double>(expanded.pairCount)));
+
     // Fewer than four supported cells is intentionally non-identifying.
     std::vector<unsigned char> weakSupport(observed.size(), 0);
     weakSupport[0] = weakSupport[1] = weakSupport[2] = 1;
