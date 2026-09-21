@@ -35,9 +35,13 @@ Authoritative VGR roots used by the frozen runner:
 - `/mnt/hgfs/workspace/GADEN_files/scenarios/House02`
 - `/mnt/hgfs/workspace/GADEN_files/scenarios/House03`
 
-External launch prerequisite:
+External launch prerequisite for the later SHADOW/FUSED closed-loop arms:
 `/dev/shm/meaci_online_20260824/launch/vgr_gsl_pmfs_pfdi.launch.py`
-must declare and forward `tnqc_mode` to the PMFS node. If absent, change launch plumbing only.
+must declare and forward `tnqc_mode` to the PMFS node. **Do not block the
+300-s offline gate on this:** that gate runs `TNQC_MODE=off` online and
+applies TNQC only in the read-only replay. If the offline gate returns GO and
+the launch argument is absent, change launch plumbing only before the
+OFF/SHADOW determinism run.
 
 Do not tune TNQC after viewing House truth.
 
