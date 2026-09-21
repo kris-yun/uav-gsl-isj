@@ -1,5 +1,11 @@
 # TNQC ranking-safety correction — 2026-09-21
 
+> **Historical correction retained for rationale.** The non-reversal idea in
+> this document remains valid, but its unweighted candidate-bank measure is
+> superseded by `docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md`.
+> V4 applies the same shared non-negative gate only to terminal active leaves
+> and weights leaf pairs by represented free-cell measure.
+
 ## Why this correction exists
 
 A code audit found a real flaw in the first auxiliary fusion rule.
