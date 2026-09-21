@@ -4,13 +4,17 @@
 Consumes a native PMFS context-bank export from a full-budget VGR House run.
 The robot trajectory, measurements, wind field, native candidate bank and
 refinement decisions stay fixed. TNQC only reweights the frozen candidate
-likelihoods. This matches the online V4 contract: quadtree refinement is
-native within each source update; the concordance gate is computed only on
-terminal active leaves, weighted by each leaf's represented free-cell
-multiplicity. Source truth is used only after all posteriors are constructed.
+likelihoods. This matches the online V5 method contract: quadtree refinement
+is native within each source update; the concordance gate is computed only on
+terminal active leaves, weighted by represented free-cell multiplicity and
+attenuated by local-order support coverage. Source truth is used only after
+all posteriors are constructed.
 
 The replay audits itself by reconstructing native PMFS from the exported
 candidate alignment/rectangles and comparing it with source_posterior.csv.
+The authoritative top-5% endpoint is evaluated by a standalone C++ clone of
+PMFS ExpectedValue(..., 0.05), and that clone must reproduce the native PMFS
+logged endpoint before any TNQC counterfactual is accepted.
 """
 from __future__ import annotations
 
