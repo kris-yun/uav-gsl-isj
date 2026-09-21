@@ -556,7 +556,7 @@ namespace GSL::PMFS_internal
             {
                 resultsFirstLevel.push_back(std::move(result));
                 numberOfSimulations++;
-                if (tnqcMode == "off")
+                if (tnqcMode == "off" || tnqcMode == "shadow")
                 {
                     const SimulationResult& stored = resultsFirstLevel.back();
                     for (int cell = 0; cell < static_cast<int>(stored.hitMap.size()); ++cell)
@@ -580,7 +580,7 @@ namespace GSL::PMFS_internal
         recordP2Candidates(scores);
 
 // update the variance thing (for the movement strategy)
-        if (tnqcMode == "off")
+        if (tnqcMode == "off" || tnqcMode == "shadow")
         {
 #pragma omp parallel for
             for (int cellI = 0; cellI < measuredHitProb.data.size(); cellI++)
@@ -678,8 +678,12 @@ namespace GSL::PMFS_internal
         {
             applyTNQCBankGate(tnqcCandidateBank);
 
-            varianceCalculationData.assign(
-                measuredHitProb.data.size(), VarianceCalculationData{});
+            const bool tnqcChangesWeights =
+                tnqcMode == "fused" || tnqcMode == "only";
+            if (tnqcChangesWeights)
+                varianceCalculationData.assign(
+                    measuredHitProb.data.size(), VarianceCalculationData{});
+
             size_t validTNQC = 0;
             double sumCosine = 0.0;
             double sumOrder = 0.0;
@@ -718,26 +722,32 @@ namespace GSL::PMFS_internal
                     maxEvidence = std::max(maxEvidence, evidence);
                 }
 
-                for (int cell = 0;
-                     cell < static_cast<int>(result.hitMap.size()); ++cell)
+                if (tnqcChangesWeights)
                 {
-                    auto& var = varianceCalculationData[cell];
-                    weighted_incremental_variance(
-                        result.hitMap[cell], result.sourceProb,
-                        var.mean, var.weight_sum, var.weight_squared_sum,
-                        var.variance);
+                    for (int cell = 0;
+                         cell < static_cast<int>(result.hitMap.size()); ++cell)
+                    {
+                        auto& var = varianceCalculationData[cell];
+                        weighted_incremental_variance(
+                            result.hitMap[cell], result.sourceProb,
+                            var.mean, var.weight_sum, var.weight_squared_sum,
+                            var.variance);
+                    }
                 }
             }
 
-#pragma omp parallel for
-            for (int cellI = 0; cellI < measuredHitProb.data.size(); ++cellI)
+            if (tnqcChangesWeights)
             {
-                if (measuredHitProb.occupancy[cellI] != Occupancy::Free)
-                    continue;
-                const auto& var = varianceCalculationData[cellI];
-                varianceOfHitProb[cellI] = var.weight_sum > 0.0
-                    ? var.variance / var.weight_sum
-                    : 0.0;
+#pragma omp parallel for
+                for (int cellI = 0; cellI < measuredHitProb.data.size(); ++cellI)
+                {
+                    if (measuredHitProb.occupancy[cellI] != Occupancy::Free)
+                        continue;
+                    const auto& var = varianceCalculationData[cellI];
+                    varianceOfHitProb[cellI] = var.weight_sum > 0.0
+                        ? var.variance / var.weight_sum
+                        : 0.0;
+                }
             }
 
             if (validTNQC > 0)
