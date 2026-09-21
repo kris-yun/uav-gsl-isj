@@ -1,0 +1,48 @@
+{
+  "status": "PROPOSAL_NOT_APPROVED_NOT_EXECUTED",
+  "scope": "Protocol checklist only; not a runtime enforcement patch or verification of V7",
+  "nominal_search_budget_seconds": 300.0,
+  "primary_endpoint": "native timeout -> saveResultsToFile -> RESULT IS; bound to final posterior state",
+  "estimator": "linked-native ExpectedValue(sourceProbability,0.05)",
+  "fallback_endpoint_role": "diagnostic_only_until_same_state_equivalence_proven",
+  "clock": {
+    "authority": "actual frozen PMFS timeout clock",
+    "recommended_prospective_clock": "ROSTime driven by designated /clock with use_sim_time=true",
+    "clock_publisher": null,
+    "start_event_code_location": null,
+    "actual_use_sim_time": null,
+    "gaden_to_search_time_map": null,
+    "sensor_to_search_time_map": null
+  },
+  "grace": {
+    "type": "wall_or_steady_clock_IO_only_after_scientific_freeze",
+    "fixed_duration_seconds": null,
+    "post_freeze_observations_allowed": false,
+    "post_freeze_planning_allowed": false,
+    "post_freeze_posterior_updates_allowed": false,
+    "unverified_pending_computation_policy": "must_resolve_before_acceptance"
+  },
+  "runtime_identity": {
+    "code_sha": null,
+    "binary_sha": null,
+    "resolved_config_sha": null,
+    "linked_estimator_sha": null,
+    "recovered_launch_sha": null,
+    "historic_launch_sha": null,
+    "historic_identity_proven": false
+  },
+  "replay_inputs": {
+    "format": "CSV_can_be_computationally_complete_if_verified",
+    "f32_mandatory_by_extension": false,
+    "actual_V7_dependency_audit_complete": false,
+    "native_reconstruction_passed": false
+  },
+  "failure_statuses": [
+    "ENDPOINT_MISSING_INCOMPLETE",
+    "CLOCK_MAPPING_INVALID",
+    "POST_CUTOFF_SCIENTIFIC_UPDATE_INVALID",
+    "NATIVE_RECONSTRUCTION_INVALID",
+    "SCIENTIFIC_GATE_HOLD_AFTER_VALID_EXECUTION"
+  ],
+  "approval_required": true
+}
