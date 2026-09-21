@@ -10,7 +10,7 @@ Branch: `main`
 **Closed-loop localization gain: not yet established.**
 
 The VGR project-data mechanism screen is frozen in
-`evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json`.  Orebro is
+`evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json`.  Orebro is
 auxiliary only. Codex must not start the planner-coupled House matrix until
 `docs/TNQC_VGR_300S_CORRECTION_20260920.md` is satisfied and the 300-s gate
 returns an explicit GO.
@@ -96,34 +96,54 @@ q_{\rm ord}(g(x),h(y_s))=q_{\rm ord}(x,y_s).
 
 This is deliberately **local adjacency order**, not global concentration ranking.
 
-### Secondary innovation: symmetry-hierarchy consistency guard
+### Secondary innovation: candidate-bank quotient-channel concordance gate
 
-The VGR spatial screen falsified unconditional 1:1 fusion: in H02/fast/SA,
-the exact affine quotient selected the correct source while the broader local
-order channel reversed it.  The frozen repair is parameter-free:
+The VGR spatial screen first falsified unconditional 1:1 fusion. A later
+counterexample exposed a deeper flaw in the first per-candidate sign guard:
+keeping every candidate score on the same side of zero does **not** guarantee
+that the relative ordering of two source hypotheses is preserved.
+
+The corrected secondary mechanism therefore acts once per candidate bank,
+not independently per candidate. For valid candidates (s_i), let
+(a_i=q_{\rm aff}(s_i)) and (o_i=q_{\rm ord}(s_i)). Define
 
 [
-e_s=
-\begin{cases}
-\tfrac12(q_{\rm aff}(s)+q_{\rm ord}(s)),
-& |E_s|\ge2\ \text{and}\ q_{\rm aff}(s)q_{\rm ord}(s)\ge0,\\
-q_{\rm aff}(s), & \text{otherwise}.
-\end{cases}
+C_u=
+\frac{1}{|\mathcal P_u|}
+\sum_{(i,j)\in\mathcal P_u}
+\operatorname{sgn}(a_i-a_j)
+\operatorname{sgn}(o_i-o_j),
 ]
 
-The hierarchy is deliberate: the broader monotone quotient may corroborate the
-exact physical affine quotient, but may not reverse it. By construction
-(e_s\in[-1,1]). The online arms are
+where ties and candidates without sufficient local-order support are omitted.
+The shared gate is
 
 [
-L_{\rm fused}(s)=L_{\rm native}(s)\exp(e_s),
+g_u=\max(0,C_u),
 \qquad
-L_{\rm only}(s)=\exp(e_s).
+e_i=g_u a_i.
 ]
 
-`shadow` computes the same (e_s) but leaves (L_{\rm native}) untouched.
+The same non-negative (g_u) multiplies every affine candidate score.
+Therefore local order can attenuate or abstain when the two quotient channels
+disagree, but it **cannot reverse any affine candidate ordering**. No source
+truth, fitted coefficient, candidate rank, or post-hoc threshold is used.
 
-**Important frozen design decision:** do not multiply (e_s) by (sqrt{N_{\rm eff}}) or raw cell count. PMFS map cells are spatially correlated/smoothed; such scaling would create pseudo-replication and could overwhelm the native likelihood.
+The online arms remain
+
+[
+L_{\rm fused}(s_i)=L_{\rm native}(s_i)\exp(e_i),
+\qquad
+L_{\rm only}(s_i)=\exp(e_i).
+]
+
+`shadow` computes the same bank gate and evidence but leaves
+(L_{\rm native}) untouched.
+
+**Important frozen design decision:** do not multiply evidence by
+(sqrt{N_{\rm eff}}) or raw cell count. PMFS map cells are spatially
+correlated/smoothed; such scaling would create pseudo-replication and could
+overwhelm the native likelihood.
 
 ---
 
@@ -199,19 +219,21 @@ At 240 s:
 | affine quotient | **12/12** |
 | local spatial order | 11/12 |
 | unconditional equal fusion | 11/12 |
-| symmetry-hierarchy guarded | **12/12** |
 
 Nominal raw is already perfect, so the positive signal is not a nominal
-accuracy claim.  Under 100 source-blind independent positive-scale
-perturbation seeds, raw falls to 10/12 while affine and guarded remain 12/12
-for all 100 seeds.  Under 200 source-blind monotone-compression seeds, raw
-mean accuracy is 0.7833 (min 0.6667), while affine and guarded remain 12/12
-for all 200 seeds.
+accuracy claim. The exact affine quotient remains 12/12 at 240 s.
 
-The exact failure that rejected unconditional fusion is H02/fast/SA:
-`q_aff=[-0.02142,-0.03821]` correctly prefers SA, while
-`q_ord=[0.75758,0.87879]` prefers SB and equal averaging flips the result.
-The hierarchy guard falls back to the exact affine quotient.
+The corrected candidate-bank concordance gate **releases 11/12 cases and is
+11/11 correct when released**. The single abstention is H02/fast/SA:
+`q_aff=[-0.02142,-0.03821]` correctly orders SA above SB, while
+`q_ord=[0.75758,0.87879]` orders SB above SA, so (C=-1) and (g=0).
+This is exactly the case where unconditional equal fusion failed.
+
+Across all 100 source-blind positive-scale stress seeds and all 200
+source-blind monotone-compression stress seeds, gate coverage remains 11/12
+and conditional accuracy remains 100%. The secondary channel is therefore
+validated as a **source-blind abstention/corroboration mechanism**, not as an
+independent source classifier.
 
 Reproduction:
 
@@ -221,7 +243,7 @@ python3 reference/tnqc_vgr_offline_240s.py \
 ```
 
 Frozen record:
-`evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json`.
+`evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json`.
 
 This is still a fixed-route mechanism test, not the 300-s PMFS localization
 endpoint.
@@ -252,7 +274,7 @@ Standalone invariance test:
 
 Project-data mechanism probe:
 - `reference/tnqc_vgr_offline_240s.py`
-- `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json`
+- `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json`
 
 Auxiliary external probe:
 - `reference/tnqc_orebro_offline.py`
@@ -395,7 +417,7 @@ This separates “beats baseline PMFS” from “adds value beyond the already s
 ## 6. No-touch list before the first House matrix is complete
 
 Do not change:
-- symmetry-hierarchy guard (local order can corroborate but not reverse q_aff);
+- candidate-bank concordance rule `g=max(0,C)` and `e_i=g*q_aff_i`;
 - evidence bound ([-1,1]);
 - support rule (<4 supported cells => invalid);
 - local-edge definition;
@@ -456,10 +478,10 @@ Key commits already on `main`:
 
 Additional frozen VGR commits:
 - `92b1d9f5` — align VGR mechanism screen to the real PMFS 0.3 m spatial grid
-- `595d8fba` — symmetry-hierarchy guard in online TNQC score
-- `e14699fc` — make the 300-s replay use the identical guarded equation
-- `4e0d1f06` — standalone hierarchy-guard test
-- `a921ac14` — freeze the VGR spatial mechanism evidence
+- `595d8fba` / `e14699fc` / `4e0d1f06` — superseded per-candidate sign-guard attempt (retained in history only)
+- `0dddb1cd` / `aa3e3f87` — candidate-bank ranking-safe gate + reversal-counterexample test
+- `abf04abc` / `08070d6f` — identical ranking-safe rule in the 300-s replay + parity test
+- `69182c6a` — corrected VGR spatial mechanism evidence
 
 The scientifically correct status at handoff is:
 
