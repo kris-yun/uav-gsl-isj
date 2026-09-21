@@ -51,15 +51,26 @@ namespace
 
 int main(int argc, char** argv)
 {
-    if (argc != 4)
+    if (argc != 9)
     {
-        std::cerr << "usage: tnqc_expected_value_eval <posterior.csv> <truth_x> <truth_y>\n";
+        std::cerr
+            << "usage: tnqc_expected_value_eval <posterior.csv> "
+            << "<grid_width> <grid_height> <cell_size> <origin_x> <origin_y> "
+            << "<truth_x> <truth_y>\n";
         return 2;
     }
 
     const std::string path = argv[1];
-    const double truthX = std::stod(argv[2]);
-    const double truthY = std::stod(argv[3]);
+    // Grid metadata arguments are intentionally accepted for CLI parity with
+    // the authoritative linked-native evaluator. This standalone clone uses
+    // the CSV coordinates directly and remains test/audit-only.
+    (void)std::stoi(argv[2]);
+    (void)std::stoi(argv[3]);
+    (void)std::stod(argv[4]);
+    (void)std::stod(argv[5]);
+    (void)std::stod(argv[6]);
+    const double truthX = std::stod(argv[7]);
+    const double truthY = std::stod(argv[8]);
 
     std::ifstream file(path);
     if (!file.is_open())
@@ -137,7 +148,8 @@ int main(int argc, char** argv)
     const double error = std::hypot(averageX - truthX, averageY - truthY);
 
     std::cout << std::setprecision(17)
-              << "{\"pmfs_top5_x\":" << averageX
+              << "{\"engine\":\"standalone_std_sort_clone_v2\""
+              << ",\"pmfs_top5_x\":" << averageX
               << ",\"pmfs_top5_y\":" << averageY
               << ",\"pmfs_top5_error_m\":" << error
               << ",\"pmfs_top5_cell_count\":" << selected
