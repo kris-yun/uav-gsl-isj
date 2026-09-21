@@ -12,6 +12,7 @@ on:
       - "reference/tnqc_vgr_offline_240s.py"
       - "reference/tnqc_vgr_fixed_trajectory_replay.py"
       - "reference/tnqc_expected_value_eval.cpp"
+      - "reference/verify_tnqc_v5_manifest.py"
       - "reference/test_tnqc_vgr_fixed_trajectory_replay.py"
       - "reference/aggregate_tnqc_vgr_offline_gate.py"
       - "reference/evaluate_tnqc_closed_loop_300s.py"
@@ -37,6 +38,15 @@ jobs:
 
           echo "## python-pycompile" >> "$out"
           python3 -m py_compile             reference/tnqc_vgr_offline_240s.py             reference/tnqc_vgr_fixed_trajectory_replay.py             reference/test_tnqc_vgr_fixed_trajectory_replay.py             reference/aggregate_tnqc_vgr_offline_gate.py             reference/evaluate_tnqc_closed_loop_300s.py             >> "$out" 2>&1
+          rc=$?
+          echo "rc=$rc" >> "$out"
+          (( rc == 0 )) || overall=1
+
+          echo "## manifest-verification" >> "$out"
+          python3 reference/verify_tnqc_v5_manifest.py \
+            --root . \
+            --manifest evidence/TNQC_V5_IMPLEMENTATION_MANIFEST_20260921.json \
+            >> "$out" 2>&1
           rc=$?
           echo "rc=$rc" >> "$out"
           (( rc == 0 )) || overall=1
