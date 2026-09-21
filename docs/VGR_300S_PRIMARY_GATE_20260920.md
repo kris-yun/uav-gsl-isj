@@ -29,9 +29,9 @@ These are VM-side datasets. The GitHub repository contains the frozen code and s
 ### Gate V0 — build / invariance / project-data mechanism sanity
 
 Run the standalone TNQC quotient test and confirm exact affine invariance,
-monotone local-order invariance, the symmetry-hierarchy fallback when the two
-channels disagree, negative reversed-field evidence, and insufficient-support
-abstention.
+monotone local-order invariance, the candidate-ranking reversal counterexample,
+the candidate-bank concordance abstention rule, negative reversed-field
+evidence, and insufficient-support abstention.
 
 Then reproduce the frozen project-data mechanism record:
 
@@ -41,10 +41,11 @@ python3 reference/tnqc_vgr_offline_240s.py \
 ```
 
 It must agree with
-`evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json`.  In particular,
-affine and hierarchy-guarded source identity are 12/12 at 240 s and remain
-12/12 under all 100 frozen source-blind positive-scale stress seeds.  This is
-a mechanism sanity check, not the 300-s GO.
+`evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json`.  In particular,
+the affine quotient is 12/12 at 240 s. The candidate-bank concordance gate
+releases 11/12 cases and is 11/11 correct; across all 100 frozen positive-scale
+and 200 monotone-compression stress seeds it keeps 11/12 coverage with 100%
+conditional accuracy. This is a mechanism sanity check, not the 300-s GO.
 
 ### Gate V1 — 300 s native-trajectory shadow test
 
