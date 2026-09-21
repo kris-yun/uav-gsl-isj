@@ -205,6 +205,19 @@ For every active source-hypothesis pair `(s_i,s_j)`, compute the sign of
 A candidate's RSFP score is its signed stable-pair mass divided by its
 comparable reference pair mass, bounded in [-1,1].
 
+For a fair causal ablation, **all required controls use exactly the same
+final-partition-measure-weighted pairwise score map**. They differ only in the
+statistic used to decide each pair:
+
+- fine-only: factor-1 score;
+- coarse-only: factor-8 score;
+- mean-only: mean score across factors 1/2/4/8;
+- lower-envelope-only: minimum score across factors 1/2/4/8;
+- RSFP fixed-only: pair speaks only if all four scale-wise orderings agree.
+
+Thus a 300-s advantage of RSFP cannot be attributed to a different posterior
+mapping or score range.
+
 This candidate-wise pairwise fixed-point score is the scientific primary.
 The old `min(q_1,q_2,q_4,q_8)` construction is retained only as a required
 lower-envelope control.
