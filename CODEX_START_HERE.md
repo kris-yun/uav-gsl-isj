@@ -1,6 +1,6 @@
 # Codex start here — TNQC VGR 300 s feasibility first
 
-The current frozen candidate is **TNQC (Transport-Nuisance Quotient Canonicalization)** with the VGR-tested **symmetry-hierarchy consistency guard**.
+The current frozen candidate is **TNQC (Transport-Nuisance Quotient Canonicalization)** with the **candidate-bank quotient-channel concordance gate**.
 
 ## Important correction
 
@@ -15,14 +15,14 @@ The primary gate is the user's VGR/GADEN House benchmark:
 Read first:
 1. `docs/VGR_300S_PRIMARY_GATE_20260920.md` — authoritative evaluation contract and gate order.
 2. `docs/TNQC_CODEX_HANDOFF_20260920.md` — current guarded equation, theory, literature lineage, novelty boundary, implementation map.
-3. `docs/TNQC_OFFLINE_GATE_20260920.md` — VGR 0.3-m spatial mechanism screen and falsification of unconditional fusion.
-4. `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260920.json` — frozen project-data mechanism record.
+3. `docs/TNQC_OFFLINE_GATE_20260920.md` — VGR 0.3-m spatial mechanism screen, falsification of unconditional fusion, and the later ranking-safety correction.
+4. `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json` — corrected project-data mechanism record.
 5. `docs/CANDIDATE_SYMMETRY_QUOTIENT_20260920.md` — research lineage and rejected predecessor branches.
 
 ## Execution order
 
 1. Pull current `main`, build, and run `test_tnqc_score`.
-2. Reproduce `reference/tnqc_vgr_offline_240s.py`; it must match the frozen VGR spatial mechanism evidence. Do not retune.
+2. Reproduce `reference/tnqc_vgr_offline_240s.py`; it must match the corrected VGR spatial mechanism evidence. The old per-candidate sign guard is rejected and must not be restored.
 3. Run `reference/run_tnqc_vgr_offline_gate_20260920.sh` on the VM House datasets. This is the authoritative full-300 s fixed-trajectory gate.
 4. Require all native-reconstruction audits to pass and inspect `tnqc_vgr_300s_offline_gate.json`.
 5. Only when `go_for_closed_loop=true`, run OFF vs SHADOW and require exact determinism.
@@ -39,6 +39,16 @@ must declare and forward `tnqc_mode` to the PMFS node. If absent, change launch 
 
 Do not tune TNQC after viewing House truth.
 
+## Ranking-safety correction
+
+The earlier per-candidate sign guard was insufficient: averaging two channels can preserve each candidate's sign while still reversing the ordering between candidates. It has been rejected.
+
+The current secondary mechanism computes one source-blind candidate-bank concordance
+`C = mean sign(q_aff_i-q_aff_j) sign(q_ord_i-q_ord_j)`, then
+`g=max(0,C)`, and uses `e_i=g*q_aff_i`. Because the same `g>=0` multiplies every candidate, local order may attenuate/abstain but cannot reverse affine candidate ordering.
+
+On the archived VGR 240-s cross-transport screen this gate releases 11/12 cases and is 11/11 correct; under all 100 positive-scale and 200 monotone-compression stress seeds, coverage remains 11/12 and conditional accuracy remains 100%. This is mechanism evidence only; the 300-s localization gate is still authoritative.
+
 Current scientifically valid status:
 
-**VGR MECHANISM POSITIVE / VGR-300S PRIMARY GATE PENDING / CLOSED-LOOP HOLD.**
+**VGR MECHANISM POSITIVE / RANKING-SAFETY FIXED / VGR-300S PRIMARY GATE PENDING / CLOSED-LOOP HOLD.**
