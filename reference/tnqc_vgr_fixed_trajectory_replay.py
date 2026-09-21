@@ -18,6 +18,7 @@ import argparse
 import csv
 import json
 import math
+import re
 import statistics
 from dataclasses import dataclass
 from pathlib import Path
@@ -97,6 +98,26 @@ def choose_final_update(bank: Path, budget: float) -> Tuple[int, float]:
         raise ValueError(f"no source update at or before {budget} s")
     t, u = max(eligible, key=lambda z: (z[0], z[1]))
     return u, t
+
+
+def native_result_line(run_dir: Path):
+    """Read the authoritative C++ PMFS terminal endpoint from launch.log."""
+    pat = re.compile(
+        r"RESULT IS: Success=([^,]+), Search_t=([0-9.eE+-]+), "
+        r"Error=([0-9.eE+-]+)")
+    found = None
+    for line in (run_dir / "launch.log").read_text(
+            encoding="utf-8", errors="replace").splitlines():
+        m = pat.search(line)
+        if m:
+            found = {
+                "success": m.group(1).strip(),
+                "search_t": float(m.group(2)),
+                "reported_top5_error_m": float(m.group(3)),
+            }
+    if found is None:
+        raise ValueError(f"missing authoritative PMFS RESULT IS line: {run_dir}")
+    return found
 
 
 def load_cells(d: Path):
@@ -315,6 +336,8 @@ def main():
     ap.add_argument("--source-discrimination-power", type=float, default=1.0)
     ap.add_argument("--native-reconstruction-max-abs", type=float, default=5e-6)
     ap.add_argument("--native-reconstruction-l1", type=float, default=5e-4)
+    ap.add_argument("--native-endpoint-rounding-tolerance-m",
+                    type=float, default=0.011)
     ap.add_argument("--json-out", type=Path)
     args = ap.parse_args()
 
@@ -359,14 +382,28 @@ def main():
     only = posterior(part, only_s)
     native_export = exported_posterior(d)
     audit = diff(native_replay, native_export)
-    audit_pass = (audit["max_abs"] <= args.native_reconstruction_max_abs and
-                  audit["l1"] <= args.native_reconstruction_l1)
+    reconstruction_pass = (
+        audit["max_abs"] <= args.native_reconstruction_max_abs
+        and audit["l1"] <= args.native_reconstruction_l1)
 
     # Evaluator-only truth enters only below this line.
     nm = metrics(native_export, cells, args.truth_x, args.truth_y)
     nr = metrics(native_replay, cells, args.truth_x, args.truth_y)
     fm = metrics(fused, cells, args.truth_x, args.truth_y)
     om = metrics(only, cells, args.truth_x, args.truth_y)
+
+    # Anchor the Python endpoint implementation to the actual C++
+    # ExpectedValue(sourceProbability, 0.05) result emitted by PMFS.  The
+    # launch log prints Error to two decimals, hence the frozen 0.011 m
+    # tolerance.  This catches ranking/tie-handling or coordinate mismatches
+    # before a replay can influence the GO decision.
+    native_cpp = native_result_line(args.run_dir)
+    endpoint_delta = abs(
+        nm["pmfs_top5_error_m"] - native_cpp["reported_top5_error_m"])
+    endpoint_pass = (
+        endpoint_delta <= args.native_endpoint_rounding_tolerance_m)
+    audit_pass = reconstruction_pass and endpoint_pass
+
     ev = [diag[cid]["bank_evidence"] for cid in active_candidate_ids
           if diag[cid]["valid"]]
 
@@ -388,7 +425,15 @@ def main():
             **audit,
             "max_abs_threshold": args.native_reconstruction_max_abs,
             "l1_threshold": args.native_reconstruction_l1,
-            "pass": audit_pass,
+            "pass": reconstruction_pass,
+        },
+        "native_cpp_endpoint_audit": {
+            "cpp_result": native_cpp,
+            "python_native_top5_error_m": nm["pmfs_top5_error_m"],
+            "absolute_error_difference_m": endpoint_delta,
+            "rounding_tolerance_m":
+                args.native_endpoint_rounding_tolerance_m,
+            "pass": endpoint_pass,
         },
         "tnqc_candidate_bank_gate": bank_gate,
         "tnqc_all_evaluated_candidate_gate_audit": all_evaluated_gate_audit,
@@ -415,6 +460,9 @@ def main():
             (nm["pmfs_top5_error_m"] - om["pmfs_top5_error_m"]) /
             max(nm["pmfs_top5_error_m"], 1e-12),
         "valid_for_gate": audit_pass,
+        "gate_validity_requires":
+            ["native_posterior_reconstruction",
+             "native_cpp_expected_value_endpoint_match"],
     }
     text = json.dumps(payload, indent=2, sort_keys=True)
     print(text)
