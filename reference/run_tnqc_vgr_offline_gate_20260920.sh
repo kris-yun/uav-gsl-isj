@@ -15,8 +15,9 @@ CASE_RUNNER="${CASE_RUNNER:-${ROOT_DIR}/reference/run_meaci_case_20260824.sh}"
 REPLAY="${REPLAY:-${ROOT_DIR}/reference/tnqc_vgr_fixed_trajectory_replay.py}"
 AGGREGATE="${AGGREGATE:-${ROOT_DIR}/reference/aggregate_tnqc_vgr_offline_gate.py}"
 MANIFEST_VERIFY="${MANIFEST_VERIFY:-${ROOT_DIR}/reference/verify_tnqc_v5_manifest.py}"
-ENDPOINT_EVAL_SRC="${ENDPOINT_EVAL_SRC:-${ROOT_DIR}/reference/tnqc_expected_value_eval.cpp}"
-PFDI_INSTALL_ROOT="${PFDI_INSTALL_ROOT:-/dev/shm/meaci_online_20260824}"
+BUILD_SCRIPT="${BUILD_SCRIPT:-${ROOT_DIR}/reference/build_tnqc_v5_current.sh}"
+TNQC_BUILD_ROOT="${TNQC_BUILD_ROOT:-/dev/shm/tnqc_v5_300s_build}"
+LAUNCH_FILE="${LAUNCH_FILE:-/dev/shm/meaci_online_20260824/launch/vgr_gsl_pmfs_pfdi.launch.py}"
 RUN_ROOT="${RUN_ROOT:-/dev/shm/tnqc_vgr_300s_offline_20260920}"
 BASE_DOMAIN_ID="${BASE_DOMAIN_ID:-270}"
 STEPS_SOURCE_UPDATE="${STEPS_SOURCE_UPDATE:-3}"
@@ -26,10 +27,34 @@ OUTER_DEADLINE_SEC="${OUTER_DEADLINE_SEC:-900}"
 mkdir -p "${RUN_ROOT}"
 python3 "${MANIFEST_VERIFY}" --root "${ROOT_DIR}" \
   --manifest "evidence/TNQC_V5_IMPLEMENTATION_MANIFEST_20260921.json"
-ENDPOINT_EVAL_BIN="${RUN_ROOT}/tnqc_expected_value_eval"
-echo "TNQC_ENDPOINT_EVAL_BUILD compiler=$(g++ --version | head -n 1) source=${ENDPOINT_EVAL_SRC}"
-g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -Werror \
-  "${ENDPOINT_EVAL_SRC}" -o "${ENDPOINT_EVAL_BIN}"
+
+[[ -f "${LAUNCH_FILE}" ]] || { echo "missing external VGR launch: ${LAUNCH_FILE}" >&2; exit 69; }
+TNQC_BUILD_ROOT="${TNQC_BUILD_ROOT}" bash "${BUILD_SCRIPT}"
+
+PFDI_INSTALL_ROOT="${TNQC_BUILD_ROOT}"
+ALGORITHM_BINARY="${PFDI_INSTALL_ROOT}/install/gsl_server/lib/gsl_server/gsl_actionserver_node"
+ENDPOINT_EVAL_BIN="${PFDI_INSTALL_ROOT}/install/gsl_server/lib/gsl_server/tnqc_expected_value_native"
+EXPECTED_ALGORITHM_SHA256="$(sha256sum "${ALGORITHM_BINARY}" | awk '{print $1}')"
+EXPECTED_ENDPOINT_SHA256="$(sha256sum "${ENDPOINT_EVAL_BIN}" | awk '{print $1}')"
+LAUNCH_SHA256="$(sha256sum "${LAUNCH_FILE}" | awk '{print $1}')"
+cp -f "${LAUNCH_FILE}" "${RUN_ROOT}/frozen_vgr_launch_overlay.py"
+cp -f "${PFDI_INSTALL_ROOT}/tnqc_build_provenance.json" "${RUN_ROOT}/tnqc_build_provenance.json"
+
+python3 - "${RUN_ROOT}/tnqc_batch_provenance.json" \
+  "${EXPECTED_ALGORITHM_SHA256}" "${EXPECTED_ENDPOINT_SHA256}" \
+  "${LAUNCH_FILE}" "${LAUNCH_SHA256}" <<'PY'
+import json, pathlib, sys
+out, alg, endpoint, launch, launch_sha = sys.argv[1:]
+payload = {
+    "contract": "TNQC_V5_300S_BATCH_PROVENANCE_V1",
+    "algorithm_sha256": alg,
+    "linked_native_endpoint_sha256": endpoint,
+    "external_launch_file": launch,
+    "external_launch_sha256": launch_sha,
+}
+pathlib.Path(out).write_text(
+    json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+PY
 
 truth_for_house() {
   case "$1" in
@@ -66,7 +91,23 @@ for house in House01 House02 House03; do
     TARGET_SOURCE_UPDATES=0 \
     TARGET_ACCEPTED_UPDATES=0 \
     PFDI_INSTALL_ROOT="${PFDI_INSTALL_ROOT}" \
+    LAUNCH_FILE="${LAUNCH_FILE}" \
     bash "${CASE_RUNNER}"
+
+    # Prove that this case actually used the clean current-source binary and
+    # the frozen external launch overlay recorded before any House result.
+    python3 - "${run_dir}/runtime_manifest.json" \
+      "${EXPECTED_ALGORITHM_SHA256}" "${LAUNCH_SHA256}" <<'PY'
+import json, sys
+path, want_alg, want_launch = sys.argv[1:]
+p = json.load(open(path, encoding="utf-8"))
+if p.get("algorithm_sha256") != want_alg:
+    raise SystemExit(
+        f"algorithm binary mismatch: {p.get('algorithm_sha256')} != {want_alg}")
+if p.get("launch_sha256") != want_launch:
+    raise SystemExit(
+        f"launch overlay mismatch: {p.get('launch_sha256')} != {want_launch}")
+PY
 
     if [[ ! -s "${run_dir}/context_bank/source_update_timing.csv" ]]; then
       echo "missing context bank for ${house} seed ${seed}: ${run_dir}" >&2
