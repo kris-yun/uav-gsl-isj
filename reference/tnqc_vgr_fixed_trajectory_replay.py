@@ -4,7 +4,10 @@
 Consumes a native PMFS context-bank export from a full-budget VGR House run.
 The robot trajectory, measurements, wind field, native candidate bank and
 refinement decisions stay fixed. TNQC only reweights the frozen candidate
-likelihoods. Source truth is used only after all posteriors are constructed.
+likelihoods. This matches the online V2 contract: quadtree refinement is
+native within each source update, and the bank-level concordance gate is
+applied only after that complete native bank is frozen. Source truth is used
+only after all posteriors are constructed.
 
 The replay audits itself by reconstructing native PMFS from the exported
 candidate alignment/rectangles and comparing it with source_posterior.csv.
@@ -351,7 +354,7 @@ def main():
     ev = [q["bank_evidence"] for q in diag.values() if q["valid"]]
 
     payload = {
-        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V1",
+        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V2",
         "run_dir": str(args.run_dir),
         "budget_s": args.budget_s,
         "selected_source_update_id": uid,
