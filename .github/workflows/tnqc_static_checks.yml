@@ -47,10 +47,13 @@ jobs:
           (( rc == 0 )) || overall=1
 
           echo "## shell-syntax" >> "$out"
-          bash -n reference/run_tnqc_vgr_offline_gate_20260920.sh \
-                  reference/run_tnqc_closed_loop_matrix_20260920.sh \
-                  >> "$out" 2>&1
-          rc=$?
+          rc=0
+          for script in \
+            reference/run_tnqc_vgr_offline_gate_20260920.sh \
+            reference/run_tnqc_closed_loop_matrix_20260920.sh
+          do
+            bash -n "$script" >> "$out" 2>&1 || rc=1
+          done
           echo "rc=$rc" >> "$out"
           (( rc == 0 )) || overall=1
 
