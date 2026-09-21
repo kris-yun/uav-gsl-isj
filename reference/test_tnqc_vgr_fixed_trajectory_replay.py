@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import csv
+import json
 import math
 import shutil
+import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -90,12 +93,35 @@ def main():
         assert audit["l1"] < 1e-15
         assert replay.choose_final_update(bank, 300.0) == (1, 295.0)
 
+        fixture_metrics = replay.metrics(native, cells, 0.0, 0.0)
+        reported = fixture_metrics["pmfs_top5_error_m"]
         (root / "launch.log").write_text(
-            "fixture RESULT IS: Success=0, Search_t=300.00, Error=1.23\n",
+            "fixture RESULT IS: Success=0, Search_t=300.00, "
+            f"Error={reported:.2f}\n",
             encoding="utf-8")
         native_result = replay.native_result_line(root)
         assert native_result["search_t"] == 300.0
-        assert native_result["reported_top5_error_m"] == 1.23
+        assert abs(native_result["reported_top5_error_m"] - reported) <= 0.011
+
+        # Exercise the full replay CLI, not only helper functions.  This locks
+        # the endpoint anchor, final-leaf scope, reconstruction audit and JSON
+        # contract together.
+        out_json = root / "fixture_replay.json"
+        proc = subprocess.run(
+            [sys.executable, str(Path(replay.__file__)),
+             "--run-dir", str(root),
+             "--truth-x", "0.0", "--truth-y", "0.0",
+             "--json-out", str(out_json)],
+            check=False, capture_output=True, text=True)
+        assert proc.returncode == 0, proc.stdout + "\n" + proc.stderr
+        payload = json.loads(out_json.read_text(encoding="utf-8"))
+        assert payload["contract"] == (
+            "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V3_FINAL_LEAF_GATE")
+        assert payload["candidate_gate_scope"] == (
+            "final_partition_leaf_candidates_only")
+        assert payload["native_reconstruction_audit"]["pass"]
+        assert payload["native_cpp_endpoint_audit"]["pass"]
+        assert payload["valid_for_gate"]
 
         # Candidate-wise sign consistency is insufficient: naive averaging
         # can reverse the ordering between two positive candidates.  The
