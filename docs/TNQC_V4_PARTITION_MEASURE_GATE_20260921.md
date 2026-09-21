@@ -1,205 +1,165 @@
-# TNQC V4 partition-measure gate correction
+# TNQC V4 partition-measure final-leaf gate
 Date: 2026-09-21
 
-Authoritative code freeze for this correction:
+Authoritative V4 code checkpoint:
 `725dae6de2f58b766bc309fd40a9c5722429fb8a`
 
-This document supersedes the **gate measure** in
-`docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md`. V3 correctly removed
-subdivided ancestors, but a second audit found that equal weighting of
-terminal leaves still makes the gate depend on adaptive quadtree partition
-density.
+V4 supersedes only the **gate measure** of V3. The main quotient
+representation, claim boundary, final-leaf restriction, endpoint audits, and
+300-s benchmark remain unchanged.
 
-No House01/02/03 300-s truth result was inspected before this correction.
+No House01/02/03 300-s truth outcome was inspected before this correction.
 
-## 1. Remaining V3 problem
+## 1. Why V3 final-leaf-only was still incomplete
 
-PMFS assigns one terminal leaf score to every free source cell covered by that
-leaf. A leaf containing 12 free cells therefore carries 12 times the
-cell-level hypothesis measure of a leaf containing one free cell.
+PMFS copies one terminal leaf score to every free source cell covered by that
+leaf. A leaf covering 12 free cells therefore represents 12 cell-level source
+hypotheses; a leaf covering one free cell represents one.
 
-An unweighted leaf concordance nevertheless gives both leaves one vote.
-Native PMFS refinement can split a promising region into many small leaves,
-so an unweighted gate can over-represent highly refined regions even after
-subdivided ancestors have been removed.
+An unweighted concordance gives both leaves one vote. Because native PMFS
+adaptively refines promising regions, an unweighted leaf gate can over-count
+densely refined regions even after subdivided ancestors are removed.
 
-This is not a source-truth issue; it is a mismatch between the gate's measure
-and the posterior's source-space measure.
+The correction must therefore use the same source-space measure as the PMFS
+terminal posterior.
 
-## 2. V4 definition
+## 2. V4 gate
 
-Let the terminal active free leaves be
-(mathcal B_u^{m leaf}={s_1,ldots,s_M}).
+Let the terminal active free leaves be `s_1,...,s_M`.
 
-For leaf (i), let
+For each leaf:
 
-[
-m_i = |{	ext{free PMFS source cells represented by leaf }i}|.
-]
+- `a_i = q_aff(s_i)`;
+- `o_i = q_ord(s_i)`;
+- `m_i = number of free PMFS source cells represented by leaf i`.
 
-For its two quotient channels write
+For valid, non-tied leaf pairs define:
 
-[
-a_i=q_{m aff}(s_i),qquad o_i=q_{m ord}(s_i).
-]
+`C_cell = [sum_(i<j) m_i*m_j*sign(a_i-a_j)*sign(o_i-o_j)] /
+          [sum_(i<j) m_i*m_j]`.
 
-Over valid non-tied leaf pairs,
+Then:
 
-[
-C_u^{m cell}
-=
-rac{
-sum_{i<j}m_i m_j,
-operatorname{sgn}(a_i-a_j)
-operatorname{sgn}(o_i-o_j)}
-{
-sum_{i<j}m_i m_j
-}.
-]
+`g = max(0, C_cell)`
 
-The frozen evidence remains
+`e_i = g * a_i`.
 
-[
-g_u=max(0,C_u^{m cell}),
-qquad
-e_i=g_u a_i.
-]
+Because one common non-negative `g` multiplies every terminal candidate,
 
-The same non-negative (g_u) is still shared by the entire terminal bank, so
-the ranking-safety guarantee is unchanged:
+`e_i - e_j = g*(a_i-a_j)`.
 
-[
-e_i-e_j=g_u(a_i-a_j).
-]
+Thus the order auxiliary can attenuate or abstain but cannot reverse the
+continuous quotient ordering.
 
-Local order can attenuate or abstain; it cannot reverse the main affine
-quotient ordering.
+## 3. Exact cell-expansion equivalence
 
-## 3. Exact replication equivalence
+The `m_i*m_j` factor is not a tuned hyperparameter.
 
-The measure weighting has a direct interpretation and is not an arbitrary
-hyperparameter.
+Expand each leaf `i` into `m_i` identical copies, one per represented
+free source cell, and compute ordinary unweighted concordance on that expanded
+bank.
 
-Imagine expanding each leaf (i) into (m_i) identical copies, one for every
-free source cell it represents. Compute ordinary unweighted candidate-order
-concordance on that expanded cell-level bank.
+- copies from the same leaf tie in both channels and are ignored;
+- leaves `i` and `j` generate exactly `m_i*m_j` cross-leaf pairs;
+- every such cross-leaf pair has the same sign product.
 
-Pairs between copies of the same leaf have equal (a) and (o), hence are
-ties and are ignored. Between leaves (i) and (j), there are exactly
-(m_i m_j) cross-leaf pairs, all with the same sign product.
+Therefore the expanded cell-level statistic is **exactly equal** to the V4
+measure-weighted leaf statistic.
 
-Therefore the expanded-bank numerator and denominator are exactly
+C++ and Python tests both lock this equivalence.
 
-[
-sum_{i<j}m_i m_j,
-operatorname{sgn}(a_i-a_j)operatorname{sgn}(o_i-o_j)
-]
+## 4. Source-blind measure
 
-and
-
-[
-sum_{i<j}m_i m_j,
-]
-
-respectively. Thus
-
-[
-C_{m expanded}=C_u^{m cell}.
-]
-
-Both the C++ and Python standalone tests now lock this equivalence.
-
-## 4. Source-blindness
-
-The V4 measure uses only occupancy geometry and the already frozen terminal
-partition.
+The measure uses only occupancy geometry and the native terminal partition.
 
 It does not use:
 
-- source truth;
-- distance to truth;
-- posterior rank;
+- source truth or truth distance;
+- native score or posterior rank;
 - TNQC score magnitude;
-- native score magnitude;
 - House outcome;
-- fitted coefficients.
+- fitted parameters.
 
-For an online terminal free quadtree leaf, the C++ measure is
-`size.x * size.y`. Such a leaf is homogeneous free space
-(`value==1`), so this equals its represented free-cell count.
+For an online terminal free quadtree leaf, C++ uses
+`size.x * size.y`. A terminal node with `value==1` is homogeneous free
+space, so this is its free-cell multiplicity.
 
-The Python replay reconstructs the final partition and counts exactly how many
-free cells map to each terminal candidate ID.
+The Python replay independently reconstructs the final partition and counts
+the free cells owned by each terminal candidate ID.
 
-## 5. Audits retained in the 300-s replay
+## 5. Required replay scope
 
-The authoritative gate is now:
+The authoritative replay must emit:
 
 `candidate_gate_scope =
 final_partition_leaf_candidates_free_cell_measure_weighted`
 
-The replay additionally reports, but does not use for inference:
+It additionally records two source-blind diagnostics that cannot control
+inference:
 
-1. the same terminal leaves with **unit** leaf weights;
-2. the old gate over **all evaluated candidates** including search history.
+1. terminal leaves with unit weights;
+2. all evaluated candidates, including subdivided ancestors, with unit
+   weights.
 
-This exposes how much either partition density or ancestor contamination would
-have changed (g_u), without using source truth.
+These show separately how much partition-density bias and ancestor
+contamination would have changed the gate.
 
-## 6. Unchanged main method
+## 6. Unchanged method components
 
-V4 does not change:
+V4 does not alter:
 
-- the canonical hit-logit representation;
-- (q_{m aff});
-- local spatial-order (q_{m ord});
-- the evidence bound ([-1,1]);
-- the exponential tilt (L_{m PMFS}exp(e_i));
-- PMFS native quadtree refinement;
-- support/confidence rules;
-- 300-s endpoint;
-- House/seed set;
+- observed/predicted PMFS hit-logit fields;
+- confidence/support masks;
+- `q_aff`;
+- local spatial-order `q_ord`;
+- evidence bound `[-1,1]`;
+- `L_PMFS * exp(e_i)`;
+- native PMFS quadtree refinement;
+- 300-s House benchmark;
 - advancement thresholds.
 
-It only makes the shared auxiliary gate use the same source-space measure as
-the terminal PMFS posterior.
+It changes only the measure used by the shared auxiliary gate.
 
-## 7. 300-s gate
+## 7. Authoritative 300-s run
 
-The command remains:
+Run:
 
 ```bash
 python3 reference/test_tnqc_vgr_fixed_trajectory_replay.py
 bash reference/run_tnqc_vgr_offline_gate_20260920.sh
 ```
 
-For every House/seed, the case is valid only when:
+Every House/seed must pass:
 
-- native posterior reconstruction passes;
-- reconstructed Python native top-5% error agrees with the C++ PMFS terminal
-  `RESULT IS: Error=` within the frozen 0.011 m rounding tolerance;
-- the replay declares the V4 partition-measure final-leaf gate scope.
+- native posterior reconstruction;
+- C++ endpoint anchor within 0.011 m;
+- V4 partition-measure gate scope.
 
-The six-case development GO rule remains:
+Only then evaluate the frozen development rule:
 
-- pooled error reduction >= 10%;
-- >= 4/6 paired improvements;
-- worst pair degradation <= 25%;
+- pooled top-5% error reduction >= 10%;
+- at least 4/6 paired cases improve;
+- no pair degrades by more than 25%;
 - no false-confident collapse.
 
-Integrity-invalid cases are still run to completion so the aggregate contains
-all six diagnostics; execution/file failures still abort.
+An integrity-invalid replay writes its JSON and the runner continues through
+the remaining frozen cases so the aggregate gives a complete six-case
+diagnosis. Execution/file failures still abort.
 
-## 8. Claim boundary inherited from V3
+No equation, measure, threshold, support rule, or candidate scope may be
+changed after the six House truth outcomes are seen.
 
-The exact quotient theorem remains conditional on fixed support/weights and
-positive-affine actions on the supported PMFS **hit-logit fields**.
+## 8. Closed-loop boundary
 
-The archived 240-s `gas_ppm` screens remain concentration-space mechanism
-evidence only. They are not a substitute for the V4 online-representation
-300-s replay.
+The fixed-trajectory replay tests inference on the native trajectory.
+
+A later fused closed loop may additionally alter future motion through PMFS
+posterior/planner state. Native within-update quadtree refinement remains
+frozen. Those feedback effects are tested only after an explicit offline GO.
 
 ## 9. Status
 
-**TNQC V4 METHOD FROZEN BEFORE 300-S TRUTH / PARTITION-MEASURE GATE
-IMPLEMENTED / AUTHORITATIVE VGR 300-S REPLAY PENDING / CLOSED LOOP HOLD.**
+**TNQC V4 METHOD FROZEN BEFORE 300-S TRUTH /
+PARTITION-MEASURE FINAL-LEAF GATE IMPLEMENTED /
+AUTHORITATIVE VGR 300-S REPLAY PENDING /
+CLOSED LOOP HOLD.**
