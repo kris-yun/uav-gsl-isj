@@ -14,6 +14,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CASE_RUNNER="${CASE_RUNNER:-${ROOT_DIR}/reference/run_meaci_case_20260824.sh}"
 REPLAY="${REPLAY:-${ROOT_DIR}/reference/tnqc_vgr_fixed_trajectory_replay.py}"
 AGGREGATE="${AGGREGATE:-${ROOT_DIR}/reference/aggregate_tnqc_vgr_offline_gate.py}"
+MANIFEST_VERIFY="${MANIFEST_VERIFY:-${ROOT_DIR}/reference/verify_tnqc_v5_manifest.py}"
 ENDPOINT_EVAL_SRC="${ENDPOINT_EVAL_SRC:-${ROOT_DIR}/reference/tnqc_expected_value_eval.cpp}"
 PFDI_INSTALL_ROOT="${PFDI_INSTALL_ROOT:-/dev/shm/meaci_online_20260824}"
 RUN_ROOT="${RUN_ROOT:-/dev/shm/tnqc_vgr_300s_offline_20260920}"
@@ -23,6 +24,8 @@ TIMEOUT_SEC="${TIMEOUT_SEC:-300.0}"
 OUTER_DEADLINE_SEC="${OUTER_DEADLINE_SEC:-900}"
 
 mkdir -p "${RUN_ROOT}"
+python3 "${MANIFEST_VERIFY}" --root "${ROOT_DIR}" \
+  --manifest "evidence/TNQC_V5_IMPLEMENTATION_MANIFEST_20260921.json"
 ENDPOINT_EVAL_BIN="${RUN_ROOT}/tnqc_expected_value_eval"
 echo "TNQC_ENDPOINT_EVAL_BUILD compiler=$(g++ --version | head -n 1) source=${ENDPOINT_EVAL_SRC}"
 g++ -std=c++20 -O2 -Wall -Wextra -Wpedantic -Werror \
