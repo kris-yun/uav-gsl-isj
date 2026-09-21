@@ -46,6 +46,15 @@ class Cell:
 
 
 @dataclass(frozen=True)
+class GridMetadata:
+    width: int
+    height: int
+    cell_size: float
+    origin_x: float
+    origin_y: float
+
+
+@dataclass(frozen=True)
 class Candidate:
     candidate_id: str
     origin_i: int
@@ -124,6 +133,36 @@ def native_result_line(run_dir: Path):
     if found is None:
         raise ValueError(f"missing authoritative PMFS RESULT IS line: {run_dir}")
     return found
+
+
+def load_grid_metadata(bank: Path, source_update_id: int) -> GridMetadata:
+    matches = [
+        r for r in rows(bank / "source_update_timing.csv")
+        if int(r["source_update_id"]) == source_update_id
+    ]
+    if len(matches) != 1:
+        raise ValueError(
+            f"expected one timing row for source update {source_update_id}, "
+            f"got {len(matches)}")
+    r = matches[0]
+    required = ("grid_width", "grid_height", "cell_size",
+                "origin_x", "origin_y")
+    missing = [k for k in required if k not in r or r[k] == ""]
+    if missing:
+        raise ValueError(f"source-update grid metadata missing: {missing}")
+    meta = GridMetadata(
+        width=int(r["grid_width"]),
+        height=int(r["grid_height"]),
+        cell_size=float(r["cell_size"]),
+        origin_x=float(r["origin_x"]),
+        origin_y=float(r["origin_y"]),
+    )
+    if (meta.width <= 0 or meta.height <= 0 or
+            not (meta.cell_size > 0.0 and math.isfinite(meta.cell_size)) or
+            not math.isfinite(meta.origin_x) or
+            not math.isfinite(meta.origin_y)):
+        raise ValueError(f"invalid source-update grid metadata: {meta}")
+    return meta
 
 
 def load_cells(d: Path):
@@ -371,17 +410,23 @@ def write_endpoint_posterior(path: Path, p, cells):
                         format(max(float(p.get(idx, 0.0)), 0.0), ".17g")])
 
 
-def cpp_endpoint_metrics(evaluator: Path, posterior_csv: Path, tx, ty):
+def cpp_endpoint_metrics(
+        evaluator: Path, posterior_csv: Path, tx, ty,
+        grid_meta: GridMetadata):
     proc = subprocess.run(
-        [str(evaluator), str(posterior_csv), repr(float(tx)), repr(float(ty))],
+        [str(evaluator), str(posterior_csv),
+         str(grid_meta.width), str(grid_meta.height),
+         repr(float(grid_meta.cell_size)),
+         repr(float(grid_meta.origin_x)), repr(float(grid_meta.origin_y)),
+         repr(float(tx)), repr(float(ty))],
         check=False, capture_output=True, text=True)
     if proc.returncode != 0:
         raise RuntimeError(
             f"C++ endpoint evaluator failed rc={proc.returncode}: "
             f"{proc.stdout}\n{proc.stderr}")
     out = json.loads(proc.stdout)
-    required = {"pmfs_top5_x", "pmfs_top5_y", "pmfs_top5_error_m",
-                "pmfs_top5_cell_count"}
+    required = {"engine", "pmfs_top5_x", "pmfs_top5_y",
+                "pmfs_top5_error_m", "pmfs_top5_cell_count"}
     if not required.issubset(out):
         raise ValueError(f"incomplete C++ endpoint output: {out}")
     return out
@@ -424,12 +469,18 @@ def main():
     ap.add_argument("--native-endpoint-rounding-tolerance-m",
                     type=float, default=0.011)
     ap.add_argument("--cpp-endpoint-evaluator", type=Path, required=True)
+    ap.add_argument(
+        "--allow-standalone-endpoint-for-test",
+        action="store_true",
+        help=argparse.SUPPRESS,
+    )
     ap.add_argument("--json-out", type=Path)
     args = ap.parse_args()
 
     bank = args.run_dir / "context_bank"
     uid, sim_time = choose_final_update(bank, args.budget_s)
     d = bank / f"source_update_{uid:04d}"
+    grid_meta = load_grid_metadata(bank, uid)
     cells, by_grid = load_cells(d)
     candidates = load_candidates(d)
     alignment = load_alignment(d, cells)
@@ -501,11 +552,22 @@ def main():
     write_endpoint_posterior(only_csv, only, cells)
 
     nm_cpp = cpp_endpoint_metrics(
-        evaluator, native_csv, args.truth_x, args.truth_y)
+        evaluator, native_csv, args.truth_x, args.truth_y, grid_meta)
     fm_cpp = cpp_endpoint_metrics(
-        evaluator, fused_csv, args.truth_x, args.truth_y)
+        evaluator, fused_csv, args.truth_x, args.truth_y, grid_meta)
     om_cpp = cpp_endpoint_metrics(
-        evaluator, only_csv, args.truth_x, args.truth_y)
+        evaluator, only_csv, args.truth_x, args.truth_y, grid_meta)
+
+    native_engine = "gsl_utils_expected_value_linked_native_v1"
+    standalone_test_engine = "standalone_std_sort_clone_v2"
+    observed_engines = {
+        nm_cpp["engine"], fm_cpp["engine"], om_cpp["engine"]}
+    allowed_engines = {native_engine}
+    if args.allow_standalone_endpoint_for_test:
+        allowed_engines.add(standalone_test_engine)
+    endpoint_engine_pass = (
+        len(observed_engines) == 1 and
+        next(iter(observed_engines)) in allowed_engines)
 
     nm = {**nm_py, **nm_cpp}
     fm = {**fm_py, **fm_cpp}
@@ -521,13 +583,13 @@ def main():
         nm_cpp["pmfs_top5_error_m"] - native_cpp["reported_top5_error_m"])
     endpoint_pass = (
         endpoint_delta <= args.native_endpoint_rounding_tolerance_m)
-    audit_pass = reconstruction_pass and endpoint_pass
+    audit_pass = reconstruction_pass and endpoint_pass and endpoint_engine_pass
 
     ev = [diag[cid]["bank_evidence"] for cid in active_candidate_ids
           if diag[cid]["valid"]]
 
     payload = {
-        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V6_CPP_ENDPOINT_PARITY",
+        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V7_LINKED_NATIVE_ENDPOINT",
         "run_dir": str(args.run_dir),
         "budget_s": args.budget_s,
         "selected_source_update_id": uid,
@@ -560,9 +622,19 @@ def main():
             "pass": endpoint_pass,
         },
         "endpoint_evaluator": {
-            "engine": "cpp_std_sort_clone_of_PMFS_ExpectedValue_0p05",
+            "engine": nm_cpp["engine"],
+            "engine_integrity_pass": endpoint_engine_pass,
+            "authoritative_engine":
+                "gsl_utils_expected_value_linked_native_v1",
             "binary": str(evaluator),
             "sha256": hashlib.sha256(evaluator.read_bytes()).hexdigest(),
+            "grid_metadata": {
+                "width": grid_meta.width,
+                "height": grid_meta.height,
+                "cell_size": grid_meta.cell_size,
+                "origin_x": grid_meta.origin_x,
+                "origin_y": grid_meta.origin_y,
+            },
             "native_posterior_csv": str(native_csv),
             "fused_posterior_csv": str(fused_csv),
             "only_posterior_csv": str(only_csv),
@@ -606,8 +678,8 @@ def main():
         "valid_for_gate": audit_pass,
         "gate_validity_requires":
             ["native_posterior_reconstruction",
-             "standalone_cpp_expected_value_matches_native_pmfs",
-             "same_cpp_expected_value_engine_for_tnqc_counterfactual",
+             "linked_native_GSL_Utils_ExpectedValue_matches_native_pmfs",
+             "same_linked_native_endpoint_binary_for_tnqc_counterfactual",
              "partition_measure_final_leaf_gate_scope",
              "local_order_support_coverage_attenuation"],
     }
