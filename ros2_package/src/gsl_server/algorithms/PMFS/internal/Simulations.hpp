@@ -73,7 +73,8 @@ namespace GSL::PMFS_internal
         {
             bool valid = false;
             std::vector<float> hitMap;
-            long double sourceProb;
+            long double nativeSourceProb = 0.0L;
+            long double sourceProb = 0.0L;
             bool tnqcValid = false;
             double tnqcCanonicalCosine = 0.0;
             double tnqcLocalOrderAgreement = 0.0;
@@ -136,8 +137,14 @@ namespace GSL::PMFS_internal
 
         struct LeafScore
         {
-            long double score;
-            Utils::NQA::Node* leaf;
+            long double score = 0.0L;
+            Utils::NQA::Node* leaf = nullptr;
+            long double nativeScore = 0.0L;
+            bool tnqcValid = false;
+            std::size_t tnqcEdgeCount = 0;
+            double tnqcCanonicalCosine = 0.0;
+            double tnqcLocalOrderAgreement = 0.0;
+            double tnqcEvidence = 0.0;
         };
 
         std::vector<long double> sourceProbInternal; // calculated from the simulations, used for movement
@@ -214,6 +221,10 @@ namespace GSL::PMFS_internal
         // from the older TADM/PFDI modes so baseline and frozen ME-ACI paths
         // remain byte-for-byte inactive when tnqc_mode=off.
         std::string tnqcMode = "off";
+        bool tnqcBankGateValid = false;
+        std::size_t tnqcBankPairCount = 0;
+        double tnqcBankConcordance = 0.0;
+        double tnqcBankGateStrength = 0.0;
         std::vector<double> tnqcObservedLogits;
         std::vector<double> tnqcWeights;
         std::vector<unsigned char> tnqcSupport;
@@ -316,6 +327,7 @@ namespace GSL::PMFS_internal
         bool applyTADMPosterior();
 
         SimulationResult runSimulation(std::vector<LeafScore>& nodes, size_t index);
+        void applyTNQCBankGate(std::vector<LeafScore>& nodes);
         void moveFilament(Filament& filament, Vector2Int& indices, float deltaTime, float noiseSTDev,
                           EventKeyedTransportRng* transportRng, uint64_t& drawIndex) const;
         void simulateSourceInPosition(const SimulationSource& source, std::vector<float>& hitMap, bool warmup,
