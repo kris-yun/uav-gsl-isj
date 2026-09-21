@@ -46,7 +46,7 @@ def main():
                 p.get("native_cpp_endpoint_audit", {}).get("pass", False)),
             "final_leaf_gate_scope_pass":
                 p.get("candidate_gate_scope") ==
-                "final_partition_leaf_candidates_only",
+                "final_partition_leaf_candidates_free_cell_measure_weighted",
             "case_valid_for_gate": bool(p.get("valid_for_gate", False)),
             "selected_source_update_id": p["selected_source_update_id"],
             "selected_source_update_sim_time": p["selected_source_update_sim_time"],
@@ -56,6 +56,8 @@ def main():
             "final_leaf_candidate_count":
                 p.get("final_leaf_candidate_count"),
             "final_leaf_gate": p.get("tnqc_candidate_bank_gate"),
+            "final_leaf_unweighted_gate_audit":
+                p.get("tnqc_final_leaf_unweighted_gate_audit"),
             "all_evaluated_gate_audit":
                 p.get("tnqc_all_evaluated_candidate_gate_audit"),
         })
@@ -90,7 +92,7 @@ def main():
         and not false_collapse
     )
     out = {
-        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_GATE_V2_FINAL_LEAF",
+        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_GATE_V3_PARTITION_MEASURE",
         "cases": rows,
         "pooled_native_error_m": native_pooled,
         "pooled_tnqc_fused_error_m": fused_pooled,
@@ -104,7 +106,7 @@ def main():
             "max_pair_degradation_fraction": args.max_pair_degradation,
             "native_reconstruction_required": True,
             "native_cpp_expected_value_endpoint_match_required": True,
-            "final_leaf_gate_scope_required": True,
+            "partition_measure_final_leaf_gate_scope_required": True,
             "no_false_confident_collapse": True,
         },
         "valid": valid,
