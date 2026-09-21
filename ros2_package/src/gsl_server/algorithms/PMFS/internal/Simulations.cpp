@@ -542,25 +542,64 @@ namespace GSL::PMFS_internal
             if (!result.valid)
                 continue;
 
-// update the information for the variance calulation
 #pragma omp critical
             {
-                resultsFirstLevel.push_back(result);
+                resultsFirstLevel.push_back(std::move(result));
                 numberOfSimulations++;
-                for (int cell = 0; cell < result.hitMap.size(); cell++)
+            }
+        }
+
+        // The coarse candidate bank defines one source-blind corroboration
+        // strength for the entire source update.  This retroactively rescales
+        // the first-level TNQC evidence and all refined levels reuse the same
+        // gate, so local order never changes affine candidate ordering.
+        if (tnqcMode != "off")
+        {
+            applyTNQCBankGate(scores);
+            for (SimulationResult& result : resultsFirstLevel)
+            {
+                if (!result.tnqcValid)
                 {
-                    auto& var = varianceCalculationData[cell];
-                    weighted_incremental_variance(result.hitMap[cell],
-                                                  result.sourceProb,
-                                                  var.mean,
-                                                  var.weight_sum,
-                                                  var.weight_squared_sum,
-                                                  var.variance);
+                    result.sourceProb = result.nativeSourceProb;
+                    result.tnqcCombinedEffect = 0.0;
+                    result.tnqcEvidence = 0.0;
+                    continue;
                 }
+                const double evidence = tnqcBankGateValid
+                    ? std::clamp(tnqcBankGateStrength * result.tnqcCanonicalCosine, -1.0, 1.0)
+                    : 0.0;
+                result.tnqcCombinedEffect = evidence;
+                result.tnqcEvidence = evidence;
+                if (tnqcMode == "fused")
+                    result.sourceProb = result.nativeSourceProb *
+                        std::exp(static_cast<long double>(evidence));
+                else if (tnqcMode == "only")
+                    result.sourceProb = std::exp(static_cast<long double>(evidence));
+                else
+                    result.sourceProb = result.nativeSourceProb;
             }
         }
 
         recordP2Candidates(scores);
+
+        // Update the variance data only after the bank gate has been frozen,
+        // so the planner sees the same first-level candidate weights as the
+        // posterior/refinement path in fused/only modes.
+        for (const SimulationResult& result : resultsFirstLevel)
+        {
+            if (!result.valid)
+                continue;
+            for (int cell = 0; cell < static_cast<int>(result.hitMap.size()); ++cell)
+            {
+                auto& var = varianceCalculationData[cell];
+                weighted_incremental_variance(result.hitMap[cell],
+                                              result.sourceProb,
+                                              var.mean,
+                                              var.weight_sum,
+                                              var.weight_squared_sum,
+                                              var.variance);
+            }
+        }
 
         if (tnqcMode != "off")
         {
@@ -580,8 +619,9 @@ namespace GSL::PMFS_internal
                 maxEvidence = std::max(maxEvidence, result.tnqcEvidence);
             }
             if (validTNQC > 0)
-                GSL_INFO("TNQC update {} mode={} valid_candidates={} mean_cos={:.6g} mean_order={:.6g} mean_evidence={:.6g} max_evidence={:.6g}",
+                GSL_INFO("TNQC update {} mode={} valid_candidates={} bank_pairs={} bank_concordance={:.6g} bank_strength={:.6g} mean_cos={:.6g} mean_order={:.6g} mean_evidence={:.6g} max_evidence={:.6g}",
                          nativeSourceUpdateId, tnqcMode, validTNQC,
+                         tnqcBankPairCount, tnqcBankConcordance, tnqcBankGateStrength,
                          sumCosine / static_cast<double>(validTNQC),
                          sumOrder / static_cast<double>(validTNQC),
                          sumEvidence / static_cast<double>(validTNQC),
@@ -595,7 +635,12 @@ namespace GSL::PMFS_internal
         for (int cellI = 0; cellI < measuredHitProb.data.size(); cellI++)
         {
             if (measuredHitProb.occupancy[cellI] == Occupancy::Free)
-                varianceOfHitProb[cellI] = varianceCalculationData[cellI].variance / varianceCalculationData[cellI].weight_sum;
+            {
+                const auto& var = varianceCalculationData[cellI];
+                varianceOfHitProb[cellI] = var.weight_sum > 0.0
+                    ? var.variance / var.weight_sum
+                    : 0.0;
+            }
         }
 
         GSL_TRACE("First simulation level done");
