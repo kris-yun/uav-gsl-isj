@@ -358,6 +358,61 @@ namespace GSL::PMFS_internal
         tnqcMode = mode;
     }
 
+    void Simulations::applyTNQCBankGate(std::vector<LeafScore>& nodes)
+    {
+        if (tnqcMode == "off")
+            return;
+
+        std::vector<TNQC::Score> quotientScores;
+        quotientScores.reserve(nodes.size());
+        for (const LeafScore& node : nodes)
+        {
+            TNQC::Score q;
+            q.valid = node.tnqcValid;
+            q.edgeCount = node.tnqcEdgeCount;
+            q.canonicalCosine = node.tnqcCanonicalCosine;
+            q.localOrderAgreement = node.tnqcLocalOrderAgreement;
+            quotientScores.push_back(q);
+        }
+
+        const TNQC::BankGate gate = TNQC::candidateOrderConcordance(quotientScores);
+        tnqcBankGateValid = gate.valid;
+        tnqcBankPairCount = gate.pairCount;
+        tnqcBankConcordance = gate.concordance;
+        tnqcBankGateStrength = gate.strength;
+
+        for (std::size_t i = 0; i < nodes.size(); ++i)
+        {
+            LeafScore& node = nodes[i];
+            if (node.leaf == nullptr || node.leaf->value != 1)
+                continue;
+            TNQC::Score q;
+            q.valid = node.tnqcValid;
+            q.edgeCount = node.tnqcEdgeCount;
+            q.canonicalCosine = node.tnqcCanonicalCosine;
+            q.localOrderAgreement = node.tnqcLocalOrderAgreement;
+            node.tnqcEvidence = TNQC::bankEvidence(q, gate);
+
+            long double score = node.nativeScore;
+            if (tnqcMode == "fused")
+                score = node.nativeScore * std::exp(static_cast<long double>(node.tnqcEvidence));
+            else if (tnqcMode == "only")
+                score = std::exp(static_cast<long double>(node.tnqcEvidence));
+            // shadow deliberately leaves the native PMFS score untouched.
+            node.score = score;
+
+            for (int cellI = node.leaf->origin.x;
+                 cellI < node.leaf->origin.x + node.leaf->size.x; ++cellI)
+                for (int cellJ = node.leaf->origin.y;
+                     cellJ < node.leaf->origin.y + node.leaf->size.y; ++cellJ)
+                    sourceProbInternal[sourceProb.metadata.indexOf({cellI, cellJ})] = score;
+        }
+
+        GSL_INFO("TNQC candidate-bank gate update {} mode={} valid={} pairs={} concordance={:.6g} strength={:.6g}",
+                 nativeSourceUpdateId, tnqcMode, tnqcBankGateValid,
+                 tnqcBankPairCount, tnqcBankConcordance, tnqcBankGateStrength);
+    }
+
     void Simulations::updateSourceProbability(float refineFraction)
     {
         ZoneScoped;
@@ -365,6 +420,10 @@ namespace GSL::PMFS_internal
         // after scoring, so the post-commit update id cannot identify that
         // the likelihood just computed was a first difference.
         sdTemporalDifferenceActive = false;
+        tnqcBankGateValid = false;
+        tnqcBankPairCount = 0;
+        tnqcBankConcordance = 0.0;
+        tnqcBankGateStrength = 0.0;
         GSL_INFO_COLOR(fmt::terminal_color::yellow, "Started simulations. Might take a while!");
         Utils::Time::Stopwatch stopwatch;
         if (contextBankExportEnabled)
@@ -743,7 +802,9 @@ namespace GSL::PMFS_internal
         exportCandidateHitMap(stableID, candidatePoint, result.hitMap);
 
         const long double nativeSourceProb = sourceProbFromMaps(measuredHitProb, result.hitMap);
+        result.nativeSourceProb = nativeSourceProb;
         result.sourceProb = nativeSourceProb;
+        scores[index].nativeScore = nativeSourceProb;
 
         if (tnqcMode != "off" && tnqcObservedLogits.size() == result.hitMap.size())
         {
@@ -756,19 +817,29 @@ namespace GSL::PMFS_internal
             result.tnqcValid = quotient.valid;
             result.tnqcCanonicalCosine = quotient.canonicalCosine;
             result.tnqcLocalOrderAgreement = quotient.localOrderAgreement;
-            result.tnqcCombinedEffect = quotient.combinedEffect;
-            result.tnqcEvidence = quotient.standardizedEvidence;
+            scores[index].tnqcValid = quotient.valid;
+            scores[index].tnqcEdgeCount = quotient.edgeCount;
+            scores[index].tnqcCanonicalCosine = quotient.canonicalCosine;
+            scores[index].tnqcLocalOrderAgreement = quotient.localOrderAgreement;
 
-            if (quotient.valid)
+            // The first/coarse level establishes one shared candidate-bank
+            // concordance strength.  Refined levels reuse that same
+            // non-negative scalar, so the broader local-order channel can
+            // attenuate/abstain but cannot reverse affine candidate ordering.
+            if (quotient.valid && tnqcBankGateValid)
             {
-                const long double modifier = std::exp(
-                    static_cast<long double>(quotient.standardizedEvidence));
+                const double evidence = std::clamp(
+                    tnqcBankGateStrength * quotient.canonicalCosine, -1.0, 1.0);
+                result.tnqcCombinedEffect = evidence;
+                result.tnqcEvidence = evidence;
+                scores[index].tnqcEvidence = evidence;
+                const long double modifier =
+                    std::exp(static_cast<long double>(evidence));
                 if (tnqcMode == "fused")
                     result.sourceProb = nativeSourceProb * modifier;
                 else if (tnqcMode == "only")
                     result.sourceProb = modifier;
-                // shadow computes the exact same diagnostics but preserves the
-                // native PMFS score and therefore the native trajectory.
+                // shadow computes diagnostics but preserves the native score.
             }
         }
 
