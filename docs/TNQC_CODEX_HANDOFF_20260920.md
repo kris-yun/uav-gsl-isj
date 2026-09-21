@@ -129,6 +129,16 @@ Therefore local order can attenuate or abstain when the two quotient channels
 disagree, but it **cannot reverse any affine candidate ordering**. No source
 truth, fitted coefficient, candidate rank, or post-hoc threshold is used.
 
+### Native-bank freeze
+
+Within each source update, PMFS candidate generation and quadtree refinement
+are intentionally driven by the historical native likelihood only. TNQC
+collects the complete native-evaluated candidate bank, computes one bank gate
+after native refinement finishes, and then reweights the final partition.
+Thus TNQC cannot choose the evidence bank on which its own quotient score is
+evaluated. This is also what makes the online equation and the 300-s
+fixed-trajectory replay use the same candidate-bank contract.
+
 The online arms remain
 
 [
