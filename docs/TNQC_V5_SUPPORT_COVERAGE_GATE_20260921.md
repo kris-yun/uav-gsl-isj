@@ -4,9 +4,10 @@ Date: 2026-09-21
 This is the authoritative TNQC **method/gate** definition before the first
 VGR/GADEN House01/02/03 x seed0/1 full-300-s truth outcome is inspected.
 
-For the authoritative 300-s endpoint implementation, read
-`docs/TNQC_V5_CPP_ENDPOINT_PARITY_20260921.md`. That later pre-truth
-correction changes only evaluation semantics; the V5 method below is unchanged.
+For the authoritative 300-s endpoint/build implementation, read
+`docs/TNQC_V5_LINKED_NATIVE_EXECUTION_FREEZE_20260921.md`. That later
+pre-truth execution correction changes only evaluation/build semantics; the
+V5 method below is unchanged.
 
 V5 keeps the V3 quotient/claim boundary and the V4 terminal-leaf
 partition measure. It corrects one remaining normalization problem in the
@@ -161,13 +162,13 @@ Online C++:
 
 The 300-s fixed-trajectory Python replay mirrors the same contract.
 
-Authoritative replay contract after the endpoint-parity correction:
+Authoritative replay contract after the linked-native execution correction:
 
-`TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V6_CPP_ENDPOINT_PARITY`
+`TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V7_LINKED_NATIVE_ENDPOINT`
 
 Authoritative aggregate contract:
 
-`TNQC_VGR_FIXED_TRAJECTORY_300S_GATE_V5_CPP_ENDPOINT_PARITY`
+`TNQC_VGR_FIXED_TRAJECTORY_300S_GATE_V6_LINKED_NATIVE_ENDPOINT`
 
 Required gate scope:
 
@@ -180,12 +181,14 @@ Every House/seed replay is invalid unless:
 1. native posterior reconstruction passes:
    - max absolute cell discrepancy <= 5e-6;
    - L1 discrepancy <= 5e-4;
-2. the standalone C++ `std::sort` endpoint clone matches the native PMFS
-   `ExpectedValue(sourceProbability,0.05)` terminal result within 0.011 m;
-3. the same validated C++ endpoint binary evaluates the TNQC counterfactual;
+2. the endpoint executable built with `gsl_actionserver_node` links
+   `GSL_common`, directly calls
+   `GSL::Utils::ExpectedValue(sourceProbability,0.05)`, and matches the
+   native PMFS terminal result within 0.011 m;
+3. the same linked-native endpoint binary evaluates the TNQC counterfactual;
 4. the V5 gate-scope contract above is present.
 
-Python top-5% remains a tie-sensitivity diagnostic only.
+Python and the standalone C++ clone remain diagnostics/tests only.
 
 An integrity-invalid case writes diagnostics and the runner continues through
 all six frozen cases. Execution/file failures still abort.
@@ -229,6 +232,6 @@ aggregate returns `go_for_closed_loop=true`.
 
 **TNQC V5 METHOD FROZEN BEFORE 300-S TRUTH /
 SUPPORT-COVERAGE + PARTITION-MEASURE + FINAL-LEAF GATE IMPLEMENTED /
-NATIVE-PARITY C++ ENDPOINT FROZEN /
+LINKED-NATIVE C++ ENDPOINT + CLEAN CURRENT-SOURCE BUILD FROZEN /
 VGR 300-S ONLINE HIT-LOGIT REPLAY PENDING /
 CLOSED LOOP HOLD.**
