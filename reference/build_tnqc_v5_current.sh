@@ -33,6 +33,27 @@ if [[ -n "$(git -C "${ROOT_DIR}" status --porcelain --untracked-files=all -- ros
   exit 74
 fi
 
+# Run the lightweight scientific preflight locally on the qualified VM.
+# GitHub-hosted Actions for this repository has not acquired a runner, so the
+# authoritative one-command path must not depend on remote CI having executed.
+python3 -m py_compile \
+  "${ROOT_DIR}/reference/tnqc_vgr_offline_240s.py" \
+  "${ROOT_DIR}/reference/tnqc_vgr_fixed_trajectory_replay.py" \
+  "${ROOT_DIR}/reference/test_tnqc_vgr_fixed_trajectory_replay.py" \
+  "${ROOT_DIR}/reference/aggregate_tnqc_vgr_offline_gate.py" \
+  "${ROOT_DIR}/reference/evaluate_tnqc_closed_loop_300s.py"
+
+PYTHONPATH="${ROOT_DIR}/reference" \
+  python3 "${ROOT_DIR}/reference/test_tnqc_vgr_fixed_trajectory_replay.py"
+
+for script in \
+  "${ROOT_DIR}/reference/run_meaci_case_20260824.sh" \
+  "${ROOT_DIR}/reference/run_tnqc_vgr_offline_gate_20260920.sh" \
+  "${ROOT_DIR}/reference/run_tnqc_closed_loop_matrix_20260920.sh"
+do
+  bash -n "${script}"
+done
+
 # A dependency-free compile/run of the frozen TNQC score core catches header
 # regressions before the heavier ROS build.
 TNQC_CORE_TEST="${BUILD_ROOT}.tnqc_score_test"
