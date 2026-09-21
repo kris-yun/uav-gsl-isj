@@ -50,7 +50,7 @@ namespace GSL::PMFS_internal::TNQC
     // affine nuisance actions in logit space. The continuous channel is a
     // confidence-weighted cosine between centered fields. The auxiliary
     // channel is the weighted agreement of local order relations and is
-    // invariant to any strictly increasing pointwise sensor transform.
+    // invariant to any strictly increasing pointwise transform of the fields.
     inline Score score(const std::vector<double>& observedLogits,
                        const std::vector<double>& predictedLogits,
                        const std::vector<double>& weights,
@@ -130,8 +130,9 @@ namespace GSL::PMFS_internal::TNQC
         if (edgeWeightSum > 0.0)
             out.localOrderAgreement = std::clamp(signedAgreement / edgeWeightSum, -1.0, 1.0);
 
-        // q_aff is the exact physical quotient for independent positive
-        // affine logit nuisance.  q_ord is deliberately broader and is kept
+        // q_aff is the exact representation quotient for independent
+        // positive-affine nuisance actions on the supported logit fields.
+        // q_ord is deliberately broader and is kept
         // as an independent corroboration channel.  Do not mix it into a
         // candidate score here: candidate-wise averaging can preserve each
         // candidate's sign yet still reverse the ordering between two source
