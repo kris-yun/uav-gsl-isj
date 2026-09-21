@@ -248,16 +248,15 @@ def tnqc_score(alignment, cells, edges):
 
 def candidate_order_concordance(
         diag, candidate_ids=None, hypothesis_measure=None):
-    """Shared quotient-channel gate over a specified hypothesis measure.
+    """Support-coverage-aware gate over a specified hypothesis measure.
 
-    The authoritative bank is the set of candidates that form the final PMFS
-    partition. Evaluated ancestors that were later subdivided are search
-    history and must not influence the terminal posterior gate.
+    Reference mass contains every valid candidate pair for which q_aff has a
+    non-tied ordering. Local-order ties or insufficient edge support contribute
+    zero signed evidence but remain in that reference mass. Consequently sparse
+    auxiliary support attenuates the shared gate instead of renormalizing to
+    full strength.
 
-    hypothesis_measure maps candidate id -> represented free-cell count. With
-    unit measure this reduces to ordinary pair concordance. With leaf cell
-    counts, pair weight m_i*m_j is exactly equivalent to expanding each leaf
-    into identical cell-level hypotheses and ignoring within-leaf ties.
+    hypothesis_measure maps candidate id -> represented free-cell count.
     """
     ids = list(diag) if candidate_ids is None else list(candidate_ids)
 
@@ -272,29 +271,56 @@ def candidate_order_concordance(
         return m
 
     valid = [(cid, diag[cid], measure(cid)) for cid in ids
-             if cid in diag and diag[cid].get("valid")
-             and diag[cid].get("edge_count", 0) >= 2]
+             if cid in diag and diag[cid].get("valid")]
+
     signed = 0.0
-    pair_weight_sum = 0.0
-    pairs = 0
+    informative_weight = 0.0
+    reference_weight = 0.0
+    informative_pairs = 0
+    reference_pairs = 0
+
     for i in range(len(valid)):
         for j in range(i + 1, len(valid)):
             _, qi, mi = valid[i]
             _, qj, mj = valid[j]
             sa = signum(qi["canonical_cosine"] - qj["canonical_cosine"])
-            so = signum(qi["local_order_agreement"] - qj["local_order_agreement"])
-            if not sa or not so:
+            if not sa:
                 continue
+
             pair_weight = mi * mj
+            reference_weight += pair_weight
+            reference_pairs += 1
+
+            if qi.get("edge_count", 0) < 2 or qj.get("edge_count", 0) < 2:
+                continue
+            so = signum(
+                qi["local_order_agreement"] - qj["local_order_agreement"])
+            if not so:
+                continue
+
             signed += pair_weight * sa * so
-            pair_weight_sum += pair_weight
-            pairs += 1
-    if pairs == 0 or not (pair_weight_sum > 0.0):
+            informative_weight += pair_weight
+            informative_pairs += 1
+
+    if not (reference_weight > 0.0):
         return dict(valid=False, pair_count=0, pair_weight=0.0,
+                    reference_pair_count=0, reference_pair_weight=0.0,
+                    informative_coverage=0.0,
                     concordance=0.0, strength=0.0)
-    concordance = max(-1.0, min(1.0, signed / pair_weight_sum))
-    return dict(valid=True, pair_count=pairs, pair_weight=pair_weight_sum,
-                concordance=concordance, strength=max(0.0, concordance))
+
+    coverage = max(0.0, min(1.0, informative_weight / reference_weight))
+    concordance = (
+        max(-1.0, min(1.0, signed / informative_weight))
+        if informative_weight > 0.0 else 0.0)
+    strength = max(0.0, signed / reference_weight)
+    return dict(valid=True,
+                pair_count=informative_pairs,
+                pair_weight=informative_weight,
+                reference_pair_count=reference_pairs,
+                reference_pair_weight=reference_weight,
+                informative_coverage=coverage,
+                concordance=concordance,
+                strength=strength)
 
 
 def final_partition(cells, candidates):
@@ -438,7 +464,7 @@ def main():
           if diag[cid]["valid"]]
 
     payload = {
-        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V4_PARTITION_MEASURE_GATE",
+        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V5_SUPPORT_COVERAGE_GATE",
         "run_dir": str(args.run_dir),
         "budget_s": args.budget_s,
         "selected_source_update_id": uid,
@@ -450,7 +476,7 @@ def main():
         "total_evaluated_candidate_count": len(candidates),
         "final_leaf_candidate_count": len(active_candidate_ids),
         "candidate_gate_scope":
-            "final_partition_leaf_candidates_free_cell_measure_weighted",
+            "final_partition_leaf_candidates_free_cell_measure_support_coverage_weighted",
         "final_leaf_hypothesis_measure_cells": active_candidate_measure,
         "local_edge_count": len(edges),
         "native_reconstruction_audit": {
@@ -499,7 +525,8 @@ def main():
         "gate_validity_requires":
             ["native_posterior_reconstruction",
              "native_cpp_expected_value_endpoint_match",
-             "partition_measure_final_leaf_gate_scope"],
+             "partition_measure_final_leaf_gate_scope",
+             "local_order_support_coverage_attenuation"],
     }
     text = json.dumps(payload, indent=2, sort_keys=True)
     print(text)
