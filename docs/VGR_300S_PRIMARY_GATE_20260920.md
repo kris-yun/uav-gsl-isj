@@ -44,23 +44,33 @@ It must agree with
 `evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json`. In particular,
 the affine concentration-space quotient is 12/12 at 240 s. The historical
 two-source concordance screen releases 11/12 cases and is 11/11 correct; this
-is motivation for the hierarchy only, not direct evidence for the V4 online
-hit-logit partition-measure gate. This remains a mechanism sanity check, not
-the 300-s GO.
+is motivation for the hierarchy only, not direct evidence for the V5 online
+hit-logit support-coverage/partition-measure gate. This remains a mechanism
+sanity check, not the 300-s GO.
 
-### Gate V1 — 300 s native-trajectory shadow test
+### Gate V1 — 300 s native-trajectory export + read-only V5 replay
 
-Run the native PMFS trajectory for the full 300 s budget while computing TNQC in `shadow` mode only. Shadow must not alter PMFS score, posterior, planner, or stopping state.
+Run **native PMFS OFF only** for the full 300 s budget and export the context
+bank. Do not let TNQC change posterior, quadtree refinement, planner, or
+stopping state during this gate.
 
 Required outputs for each House/seed pair:
 
 1. final native PMFS top-5% error at 300 s;
-2. candidate-level TNQC diagnostics at every source update;
-3. enough frozen candidate/posterior state to construct a **read-only quotient-rescored posterior** on the same native trajectory;
-4. final read-only quotient-rescored top-5% error;
-5. OFF-vs-SHADOW byte/trajectory determinism check.
+2. the complete native evaluated-candidate/context export;
+3. reconstructed native posterior and its cellwise audit;
+4. native Python top-5% endpoint versus the C++ `RESULT IS: Error=` anchor;
+5. final read-only V5 quotient-rescored posterior and top-5% error;
+6. V5 terminal-leaf free-cell measure, reference/informative pair mass,
+   informative coverage, conditional concordance, and actual gate strength.
 
-The read-only quotient-rescored posterior is the correct first VGR feasibility test because it directly evaluates the online hit-logit representation while isolating inference from navigation feedback. V4 requires the gate to use terminal active leaves weighted by represented free-cell measure.
+The read-only quotient-rescored posterior is the correct first VGR feasibility
+test because it directly evaluates the online hit-logit representation while
+isolating inference from navigation feedback. V5 requires terminal active
+leaves, free-cell pair measure, and support-coverage attenuation.
+
+OFF-vs-SHADOW determinism is a **later gate after explicit offline GO**; it is
+not a prerequisite for the fixed-trajectory inference screen.
 
 ### Gate V2 — decision to enter closed loop
 
@@ -95,4 +105,4 @@ external evidence only.
 
 Therefore the scientifically valid project status is:
 
-**TNQC VGR-MECHANISM POSITIVE / VGR-300S PRIMARY GATE PENDING / CLOSED-LOOP HOLD.**
+**TNQC CONCENTRATION-SPACE MECHANISM POSITIVE / V5 ONLINE HIT-LOGIT VGR-300S PRIMARY GATE PENDING / CLOSED-LOOP HOLD.**
