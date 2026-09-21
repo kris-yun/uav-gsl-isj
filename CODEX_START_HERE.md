@@ -6,6 +6,9 @@ Read `docs/TNQC_V5_SUPPORT_COVERAGE_GATE_20260921.md` first. Then read
 `docs/TNQC_V4_PARTITION_MEASURE_GATE_20260921.md` for the cell-measure proof
 and `docs/TNQC_V3_FINAL_LEAF_FREEZE_20260921.md` for the quotient theorem and claim boundary.
 
+Before execution, verify the machine-readable freeze:
+`evidence/TNQC_V5_IMPLEMENTATION_MANIFEST_20260921.json`.
+
 ## Important correction
 
 Do **not** treat the Orebro 2/5/10-minute source-identity probe as the project feasibility result. It is external measured-data falsification only.
