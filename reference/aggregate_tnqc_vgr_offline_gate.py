@@ -46,7 +46,7 @@ def main():
                 p.get("native_cpp_endpoint_audit", {}).get("pass", False)),
             "final_leaf_gate_scope_pass":
                 p.get("candidate_gate_scope") ==
-                "final_partition_leaf_candidates_free_cell_measure_weighted",
+                "final_partition_leaf_candidates_free_cell_measure_support_coverage_weighted",
             "case_valid_for_gate": bool(p.get("valid_for_gate", False)),
             "selected_source_update_id": p["selected_source_update_id"],
             "selected_source_update_sim_time": p["selected_source_update_sim_time"],
@@ -92,7 +92,7 @@ def main():
         and not false_collapse
     )
     out = {
-        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_GATE_V3_PARTITION_MEASURE",
+        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_GATE_V4_SUPPORT_COVERAGE",
         "cases": rows,
         "pooled_native_error_m": native_pooled,
         "pooled_tnqc_fused_error_m": fused_pooled,
@@ -107,6 +107,7 @@ def main():
             "native_reconstruction_required": True,
             "native_cpp_expected_value_endpoint_match_required": True,
             "partition_measure_final_leaf_gate_scope_required": True,
+            "local_order_support_coverage_attenuation_required": True,
             "no_false_confident_collapse": True,
         },
         "valid": valid,
