@@ -149,9 +149,10 @@ For each candidate source hypothesis:
 1. construct its source-consistency evidence at a hierarchy of spatial scales;
 2. track candidate ordering under successive coarse-graining;
 3. identify a scale interval where ordering is stable;
-4. release only evidence supported by that stable interval;
-5. stop coarse-graining when ordering destabilizes;
-6. do not count microscopic residual fluctuations as independent source evidence.
+4. for each candidate pair, release signed evidence only if its ordering has the same nonzero sign at every predeclared scale;
+5. if a pair crosses or ties at any scale, abstain for that pair;
+6. aggregate stable pairwise wins/losses with final-partition physical source-space measure;
+7. do not count microscopic residual fluctuations as independent source evidence.
 
 ## Next decisive gate
 
@@ -165,7 +166,8 @@ Required comparators:
 - frozen TNQC single-scale quotient;
 - one arbitrarily chosen coarse scale;
 - multiscale equal fusion;
-- **RSFP scale-stable evidence**;
+- per-candidate multiscale lower envelope;
+- **RSFP scale-stable pairwise evidence**;
 - spatial-shuffle / scale-instability controls.
 
 Promotion bar:
@@ -173,7 +175,7 @@ Promotion bar:
 - pooled endpoint improvement >= 2% over native;
 - at least 4/6 non-worse;
 - no false-confident collapse;
-- RSFP must beat single-scale coarse smoothing and naive multiscale fusion;
+- RSFP must beat fine-only, single-scale coarse smoothing, naive multiscale fusion, and the per-candidate lower-envelope control;
 - scale choice / stopping rule must be truth-independent.
 
 ## Current decision
@@ -189,5 +191,24 @@ This is currently the leading candidate because it has:
 - a destructive spatial control that collapses to chance;
 - a clear failure scale at over-coarsening;
 - no direct GSL novelty collision found so far.
+
+### Frozen 300-s primary definition
+
+For every active source-hypothesis pair `(s_i,s_j)`, compute the sign of
+`q_i(scale)-q_j(scale)` at factors 1/2/4/8.
+
+- same nonzero sign at all four scales -> one scale-stable signed pair contribution;
+- any sign flip -> abstain for that pair;
+- any tie -> non-comparable pair;
+- pair mass = product of represented final-partition free-cell counts.
+
+A candidate's RSFP score is its signed stable-pair mass divided by its
+comparable reference pair mass, bounded in [-1,1].
+
+This candidate-wise pairwise fixed-point score is the scientific primary.
+The old `min(q_1,q_2,q_4,q_8)` construction is retained only as a required
+lower-envelope control.
+
+This definition was frozen before any RSFP 300-s result was inspected.
 
 It is still only a candidate until the authoritative 300-s endpoint gate is positive.
