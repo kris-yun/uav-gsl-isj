@@ -2,6 +2,17 @@ name: TNQC static scientific checks
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "ros2_package/src/gsl_server/algorithms/PMFS/internal/TNQCScore.hpp"
+      - "ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.hpp"
+      - "ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp"
+      - "ros2_package/test/test_tnqc_score.cpp"
+      - "reference/tnqc_vgr_offline_240s.py"
+      - "reference/tnqc_vgr_fixed_trajectory_replay.py"
+      - "reference/test_tnqc_vgr_fixed_trajectory_replay.py"
+      - ".github/workflows/tnqc_static_checks.yml"
 
 permissions:
   contents: write
@@ -16,7 +27,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          out="evidence/TNQC_STATIC_CHECKS_20260920.txt"
+          out="evidence/TNQC_STATIC_CHECKS_20260921.txt"
           : > "$out"
           overall=0
 
@@ -51,9 +62,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tnqc-static-checks
-          path: evidence/TNQC_STATIC_CHECKS_20260920.txt
+          path: evidence/TNQC_STATIC_CHECKS_20260921.txt
           if-no-files-found: error
 
       - name: Enforce pass
         run: |
-          grep -q '^overall_rc=0$' evidence/TNQC_STATIC_CHECKS_20260920.txt
+          grep -q '^overall_rc=0$' evidence/TNQC_STATIC_CHECKS_20260921.txt
