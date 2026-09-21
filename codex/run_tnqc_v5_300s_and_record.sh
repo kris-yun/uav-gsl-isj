@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -Euo pipefail
+set -Eeuo pipefail
 
 EXPECTED_BRANCH="codex/tnqc-v5-300s-offline-20260921"
 FROZEN_ANCESTOR="9d3d21e7a7fdea0946e29d313ea9073ce63d2bab"
@@ -77,7 +77,7 @@ RUN_ROOT="${RUN_ROOT}" TNQC_BUILD_ROOT="${BUILD_ROOT}" LAUNCH_FILE="${LAUNCH_FIL
 runner_rc=${PIPESTATUS[0]}
 set -e
 
-echo "${runner_rc}" > "${RESULT_DIR}/runner_exit_code.txt"
+echo "${runner_rc}" > "${RESULT_DIR}/authoritative_runner_exit_code.txt"
 date -u +%Y-%m-%dT%H:%M:%SZ > "${RESULT_DIR}/end_utc.txt"
 
 for f in   tnqc_build_provenance.json   tnqc_batch_provenance.json   tnqc_vgr_300s_offline_gate.json   frozen_vgr_launch_overlay.py
@@ -106,6 +106,17 @@ for house in House01 House02 House03; do
     fi
   done
 done
+
+# The authoritative runner must never rewrite tracked repository files.
+# Untracked evidence under codex_results is expected; tracked changes are not.
+git diff --name-only > "${RESULT_DIR}/preflight/tracked_changes_after_run.txt"
+postrun_integrity_rc=0
+if [[ -s "${RESULT_DIR}/preflight/tracked_changes_after_run.txt" ]]; then
+  echo "ERROR: tracked repository files changed during execution" >&2
+  cat "${RESULT_DIR}/preflight/tracked_changes_after_run.txt" >&2
+  git diff > "${RESULT_DIR}/preflight/tracked_changes_after_run.patch"
+  postrun_integrity_rc=95
+fi
 
 python3 - "${RESULT_DIR}" "${runner_rc}" <<'PY'
 import json
@@ -245,17 +256,26 @@ lines += [
     "\n".join(lines) + "\n", encoding="utf-8")
 PY
 
-(
-  cd "${RESULT_DIR}"
-  find . -type f ! -name SHA256SUMS.txt -print0     | sort -z     | xargs -0 sha256sum > SHA256SUMS.txt
-)
-
 git status --porcelain --untracked-files=all > "${RESULT_DIR}/git_status_after.txt"
 
-echo "=== Recorder completed: runner_rc=${runner_rc} ==="
+final_rc="${runner_rc}"
+if [[ "${postrun_integrity_rc}" -ne 0 ]]; then
+  final_rc="${postrun_integrity_rc}"
+fi
+echo "${final_rc}" > "${RESULT_DIR}/recorder_exit_code.txt"
+
+(
+  cd "${RESULT_DIR}"
+  find . -type f ! -name SHA256SUMS.txt -print0 \
+    | sort -z \
+    | xargs -0 sha256sum > SHA256SUMS.txt
+)
+
+echo "=== Recorder completed: runner_rc=${runner_rc} final_rc=${final_rc} ==="
 echo "Evidence directory: ${RESULT_DIR}"
 echo "Review: ${RESULT_DIR}/RESULTS_SUMMARY.md"
 
-# Preserve the scientific runner status for the caller:
-# 0 = GO; 10 = HOLD; other = execution/infrastructure failure.
-exit "${runner_rc}"
+# Preserve the scientific runner status unless the recorder detects a
+# repository-integrity violation:
+# 0 = GO; 10 = HOLD; other = execution/infrastructure/integrity failure.
+exit "${final_rc}"
