@@ -33,7 +33,7 @@ monotone local-order invariance, the candidate-ranking reversal counterexample,
 the candidate-bank concordance abstention rule, negative reversed-field
 evidence, and insufficient-support abstention.
 
-Then reproduce the frozen project-data mechanism record:
+Then reproduce the frozen **concentration-space** project-data mechanism record:
 
 ```bash
 python3 reference/tnqc_vgr_offline_240s.py \
@@ -41,11 +41,12 @@ python3 reference/tnqc_vgr_offline_240s.py \
 ```
 
 It must agree with
-`evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json`.  In particular,
-the affine quotient is 12/12 at 240 s. The candidate-bank concordance gate
-releases 11/12 cases and is 11/11 correct; across all 100 frozen positive-scale
-and 200 monotone-compression stress seeds it keeps 11/12 coverage with 100%
-conditional accuracy. This is a mechanism sanity check, not the 300-s GO.
+`evidence/TNQC_VGR_240S_SPATIAL_MECHANISM_20260921.json`. In particular,
+the affine concentration-space quotient is 12/12 at 240 s. The historical
+two-source concordance screen releases 11/12 cases and is 11/11 correct; this
+is motivation for the hierarchy only, not direct evidence for the V4 online
+hit-logit partition-measure gate. This remains a mechanism sanity check, not
+the 300-s GO.
 
 ### Gate V1 — 300 s native-trajectory shadow test
 
@@ -59,7 +60,7 @@ Required outputs for each House/seed pair:
 4. final read-only quotient-rescored top-5% error;
 5. OFF-vs-SHADOW byte/trajectory determinism check.
 
-The read-only quotient-rescored posterior is the correct first VGR feasibility test because it isolates the inference signal from navigation feedback.
+The read-only quotient-rescored posterior is the correct first VGR feasibility test because it directly evaluates the online hit-logit representation while isolating inference from navigation feedback. V4 requires the gate to use terminal active leaves weighted by represented free-cell measure.
 
 ### Gate V2 — decision to enter closed loop
 
