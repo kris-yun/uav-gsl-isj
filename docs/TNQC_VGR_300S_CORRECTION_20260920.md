@@ -150,28 +150,26 @@ q_{\rm ord}(s)=
 and the corrected candidate-bank quotient-channel concordance gate.
 
 For all valid **terminal active leaf candidates in the reconstructed final
-PMFS partition** of one frozen update, write
-(a_i=q_{\rm aff}(s_i)), (o_i=q_{\rm ord}(s_i)), and let (m_i) be the
-number of free source cells represented by leaf i. V4 computes
+PMFS partition**, write a_i=q_aff(s_i), o_i=q_ord(s_i), and let m_i be the
+number of free source cells represented by leaf i.
 
-[
-C_u=
-\frac{\sum_{i<j}m_i m_j
-\operatorname{sgn}(a_i-a_j)
-\operatorname{sgn}(o_i-o_j)}
-{\sum_{i<j}m_i m_j},
-]
+V5 defines W_main as the sum of m_i*m_j over every non-tied affine-order
+pair. W_info is the subset for which both candidates have sufficient local
+edge support and local order is also non-tied. Define signed informative mass
 
-ignoring ties and candidates without enough local-order support. Subdivided
-ancestors are search-history audit only, and an unweighted final-leaf gate is
-also recorded only as a sensitivity audit. Neither can control the V4 gate.
-The shared source-blind gate and candidate evidence are
+`S = sum_info m_i*m_j*sign(a_i-a_j)*sign(o_i-o_j)`.
 
-[
-g_u=\max(0,C_u),
-\qquad
-e_i=g_u a_i.
-]
+The diagnostic conditional concordance is `C_cond=S/W_info` when W_info>0
+(otherwise 0), and informative coverage is `rho=W_info/W_main`.
+The actual gate and evidence are
+
+`g=max(0,S/W_main)=max(0,C_cond)*rho`
+
+`e_i=g*a_i`.
+
+Subdivided ancestors, an unweighted final-leaf gate, and the older
+coverage-unaware V4 normalization are recorded only as source-blind
+sensitivity audits. None can control the V5 posterior.
 
 This replaces the earlier per-candidate sign guard. That older rule was
 falsified by a ranking counterexample: preserving the sign of each candidate
@@ -204,7 +202,7 @@ Default validity limits:
 - Python native top-5% error must match the native C++ `RESULT IS: Error=`
   endpoint within 0.011 m (the C++ log is printed to two decimals);
 - gate scope must be
-  `final_partition_leaf_candidates_free_cell_measure_weighted`.
+  `final_partition_leaf_candidates_free_cell_measure_support_coverage_weighted`.
 
 If any integrity condition fails, that House/seed replay is invalid and the
 six-case gate cannot return GO. These audits detect mismatches in candidate
