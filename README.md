@@ -4,8 +4,10 @@ This repository contains two clearly separated research layers for
 PMFS-based single-UAV gas-source localization:
 
 1. the frozen historical **ME-ACI V10** development result;
-2. the newer **TNQC (Transport-Nuisance Quotient Canonicalization)** research
-   cycle, whose authoritative full-300-s feasibility result is still pending.
+2. the frozen **TNQC (Transport-Nuisance Quotient Canonicalization) V5**
+   research cycle, whose authoritative six-case 300-s fixed-trajectory verdict
+   is **HOLD**; and the separately scoped next-generation active-deconfounding
+   research direction.
 
 The repository has been reorganized around three top-level entry points
 without moving frozen executable/evidence files:
@@ -118,12 +120,16 @@ invariance to arbitrary raw physical sensor/release transformations.
 
 - concentration-space VGR mechanism evidence: **positive**;
 - implementation/evaluator integrity: **frozen and audited**;
-- full-300-s hit-logit fixed-trajectory House gate: **pending**;
-- closed loop: **HOLD until offline GO**.
+- full-300-s hit-logit fixed-trajectory House gate: **HOLD**;
+- integrity: **6/6 PASS**;
+- pooled improvement: **-0.009162%**;
+- improved cases: **1/6**;
+- TNQC V5 FUSED closed loop: **not run after the frozen HOLD verdict**.
 
-A recent execution attempt did **not** produce a scientific result: it stopped
-before experiment start because of WSL/VM launch infrastructure loss.
-Therefore TNQC is currently neither GO nor HOLD on the 300-s gate.
+The final evidence summary is
+[evidence/TNQC_V5_R2_HOUSE123_SEED01_OFFLINE_HOLD_20260921.md](evidence/TNQC_V5_R2_HOUSE123_SEED01_OFFLINE_HOLD_20260921.md).
+The next-generation direction is documented separately and must not be
+presented as part of TNQC V5.
 
 Authoritative entry point:
 
