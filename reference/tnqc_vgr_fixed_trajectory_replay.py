@@ -4,10 +4,10 @@
 Consumes a native PMFS context-bank export from a full-budget VGR House run.
 The robot trajectory, measurements, wind field, native candidate bank and
 refinement decisions stay fixed. TNQC only reweights the frozen candidate
-likelihoods. This matches the online V2 contract: quadtree refinement is
-native within each source update, and the bank-level concordance gate is
-applied only after that complete native bank is frozen. Source truth is used
-only after all posteriors are constructed.
+likelihoods. This matches the online V4 contract: quadtree refinement is
+native within each source update; the concordance gate is computed only on
+terminal active leaves, weighted by each leaf's represented free-cell
+multiplicity. Source truth is used only after all posteriors are constructed.
 
 The replay audits itself by reconstructing native PMFS from the exported
 candidate alignment/rectangles and comparing it with source_posterior.csv.
@@ -246,32 +246,55 @@ def tnqc_score(alignment, cells, edges):
                 canonical_cosine=qa, local_order_agreement=qo)
 
 
-def candidate_order_concordance(diag, candidate_ids=None):
-    """Shared quotient-channel gate over a specified hypothesis bank.
+def candidate_order_concordance(
+        diag, candidate_ids=None, hypothesis_measure=None):
+    """Shared quotient-channel gate over a specified hypothesis measure.
 
     The authoritative bank is the set of candidates that form the final PMFS
-    partition.  Evaluated ancestors that were later subdivided are search
+    partition. Evaluated ancestors that were later subdivided are search
     history and must not influence the terminal posterior gate.
+
+    hypothesis_measure maps candidate id -> represented free-cell count. With
+    unit measure this reduces to ordinary pair concordance. With leaf cell
+    counts, pair weight m_i*m_j is exactly equivalent to expanding each leaf
+    into identical cell-level hypotheses and ignoring within-leaf ties.
     """
     ids = list(diag) if candidate_ids is None else list(candidate_ids)
-    valid = [diag[cid] for cid in ids
+
+    def measure(cid):
+        if hypothesis_measure is None:
+            return 1.0
+        if cid not in hypothesis_measure:
+            raise ValueError(f"missing hypothesis measure for {cid}")
+        m = float(hypothesis_measure[cid])
+        if not (m > 0.0 and math.isfinite(m)):
+            raise ValueError(f"invalid hypothesis measure for {cid}: {m}")
+        return m
+
+    valid = [(cid, diag[cid], measure(cid)) for cid in ids
              if cid in diag and diag[cid].get("valid")
              and diag[cid].get("edge_count", 0) >= 2]
     signed = 0.0
+    pair_weight_sum = 0.0
     pairs = 0
     for i in range(len(valid)):
         for j in range(i + 1, len(valid)):
-            sa = signum(valid[i]["canonical_cosine"] - valid[j]["canonical_cosine"])
-            so = signum(valid[i]["local_order_agreement"] - valid[j]["local_order_agreement"])
+            _, qi, mi = valid[i]
+            _, qj, mj = valid[j]
+            sa = signum(qi["canonical_cosine"] - qj["canonical_cosine"])
+            so = signum(qi["local_order_agreement"] - qj["local_order_agreement"])
             if not sa or not so:
                 continue
-            signed += sa * so
+            pair_weight = mi * mj
+            signed += pair_weight * sa * so
+            pair_weight_sum += pair_weight
             pairs += 1
-    if pairs == 0:
-        return dict(valid=False, pair_count=0, concordance=0.0, strength=0.0)
-    concordance = max(-1.0, min(1.0, signed / pairs))
-    return dict(valid=True, pair_count=pairs, concordance=concordance,
-                strength=max(0.0, concordance))
+    if pairs == 0 or not (pair_weight_sum > 0.0):
+        return dict(valid=False, pair_count=0, pair_weight=0.0,
+                    concordance=0.0, strength=0.0)
+    concordance = max(-1.0, min(1.0, signed / pair_weight_sum))
+    return dict(valid=True, pair_count=pairs, pair_weight=pair_weight_sum,
+                concordance=concordance, strength=max(0.0, concordance))
 
 
 def final_partition(cells, candidates):
@@ -363,7 +386,14 @@ def main():
     # terminal source hypotheses.  The all-evaluated-candidate gate is kept
     # below as a source-blind audit only; it must not control TNQC evidence.
     active_candidate_ids = sorted(set(part.values()))
-    bank_gate = candidate_order_concordance(diag, active_candidate_ids)
+    active_candidate_measure = {}
+    for cid in part.values():
+        active_candidate_measure[cid] = active_candidate_measure.get(cid, 0) + 1
+
+    bank_gate = candidate_order_concordance(
+        diag, active_candidate_ids, active_candidate_measure)
+    final_leaf_unweighted_gate_audit = candidate_order_concordance(
+        diag, active_candidate_ids)
     all_evaluated_gate_audit = candidate_order_concordance(diag)
 
     fused_s, only_s = {}, {}
@@ -408,7 +438,7 @@ def main():
           if diag[cid]["valid"]]
 
     payload = {
-        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V3_FINAL_LEAF_GATE",
+        "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V4_PARTITION_MEASURE_GATE",
         "run_dir": str(args.run_dir),
         "budget_s": args.budget_s,
         "selected_source_update_id": uid,
@@ -419,7 +449,9 @@ def main():
         "candidate_count": len(candidates),
         "total_evaluated_candidate_count": len(candidates),
         "final_leaf_candidate_count": len(active_candidate_ids),
-        "candidate_gate_scope": "final_partition_leaf_candidates_only",
+        "candidate_gate_scope":
+            "final_partition_leaf_candidates_free_cell_measure_weighted",
+        "final_leaf_hypothesis_measure_cells": active_candidate_measure,
         "local_edge_count": len(edges),
         "native_reconstruction_audit": {
             **audit,
@@ -436,9 +468,13 @@ def main():
             "pass": endpoint_pass,
         },
         "tnqc_candidate_bank_gate": bank_gate,
+        "tnqc_final_leaf_unweighted_gate_audit":
+            final_leaf_unweighted_gate_audit,
         "tnqc_all_evaluated_candidate_gate_audit": all_evaluated_gate_audit,
         "tnqc_gate_scope_audit": {
-            "all_evaluated_gate_differs_from_final_leaf_gate":
+            "unweighted_final_leaf_gate_differs_from_measure_gate":
+                final_leaf_unweighted_gate_audit != bank_gate,
+            "all_evaluated_gate_differs_from_measure_gate":
                 all_evaluated_gate_audit != bank_gate,
             "final_leaf_candidate_ids": active_candidate_ids,
         },
@@ -462,7 +498,8 @@ def main():
         "valid_for_gate": audit_pass,
         "gate_validity_requires":
             ["native_posterior_reconstruction",
-             "native_cpp_expected_value_endpoint_match"],
+             "native_cpp_expected_value_endpoint_match",
+             "partition_measure_final_leaf_gate_scope"],
     }
     text = json.dumps(payload, indent=2, sort_keys=True)
     print(text)
