@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
             GSL::PMFSLib::InitializeMap(mg,sim,visibility,Vector2(t.robotX,t.robotY));
             if(worldCount==0) for(size_t j=0;j<n;++j) if(occ[j]==Occupancy::Free) {
                 auto ij=meta.indices2D(j); double w=0;
-                for(auto p:visibility.at(ij)) w+=std::exp(-vmath::length(Vector2(ij-p)));
+                for(auto p:visibility.at(ij)) w+=std::exp(-std::hypot(double(ij.x-p.x),double(ij.y-p.y)));
                 vis << j << ',' << std::setprecision(17) << w << '\n';
             }
             for(auto& s:sources) {
