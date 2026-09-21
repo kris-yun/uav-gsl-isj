@@ -17,7 +17,10 @@ set -Eeo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CASE_RUNNER="${CASE_RUNNER:-${ROOT_DIR}/reference/run_meaci_case_20260824.sh}"
-PFDI_INSTALL_ROOT="${PFDI_INSTALL_ROOT:-/dev/shm/meaci_online_20260824}"
+MANIFEST_VERIFY="${MANIFEST_VERIFY:-${ROOT_DIR}/reference/verify_tnqc_v5_manifest.py}"
+BUILD_SCRIPT="${BUILD_SCRIPT:-${ROOT_DIR}/reference/build_tnqc_v5_current.sh}"
+TNQC_BUILD_ROOT="${TNQC_BUILD_ROOT:-/dev/shm/tnqc_v5_300s_build}"
+LAUNCH_FILE="${LAUNCH_FILE:-/dev/shm/meaci_online_20260824/launch/vgr_gsl_pmfs_pfdi.launch.py}"
 RUN_ROOT="${RUN_ROOT:-/dev/shm/tnqc_closed_loop_20260920}"
 TNQC_MODES="${TNQC_MODES:-off shadow fused only}"
 HOUSES="${HOUSES:-House01 House02 House03}"
@@ -37,18 +40,29 @@ if [[ "${ALLOW_UNCONFIRMED_DIAGNOSTIC}" != "1" ]]; then
   python3 - "${OFFLINE_GO_FILE}" <<'PY'
 import json, sys
 p=json.load(open(sys.argv[1], encoding="utf-8"))
-if not p.get("go_for_closed_loop", False):
-    raise SystemExit("TNQC closed loop blocked: VGR 300-s offline gate is HOLD")
+if p.get("contract") != "TNQC_VGR_FIXED_TRAJECTORY_300S_GATE_V6_LINKED_NATIVE_ENDPOINT":
+    raise SystemExit(
+        "TNQC closed loop blocked: offline gate is not the authoritative "
+        "V6 linked-native endpoint contract")
+if not p.get("valid", False) or not p.get("go_for_closed_loop", False):
+    raise SystemExit("TNQC closed loop blocked: VGR 300-s offline gate is HOLD/INVALID")
 PY
 fi
 
 mkdir -p "${RUN_ROOT}"
+python3 "${MANIFEST_VERIFY}" --root "${ROOT_DIR}" \
+  --manifest "evidence/TNQC_V5_IMPLEMENTATION_MANIFEST_20260921.json"
+TNQC_BUILD_ROOT="${TNQC_BUILD_ROOT}" bash "${BUILD_SCRIPT}"
+PFDI_INSTALL_ROOT="${TNQC_BUILD_ROOT}"
+EXPECTED_ALGORITHM_SHA256="$(sha256sum "${PFDI_INSTALL_ROOT}/install/gsl_server/lib/gsl_server/gsl_actionserver_node" | awk '{print $1}')"
+LAUNCH_SHA256="$(sha256sum "${LAUNCH_FILE}" | awk '{print $1}')"
+
 summary="${RUN_ROOT}/tnqc_matrix.tsv"
 printf 'house\tseed\tmode\texit_code\trun_dir\tresult_line\n' > "${summary}"
 
-launch_file="${PFDI_INSTALL_ROOT}/launch/vgr_gsl_pmfs_pfdi.launch.py"
+launch_file="${LAUNCH_FILE}"
 if [[ ! -f "${launch_file}" ]]; then
-  echo "missing installed launch file: ${launch_file}" >&2
+  echo "missing external launch file: ${launch_file}" >&2
   exit 3
 fi
 
@@ -87,6 +101,7 @@ for house in ${HOUSES}; do
       TIMEOUT_SEC="${TIMEOUT_SEC}" \
       OUTER_DEADLINE_SEC="${OUTER_DEADLINE_SEC}" \
       PFDI_INSTALL_ROOT="${PFDI_INSTALL_ROOT}" \
+      LAUNCH_FILE="${LAUNCH_FILE}" \
       bash "${CASE_RUNNER}"
       status=$?
       set -e
@@ -96,6 +111,19 @@ for house in ${HOUSES}; do
         suffix="_tnqc_${mode}"
       fi
       run_dir="${RUN_ROOT}/${house}_seed${seed}_off_off${suffix}"
+      if [[ -s "${run_dir}/runtime_manifest.json" ]]; then
+        python3 - "${run_dir}/runtime_manifest.json" \
+          "${EXPECTED_ALGORITHM_SHA256}" "${LAUNCH_SHA256}" <<'PY'
+import json, sys
+path, want_alg, want_launch = sys.argv[1:]
+p = json.load(open(path, encoding="utf-8"))
+if p.get("algorithm_sha256") != want_alg:
+    raise SystemExit("closed-loop run used unexpected algorithm binary")
+if p.get("launch_sha256") != want_launch:
+    raise SystemExit("closed-loop run used unexpected launch overlay")
+PY
+      fi
+
       result_line=""
       if [[ -f "${run_dir}/launch.log" ]]; then
         result_line="$(grep -F 'RESULT IS:' "${run_dir}/launch.log" | tail -n 1 | tr '\t' ' ' || true)"
