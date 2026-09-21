@@ -1,5 +1,11 @@
 # VGR House 300 s primary feasibility gate — 2026-09-20
 
+> **Endpoint correction (2026-09-21):**
+> `docs/TNQC_V5_CPP_ENDPOINT_PARITY_20260921.md` is authoritative for the
+> top-5% evaluator. The frozen TNQC method remains V5; the endpoint correction
+> replaces Python tie-breaking with a native-parity C++ clone of PMFS
+> `ExpectedValue(...,0.05)`.
+
 ## Correction of evaluation contract
 
 The Orebro3DSEN experiments in this repository are **external measured-data falsification only**. They are useful for checking whether quotient/canonicalized spatial representations preserve source identity under release/airflow nuisance, but they are **not** the project's primary feasibility test.
@@ -59,8 +65,10 @@ Required outputs for each House/seed pair:
 1. final native PMFS top-5% error at 300 s;
 2. the complete native evaluated-candidate/context export;
 3. reconstructed native posterior and its cellwise audit;
-4. native Python top-5% endpoint versus the C++ `RESULT IS: Error=` anchor;
-5. final read-only V5 quotient-rescored posterior and top-5% error;
+4. standalone C++ top-5% endpoint clone versus the native PMFS
+   `RESULT IS: Error=` anchor;
+5. final read-only V5 quotient-rescored posterior evaluated by that **same
+   validated C++ endpoint binary**; Python top-5% is diagnostic only;
 6. V5 terminal-leaf free-cell measure, reference/informative pair mass,
    informative coverage, conditional concordance, and actual gate strength.
 
