@@ -11,7 +11,12 @@ CASES = [
     ("House02", 0), ("House02", 1),
     ("House03", 0), ("House03", 1),
 ]
-CONTROL_KEYS = ("fine_only", "coarse_only", "mean_only")
+CONTROL_KEYS = (
+    "fine_only",
+    "coarse_only",
+    "mean_only",
+    "lower_envelope_only",
+)
 PRIMARY_KEY = "fixed_only"
 
 
@@ -144,6 +149,7 @@ def main():
             "must_beat_fine_only": True,
             "must_beat_coarse_only": True,
             "must_beat_naive_mean_only": True,
+            "must_beat_lower_envelope_only": True,
             "no_false_confident_collapse": True,
             "frozen_factors": [1, 2, 4, 8],
             "truth_independent_variant_selection": True,
