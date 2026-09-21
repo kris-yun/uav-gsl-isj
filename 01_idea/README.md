@@ -237,7 +237,7 @@ Rules after freeze:
 - HOLD is a scientific result, not permission to tune V5;
 - an infrastructure failure is not HOLD and not GO.
 
-The full six-case 300-s TNQC batch has **not yet produced a scientific verdict**. A repaired House01/seed0 execution has now passed the terminal endpoint, context-bank reconstruction and linked-native endpoint audits; its TNQC fused endpoint was essentially neutral/slightly worse than native. This single case is pipeline validation and one observed case, not the six-case GO/HOLD verdict.
+The authoritative House01/02/03 x seed0/1 300-s fixed-trajectory batch is now complete. All six integrity audits passed, but the frozen scientific verdict is **HOLD**: pooled TNQC improvement is -0.009162%, with only 1/6 cases improving. TNQC V5 is therefore preserved as a negative result and will not be retuned on these six cases. The project now transitions to the separately versioned active source–transport deconfounding research line.
 
 ## 10. What counts as success
 
