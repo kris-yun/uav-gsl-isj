@@ -151,7 +151,10 @@ def evaluate(design,bank,selection,truth_path,out):
         # Do not manufacture a zero-entropy posterior by epsilon division.
         expected_entropy=[float(x) if m==0 else None for x,m in zip(qt@ent,unsupported)]
         expected_error=[float(x) if m==0 else None for x,m in zip(qt@point_errors,unsupported)]
+        rival_distances=[float(np.hypot(d['sources'][leaf[int(x)]]['x']-truth[0],d['sources'][leaf[int(x)]]['y']-truth[1])) for x in rival]
         results[name]={'heldout_min_separation':sep.tolist(),'fixed_rival_ids':[ids[int(x)] for x in rival],
+                       'rival_distance_to_truth_m':rival_distances,
+                       'true_representative_hit_probabilities':h[true,:,acts].T.tolist(),
                        'first_min_separation':single.tolist(),'pair_minus_single':(sep-single).tolist(),
                        'expected_source_entropy_nats':expected_entropy,
                        'expected_two_observation_posterior_mean_error_m':expected_error,
@@ -163,6 +166,8 @@ def evaluate(design,bank,selection,truth_path,out):
     reasons=[]
     if int(pass_world.sum())<6:reasons.append('FEWER_THAN_6_OF_8_HELDOUT_WORLDS_CLEARLY_BEAT_SOURCE_MI')
     if np.any(a<1e-12):reasons.append('TRUE_SOURCE_HAS_ZERO_SEPARATION_FROM_A_FALSE_SOURCE')
+    chosen=sel['strategies']['two_step_deconfounding']['pair']
+    if np.max(h[true,:,[chosen['a'],chosen['b']]])==0:reasons.append('SELECTED_PAIR_PREDICTS_NO_HITS_FOR_TRUE_REPRESENTATIVE_IN_ALL_HELDOUT_WORLDS')
     if np.mean(a-b)<-max(.05*float(b.mean()),1e-4):reasons.append('CASE_MEAN_SEPARATION_DEGRADATION')
     if sel['strategies']['two_step_deconfounding']['pair']==sel['strategies']['one_step_source_MI']['pair']:reasons.append('SAME_ACTION_PAIR_AS_GREEDY_SOURCE_MI')
     # True representative against the fixed highest native-mass false source.
@@ -174,8 +179,10 @@ def evaluate(design,bank,selection,truth_path,out):
     frac,rank=projected_fraction((z[13,false]-z[13,true])*weights,bmat)
     dump(out,{'case':d['case'],'house':d['house'],'true_owner':owner,'true_representative_distance_m':distance,
               'fixed_native_false_rival':ids[false],'true_vs_native_false_residual_fraction':frac,'true_nuisance_rank':rank,
+              'true_response_at_all_action_worlds_zero_count':int(np.sum(h[true]==0)),
+              'true_response_at_all_action_worlds_count':int(h[true].size),
               'selection_sha256_before_truth':sha(selection),'strategies':results,'passing_heldout_worlds':int(pass_world.sum()),
-              'necessary_case_gate':int(pass_world.sum())>=6,'case_mean_degradation':np.mean(a-b)<-max(.05*float(b.mean()),1e-4),
+              'necessary_case_gate':int(pass_world.sum())>=6,'case_mean_degradation':bool(np.mean(a-b)<-max(.05*float(b.mean()),1e-4)),
               'two_step_minus_source_mi':(a-b).tolist(),'reasons':reasons,
               'scope':'true-leaf representative, not true continuous-source response; same native model, grid-off transport robustness only'})
 

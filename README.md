@@ -1,4 +1,17 @@
-# UAV Gas Source Localization — ME-ACI V10
+# Active Source–Transport Deconfounding V1 — offline screen NO-GO
+
+This research branch starts from exact TNQC R2 `b24da77` and stops after the
+six-case offline screen: **0/6 promotion cases, no ROS implementation**.
+TNQC V5 remains **frozen HOLD**, with no FUSED closed loop.
+
+- [Screen result and limitations](evidence/active_deconfounding_v1/REPORT.md)
+- [Contract and reproduction](research/active_deconfounding/README.md)
+- [Exact V5 source/runtime freeze](https://github.com/kris-yun/uav-gsl-isj/releases/tag/tnqc-v5-r2-execution-20260921)
+
+The historical source-snapshot README follows. Its development claims do not
+override the TNQC HOLD or the new offline screen verdict.
+
+# Historical source snapshot — ME-ACI V10
 
 This repository contains the frozen **ME-ACI V10** main-innovation implementation for PMFS-based single-UAV gas-source localization. It replaces the previous DQA-AS/SDR/TDC/MHC development version; that version remains recoverable from Git history at commit `647b0bb94a23cbd75dd4cca6377bd8be5c85a887`.
 
@@ -67,4 +80,3 @@ The validated role of SD-TFEI is therefore a **sequential temporal-replication i
 See [REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md) before rebuilding or running. Do not silently replace the frozen binary with a new build when reproducing the reported 6/6 result.
 
 Run `python3 verify_repository.py` for a repository-level integrity check.
-
