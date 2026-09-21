@@ -213,16 +213,32 @@ def tnqc_score(alignment, cells, edges):
         ec += 1
     qo = max(-1.0, min(1.0, signed / ew)) if ew > 0.0 else 0.0
 
-    # Symmetry-hierarchy guard, exactly matching TNQCScore.hpp: the broader
-    # monotone/order quotient may corroborate the exact affine quotient but
-    # may not reverse it.  No threshold or fitted coefficient is introduced.
-    order_consistent = ec >= 2 and qa * qo >= 0.0
-    e = 0.5 * (qa + qo) if order_consistent else qa
-    e = max(-1.0, min(1.0, e))
+    # Candidate-local score only.  The broader order channel is not mixed
+    # here because candidate-wise averaging can preserve sign yet reverse the
+    # relative ordering between two source hypotheses.  A single shared bank
+    # gate is computed below after all candidates are available.
     return dict(valid=True, support_count=len(support), edge_count=ec,
                 effective_support=(sw * sw) / sw2,
-                canonical_cosine=qa, local_order_agreement=qo,
-                order_consistent=order_consistent, evidence=e)
+                canonical_cosine=qa, local_order_agreement=qo)
+
+
+def candidate_order_concordance(diag):
+    valid = [q for q in diag.values() if q.get("valid") and q.get("edge_count", 0) >= 2]
+    signed = 0.0
+    pairs = 0
+    for i in range(len(valid)):
+        for j in range(i + 1, len(valid)):
+            sa = signum(valid[i]["canonical_cosine"] - valid[j]["canonical_cosine"])
+            so = signum(valid[i]["local_order_agreement"] - valid[j]["local_order_agreement"])
+            if not sa or not so:
+                continue
+            signed += sa * so
+            pairs += 1
+    if pairs == 0:
+        return dict(valid=False, pair_count=0, concordance=0.0, strength=0.0)
+    concordance = max(-1.0, min(1.0, signed / pairs))
+    return dict(valid=True, pair_count=pairs, concordance=concordance,
+                strength=max(0.0, concordance))
 
 
 def final_partition(cells, candidates):
@@ -302,13 +318,22 @@ def main():
     edges = local_edges(cells, by_grid)
     part = final_partition(cells, candidates)
 
-    native_s, fused_s, only_s, diag = {}, {}, {}, {}
+    native_s, diag = {}, {}
     for cid in candidates:
-        ln = native_log_score(alignment[cid], args.source_discrimination_power)
-        q = tnqc_score(alignment[cid], cells, edges)
-        e = q["evidence"] if q["valid"] else 0.0
-        native_s[cid], fused_s[cid], only_s[cid] = ln, ln + e, e
-        diag[cid] = q
+        native_s[cid] = native_log_score(
+            alignment[cid], args.source_discrimination_power)
+        diag[cid] = tnqc_score(alignment[cid], cells, edges)
+
+    bank_gate = candidate_order_concordance(diag)
+    fused_s, only_s = {}, {}
+    for cid in candidates:
+        q = diag[cid]
+        e = (bank_gate["strength"] * q["canonical_cosine"]
+             if bank_gate["valid"] and q["valid"] else 0.0)
+        e = max(-1.0, min(1.0, e))
+        q["bank_evidence"] = e
+        fused_s[cid] = native_s[cid] + e
+        only_s[cid] = e
 
     native_replay = posterior(part, native_s)
     fused = posterior(part, fused_s)
@@ -323,7 +348,7 @@ def main():
     nr = metrics(native_replay, cells, args.truth_x, args.truth_y)
     fm = metrics(fused, cells, args.truth_x, args.truth_y)
     om = metrics(only, cells, args.truth_x, args.truth_y)
-    ev = [q["evidence"] for q in diag.values() if q["valid"]]
+    ev = [q["bank_evidence"] for q in diag.values() if q["valid"]]
 
     payload = {
         "contract": "TNQC_VGR_FIXED_TRAJECTORY_300S_REPLAY_V1",
@@ -342,6 +367,7 @@ def main():
             "l1_threshold": args.native_reconstruction_l1,
             "pass": audit_pass,
         },
+        "tnqc_candidate_bank_gate": bank_gate,
         "tnqc_evidence": {
             "valid_candidate_count": len(ev),
             "min": min(ev) if ev else None,
