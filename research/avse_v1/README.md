@@ -4,29 +4,37 @@ Date: 2026-09-21
 Branch: `research/anytime-valid-source-elimination-v1`  
 Status: **MAIN-INNOVATION CANDIDATE / OFFLINE FALSIFICATION ONLY**
 
-## 1. Closure of the previous TPSD simplex-weight rescue
+## 1. Previous line is closed
 
-TPSD V1 is already frozen as `NO_GO_ON_NATIVE_300S_ENDPOINT`.
+TPSD V1 is frozen as `NO_GO_ON_NATIVE_300S_ENDPOINT`.
 
-The proposed nonnegative, sum-to-one weight optimization over temporal/candidate evidence channels is therefore **not admissible as a rescue test on the same six R2 cases**. Optimizing convex weights against those endpoints would be post-hoc tuning of a frozen negative screen. Any apparent gain would not count as independent evidence.
+A nonnegative, sum-to-one optimization of its temporal/evidence-channel weights on the same six R2 endpoint cases is not an admissible rescue experiment: it would optimize against a frozen negative evaluation set. TPSD remains closed.
 
-Scientific consequence: TPSD remains closed. Do not spend the main-innovation slot on a better fusion rule for the same weak ingredients.
-
-## 2. New mother idea
-
-### Main thesis
+## 2. Main thesis
 
 **Turbulent gas-source localization should be formulated as sequential falsification of source hypotheses under dependent evidence, rather than repeated multiplication of heuristic compatibility scores.**
 
-For each candidate source (s), maintain an anytime-valid evidence process that asks whether the observed sequence is still statistically compatible with (s).
+For each source hypothesis (s), maintain an anytime-valid sequential test/evidence process asking whether the observed history is still compatible with (s).
 
-A distinct physical sensor event may contribute evidence once. Map propagation, resampling, repeated candidate-cell updates, or repeated processing of the same observation may redistribute state but may not manufacture additional evidential mass.
+A distinct physical observation may create evidence once. Map propagation, resampling, cell expansion, repeated source updates, or repeated processing of that observation may redistribute state but may not create additional evidential mass.
 
-False candidates are progressively rejected; surviving candidates define the source map.
+False source hypotheses are progressively rejected/downweighted; surviving hypotheses define the spatial source map.
 
-## 3. Remote-field scientific roots
+## 3. Preferred V1 route: induce a sequential test from a strong terminal source test
 
-Primary modern roots:
+The preferred first realization is **not** to invent another arbitrary betting score.
+
+Use the recent induced-sequential-test result:
+
+- start from a predeclared valid fixed-horizon source-consistency test;
+- sequentialize that test so its current value represents its conditional terminal rejection behavior;
+- preserve the terminal test at the fixed horizon while gaining anytime-valid stopping semantics.
+
+For this project the natural terminal object to investigate first is the already-positive nuisance-robust source-identity statistic (the affine/quotient spatial consistency signal), **not** the failed TNQC posterior tilt itself.
+
+This is a materially different scientific object from “multiply another likelihood into PMFS”.
+
+## 4. Modern remote-field roots
 
 - NeurIPS 2025 — Kilian, Cortinovis & Caron, *Anytime-valid, Bayes-assisted, Prediction-Powered Inference*.
 - JRSS Series B 2026 — Koning & van Meer, *Anytime validity is free: inducing sequential tests*.
@@ -34,86 +42,103 @@ Primary modern roots:
 
 Transferred principle:
 
-> evidence accumulated under continuous monitoring must remain valid under adaptive stopping and dependent information flows.
+> continuously monitored evidence needs a sequential validity law; repeated computational reuse of one observation is not new evidence.
 
-This is not ordinary confidence calibration and not another posterior-temperature rule.
+The cross-filtration result is especially relevant if gas, wind, spatial-support, or event-level evidence streams are later combined, because validity of a process in one information filtration does not automatically survive naïve fusion into a richer filtration.
 
-## 4. Why it matches the project failure
+## 5. Why the project now points at evidence semantics
 
-Existing project evidence repeatedly shows that sharper internal confidence can coexist with worse true-source localization.
+The strongest current internal premise is not “there is no source signal”.
 
-Relevant frozen observations include:
+The frozen 240-s controlled VGR audit already reports:
 
-- TNQC V5: six-case integrity pass, but 6/6 false-confident collapse and essentially zero pooled endpoint gain.
-- TPSD V1: ordinary cumulative temporal likelihood is slightly negative on the native 300-s endpoint; generic inhibition can improve true-source rank while degrading the actual endpoint.
-- Active-deconfounding V1: all six required gates fail because false-source alternatives can remain observationally indistinguishable.
-- MIPO V1: deliberate motion creates measurable modulation, but not reliable source-direction information.
+- 12/12 correct affine/quotient source identity at full support;
+- both disjoint checkerboard support halves independently recover the correct source in 12/12;
+- 100 independent positive-scale perturbation runs retain 100% affine accuracy;
+- 100 independent background-offset perturbation runs retain 100% affine accuracy;
+- far-from-source support still retains 11/12 affine accuracy.
 
-These failures are consistent with an evidence-accounting problem: compatibility transformations can repeatedly sharpen a map without establishing new source-specific information.
+Yet the authoritative TNQC V5 300-s localization gate produces essentially zero pooled improvement and 6/6 false-confident-collapse cases.
 
-They do **not** yet prove that AVSE improves localization.
+Therefore a plausible bottleneck is:
 
-## 5. GSL realization
+**source-discriminative information exists, but its conversion into recursively sharpened posterior mass is scientifically wrong or poorly calibrated.**
 
-At each distinct sensor event (k):
+This is a premise for AVSE, not proof that AVSE will improve endpoint localization.
 
-1. For every live source candidate (s), compute a causal candidate-conditioned residual/score from information available at that event.
-2. Convert that event score into a valid bounded betting/evidence increment using a calibration rule fixed without endpoint truth tuning.
-3. Update one source-specific evidence process (E_s(k)).
-4. Reject/downweight a candidate only when accumulated evidence against it crosses a predeclared threshold.
-5. Spatial propagation may move/expand candidate support but cannot multiply the event evidence again.
+## 6. GSL realization
+
+At each distinct physical sensor event (k):
+
+1. Update the source-consistency state using only information newly revealed at event (k).
+2. For each live candidate (s), update its induced sequential test / e-process.
+3. Reject or attenuate (s) only according to a predeclared anytime-valid rule.
+4. Do not re-count the event when PMFS later propagates, repartitions, or revisits the same derived map quantity.
+5. Keep unsupported candidates unresolved rather than forcing posterior concentration.
 
 Output remains a PMFS-compatible source-location map.
 
-## 6. Hard novelty boundary
+## 7. Hard novelty boundary
 
-Not claimed as new:
+Not new by itself:
 
-- sequential probability ratio testing;
+- SPRT / sequential testing;
+- e-values, e-processes, test martingales;
 - Bayesian source posteriors;
-- confidence sequences/e-values themselves;
-- ordinary likelihood accumulation;
-- source-hypothesis pruning.
+- source-hypothesis pruning;
+- ordinary cumulative likelihood;
+- confidence calibration.
 
-Targeted novelty hypothesis:
+Targeted GSL novelty hypothesis:
 
-**event-unique anytime-valid elimination of physics-based gas-source hypotheses under correlated turbulent observations, integrated with a PMFS-style spatial source map.**
+**induced anytime-valid sequential falsification of physics-based gas-source hypotheses with event-unique evidence accounting, coupled to a PMFS spatial source map under turbulent dependent observations.**
 
-Current targeted searches found no direct GSL/OSL implementation of e-process / anytime-valid source-hypothesis elimination. This remains a search result, not an exhaustive novelty proof.
+A targeted 2025/2026 search has not found a direct GSL/OSL implementation of this construction. Recent GSL does contain “sequential inference”, so the novelty claim must remain specifically about anytime-valid source falsification/evidence accounting rather than the word “sequential”.
 
-## 7. Cheapest decisive offline gate
+## 8. Cheap falsification ladder
 
-Use only the frozen VGR/GADEN R2 House01/02/03 seed0/1 six-case traces and the native 300-s top-5% ExpectedValue endpoint.
+### Gate A — controlled 240-s mechanism asset
 
-No 2/5/10-min substitute metric.
+Use H01/H02/H03 × SA/SB × fast/slow only as a mechanism screen.
+
+Require:
+
+- correct candidate elimination when source identity becomes physically supported;
+- abstention before support;
+- invariance to duplicated/replayed observations at the evidence-accounting level;
+- no evidence change from propagation-only steps;
+- no degradation relative to the terminal affine test at 240 s;
+- destructive controls showing the result is not just cumulative amplitude or sample count.
+
+This gate does **not** establish full localization.
+
+### Gate B — authoritative native 300-s R2 endpoint
+
+Use House01/02/03 × seed0/1 and the original
+`ExpectedValue(sourceProbability,0.05)` endpoint.
 
 Comparators:
 
 - native PMFS;
 - ordinary cumulative event likelihood;
 - bounded/clipped cumulative score;
-- terminal fixed-horizon candidate test;
-- AVSE sequential evidence.
+- fixed-horizon source test;
+- AVSE sequentialized test.
 
-Required controls:
+Promotion bar before closed loop:
 
-- **duplicate-event control:** replaying the same physical event must not create additional evidence;
-- **propagation-only control:** PMFS propagation without a new observation must not change evidence wealth;
-- **support/erasure control:** no source claim when the observation contains no candidate-specific physical support;
-- **wrong-candidate calibration control:** calibration cannot use final source truth from the evaluation case.
-
-Promotion bar before any ROS/closed-loop work:
-
-- pooled 300-s endpoint improvement >= 2% over native;
+- pooled endpoint improvement >= 2%;
 - at least 4/6 cases non-worse;
 - no new false-confident collapse;
-- improvement must exceed the terminal-test and clipped-cumulative controls;
-- result must survive leave-one-House-out or equivalent truth-independent calibration.
+- improvement beyond fixed-horizon/clipped controls;
+- truth-independent calibration / leave-one-House-out where calibration is required.
 
-## 8. Current decision
+No 2/5/10-minute substitute endpoint.
 
-**AVSE = GO FOR CHEAP OFFLINE FALSIFICATION ONLY.**
+## 9. Current decision
 
-It is not yet authorized for closed loop.
+**AVSE = STAGE-1 PASS / GO FOR CHEAP OFFLINE FALSIFICATION.**
 
-It currently ranks above another TPSD fusion rescue because it changes the semantics of evidence rather than tuning the weighting of already-failed evidence channels.
+It is not yet a validated main innovation and is not authorized for closed-loop ROS.
+
+It currently ranks above a TPSD convex-fusion rescue because it changes the semantics of evidence accumulation rather than optimizing weights on already-failed evidence channels.
