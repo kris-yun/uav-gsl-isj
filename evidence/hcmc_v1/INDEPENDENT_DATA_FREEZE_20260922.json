@@ -1,0 +1,260 @@
+{
+  "contract": "HCMC_V1_INDEPENDENT_VALIDATION_V1",
+  "endpoint_seen_at_freeze": false,
+  "fixed_generation": {
+    "allow_looping": true,
+    "concentration_unit_choice": 1,
+    "filament_growth_gamma_cm2_s": 15.0,
+    "filament_initial_std_cm": 10.0,
+    "filament_noise_std_m": 0.01,
+    "filament_stop_steps": 0,
+    "gas_type": 10,
+    "loop_from_step": 1,
+    "loop_to_step": 10,
+    "num_filaments_per_s": 7,
+    "ppm_filament_center": 10.0,
+    "pressure_atm": 1.0,
+    "results_min_time_s": 0.0,
+    "results_time_step_s": 0.5,
+    "sim_time_s": 1000.0,
+    "temperature_k": 298.0,
+    "time_step_s": 0.1,
+    "variable_rate": true,
+    "wind_time_step_s": 1.0,
+    "write_concentrations": false
+  },
+  "freeze_date": "2026-09-22",
+  "freeze_state": "PRE_ENDPOINT_PROVENANCE_FROZEN_AFTER_EXECUTION_ONLY_R2_CORRECTION",
+  "execution_runtime_revision": {
+    "algorithm_sha256": "b06c2036da91ef22285d1cb5d4d08172e828956fc5844d8a2044a4221a8c2cce",
+    "linked_native_endpoint_sha256": "9d0954c32021f6b808ba4bec06e98ea9fe8193b25cc4ed33d4189330d40c9ac6",
+    "r2_reference_commit": "b24da77fd24bd5ea2cbb33caf856f80b9d7670e4",
+    "reason": "invalid pre-endpoint attempts lacked native RESULT IS because the HCMC branch omitted the already-qualified R2 terminal lifecycle patch",
+    "scientific_change": false
+  },
+  "realizations": [
+    {
+      "available_iteration_count": 1803,
+      "available_iteration_range": [
+        0,
+        1802
+      ],
+      "backend": "raw_house1_snapshot",
+      "case_id": "H01_R2026092201",
+      "config_id": "2,4-1_fast",
+      "discovery_used_this_realization": false,
+      "gas_realization_content_sha256": "f374d95e1c541d6b84dba38624f2e5131e316fad426215937d01b6ee23cc1c72",
+      "gas_realization_directory": "/home/zyc/hcmc_v1_independent_data_20260922/H01_R2026092201/FilamentSimulation_gasType_10_sourcePosition_-0.40_-2.90_-0.30",
+      "generation_manifest_sha256": "a4c4102deb59e404181bf532eb97639c46862714285573905140484ee7cca20c",
+      "generator_binary_sha256": "4127b9ba4f42186ba2d6d33c84fba8d4b92749da59b83750fa4847dbd9957ce1",
+      "generator_source_diff_sha256": "50f04ec609157189d3f9fed72a87e6729c0b66691fcaee8da6864d9194575278",
+      "hcmc_code_sha256": "67971746c132d708b41e7bb4ab40ddaabfd828bdf91e14623685331f3134f62e",
+      "house": "House01",
+      "independence_classification": "NEW_STOCHASTIC_GADEN_PLUME_REALIZATION",
+      "launch_sha256": "0cd1ae4ad852bf548fd1ebc131e7f46f0d6d20603a2e4e71ae37c6831e40f2c9",
+      "navigation_seed": 2,
+      "plume_seed": 2026092201,
+      "pmfs_binary_sha256": "b06c2036da91ef22285d1cb5d4d08172e828956fc5844d8a2044a4221a8c2cce",
+      "replay_policy": "seeded_time_replay; offset=(7919*(navigation_seed+1))%max(1,max_iteration-1)",
+      "scenario_id": "H01_cfg_2_4_1_fast",
+      "sensor_model": "fopdt_tau1p2_dead0p4_noise0",
+      "source_position": [
+        -0.4,
+        -2.9,
+        -0.3
+      ],
+      "start_position": [
+        -3.17,
+        -1.75,
+        0.3
+      ],
+      "wind_config": "canonical House01 2,4-1_fast wind_iteration_0..10"
+    },
+    {
+      "available_iteration_count": 1803,
+      "available_iteration_range": [
+        0,
+        1802
+      ],
+      "backend": "raw_house1_snapshot",
+      "case_id": "H01_R2026092202",
+      "config_id": "2,4-1_fast",
+      "discovery_used_this_realization": false,
+      "gas_realization_content_sha256": "0f49480a37d5e95f59066602ceee882d3dcb90d94095ba4c72ceb9e32aeb0a1d",
+      "gas_realization_directory": "/home/zyc/hcmc_v1_independent_data_20260922/H01_R2026092202/FilamentSimulation_gasType_10_sourcePosition_-0.40_-2.90_-0.30",
+      "generation_manifest_sha256": "e615430384f7dc972c69950a381dd506b3eebb4acca0940e3afc886b8232b652",
+      "generator_binary_sha256": "4127b9ba4f42186ba2d6d33c84fba8d4b92749da59b83750fa4847dbd9957ce1",
+      "generator_source_diff_sha256": "50f04ec609157189d3f9fed72a87e6729c0b66691fcaee8da6864d9194575278",
+      "hcmc_code_sha256": "67971746c132d708b41e7bb4ab40ddaabfd828bdf91e14623685331f3134f62e",
+      "house": "House01",
+      "independence_classification": "NEW_STOCHASTIC_GADEN_PLUME_REALIZATION",
+      "launch_sha256": "0cd1ae4ad852bf548fd1ebc131e7f46f0d6d20603a2e4e71ae37c6831e40f2c9",
+      "navigation_seed": 3,
+      "plume_seed": 2026092202,
+      "pmfs_binary_sha256": "b06c2036da91ef22285d1cb5d4d08172e828956fc5844d8a2044a4221a8c2cce",
+      "replay_policy": "seeded_time_replay; offset=(7919*(navigation_seed+1))%max(1,max_iteration-1)",
+      "scenario_id": "H01_cfg_2_4_1_fast",
+      "sensor_model": "fopdt_tau1p2_dead0p4_noise0",
+      "source_position": [
+        -0.4,
+        -2.9,
+        -0.3
+      ],
+      "start_position": [
+        -3.17,
+        -1.75,
+        0.3
+      ],
+      "wind_config": "canonical House01 2,4-1_fast wind_iteration_0..10"
+    },
+    {
+      "available_iteration_count": 1803,
+      "available_iteration_range": [
+        0,
+        1802
+      ],
+      "backend": "gaden_player",
+      "case_id": "H02_R2026092211",
+      "config_id": "3,5-1_fast",
+      "discovery_used_this_realization": false,
+      "gas_realization_content_sha256": "6ad203fd3be068bd2279a85835e5188af7d3bbe4a4b5c58b6ae4f2551e54d83f",
+      "gas_realization_directory": "/home/zyc/hcmc_v1_independent_data_20260922/H02_R2026092211/FilamentSimulation_gasType_10_sourcePosition_0.00_-1.00_0.20",
+      "generation_manifest_sha256": "5122e650c2058f0b74e4512cc39cf637073c71fc28f3057fb0ed9c0724214cdf",
+      "generator_binary_sha256": "4127b9ba4f42186ba2d6d33c84fba8d4b92749da59b83750fa4847dbd9957ce1",
+      "generator_source_diff_sha256": "50f04ec609157189d3f9fed72a87e6729c0b66691fcaee8da6864d9194575278",
+      "hcmc_code_sha256": "67971746c132d708b41e7bb4ab40ddaabfd828bdf91e14623685331f3134f62e",
+      "house": "House02",
+      "independence_classification": "NEW_STOCHASTIC_GADEN_PLUME_REALIZATION",
+      "launch_sha256": "0cd1ae4ad852bf548fd1ebc131e7f46f0d6d20603a2e4e71ae37c6831e40f2c9",
+      "navigation_seed": 2,
+      "plume_seed": 2026092211,
+      "pmfs_binary_sha256": "b06c2036da91ef22285d1cb5d4d08172e828956fc5844d8a2044a4221a8c2cce",
+      "replay_policy": "seeded_time_replay; offset=(7919*(navigation_seed+1))%max(1,max_iteration-1)",
+      "scenario_id": "H02_cfg_3_5_1_fast",
+      "sensor_model": "fopdt_tau1p2_dead0p4_noise0",
+      "source_position": [
+        0.0,
+        -1.0,
+        0.2
+      ],
+      "start_position": [
+        -0.5,
+        -2.5,
+        0.3
+      ],
+      "wind_config": "canonical House02 3,5-1_fast wind_iteration_0..10"
+    },
+    {
+      "available_iteration_count": 1803,
+      "available_iteration_range": [
+        0,
+        1802
+      ],
+      "backend": "gaden_player",
+      "case_id": "H02_R2026092212",
+      "config_id": "3,5-1_fast",
+      "discovery_used_this_realization": false,
+      "gas_realization_content_sha256": "dc61389dd6a9af40dc42704b41454108404322a7d8e3262fa66c4ceb0e61c852",
+      "gas_realization_directory": "/home/zyc/hcmc_v1_independent_data_20260922/H02_R2026092212/FilamentSimulation_gasType_10_sourcePosition_0.00_-1.00_0.20",
+      "generation_manifest_sha256": "ad9c81022179facf900ef2638e61cc8b466240379693b754730e64b75c3d0f8d",
+      "generator_binary_sha256": "4127b9ba4f42186ba2d6d33c84fba8d4b92749da59b83750fa4847dbd9957ce1",
+      "generator_source_diff_sha256": "50f04ec609157189d3f9fed72a87e6729c0b66691fcaee8da6864d9194575278",
+      "hcmc_code_sha256": "67971746c132d708b41e7bb4ab40ddaabfd828bdf91e14623685331f3134f62e",
+      "house": "House02",
+      "independence_classification": "NEW_STOCHASTIC_GADEN_PLUME_REALIZATION",
+      "launch_sha256": "0cd1ae4ad852bf548fd1ebc131e7f46f0d6d20603a2e4e71ae37c6831e40f2c9",
+      "navigation_seed": 3,
+      "plume_seed": 2026092212,
+      "pmfs_binary_sha256": "b06c2036da91ef22285d1cb5d4d08172e828956fc5844d8a2044a4221a8c2cce",
+      "replay_policy": "seeded_time_replay; offset=(7919*(navigation_seed+1))%max(1,max_iteration-1)",
+      "scenario_id": "H02_cfg_3_5_1_fast",
+      "sensor_model": "fopdt_tau1p2_dead0p4_noise0",
+      "source_position": [
+        0.0,
+        -1.0,
+        0.2
+      ],
+      "start_position": [
+        -0.5,
+        -2.5,
+        0.3
+      ],
+      "wind_config": "canonical House02 3,5-1_fast wind_iteration_0..10"
+    },
+    {
+      "available_iteration_count": 1803,
+      "available_iteration_range": [
+        0,
+        1802
+      ],
+      "backend": "gaden_player",
+      "case_id": "H03_R2026092221",
+      "config_id": "1-2,5_fast",
+      "discovery_used_this_realization": false,
+      "gas_realization_content_sha256": "35797a8b4543ea7e9cea1e0158a8266da605a64ea99327512568338201a5b78b",
+      "gas_realization_directory": "/home/zyc/hcmc_v1_independent_data_20260922/H03_R2026092221/FilamentSimulation_gasType_10_sourcePosition_-0.45_1.90_-0.10",
+      "generation_manifest_sha256": "5d44e97c82f7d848cdcf7ae38aa3a822e9a6a5bb09bf23b58603afdb8f624a1e",
+      "generator_binary_sha256": "4127b9ba4f42186ba2d6d33c84fba8d4b92749da59b83750fa4847dbd9957ce1",
+      "generator_source_diff_sha256": "50f04ec609157189d3f9fed72a87e6729c0b66691fcaee8da6864d9194575278",
+      "hcmc_code_sha256": "67971746c132d708b41e7bb4ab40ddaabfd828bdf91e14623685331f3134f62e",
+      "house": "House03",
+      "independence_classification": "NEW_STOCHASTIC_GADEN_PLUME_REALIZATION",
+      "launch_sha256": "0cd1ae4ad852bf548fd1ebc131e7f46f0d6d20603a2e4e71ae37c6831e40f2c9",
+      "navigation_seed": 2,
+      "plume_seed": 2026092221,
+      "pmfs_binary_sha256": "b06c2036da91ef22285d1cb5d4d08172e828956fc5844d8a2044a4221a8c2cce",
+      "replay_policy": "seeded_time_replay; offset=(7919*(navigation_seed+1))%max(1,max_iteration-1)",
+      "scenario_id": "H03_cfg_1-2_5_fast",
+      "sensor_model": "fopdt_tau1p2_dead0p4_noise0",
+      "source_position": [
+        -0.45,
+        1.9,
+        -0.1
+      ],
+      "start_position": [
+        2.0,
+        0.0,
+        0.3
+      ],
+      "wind_config": "canonical House03 1-2,5_fast wind_iteration_0..10"
+    },
+    {
+      "available_iteration_count": 1803,
+      "available_iteration_range": [
+        0,
+        1802
+      ],
+      "backend": "gaden_player",
+      "case_id": "H03_R2026092222",
+      "config_id": "1-2,5_fast",
+      "discovery_used_this_realization": false,
+      "gas_realization_content_sha256": "1dfe20a0e05c69428f90bc1080d044200ed237c1cc1febafb3e13a3510436589",
+      "gas_realization_directory": "/home/zyc/hcmc_v1_independent_data_20260922/H03_R2026092222/FilamentSimulation_gasType_10_sourcePosition_-0.45_1.90_-0.10",
+      "generation_manifest_sha256": "9252fa3b2fbf55bb55f46227e21464a6cb76e3ade3af05c7fe9a1290cd3fd0bf",
+      "generator_binary_sha256": "4127b9ba4f42186ba2d6d33c84fba8d4b92749da59b83750fa4847dbd9957ce1",
+      "generator_source_diff_sha256": "50f04ec609157189d3f9fed72a87e6729c0b66691fcaee8da6864d9194575278",
+      "hcmc_code_sha256": "67971746c132d708b41e7bb4ab40ddaabfd828bdf91e14623685331f3134f62e",
+      "house": "House03",
+      "independence_classification": "NEW_STOCHASTIC_GADEN_PLUME_REALIZATION",
+      "launch_sha256": "0cd1ae4ad852bf548fd1ebc131e7f46f0d6d20603a2e4e71ae37c6831e40f2c9",
+      "navigation_seed": 3,
+      "plume_seed": 2026092222,
+      "pmfs_binary_sha256": "b06c2036da91ef22285d1cb5d4d08172e828956fc5844d8a2044a4221a8c2cce",
+      "replay_policy": "seeded_time_replay; offset=(7919*(navigation_seed+1))%max(1,max_iteration-1)",
+      "scenario_id": "H03_cfg_1-2_5_fast",
+      "sensor_model": "fopdt_tau1p2_dead0p4_noise0",
+      "source_position": [
+        -0.45,
+        1.9,
+        -0.1
+      ],
+      "start_position": [
+        2.0,
+        0.0,
+        0.3
+      ],
+      "wind_config": "canonical House03 1-2,5_fast wind_iteration_0..10"
+    }
+  ],
+  "selection_timestamp_utc": "2026-09-22T06:04:15.855167+00:00"
+}
