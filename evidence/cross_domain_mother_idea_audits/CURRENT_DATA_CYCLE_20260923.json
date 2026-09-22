@@ -1,0 +1,70 @@
+{
+  "contract": "CURRENT_DATA_MOTHER_IDEA_CYCLE_20260923",
+  "status": "NO_MAIN_INNOVATION_PROMOTED",
+  "candidates": {
+    "path_large_deviation_proxy": {
+      "verdict": "NO_GO",
+      "cstar_correct": 10,
+      "cstar_total": 12,
+      "shuffle_null_fraction_at_least_real": {
+        "block10": 0.435,
+        "block25": 0.145,
+        "block50": 0.12,
+        "block100": 0.09
+      }
+    },
+    "koopman_delay_proxy": {
+      "verdict": "NO_GO",
+      "cstar": {
+        "d5": "8/12",
+        "d10": "7/12",
+        "d20": "7/12"
+      },
+      "best_shuffle_null_fraction_at_least_real": 0.16
+    },
+    "irreversibility_probability_current": {
+      "verdict": "AUXILIARY_ONLY",
+      "cstar_correct": 9,
+      "cstar_total": 12,
+      "shuffle_null_fraction_at_least_real": 0.025,
+      "simple_hit_rate_baseline_correct": 10
+    },
+    "nonequilibrium_response_category": {
+      "verdict": "MOTHER_THEORY_SURVIVES_CURRENT_PROXY_MAINLINE_HOLD",
+      "fixed_sensor_kernel": {
+        "dt_s": 0.2,
+        "dead_time_s": 0.4,
+        "tau_s": 1.2
+      },
+      "cstar_correct": 11,
+      "cstar_total": 12,
+      "gas_circular_shift_500": {
+        "null_mean_correct": 6.46,
+        "fraction_at_least_real": 0.006
+      },
+      "wind_shuffle_500": {
+        "null_mean_correct": 7.97,
+        "fraction_at_least_real": 0.032
+      },
+      "dense_development": {
+        "old_six": {
+          "improvement_percent": 41.16899473979249,
+          "nonworse": 5
+        },
+        "independent_six": {
+          "improvement_percent": 26.34986509058647,
+          "nonworse": 5
+        },
+        "all12": {
+          "improvement_percent": 33.46583834705276,
+          "nonworse": 10
+        },
+        "mean_truth_nearest_percentile": 0.5123018918914563,
+        "mean_score_vs_negative_distance_spearman": 0.2694577660498549,
+        "mean_top_candidate_truth_distance_m": 4.388995764594543
+      },
+      "decision_reason": "passes stochastic-realization and source/transport mechanism screens, but direct dense source identity remains too weak; no parameter tuning allowed on these 12."
+    }
+  },
+  "pending": "Perron-Frobenius/transfer-operator mother-theory audit after deterministic candidate replay parity"
+}
