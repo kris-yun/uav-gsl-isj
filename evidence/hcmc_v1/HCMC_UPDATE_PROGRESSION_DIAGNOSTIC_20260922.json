@@ -1,0 +1,17 @@
+{
+  "contract": "HCMC_UPDATE_PROGRESSION_DIAGNOSTIC_V1",
+  "interpretation": "diagnostic_only_not_used_to_tune_HCMC_V1",
+  "aggregate": [
+    {"update_id":1,"mean_time_s":67.0,"native_mean_m":3.752231040654336,"hcmc_mean_m":3.6787466843036967,"improved_cases":3},
+    {"update_id":2,"mean_time_s":120.1,"native_mean_m":4.456301771028817,"hcmc_mean_m":4.9145940708261815,"improved_cases":2},
+    {"update_id":3,"mean_time_s":174.6,"native_mean_m":5.381029619238767,"hcmc_mean_m":3.8186568277610413,"improved_cases":5},
+    {"update_id":4,"mean_time_s":226.46666666666667,"native_mean_m":5.465117418815936,"hcmc_mean_m":3.82803403798088,"improved_cases":4},
+    {"update_id":5,"mean_time_s":277.83333333333337,"native_mean_m":5.555068092902446,"hcmc_mean_m":2.448827300603709,"improved_cases":6}
+  ],
+  "claim_boundary": [
+    "HCMC is not monotonically better at every source update.",
+    "Early source-update support is insufficient for reliable multiscaling evidence in several cases.",
+    "The discovery evidence becomes materially useful from the middle-to-late updates, with 5/6 improvement at update 3 and 6/6 only at the final update.",
+    "Do not tune a release time from these six discovery cases."
+  ]
+}
