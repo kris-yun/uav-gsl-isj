@@ -1,0 +1,35 @@
+{
+  "contract": "HCMC_V1_REPRO_CONTROL_SCREEN",
+  "data_archive_sha256": "81c72910b2fc912e5e0a9340d3f6b1ba20024da510ef58eb95da2ff1d8055708",
+  "definition": {
+    "powers": [1,2,3,4],
+    "scales_cells": [1,2,4,8],
+    "confidence_floor": 1e-06,
+    "pair_weight": "sqrt(conf_i*conf_j)",
+    "directions": "+x,+y cardinal",
+    "score": "negative mean absolute mismatch of adjacent log2 structure-function slopes",
+    "leaf_density": "average percentile among valid final-leaf scores; invalid=0",
+    "endpoint": "floor(0.05*Nfree) highest-density cells, density-weighted ExpectedValue"
+  },
+  "native_errors_m": [5.527347155337969,4.001642364490226,4.107022746118029,3.700743269109462,7.782054929226254,8.211551289867678],
+  "hcmc_errors_m": [2.0541473921236735,2.194595449071543,1.2290008974428555,3.1109702021109107,1.282938532370229,4.821311330503044],
+  "native_mean_m": 5.55506029235827,
+  "hcmc_mean_m": 2.448827300603709,
+  "improved_cases": 6,
+  "pooled_improvement_percent": 55.9171787213111,
+  "random_leaf_permutation_300": {
+    "overall_mean_error_distribution": {"min":2.4466633087663205,"mean":4.49580069349027,"median":4.530838357131536,"max":6.267353981060292,"q05":3.470310485590073,"q95":5.4548605394424925},
+    "case_mean_errors": [3.487606951629253,3.6209807103329292,2.5443135793970355,2.63403767119616,7.395389756697636,7.292475491688608],
+    "fraction_overall_as_good_or_better": 0.0033333333333333335
+  },
+  "simulated_field_spatial_shuffle_30": {
+    "overall_mean_error_distribution": {"min":3.9247181655087076,"mean":4.961346617454928,"median":4.903305310493684,"max":5.895353579554158,"q05":3.9450826957478924,"q95":5.797297120633878},
+    "case_mean_errors": [4.184557240758271,4.562056449859513,3.532651549443687,3.4792504276485032,6.959264819498028,7.050299217521565],
+    "fraction_overall_as_good_or_better": 0.0
+  },
+  "cross_seed_reproducibility": {
+    "House01": {"common_valid_leaves":27,"spearman":0.43956043956043955,"permutation_ge_count_1000":19,"permutation_p_upper":0.01998001998001998},
+    "House02": {"common_valid_leaves":55,"spearman":0.8481240981240982,"permutation_ge_count_1000":0,"permutation_p_upper":0.000999000999000999},
+    "House03": {"common_valid_leaves":100,"spearman":0.2545334533453345,"permutation_ge_count_1000":7,"permutation_p_upper":0.007992007992007992}
+  }
+}
