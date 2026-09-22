@@ -4,7 +4,7 @@ Date: 2026-09-22
 Branch: `research/hcce-v1-development-screen-20260922`  
 Base raw-data commit: `c5271515d565c343d2fd2a63c77bf0484f45772a`
 
-Status: **DEVELOPMENT-POSITIVE / NOT AN INDEPENDENT VALIDATION**
+Status: **DEVELOPMENT-POSITIVE ON ENDPOINTS, BUT MAIN-LINE HOLD AFTER ANTI-METRIC AUDIT / NOT AN INDEPENDENT VALIDATION**
 
 ## 0. Why this cycle is different
 
@@ -347,3 +347,51 @@ A minimum promotion gate should include:
 - no parameter changes after holdout generation.
 
 Only after this gate should a closed-loop planner or two auxiliary innovations be promoted.
+
+
+## 16. Anti-metric-gaming audit — critical downgrade
+
+After the strong top-5% endpoint result was obtained, HCCE was audited using metrics that do not depend on the same top-5% centroid.
+
+Across all 12 cases:
+
+- Native full-posterior expected distance: **5.7644 m**
+- HCCE full-posterior expected distance: **5.1834 m**
+- Native mass within 1 m: **0.0067**
+- HCCE mass within 1 m: **0.0348**
+- Native mass within 2 m: **0.0188**
+- HCCE mass within 2 m: **0.1255**
+- Native MAP-cell error: **5.5677 m**
+- HCCE MAP-cell error: **4.7377 m**
+
+These are positive but much weaker than the 54.77% top-5% endpoint improvement.
+
+More importantly, direct candidate-level source identification is not yet strong enough for promotion:
+
+- mean percentile of the candidate nearest the true source: **0.764**
+- mean Spearman correlation between HCCE score and negative source-distance: **0.194**
+- mean distance from truth of the single highest-scoring candidate: **4.570 m**
+
+The two new House01 realizations are the clearest warning:
+- the candidate nearest truth is only at about the **51st percentile** in both;
+- nevertheless the top-5% centroid endpoint improves.
+
+Therefore the present endpoint gain can partly arise from a broad spatial ranking/centroid effect rather than the true source hypothesis being directly selected.
+
+### Consequence
+
+HCCE is **not promoted to the paper's main innovation yet**.
+
+It survives as a scientifically interesting causal-emergence candidate because:
+- old/new stochastic realization transfer is strong;
+- destructive controls are strong;
+- geometry subtraction is load-bearing;
+- alternative posterior diagnostics improve.
+
+But before main-line promotion, HCCE must pass a source-position intervention test in which the true source is moved substantially and the candidate-level truth rank is a primary criterion, not merely the top-5% ExpectedValue endpoint.
+
+The existing 240 s SA/SB controlled asset cannot honestly provide this test because its published candidate-domain files contain only map coordinates, not the source-conditioned candidate plume fields required by HCCE.
+
+Final development verdict for this cycle:
+
+`HCCE_V1_MAINLINE_HOLD_SOURCE_IDENTITY_NOT_YET_PROVEN`
