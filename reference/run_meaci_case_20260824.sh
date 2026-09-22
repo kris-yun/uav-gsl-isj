@@ -217,7 +217,7 @@ ARGS=(
   "sensor_config:=fopdt_tau1p2_dead0p4_noise0" "start_config:=frozen_native_start"
   "source_x:=${SOURCE_X}" "source_y:=${SOURCE_Y}" "source_z:=${SOURCE_Z}"
   "start_x:=${START_X}" "start_y:=${START_Y}" "seed:=${SEED}" "flight_height:=0.3"
-  "timeout_sec:=${TIMEOUT_SEC:-300.0}" "path_budget_m:=-1.0" "scale:=3" "useWindGroundTruth:=false"
+  "timeout_sec:=${TIMEOUT_SEC:-300.0}" "path_budget_m:=-1.0" "scale:=3" "useWindGroundTruth:=${USE_WIND_GROUND_TRUTH:-false}"
   "convergence_thr:=-1.0" "sourceDiscriminationPower:=1.0" "refineFraction:=0.25"
   # Keep the frozen PMFS cadence by default.  Acceleration experiments may
   # override only this scheduler variable (e.g. STEPS_SOURCE_UPDATE=3),
