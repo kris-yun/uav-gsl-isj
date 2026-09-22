@@ -1,0 +1,82 @@
+{
+  "contract": "FAILURE_INFORMED_MAINLINE_CYCLE_20260922",
+  "base_hcmc_nogo_commit": "878bcbd1082d00f1554286920d9fde88cc84c5ea",
+  "process_change": {
+    "old_rule": "old six -> freeze -> one holdout",
+    "new_rule": "heterogeneous development corpus D0-D3 -> freeze -> brand-new D4 holdout",
+    "unblinded_hcmc_independent_six_status": "development data only; never holdout again"
+  },
+  "candidates": {
+    "acia_proxy": {
+      "mother_idea": "NeurIPS 2025 Measure-Theoretic Anti-Causal Representation Learning",
+      "code": "https://github.com/ArmanBehnam/ACIA",
+      "old_six": {
+        "mean_m": 3.688480624621833,
+        "improvement_percent": 33.601429498509084,
+        "nonworse": 5
+      },
+      "leaf_null_300": {
+        "mean_m": 4.520473969022343,
+        "fraction_as_good_or_better": 0.09
+      },
+      "environment_permutation_100": {
+        "mean_m": 4.406701949556457,
+        "fraction_as_good_or_better": 0.19
+      },
+      "cross_seed_spearman": {
+        "House01": 0.4408355978766213,
+        "House02": 0.2803458523207879,
+        "House03": 0.8435104518609555
+      },
+      "verdict": "NO_GO_MAIN"
+    },
+    "idg_invariant_subgraph_proxy": {
+      "mother_idea": "NeurIPS 2025 Quantifying Distributional Invariance in Causal Subgraph for IRM-Free Graph Generalization",
+      "code": "https://github.com/anders1123/IDG",
+      "old_six": {
+        "mean_m": 4.994363731579097,
+        "improvement_percent": 10.093437897523573,
+        "nonworse": 3
+      },
+      "verdict": "NO_GO"
+    },
+    "partial_identification_proxy": {
+      "mother_idea": "NeurIPS 2025 Data Fusion for Partial Identification of Causal Effects",
+      "code": "https://github.com/harsh-parikh/Partial-Identification-Data-Fusion",
+      "coverage_frontier": [
+        {
+          "relative_sensitivity": 0,
+          "truth_coverage": 0,
+          "mean_plausible_leaves": 1
+        },
+        {
+          "relative_sensitivity": 0.0001,
+          "truth_coverage": 3,
+          "mean_plausible_leaves": 24.1666666667
+        },
+        {
+          "relative_sensitivity": 0.001,
+          "truth_coverage": 5,
+          "mean_plausible_leaves": 59.8333333333
+        },
+        {
+          "relative_sensitivity": 0.05,
+          "truth_coverage": 6,
+          "mean_plausible_leaves": 76.5
+        }
+      ],
+      "verdict": "NO_GO_MAIN_KEEP_AS_SAFETY_LAYER"
+    }
+  },
+  "promotion_contract": {
+    "defined_under_constant_or_near_constant_fields": true,
+    "old_r2_improvement_percent_min": 10,
+    "old_r2_nonworse_min": 4,
+    "must_pass_unblinded_independent_six_as_development": true,
+    "must_survive_source_position_intervention_stress": true,
+    "principal_destructive_null_fraction_as_good_max": 0.05,
+    "geometry_only_explanation_forbidden": true,
+    "source_blind_freeze_required": true,
+    "fresh_holdout_only_after_all_development_gates": true
+  }
+}
