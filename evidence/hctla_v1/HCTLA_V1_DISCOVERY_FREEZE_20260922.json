@@ -1,0 +1,173 @@
+{
+  "contract": "HCTLA_V1_DISCOVERY_FREEZE_20260922",
+  "status": "DISCOVERY_POSITIVE_FROZEN_BEFORE_CURRENT_INDEPENDENT_PLUME_RESULTS",
+  "parent_fallback_commit": "90e03e9e4fee6ac837a6699174e6a13f25a4dbf6",
+  "archive_sha256": "81c72910b2fc912e5e0a9340d3f6b1ba20024da510ef58eb95da2ff1d8055708",
+  "endpoint_note": "discovery rapid Python ceil/stable-tie clone; future validation must use linked-native C++ evaluator",
+  "frozen_v1": {
+    "source_updates": 5,
+    "valid_candidate_rule": "authoritative final leaf ID present in all five source updates",
+    "support_rule": "cell present in every update and measured_confidence > 1e-6 in every update",
+    "stencil": "center,+x,-x,+y,-y cardinal five-point",
+    "per_snapshot_normalization": "subtract support mean and divide by support standard deviation",
+    "regression": "ridge local transition map, alpha=1.0, intercept included",
+    "transition_count": 4,
+    "score": "mean over transitions of cosine similarity between measured and candidate local-stencil coefficient vectors",
+    "candidate_density": "average percentile rank among valid candidates; invalid final leaves=0",
+    "house_specific_parameters": false,
+    "truth_input_to_scorer": false
+  },
+  "discovery": {
+    "native_errors_m": [
+      5.527347155337969,
+      4.001642364490226,
+      4.107022746118029,
+      3.700743269109462,
+      7.782054929226254,
+      8.211551289867678
+    ],
+    "hctla_errors_m": [
+      4.029737220886891,
+      4.372407522413752,
+      2.763606151004446,
+      2.6617177184532137,
+      2.324815070493381,
+      3.273095787479217
+    ],
+    "native_mean_m": 5.55506029235827,
+    "hctla_mean_m": 3.2375632451218164,
+    "pooled_reduction_percent": 41.71866595983632,
+    "improved_cases": 5
+  },
+  "controls": {
+    "uniform_persistent_candidate_support": {
+      "mean_error_m": 6.410248460840272,
+      "pooled_change_percent": -15.394759435076297,
+      "improved_cases": 2
+    },
+    "leaf_permutation_300": {
+      "mean_m": 4.401202440902751,
+      "q05_m": 3.2982498202415993,
+      "q95_m": 5.384709335406779,
+      "min_m": 2.445995644892864,
+      "max_m": 6.762641907371374,
+      "fraction_as_good_or_better": 0.03333333333333333
+    },
+    "spatial_shuffle_30": {
+      "mean_m": 4.095040506641078,
+      "q05_m": 3.5169258500804443,
+      "q95_m": 4.613978562487012,
+      "min_m": 3.448969732884557,
+      "max_m": 4.880535523272339,
+      "fraction_as_good_or_better": 0
+    },
+    "time_permutation_30": {
+      "mean_m": 3.9689280310028416,
+      "q05_m": 3.323022439474692,
+      "q95_m": 4.577780966493526,
+      "min_m": 3.164309825484892,
+      "max_m": 4.716442026006677,
+      "fraction_as_good_or_better": 0.06666666666666667
+    },
+    "rejected_aggregate_stencil_prototype": {
+      "pooled_reduction_percent": 43.49287863317423,
+      "improved_cases": 6,
+      "time_permutation_fraction_as_good_or_better": 0.8333333333333334,
+      "decision": "REJECT_CAUSAL_INTERPRETATION"
+    }
+  },
+  "cross_seed_candidate_score_reproducibility": {
+    "House01": {
+      "common_ids": 45,
+      "spearman": 0.4447761194029851,
+      "permutation_p_upper": 0.000999000999000999
+    },
+    "House02": {
+      "common_ids": 48,
+      "spearman": 0.8327341164818582,
+      "permutation_p_upper": 0.000999000999000999
+    },
+    "House03": {
+      "common_ids": 81,
+      "spearman": 0.9540313225058004,
+      "permutation_p_upper": 0.000999000999000999
+    }
+  },
+  "robustness_family": [
+    {
+      "stencil": "cardinal5",
+      "alpha": 0.1,
+      "mean_m": 3.412360161893408,
+      "reduction_percent": 38.572040944585844,
+      "improved": 5
+    },
+    {
+      "stencil": "cardinal5",
+      "alpha": 1,
+      "mean_m": 3.2375632451218164,
+      "reduction_percent": 41.71866595983632,
+      "improved": 5
+    },
+    {
+      "stencil": "cardinal5",
+      "alpha": 10,
+      "mean_m": 3.899175572234391,
+      "reduction_percent": 29.808582319111288,
+      "improved": 5
+    },
+    {
+      "stencil": "moore9",
+      "alpha": 0.1,
+      "mean_m": 3.0832869361023625,
+      "reduction_percent": 44.495887104162726,
+      "improved": 5
+    },
+    {
+      "stencil": "moore9",
+      "alpha": 1,
+      "mean_m": 3.3789306733693376,
+      "reduction_percent": 39.17382538552265,
+      "improved": 5
+    },
+    {
+      "stencil": "moore9",
+      "alpha": 10,
+      "mean_m": 3.8927942240167432,
+      "reduction_percent": 29.923456827789906,
+      "improved": 4
+    }
+  ],
+  "robust_consensus": {
+    "median_rank_mean_m": 3.485163892637034,
+    "median_rank_reduction_percent": 37.26145695607761,
+    "median_rank_improved": 5
+  },
+  "external_anchors": [
+    {
+      "name": "CaStLe",
+      "venue": "JGR Machine Learning and Computation 2025",
+      "doi": "10.1029/2024JH000546",
+      "code": "https://github.com/jjakenichol/CaStLe"
+    },
+    {
+      "name": "PITA",
+      "venue": "ICML 2025",
+      "code": "https://github.com/SCAILab-USTC/PITA"
+    }
+  ],
+  "targeted_collision_boundary": {
+    "adjacent": "2025 Visual Mamba-inspired directional causal stencils for chemical gas source localization; 2026 physics-guided/sequential indoor GSL",
+    "novelty_hypothesis": "candidate-wise temporal alignment of data-discovered local effective transport-stencil trajectories between measured and source-conditioned simulated plume statistics",
+    "exhaustive_prior_art_proof": false
+  },
+  "pre_registered_independent_gate": {
+    "pooled_reduction_percent_min": 10,
+    "nonworse_cases_min": 4,
+    "no_new_false_confident_collapse": true,
+    "require_real_better_than_mean_leaf_null": true,
+    "require_real_better_than_mean_spatial_null": true,
+    "require_real_better_than_mean_time_null": true,
+    "require_source_blind_posterior_freeze_before_truth": true,
+    "require_linked_native_endpoint": true
+  }
+}
