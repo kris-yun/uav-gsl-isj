@@ -1,0 +1,72 @@
+{
+  "contract": "MORI_ZWANZIG_MOTHER_IDEA_AUDIT_20260923",
+  "status": "DIRECT_TRANSFER_NO_GO_FULL_TEST_DATA_INELIGIBLE",
+  "data": {
+    "old_cases": 6,
+    "new_independent_plume_cases": 6,
+    "total": 12,
+    "new_inventory": "exactly one source_update_0001 per accepted new run plus full 1500-step sensor/pose/wind traces"
+  },
+  "instantaneous_endpoint": {
+    "all_mean_m": 4.616472787465344,
+    "all_gain_percent": 20.183592313173435,
+    "all_nonworse": 8,
+    "new_mean_m": 4.296479281143153,
+    "new_gain_percent": 28.54288774729254,
+    "new_nonworse": 6
+  },
+  "memory8_endpoint": {
+    "all_mean_m": 4.393091241883172,
+    "all_gain_percent": 24.045742775819033,
+    "all_nonworse": 8,
+    "new_mean_m": 4.112898473637094,
+    "new_gain_percent": 31.596121223124126,
+    "new_nonworse": 5
+  },
+  "necessary_condition": {
+    "interleaved": {
+      "truth_candidate_memory_benefit_positive_cases": 3,
+      "cases": 12,
+      "mean_truth_candidate_memory_benefit": -0.0000018485753419598408,
+      "mean_truth_candidate_memory_benefit_percentile": 0.667218887,
+      "mean_spearman_memory_benefit_vs_negative_source_distance": -0.003653283895624059
+    },
+    "forward_60_40": {
+      "truth_candidate_memory_benefit_positive_cases": 1,
+      "cases": 12,
+      "mean_truth_candidate_memory_benefit": -0.00000636704041,
+      "mean_truth_candidate_memory_benefit_percentile": 0.558350447,
+      "mean_spearman_memory_benefit_vs_negative_source_distance": 0.180904873
+    }
+  },
+  "residual_whitening_proxy": {
+    "real_mean_m": 4.831538336031531,
+    "gain_percent": 16.465221103370528,
+    "nonworse": 10,
+    "leaf_permutation_300": {
+      "null_mean_m": 4.443484483751124,
+      "q05_m": 3.774651624762467,
+      "median_m": 4.443608624135626,
+      "q95_m": 5.118544336894852,
+      "fraction_as_good_or_better": 0.82
+    },
+    "shifted_50_mean_m": 4.687384987573779,
+    "shifted_600_mean_m": 4.683561268142544
+  },
+  "external_anchors": [
+    {
+      "doi": "10.1073/pnas.2525390123",
+      "title": "Data-driven Mori–Zwanzig modeling of Lagrangian particle dynamics in turbulent flows",
+      "venue": "PNAS",
+      "year": 2026
+    },
+    {
+      "doi": "10.48550/arxiv.2606.14918",
+      "title": "Learning turbulent transport via Mori--Zwanzig graph neural networks",
+      "year": 2026
+    }
+  ],
+  "verdict": "MORI_ZWANZIG_DIRECT_SOURCE_MEMORY_TRANSFER_NO_GO",
+  "full_program_status": "DATA_INELIGIBLE_WITH_CURRENT_CANDIDATE_BANK",
+  "reason": "Delayed candidate forcing does not provide source-specific held-out predictive-memory benefit; faithful MZ requires candidate-conditioned time-resolved dynamics not present in the current bank."
+}
