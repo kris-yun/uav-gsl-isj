@@ -1,0 +1,55 @@
+{
+  "contract": "DYNAMIC_FORWARD_EXPORT_NATIVE_PARITY_V1",
+  "off": "/home/zyc/dynamic_inventory_parity_20260923/off/H01_R2026092201",
+  "on": "/home/zyc/dynamic_inventory_parity_20260923/on/H01_R2026092201",
+  "status": "STOP_PARITY_NOT_ESTABLISHED",
+  "disposition": "temporary export prototype removed; audit-only branch retained",
+  "scientific_interpretation": "The in-loop summary collection and per-candidate writes did not preserve the asynchronous closed-loop run. No causal attribution beyond failed parity is claimed, and no optimization/retry was performed after STOP.",
+  "checks": {
+    "off_terminal_present": true,
+    "on_terminal_present": true,
+    "sim_pose_trace.csv_bitwise_equal": false,
+    "sensor_trace.csv_bitwise_equal": false,
+    "wind_trace.csv_bitwise_equal": false,
+    "candidate_ids_equal": false,
+    "candidate_count_equal": true,
+    "native_candidate_scores_and_source_draws_bitwise_equal": false,
+    "final_posterior_bitwise_equal_after_row_sort": false,
+    "candidate_support_alignment_bitwise_equal_after_row_sort": false,
+    "terminal_result_equal": false,
+    "linked_native_endpoint_binary_equal": true,
+    "same_algorithm_binary": true,
+    "same_realization_id_and_seed": true,
+    "export_flag_off_on": true,
+    "on_dynamic_files_match_candidate_count": true,
+    "off_has_no_dynamic_files": true,
+    "rng_contract_equal_indirectly": false
+  },
+  "candidate_counts": [
+    154,
+    154
+  ],
+  "dynamic_file_count": 154,
+  "temporary_on_dynamic_size": "7.5 MiB including stride-20 sparse cells",
+  "algorithm_binary_sha256": "3e7c2115682593b5739801400b9735fb0119092a2189bf1ec539063a39bfbf6a",
+  "linked_native_endpoint_binary_sha256": "112a295e4666a85a49e537f6ba3a6d91acdd9389deb461580dbddf606adfaefd",
+  "trace_sha256_off_on": {
+    "sim_pose_trace.csv": [
+      "d0c64db77af843a8468a0eabb7d58119e880575c324da2e9f13a3f3ec6f0f6e1",
+      "dde2c01ca98b68206b600e83c7c0c4387c5c4aabe5c1569f3ff178665b17c539"
+    ],
+    "sensor_trace.csv": [
+      "ec958a7d8c89052f17749e7fe64885a6dae0060ccd2f358d04fac802ecf0979f",
+      "194c2a86d884c9038afbf825bd68a08a42ec2aa44412b539c357f9c4f5fc92d9"
+    ],
+    "wind_trace.csv": [
+      "b836db7e2720a8caa8d940de83764d5a559e761c4ae29692176282741d8a7144",
+      "25ae9f5130eb32ee36851a5b4384b54aa7cb5f9bf84642ab53beb9cfb450c7ae"
+    ]
+  },
+  "linked_native_endpoints": [
+    "RESULT IS: Success=0, Search_t=299.89, Error=4.60\u001b[0m",
+    "RESULT IS: Success=0, Search_t=299.91, Error=4.63\u001b[0m"
+  ],
+  "rng_note": "No draw ledger was exported; binary/key contract plus source draws and forward support alignment are the available indirect checks."
+}
