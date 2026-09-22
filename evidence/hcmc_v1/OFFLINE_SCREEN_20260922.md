@@ -53,11 +53,13 @@ This changes the scientific object from **pointwise plume reproduction** to **me
 
 ## 2. Recent remote-field anchors
 
-Two direct modern anchors motivate the transfer:
+Three direct modern anchors motivate the transfer:
 
 1. Kiran, Kumar, Gupta, Pandit & Ray, **"Onset of Intermittency and Multiscaling in Active Turbulence"**, *Physical Review Letters* 134, 088302 (2025). DOI: 10.1103/PhysRevLett.134.088302. The paper uses Eulerian/Lagrangian structure functions and multiscaling as signatures of intermittent turbulent states.
 
 2. Tang, Antonia, Djenidi & Danaila, **"Dual scaling and the 2/3 power law for the second-order scalar structure function in homogeneous turbulence with a mean scalar gradient"**, *Journal of Fluid Mechanics* 1013, A46 (2025). DOI: 10.1017/jfm.2025.10319. This is especially relevant because gas concentration is a transported scalar and the paper studies scale laws of scalar increments rather than pointwise scalar values.
+
+3. Mailybaev & Thalabard, **"Perturbative Anomalous Exponents from Kolmogorov Multipliers"**, *Physical Review Letters* 137, 094002 (2026), Editors' Suggestion. DOI: 10.1103/6qrr-3646. The paper develops a 2026 analytical framework for anomalous scaling in turbulent transport and computes structure-function exponents of arbitrary order from cross-scale multiplier statistics. It supports the paper-level view that the informative object is the cross-scale law, not pointwise field agreement.
 
 Adjacent OSL literature already uses intermittency, burst timing, variance, and other plume statistics. The novelty claim therefore must **not** be "intermittency is useful for odor localization".
 
