@@ -1,0 +1,201 @@
+{
+  "contract": "HCCE_CSTAR_CROSS_TRANSPORT_KILL_20260922",
+  "verdict": "HCCE_V1_MAINLINE_NO_GO_CROSS_TRANSPORT_SOURCE_IDENTITY",
+  "hcce_dev_branch": "research/hcce-v1-development-screen-20260922",
+  "raw_dev_commit": "c5271515d565c343d2fd2a63c77bf0484f45772a",
+  "cstar_asset_commit": "26e89a99532e4268c5022dca2e938bf1473377b1",
+  "route_audit": {
+    "H01": {
+      "samples_per_episode": 1200,
+      "max_pose_delta_m": 0,
+      "hit_rates": {
+        "SA_fast": 0.43916666666666665,
+        "SA_slow": 0.49333333333333335,
+        "SB_fast": 0.8958333333333334,
+        "SB_slow": 0.8958333333333334
+      }
+    },
+    "H02": {
+      "samples_per_episode": 1200,
+      "max_pose_delta_m": 0,
+      "hit_rates": {
+        "SA_fast": 0.0775,
+        "SA_slow": 0.5808333333333333,
+        "SB_fast": 0.36916666666666664,
+        "SB_slow": 0.36833333333333335
+      }
+    },
+    "H03": {
+      "samples_per_episode": 1200,
+      "max_pose_delta_m": 0,
+      "hit_rates": {
+        "SA_fast": 0.7658333333333334,
+        "SA_slow": 0.6483333333333333,
+        "SB_fast": 0.14666666666666667,
+        "SB_slow": 0.14583333333333334
+      }
+    }
+  },
+  "source_pairs": {
+    "H01": {
+      "SA": [
+        -0.6,
+        1.95,
+        0.4
+      ],
+      "SB": [
+        -0.4,
+        -2.9,
+        -0.3
+      ]
+    },
+    "H02": {
+      "SA": [
+        0,
+        -1,
+        0.2
+      ],
+      "SB": [
+        1,
+        -2.3,
+        -0.1
+      ]
+    },
+    "H03": {
+      "SA": [
+        -0.45,
+        1.9,
+        -0.1
+      ],
+      "SB": [
+        8.2,
+        5,
+        -0.2
+      ]
+    }
+  },
+  "protocol": {
+    "target_template_split": "fast target uses slow SA/SB templates; slow target uses fast SA/SB templates",
+    "template_normalization": "within-template empirical rank to [0,1]",
+    "target_event": "gas_ppm > 0",
+    "microstate": "4 candidate-template bins x binary target event = 8 states",
+    "causal_statistic": "maximum nontrivial CE2-style macro causal power minus constant-event baseline",
+    "lag_samples": 1
+  },
+  "hcce_identity_rows": [
+    {
+      "house": "H01",
+      "target": "SA_fast",
+      "truth": "SA",
+      "pred": "SA",
+      "scoreSA": 0.020411444485151864,
+      "scoreSB": 0.018321949504117252,
+      "truth_margin": 0.002089494981034612
+    },
+    {
+      "house": "H01",
+      "target": "SB_fast",
+      "truth": "SB",
+      "pred": "SA",
+      "scoreSA": 0.01717150543844259,
+      "scoreSB": 0.01183407965399752,
+      "truth_margin": -0.005337425784445071
+    },
+    {
+      "house": "H01",
+      "target": "SA_slow",
+      "truth": "SA",
+      "pred": "SB",
+      "scoreSA": 0.019639102698418842,
+      "scoreSB": 0.025429055294766356,
+      "truth_margin": -0.005789952596347514
+    },
+    {
+      "house": "H01",
+      "target": "SB_slow",
+      "truth": "SB",
+      "pred": "SA",
+      "scoreSA": 0.017573414385536168,
+      "scoreSB": 0.011238648160106224,
+      "truth_margin": -0.006334766225429944
+    },
+    {
+      "house": "H02",
+      "target": "SA_fast",
+      "truth": "SA",
+      "pred": "SB",
+      "scoreSA": 0.008018761257064466,
+      "scoreSB": 0.03138796219631912,
+      "truth_margin": -0.023369200939254653
+    },
+    {
+      "house": "H02",
+      "target": "SB_fast",
+      "truth": "SB",
+      "pred": "SA",
+      "scoreSA": 0.01168291748516781,
+      "scoreSB": 0.002987338447626664,
+      "truth_margin": -0.008695579037541146
+    },
+    {
+      "house": "H02",
+      "target": "SA_slow",
+      "truth": "SA",
+      "pred": "SA",
+      "scoreSA": 0.029983706903123686,
+      "scoreSB": 0.017519065831922642,
+      "truth_margin": 0.012464641071201044
+    },
+    {
+      "house": "H02",
+      "target": "SB_slow",
+      "truth": "SB",
+      "pred": "SA",
+      "scoreSA": 0.03288382475077045,
+      "scoreSB": 0.0029999766129947814,
+      "truth_margin": -0.02988384813777567
+    },
+    {
+      "house": "H03",
+      "target": "SA_fast",
+      "truth": "SA",
+      "pred": "SB",
+      "scoreSA": 0.006014823057362895,
+      "scoreSB": 0.030624844256739836,
+      "truth_margin": -0.02461002119937694
+    },
+    {
+      "house": "H03",
+      "target": "SB_fast",
+      "truth": "SB",
+      "pred": "SA",
+      "scoreSA": 0.020317132506384672,
+      "scoreSB": 0.0026590795309641146,
+      "truth_margin": -0.017658052975420557
+    },
+    {
+      "house": "H03",
+      "target": "SA_slow",
+      "truth": "SA",
+      "pred": "SB",
+      "scoreSA": 0.028747130814520072,
+      "scoreSB": 0.02983765327807275,
+      "truth_margin": -0.001090522463552679
+    },
+    {
+      "house": "H03",
+      "target": "SB_slow",
+      "truth": "SB",
+      "pred": "SA",
+      "scoreSA": 0.021469113481876856,
+      "scoreSB": 0.0026604604064248694,
+      "truth_margin": -0.018808653075451987
+    }
+  ],
+  "hcce_identity_accuracy": "2/12",
+  "hcce_identity_accuracy_fraction": 0.16666666666666666,
+  "mean_truth_margin": -0.010585323865196708,
+  "simple_hit_rate_nearest_template_accuracy": "10/12",
+  "interpretation": "The CE macro coupling is not transport-invariant source identity. A trivial encounter-rate transfer retains substantially more source identity on the same controlled episodes.",
+  "caveat": "This is a binary cross-transport mechanism diagnostic, not the exact continuous-grid HCCE endpoint, because the published CStar candidate-domain files contain coordinates but not source-conditioned candidate plume fields."
+}
