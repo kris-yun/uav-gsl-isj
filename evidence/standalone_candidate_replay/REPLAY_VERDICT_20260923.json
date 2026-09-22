@@ -1,0 +1,49 @@
+{
+  "contract": "STANDALONE_NATIVE_CANDIDATE_REPLAY_V1",
+  "status": "H01_STATIC_PARITY_PASS_AND_OFFLINE_TRACE_PASS",
+  "scope": "one frozen accepted run, no ROS/live loop, no mother-theory test",
+  "accepted_run": "H01_R2026092201",
+  "source_update_id": 1,
+  "navigation_seed": 2,
+  "effective_native_candidate_rng_seed": 0,
+  "seed_binding_reason": "frozen launch passes random_seed to the algorithm, but Algorithm and PMFS read seed; absent seed takes default 0",
+  "frozen_launch_sha256": "0cd1ae4ad852bf548fd1ebc131e7f46f0d6d20603a2e4e71ae37c6831e40f2c9",
+  "accepted_algorithm_sha256": "b06c2036da91ef22285d1cb5d4d08172e828956fc5844d8a2044a4221a8c2cce",
+  "offline_executable_sha256": "c86486cb6a6fc5740d93032f1cad9c5ba162e799338f97ca95dd335496aab45d",
+  "pmfs_library_sha256": "9b9e23df9129002087f95add0ad2cf17031788af08fed7492744af9a8a045fae",
+  "pmfs_simulations_source_sha256": "d8b7c3d8a3799192719cbbf3abbcc1d421d0acfe3b23f3e8822f5cd3474c30ed",
+  "static_gate": {
+    "order": [1, 10, 152],
+    "evaluated_candidates": 152,
+    "source_point_bitwise_pass": 152,
+    "support_cell_float_bitwise_pass": 32224,
+    "max_abs_support_difference": 0,
+    "native_score_double_bitwise_pass": 152,
+    "terminal_leaves": 121,
+    "free_cells": 626,
+    "terminal_leaf_partition_has_overlap_or_gap": false
+  },
+  "dynamic_gate": {
+    "recording_steps_per_candidate": 200,
+    "total_step_rows": 30400,
+    "offline_traced_vs_untouched_pmfs_full_map_float_bitwise_pass": 152,
+    "filament_position_pairs": 15474729,
+    "unique_occupied_cell_events": 1579830,
+    "trace_integrity": "PASS",
+    "first_candidate_separate_run_binary_reproducibility": "PASS"
+  },
+  "package": {
+    "name": "H01_R2026092201_native_candidate_dynamics_v2.tar.zst",
+    "sha256": "46bbfd8aff2d6203dd4046c754b2885273b8f5b94e4643a9dec0946279e2b71f",
+    "compressed_bytes": 127998403,
+    "vm_path": "/home/zyc/native_candidate_replay_results_20260923/H01_R2026092201_native_candidate_dynamics_v2.tar.zst",
+    "windows_path": "D:\\ZYC\\A-gas\\_staging\\STANDALONE_NATIVE_CANDIDATE_REPLAY_20260923\\H01_R2026092201_native_candidate_dynamics_v2.tar.zst"
+  },
+  "limits": [
+    "Historical Native full hit maps were not saved, so historical parity is independently observed only on candidate_support_alignment.csv and native score.",
+    "This is PMFS model-internal dynamics, not observed plume dynamics.",
+    "Only H01_R2026092201 was replayed; no cross-realization or source-transport identity gate was run."
+  ],
+  "noncausal_inputs_used": false,
+  "live_pmfs_source_modified": false
+}

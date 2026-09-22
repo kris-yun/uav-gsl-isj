@@ -127,6 +127,16 @@ ament_target_dependencies(meaci_replay_true
     ${CONDITIONAL_GADEN_MSGS}
 )
 target_link_libraries(meaci_replay_true PMFS)
+
+# Offline Native candidate parity tool. It links the existing PMFS library
+# and never runs as a ROS node or changes the live PMFS algorithm.
+add_executable(native_candidate_replay tools/native_candidate_replay.cpp)
+ament_target_dependencies(native_candidate_replay
+    ${COMMON_AMENT_DEPENDENCIES}
+    gmrf_msgs
+    ${CONDITIONAL_GADEN_MSGS}
+)
+target_link_libraries(native_candidate_replay PMFS)
 #include(src/gsl_server/algorithms/Semantics/CMakeLists.txt) # There is further modularity inside of this file!
 
 
