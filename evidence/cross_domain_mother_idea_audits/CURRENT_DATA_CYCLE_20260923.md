@@ -103,8 +103,15 @@ However:
 - the trivial encounter-rate comparator previously obtains **10/12** on the same CStar task;
 - therefore irreversibility currently adds scientific mechanism evidence but not a competitive source-localization signal.
 
+A stronger candidate-relative stochastic-thermodynamic construction was also tested:
+- joint state = candidate-relative wind sign × gas hit/no-hit;
+- candidate score = entropy production / antisymmetric probability-current magnitude;
+- lags 1,2,5,10,25.
+
+It peaks at only **7/12** source identity and therefore fails before dense localization.
+
 Decision:
-`IRREVERSIBILITY_SIGNAL_RETAIN_AUXILIARY_ONLY`
+`IRREVERSIBILITY_SIGNAL_RETAIN_AUXILIARY_ONLY / CANDIDATE_RELATIVE_EPR_NO_GO`
 
 Not a main-line candidate.
 
@@ -171,31 +178,46 @@ Across all 12:
 
 Several cases have a poor truth-nearest rank despite an improved top-5% centroid.
 
-Therefore this response proxy is **not promoted**.
+A second, more explicit response-kernel construction was then tested rather than tuning the first score:
+- fixed 1.6 s lag vector;
+- blocked train/test;
+- ridge response kernel from candidate-relative downwind alignment to log gas;
+- no truth-dependent lag selection.
+
+This performs worse:
+- old six: **14.09%**, 3/6;
+- independent six: **29.57%**, 5/6;
+- all 12: **22.13%**, 8/12;
+- mean truth-nearest percentile: **0.380**;
+- mean score-vs-distance Spearman: **0.008**.
+
+Therefore a more explicit local linear response kernel does not solve the dense-source-identity weakness.
 
 Current verdict:
-`RESPONSE_LAW_MOTHER_THEORY_SURVIVES / CURRENT_DENSE_PROXY_MAINLINE_HOLD`
+`RESPONSE_LAW_MOTHER_THEORY_SURVIVES NECESSARY_PHENOMENON / CURRENT_LOCAL_RESPONSE_LOCALIZER_NO_GO`
 
 Interpretation:
 - the mother-theory necessary phenomenon is materially stronger than HCMC/HCCE at this stage;
-- the simple candidate-relative response proxy still suffers the endpoint-vs-source-identity problem;
-- do not rescue it by tuning lag, distance power, wind-speed weighting, or response kernel against these 12 cases.
+- the tested localization constructions still suffer the endpoint-vs-source-identity problem;
+- do not rescue them by tuning lag, distance power, wind-speed weighting, or response kernel against these 12 cases.
 
-The next response-theory test, if pursued, must use a source-specific response object that improves direct candidate truth identity, not merely the top-5% centroid.
+Any future response-theory revisit requires a materially different observable, most likely a prospectively logged spatial wind-response field rather than another scalar local-wind score.
 
 ## Current ranking after this cycle
 
-Rejected:
-1. path-space SCGF direct proxy;
-2. Koopman delay fingerprint direct proxy.
+Rejected direct transfers:
+1. path-space SCGF;
+2. Koopman delay fingerprint;
+3. candidate-relative entropy production;
+4. current scalar/local response localizers.
 
 Auxiliary-only:
-3. time irreversibility / probability currents.
+5. gas-only time irreversibility / probability currents.
 
-Mother theory retained, implementation not promoted:
-4. nonequilibrium response theory.
+Mother theory retained but data/observable-limited:
+6. nonequilibrium response theory.
 
 Pending Codex deterministic candidate replay:
-5. Perron-Frobenius / transfer-operator transport remains the highest-priority mother theory requiring replayed candidate dynamics.
+7. Perron-Frobenius / transfer-operator transport remains the highest-priority mother theory requiring replayed candidate dynamics.
 
-No method name has been assigned to item 4 or 5.
+No method name has been assigned to items 6 or 7.
