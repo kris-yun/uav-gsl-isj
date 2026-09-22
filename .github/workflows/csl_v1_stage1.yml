@@ -1,0 +1,60 @@
+name: CSL V1 frozen-bank screen
+
+on:
+  push:
+    branches:
+      - research/contrastive-surrogate-likelihood-v1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  stage1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact branch commit
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install minimal dependency
+        run: python -m pip install --disable-pip-version-check numpy
+
+      - name: Unit tests
+        run: |
+          python -m unittest discover \
+            -s research/contrastive_surrogate \
+            -p 'test_*.py' -v
+
+      - name: Verify frozen evidence archive hash
+        run: |
+          echo "dca2fbd6f1c052e7e71e573ec617d629fe03466cf197e128c49184ae68f61f3b  evidence/active_deconfounding_v1/ACTIVE_DECONFOUNDING_V1_OFFLINE_NO_GO_20260921.tar.gz" | sha256sum -c -
+
+      - name: Extract frozen response archive
+        run: |
+          mkdir -p /tmp/csl_archive
+          tar -xzf evidence/active_deconfounding_v1/ACTIVE_DECONFOUNDING_V1_OFFLINE_NO_GO_20260921.tar.gz \
+            -C /tmp/csl_archive
+          test -d /tmp/csl_archive/responses
+
+      - name: Run six-case pre-registered CSL gate
+        run: |
+          mkdir -p /tmp/csl_results
+          python research/contrastive_surrogate/run_six.py \
+            --responses-root /tmp/csl_archive/responses \
+            --out-root /tmp/csl_results
+          cat /tmp/csl_results/FINAL_GATE.json
+
+      - name: Upload immutable stage-1 results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: csl-v1-stage1-results
+          path: /tmp/csl_results
+          if-no-files-found: warn
+          retention-days: 30
