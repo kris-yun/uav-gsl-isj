@@ -102,3 +102,42 @@ Commit immediately after:
 Do not use source truth rank in O0.
 
 Do not continue to neural training unless O0 is PASS.
+
+
+## Stage 2B — mandatory cross-source transfer
+
+Do not stop after a one-source O0 fit.
+
+For the same House/wind, export a second source realization on the same grid if available.
+
+Run:
+
+`evidence/testtime_compositional_plume_operators_v1/run_o0_cross_source_transfer.py`
+
+Protocol:
+
+1. choose/calibrate the diffusivity panel **using Source A only**;
+2. freeze the selected diffusivity and every transport setting;
+3. evaluate held-out A transitions;
+4. apply the same frozen operator to Source B;
+5. only the physical source position changes in the source-neighborhood scoring mask;
+6. do not recalibrate D or wall/advection settings for B.
+
+Required report:
+
+- A-heldout metrics;
+- B-cross-source metrics;
+- persistence baseline;
+- wind-shuffle null;
+- whether the same frozen physical operator remains useful on B.
+
+Important interpretation:
+
+Do **not** require additive residual vectors from A and B to be similar.
+A source-independent operator acts on different plume states and can produce very different residual vectors.
+
+The reuse claim is:
+
+> one frozen operator maps both source-conditioned plume states correctly.
+
+If the same operator cannot transfer from A to B, M7 should be demoted before neural training.
