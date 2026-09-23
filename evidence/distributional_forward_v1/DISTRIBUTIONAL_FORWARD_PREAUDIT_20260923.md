@@ -49,8 +49,11 @@ For each terminal source candidate:
 
 1. Reconstruct a 200-step binary occupancy process only on grid cells visited by the real robot during the frozen window.
 2. Treat global cyclic plume phase as unknown. For each of the 200 phase offsets, sample the candidate's predicted hit sequence along the real robot path.
-3. Compress each phase realization into 10 consecutive 20-sample hit-count blocks. This gives an empirical candidate-conditioned distribution over a 10-D path-observation statistic.
-4. Score the actually observed 10-D hit-count vector with the multivariate Energy Score (lower is better). This is a proper scoring rule for distributions and contains no fitted coefficient.
+3. Compress each phase realization into 10 consecutive 20-sample hit-count blocks. This gives an empirical candidate-conditioned distribution over block hit counts.
+4. **Primary frozen score:** sum the empirical CRPS of the 10 block-count distributions against the actually observed block counts. Lower is better. CRPS is a proper scoring rule and requires no fitted coefficient.
+5. **Secondary diagnostic only:** compute the exact multivariate Energy Score for the unshuffled candidate ensemble. It is reported for interpretation but does not enter the advancement gate.
+
+The primary score is blockwise CRPS rather than a 10-D Energy Score because the destructive-null test requires 500 source-wide repetitions; CRPS admits an exact finite-support computation from count histograms without an O(T^2) pairwise-distance loop. This implementation choice is frozen before any joint-structure result is viewed.
 
 ### Destructive null
 
@@ -62,8 +65,8 @@ Run 500 null repetitions with frozen RNG seed 20260923.
 
 The mother mechanism advances beyond H01 only if BOTH are true:
 
-1. actual joint-distribution Energy Score ranks the truth-nearest terminal source candidate better than the already observed H01 static low-occupancy baseline rank 20.5/121;
-2. <=5% of joint-destruction null repetitions give the truth candidate a rank as good as or better than the actual joint score.
+1. actual joint-distribution CRPS ranks the truth-nearest terminal source candidate better than the already observed H01 static low-occupancy baseline rank 20.5/121;
+2. <=5% of joint-destruction null repetitions give the truth candidate a CRPS rank as good as or better than the actual joint score.
 
 Truth coordinates are used only after scores are frozen, for evaluation.
 
