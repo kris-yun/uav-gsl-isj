@@ -8,11 +8,15 @@ set -Eeuo pipefail
 
 ROOT="${ROOT:-$(git rev-parse --show-toplevel)}"
 BRANCH="$(git -C "${ROOT}" branch --show-current)"
+HEAD_SHA="$(git -C "${ROOT}" rev-parse HEAD)"
 EXPECTED_BRANCH="research/m4-v3-interventional-evolution-propagator"
 [[ "${BRANCH}" == "${EXPECTED_BRANCH}" ]] || {
   echo "Refuse D0 on branch '${BRANCH}'; expected '${EXPECTED_BRANCH}'" >&2
   exit 2
 }
+git -C "${ROOT}" diff --quiet || { echo "Refuse D0 with tracked working-tree changes" >&2; exit 2; }
+git -C "${ROOT}" diff --cached --quiet || { echo "Refuse D0 with staged changes" >&2; exit 2; }
+echo "M4_V3_D0_HEAD_SHA=${HEAD_SHA}"
 
 EVIDENCE="${ROOT}/evidence/causal_compositional_plume_world_model_v1"
 RESEARCH="${ROOT}/research/causal_compositional_plume_world_model_v1"
@@ -46,11 +50,27 @@ fi
 MODEL="${RESEARCH}/m4_v3_interventional_evolution.py"
 D0="${RESEARCH}/m4_v3_d0_house02.py"
 
-python "${D0}" train   --bank "${BANK}"   --dynamic-wind "${DYNAMIC}"   --model-script "${MODEL}"   --out "${OUT}"   | tee "${EVIDENCE}/M4_V3_D0_TRAIN_20260923.log"
+python "${D0}" train \\
+  --bank "${BANK}" \\
+  --dynamic-wind "${DYNAMIC}" \\
+  --model-script "${MODEL}" \\
+  --out "${OUT}" \\
+  --device cpu --cpu-threads 4 \\
+  | tee "${EVIDENCE}/M4_V3_D0_TRAIN_20260923.log"
 
-python "${D0}" evaluate   --bank "${BANK}"   --dynamic-wind "${DYNAMIC}"   --model-script "${MODEL}"   --out "${OUT}"   | tee "${EVIDENCE}/M4_V3_D0_EVALUATE_20260923.log"
+python "${D0}" evaluate \\
+  --bank "${BANK}" \\
+  --dynamic-wind "${DYNAMIC}" \\
+  --model-script "${MODEL}" \\
+  --out "${OUT}" \\
+  --device cpu --cpu-threads 4 \\
+  | tee "${EVIDENCE}/M4_V3_D0_EVALUATE_20260923.log"
 
 {
+  printf 'git_head  %s\\n' "${HEAD_SHA}"
+  sha256sum "${RESEARCH}/m4_v3_interventional_evolution.py"
+  sha256sum "${RESEARCH}/m4_v3_d0_house02.py"
+  sha256sum "${RESEARCH}/export_m4_v3_dynamic_wind_sequence.py"
   sha256sum "${DYNAMIC}/wind_W1_sequence_z0p20.npy"
   sha256sum "${DYNAMIC}/wind_W2_sequence_z0p20.npy"
   sha256sum "${DYNAMIC}/wind_sequence_manifest.json"
