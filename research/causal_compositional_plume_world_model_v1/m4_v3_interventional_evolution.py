@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""M4-v3 minimal source-agnostic interventional evolution propagator.
+"""M4-v3 minimal interventional characteristic evolution propagator.
 
-Core invariant: for fixed wind/geometry/parameters, transport is linear in the
-concentration/source state. Wind changes the characteristic map itself through
-semi-Lagrangian backtracing. Source identity never conditions transport.
+For fixed wind/geometry/parameters the mapping is linear in source/concentration
+state. Wind changes the characteristic map itself. A source-independent local
+closure handles unresolved diffusion/turbulence without access to source ID,
+source coordinates, or source state other than the transported scalar field.
 """
 from __future__ import annotations
 
@@ -23,11 +24,6 @@ def _base_grid(h:int,w:int,device,dtype):
 
 def semi_lagrangian_advect(state:torch.Tensor, wind_xy:torch.Tensor,
                             dt_s:float, cell_m:float)->torch.Tensor:
-    """Backtrace state along local wind.
-
-    state: [B,1,H,W]; wind_xy: [B,2,H,W].
-    H is GADEN x-index and W is GADEN y-index.
-    """
     if state.ndim!=4 or wind_xy.ndim!=4 or state.shape[0]!=wind_xy.shape[0]:
         raise ValueError("shape mismatch")
     _,_,h,w=state.shape
@@ -41,34 +37,53 @@ def semi_lagrangian_advect(state:torch.Tensor, wind_xy:torch.Tensor,
                          align_corners=True)
 
 
-def zero_boundary_neighbor_mean(x:torch.Tensor)->torch.Tensor:
-    """4-neighbour mean with zero exterior; never wraps across map boundaries."""
+def zero_boundary_stencil(x:torch.Tensor)->torch.Tensor:
+    """Return center/up/down/left/right as [B,5,H,W], no periodic wrap."""
     p=F.pad(x,(1,1,1,1),mode="constant",value=0.0)
-    up=p[:,:,0:-2,1:-1]
-    down=p[:,:,2:,1:-1]
-    left=p[:,:,1:-1,0:-2]
-    right=p[:,:,1:-1,2:]
-    return (up+down+left+right)/4.0
+    return torch.cat((
+        x,
+        p[:,:,0:-2,1:-1],
+        p[:,:,2:,1:-1],
+        p[:,:,1:-1,0:-2],
+        p[:,:,1:-1,2:],
+    ),dim=1)
+
+
+class WindConditionedLocalClosure(nn.Module):
+    """Positive local closure, nonlinear in wind but linear in transported state."""
+    def __init__(self):
+        super().__init__()
+        # wind_x, wind_y, speed -> five local mixing logits.
+        self.logits=nn.Conv2d(3,5,1,bias=True)
+        with torch.no_grad():
+            self.logits.weight.zero_()
+            self.logits.bias[:] = torch.tensor([4.0,0.0,0.0,0.0,0.0])
+
+    def forward(self,state,wind_xy,free_mask):
+        speed=torch.linalg.vector_norm(wind_xy,dim=1,keepdim=True)
+        context=torch.cat((wind_xy,speed),dim=1)
+        logits=self.logits(context)
+        state_stencil=zero_boundary_stencil(state)
+        valid_stencil=zero_boundary_stencil(free_mask)
+        # Invalid neighbours receive no mixture mass. Center remains valid only
+        # in free cells. -1e9 avoids NaN while acting as masked -inf.
+        weights=torch.softmax(logits.masked_fill(valid_stencil<=0.5,-1e9),dim=1)
+        return (weights*state_stencil).sum(dim=1,keepdim=True)*free_mask
 
 
 class SourceAgnosticLinearTransport(nn.Module):
-    """Linear-in-state characteristic advection + local diffusion + decay.
-
-    Trainable scalars are shared by all source hypotheses. The module's
-    signature intentionally accepts no source ID, source map, or coordinates.
-    """
+    """Characteristic advection + local wind closure + source-independent loss."""
     def __init__(self):
         super().__init__()
-        self.diffusion_logit=nn.Parameter(torch.tensor(-2.0))
-        self.decay_raw=nn.Parameter(torch.tensor(-5.0))
+        self.closure=WindConditionedLocalClosure()
+        self.loss_raw=nn.Parameter(torch.tensor(-8.0))
 
     def forward(self,state,wind_xy,free_mask,dt_s:float,cell_m:float):
         x=semi_lagrangian_advect(state,wind_xy,dt_s,cell_m)
-        nbr=zero_boundary_neighbor_mean(x)
-        alpha=torch.sigmoid(self.diffusion_logit)*0.5
-        x=(1.0-alpha)*x+alpha*nbr
-        decay=torch.exp(-F.softplus(self.decay_raw)*dt_s)
-        return x*decay*free_mask
+        x=self.closure(x,wind_xy,free_mask)
+        # Small positive sink can represent unresolved vertical/outlet loss.
+        retention=torch.exp(-F.softplus(self.loss_raw)*dt_s)
+        return x*retention*free_mask
 
 
 class InterventionalEvolutionPropagator(nn.Module):
@@ -78,23 +93,18 @@ class InterventionalEvolutionPropagator(nn.Module):
         self.cell_m=float(cell_m)
         self.internal_dt_s=float(internal_dt_s)
         self.transport=SourceAgnosticLinearTransport()
-        self.source_rate_raw=nn.Parameter(torch.tensor(-1.0))
-        self.output_scale_raw=nn.Parameter(torch.tensor(0.0))
+        self.source_strength_raw=nn.Parameter(torch.tensor(0.0))
 
-    def source_rate(self):
-        return F.softplus(self.source_rate_raw)
-
-    def output_scale(self):
-        return F.softplus(self.output_scale_raw)
+    def source_strength(self):
+        return F.softplus(self.source_strength_raw)
 
     def step(self,state,source_map,wind_xy,free_mask):
         transported=self.transport(
             state,wind_xy,free_mask,self.internal_dt_s,self.cell_m)
-        # Separate forcing term. Source never enters transport parameters.
-        return (transported+self.source_rate()*source_map)*free_mask
+        # Source intervention is a separate forcing term.
+        return (transported+self.source_strength()*source_map)*free_mask
 
     def forward(self,source_map,wind_schedule,free_mask,record_steps=None):
-        """source_map [B,1,H,W], wind_schedule [T,B,2,H,W]."""
         if record_steps is None:
             record_steps=[wind_schedule.shape[0]]
         wanted=set(int(x) for x in record_steps)
@@ -105,7 +115,7 @@ class InterventionalEvolutionPropagator(nn.Module):
         for k in range(wind_schedule.shape[0]):
             state=self.step(state,source_map,wind_schedule[k],free_mask)
             if k+1 in wanted:
-                outputs[k+1]=state*self.output_scale()
+                outputs[k+1]=state
         return [outputs[int(k)] for k in record_steps]
 
 
@@ -117,22 +127,14 @@ def gaden_wind_index_schedule(num_steps:int, physics_dt_s:float=0.1,
                               wind_iteration_dt_s:float=1.0,
                               iteration_count:int=11,
                               loop_from:int=1,loop_to:int=10)->list[int]:
-    """Emulate GADEN RunningSimulation's float32 wind-index timing.
-
-    In GADEN each MoveFilaments() uses the current wind, then the wind index is
-    advanced when currentTime > lastWindUpdateTime + windIterationDeltaTime,
-    and only afterwards currentTime is incremented by deltaTime.
-    """
+    """Emulate the wind update order in GADEN RunningSimulation."""
     if not (0<=loop_from<=loop_to<iteration_count):
         raise ValueError("bad loop bounds")
-    current=_f32(0.0)
-    last=_f32(0.0)
-    dt=_f32(physics_dt_s)
-    wind_dt=_f32(wind_iteration_dt_s)
-    idx=0
-    out=[]
+    current=_f32(0.0); last=_f32(0.0)
+    dt=_f32(physics_dt_s); wind_dt=_f32(wind_iteration_dt_s)
+    idx=0; out=[]
     for _ in range(int(num_steps)):
-        out.append(idx)
+        out.append(idx)  # MoveFilaments uses current wind before index update.
         if current > _f32(last+wind_dt):
             idx+=1
             if idx>loop_to:
@@ -148,7 +150,7 @@ def schedule_from_sequence(wind_sequence:torch.Tensor,num_steps:int,
                            batch_size:int=1,physics_dt_s:float=0.1,
                            wind_iteration_dt_s:float=1.0,
                            loop_from:int=1,loop_to:int=10)->torch.Tensor:
-    """Expand [I,2,H,W] sequence to exact GADEN-style [T,B,2,H,W]."""
+    """Expand [I,2,H,W] to the GADEN-style [T,B,2,H,W] schedule."""
     if wind_sequence.ndim!=4 or wind_sequence.shape[1]!=2:
         raise ValueError("wind_sequence must be [I,2,H,W]")
     ids=gaden_wind_index_schedule(
@@ -170,13 +172,15 @@ def wind_reversal_displacement_smoke(device="cpu"):
     h=w=41
     m=InterventionalEvolutionPropagator(cell_m=1.0,internal_dt_s=1.0).to(device)
     with torch.no_grad():
-        m.transport.diffusion_logit.fill_(-20.0)
-        m.transport.decay_raw.fill_(-20.0)
+        # Force near-identity closure for a pure characteristic sanity check.
+        m.transport.closure.logits.weight.zero_()
+        m.transport.closure.logits.bias[:] = torch.tensor(
+            [20.0,-20.0,-20.0,-20.0,-20.0],device=device)
+        m.transport.loss_raw.fill_(-20.0)
     state=torch.zeros(1,1,h,w,device=device); state[0,0,20,20]=1
     mask=torch.ones_like(state)
     wp=torch.zeros(1,2,h,w,device=device); wp[:,1]=1.0
-    wn=-wp
-    z=torch.zeros_like(wp)
+    wn=-wp; z=torch.zeros_like(wp)
     p=m.transport(state,wp,mask,1.0,1.0)[0,0]
     n=m.transport(state,wn,mask,1.0,1.0)[0,0]
     q=m.transport(state,z,mask,1.0,1.0)[0,0]
