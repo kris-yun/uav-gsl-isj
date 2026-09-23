@@ -125,6 +125,31 @@ DOI:
 https://doi.org/10.1080/14685248.2025.2492711
 
 
+
+### C4 — Rényi-infotaxis / Rényi-divergence OSL already exists (Entropy 2025)
+
+Jia et al., *A Novel Distributed Hybrid Cognitive Strategy for Odor Source Location in Turbulent and Sparse Environment*, Entropy 27(8):826, 2025.
+
+This is a **hard novelty constraint**. Their CGRInfotaxis family already uses Rényi divergence / Rényi-infotaxis-style exploration in odor-source localization.
+
+Therefore M1 is immediately **NO-GO** if it reduces to any of the following:
+- replace Shannon entropy / KL information with Rényi or Sibson information;
+- tune an alpha parameter and call the result robust infotaxis;
+- use power likelihood only as a heuristic temperature;
+- claim alpha-information itself as the OSL novelty.
+
+The only defensible route is a stronger derivation:
+
+1. define an explicit uncertainty set over the **transport process / transition law**;
+2. derive the worst-case observation law induced by that transport ambiguity;
+3. derive the action criterion and belief update from the **same max-min game**;
+4. calibrate the ambiguity radius source-blind, rather than tuning alpha against source truth;
+5. show truth-source-rank benefit specifically under forward-model mismatch.
+
+DOI:
+https://doi.org/10.3390/e27080826
+
+
 ## 4. The novelty boundary we must defend
 
 The candidate only survives if we can support this narrower statement:
@@ -356,6 +381,6 @@ Immediately if:
 **Scientific narrative strength:** high.  
 **Recency / remote-field strength:** high (2025–2026 robust experimental design / DRO).  
 **Direct GSL collision risk:** currently moderate-low, but broad robust sensor-placement prior art is substantial.  
-**Risk of becoming "just a new reward":** high unless transport-ambiguity derivation survives.  
+**Risk of becoming "just a new reward":** CRITICAL. 2025 Rényi-infotaxis is a direct collision if transport-ambiguity derivation does not survive.  
 **Data/interface fit with PMFS:** unusually good because PMFS already supplies a discrete candidate-source probability map and per-candidate hit probabilities.  
 **Next action:** wait only for the Native baseline artifacts, then run F0–F2 before any full code integration.
