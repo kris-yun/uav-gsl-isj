@@ -202,40 +202,41 @@ Interpretation:
 
 ## 7. Anytime-valid source confidence set
 
-Allocate candidate error budgets \(\alpha_s\) with
+For a **single-source** localization problem, no Bonferroni split across the candidate grid is required to obtain confidence-set coverage.
 
-\[
-\sum_s \alpha_s\le\alpha.
-\]
-
-For example, with uniform initial support:
-
-\[
-\alpha_s=\alpha/|S|.
-\]
-
-Define the surviving source set:
+Define
 
 \[
 \boxed{
 \mathcal C_t^\alpha
 =
 \left\{
-s:E_t(s)<1/\alpha_s
+s:E_t(s)<1/\alpha
 \right\}.
 }
 \]
 
-If the true source hypothesis \(s^\star\) belongs to the modeled composite family,
+If the true source hypothesis is \(s^\star\), coverage only requires that its own e-process does not cross the rejection threshold. Hence
 
 \[
-P
+P_{s^\star}
 \left(
 s^\star\in\mathcal C_t^\alpha
 \ \forall t
 \right)
+=
+P_{s^\star}
+\left(
+\sup_t E_t(s^\star)<1/\alpha
+\right)
 \ge1-\alpha.
 \]
+
+The fact that many false candidate hypotheses are tested does not require replacing \(\alpha\) by \(\alpha/|S|\) for this inverted confidence set: only one candidate is the true null whose retention determines coverage.
+
+This materially improves power. At \(\alpha=0.05\), the evidence threshold is \(20\), not \(20|S|\).
+
+A multiplicity allocation may become necessary for a different inferential target, e.g. simultaneous guarantees about multiple true sources, multiple declarations, or dynamically introduced hierarchical hypotheses. Those extensions must be derived separately rather than imported into the single-source case.
 
 This is fundamentally different from a posterior threshold:
 - validity is uniform over time;
