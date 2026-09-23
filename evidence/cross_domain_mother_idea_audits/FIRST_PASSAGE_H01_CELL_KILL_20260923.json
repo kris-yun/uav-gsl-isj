@@ -1,0 +1,65 @@
+{
+  "all_miss_constant_field": true,
+  "contract": "H01_FIRST_PASSAGE_ORDER_ONLY_KILL_V1",
+  "date": "2026-09-23",
+  "event_columns": [
+    "candidate_id",
+    "source_update_id",
+    "internal_timestep",
+    "cell_index"
+  ],
+  "event_rows": 1579830,
+  "input_run": "H01_R2026092201",
+  "interpretation": "NO_GO_H01_ORDER_SPECIFIC_FIRST_PASSAGE_PREAUDIT",
+  "measured_probability_unique_rounded": [
+    0.099999685828
+  ],
+  "metrics": {
+    "native_score": {
+      "candidate_count": 121,
+      "spearman_score_vs_negative_truth_distance": 0.15755802062126387,
+      "truth_candidate_rank_average_ties": 76.0,
+      "truth_score": 0.0118665092327988
+    },
+    "order_only_first_passage_delay": {
+      "candidate_count": 121,
+      "spearman_score_vs_negative_truth_distance": -0.1818250818080068,
+      "truth_candidate_rank_average_ties": 101.5,
+      "truth_score": 0.0
+    },
+    "raw_first_passage_delay": {
+      "candidate_count": 121,
+      "spearman_score_vs_negative_truth_distance": 0.29013008375781196,
+      "truth_candidate_rank_average_ties": 21.0,
+      "truth_score": 0.9999999999999998
+    },
+    "static_low_occupancy": {
+      "candidate_count": 121,
+      "spearman_score_vs_negative_truth_distance": 0.26633455365016173,
+      "truth_candidate_rank_average_ties": 20.5,
+      "truth_score": -0.0
+    }
+  },
+  "note": "Scores are source-blind; truth coordinates enter only after score freeze for rank/correlation evaluation. H01 is all-miss, so this tests whether transport-age ordering adds negative-evidence information beyond final occupancy frequency, not positive reactive flux to hit cells.",
+  "observed_support_cell_count": 212,
+  "predeclared_gate": {
+    "pass": false,
+    "require_null_as_good_or_better_fraction_lte": 0.05,
+    "require_order_rank_better_than_static": true
+  },
+  "raw_step_max": 200,
+  "raw_step_min": 1,
+  "terminal_candidate_count": 121,
+  "time_order_destruction_null": {
+    "fraction_null_rank_as_good_or_better_than_actual": 1.0,
+    "repetitions": 500,
+    "truth_order_score_null_mean": 0.0,
+    "truth_order_score_null_q95": 0.0,
+    "truth_rank_mean": 58.299,
+    "truth_rank_median": 58.5,
+    "truth_rank_q05": 51.5,
+    "truth_rank_q95": 65.5
+  },
+  "truth_candidate_distance_m": 0.23347838323974526,
+  "truth_candidate_id_evaluation_only": "quadtree_23_16_1_1"
+}
