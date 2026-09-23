@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/mz-pbd-offline-screen.yml"
       - "research/mori_zwanzig_plume_belief_v1/mz_pbd_residual_memory_audit.py"
+      - "research/mori_zwanzig_plume_belief_v1/mz_pbd_linear_memory_probe.py"
 
 permissions:
   contents: read
@@ -34,3 +35,12 @@ jobs:
             --output /tmp/MZ_PBD_RESIDUAL_MEMORY_AUDIT_20260923.json
           echo "===MZ_PBD_OFFLINE_RESULT==="
           cat /tmp/MZ_PBD_RESIDUAL_MEMORY_AUDIT_20260923.json
+      - name: Run held-out linear memory probe
+        run: |
+          python research/mori_zwanzig_plume_belief_v1/mz_pbd_linear_memory_probe.py \\
+            --repo-root "$GITHUB_WORKSPACE" \\
+            --dynamic-wind evidence/causal_compositional_plume_world_model_v1/m4_v3_dynamic_wind_house02 \\
+            --d0-out evidence/causal_compositional_plume_world_model_v1/m4_v3_d0_house02_20260923 \\
+            --output /tmp/MZ_PBD_LINEAR_MEMORY_PROBE_20260923.json
+          echo "===MZ_PBD_LINEAR_MEMORY_PROBE==="
+          cat /tmp/MZ_PBD_LINEAR_MEMORY_PROBE_20260923.json
