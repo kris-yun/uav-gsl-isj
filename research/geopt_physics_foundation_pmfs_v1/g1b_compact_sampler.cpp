@@ -38,6 +38,7 @@ std::vector<GridPoint> read_free_grid(fs::path const& path) {
     while (std::getline(in, line)) {
         if (line.empty()) continue;
         auto c = split_csv(line); if (c.size() < 6) throw std::runtime_error("malformed grid csv row");
+        while (!c[5].empty() && (c[5].back() == '\r' || c[5].back() == ' ' || c[5].back() == '\t')) c[5].pop_back();
         if (c[5] != "Free") continue;
         points.push_back(GridPoint{static_cast<std::size_t>(std::stoull(c[0])), std::stoi(c[1]),
                                    std::stoi(c[2]), std::stof(c[3]), std::stof(c[4])});
