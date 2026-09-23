@@ -1,11 +1,12 @@
 """VGR adapter for the isolated official PMFS recovery binary.
 
-No PFDI/TNQC/TADM/P2 parameter or GMRF node is launched in this Native arm.
-The algorithm binary and /wind_value server are validated by the shell runner.
+R1 may launch GMRF solely as an observer for arm A. PMFS itself remains locked
+to /wind_value and rejects the estimated-wind branch at runtime.
 """
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, TimerAction
+from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration as LC
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
@@ -22,6 +23,7 @@ DEFAULTS = {
     "repo_root": "/home/zyc/native_pmfs_recovery_v1/checkout",
     "timeout_sec": "300.0", "realtime_factor": "1.0", "sim_stop_at_s": "-1.0",
     "gas_backend": "raw_house1_snapshot", "raw_query_executable": "/bin/false",
+    "shadow_gmrf": "false",
     # Official PMFS example effective values, except VGR map scale and stop rule.
     "scale": "3", "useWindGroundTruth": "true", "convergence_thr": "-1.0",
     "stepsSourceUpdate": "3", "maxRegionSize": "5",
@@ -130,7 +132,22 @@ def generate_launch_description():
             "pose_trace_file": _file("sim_pose_trace.csv"),
         }],
     )
-    args += [sim, TimerAction(period=5.0, actions=[pmfs, benchmark])]
+    shadow_gmrf = Node(
+        package="gmrf_wind_mapping", executable="gmrf_wind_mapping_node",
+        name="gmrf_r1_observer", output="screen", condition=IfCondition(LC("shadow_gmrf")),
+        parameters=[{
+            "frame_id": "map", "sensor_topic": "/Anemometer/WindSensor_reading",
+            "map_yaml_file": PathJoinSubstitution([LC("vgr_data_path"), "occupancy.yaml"]),
+            "map_topic": "map", "exec_freq": 10.0,
+            "update_on_new_observation_only": False,
+            "cell_size": 0.3, "verbose": False, "visualize_gmrf": False,
+            "GMRF_lambdaPrior_reg": 0.5,
+            "GMRF_lambdaPrior_mass_conservation": 10.0,
+            "GMRF_lambdaPrior_obstacles": 1.0,
+            "GMRF_lambdaObs": 1.0, "GMRF_lambdaObsLoss": 0.0,
+        }],
+    )
+    args += [sim, shadow_gmrf, TimerAction(period=5.0, actions=[pmfs, benchmark])]
     args.append(TimerAction(period=8.0, actions=[ExecuteProcess(
         cmd=["ros2", "service", "call", "/start_simulation", "std_srvs/srv/Trigger", "{}"],
         output="screen")]))

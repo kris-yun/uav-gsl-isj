@@ -106,10 +106,10 @@ def main() -> None:
             }
             else
                 GSL_WARN("CANNOT READ ESTIMATED WIND VECTORS");'''
-    new_branch = '''            if (!groundTruth.client->wait_for_service(std::chrono::seconds(5)))
+    new_branch = '''            if (!groundTruth.client->wait_for_service(std::chrono::seconds(30)))
                 throw std::runtime_error("NATIVE_RECOVERY_WIND_SERVICE_UNAVAILABLE");
             auto future = groundTruth.client->async_send_request(groundTruth.request);
-            auto result = rclcpp::spin_until_future_complete(node, future, std::chrono::seconds(5));
+            auto result = rclcpp::spin_until_future_complete(node, future, std::chrono::seconds(30));
             if (result != rclcpp::FutureReturnCode::SUCCESS)
                 throw std::runtime_error("NATIVE_RECOVERY_WIND_QUERY_FAILED");
             auto response = future.get();

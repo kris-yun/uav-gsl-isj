@@ -8,7 +8,7 @@ SEED="${SEED:-0}"
 STAGE="${RECOVERY_STAGE:-R0}"
 ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-211}"
 OUTER_DEADLINE_SEC="${OUTER_DEADLINE_SEC:-1800}"
-case "${STAGE}" in R0|R2|R3) ;; *) echo "unsupported stage" >&2; exit 64 ;; esac
+case "${STAGE}" in R0|R1|R2|R3) ;; *) echo "unsupported stage" >&2; exit 64 ;; esac
 case "${SEED}" in 0|1) ;; *) echo "unsupported frozen seed" >&2; exit 65 ;; esac
 if (( ROS_DOMAIN_ID < 0 || ROS_DOMAIN_ID > 232 )); then
   echo "Fast DDS ROS_DOMAIN_ID must be <=232" >&2; exit 66
@@ -46,10 +46,17 @@ BIN="${ROOT}/install/gsl_server/lib/gsl_server/gsl_actionserver_node"
 LAUNCH="${ROOT}/vgr_native_pmfs_recovery_20260923.launch.py"
 PROBE="${ROOT}/probe_native_wind_service_20260923.py"
 VERIFY="${ROOT}/verify_native_wind_parity_20260923.py"
+GMRF_CAPTURE="${ROOT}/capture_r1_gmrf_observer_20260923.py"
 WIND_SERVER=/home/zyc/ros2_ws/src/vgr_bridge/vgr_bridge/wind_value_server.py
 for path in "${BIN}" "${LAUNCH}" "${PROBE}" "${VERIFY}" "${WIND_SERVER}"; do
   [[ -f "${path}" ]] || { echo "missing runtime file: ${path}" >&2; exit 71; }
 done
+if [[ "${STAGE}" == R1 ]]; then
+  [[ -f "${GMRF_CAPTURE}" ]] || { echo "missing R1 GMRF observer" >&2; exit 71; }
+  [[ -x /home/zyc/ros2_ws/install/gmrf_wind_mapping/lib/gmrf_wind_mapping/gmrf_wind_mapping_node ]] || {
+    echo "missing pinned GMRF observer binary" >&2; exit 71;
+  }
+fi
 [[ -x "${BIN}" ]] || exit 72
 grep -R -l -- '-DUSE_GADEN' "${ROOT}/build/gsl_server/CMakeFiles" >/dev/null 2>&1 || {
   echo "USE_GADEN missing from compile files" >&2; exit 73;
@@ -79,6 +86,9 @@ export NATIVE_RECOVERY_UPDATE_COMPLETE_FILE="${RUN_DIR}/source_update_complete.t
 CHILD_PIDS=()
 cleanup() {
   local pid
+  if [[ -n "${LAUNCH_PID:-}" ]]; then
+    kill -TERM -- "-${LAUNCH_PID}" 2>/dev/null || true
+  fi
   for pid in "${CHILD_PIDS[@]:-}"; do kill -TERM "${pid}" 2>/dev/null || true; done
 }
 trap cleanup EXIT INT TERM
@@ -126,6 +136,7 @@ ARGS=(
   "seed:=${SEED}" "run_id:=${RUN_ID}" "run_dir:=${RUN_DIR}"
   "timeout_sec:=300.0" "realtime_factor:=1.0"
   "gas_backend:=${GAS_BACKEND}" "raw_query_executable:=${RAW_QUERY}"
+  "shadow_gmrf:=$( [[ "${STAGE}" == R1 ]] && echo true || echo false )"
 )
 printf '%s\n' "${ARGS[@]}" >"${RUN_DIR}/launch_args.txt"
 export RUN_DIR RUN_ID HOUSE SEED STAGE BIN LAUNCH WIND_SERVER ROOT
@@ -149,24 +160,52 @@ manifest = dict(contract='NATIVE_PMFS_BASELINE_RECOVERY_V1', stage=os.environ['S
     wind_server_source=os.environ['WIND_SERVER'], wind_server_sha256=sha(os.environ['WIND_SERVER']),
     gmrf_in_native_forward=False, launch_args=effective_args,
     ground_truth_use='offline evaluation/logging only; distanceThreshold=-1',
-    evaluation_budget_s=300, smoke_stop='first completed PMFS source update' if os.environ['STAGE']=='R0' else None)
+    evaluation_budget_s=300,
+    smoke_stop='first completed PMFS source update' if os.environ['STAGE'] in ('R0', 'R1') else None)
+if os.environ['STAGE'] == 'R1':
+    gmrf = '/home/zyc/ros2_ws/install/gmrf_wind_mapping/lib/gmrf_wind_mapping/gmrf_wind_mapping_node'
+    gmrf_source = '/home/zyc/ros2_ws/src/GMRF-wind/gmrf_wind_mapping/src/gmrf_node.cpp'
+    manifest['gmrf_observer_only'] = dict(binary=gmrf, binary_sha256=sha(gmrf),
+        source=gmrf_source, source_sha256=sha(gmrf_source),
+        source_repo_commit='2ec7a5db7bf5f2597e9d62ba662d3efcfc788d71',
+        source_repo_dirty_at_preflight=True,
+        service='/WindEstimation', service_type='gmrf_msgs/srv/WindEstimation')
 (run/'runtime_manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
 PY
 
 echo "NATIVE_RECOVERY_START stage=${STAGE} house=${HOUSE} seed=${SEED} run=${RUN_DIR}"
+if [[ "${STAGE}" == R1 ]]; then
+  python3 -u "${GMRF_CAPTURE}" \
+    --wind-snapshot "${RUN_DIR}/wind_source_update.csv" \
+    --output "${RUN_DIR}/gmrf_wind_at_update.csv" \
+    >"${RUN_DIR}/gmrf_observer.log" 2>&1 &
+  OBSERVER_PID=$!
+  CHILD_PIDS+=("${OBSERVER_PID}")
+fi
 setsid ros2 launch "${LAUNCH}" "${ARGS[@]}" >"${RUN_DIR}/launch.log" 2>&1 &
 LAUNCH_PID=$!
 deadline=$((SECONDS + OUTER_DEADLINE_SEC))
 completed=0
 while kill -0 "${LAUNCH_PID}" 2>/dev/null; do
-  if [[ "${STAGE}" == R0 && -s "${RUN_DIR}/source_update_complete.txt" ]]; then
+  if grep -Fq 'NATIVE_RECOVERY_WIND_QUERY_FAILED' "${RUN_DIR}/launch.log"; then
+    echo 'ground-truth wind query failed; stopping this run' >&2
+    kill -INT -- "-${LAUNCH_PID}" 2>/dev/null || true
+    break
+  fi
+  if [[ "${STAGE}" == R1 ]] && ! kill -0 "${OBSERVER_PID}" 2>/dev/null && [[ ! -s "${RUN_DIR}/gmrf_wind_at_update.csv" ]]; then
+    echo 'R1 GMRF observer exited without capture' >&2; break
+  fi
+  if [[ ( "${STAGE}" == R0 || "${STAGE}" == R1 ) && -s "${RUN_DIR}/source_update_complete.txt" ]]; then
     if (( $(wc -l < "${RUN_DIR}/source_update_complete.txt") >= 1 )); then
+      if [[ "${STAGE}" == R1 && ! -s "${RUN_DIR}/gmrf_wind_at_update.csv" ]]; then
+        sleep 1; continue
+      fi
       completed=1
-      echo 'R0_SOURCE_UPDATE_OBSERVED' >"${RUN_DIR}/smoke_status.txt"
+      echo "${STAGE}_SOURCE_UPDATE_OBSERVED" >"${RUN_DIR}/smoke_status.txt"
       kill -INT -- "-${LAUNCH_PID}" 2>/dev/null || true
       break
     fi
-  elif [[ "${STAGE}" != R0 && -s "${RUN_DIR}/run_status.json" ]]; then
+  elif [[ "${STAGE}" != R0 && "${STAGE}" != R1 && -s "${RUN_DIR}/run_status.json" ]]; then
     completed=1; break
   fi
   (( SECONDS < deadline )) || { echo 'NATIVE_RECOVERY_OUTER_DEADLINE' >&2; break; }
