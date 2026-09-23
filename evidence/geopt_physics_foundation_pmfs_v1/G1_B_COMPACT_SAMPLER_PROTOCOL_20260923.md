@@ -38,7 +38,8 @@ patch are recorded in `G1A_COST_RAW_20260923/`.
 Each `source_id/seed` directory contains only `metadata.json`,
 `hit_samples_u8.bin` with shape `(250,631)`, primary
 `hit_frequency_f32.bin` with shape `(631,)`, mean/variance concentration
-diagnostics, and a fixed-window diagnostic map. A post-generation manifest
+diagnostics, and `hit_frequency_window20_f32.bin` / `hit_frequency_window100_f32.bin`
+diagnostic maps. A post-generation manifest
 hashes every file. No filament dumps, full concentration volumes, or ROS/PMFS
 loop outputs are written.
 
