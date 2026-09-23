@@ -1,0 +1,126 @@
+{
+  "bank_sha256": "f30c7de2ea892120b70411edb7187f2769246896152f9bb9b8181e15f749a397",
+  "checkpoint_sha256": "c0b1b9c4e5d533dbc249190d3d1fbe8e6b066b36d325cf4377cc0d613c02d1c2",
+  "device": "cpu",
+  "epochs": 2,
+  "fractions": {
+    "1.0": {
+      "arms": {
+        "pretrained": {
+          "final_train_bce": 0.6870185732841492,
+          "loaded_internal_keys": 165,
+          "loss_curve": [
+            0.7435624599456787,
+            0.6870185732841492
+          ],
+          "seconds": 1.2972025871276855,
+          "test_field": {
+            "test1": {
+              "bce": 0.6813120245933533,
+              "brier": 0.1577073037624359,
+              "mae": 0.3484620749950409,
+              "rmse": 0.397123783826828
+            }
+          },
+          "test_independent_seed": 2026092312,
+          "train_samples": 1,
+          "trainable_parameters": 17729,
+          "truth_rank": {
+            "test1": {
+              "candidate_count": 3,
+              "rank": 3,
+              "top5": [
+                "val1",
+                "train1",
+                "test1"
+              ],
+              "truth_rmse": 0.397123783826828
+            }
+          },
+          "validation": {
+            "bce": 0.6323249340057373,
+            "brier": 0.18925504386425018,
+            "mae": 0.42129215598106384,
+            "rmse": 0.43503454327583313
+          },
+          "validation_seed": 2026092311
+        },
+        "proxy_pmfs_kernel": {
+          "note": "offline analytical anisotropic PMFS-like proxy; not current Native PMFS simulator; no ROS/live loop",
+          "test_field": {
+            "test1": {
+              "bce": 0.5423453450202942,
+              "brier": 0.09084151685237885,
+              "mae": 0.29176074266433716,
+              "rmse": 0.30139926075935364
+            }
+          },
+          "truth_rank": {
+            "test1": {
+              "candidate_count": 3,
+              "rank": 1,
+              "top5": [
+                "test1",
+                "train1",
+                "val1"
+              ],
+              "truth_rmse": 0.30139926075935364
+            }
+          }
+        },
+        "scratch": {
+          "final_train_bce": 0.7516273260116577,
+          "loaded_internal_keys": 0,
+          "loss_curve": [
+            0.6349107027053833,
+            0.7516273260116577
+          ],
+          "seconds": 2.556462287902832,
+          "test_field": {
+            "test1": {
+              "bce": 0.5818583369255066,
+              "brier": 0.11478962004184723,
+              "mae": 0.23851637542247772,
+              "rmse": 0.3388061821460724
+            }
+          },
+          "test_independent_seed": 2026092312,
+          "train_samples": 1,
+          "trainable_parameters": 3880577,
+          "truth_rank": {
+            "test1": {
+              "candidate_count": 3,
+              "rank": 1,
+              "top5": [
+                "test1",
+                "train1",
+                "val1"
+              ],
+              "truth_rmse": 0.3388061821460724
+            }
+          },
+          "validation": {
+            "bce": 0.8246851563453674,
+            "brier": 0.2618306577205658,
+            "mae": 0.388313353061676,
+            "rmse": 0.5116938948631287
+          },
+          "validation_seed": 2026092311
+        }
+      },
+      "train_sources": [
+        "train1"
+      ]
+    }
+  },
+  "optimizer": {
+    "lr": 0.001,
+    "name": "Adam"
+  },
+  "source_adapter": {
+    "hidden": 64,
+    "input": 4,
+    "output": 256
+  },
+  "status": "SMOKE_ONLY"
+}
