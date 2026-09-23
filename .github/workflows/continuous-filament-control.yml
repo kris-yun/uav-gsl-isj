@@ -1,0 +1,36 @@
+name: Continuous 2D filament controls
+
+on:
+  push:
+    branches:
+      - research/continuous-filament-control-v1
+    paths:
+      - ".github/workflows/continuous-filament-control.yml"
+      - "research/generative_lagrangian_filament_world_model_v1/continuous_filament_2d_control.py"
+
+permissions:
+  contents: read
+
+jobs:
+  control:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          pip install numpy
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Run stop-at-wall control
+        run: |
+          python research/generative_lagrangian_filament_world_model_v1/continuous_filament_2d_control.py --repo-root "$GITHUB_WORKSPACE" --output /tmp/fil_stop.json
+          echo "===FILAMENT_STOP_RESULT==="
+          cat /tmp/fil_stop.json
+      - name: Run GADEN-like wall-slide control
+        run: |
+          python research/generative_lagrangian_filament_world_model_v1/continuous_filament_2d_control.py --repo-root "$GITHUB_WORKSPACE" --output /tmp/fil_slide.json --slide
+          echo "===FILAMENT_SLIDE_RESULT==="
+          cat /tmp/fil_slide.json
