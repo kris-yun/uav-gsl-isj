@@ -1,0 +1,27 @@
+name: MZ-PBD screening contract
+
+on:
+  push:
+    branches:
+      - research/mori-zwanzig-plume-belief-v1
+    paths:
+      - ".github/workflows/mz-pbd-screen.yml"
+      - "research/mori_zwanzig_plume_belief_v1/mz_pbd_residual_memory_audit.py"
+      - "research/mori_zwanzig_plume_belief_v1/run_residual_memory_audit_remote.sh"
+
+permissions:
+  contents: read
+
+jobs:
+  screen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Syntax-check screening scripts
+        run: |
+          python -m py_compile research/mori_zwanzig_plume_belief_v1/mz_pbd_residual_memory_audit.py
+          bash -n research/mori_zwanzig_plume_belief_v1/run_residual_memory_audit_remote.sh
