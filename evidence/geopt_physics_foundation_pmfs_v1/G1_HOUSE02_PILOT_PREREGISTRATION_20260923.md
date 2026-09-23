@@ -1,4 +1,4 @@
-# M6 G1 House02 pilot source-position preregistration
+> **SOURCE-PLANE RESOLUTION:** The House02 source plane is now frozen to `z=0.20 m` as a known House-specific nuisance constant for the 2-D PMFS localization task. See `G1_HOUSE02_FIXED_SOURCE_PLANE_20260923.md`. This supersedes the earlier HOLD wording below.\n\n# M6 G1 House02 pilot source-position preregistration
 
 Date: 2026-09-23  
 Status: **FROZEN BEFORE MODEL TRAINING / SOURCE-RANK REVEAL**
