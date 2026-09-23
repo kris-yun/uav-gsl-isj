@@ -205,7 +205,7 @@ def train_one(mode,features,gate,coarse,targets,free):
     return model,losses
 
 
-def evaluate_variant(name,model,eval_base,eval_features,eval_gates,truth,free):
+def evaluate_variant(label,apply_mode,model,eval_base,eval_features,eval_gates,truth,free):
     all_rows=[]
     fits={}
     cos_gains=[]
@@ -217,7 +217,7 @@ def evaluate_variant(name,model,eval_base,eval_features,eval_gates,truth,free):
         feat=eval_features[seed]
         gate=eval_gates[seed]
         with torch.no_grad():
-            corrected,corr=apply_corrector(model,coarse,feat,gate,free,name)
+            corrected,corr=apply_corrector(model,coarse,feat,gate,free,apply_mode)
         ratio=float(torch.linalg.vector_norm(free_flat(corr,free))/
                     torch.linalg.vector_norm(free_flat(coarse,free)).clamp_min(1e-30))
         correction_ratios.append(ratio)
@@ -312,13 +312,20 @@ def main():
     train_feat,train_gate=build_features_and_gate(coarse,train_w3,free,cell_m)
 
     args.output_dir.mkdir(parents=True,exist_ok=False)
+    train_feat_agnostic=train_feat.clone()
+    train_feat_agnostic[:,:,1:]=0.0
+    specs={
+      "gated":("gated",train_feat),
+      "global":("global",train_feat),
+      "agnostic":("global",train_feat_agnostic),
+    }
     models={}
     losses={}
-    for mode in ("gated","global"):
-        m,ls=train_one(mode,train_feat,train_gate,coarse,targets,free)
-        models[mode]=m
-        losses[mode]=ls
-        torch.save(m.state_dict(),args.output_dir/f"{mode}_corrector.pt")
+    for label,(apply_mode,features) in specs.items():
+        m,ls=train_one(apply_mode,features,train_gate,coarse,targets,free)
+        models[label]=m
+        losses[label]=ls
+        torch.save(m.state_dict(),args.output_dir/f"{label}_corrector.pt")
 
     # Holdout is opened only after both correctors are frozen.
     truth={}
@@ -327,16 +334,20 @@ def main():
 
     eval_w3=record_wind3(d0,mm,winds3,EVAL_PAIRS)
     eval_features={}
+    eval_features_agnostic={}
     eval_gates={}
     for seed in BASE_SEEDS:
         ef,eg=build_features_and_gate(eval_base[seed],eval_w3,free,cell_m)
         eval_features[seed]=ef
+        ea=ef.clone()
+        ea[:,:,1:]=0.0
+        eval_features_agnostic[seed]=ea
         eval_gates[seed]=eg
 
     result={
       "mode":"M4_CONSTRAINT_ACTIVE_RESIDUAL_D2",
       "base_checkpoints":list(BASE_SEEDS),
-      "corrector_parameters":64,
+      "corrector_parameters_each":64,
       "corrector_seed":CORRECTOR_SEED,
       "epochs":EPOCHS,"lr":LR,
       "training_pairs":["S1_W1","S2_W1","S1_W2"],
@@ -344,20 +355,27 @@ def main():
       "physical_gate":"wall<=1 downsampled cell OR top25% strain OR top25% |Wz|",
       "models":{},
     }
-    for mode in ("gated","global"):
-        ev=evaluate_variant(mode,models[mode],eval_base,eval_features,eval_gates,truth,free)
-        ev["loss_first"]=losses[mode][0]
-        ev["loss_last"]=losses[mode][-1]
-        result["models"][mode]=ev
+    eval_specs={
+      "gated":("gated",eval_features),
+      "global":("global",eval_features),
+      "agnostic":("global",eval_features_agnostic),
+    }
+    for label,(apply_mode,features) in eval_specs.items():
+        ev=evaluate_variant(label,apply_mode,models[label],eval_base,features,eval_gates,truth,free)
+        ev["loss_first"]=losses[label][0]
+        ev["loss_last"]=losses[label][-1]
+        result["models"][label]=ev
 
     gp=result["models"]["gated"]["summary"]["pass"]
     wp=result["models"]["global"]["summary"]["pass"]
-    if gp and not wp:
-        decision="CONSTRAINT_LOCAL_RESIDUAL_SIGNAL"
-    elif gp and wp:
+    apass=result["models"]["agnostic"]["summary"]["pass"]
+    if (gp or wp) and not apass:
+        if gp:
+            decision="PHYSICAL_CONTEXT_CONSTRAINT_RESIDUAL_SIGNAL"
+        else:
+            decision="PHYSICAL_CONTEXT_SIGNAL_HARD_GATE_TOO_RESTRICTIVE"
+    elif (gp or wp) and apass:
         decision="GENERIC_RESIDUAL_FIT_NOT_MECHANISM_SPECIFIC"
-    elif (not gp) and wp:
-        decision="GENERIC_ONLY_NO_CONSTRAINT_MECHANISM"
     else:
         decision="CONSTRAINT_LOCAL_RESIDUAL_NO_GO"
     result["decision"]=decision
