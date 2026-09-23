@@ -115,10 +115,18 @@ SINGER, ICLR 2025:
 DISCO, ICML 2025:
 - separates discovery/representation of dynamics from repeated state evolution.
 
-### D. Characteristic transport
+### D. Characteristic, conservative, and local transport
 Franck et al., *Neural semi-Lagrangian method for high-dimensional advection-diffusion problems*, CMAME, DOI `10.1016/j.cma.2025.118481`:
 - transports the solution along characteristic curves before neural approximation/update;
 - supplies the direct mechanism missing from M4-v2.
+
+Chen, Guo and Zhong, JCP 2025, DOI `10.1016/j.jcp.2025.113768`:
+- shows why conservative multidimensional semi-Lagrangian transport is a distinct numerical requirement;
+- motivates making mass behavior structural rather than leaving it to a loss.
+
+Chen et al., JCP 2025, DOI `10.1016/j.jcp.2025.114131`:
+- formalizes bounded local dependency for learned time-dependent PDE operators;
+- motivates limiting learned closure support to the physically reachable neighborhood.
 
 These works are inspiration/parent principles. M4-v3 is not a reproduction of any one of them.
 
@@ -176,11 +184,14 @@ Hard restrictions:
 - no source-conditioned weights;
 - no direct path from source map to transport parameters.
 
-### 5.4 Obstacle projection
+### 5.4 Obstacle and locality rule
 
-The occupancy mask is applied every internal step.
+The occupancy mask is applied every internal step. Characteristic segments are
+checked for in-domain obstacle intersections, and the learned closure is limited
+to a one-cell neighborhood.
 
-No mass may be propagated through obstacle cells by the learned residual without an explicitly documented boundary rule.
+No transport path may jump through an obstacle. The dependency radius is bounded
+by the characteristic displacement plus one local closure cell.
 
 ### 5.5 Nonnegativity
 
@@ -206,15 +217,9 @@ z_k + K_	heta(z_k)odot g_	heta(W,O,t)
 
 where the wind mostly gates a fixed spatial propagation pattern.
 
-M4-v3:
-
-[
-C_{k+1}(x)
-leftarrow
-C_k(x-Delta t W_k(x))
-]
-
-before any learned correction.
+M4-v3 explicitly moves scalar state along the local characteristic flow and then
+applies only a conservative, source-independent local closure before the separate
+source forcing.
 
 Therefore wind changes the **transport map itself**.
 
