@@ -1,0 +1,274 @@
+name: H01 first-passage mother-idea kill
+
+on:
+  push:
+    branches:
+      - research/time-irreversibility-local-interface-kill-20260923
+    paths:
+      - ".github/workflows/first_passage_h01_kill.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  first-passage-kill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch frozen replay and accepted H01 context
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin research/standalone-candidate-replay-20260923
+          git fetch origin research/hcmc-v1-independent-validation-20260922
+          git show origin/research/standalone-candidate-replay-20260923:evidence/standalone_candidate_replay/H01_R2026092201/occupied_cells.csv.zst > /tmp/occupied_cells.csv.zst
+          git show origin/research/standalone-candidate-replay-20260923:evidence/standalone_candidate_replay/H01_R2026092201/parity_all.csv > /tmp/parity_all.csv
+          git show origin/research/hcmc-v1-independent-validation-20260922:evidence/hcmc_v1/independent_raw_native_20260922_verified/H01_R2026092201/context_bank/source_update_0001/measured_hit_probability.csv > /tmp/measured_hit_probability.csv
+          python3 -m pip install --quiet zstandard pandas numpy
+
+      - name: Run source-blind first-passage pre-screen
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, math
+          from pathlib import Path
+          import numpy as np
+          import pandas as pd
+
+          T = 200
+          TRUTH = np.array([-0.4, -2.9], dtype=float)
+          RNG_SEED = 20260923
+          NULL_REPS = 500
+
+          ev = pd.read_csv('/tmp/occupied_cells.csv.zst', compression='zstd')
+          parity = pd.read_csv('/tmp/parity_all.csv')
+          meas = pd.read_csv('/tmp/measured_hit_probability.csv')
+
+          cols = {c.lower(): c for c in ev.columns}
+          def pick(names):
+              for n in names:
+                  if n in cols:
+                      return cols[n]
+              raise KeyError(f'missing one of {names}; columns={list(ev.columns)}')
+          c_cand = pick(['candidate_id','candidate','source_candidate'])
+          c_step = pick(['internal_step','step','timestep','time_step'])
+          c_cell = pick(['cell_index','cell','grid_index'])
+
+          support = meas.copy()
+          if 'occupancy' in support.columns:
+              support = support[support['occupancy'].astype(str).str.lower().eq('free')]
+          support = support[support['confidence'] > 0].copy()
+          support_cells = support['cell_index'].astype(int).to_numpy()
+          weights = support['confidence'].astype(float).to_numpy()
+          weights = weights / weights.sum()
+
+          measured_prob_unique = sorted(set(np.round(support['probability'].astype(float), 12)))
+          all_miss_constant = (len(measured_prob_unique) == 1)
+
+          terminal = parity[parity['terminal_leaf'].astype(int) == 1].copy()
+          terminal['truth_distance_m'] = np.hypot(
+              terminal['expected_source_x'].astype(float) - TRUTH[0],
+              terminal['expected_source_y'].astype(float) - TRUTH[1],
+          )
+          truth_row = terminal.sort_values('truth_distance_m').iloc[0]
+          truth_id = str(truth_row['candidate_id'])
+
+          cand_ids = terminal['candidate_id'].astype(str).tolist()
+          ci = {c:i for i,c in enumerate(cand_ids)}
+          si = {int(c):i for i,c in enumerate(support_cells)}
+          counts = np.zeros((len(cand_ids), len(support_cells)), dtype=np.int16)
+          first = np.full((len(cand_ids), len(support_cells)), T+1, dtype=np.int16)
+
+          e = ev[ev[c_cand].astype(str).isin(ci) & ev[c_cell].astype(int).isin(si)].copy()
+          steps = e[c_step].astype(int).to_numpy()
+          step0 = int(steps.min()) if len(steps) else 0
+          norm_step = e[c_step].astype(int).to_numpy() - step0 + 1
+          if len(norm_step) and norm_step.max() > T:
+              raise RuntimeError(f'normalized step exceeds {T}: min={norm_step.min()} max={norm_step.max()} raw_min={step0}')
+          for cand, cell, st in zip(e[c_cand].astype(str), e[c_cell].astype(int), norm_step):
+              i = ci[cand]; j = si[int(cell)]
+              counts[i,j] += 1
+              if st < first[i,j]:
+                  first[i,j] = st
+
+          q = counts.astype(float) / T
+          first_age = np.where(first <= T, first.astype(float)/(T+1.0), 1.0)
+          expected_first_age = np.where(counts > 0, 1.0/(counts.astype(float)+1.0), 1.0)
+          residual_delay = first_age - expected_first_age
+
+          static_low_occupancy = -(q * weights).sum(axis=1)
+          raw_first_passage_delay = (first_age * weights).sum(axis=1)
+          order_only_delay = (residual_delay * weights).sum(axis=1)
+
+          native_map = dict(zip(parity['candidate_id'].astype(str), parity['expected_score'].astype(float)))
+          native_score = np.array([native_map[c] for c in cand_ids], dtype=float)
+          truth_dist = terminal.set_index('candidate_id').loc[cand_ids,'truth_distance_m'].to_numpy(float)
+
+          def ranks_desc(score):
+              return pd.Series(-np.asarray(score)).rank(method='average').to_numpy(float)
+          def spearman(a,b):
+              ra = pd.Series(a).rank(method='average').to_numpy(float)
+              rb = pd.Series(b).rank(method='average').to_numpy(float)
+              if np.std(ra)==0 or np.std(rb)==0: return 0.0
+              return float(np.corrcoef(ra,rb)[0,1])
+          ti = ci[truth_id]
+
+          rng = np.random.default_rng(RNG_SEED)
+          probs = {}
+          for k in sorted(set(int(x) for x in counts.ravel() if x>0)):
+              ms = np.arange(1, T-k+2, dtype=int)
+              den = math.comb(T,k)
+              p = np.array([math.comb(T-int(m), k-1)/den for m in ms], dtype=float)
+              p /= p.sum()
+              probs[k]=(ms,p)
+
+          null_truth_ranks=[]
+          null_truth_scores=[]
+          for rep in range(NULL_REPS):
+              null_res = np.zeros_like(order_only_delay)
+              for i in range(len(cand_ids)):
+                  s=0.0
+                  for j,k0 in enumerate(counts[i]):
+                      k=int(k0)
+                      if k<=0:
+                          continue
+                      ms,p=probs[k]
+                      m=int(rng.choice(ms,p=p))
+                      fa=m/(T+1.0)
+                      ex=1.0/(k+1.0)
+                      s += weights[j]*(fa-ex)
+                  null_res[i]=s
+              null_truth_scores.append(float(null_res[ti]))
+              null_truth_ranks.append(float(ranks_desc(null_res)[ti]))
+
+          metrics = {}
+          for name,score in [
+              ('native_score',native_score),
+              ('static_low_occupancy',static_low_occupancy),
+              ('raw_first_passage_delay',raw_first_passage_delay),
+              ('order_only_first_passage_delay',order_only_delay),
+          ]:
+              r=ranks_desc(score)
+              metrics[name]={
+                  'truth_candidate_rank_average_ties':float(r[ti]),
+                  'candidate_count':len(cand_ids),
+                  'truth_score':float(score[ti]),
+                  'spearman_score_vs_negative_truth_distance':spearman(score,-truth_dist),
+              }
+
+          actual_rank=metrics['order_only_first_passage_delay']['truth_candidate_rank_average_ties']
+          static_rank=metrics['static_low_occupancy']['truth_candidate_rank_average_ties']
+          null_r=np.asarray(null_truth_ranks)
+          null_s=np.asarray(null_truth_scores)
+          null={
+              'repetitions':NULL_REPS,
+              'truth_rank_mean':float(null_r.mean()),
+              'truth_rank_median':float(np.median(null_r)),
+              'truth_rank_q05':float(np.quantile(null_r,.05)),
+              'truth_rank_q95':float(np.quantile(null_r,.95)),
+              'fraction_null_rank_as_good_or_better_than_actual':float(np.mean(null_r <= actual_rank)),
+              'truth_order_score_null_mean':float(null_s.mean()),
+              'truth_order_score_null_q95':float(np.quantile(null_s,.95)),
+          }
+
+          gate_pass = bool(actual_rank < static_rank and null['fraction_null_rank_as_good_or_better_than_actual'] <= 0.05)
+
+          payload={
+              'contract':'H01_FIRST_PASSAGE_ORDER_ONLY_KILL_V1',
+              'date':'2026-09-23',
+              'input_run':'H01_R2026092201',
+              'event_rows':int(len(ev)),
+              'event_columns':list(ev.columns),
+              'raw_step_min':int(e[c_step].astype(int).min()) if len(e) else None,
+              'raw_step_max':int(e[c_step].astype(int).max()) if len(e) else None,
+              'terminal_candidate_count':len(cand_ids),
+              'observed_support_cell_count':len(support_cells),
+              'measured_probability_unique_rounded':measured_prob_unique,
+              'all_miss_constant_field':bool(all_miss_constant),
+              'truth_candidate_id_evaluation_only':truth_id,
+              'truth_candidate_distance_m':float(truth_row['truth_distance_m']),
+              'metrics':metrics,
+              'time_order_destruction_null':null,
+              'predeclared_gate':{
+                  'require_order_rank_better_than_static':True,
+                  'require_null_as_good_or_better_fraction_lte':0.05,
+                  'pass':gate_pass,
+              },
+              'interpretation':(
+                  'PASS_H01_ORDER_SPECIFIC_FIRST_PASSAGE_PREAUDIT' if gate_pass else
+                  'NO_GO_H01_ORDER_SPECIFIC_FIRST_PASSAGE_PREAUDIT'
+              ),
+              'note':'Scores are source-blind; truth coordinates enter only after score freeze for rank/correlation evaluation. H01 is all-miss, so this tests whether transport-age ordering adds negative-evidence information beyond final occupancy frequency, not positive reactive flux to hit cells.'
+          }
+          outj=Path('evidence/cross_domain_mother_idea_audits/FIRST_PASSAGE_H01_CELL_KILL_20260923.json')
+          outj.write_text(json.dumps(payload,indent=2,sort_keys=True)+'\n')
+
+          md=[]
+          md.append('# H01 cell-level first-passage / transport-age kill test')
+          md.append('')
+          md.append('Date: 2026-09-23')
+          md.append('')
+          md.append(f"Status: **{payload['interpretation']}**")
+          md.append('')
+          md.append('This is a Layer-1 mother-mechanism pre-screen, not a localization method.')
+          md.append('')
+          md.append('## Frozen setting')
+          md.append('')
+          md.append(f"- accepted run: H01_R2026092201")
+          md.append(f"- terminal source candidates: {len(cand_ids)}")
+          md.append(f"- observed-support cells: {len(support_cells)}")
+          md.append(f"- candidate transport age: {T} internal steps")
+          md.append(f"- measured H01 field is all-miss / constant-prior: {all_miss_constant}")
+          md.append('')
+          md.append("Because H01 contains no positive hit target, this pre-screen asks a narrower falsifiable question: after conditioning on each cell's final 200-step occupancy count, does the ordering / first-arrival age itself give the truth-nearest source candidate extra compatibility with the observed no-hit support?")
+          md.append('')
+          md.append('## Results')
+          md.append('')
+          md.append('| score | truth rank (avg ties) | Spearman vs -truth distance |')
+          md.append('|---|---:|---:|')
+          for n in ['native_score','static_low_occupancy','raw_first_passage_delay','order_only_first_passage_delay']:
+              x=metrics[n]
+              md.append(f"| {n} | {x['truth_candidate_rank_average_ties']:.2f}/{len(cand_ids)} | {x['spearman_score_vs_negative_truth_distance']:.4f} |")
+          md.append('')
+          md.append('### Time-order destruction null')
+          md.append('')
+          md.append(f"- repetitions: {NULL_REPS}")
+          md.append(f"- actual order-only truth rank: {actual_rank:.2f}/{len(cand_ids)}")
+          md.append(f"- null median truth rank: {null['truth_rank_median']:.2f}")
+          md.append(f"- null fraction with truth rank as good or better than actual: {null['fraction_null_rank_as_good_or_better_than_actual']:.4f}")
+          md.append('')
+          md.append("The null preserves every candidate×cell final occupancy count and destroys only the occupied-step order, so any surviving advantage is specifically attributable to first-passage order rather than the static hitMap frequency.")
+          md.append('')
+          md.append('## Gate')
+          md.append('')
+          md.append(f"- order-only rank must beat static occupancy rank: {actual_rank < static_rank}")
+          md.append(f"- time-destroyed null as-good-or-better fraction <= 0.05: {null['fraction_null_rank_as_good_or_better_than_actual'] <= 0.05}")
+          md.append(f"- **PASS: {gate_pass}**")
+          md.append('')
+          if gate_pass:
+              md.append('H01 supplies enough order-specific negative-evidence signal to justify extending exact candidate replay to hit-bearing H02/H03 before any TPT/reactive-flux localization score is designed.')
+          else:
+              md.append('H01 does not show load-bearing order-specific first-passage information beyond static occupancy. Do not rescue this by tuning passage windows or target sets on H01. Positive reactive-flux testing would require new replay on hit-bearing H02/H03 and should only be undertaken if there is an independent reason to keep the mother theory alive.')
+          md.append('')
+          md.append('Full machine-readable results: FIRST_PASSAGE_H01_CELL_KILL_20260923.json.')
+          Path('evidence/cross_domain_mother_idea_audits/FIRST_PASSAGE_H01_CELL_KILL_20260923.md').write_text('\n'.join(md)+'\n')
+          print(json.dumps(payload,indent=2,sort_keys=True))
+          PY
+
+      - name: Commit frozen kill-test evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evidence/cross_domain_mother_idea_audits/FIRST_PASSAGE_H01_CELL_KILL_20260923.json
+          git add evidence/cross_domain_mother_idea_audits/FIRST_PASSAGE_H01_CELL_KILL_20260923.md
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "evidence: run H01 cell-level first-passage kill test"
+          git push origin HEAD:research/time-irreversibility-local-interface-kill-20260923
