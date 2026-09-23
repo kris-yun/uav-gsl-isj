@@ -1,0 +1,38 @@
+name: M6 GeoPT checkpoint fetch
+
+on:
+  push:
+    branches:
+      - research/m6-geopt-g05-runtime-v1
+    paths:
+      - ".github/workflows/m6-geopt-checkpoint-fetch.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Download and hash official artifact
+        run: |
+          pip install -q huggingface_hub
+          python - <<'PY'
+          from huggingface_hub import hf_hub_download, list_repo_files
+          from pathlib import Path
+          import hashlib, json
+          repo="GeoPT/GeoPT_Pretrained_Models"
+          files=list_repo_files(repo)
+          print("FILES",json.dumps(files,indent=2))
+          for name in ("GeoPT_8layers.pt","config.json"):
+              p=Path(hf_hub_download(repo_id=repo,filename=name,local_dir="/tmp/geopt_hf"))
+              h=hashlib.sha256(p.read_bytes()).hexdigest()
+              print("ARTIFACT",name,"bytes",p.stat().st_size,"sha256",h)
+              if name=="config.json":
+                  print(p.read_text())
+          PY
