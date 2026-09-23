@@ -23,8 +23,16 @@ def main():
     parser.add_argument("trace_dir", type=Path)
     parser.add_argument("parity_csv", type=Path)
     parser.add_argument("manifest_json", type=Path)
+    parser.add_argument("--run-dir", type=Path, default=None)
     args = parser.parse_args()
     trace_dir = args.trace_dir
+    grid_cell_count = 29 * 38
+    if args.run_dir is not None:
+        timing_path = args.run_dir / "context_bank" / "source_update_timing.csv"
+        with timing_path.open(newline="") as stream:
+            timing_rows = list(csv.DictReader(stream))
+        assert len(timing_rows) == 1 and timing_rows[0]["source_update_id"] == "1"
+        grid_cell_count = int(timing_rows[0]["grid_width"]) * int(timing_rows[0]["grid_height"])
     with args.parity_csv.open(newline="") as stream:
         parity = list(csv.DictReader(stream))
     assert parity and all(
@@ -52,7 +60,7 @@ def main():
             timestep = int(row["internal_timestep"])
             cell = int(row["cell_index"])
             assert candidate in ids and row["source_update_id"] == "1"
-            assert 1 <= timestep <= 200 and 0 <= cell < 29 * 38
+            assert 1 <= timestep <= 200 and 0 <= cell < grid_cell_count
             occupancy[candidate].append((timestep, cell))
 
     total_positions = total_occupied = 0
@@ -89,6 +97,7 @@ def main():
     payload = {
         "contract": "STANDALONE_NATIVE_CANDIDATE_TRACE_VERIFIED_V1",
         "candidate_count": len(ids),
+        "grid_cell_count": grid_cell_count,
         "step_count": len(ids) * 200,
         "filament_position_count": total_positions,
         "unique_occupied_cell_events": total_occupied,
