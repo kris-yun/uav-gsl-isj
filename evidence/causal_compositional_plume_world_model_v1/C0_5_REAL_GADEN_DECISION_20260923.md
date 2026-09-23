@@ -1,7 +1,7 @@
 # C0.5 REAL-GADEN DECISION — 2026-09-23
 
 Branch: `research/causal-compositional-plume-world-model-v1`  
-Status: **HOLD — C0.5 SAME-HOUSE DATA PASS, M4-V2 UNKNOWN-HOUSE GATE NOT MET**
+Status: **HOLD — HOUSE02 FIELD SIGNAL, NO QUALIFYING SOURCE-RANK OR UNKNOWN-HOUSE PASS**
 
 This report records the evidence actually generated and preserves the stricter
 unknown-House boundary. It does not promote the House02 bank to a main-line
@@ -41,19 +41,29 @@ M4 result.
    files and 42,961,851 bytes. The bank uses the 300 s contract. This is an
    infrastructure cost result, not a source-rank result.
 
-6. **Held-out field prediction:** Not evaluated. The newly required G3
-   unknown-House gate forbids treating a same-House S2×W2 recombination as
-   unfamiliar-real-world evidence, and no target-House spatial bank exists.
+6. **Held-out field prediction:** Evaluated as a bounded House02 local
+   diagnostic after four checkpoints were frozen. On S2×W2 A/B, operator
+   `log1p` field MSE was 0.135064/0.113821 for training seed 1729 and
+   0.141936/0.120340 for seed 2718. Matched monolithic errors were
+   0.442162/0.431375 and 0.310335/0.297871. This is a consistent local
+   field signal, not unknown-House evidence.
 
-7. **Truth-source candidate rank:** Not evaluated. No G3 target-House
-   candidate-field replay exists. The primary endpoint therefore has no result.
+7. **Truth-source candidate rank:** A source-blind, 30-probe, two-candidate
+   offline diagnostic ranked true S2 first for **both** models on both
+   training seeds and both plume seeds. There is no rank gain. This is not
+   the charter's Native PMFS-compatible source-rank replay, which remains
+   unevaluated. No G3 target-House candidate replay exists.
 
-8. **Nulls:** Not run. Without an authorized unknown-House target and frozen
-   rank endpoint, null outcomes would not answer the hard gate.
+8. **Nulls:** The source swap changes the sparse score in the expected
+   direction for both models. The M4 transport swap has tiny paired error
+   changes (`+0.000353`, `+0.000112`, `+0.000051`, `-0.000027`); one reverses.
+   Source-label and wind-label shuffle retraining were not run after the
+   rank-tie stop rule. No full null battery is claimed.
 
-9. **M4 decision:** **HOLD.** The same-House physical/data-integrity
-   precondition is recorded locally, but M4-v2 remains unestablished because
-   the required unknown-House data audit is unavailable.
+9. **M4 decision:** **HOLD for G3; no C0.5 mechanism ADVANCE.** The same-House
+   physical/data-integrity precondition and a held-out field advantage are
+   recorded, but neither source-rank superiority nor a reliable transport
+   effect was established. The required unknown-House data remain unavailable.
 
 10. **Closed loop:** **Not justified.** Do not modify PMFS movement, source
     updates, stopping logic, or ROS/live-loop code.
@@ -66,6 +76,8 @@ M4 result.
   `/home/zyc/c0_5_real_gaden_bank_20260923`
 - G3 audit:
   [`G3_UNKNOWN_HOUSE_DATA_AUDIT_20260923.md`](G3_UNKNOWN_HOUSE_DATA_AUDIT_20260923.md)
+- Frozen local comparison and exact scores:
+  [`C0_5_LOCAL_COMPARISON_RESULT_20260923.md`](C0_5_LOCAL_COMPARISON_RESULT_20260923.md)
 - Hard boundary:
   [`G3_UNKNOWN_HOUSE_TRANSFER_HARD_GATE_20260923.md`](G3_UNKNOWN_HOUSE_TRANSFER_HARD_GATE_20260923.md)
 
