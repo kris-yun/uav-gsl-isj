@@ -58,7 +58,7 @@ jobs:
                       return cols[n]
               raise KeyError(f'missing one of {names}; columns={list(ev.columns)}')
           c_cand = pick(['candidate_id','candidate','source_candidate'])
-          c_step = pick(['internal_step','step','timestep','time_step'])
+          c_step = pick(['internal_step','internal_timestep','step','timestep','time_step'])
           c_cell = pick(['cell_index','cell','grid_index'])
 
           support = meas.copy()
