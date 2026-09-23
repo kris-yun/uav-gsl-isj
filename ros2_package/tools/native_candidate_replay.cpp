@@ -236,14 +236,19 @@ namespace
             !std::regex_search(text, std::regex("\\\"tnqc_mode\\\"\\s*:\\s*\\\"off\\\"")))
             throw std::runtime_error("run is not the frozen Native OFF arm");
         const uint64_t navigationSeed = number<uint64_t>(match[1].str());
-        if (navigationSeed != 2)
-            throw std::runtime_error("this frozen replay is bound to H01_R2026092201 navigation seed 2");
-        // Frozen launch SHA 0cd1... passes 'random_seed' to the algorithm,
-        // while Algorithm/PMFS reads 'seed'. The effective Native transport
-        // seed is therefore its declared default zero, independently of the
-        // navigation seed stored in runtime_manifest.json.
+        if (navigationSeed != 2 && navigationSeed != 3)
+            throw std::runtime_error("unsupported navigation seed for the frozen six-run Native bank");
+        if (!std::regex_search(text, std::regex("\\\"contract\\\"\\s*:\\s*\\\"HCMC_V1_INDEPENDENT_NATIVE_TRAJECTORY_V1\\\"")))
+            throw std::runtime_error("unrecognized frozen Native trajectory contract");
+        // The frozen launcher passes 'random_seed' to the algorithm while
+        // Algorithm/PMFS reads 'seed'. Therefore the candidate transport/source
+        // RNG uses the declared default seed zero for both NAV2 and NAV3 runs.
+        // Bind that conclusion to the exact frozen launch and Native algorithm
+        // hashes rather than to one H01 realization.
         if (text.find("0cd1ae4ad852bf548fd1ebc131e7f46f0d6d20603a2e4e71ae37c6831e40f2c9") == std::string::npos)
             throw std::runtime_error("unrecognized frozen launch hash; effective Native seed not established");
+        if (text.find("b06c2036da91ef22285d1cb5d4d08172e828956fc5844d8a2044a4221a8c2cce") == std::string::npos)
+            throw std::runtime_error("unrecognized frozen Native algorithm hash");
         return 0;
     }
 
