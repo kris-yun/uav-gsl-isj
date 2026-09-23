@@ -37,6 +37,15 @@ jobs:
           assert abs(r["mass_in"]-r["mass_out"]) < 1e-6
           assert r["moved_tangentially"]
           PY
+      - name: Frozen-checkpoint physical surgery
+        run: |
+          mkdir -p /tmp/wall_surgery
+          cp evidence/causal_compositional_plume_world_model_v1/m4_v3_d0_house02_20260923/m4v3_seed1729.pt /tmp/wall_surgery/
+          cp evidence/causal_compositional_plume_world_model_v1/m4_v3_d0_house02_20260923/m4v3_seed2718.pt /tmp/wall_surgery/
+          cp evidence/causal_compositional_plume_world_model_v1/m4_v3_d0_house02_20260923/train_manifest.json /tmp/wall_surgery/
+          python research/causal_compositional_plume_world_model_v1/m4_v3_d0_house02.py evaluate --bank evidence/causal_compositional_plume_world_model_v1/c0_5_real_gaden_bank --dynamic-wind evidence/causal_compositional_plume_world_model_v1/m4_v3_dynamic_wind_house02 --model-script research/m4_spatial_mechanism_audit_v1/m4_wall_slide_control.py --out /tmp/wall_surgery --device cpu --cpu-threads 4
+          echo "===WALL_SLIDE_FROZEN_SURGERY_RESULT==="
+          cat /tmp/wall_surgery/d0_result.json
       - name: Train frozen-control split
         run: |
           python research/causal_compositional_plume_world_model_v1/m4_v3_d0_house02.py train --bank evidence/causal_compositional_plume_world_model_v1/c0_5_real_gaden_bank --dynamic-wind evidence/causal_compositional_plume_world_model_v1/m4_v3_dynamic_wind_house02 --model-script research/m4_spatial_mechanism_audit_v1/m4_wall_slide_control.py --out /tmp/wall_slide_d0 --device cpu --cpu-threads 4
