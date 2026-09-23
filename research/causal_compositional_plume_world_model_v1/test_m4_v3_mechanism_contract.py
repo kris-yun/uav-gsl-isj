@@ -14,13 +14,43 @@ s1=torch.zeros(1,1,h,w); s1[0,0,8,8]=1
 s2=torch.zeros(1,1,h,w); s2[0,0,16,17]=1
 mask=torch.ones_like(s1)
 wind=torch.zeros(8,1,2,h,w); wind[:,:,0]=0.2; wind[:,:,1]=0.5
+
 err=m.superposition_error(model,s1,s2,wind,mask)
 rev=m.wind_reversal_displacement_smoke()
-# Structural source-leakage audit: transport.forward accepts only state, wind, mask, dt, cell.
+
+# Structural source-leakage audit.
 transport_args=list(model.transport.forward.__code__.co_varnames[:model.transport.forward.__code__.co_argcount])
-result={"superposition_max_abs_error":err,"superposition_pass":err<1e-5,
-        "wind_reversal":rev,"transport_forward_args":transport_args,
-        "source_leakage_signature_pass":"source" not in " ".join(transport_args).lower()}
-if not all([result["superposition_pass"],rev["reversal_pass"],result["source_leakage_signature_pass"]]):
+
+# Zero-boundary diffusion must never wrap an impulse from one edge to the other.
+edge=torch.zeros(1,1,9,9); edge[0,0,4,0]=1.0
+nbr=m.zero_boundary_neighbor_mean(edge)
+boundary_wrap=float(nbr[0,0,4,-1].abs())
+
+# GADEN timing contract: first wind is used before update; dynamic sequence must
+# actually advance and loop only inside [1,10].
+ids=m.gaden_wind_index_schedule(140,0.1,1.0,11,1,10)
+timing_pass=(ids[0]==0 and 1 in ids and max(ids)<=10 and min(ids)>=0 and ids[-1] in range(1,11))
+
+result={
+  "superposition_max_abs_error":err,
+  "superposition_pass":err<1e-5,
+  "wind_reversal":rev,
+  "transport_forward_args":transport_args,
+  "source_leakage_signature_pass":"source" not in " ".join(transport_args).lower(),
+  "zero_boundary_wrap_value":boundary_wrap,
+  "zero_boundary_pass":boundary_wrap==0.0,
+  "wind_schedule_prefix":ids[:30],
+  "wind_schedule_suffix":ids[-20:],
+  "wind_schedule_pass":timing_pass,
+}
+checks=[
+  result["superposition_pass"],
+  rev["reversal_pass"],
+  rev["no_advection_pass"],
+  result["source_leakage_signature_pass"],
+  result["zero_boundary_pass"],
+  result["wind_schedule_pass"],
+]
+if not all(checks):
     raise SystemExit(json.dumps(result,indent=2))
 print(json.dumps(result,indent=2))
