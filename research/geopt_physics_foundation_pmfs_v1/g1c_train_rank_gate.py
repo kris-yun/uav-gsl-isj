@@ -162,9 +162,12 @@ class SourceArm:
 
 
 def proxy_pmfs_field(pos, fx, source, torch):
-    rel = pos[None, :, :] - source[:, None, :]
-    u = fx[:, 7:10][None, :, :]
-    speed = fx[:, 10][None, :]
+    # ``pos``/``fx`` carry one environment batch dimension.  Index the last
+    # dimension for wind features; slicing ``fx[:, 7:10]`` would incorrectly
+    # select three tokens and silently break candidate scoring.
+    rel = pos[0][None, :, :] - source[:, None, :]
+    u = fx[0, :, 7:10][None, :, :]
+    speed = fx[0, :, 10][None, :]
     longitudinal = (rel * u).sum(-1)
     lateral = rel[..., 0] * (-u[..., 1]) + rel[..., 1] * u[..., 0]
     sig_minor = 1.0 / (1.0 + speed)
