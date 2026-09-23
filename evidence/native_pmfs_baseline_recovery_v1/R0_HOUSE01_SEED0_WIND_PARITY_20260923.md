@@ -1,0 +1,12 @@
+# R0 House01 seed0: official-wind branch smoke test
+
+**Gate: PASS for R0 wind-path and parameter provenance.** This is the deliberately short first-source-update smoke test, not a 300 s result and not a source-rank result.
+
+- Run root: `/home/zyc/native_pmfs_recovery_v1/runs/NATIVE_RECOVERY_R0_House01_S0_20260923T065027Z`, copied byte-for-byte into the adjacent evidence directory. Old R2 outputs and the frozen runner were not touched.
+- The isolated recovery binary was built with `USE_GADEN=1` and SHA256 `f9fb6c915fe36fd3ec85146bed0c04a0a826c86cc9f9b4dfa8f3d9098e05e5fc`. Runtime manifest records the launch hash and every effective argument. The PMFS log emitted `NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH`, with 21 successful queries and zero fallback/failure queries before the first completed source update.
+- `/wind_value` had type `gaden_msgs/srv/WindPosition`. The preflight returned finite nonzero wind at the robot start and four fixed offsets; those probe points were chosen without source truth.
+- All 626 free cells at source update 1 matched the last preceding `/wind_value` response after the service double values were cast to the official PMFS `Vector2` float32 storage type. Maximum post-cast component difference was exactly 0; maximum raw double-to-float component difference was `1.4190673802705334e-08`; maximum angular difference was `3.6438052020137945e-08` rad. The internal magnitude range was `8.733642526935983e-06` / median `0.05971972956518906` / max `0.451018752721897` m/s. This is a complete free-cell audit, including the robot cell, rather than a sampled subset.
+- The first verifier invocation used a `1e-9` threshold on raw service doubles and therefore returned FAIL on expected float32 quantization. The verifier was corrected to test exact float32 storage parity while retaining the raw difference and angle diagnostics. The original raw capture was reverified; the simulator was not rerun for this correction.
+- The runner sent SIGINT after `NATIVE_RECOVERY_SOURCE_UPDATE_COMPLETE=1`. ROS logged result-publication and shutdown exceptions during this intentional early stop. Those lines occurred after the completed update and do not establish a 300 s result. They remain in the raw log for inspection.
+
+R1 must freeze a single observation snapshot and candidate geometry, run the three declared forward arms, and freeze all candidate scores before truth-source rank is evaluated.

@@ -6,6 +6,7 @@ import csv
 import json
 import math
 import statistics
+import struct
 from pathlib import Path
 
 
@@ -19,7 +20,9 @@ def main() -> None:
     ap.add_argument("run_dir", type=Path)
     ap.add_argument("--house", required=True)
     ap.add_argument("--seed", type=int, required=True)
-    ap.add_argument("--tolerance", type=float, default=1e-9)
+    ap.add_argument("--tolerance", type=float, default=1e-9,
+                    help="absolute component tolerance after casting service doubles to PMFS Vector2 float32")
+    ap.add_argument("--angle-tolerance", type=float, default=1e-6)
     args = ap.parse_args()
     run = args.run_dir
     query_path = run / "wind_query.csv"
@@ -43,11 +46,13 @@ def main() -> None:
     out_path = run / f"WIND_GROUND_TRUTH_PARITY_{args.house}_seed{args.seed}.csv"
     summaries = []
     overall_max_component = 0.0
+    overall_max_raw_component = 0.0
     overall_max_angle = 0.0
     with out_path.open("w", newline="", encoding="utf-8") as stream:
         fieldnames = ["source_update_id", "query_id", "cell_index", "x", "y",
                       "service_u", "service_v", "internal_u", "internal_v",
-                      "internal_magnitude", "component_max_abs_diff", "angle_abs_rad"]
+                      "internal_magnitude", "raw_component_max_abs_diff",
+                      "float32_component_max_abs_diff", "angle_abs_rad"]
         writer = csv.DictWriter(stream, fieldnames=fieldnames)
         writer.writeheader()
         for update_id, cells in sorted(updates.items()):
@@ -65,7 +70,10 @@ def main() -> None:
                 service = service_cells[index]
                 u, v = float(service["service_u"]), float(service["service_v"])
                 internal_u, internal_v = float(cell["internal_u"]), float(cell["internal_v"])
-                difference = max(abs(u - internal_u), abs(v - internal_v))
+                u32 = struct.unpack("f", struct.pack("f", u))[0]
+                v32 = struct.unpack("f", struct.pack("f", v))[0]
+                raw_difference = max(abs(u - internal_u), abs(v - internal_v))
+                difference = max(abs(u32 - internal_u), abs(v32 - internal_v))
                 magnitude = math.hypot(internal_u, internal_v)
                 if math.hypot(u, v) <= args.tolerance and magnitude <= args.tolerance:
                     angle = 0.0
@@ -74,6 +82,7 @@ def main() -> None:
                 else:
                     angle = abs(math.remainder(math.atan2(internal_v, internal_u) - math.atan2(v, u), 2 * math.pi))
                 overall_max_component = max(overall_max_component, difference)
+                overall_max_raw_component = max(overall_max_raw_component, raw_difference)
                 overall_max_angle = max(overall_max_angle, angle)
                 magnitudes.append(magnitude)
                 writer.writerow({"source_update_id": update_id, "query_id": query_id,
@@ -81,7 +90,9 @@ def main() -> None:
                                  "service_u": u, "service_v": v,
                                  "internal_u": internal_u, "internal_v": internal_v,
                                  "internal_magnitude": magnitude,
-                                 "component_max_abs_diff": difference, "angle_abs_rad": angle})
+                                 "raw_component_max_abs_diff": raw_difference,
+                                 "float32_component_max_abs_diff": difference,
+                                 "angle_abs_rad": angle})
             summaries.append({"source_update_id": update_id, "query_id": query_id,
                               "cell_count": len(cells), "magnitude_min": min(magnitudes),
                               "magnitude_median": statistics.median(magnitudes),
@@ -92,9 +103,11 @@ def main() -> None:
                "useWindGroundTruth_requested": True, "USE_GADEN_compiled": True,
                "successful_wind_queries": len(queries), "fallback_or_failure_queries": 0,
                "max_component_abs_diff": overall_max_component,
+               "max_raw_component_abs_diff": overall_max_raw_component,
                "max_angular_diff_rad": overall_max_angle,
                "tolerance": args.tolerance, "source_updates": summaries,
-               "parity_pass": overall_max_component <= args.tolerance and overall_max_angle <= args.tolerance}
+               "angle_tolerance": args.angle_tolerance,
+               "parity_pass": overall_max_component <= args.tolerance and overall_max_angle <= args.angle_tolerance}
     (run / "wind_parity_summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary, indent=2))
     if not summary["parity_pass"]:

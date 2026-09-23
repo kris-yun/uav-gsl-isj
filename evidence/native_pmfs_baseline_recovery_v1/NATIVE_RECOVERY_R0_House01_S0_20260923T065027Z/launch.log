@@ -1,0 +1,212 @@
+[INFO] [launch]: All log files can be found below /home/zyc/native_pmfs_recovery_v1/runs/NATIVE_RECOVERY_R0_House01_S0_20260923T065027Z/ros_log/2026-09-23-14-50-43-278562-zyc-virtual-machine-31715
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [vgr_sim_node-1]: process started with pid [31717]
+[vgr_sim_node-1] [INFO] [1790146244.015847236] [vgr_uav_sim]: Loading VGR data from /mnt/hgfs/workspace/GADEN_files/scenarios/House01, config=2,4-1_fast
+[vgr_sim_node-1] [INFO] [1790146244.091264495] [vgr_uav_sim]: Occupancy: 87x114 slice z_idx=13 (z=0.3m), free=6866, obstacle=3052, input_sha256=846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb
+[vgr_sim_node-1] [INFO] [1790146244.265121333] [vgr_uav_sim]: Gas backend=raw_house1_snapshot exec=/home/zyc/hcmc_gaden_seed_build_20260922/house1_raw_query env_root=/mnt/hgfs/workspace/GADEN_files/scenarios/House01 gas_results=/mnt/hgfs/workspace/GADEN_files/scenarios/House01/gas_simulations/2,4-1_fast/FilamentSimulation_gasType_10_sourcePosition_-0.40_-2.90_-0.30 max_iteration=1999
+[vgr_sim_node-1] [INFO] [1790146244.267769105] [vgr_uav_sim]: Navigation grid: coarse 29x38 cell=0.3000 free=626 obstacle=476 (reduce_scale=3)
+[vgr_sim_node-1] [INFO] [1790146244.316612254] [vgr_uav_sim]: UAV Sim v3 ready. Start=(-3.17,-1.75), sim_dt=0.200s, realtime_factor=1.00, sensor=asymmetric, vertical_motion=False, open_loop_profile=hover
+[INFO] [gsl_actionserver_node-2]: process started with pid [31745]
+[INFO] [gsl_benchmark_runner-3]: process started with pid [31747]
+[gsl_actionserver_node-2] [INFO] [1790146249.431577722] [GSL]: Starting GSL server
+[INFO] [ros2-4]: process started with pid [31773]
+[ros2-4] requester: making request: std_srvs.srv.Trigger_Request()
+[ros2-4] 
+[ros2-4] response:
+[ros2-4] std_srvs.srv.Trigger_Response(success=True, message='started at step=0, t_sim=0.000000')
+[ros2-4] 
+[INFO] [ros2-4]: process has finished cleanly [pid 31773]
+[gsl_actionserver_node-2] [INFO] [1790146254.472128017] [GSL]: GSL action server is ready for action!
+[gsl_actionserver_node-2] [INFO] [1790146255.473931113] [GSL]: [33mRequest received: PMFS[0m
+[gsl_actionserver_node-2] [INFO] [1790146256.484151701] [GSL]: Waiting to hear from localization topic: /amcl_pose
+[gsl_actionserver_node-2] [INFO] [1790146257.484131339] [GSL]: Waiting to hear from localization topic: /amcl_pose
+[gsl_actionserver_node-2] [INFO] [1790146257.486651757] [GSL]: Gas sensor topic: '/PID/Sensor_reading'
+[gsl_actionserver_node-2] [INFO] [1790146257.487632991] [GSL]: Wind sensor topic: '/Anemometer/WindSensor_reading'
+[gsl_actionserver_node-2] [INFO] [1790146257.487837948] [GSL]: [34mINITIALIZATON COMPLETED[0m
+[gsl_actionserver_node-2] [INFO] [1790146257.506818341] [GSL - Trace]: [32mEntering WaitForMap[0m
+[gsl_actionserver_node-2] [INFO] [1790146257.506856241] [GSL - Trace]: [32mNeed occupancy map and costmap[0m
+[gsl_actionserver_node-2] [INFO] [1790146257.563972467] [GSL - Trace]: [32mGot occupancy map[0m
+[gsl_actionserver_node-2] [INFO] [1790146257.564930657] [GSL]: 
+[gsl_actionserver_node-2] --------------GSL---------------
+[gsl_actionserver_node-2] Occupancy Map dimensions:
+[gsl_actionserver_node-2] x_min:-7.5 x_max:1.1   -   y_min:-7.9 y_max:3.5
+[gsl_actionserver_node-2] --------------------------------
+[gsl_actionserver_node-2] [INFO] [1790146257.566333646] [GSL - Trace]: [32mCreated grid[0m
+[gsl_actionserver_node-2] [INFO] [1790146257.567632995] [GSL - Trace]: [32mPruned unreachable cells[0m
+[gsl_actionserver_node-2] [INFO] [1790146257.579500448] [GSL - Trace]: [32mCreated visibility map[0m
+[gsl_actionserver_node-2] [INFO] [1790146257.585701464] [GSL]: Number of cells after fusing quadtree: 86
+[gsl_actionserver_node-2] [INFO] [1790146257.597287822] [GSL]: anemometer z is 0
+[gsl_actionserver_node-2] [INFO] [1790146258.332364718] [GSL - Trace]: [32mGot cost map[0m
+[gsl_actionserver_node-2] [INFO] [1790146258.332733755] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146262.074158259] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=1 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146262.074766995] [GSL]: 10 gas measurements, 10 wind measurements over 3.74 seconds
+[gsl_actionserver_node-2] [INFO] [1790146262.075986727] [GSL]: avg_gas=0.099;  avg_windSpeed=0.068;  avg_wind_dir=0.47
+[gsl_actionserver_node-2] [INFO] [1790146262.077968955] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146266.554569433] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=2 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146266.554664746] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146268.588181277] [GSL]: 10 gas measurements, 10 wind measurements over 2.03 seconds
+[gsl_actionserver_node-2] [INFO] [1790146268.588297472] [GSL]: avg_gas=0.064;  avg_windSpeed=0.059;  avg_wind_dir=-0.5
+[gsl_actionserver_node-2] [INFO] [1790146268.589637751] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146273.141557958] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=3 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146273.141635656] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146275.177104722] [GSL]: 10 gas measurements, 10 wind measurements over 2.04 seconds
+[gsl_actionserver_node-2] [INFO] [1790146275.177167611] [GSL]: avg_gas=0.00026;  avg_windSpeed=0.046;  avg_wind_dir=-0.33
+[gsl_actionserver_node-2] [INFO] [1790146275.178122998] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146279.637378196] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=4 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146279.637445364] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146281.563574803] [GSL]: 10 gas measurements, 10 wind measurements over 1.93 seconds
+[gsl_actionserver_node-2] [INFO] [1790146281.563931855] [GSL]: avg_gas=1.3e-06;  avg_windSpeed=0.063;  avg_wind_dir=-1.8
+[gsl_actionserver_node-2] [INFO] [1790146281.564826961] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146286.076326317] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=5 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146286.076392733] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146287.960446060] [GSL]: 10 gas measurements, 10 wind measurements over 1.88 seconds
+[gsl_actionserver_node-2] [INFO] [1790146287.960521971] [GSL]: avg_gas=6.1e-09;  avg_windSpeed=0.065;  avg_wind_dir=0.24
+[gsl_actionserver_node-2] [INFO] [1790146287.961650135] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146292.466907084] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=6 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146292.468969693] [GSL]: Max mutual info: 6.439
+[gsl_actionserver_node-2] [WARN] [1790146292.469165859] [rcl.logging_rosout]: Publisher already registered for provided node name. If this is due to multiple nodes with the same name then all logs for that logger name will go out over the existing publisher. As soon as any node with that name is destructed it will unregister the publisher, preventing any further logs for that name from being published on the rosout topic.
+[gsl_actionserver_node-2] [INFO] [1790146292.474880064] [GSL]: MutualInformation - Ellapsed: 0.008s
+[vgr_sim_node-1] [WARN] [1790146292.483241882] [vgr_uav_sim]: PLAN_CB: called with goal=(-5.60,-0.83)
+[vgr_sim_node-1] [WARN] [1790146292.486942588] [vgr_uav_sim]: PLAN_CB: returning 10 poses
+[gsl_actionserver_node-2] [INFO] [1790146292.494535524] [GSL]: Sending goal (-5.60, -0.83)
+[gsl_actionserver_node-2] [INFO] [1790146292.494808349] [GSL]: Variance: 16.02
+[gsl_actionserver_node-2] [INFO] [1790146292.494855940] [GSL - Trace]: [32mEntering Moving[0m
+[vgr_sim_node-1] [INFO] [1790146292.498218075] [vgr_uav_sim]: Prepared 10 collision-free navigation waypoints to (-5.60, -0.83)
+[vgr_sim_node-1] [INFO] [1790146292.499470223] [vgr_uav_sim]: UAV navigating in audited 2-D mode to (-5.60, -0.83, 0.30)
+[gsl_actionserver_node-2] [INFO] [1790146294.428535353] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146296.396762388] [GSL]: 10 gas measurements, 10 wind measurements over 1.97 seconds
+[gsl_actionserver_node-2] [INFO] [1790146296.396860893] [GSL]: avg_gas=5.5e-12;  avg_windSpeed=0.085;  avg_wind_dir=1.7
+[gsl_actionserver_node-2] [INFO] [1790146296.398345674] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146300.932822054] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=7 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146300.932874007] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146302.765162983] [GSL]: 10 gas measurements, 10 wind measurements over 1.83 seconds
+[gsl_actionserver_node-2] [INFO] [1790146302.765268972] [GSL]: avg_gas=2.7e-14;  avg_windSpeed=0.15;  avg_wind_dir=0.32
+[gsl_actionserver_node-2] [INFO] [1790146302.766450998] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146307.277309173] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=8 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146307.277371001] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146309.156801653] [GSL]: 10 gas measurements, 10 wind measurements over 1.88 seconds
+[gsl_actionserver_node-2] [INFO] [1790146309.156872063] [GSL]: avg_gas=1.3e-16;  avg_windSpeed=0.11;  avg_wind_dir=1.7
+[gsl_actionserver_node-2] [INFO] [1790146309.157816216] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146313.752774262] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=9 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146313.752869218] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146315.755073974] [GSL]: 10 gas measurements, 10 wind measurements over 2.00 seconds
+[gsl_actionserver_node-2] [INFO] [1790146315.755192079] [GSL]: avg_gas=5.3e-19;  avg_windSpeed=0.14;  avg_wind_dir=0.28
+[gsl_actionserver_node-2] [INFO] [1790146315.756898351] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146320.303418674] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=10 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146320.303483491] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146322.151175693] [GSL]: 10 gas measurements, 10 wind measurements over 1.85 seconds
+[gsl_actionserver_node-2] [INFO] [1790146322.151303438] [GSL]: avg_gas=2.5e-21;  avg_windSpeed=0.13;  avg_wind_dir=1.3
+[gsl_actionserver_node-2] [INFO] [1790146322.152589447] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146326.678472415] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=11 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146326.683261923] [GSL]: Max mutual info: 6.439
+[gsl_actionserver_node-2] [INFO] [1790146326.683408426] [GSL]: MutualInformation - Ellapsed: 0.005s
+[vgr_sim_node-1] [WARN] [1790146326.687218656] [vgr_uav_sim]: PLAN_CB: called with goal=(-6.20,-5.93)
+[vgr_sim_node-1] [WARN] [1790146326.703403282] [vgr_uav_sim]: PLAN_CB: returning 45 poses
+[gsl_actionserver_node-2] [INFO] [1790146326.710166902] [GSL]: Sending goal (-6.20, -5.93)
+[gsl_actionserver_node-2] [INFO] [1790146326.710424241] [GSL]: Variance: 16.02
+[gsl_actionserver_node-2] [INFO] [1790146326.710440564] [GSL - Trace]: [32mEntering Moving[0m
+[vgr_sim_node-1] [INFO] [1790146326.717327073] [vgr_uav_sim]: Prepared 45 collision-free navigation waypoints to (-6.20, -5.93)
+[vgr_sim_node-1] [INFO] [1790146326.718563071] [vgr_uav_sim]: UAV navigating in audited 2-D mode to (-6.20, -5.93, 0.30)
+[gsl_actionserver_node-2] [INFO] [1790146336.212370032] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146338.162262618] [GSL]: 10 gas measurements, 10 wind measurements over 1.95 seconds
+[gsl_actionserver_node-2] [INFO] [1790146338.162323464] [GSL]: avg_gas=0.0011;  avg_windSpeed=0.24;  avg_wind_dir=1.5
+[gsl_actionserver_node-2] [INFO] [1790146338.163224958] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146342.595718202] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=12 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146342.595781494] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146344.578133899] [GSL]: 10 gas measurements, 10 wind measurements over 1.98 seconds
+[gsl_actionserver_node-2] [INFO] [1790146344.578404536] [GSL]: avg_gas=5.1e-06;  avg_windSpeed=0.18;  avg_wind_dir=1.9
+[gsl_actionserver_node-2] [INFO] [1790146344.579986848] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146349.013289954] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=13 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146349.013360379] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146350.946419588] [GSL]: 10 gas measurements, 10 wind measurements over 1.93 seconds
+[gsl_actionserver_node-2] [INFO] [1790146350.946497200] [GSL]: avg_gas=2.5e-08;  avg_windSpeed=0.25;  avg_wind_dir=1.5
+[gsl_actionserver_node-2] [INFO] [1790146350.947995595] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146355.450619281] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=14 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146355.450701569] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146357.384539176] [GSL]: 10 gas measurements, 10 wind measurements over 1.93 seconds
+[gsl_actionserver_node-2] [INFO] [1790146357.384671780] [GSL]: avg_gas=1.2e-10;  avg_windSpeed=0.17;  avg_wind_dir=1.9
+[gsl_actionserver_node-2] [INFO] [1790146357.385803969] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146361.792961033] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=15 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146361.793030002] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146363.778912413] [GSL]: 10 gas measurements, 10 wind measurements over 1.99 seconds
+[gsl_actionserver_node-2] [INFO] [1790146363.779023397] [GSL]: avg_gas=5.8e-13;  avg_windSpeed=0.25;  avg_wind_dir=1.5
+[gsl_actionserver_node-2] [INFO] [1790146363.780459899] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146368.183853506] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=16 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146368.188335168] [GSL]: Max mutual info: 6.439
+[gsl_actionserver_node-2] [INFO] [1790146368.188514531] [GSL]: MutualInformation - Ellapsed: 0.005s
+[vgr_sim_node-1] [WARN] [1790146368.193949783] [vgr_uav_sim]: PLAN_CB: called with goal=(-4.10,-0.53)
+[vgr_sim_node-1] [WARN] [1790146368.200051297] [vgr_uav_sim]: PLAN_CB: returning 40 poses
+[gsl_actionserver_node-2] [INFO] [1790146368.211122421] [GSL]: Sending goal (-4.10, -0.53)
+[gsl_actionserver_node-2] [INFO] [1790146368.211353437] [GSL]: Variance: 16.02
+[gsl_actionserver_node-2] [INFO] [1790146368.211368104] [GSL - Trace]: [32mEntering Moving[0m
+[vgr_sim_node-1] [INFO] [1790146368.217185994] [vgr_uav_sim]: Prepared 40 collision-free navigation waypoints to (-4.10, -0.53)
+[vgr_sim_node-1] [INFO] [1790146368.218762232] [vgr_uav_sim]: UAV navigating in audited 2-D mode to (-4.10, -0.53, 0.30)
+[gsl_actionserver_node-2] [INFO] [1790146376.612929723] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146378.562923903] [GSL]: 10 gas measurements, 10 wind measurements over 1.95 seconds
+[gsl_actionserver_node-2] [INFO] [1790146378.562989395] [GSL]: avg_gas=0.024;  avg_windSpeed=0.15;  avg_wind_dir=3
+[gsl_actionserver_node-2] [INFO] [1790146378.563943605] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146382.906752413] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=17 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146382.906847541] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146384.739318879] [GSL]: 10 gas measurements, 10 wind measurements over 1.83 seconds
+[gsl_actionserver_node-2] [INFO] [1790146384.739374865] [GSL]: avg_gas=0.041;  avg_windSpeed=0.28;  avg_wind_dir=-3
+[gsl_actionserver_node-2] [INFO] [1790146384.740268584] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146389.097928866] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=18 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146389.098002124] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146390.977156571] [GSL]: 10 gas measurements, 10 wind measurements over 1.88 seconds
+[gsl_actionserver_node-2] [INFO] [1790146390.977268724] [GSL]: avg_gas=0.026;  avg_windSpeed=0.19;  avg_wind_dir=2.8
+[gsl_actionserver_node-2] [INFO] [1790146390.978159813] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146395.324084100] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=19 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146395.324154438] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146397.163502355] [GSL]: 10 gas measurements, 10 wind measurements over 1.84 seconds
+[gsl_actionserver_node-2] [INFO] [1790146397.163585274] [GSL]: avg_gas=0.047;  avg_windSpeed=0.25;  avg_wind_dir=-2.8
+[gsl_actionserver_node-2] [INFO] [1790146397.165396499] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146401.587872683] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=20 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146401.587935288] [GSL - Trace]: [32mEntering StopAndMeasure[0m
+[gsl_actionserver_node-2] [INFO] [1790146403.572768343] [GSL]: 10 gas measurements, 10 wind measurements over 1.98 seconds
+[gsl_actionserver_node-2] [INFO] [1790146403.572892551] [GSL]: avg_gas=0.047;  avg_windSpeed=0.23;  avg_wind_dir=2.8
+[gsl_actionserver_node-2] [INFO] [1790146403.574515727] [GSL]: [33mNOTHING [0m
+[gsl_actionserver_node-2] [INFO] [1790146408.036904592] [GSL]: NATIVE_RECOVERY_WIND_PATH=GADEN_GROUND_TRUTH QUERY_SUCCESS=21 FALLBACK=0
+[gsl_actionserver_node-2] [INFO] [1790146408.036989309] [GSL]: [33mStarted simulations. Might take a while![0m
+[gsl_actionserver_node-2] [INFO] [1790146408.038856056] [GSL]: NATIVE_RECOVERY_SOURCE_UPDATE_WIND_EXPORTED=1
+[gsl_actionserver_node-2] [INFO] [1790146408.670283263] [GSL - Trace]: [32mFirst simulation level done[0m
+[gsl_actionserver_node-2] [INFO] [1790146408.818901085] [GSL - Trace]: [32mSimulation level 2 done[0m
+[gsl_actionserver_node-2] [INFO] [1790146408.856350326] [GSL - Trace]: [32mSimulation level 3 done[0m
+[gsl_actionserver_node-2] [INFO] [1790146408.857012592] [GSL - Trace]: [32mSimulation level 4 done[0m
+[gsl_actionserver_node-2] [INFO] [1790146408.857029525] [GSL]: Number of levels in the simulation: 4
+[gsl_actionserver_node-2] [INFO] [1790146408.857037050] [GSL]: Total number of simulations: 116
+[gsl_actionserver_node-2] [INFO] [1790146408.857069089] [GSL]: Time ellapsed in simulation = 0.820059779 s
+[gsl_actionserver_node-2] [INFO] [1790146408.857189004] [GSL]: NATIVE_RECOVERY_SOURCE_UPDATE_COMPLETE=1
+[gsl_actionserver_node-2] [INFO] [1790146408.863332383] [GSL]: Max mutual info: 1.839
+[gsl_actionserver_node-2] [INFO] [1790146408.863486379] [GSL]: MutualInformation - Ellapsed: 0.006s
+[vgr_sim_node-1] [WARN] [1790146408.869308366] [vgr_uav_sim]: PLAN_CB: called with goal=(-0.20,-6.53)
+[vgr_sim_node-1] [WARN] [1790146408.887079081] [vgr_uav_sim]: PLAN_CB: returning 32 poses
+[gsl_actionserver_node-2] [INFO] [1790146408.894716080] [GSL]: Sending goal (-0.20, -6.53)
+[gsl_actionserver_node-2] [INFO] [1790146408.894948809] [GSL]: Variance: 19.13
+[gsl_actionserver_node-2] [INFO] [1790146408.894962820] [GSL - Trace]: [32mEntering Moving[0m
+[vgr_sim_node-1] [INFO] [1790146408.901281401] [vgr_uav_sim]: Prepared 32 collision-free navigation waypoints to (-0.20, -6.53)
+[vgr_sim_node-1] [INFO] [1790146408.902594393] [vgr_uav_sim]: UAV navigating in audited 2-D mode to (-0.20, -6.53, 0.30)
+[gsl_actionserver_node-2] [INFO] [1790146409.428462514] [rclcpp]: signal_handler(signum=2)
+[gsl_actionserver_node-2] [INFO] [1790146409.428778209] [GSL]: Could not find the source. Sorry!
+[gsl_actionserver_node-2] [ERROR] [1790146409.444774605] [GSL]: [31mException while running GSL: Asked to publish result for goal that does not exist[0m
+[gsl_benchmark_runner-3] Traceback (most recent call last):
+[gsl_benchmark_runner-3]   File "/home/zyc/ros2_ws/install/vgr_bridge/lib/vgr_bridge/gsl_benchmark_runner", line 33, in <module>
+[gsl_benchmark_runner-3]     sys.exit(load_entry_point('vgr-bridge', 'console_scripts', 'gsl_benchmark_runner')())
+[gsl_benchmark_runner-3]   File "/home/zyc/ros2_ws/build/vgr_bridge/vgr_bridge/gsl_benchmark_runner.py", line 413, in main
+[gsl_benchmark_runner-3]     rclpy.spin(node)
+[gsl_benchmark_runner-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 229, in spin
+[gsl_benchmark_runner-3]     executor.spin_once()
+[gsl_benchmark_runner-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 751, in spin_once
+[gsl_benchmark_runner-3]     self._spin_once_impl(timeout_sec)
+[gsl_benchmark_runner-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 740, in _spin_once_impl
+[gsl_benchmark_runner-3]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[gsl_benchmark_runner-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 723, in wait_for_ready_callbacks
+[gsl_benchmark_runner-3]     return next(self._cb_iter)
+[gsl_benchmark_runner-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 624, in _wait_for_ready_callbacks
+[gsl_benchmark_runner-3]     raise ExternalShutdownException()
+[gsl_benchmark_runner-3] rclpy.executors.ExternalShutdownException
+[INFO] [vgr_sim_node-1]: process has finished cleanly [pid 31717]
+[ERROR] [gsl_benchmark_runner-3]: process has died [pid 31747, exit code 1, cmd '/home/zyc/ros2_ws/install/vgr_bridge/lib/vgr_bridge/gsl_benchmark_runner --ros-args -r __node:=gsl_benchmark_runner --params-file /tmp/launch_params_3ma8ck0z'].
+[gsl_actionserver_node-2] [INFO] [1790146410.445096184] [GSL]: [34mDONE, CLOSING[0m
+[gsl_actionserver_node-2] terminate called after throwing an instance of 'std::system_error'
+[gsl_actionserver_node-2]   what():  Invalid argument
+[ERROR] [gsl_actionserver_node-2]: process has died [pid 31745, exit code -6, cmd '/home/zyc/native_pmfs_recovery_v1/install/gsl_server/lib/gsl_server/gsl_actionserver_node --ros-args -r __node:=gsl_server --params-file /tmp/launch_params_uzw7xot4'].
