@@ -236,3 +236,62 @@ This makes M6 a materially stronger candidate than before.
 Status:
 
 `ADVANCE TO G0.5 FROZEN-BACKBONE FEASIBILITY`.
+
+
+## 11. G0.5 architecture preflight
+
+Official Hugging Face release:
+- repo: `GeoPT/GeoPT_Pretrained_Models`;
+- checkpoint: `GeoPT_8layers.pt`;
+- reported size: 15.6 MB;
+- SHA256: `c0b1b9c4e5d533dbc249190d3d1fbe8e6b066b36d325cf4377cc0d613c02d1c2`;
+- config: hidden=256, 8 layers, 8 heads, slice_num=32, MLP ratio=2;
+- input contract: coord=3, SDF=1, normal/direction=3, dynamics condition=4.
+
+Reconstructing the official 8-layer Transolver from source gives:
+- pretraining model parameters (9-D trajectory head): **3,865,673**;
+- downstream 1-D plume-head model: **3,863,617**;
+- parameters retained if following the official fine-tune filter that excludes only final `mlp2` and `ln_3`: **3,862,848**.
+
+Expected coverage:
+- **99.927% of pretrained parameters retained**;
+- **99.980% of downstream model parameters initialized from pretrained backbone**.
+
+This is an architecture-derived expectation. Codex must still load the actual checkpoint and record the real key/shape match count.
+
+## 12. House-scale token-cost preflight
+
+From the existing House02 PMFS evidence:
+- grid size: 27 × 39 = 1053 cells;
+- free-space cells: 631;
+- obstacle cells: 422.
+
+A faithful local reconstruction of the official 8-layer irregular-mesh Transolver was benchmarked on CPU solely for scale estimation:
+
+| tokens | median CPU forward |
+|---:|---:|
+| 631 | ~0.079 s |
+| 1053 | ~0.144 s |
+| 5000 | ~0.593 s |
+
+These are **not official GeoPT benchmark numbers** and do not include checkpoint loading or source adapter. They show only that PMFS-scale 2-D free-space token counts are far below the mesh sizes GeoPT is designed for.
+
+Inference/token count is therefore not currently a primary M6 risk.
+
+## 13. Revised G0.5 hard tasks
+
+Codex should now verify only the remaining factual gaps:
+
+1. download the official `GeoPT_8layers.pt`;
+2. verify SHA256;
+3. instantiate exact official 8-layer model with `space_dim=3, fun_dim=11`;
+4. load with the official fine-tune filter;
+5. record actual loaded keys / tensors / parameter count and compare against the predicted ~99.93%;
+6. construct House02 free-space features using:
+   - xyz;
+   - wall SDF;
+   - nearest-wall direction;
+   - GT wind unit vector + magnitude;
+7. run one actual frozen-backbone forward pass.
+
+If actual load coverage is materially below the predicted value, investigate before any plume training.
