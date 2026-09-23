@@ -14,7 +14,7 @@ EXPECTED_ELIGIBLE = {
 
 
 def median(xs):
-    return statistics.median(xs) if xs else float("nan")
+    return statistics.median(xs) if xs else None
 
 
 def main():
@@ -46,14 +46,20 @@ def main():
         any(run.startswith("H02_") for run in passes)
         and any(run.startswith("H03_") for run in passes)
     )
+    passage_median = median(passage_pct)
+    static_median = median(static_pct)
+    geometry_median = median(geometry_pct)
     gate = bool(
         not missing
         and len(eligible) == 4
         and len(passes) >= 3
         and both_houses
-        and median(passage_pct) <= 0.25
-        and median(passage_pct) < median(static_pct)
-        and median(passage_pct) < median(geometry_pct)
+        and passage_median is not None
+        and static_median is not None
+        and geometry_median is not None
+        and passage_median <= 0.25
+        and passage_median < static_median
+        and passage_median < geometry_median
     )
 
     payload = {
@@ -65,9 +71,9 @@ def main():
         "single_run_pass_count": len(passes),
         "both_houses_represented_among_passes": both_houses,
         "median_truth_rank_percentile": {
-            "passage_auc": median(passage_pct),
-            "static_occupancy": median(static_pct),
-            "geometry": median(geometry_pct),
+            "passage_auc": passage_median,
+            "static_occupancy": static_median,
+            "geometry": geometry_median,
         },
         "promotion_rule": {
             "all_four_H02_H03_runs_present_and_eligible": True,
