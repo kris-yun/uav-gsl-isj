@@ -351,3 +351,135 @@ M1-v2:
      active identifiability, and declaration."
 
 This is the version worth testing when the repaired Native PMFS artifacts arrive.
+
+
+---
+
+## 14. Mathematical correction — do NOT identify one-step KL radius with hit-law KL radius
+
+**Correction added 2026-09-23 before any data test.**
+
+Section 3's one-step identity is correct:
+
+[
+D_{KL}(K_{w+delta w}(cdot|z)Vert K_w(cdot|z))
+=
+|delta w(z)|^2/(2sigma^2).
+]
+
+However, the same numerical radius `eta` must **not** be copied directly into the Level-A Bernoulli hit-law ball and then interpreted as the same wind-error budget.
+
+For Markov path laws Q and P with the same initial law, the chain rule gives
+
+[
+D_{KL}(Q_{0:T}Vert P_{0:T})
+=
+mathbb E_Q
+sum_{k=0}^{T-1}
+D_{KL}(Q_k(cdot|X_k)Vert P_k(cdot|X_k)).
+]
+
+Therefore, under a per-transition bound `eta_k`, a safe path-level budget is the accumulated relative-entropy budget, not one step's radius.
+
+The PMFS hit/miss output is a measurable function of the simulator trajectory. By data processing,
+
+[
+D_{KL}(Q_{m hit}Vert P_{m hit})
+le
+D_{KL}(Q_{m path}Vert P_{m path}).
+]
+
+Consequences:
+
+1. the Bernoulli Level-A radius is an **observation/path-law radius**, not automatically the one-step wind radius;
+2. setting `rho_hit = eta_step` is not a physically justified contraction of the full PMFS simulator;
+3. a crude bound such as `rho_path <= T eta_step` can become too loose, especially because PMFS contains many persistent filaments and many moves;
+4. the direct velocity interpretation `|delta_w| <= sigma sqrt(2 eta)` belongs to the **transition-level** ambiguity only.
+
+This correction strengthens the reason to keep Level A explicitly as a cheap falsification probe and Level B as the paper-level transport-native method.
+
+### 14.1 Revised Level-A meaning
+
+Level A now has two permissible uses only:
+
+**A1 — abstract falsification panel.**
+Use predeclared observation-law radii `rho_hit` only to ask whether set-valued likelihoods can improve truth-source rank at all. Do not label `rho_hit` as a wind-speed uncertainty.
+
+**A2 — source-blind empirical observation-law calibration.**
+If independent nominal/held-out plume realizations allow a source-blind estimate of predictive hit-law discrepancy, use that estimate to set `rho_hit`. Source truth may not be used.
+
+If neither A1 nor A2 shows a repeated truth-rank signal, stop. Do not build Level B.
+
+### 14.2 Stronger Level-B target: robust occupation operator
+
+The transport-native method should keep the ambiguity at the transition kernel.
+
+For a target cell c and horizon T, define terminal reward
+
+[
+V_T(z)=1[z=c].
+]
+
+For an s-rectangular transition ambiguity set
+
+[
+mathcal K_eta(z)
+=
+{q(cdot|z):D_{KL}(q(cdot|z)Vert p(cdot|z))leeta(z)},
+]
+
+upper/lower single-filament occupancy probabilities can be propagated backward:
+
+[
+V_k^+(z)
+=
+sup_{qinmathcal K_eta(z)}
+mathbb E_q[V_{k+1}^+(Z')],
+]
+
+[
+V_k^-(z)
+=
+inf_{qinmathcal K_eta(z)}
+mathbb E_q[V_{k+1}^-(Z')].
+]
+
+Each inner optimization has the scalar KL dual already stated in Section 4.
+
+This gives an exact robust occupancy envelope for a **single filament under the chosen rectangular ambiguity model**.
+
+PMFS's recorded hit map is harder: it records whether at least one of many persistent filaments occupies a cell at a timestep. Do not claim that the single-filament Bellman envelope is already an exact bound for this multi-filament event. The final method must either:
+
+- derive the multi-filament aggregation under a shared admissible transport kernel; or
+- use a clearly stated conservative/factorized approximation and validate its coverage empirically.
+
+This is now an explicit implementation gate.
+
+### 14.3 Alternative computational route worth probing
+
+A second paper-level route is to place a KL ball on the **entire PMFS simulator path law** P_s for source s and robustify the exact simulator output H_x(path):
+
+[
+sup_{Q:D_{KL}(QVert P_s)leho}
+mathbb E_Q[H_x]
+=
+inf_{lambda>0}
+left[
+lambdaho+lambdalogmathbb E_{P_s}
+e^{H_x/lambda}
+ight].
+]
+
+The corresponding lower expectation uses `-H_x`.
+
+Advantages:
+- robustifies the exact PMFS hit-map functional, including multiple filaments and the any-hit convention;
+- inner problem is still one-dimensional;
+- can initially be estimated from repeated nominal simulator trajectories.
+
+Risk:
+- finite Monte Carlo support / exponential weighting may be unstable;
+- a path-law radius is less directly interpretable than a local transition radius;
+- physical calibration must use relative-entropy rate / accumulated drift discrepancy, not source truth.
+
+Compare transition-operator Level B and path-law DRO only after Level A gives a positive rank signal.
