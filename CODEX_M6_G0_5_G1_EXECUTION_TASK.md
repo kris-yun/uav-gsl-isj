@@ -1,4 +1,4 @@
-# CODEX M6 EXECUTION TASK — GeoPT Foundation Transfer
+> **DYNAMICS-PROMPT UPDATE (2026-09-23):** Read `evidence/geopt_physics_foundation_pmfs_v1/MECHANISTIC_BRIDGE_GEOPT_RANDOM_WALK_TO_PMFS_FILAMENT_20260923.md`. GeoPT pretraining conditions on `[direction_x,direction_y,direction_z,step_length]`. For G1, prefer the physically aligned gas prompt `[wind_unit_vector, geometry_scaled_advective_displacement]` with a predeclared protocol-derived time horizon. Raw-speed encoding may be retained only as an ablation.\n\n# CODEX M6 EXECUTION TASK — GeoPT Foundation Transfer
 
 Date: 2026-09-23  
 Branch: `research/geopt-physics-foundation-pmfs-v1`
