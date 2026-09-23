@@ -23,8 +23,10 @@ transport_args=list(model.transport.forward.__code__.co_varnames[:model.transpor
 
 # Zero-boundary diffusion must never wrap an impulse from one edge to the other.
 edge=torch.zeros(1,1,9,9); edge[0,0,4,0]=1.0
-nbr=m.zero_boundary_neighbor_mean(edge)
-boundary_wrap=float(nbr[0,0,4,-1].abs())
+stencil=m.zero_boundary_stencil(edge)
+# At destination (row4,last-col), none of its five local source neighbours may
+# contain the impulse placed at the opposite boundary.
+boundary_wrap=float(stencil[0,:,4,-1].abs().max())
 
 # GADEN timing contract: first wind is used before update; dynamic sequence must
 # actually advance and loop only inside [1,10].
