@@ -205,7 +205,7 @@ def train_one(mode,features,gate,coarse,targets,free):
     return model,losses
 
 
-def evaluate_variant(name,model,eval_base,eval_feat,eval_gate,truth,free):
+def evaluate_variant(name,model,eval_base,eval_features,eval_gates,truth,free):
     all_rows=[]
     fits={}
     cos_gains=[]
@@ -214,8 +214,8 @@ def evaluate_variant(name,model,eval_base,eval_feat,eval_gate,truth,free):
     correction_ratios=[]
     for seed in BASE_SEEDS:
         coarse=eval_base[seed]
-        feat=eval_feat
-        gate=eval_gate
+        feat=eval_features[seed]
+        gate=eval_gates[seed]
         with torch.no_grad():
             corrected,corr=apply_corrector(model,coarse,feat,gate,free,name)
         ratio=float(torch.linalg.vector_norm(free_flat(corr,free))/
@@ -326,9 +326,12 @@ def main():
         truth[pair]={p:d0.target(bank,*pair,p)[None] for p in PLUME_SEEDS}
 
     eval_w3=record_wind3(d0,mm,winds3,EVAL_PAIRS)
-    # physical feature/gate is identical across base seeds because it is source-blind.
-    example=eval_base[BASE_SEEDS[0]]
-    eval_feat,eval_gate=build_features_and_gate(example,eval_w3,free,cell_m)
+    eval_features={}
+    eval_gates={}
+    for seed in BASE_SEEDS:
+        ef,eg=build_features_and_gate(eval_base[seed],eval_w3,free,cell_m)
+        eval_features[seed]=ef
+        eval_gates[seed]=eg
 
     result={
       "mode":"M4_CONSTRAINT_ACTIVE_RESIDUAL_D2",
@@ -342,7 +345,7 @@ def main():
       "models":{},
     }
     for mode in ("gated","global"):
-        ev=evaluate_variant(mode,models[mode],eval_base,eval_feat,eval_gate,truth,free)
+        ev=evaluate_variant(mode,models[mode],eval_base,eval_features,eval_gates,truth,free)
         ev["loss_first"]=losses[mode][0]
         ev["loss_last"]=losses[mode][-1]
         result["models"][mode]=ev
