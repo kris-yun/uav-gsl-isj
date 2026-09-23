@@ -1,0 +1,71 @@
+name: M6 GeoPT G0.5 actual load
+
+on:
+  push:
+    branches:
+      - research/m6-geopt-g05-runtime-v1
+    paths:
+      - ".github/workflows/m6-geopt-g05-runtime.yml"
+      - "evidence/geopt_physics_foundation_pmfs_v1/g05_actual_checkpoint_load.py"
+      - "evidence/geopt_physics_foundation_pmfs_v1/g05_house02_runtime_tokens.py"
+
+permissions:
+  contents: read
+
+jobs:
+  g05:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install minimal runtime
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pandas scipy timm einops huggingface_hub
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Freeze official GeoPT source
+        run: |
+          git clone --filter=blob:none https://github.com/Physics-Scaling/GeoPT.git /tmp/GeoPT
+          git -C /tmp/GeoPT checkout 9984f359fd44b6332c03ca55ab2e659e0c6e899d
+          echo "GEOPT_COMMIT=$(git -C /tmp/GeoPT rev-parse HEAD)"
+
+      - name: Download official checkpoint and config
+        run: |
+          python - <<'PY'
+          from huggingface_hub import hf_hub_download
+          from pathlib import Path
+          repo="GeoPT/GeoPT_Pretrained_Models"
+          root=Path("/tmp/geopt_hf")
+          root.mkdir(parents=True,exist_ok=True)
+          for name in ("GeoPT_8layers.pt","config.json"):
+              p=hf_hub_download(repo_id=repo,filename=name,local_dir=root)
+              print(name,p,Path(p).stat().st_size)
+          PY
+          sha256sum /tmp/geopt_hf/GeoPT_8layers.pt
+          cat /tmp/geopt_hf/config.json
+
+      - name: Build semantics-aligned House02 runtime tokens
+        run: |
+          python evidence/geopt_physics_foundation_pmfs_v1/g05_house02_runtime_tokens.py \
+            --hit evidence/hcmc_v1/independent_raw_native_20260922_verified/H02_R2026092211/context_bank/source_update_0001/measured_hit_probability.csv \
+            --wind evidence/hcmc_v1/independent_raw_native_20260922_verified/H02_R2026092211/context_bank/source_update_0001/estimated_wind.csv \
+            --out /tmp/house02_geopt_runtime.npz \
+            --meta /tmp/house02_geopt_runtime_meta.json \
+            --tau-ref-s 1.0
+
+      - name: Strict actual checkpoint load and forward
+        run: |
+          python evidence/geopt_physics_foundation_pmfs_v1/g05_actual_checkpoint_load.py \
+            --geopt-root /tmp/GeoPT \
+            --checkpoint /tmp/geopt_hf/GeoPT_8layers.pt \
+            --config /tmp/geopt_hf/config.json \
+            --house-npz /tmp/house02_geopt_runtime.npz \
+            --output /tmp/g05_actual_load.json
+          echo "===M6_G05_ACTUAL_LOAD_RESULT==="
+          cat /tmp/g05_actual_load.json
