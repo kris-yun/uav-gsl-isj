@@ -1,7 +1,7 @@
 # C0.5 REAL-GADEN DECISION — 2026-09-23
 
 Branch: `research/causal-compositional-plume-world-model-v1`  
-Status: **HOLD — HOUSE02 FIELD SIGNAL, NO QUALIFYING SOURCE-RANK OR UNKNOWN-HOUSE PASS**
+Status: **NO-GO AS MAIN — HOUSE02 FIELD SIGNAL DOES NOT SUPPORT THE M4-v2 REUSABLE TRANSPORT MECHANISM**
 
 This report records the evidence actually generated and preserves the stricter
 unknown-House boundary. It does not promote the House02 bank to a main-line
@@ -60,10 +60,15 @@ M4 result.
    Source-label and wind-label shuffle retraining were not run after the
    rank-tie stop rule. No full null battery is claimed.
 
-9. **M4 decision:** **HOLD for G3; no C0.5 mechanism ADVANCE.** The same-House
-   physical/data-integrity precondition and a held-out field advantage are
-   recorded, but neither source-rank superiority nor a reliable transport
-   effect was established. The required unknown-House data remain unavailable.
+9. **M4 decision:** **NO-GO AS MAIN for M4-v2.** The original C0.5 evaluation
+   stopped at HOLD because source-rank superiority and a reliable transport
+   effect were not established. A subsequent frozen, kill-only transport-response
+   audit used the same checkpoints without retraining and rejected the reusable
+   transport interpretation: the operator's W1→W2 field-change amplitude was
+   only 4.31%–5.25% of the paired real-GADEN wind intervention, while its
+   source-intervention amplitude was 80.60%–85.83% of the paired real-GADEN
+   source intervention. The predicted wind/source response ratio was only
+   about 5.35%–6.11% of the true ratio. M4-v2 therefore does not proceed to G3.
 
 10. **Closed loop:** **Not justified.** Do not modify PMFS movement, source
     updates, stopping logic, or ROS/live-loop code.
@@ -80,5 +85,14 @@ M4 result.
   [`C0_5_LOCAL_COMPARISON_RESULT_20260923.md`](C0_5_LOCAL_COMPARISON_RESULT_20260923.md)
 - Hard boundary:
   [`G3_UNKNOWN_HOUSE_TRANSFER_HARD_GATE_20260923.md`](G3_UNKNOWN_HOUSE_TRANSFER_HARD_GATE_20260923.md)
+- Post-freeze M4-v2 transport-response kill audit:
+  [`M4_V2_FROZEN_TRANSPORT_RESPONSE_AUDIT_20260923.md`](M4_V2_FROZEN_TRANSPORT_RESPONSE_AUDIT_20260923.md)
+
+## Post-freeze boundary
+
+The transport-response audit is **kill-only** because S2×W2 had already been
+opened. It may reject M4-v2 but cannot convert the same House02 evidence into
+ADVANCE. No dense candidate-ranking, G3 generation, ROS/PMFS integration, or
+closed-loop run is authorized for this frozen v2.
 
 No claim of M4 ADVANCE or scientific PASS is made.
