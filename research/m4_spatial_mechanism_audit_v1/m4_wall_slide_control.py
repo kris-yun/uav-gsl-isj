@@ -30,15 +30,31 @@ _base_grid=base._base_grid
 _path_is_clear=base._path_is_clear
 _scatter_add_flat=base._scatter_add_flat
 
-def _free_normals(free_mask:torch.Tensor):
-    """Approximate inward-free-space wall normal from Sobel gradient."""
-    dtype=free_mask.dtype; device=free_mask.device
-    kr=torch.tensor([[-1.,-2.,-1.],[0.,0.,0.],[1.,2.,1.]],device=device,dtype=dtype).reshape(1,1,3,3)/8.0
-    kc=torch.tensor([[-1.,0.,1.],[-2.,0.,2.],[-1.,0.,1.]],device=device,dtype=dtype).reshape(1,1,3,3)/8.0
-    gr=F.conv2d(free_mask,kr,padding=1)
-    gc=F.conv2d(free_mask,kc,padding=1)
-    n=torch.sqrt(gr*gr+gc*gc).clamp_min(1e-8)
-    return gr/n,gc/n
+def _first_collision_normal(free_mask,rowf,colf,dr,dc,substeps:int=4):
+    """Approximate free-space normal from the first blocked cell on a segment."""
+    b,_,h,w=free_mask.shape
+    free=free_mask[:,0].reshape(b,-1)>0.5
+    nr=torch.zeros_like(dr); nc=torch.zeros_like(dc)
+    found=torch.zeros_like(dr,dtype=torch.bool)
+    for k in range(1,substeps+1):
+        frac=float(k)/float(substeps)
+        rrf=rowf[None]+frac*dr
+        ccf=colf[None]+frac*dc
+        rr=torch.round(rrf).long(); cc=torch.round(ccf).long()
+        inside=(rr>=0)&(rr<h)&(cc>=0)&(cc<w)
+        idx=rr.clamp(0,h-1)*w+cc.clamp(0,w-1)
+        sampled=torch.gather(free,1,idx)
+        hit=inside & (~sampled) & (~found)
+        vr=rowf[None]-rr.to(dr.dtype)
+        vc=colf[None]-cc.to(dc.dtype)
+        norm=torch.sqrt(vr*vr+vc*vc)
+        dnorm=torch.sqrt(dr*dr+dc*dc).clamp_min(1e-8)
+        frn=torch.where(norm>1e-8,vr/norm.clamp_min(1e-8),-dr/dnorm)
+        fcn=torch.where(norm>1e-8,vc/norm.clamp_min(1e-8),-dc/dnorm)
+        nr=torch.where(hit,frn,nr)
+        nc=torch.where(hit,fcn,nc)
+        found |= hit
+    return nr,nc,found
 
 def _scatter_displacement(src,active,dr,dc,free_mask,path_clear):
     """Bilinear conservative scatter for selected source cells."""
@@ -102,8 +118,8 @@ def conservative_wall_slide_remap(
 
     # For blocked source cells, estimate free-space normal and remove only the
     # velocity component that points into the wall.
-    nr,nc=_free_normals(free_mask)
-    nr=nr[:,0].reshape(b,n); nc=nc[:,0].reshape(b,n)
+    nr,nc,collision_found=_first_collision_normal(
+        free_mask,rowf,colf,dr,dc,substeps=4)
     dot=dr*nr+dc*nc
     toward=(dot<0)
     proj=torch.where(toward,dot,torch.zeros_like(dot))
