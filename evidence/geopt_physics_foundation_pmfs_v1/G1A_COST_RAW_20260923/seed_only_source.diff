@@ -1,0 +1,65 @@
+diff -ru --exclude .git /home/zyc/ros2_ws/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp /home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp
+--- /home/zyc/ros2_ws/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp	2026-07-25 22:12:26.816791125 +0800
++++ /home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp	2026-09-22 13:59:55.223400793 +0800
+@@ -2,6 +2,8 @@
+ #include "gaden/core/Logging.hpp"
+ #include "gaden/core/Vectors.hpp"
+ #include <random>
++#include <cstdlib>
++#include <cstdint>
+ 
+ namespace gaden
+ {
+@@ -25,17 +27,34 @@
+         return val >= min && val < max;
+     }
+ 
++    // Optional seed binding for independent plume realizations.  When the
++    // environment variable is absent, this preserves std::mt19937's default
++    // seed (5489u), which is the historical GADEN behavior.
++    inline std::uint32_t configuredSeed(std::uint32_t salt)
++    {
++        std::uint64_t base = 5489u;
++        const char* raw = std::getenv("GADEN_RNG_SEED");
++        if (raw != nullptr && *raw != '\0')
++        {
++            char* end = nullptr;
++            const unsigned long long parsed = std::strtoull(raw, &end, 10);
++            if (end != raw)
++                base = static_cast<std::uint64_t>(parsed);
++        }
++        return static_cast<std::uint32_t>((base ^ (base >> 32)) + salt);
++    }
++
+     // thread-safe
+     inline float GaussianRandom(float mean, float stdDev)
+     {
+-        static thread_local std::mt19937 engine;
++        static thread_local std::mt19937 engine(configuredSeed(0x9e3779b9u));
+         static thread_local std::normal_distribution<> dist{0, 1};
+         return mean + dist(engine) * stdDev;
+     }
+ 
+     inline float uniformRandom(float min, float max)
+     {
+-        static thread_local std::mt19937 engine;
++        static thread_local std::mt19937 engine(configuredSeed(0x243f6a88u));
+         static thread_local std::uniform_real_distribution<float> distribution{0.0, 1.0};
+         return min + distribution(engine) * (max - min);
+     }
+@@ -45,8 +64,6 @@
+         return std::abs(x - y) < epsilon;
+     }
+ 
+-    // holds a long list of N(0,1) values, and returns them one at a time, scaled as requested.
+-    // obviously not as good as generating them on the fly, but it's not like we are doing cryptography here
+     template <int Size>
+     class PrecalculatedGaussian
+     {
+@@ -69,4 +86,4 @@
+         std::array<float, Size> m_precalculatedTable;
+     };
+ 
+-} // namespace gaden
+\ No newline at end of file
++} // namespace gaden
