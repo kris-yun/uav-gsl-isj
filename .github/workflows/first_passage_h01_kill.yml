@@ -27,7 +27,7 @@ jobs:
           git show origin/research/standalone-candidate-replay-20260923:evidence/standalone_candidate_replay/H01_R2026092201/occupied_cells.csv.zst > /tmp/occupied_cells.csv.zst
           git show origin/research/standalone-candidate-replay-20260923:evidence/standalone_candidate_replay/H01_R2026092201/parity_all.csv > /tmp/parity_all.csv
           git show origin/research/hcmc-v1-independent-validation-20260922:evidence/hcmc_v1/independent_raw_native_20260922_verified/H01_R2026092201/context_bank/source_update_0001/measured_hit_probability.csv > /tmp/measured_hit_probability.csv
-          python3 -m pip install --quiet zstandard pandas numpy
+          python3 -m pip install --quiet --upgrade "zstandard>=0.23.0" pandas numpy
 
       - name: Run source-blind first-passage pre-screen
         shell: bash
@@ -44,7 +44,7 @@ jobs:
           RNG_SEED = 20260923
           NULL_REPS = 500
 
-          ev = pd.read_csv('/tmp/occupied_cells.csv.zst', compression='zstd')
+          import zstandard as zstd\n          with open('/tmp/occupied_cells.csv.zst','rb') as src, open('/tmp/occupied_cells.csv','wb') as dst:\n              zstd.ZstdDecompressor().copy_stream(src,dst)\n          ev = pd.read_csv('/tmp/occupied_cells.csv')
           parity = pd.read_csv('/tmp/parity_all.csv')
           meas = pd.read_csv('/tmp/measured_hit_probability.csv')
 
