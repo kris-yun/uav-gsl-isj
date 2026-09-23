@@ -46,6 +46,28 @@ Do NOT claim absolute firstness without a broader final literature review.
 
 Older GSL source declaration and sequential tests in other localization/robotics fields remain prior art.
 
+### Critical near-neighbor — conformal source detection on networks (AAAI 2026)
+
+Jian et al., *Conformal Prediction for Multi-Source Detection on a Network*, AAAI 2026, DOI 10.1609/aaai.v40i43.40990.
+
+They construct conformal prediction sets with statistically valid recall / coverage guarantees for single- and multi-source detection in network diffusion problems.
+
+Therefore Auxiliary A must NOT claim:
+- first statistically valid source-location prediction set;
+- first conformal/source-set coverage guarantee;
+- first uncertainty set for a diffusion-source localization problem.
+
+Remaining distinction to test and defend:
+- their setting uses snapshot observations on a diffusion network and an external calibration framework;
+- ours is sequential mobile robotic sensing;
+- sensing actions are selected adaptively from past data;
+- validity is required uniformly over data-dependent stopping times;
+- the null includes a transport-ambiguity family;
+- the confidence set is updated through e-process inversion during the search itself.
+
+This is a meaningful distinction only if the anytime/adaptive guarantee is actually validated.
+
+
 ## 4. Setup
 
 Let S be the finite PMFS candidate-source set.
