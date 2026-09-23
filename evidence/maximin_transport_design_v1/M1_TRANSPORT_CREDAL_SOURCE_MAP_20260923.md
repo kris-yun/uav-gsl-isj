@@ -47,6 +47,116 @@ After observing y_t in {0,1}, the admissible likelihood interval is
 
 These bounds come from the same transport model used by robust planning.
 
+
+## 2A. PMFS-native score interval — preferred implementation
+
+The generic Bernoulli-likelihood construction is useful for one-step information design and Auxiliary A, but native PMFS source scoring does not perform a simple Bernoulli Bayes update.
+
+Official MAPIRlab PMFS humble implements
+
+\[
+a_i(s)=\operatorname{lerp}(1,1-\gamma|m_i-h_{s,i}|,c_i)
+=1-c_i\gamma|m_i-h_{s,i}|,
+\]
+
+where \(m_i\) is measured hit probability, \(c_i\) is confidence, \(h_{s,i}\) is simulated hit probability for source s, and gamma is sourceDiscriminationPower.
+
+The source score is
+
+\[
+S(s)=\prod_i a_i(s)
+\]
+
+over free cells.
+
+If transport ambiguity gives
+
+\[
+h_{s,i}\in[L_{s,i},U_{s,i}],
+\]
+
+define
+
+\[
+d_{\min}=\operatorname{dist}(m_i,[L_{s,i},U_{s,i}])
+\]
+
+and
+
+\[
+d_{\max}=\max(|m_i-L_{s,i}|,|m_i-U_{s,i}|).
+\]
+
+Because the PMFS factor decreases monotonically with absolute mismatch,
+
+\[
+\boxed{a^-_{s,i}=1-c_i\gamma d_{\max}}
+\]
+
+and
+
+\[
+\boxed{a^+_{s,i}=1-c_i\gamma d_{\min}}.
+\]
+
+A rectangular transport relaxation therefore gives
+
+\[
+\boxed{
+S^-(s)=\prod_i a^-_{s,i},
+\qquad
+S^+(s)=\prod_i a^+_{s,i}.
+}
+\]
+
+Use log products numerically.
+
+For official sourceDiscriminationPower = 0.3 and probabilities in [0,1], the factors remain positive. Any future gamma > 1 configuration must explicitly handle possible non-positive factors.
+
+If candidate scores are normalized across sources, coordinate-wise bounds are
+
+\[
+\boxed{
+\underline P(s)=
+\frac{S^-(s)}
+{S^-(s)+\sum_{r\ne s}S^+(r)}
+}
+\]
+
+and
+
+\[
+\boxed{
+\overline P(s)=
+\frac{S^+(s)}
+{S^+(s)+\sum_{r\ne s}S^-(r)}
+}.
+\]
+
+This is the preferred first implementation because only the forward-model assumption changes:
+
+\[
+\text{single simulated hitMap}
+\longrightarrow
+\text{transport-admissible hitMap interval},
+\]
+
+while PMFS's confidence-weighted map-matching logic remains intact.
+
+### Division of roles
+
+Use the PMFS-native interval score for:
+- source-map inference;
+- robust candidate rank;
+- transport-fragility diagnostics.
+
+Use the Bernoulli hit/miss likelihood family for:
+- prospective one-step mutual-information / TCIF action selection;
+- Auxiliary A e-process declaration.
+
+Do not treat these two scoring objects as identical.
+
+
 ## 3. Cumulative source evidence interval
 
 Let pi_0(s) be the initial source prior.
