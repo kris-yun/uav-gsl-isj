@@ -1,4 +1,4 @@
-# M6 G1 Charter — Low-Data Foundation Transfer and Source-Rank Falsification
+> **CRITICAL INTERFACE CORRECTION (2026-09-23):** GeoPT uses separate `pos3` plus `fx11`; the pretrained `preprocess` layer therefore receives 14 dimensions. See `CRITICAL_INTERFACE_CORRECTION_POS3_PLUS_FX11_20260923.md`. Any wording below that calls 11 dimensions the *total* input is superseded. The correct gas mapping preserves `space_dim=3`, `fun_dim=11` exactly.\n\n# M6 G1 Charter — Low-Data Foundation Transfer and Source-Rank Falsification
 
 Date: 2026-09-23  
 Branch: `research/geopt-physics-foundation-pmfs-v1`
