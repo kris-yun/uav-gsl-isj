@@ -203,8 +203,7 @@ def train(args):
             model.train()
             pred=evolve_to_records(model,source_batch,schedule,free,use_checkpoint=True)
             plog=torch.log1p(pred.clamp_min(0))[:,None] # [B,1,T,1,H,W]
-            f=free[None,None] # [1,1,1,1,H,W] after broadcast below
-            f=f.unsqueeze(2)
+            f=free[None,None] # [1,1,1,1,H,W]
             diff=(plog-targets)**2
             loss=(diff*f).sum()/(f.sum()*diff.shape[0]*diff.shape[1]*diff.shape[2])
             opt.zero_grad(set_to_none=True); loss.backward(); opt.step()
@@ -231,7 +230,13 @@ def evaluate(args):
     source_batch=torch.cat([sources[s] for s,_ in eval_pairs],dim=0).to(device)
     schedule=build_batch_schedule(module,winds,eval_pairs,device)
 
-    # Holdout is first opened here, after checkpoint existence/hash validation.
+    # Validate every frozen checkpoint hash before opening either S2-W2 target.
+    validated={}
+    for seed in TRAIN_SEEDS:
+        key=f"m4v3_seed{seed}"
+        validated[seed]=checkpoint_hash_ok(args.out,manifest,key)
+
+    # Holdout is first opened only after all checkpoint hashes have passed.
     true={}
     for sid,wid in eval_pairs:
         true[(sid,wid)]={ps:target(args.bank,sid,wid,ps).to(device)[None] for ps in PLUME_SEEDS}
@@ -240,7 +245,7 @@ def evaluate(args):
     all_pass=True
     for seed in TRAIN_SEEDS:
         key=f"m4v3_seed{seed}"
-        cp=checkpoint_hash_ok(args.out,manifest,key)
+        cp=validated[seed]
         model=module.InterventionalEvolutionPropagator(cell_m=0.2,internal_dt_s=PHYSICS_DT_S).to(device)
         model.load_state_dict(torch.load(cp,map_location=device,weights_only=True)); model.eval()
         with torch.no_grad():
