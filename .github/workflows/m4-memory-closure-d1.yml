@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/m4-memory-closure-d1.yml"
       - "research/m4_memory_closure_v1/m4_memory_closure_d1.py"
+      - "research/m4_memory_closure_v1/run_d1_remote.sh"
 
 permissions:
   contents: read
@@ -25,6 +26,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install numpy
           pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Syntax-check runner
+        run: bash -n research/m4_memory_closure_v1/run_d1_remote.sh
       - name: Run D1
         run: |
           python research/m4_memory_closure_v1/m4_memory_closure_d1.py --repo-root "$GITHUB_WORKSPACE" --dynamic-wind evidence/causal_compositional_plume_world_model_v1/m4_v3_dynamic_wind_house02 --d0-out evidence/causal_compositional_plume_world_model_v1/m4_v3_d0_house02_20260923 --output-dir /tmp/m4_memory_d1
