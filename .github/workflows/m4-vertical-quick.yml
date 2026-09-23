@@ -1,0 +1,21 @@
+name: M4 vertical quick cosine
+on:
+  push:
+    branches: [research/m4-vertical-control-v1]
+    paths: [".github/workflows/m4-vertical-quick.yml"]
+permissions:
+  contents: read
+jobs:
+  quick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: |
+          pip install numpy
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: |
+          python research/m4_spatial_mechanism_audit_v1/vertical_frozen_quick.py --repo-root "$GITHUB_WORKSPACE" --output /tmp/vertical_quick.json
+          cat /tmp/vertical_quick.json
