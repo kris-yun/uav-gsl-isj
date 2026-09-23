@@ -17,19 +17,22 @@ wind=torch.zeros(8,1,2,h,w); wind[:,:,0]=0.2; wind[:,:,1]=0.5
 
 err=m.superposition_error(model,s1,s2,wind,mask)
 rev=m.wind_reversal_displacement_smoke()
+mass=m.transport_mass_balance_smoke()
+wall=m.wall_nonpenetration_smoke()
 
 # Structural source-leakage audit.
 transport_args=list(model.transport.forward.__code__.co_varnames[:model.transport.forward.__code__.co_argcount])
 
-# Zero-boundary diffusion must never wrap an impulse from one edge to the other.
+# Conservative local closure must not wrap across the exterior boundary.
 edge=torch.zeros(1,1,9,9); edge[0,0,4,0]=1.0
-stencil=m.zero_boundary_stencil(edge)
-# At destination (row4,last-col), none of its five local source neighbours may
-# contain the impulse placed at the opposite boundary.
-boundary_wrap=float(stencil[0,:,4,-1].abs().max())
+edge_mask=torch.ones_like(edge)
+logits=torch.full((1,5,9,9),-20.0)
+logits[:,4]=20.0  # push right; still cannot wrap around an exterior boundary.
+mixed=m.conservative_local_mix(edge,logits,edge_mask)
+boundary_wrap=float(mixed[0,0,4,-1].abs())
 
 # GADEN timing contract: first wind is used before update; dynamic sequence must
-# actually advance and loop only inside [1,10].
+# advance and loop only inside [1,10].
 ids=m.gaden_wind_index_schedule(140,0.1,1.0,11,1,10)
 timing_pass=(ids[0]==0 and 1 in ids and max(ids)<=10 and min(ids)>=0 and ids[-1] in range(1,11))
 
@@ -37,10 +40,13 @@ result={
   "superposition_max_abs_error":err,
   "superposition_pass":err<1e-5,
   "wind_reversal":rev,
+  "mass_balance":mass,
+  "mass_balance_pass":mass["abs_error"]<1e-6,
+  "wall_nonpenetration":wall,
   "transport_forward_args":transport_args,
   "source_leakage_signature_pass":"source" not in " ".join(transport_args).lower(),
   "zero_boundary_wrap_value":boundary_wrap,
-  "zero_boundary_pass":boundary_wrap==0.0,
+  "zero_boundary_pass":boundary_wrap<1e-8,
   "wind_schedule_prefix":ids[:30],
   "wind_schedule_suffix":ids[-20:],
   "wind_schedule_pass":timing_pass,
@@ -49,6 +55,8 @@ checks=[
   result["superposition_pass"],
   rev["reversal_pass"],
   rev["no_advection_pass"],
+  result["mass_balance_pass"],
+  wall["nonpenetration_pass"],
   result["source_leakage_signature_pass"],
   result["zero_boundary_pass"],
   result["wind_schedule_pass"],
