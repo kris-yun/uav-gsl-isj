@@ -1,0 +1,68 @@
+{
+  "all_miss_constant_observation": true,
+  "contract": "DISTRIBUTIONAL_FORWARD_H01_ENERGY_PREAUDIT_V1",
+  "date": "2026-09-23",
+  "destructive_null": {
+    "definition": "product Bernoulli field with exactly the same per-cell occupancy probabilities q_i as the replay; this preserves the PMFS mean hitMap/marginals while deleting all cross-cell dependence",
+    "mc_samples": 5000,
+    "rng_seed": 20260923
+  },
+  "input_run": "H01_R2026092201",
+  "internal_steps": 200,
+  "interpretation": "NO_GO_OR_INCONCLUSIVE_DISTRIBUTIONAL_DEPENDENCE_H01",
+  "measured_probability_unique_rounded": [
+    0.099999685828
+  ],
+  "metrics": {
+    "distributional_energy_actual_joint": {
+      "candidate_count": 121,
+      "spearman_goodness_vs_negative_truth_distance": 0.2762013518812429,
+      "truth_rank_average_ties": 20.5,
+      "truth_score": 0.0
+    },
+    "distributional_energy_independent_marginals_null": {
+      "candidate_count": 121,
+      "spearman_goodness_vs_negative_truth_distance": 0.24976799242440942,
+      "truth_rank_average_ties": 27.5,
+      "truth_score": 0.0
+    },
+    "marginal_occupancy_mass": {
+      "candidate_count": 121,
+      "spearman_goodness_vs_negative_truth_distance": 0.26633455365016173,
+      "truth_rank_average_ties": 20.5,
+      "truth_score": 0.0
+    },
+    "meanfield_l2_to_all_miss": {
+      "candidate_count": 121,
+      "spearman_goodness_vs_negative_truth_distance": 0.27057106701651407,
+      "truth_rank_average_ties": 20.5,
+      "truth_score": 0.0
+    },
+    "native_score": {
+      "candidate_count": 121,
+      "spearman_goodness_vs_negative_truth_distance": 0.15755802062126387,
+      "truth_rank_average_ties": 76.0,
+      "truth_score": 0.0118665092327988
+    }
+  },
+  "mother_idea": "replace one mean hitMap per source candidate by a multivariate predictive distribution over stochastic plume fields",
+  "note": "Scores are frozen without truth coordinates. Truth is used only after score construction for candidate-rank and correlation evaluation. H01 is an all-miss case, so this is specifically a negative-evidence test of whether joint stochastic plume structure adds information beyond the mean hitMap.",
+  "predeclared_gate": {
+    "actual_energy_beats_independent_marginals_truth_rank": true,
+    "actual_energy_beats_meanfield_truth_rank": false,
+    "actual_energy_beats_native_truth_rank": true,
+    "actual_truth_energy_better_than_null_by_3mcse": false,
+    "pass": false
+  },
+  "support_cell_count": 212,
+  "terminal_candidate_count": 121,
+  "truth_candidate_distance_m": 0.23347838323974526,
+  "truth_candidate_id_evaluation_only": "quadtree_23_16_1_1",
+  "truth_energy_decomposition": {
+    "actual_energy": 0.0,
+    "actual_half_pairwise_diversity_term": 0.0,
+    "actual_term_observation_distance": 0.0,
+    "independent_marginals_null_energy": 0.0,
+    "independent_marginals_null_mc_se": 0.0
+  }
+}
