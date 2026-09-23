@@ -33,6 +33,6 @@ while IFS=, read -r split order grid_i grid_j x y z_rule clearance; do
 done < "$SOURCE_TABLE"
 
 test "$count" -eq 24
-find "$OUT" -mindepth 2 -maxdepth 2 -type f -name metadata.json | sort > "$OUT/METADATA_PATHS.txt"
+find "$OUT" -mindepth 3 -maxdepth 3 -type f -name metadata.json | sort > "$OUT/METADATA_PATHS.txt"
 sha256sum "$OUT/METADATA_PATHS.txt" "$GRID" "$SOURCE_TABLE" > "$OUT/MANIFEST_INPUT_HASHES.txt"
 echo "G1B_FULL_GENERATION_OK cases=$count out=$OUT"
