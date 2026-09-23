@@ -31,6 +31,21 @@ logits[:,4]=20.0  # push right; still cannot wrap around an exterior boundary.
 mixed=m.conservative_local_mix(edge,logits,edge_mask)
 boundary_wrap=float(mixed[0,0,4,-1].abs())
 
+# D0 trains three source-wind cells together. The local scatter must preserve
+# that batch dimension in both forward and backward passes.
+batch_state=torch.rand(3,1,9,9)
+batch_logits=torch.randn(3,5,9,9,requires_grad=True)
+batch_mask=torch.ones(1,1,9,9)
+batch_mixed=m.conservative_local_mix(batch_state,batch_logits,batch_mask)
+spatial_weight=torch.arange(81,dtype=batch_mixed.dtype).reshape(1,1,9,9)
+(batch_mixed*spatial_weight).sum().backward()
+batch_backward_pass=(batch_mixed.shape==(3,1,9,9) and
+                     batch_logits.grad is not None and
+                     bool(torch.isfinite(batch_logits.grad).all()) and
+                     bool((batch_logits.grad.abs()>0).any()))
+batch_mass_error=float((batch_mixed.sum(dim=(1,2,3))-
+                        batch_state.sum(dim=(1,2,3))).abs().max())
+
 # GADEN timing contract: first wind is used before update; dynamic sequence must
 # advance and loop only inside [1,10].
 ids=m.gaden_wind_index_schedule(140,0.1,1.0,11,1,10)
@@ -47,6 +62,8 @@ result={
   "source_leakage_signature_pass":"source" not in " ".join(transport_args).lower(),
   "zero_boundary_wrap_value":boundary_wrap,
   "zero_boundary_pass":boundary_wrap<1e-8,
+  "batch_backward_pass":batch_backward_pass,
+  "batch_mass_error":batch_mass_error,
   "wind_schedule_prefix":ids[:30],
   "wind_schedule_suffix":ids[-20:],
   "wind_schedule_pass":timing_pass,
@@ -59,6 +76,8 @@ checks=[
   wall["nonpenetration_pass"],
   result["source_leakage_signature_pass"],
   result["zero_boundary_pass"],
+  result["batch_backward_pass"],
+  result["batch_mass_error"]<1e-5,
   result["wind_schedule_pass"],
 ]
 if not all(checks):

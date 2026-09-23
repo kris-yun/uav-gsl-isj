@@ -127,7 +127,7 @@ def conservative_local_mix(state:torch.Tensor,logits:torch.Tensor,
     for k,(di,dj) in enumerate(directions):
         rr=rows[None]+di; cc=cols[None]+dj
         inside=(rr>=0)&(rr<h)&(cc>=0)&(cc<w)
-        idx=rr.clamp(0,h-1)*w+cc.clamp(0,w-1)
+        idx=(rr.clamp(0,h-1)*w+cc.clamp(0,w-1)).expand(b,-1)
         dest_free=torch.gather(free,1,idx)
         valid=inside & dest_free
         amount=src*weights[:,k].reshape(b,-1)
