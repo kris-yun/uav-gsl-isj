@@ -8,6 +8,7 @@ on:
       - ".github/workflows/m4-v3-w0-wind-contract.yml"
       - "research/causal_compositional_plume_world_model_v1/m4_v3_wind_interface_preflight.py"
       - "research/causal_compositional_plume_world_model_v1/test_m4_v3_wind_interface_preflight.py"
+      - "research/causal_compositional_plume_world_model_v1/m4_v3_w0_ros_preflight.py"
 
 permissions:
   contents: read
@@ -21,5 +22,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Compile live ROS W0 preflight
+        run: python -m py_compile research/causal_compositional_plume_world_model_v1/m4_v3_w0_ros_preflight.py
       - name: Verify canonical downwind-vector contract
         run: python research/causal_compositional_plume_world_model_v1/test_m4_v3_wind_interface_preflight.py
