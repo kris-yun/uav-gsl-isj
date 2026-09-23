@@ -95,11 +95,41 @@ Therefore "information-driven path planning" or "path-integrated information" is
 DOI:
 https://doi.org/10.1109/IROS60139.2025.11246224
 
+
+### C3 — "Many wrong models" odor-source localization (Journal of Turbulence 2025)
+
+Piro, Heinonen, Cencini, Biferale, *Many wrong models approach to localise an odour source in turbulence with static sensors*, Journal of Turbulence 26(5), 2025.
+
+This is a **critical near-neighbor**.
+
+They explicitly:
+- assume turbulent transport models are unavoidably misspecified;
+- run a discrete bank of wrong stochastic plume models;
+- rank the models using an overlap integral;
+- blend the resulting source-location beliefs into a master belief;
+- show that this improves robustness and gives a more reliable stopping criterion.
+
+Therefore we also cannot claim:
+- first odor/GSL method to exploit a family of wrong plume models;
+- first model-uncertainty-aware Bayesian fusion for odor source localization;
+- first robustness-oriented source posterior under turbulent model misspecification.
+
+Important remaining distinction:
+- their sensors are static;
+- their primary mechanism is model ranking/blending after observing sensor data;
+- they do not formulate the **measurement-location decision** as a max-min game;
+- they do not optimize worst-case source information over an ambiguity set;
+- they do not derive Sibson-alpha robust information or an adversarial transport design criterion.
+
+DOI:
+https://doi.org/10.1080/14685248.2025.2492711
+
+
 ## 4. The novelty boundary we must defend
 
 The candidate only survives if we can support this narrower statement:
 
-> Existing GSL methods use a nominal dispersion likelihood, a parametrically relaxed model, or nominal information gain. We instead formulate **sequential mobile source localization as transport-ambiguous source identification**, choosing observations and updating source belief against the worst admissible perturbation of the plume-generated observation law.
+> Existing GSL methods use nominal dispersion likelihoods, parametrically relaxed models, and even weighted ensembles of multiple misspecified plume models. We instead formulate **sequential mobile source localization as transport-ambiguous source identification**, choosing observations and updating source belief against the worst admissible perturbation of the plume-generated observation law.
 
 The intended scientific object is NOT generic uncertainty and NOT merely a new reward.
 
