@@ -1,0 +1,53 @@
+name: Distributional-forward H01 joint-structure gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - research/distributional-forward-gsl-v1
+    paths:
+      - ".github/workflows/distributional_forward_h01_joint.yml"
+      - "research/distributional_forward_v1/h01_distributional_joint_kill.py"
+
+permissions:
+  contents: write
+
+jobs:
+  h01-joint-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch frozen replay and accepted real trace
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin research/standalone-candidate-replay-20260923
+          git fetch origin research/hcmc-v1-independent-validation-20260922
+          git show origin/research/standalone-candidate-replay-20260923:evidence/standalone_candidate_replay/H01_R2026092201/occupied_cells.csv.zst > /tmp/occupied_cells.csv.zst
+          git show origin/research/standalone-candidate-replay-20260923:evidence/standalone_candidate_replay/H01_R2026092201/parity_all.csv > /tmp/parity_all.csv
+          git show origin/research/hcmc-v1-independent-validation-20260922:evidence/hcmc_v1/independent_raw_native_20260922_verified/H01_R2026092201/sensor_trace.csv > /tmp/sensor_trace.csv
+          git show origin/research/hcmc-v1-independent-validation-20260922:evidence/hcmc_v1/independent_raw_native_20260922_verified/H01_R2026092201/context_bank/source_update_timing.csv > /tmp/source_update_timing.csv
+          python3 -m pip install --quiet --upgrade "zstandard>=0.23.0" pandas numpy
+
+      - name: Run frozen source-blind joint-distribution test
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 research/distributional_forward_v1/h01_distributional_joint_kill.py
+
+      - name: Commit result evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evidence/distributional_forward_v1/H01_DISTRIBUTIONAL_JOINT_STRUCTURE_RESULT_20260923.json
+          git add evidence/distributional_forward_v1/H01_DISTRIBUTIONAL_JOINT_STRUCTURE_RESULT_20260923.md
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "evidence: run H01 distributional joint-structure gate"
+          git push origin HEAD:research/distributional-forward-gsl-v1
