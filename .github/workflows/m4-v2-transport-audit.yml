@@ -1,0 +1,32 @@
+name: M4-v2 frozen transport-response audit
+
+on:
+  push:
+    branches:
+      - research/causal-compositional-plume-world-model-v1
+    paths:
+      - ".github/workflows/m4-v2-transport-audit.yml"
+      - "research/causal_compositional_plume_world_model_v1/m4_v2_frozen_transport_response_audit.py"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install frozen audit dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Run kill-only audit
+        run: |
+          python research/causal_compositional_plume_world_model_v1/m4_v2_frozen_transport_response_audit.py | tee /tmp/m4_audit.log
+          echo "---- result file ----"
+          cat evidence/causal_compositional_plume_world_model_v1/M4_V2_FROZEN_TRANSPORT_RESPONSE_AUDIT_20260923.json
