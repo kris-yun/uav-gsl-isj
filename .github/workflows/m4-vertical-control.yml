@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/m4-vertical-control.yml"
       - "research/m4_spatial_mechanism_audit_v1/m4_vertical_three_slab_control.py"
+      - "research/m4_spatial_mechanism_audit_v1/m4_vertical_frozen_surgery.py"
 
 permissions:
   contents: read
@@ -25,6 +26,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install numpy
           pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Frozen-checkpoint vertical surgery
+        run: |
+          python research/m4_spatial_mechanism_audit_v1/m4_vertical_frozen_surgery.py --repo-root "$GITHUB_WORKSPACE" --output /tmp/vertical_surgery.json
+          echo "===VERTICAL_FROZEN_SURGERY_RESULT==="
+          cat /tmp/vertical_surgery.json
       - name: Train
         run: |
           python research/m4_spatial_mechanism_audit_v1/m4_vertical_three_slab_control.py train --repo-root "$GITHUB_WORKSPACE" --out /tmp/m4_vertical --cpu-threads 4
