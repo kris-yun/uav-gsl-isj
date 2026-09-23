@@ -1,0 +1,258 @@
+name: H01 distributional-forward energy preaudit
+
+on:
+  push:
+    branches:
+      - research/distributional-forward-semantics-v1
+    paths:
+      - ".github/workflows/distributional_forward_h01_energy.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  distributional-forward-preaudit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch frozen H01 replay and accepted observation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin research/standalone-candidate-replay-20260923
+          git fetch origin research/hcmc-v1-independent-validation-20260922
+          git show origin/research/standalone-candidate-replay-20260923:evidence/standalone_candidate_replay/H01_R2026092201/occupied_cells.csv.zst > /tmp/occupied_cells.csv.zst
+          git show origin/research/standalone-candidate-replay-20260923:evidence/standalone_candidate_replay/H01_R2026092201/parity_all.csv > /tmp/parity_all.csv
+          git show origin/research/hcmc-v1-independent-validation-20260922:evidence/hcmc_v1/independent_raw_native_20260922_verified/H01_R2026092201/context_bank/source_update_0001/measured_hit_probability.csv > /tmp/measured_hit_probability.csv
+          python3 -m pip install --quiet --upgrade "zstandard>=0.23.0" pandas numpy
+
+      - name: Run source-blind distributional energy-score knife
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, math
+          from pathlib import Path
+          import numpy as np
+          import pandas as pd
+          import zstandard as zstd
+
+          T = 200
+          TRUTH = np.array([-0.4, -2.9], dtype=float)
+          RNG_SEED = 20260923
+          NULL_MC = 5000
+
+          with open('/tmp/occupied_cells.csv.zst','rb') as src, open('/tmp/occupied_cells.csv','wb') as dst:
+              zstd.ZstdDecompressor().copy_stream(src,dst)
+          ev = pd.read_csv('/tmp/occupied_cells.csv')
+          parity = pd.read_csv('/tmp/parity_all.csv')
+          meas = pd.read_csv('/tmp/measured_hit_probability.csv')
+
+          cols = {c.lower(): c for c in ev.columns}
+          def pick(names):
+              for n in names:
+                  if n in cols:
+                      return cols[n]
+              raise KeyError(f'missing one of {names}; columns={list(ev.columns)}')
+          c_cand = pick(['candidate_id','candidate','source_candidate'])
+          c_step = pick(['internal_step','internal_timestep','step','timestep','time_step'])
+          c_cell = pick(['cell_index','cell','grid_index'])
+
+          support = meas.copy()
+          if 'occupancy' in support.columns:
+              support = support[support['occupancy'].astype(str).str.lower().eq('free')]
+          support = support[support['confidence'].astype(float) > 0].copy()
+          support_cells = support['cell_index'].astype(int).to_numpy()
+          w = support['confidence'].astype(float).to_numpy()
+          w = w / w.sum()
+
+          measured_unique = sorted(set(np.round(support['probability'].astype(float), 12)))
+          all_miss_constant = (len(measured_unique) == 1)
+
+          terminal = parity[parity['terminal_leaf'].astype(int) == 1].copy()
+          terminal['truth_distance_m'] = np.hypot(
+              terminal['expected_source_x'].astype(float)-TRUTH[0],
+              terminal['expected_source_y'].astype(float)-TRUTH[1],
+          )
+          truth_row = terminal.sort_values('truth_distance_m').iloc[0]
+          truth_id = str(truth_row['candidate_id'])
+          cand_ids = terminal['candidate_id'].astype(str).tolist()
+          ci = {c:i for i,c in enumerate(cand_ids)}
+          si = {int(c):i for i,c in enumerate(support_cells)}
+
+          X = np.zeros((len(cand_ids), T, len(support_cells)), dtype=np.uint8)
+          e = ev[ev[c_cand].astype(str).isin(ci) & ev[c_cell].astype(int).isin(si)].copy()
+          raw_steps = e[c_step].astype(int).to_numpy()
+          step0 = int(raw_steps.min()) if len(raw_steps) else 0
+          norm_steps = raw_steps - step0
+          if len(norm_steps) and (norm_steps.min() < 0 or norm_steps.max() >= T):
+              raise RuntimeError(f'normalized step outside [0,{T-1}]: {norm_steps.min()}..{norm_steps.max()}')
+          for cand, cell, st in zip(e[c_cand].astype(str), e[c_cell].astype(int), norm_steps):
+              X[ci[cand], int(st), si[int(cell)]] = 1
+
+          q = X.mean(axis=1)
+          sqrtw = np.sqrt(w)
+          rng = np.random.default_rng(RNG_SEED)
+
+          def exact_empirical_energy(x):
+              z = x.astype(float) * sqrtw[None,:]
+              a = np.sum(z*z, axis=1)
+              d2 = a[:,None] + a[None,:] - 2.0*(z @ z.T)
+              d2 = np.maximum(d2, 0.0)
+              term1 = float(np.mean(np.sqrt(a)))
+              term2 = 0.5*float(np.mean(np.sqrt(d2)))
+              return term1-term2, term1, term2
+
+          actual_es = np.empty(len(cand_ids), float)
+          actual_t1 = np.empty(len(cand_ids), float)
+          actual_t2 = np.empty(len(cand_ids), float)
+          null_es = np.empty(len(cand_ids), float)
+          null_mc_se = np.empty(len(cand_ids), float)
+
+          for i in range(len(cand_ids)):
+              actual_es[i], actual_t1[i], actual_t2[i] = exact_empirical_energy(X[i])
+              qi = q[i]
+              A = (rng.random((NULL_MC, len(qi))) < qi[None,:])
+              B = (rng.random((NULL_MC, len(qi))) < qi[None,:])
+              d1 = np.sqrt(A.astype(float) @ w)
+              d2 = np.sqrt((A != B).astype(float) @ w)
+              vals = d1 - 0.5*d2
+              null_es[i] = float(np.mean(vals))
+              null_mc_se[i] = float(np.std(vals, ddof=1)/np.sqrt(NULL_MC))
+
+          meanfield_l2 = np.sqrt(np.sum((q*q)*w[None,:], axis=1))
+          occupancy_mass = np.sum(q*w[None,:], axis=1)
+          native_map = dict(zip(parity['candidate_id'].astype(str), parity['expected_score'].astype(float)))
+          native = np.array([native_map[c] for c in cand_ids], float)
+          truth_dist = terminal.set_index('candidate_id').loc[cand_ids,'truth_distance_m'].to_numpy(float)
+          ti = ci[truth_id]
+
+          def rank_low(score):
+              return pd.Series(np.asarray(score)).rank(method='average').to_numpy(float)
+          def rank_high(score):
+              return pd.Series(-np.asarray(score)).rank(method='average').to_numpy(float)
+          def spear_good(score, low=True):
+              a = -np.asarray(score) if low else np.asarray(score)
+              b = -truth_dist
+              ra = pd.Series(a).rank(method='average').to_numpy(float)
+              rb = pd.Series(b).rank(method='average').to_numpy(float)
+              if np.std(ra)==0 or np.std(rb)==0: return 0.0
+              return float(np.corrcoef(ra,rb)[0,1])
+
+          metrics = {}
+          for name, score, low in [
+              ('native_score', native, False),
+              ('marginal_occupancy_mass', occupancy_mass, True),
+              ('meanfield_l2_to_all_miss', meanfield_l2, True),
+              ('distributional_energy_actual_joint', actual_es, True),
+              ('distributional_energy_independent_marginals_null', null_es, True),
+          ]:
+              ranks = rank_low(score) if low else rank_high(score)
+              metrics[name] = {
+                  'truth_rank_average_ties': float(ranks[ti]),
+                  'candidate_count': int(len(cand_ids)),
+                  'truth_score': float(score[ti]),
+                  'spearman_goodness_vs_negative_truth_distance': spear_good(score, low=low),
+              }
+
+          gate = {
+              'actual_energy_beats_native_truth_rank': metrics['distributional_energy_actual_joint']['truth_rank_average_ties'] < metrics['native_score']['truth_rank_average_ties'],
+              'actual_energy_beats_meanfield_truth_rank': metrics['distributional_energy_actual_joint']['truth_rank_average_ties'] < metrics['meanfield_l2_to_all_miss']['truth_rank_average_ties'],
+              'actual_energy_beats_independent_marginals_truth_rank': metrics['distributional_energy_actual_joint']['truth_rank_average_ties'] < metrics['distributional_energy_independent_marginals_null']['truth_rank_average_ties'],
+              'actual_truth_energy_better_than_null_by_3mcse': bool(
+                  actual_es[ti] < null_es[ti] - 3.0*null_mc_se[ti]
+              ),
+          }
+          gate['pass'] = bool(all(gate.values()))
+
+          payload = {
+              'contract':'DISTRIBUTIONAL_FORWARD_H01_ENERGY_PREAUDIT_V1',
+              'date':'2026-09-23',
+              'input_run':'H01_R2026092201',
+              'mother_idea':'replace one mean hitMap per source candidate by a multivariate predictive distribution over stochastic plume fields',
+              'terminal_candidate_count':int(len(cand_ids)),
+              'support_cell_count':int(len(support_cells)),
+              'internal_steps':T,
+              'all_miss_constant_observation':bool(all_miss_constant),
+              'measured_probability_unique_rounded':measured_unique,
+              'truth_candidate_id_evaluation_only':truth_id,
+              'truth_candidate_distance_m':float(truth_row['truth_distance_m']),
+              'metrics':metrics,
+              'truth_energy_decomposition':{
+                  'actual_term_observation_distance':float(actual_t1[ti]),
+                  'actual_half_pairwise_diversity_term':float(actual_t2[ti]),
+                  'actual_energy':float(actual_es[ti]),
+                  'independent_marginals_null_energy':float(null_es[ti]),
+                  'independent_marginals_null_mc_se':float(null_mc_se[ti]),
+              },
+              'destructive_null':{
+                  'definition':'product Bernoulli field with exactly the same per-cell occupancy probabilities q_i as the replay; this preserves the PMFS mean hitMap/marginals while deleting all cross-cell dependence',
+                  'mc_samples':NULL_MC,
+                  'rng_seed':RNG_SEED,
+              },
+              'predeclared_gate':gate,
+              'interpretation':'PASS_DISTRIBUTIONAL_DEPENDENCE_H01' if gate['pass'] else 'NO_GO_OR_INCONCLUSIVE_DISTRIBUTIONAL_DEPENDENCE_H01',
+              'note':'Scores are frozen without truth coordinates. Truth is used only after score construction for candidate-rank and correlation evaluation. H01 is an all-miss case, so this is specifically a negative-evidence test of whether joint stochastic plume structure adds information beyond the mean hitMap.'
+          }
+          Path('evidence/distributional_forward_semantics_v1').mkdir(parents=True, exist_ok=True)
+          Path('evidence/distributional_forward_semantics_v1/H01_ENERGY_PREAUDIT_20260923.json').write_text(json.dumps(payload,indent=2,sort_keys=True)+'\n')
+
+          lines = [
+              '# Distributional forward semantics — H01 energy-score preaudit',
+              '',
+              'Date: 2026-09-23',
+              '',
+              f"Status: **{payload['interpretation']}**",
+              '',
+              '## Question',
+              '',
+              'Does the full stochastic joint plume field carry source evidence that is lost when PMFS compresses each candidate to per-cell mean hit probabilities?',
+              '',
+              'The test uses the frozen 200-step standalone candidate replay. No neural model is trained. The actual candidate ensemble is compared with an independence null that preserves every per-cell occupancy probability exactly in expectation while deleting cross-cell dependence.',
+              '',
+              '## Truth-nearest candidate ranks',
+              '',
+              '| score | truth rank | good-score Spearman vs -truth distance |',
+              '|---|---:|---:|'
+          ]
+          for n in ['native_score','marginal_occupancy_mass','meanfield_l2_to_all_miss','distributional_energy_actual_joint','distributional_energy_independent_marginals_null']:
+              x=metrics[n]
+              lines.append(f"| {n} | {x['truth_rank_average_ties']:.2f}/{len(cand_ids)} | {x['spearman_goodness_vs_negative_truth_distance']:.4f} |")
+          lines += [
+              '',
+              '## Destructive null',
+              '',
+              '- preserves candidate-specific per-cell hit probabilities q_i (the information represented by the PMFS mean hitMap);',
+              '- removes cross-cell dependence/co-occurrence by replacing the joint field with the product of Bernoulli marginals;',
+              f"- Monte Carlo samples per candidate: {NULL_MC}; seed: {RNG_SEED}.",
+              '',
+              '## Gate',
+              ''
+          ]
+          for k,v in gate.items():
+              lines.append(f"- {k}: **{v}**")
+          lines += [
+              '',
+              'A PASS means the load-bearing object is the stochastic multivariate plume distribution rather than the mean field alone, justifying replay on hit-bearing H02/H03 and only then a learned conditional generative model. A failure means diffusion/flow-matching should not be pursued merely because it is newer.',
+              ''
+          ]
+          Path('evidence/distributional_forward_semantics_v1/H01_ENERGY_PREAUDIT_20260923.md').write_text('\n'.join(lines))
+          print(json.dumps(payload, indent=2, sort_keys=True))
+          PY
+
+      - name: Commit frozen evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evidence/distributional_forward_semantics_v1/H01_ENERGY_PREAUDIT_20260923.json
+          git add evidence/distributional_forward_semantics_v1/H01_ENERGY_PREAUDIT_20260923.md
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "evidence: test distributional plume semantics on H01"
+          git push origin HEAD:research/distributional-forward-semantics-v1
