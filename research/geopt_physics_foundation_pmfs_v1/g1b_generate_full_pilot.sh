@@ -9,7 +9,7 @@ OCC=/mnt/hgfs/workspace/GADEN_files/scenarios/House02/OccupancyGrid3D.csv
 WIND=/mnt/hgfs/workspace/GADEN_files/scenarios/House02/gas_simulations/3,5-1_fast/FilamentSimulation_gasType_10_sourcePosition_0.00_-1.00_0.20/wind
 GRID=/mnt/hgfs/workspace/M6_G1_STAGE1_PILOT_20260923_grid.csv
 SOURCE_TABLE=/mnt/hgfs/workspace/M6_G1_STAGE1_PILOT_20260923_sources.csv
-OUT=/mnt/hgfs/workspace/M6_G1_STAGE1_PILOT_20260923/full
+OUT=${M6_G1_OUT:-/mnt/hgfs/workspace/M6_G1_STAGE1_PILOT_20260923/full}
 
 test -x "$SAMPLER"
 test -s "$OCC"; test -s "$GRID"; test -s "$SOURCE_TABLE"
