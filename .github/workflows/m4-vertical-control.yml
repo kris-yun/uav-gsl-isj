@@ -1,0 +1,35 @@
+name: M4 vertical three-slab control
+
+on:
+  push:
+    branches:
+      - research/m4-vertical-control-v1
+    paths:
+      - ".github/workflows/m4-vertical-control.yml"
+      - "research/m4_spatial_mechanism_audit_v1/m4_vertical_three_slab_control.py"
+
+permissions:
+  contents: read
+
+jobs:
+  control:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Train
+        run: |
+          python research/m4_spatial_mechanism_audit_v1/m4_vertical_three_slab_control.py train --repo-root "$GITHUB_WORKSPACE" --out /tmp/m4_vertical --cpu-threads 4
+      - name: Evaluate
+        run: |
+          python research/m4_spatial_mechanism_audit_v1/m4_vertical_three_slab_control.py evaluate --repo-root "$GITHUB_WORKSPACE" --out /tmp/m4_vertical --cpu-threads 4
+          echo "===VERTICAL_CONTROL_RESULT==="
+          cat /tmp/m4_vertical/vertical_result.json
