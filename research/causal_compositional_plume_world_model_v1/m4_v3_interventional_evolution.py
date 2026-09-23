@@ -77,9 +77,12 @@ class SourceAgnosticLinearTransport(nn.Module):
         super().__init__()
         self.closure=WindConditionedLocalClosure()
         self.loss_raw=nn.Parameter(torch.tensor(-8.0))
+        # Frozen diagnostic switch. It is not trainable and is 1.0 in the method.
+        self.characteristic_scale=1.0
 
     def forward(self,state,wind_xy,free_mask,dt_s:float,cell_m:float):
-        x=semi_lagrangian_advect(state,wind_xy,dt_s,cell_m)
+        x=semi_lagrangian_advect(
+            state,wind_xy,float(self.characteristic_scale)*dt_s,cell_m)
         x=self.closure(x,wind_xy,free_mask)
         # Small positive sink can represent unresolved vertical/outlet loss.
         retention=torch.exp(-F.softplus(self.loss_raw)*dt_s)
