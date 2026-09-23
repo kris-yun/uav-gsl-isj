@@ -1,0 +1,61 @@
+name: M6 House02 frozen transfer D0
+
+on:
+  push:
+    branches:
+      - research/m6-geopt-house02-dev-v1
+    paths:
+      - ".github/workflows/m6-geopt-house02-transfer-d0.yml"
+      - "evidence/geopt_physics_foundation_pmfs_v1/g1_d0_house02_frozen_transfer.py"
+
+permissions:
+  contents: read
+
+jobs:
+  d0:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install runtime
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy scipy timm einops huggingface_hub
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Bring in frozen House02 development bank
+        run: |
+          git fetch --depth=1 origin research/m4-v3-interventional-evolution-propagator
+          test "$(git rev-parse FETCH_HEAD)" = "fbaaf50ceae64b637c28fe462e2c0d27445e4089"
+          git checkout FETCH_HEAD --             evidence/causal_compositional_plume_world_model_v1/c0_5_real_gaden_bank             evidence/causal_compositional_plume_world_model_v1/m4_v3_dynamic_wind_house02
+          find evidence/causal_compositional_plume_world_model_v1/c0_5_real_gaden_bank -type f | wc -l
+
+      - name: Freeze official GeoPT and checkpoint
+        run: |
+          git clone --filter=blob:none https://github.com/Physics-Scaling/GeoPT.git /tmp/GeoPT
+          git -C /tmp/GeoPT checkout 9984f359fd44b6332c03ca55ab2e659e0c6e899d
+          python - <<'PY'
+          from huggingface_hub import hf_hub_download
+          from pathlib import Path
+          import hashlib
+          p=Path(hf_hub_download(
+              repo_id="GeoPT/GeoPT_Pretrained_Models",
+              filename="GeoPT_8layers.pt",
+              local_dir="/tmp/geopt_hf"))
+          h=hashlib.sha256(p.read_bytes()).hexdigest()
+          print("checkpoint",p,"bytes",p.stat().st_size,"sha256",h)
+          assert h=="c0b1b9c4e5d533dbc249190d3d1fbe8e6b066b36d325cf4377cc0d613c02d1c2"
+          PY
+
+      - name: Run frozen foundation transfer kill test
+        run: |
+          python evidence/geopt_physics_foundation_pmfs_v1/g1_d0_house02_frozen_transfer.py             --geopt-root /tmp/GeoPT             --checkpoint /tmp/geopt_hf/GeoPT_8layers.pt             --bank evidence/causal_compositional_plume_world_model_v1/c0_5_real_gaden_bank             --dynamic-wind evidence/causal_compositional_plume_world_model_v1/m4_v3_dynamic_wind_house02             --output /tmp/m6_g1_d0.json
+          echo "===M6_G1_D0_RESULT==="
+          cat /tmp/m6_g1_d0.json
