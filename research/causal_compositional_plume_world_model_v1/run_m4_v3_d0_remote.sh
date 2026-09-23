@@ -2,20 +2,25 @@
 set -Eeuo pipefail
 
 # One-shot House02 DEVELOPMENT run for M4-v3.
-# This does not launch ROS, PMFS, GADEN plume generation, or a closed loop.
-# It only exports the already-existing canonical dynamic winds and runs the
-# preregistered D0 train/evaluate split.
+# No ROS, PMFS, plume generation, or closed loop is launched here.
 
 ROOT="${ROOT:-$(git rev-parse --show-toplevel)}"
 BRANCH="$(git -C "${ROOT}" branch --show-current)"
 HEAD_SHA="$(git -C "${ROOT}" rev-parse HEAD)"
 EXPECTED_BRANCH="research/m4-v3-interventional-evolution-propagator"
+
 [[ "${BRANCH}" == "${EXPECTED_BRANCH}" ]] || {
   echo "Refuse D0 on branch '${BRANCH}'; expected '${EXPECTED_BRANCH}'" >&2
   exit 2
 }
-git -C "${ROOT}" diff --quiet || { echo "Refuse D0 with tracked working-tree changes" >&2; exit 2; }
-git -C "${ROOT}" diff --cached --quiet || { echo "Refuse D0 with staged changes" >&2; exit 2; }
+git -C "${ROOT}" diff --quiet || {
+  echo "Refuse D0 with tracked working-tree changes" >&2
+  exit 2
+}
+git -C "${ROOT}" diff --cached --quiet || {
+  echo "Refuse D0 with staged changes" >&2
+  exit 2
+}
 echo "M4_V3_D0_HEAD_SHA=${HEAD_SHA}"
 
 EVIDENCE="${ROOT}/evidence/causal_compositional_plume_world_model_v1"
@@ -34,13 +39,20 @@ for p in "${OCC}" "${W1}/wind_iteration_1" "${W2}/wind_iteration_1"; do
 done
 
 if [[ ! -d "${DYNAMIC}" ]]; then
-  python "${RESEARCH}/export_m4_v3_dynamic_wind_sequence.py"     "${OCC}" "${W1}" "${W2}" "${DYNAMIC}"     --sensor-z 0.20 --wind-iteration-dt 1.0 --loop-from 1 --loop-to 10     | tee "${EVIDENCE}/M4_V3_DYNAMIC_WIND_EXPORT_20260923.log"
+  python "${RESEARCH}/export_m4_v3_dynamic_wind_sequence.py" \
+    "${OCC}" "${W1}" "${W2}" "${DYNAMIC}" \
+    --sensor-z 0.20 \
+    --wind-iteration-dt 1.0 \
+    --loop-from 1 \
+    --loop-to 10 \
+    | tee "${EVIDENCE}/M4_V3_DYNAMIC_WIND_EXPORT_20260923.log"
 else
   echo "Using existing dynamic-wind export: ${DYNAMIC}"
 fi
 
 [[ -f "${DYNAMIC}/wind_sequence_manifest.json" ]] || {
-  echo "dynamic wind manifest missing" >&2; exit 4;
+  echo "dynamic wind manifest missing" >&2
+  exit 4
 }
 [[ ! -e "${OUT}" ]] || {
   echo "Refuse to overwrite D0 output: ${OUT}" >&2
@@ -50,24 +62,26 @@ fi
 MODEL="${RESEARCH}/m4_v3_interventional_evolution.py"
 D0="${RESEARCH}/m4_v3_d0_house02.py"
 
-python "${D0}" train \\
-  --bank "${BANK}" \\
-  --dynamic-wind "${DYNAMIC}" \\
-  --model-script "${MODEL}" \\
-  --out "${OUT}" \\
-  --device cpu --cpu-threads 4 \\
+python "${D0}" train \
+  --bank "${BANK}" \
+  --dynamic-wind "${DYNAMIC}" \
+  --model-script "${MODEL}" \
+  --out "${OUT}" \
+  --device cpu \
+  --cpu-threads 4 \
   | tee "${EVIDENCE}/M4_V3_D0_TRAIN_20260923.log"
 
-python "${D0}" evaluate \\
-  --bank "${BANK}" \\
-  --dynamic-wind "${DYNAMIC}" \\
-  --model-script "${MODEL}" \\
-  --out "${OUT}" \\
-  --device cpu --cpu-threads 4 \\
+python "${D0}" evaluate \
+  --bank "${BANK}" \
+  --dynamic-wind "${DYNAMIC}" \
+  --model-script "${MODEL}" \
+  --out "${OUT}" \
+  --device cpu \
+  --cpu-threads 4 \
   | tee "${EVIDENCE}/M4_V3_D0_EVALUATE_20260923.log"
 
 {
-  printf 'git_head  %s\\n' "${HEAD_SHA}"
+  printf 'git_head  %s\n' "${HEAD_SHA}"
   sha256sum "${RESEARCH}/m4_v3_interventional_evolution.py"
   sha256sum "${RESEARCH}/m4_v3_d0_house02.py"
   sha256sum "${RESEARCH}/export_m4_v3_dynamic_wind_sequence.py"
