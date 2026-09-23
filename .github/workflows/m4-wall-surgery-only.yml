@@ -1,0 +1,31 @@
+name: M4 wall-slide frozen surgery only
+on:
+  push:
+    branches:
+      - research/m4-wall-slide-control-v1
+    paths:
+      - ".github/workflows/m4-wall-surgery-only.yml"
+permissions:
+  contents: read
+jobs:
+  surgery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          pip install numpy
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Frozen surgery
+        run: |
+          mkdir -p /tmp/wall_surgery
+          cp evidence/causal_compositional_plume_world_model_v1/m4_v3_d0_house02_20260923/m4v3_seed1729.pt /tmp/wall_surgery/
+          cp evidence/causal_compositional_plume_world_model_v1/m4_v3_d0_house02_20260923/m4v3_seed2718.pt /tmp/wall_surgery/
+          cp evidence/causal_compositional_plume_world_model_v1/m4_v3_d0_house02_20260923/train_manifest.json /tmp/wall_surgery/
+          python research/causal_compositional_plume_world_model_v1/m4_v3_d0_house02.py evaluate --bank evidence/causal_compositional_plume_world_model_v1/c0_5_real_gaden_bank --dynamic-wind evidence/causal_compositional_plume_world_model_v1/m4_v3_dynamic_wind_house02 --model-script research/m4_spatial_mechanism_audit_v1/m4_wall_slide_control.py --out /tmp/wall_surgery --device cpu --cpu-threads 4
+          echo "===WALL_SLIDE_FROZEN_SURGERY_RESULT==="
+          cat /tmp/wall_surgery/d0_result.json
