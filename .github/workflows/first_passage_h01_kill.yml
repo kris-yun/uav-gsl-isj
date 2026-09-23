@@ -44,7 +44,10 @@ jobs:
           RNG_SEED = 20260923
           NULL_REPS = 500
 
-          import zstandard as zstd\n          with open('/tmp/occupied_cells.csv.zst','rb') as src, open('/tmp/occupied_cells.csv','wb') as dst:\n              zstd.ZstdDecompressor().copy_stream(src,dst)\n          ev = pd.read_csv('/tmp/occupied_cells.csv')
+          import zstandard as zstd
+          with open('/tmp/occupied_cells.csv.zst','rb') as src, open('/tmp/occupied_cells.csv','wb') as dst:
+              zstd.ZstdDecompressor().copy_stream(src,dst)
+          ev = pd.read_csv('/tmp/occupied_cells.csv')
           parity = pd.read_csv('/tmp/parity_all.csv')
           meas = pd.read_csv('/tmp/measured_hit_probability.csv')
 
