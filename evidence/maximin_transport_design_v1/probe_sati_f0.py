@@ -107,6 +107,41 @@ def sati_trust_region(
     return robust, a_star, native
 
 
+
+def nuisance_orthogonal_source_variance(
+    nominal: np.ndarray,
+    gradients: np.ndarray,
+    weights: np.ndarray,
+):
+    """Parameter-free residual source variance after projecting out transport nuisance.
+
+    Returns (residual_variance, confounding_ratio, native_variance).
+    """
+    h = np.asarray(nominal, dtype=float).reshape(-1)
+    G = np.asarray(gradients, dtype=float)
+    w = _normalize_weights(weights)
+
+    if G.ndim != 2 or G.shape[0] != h.shape[0]:
+        raise ValueError("gradients must have shape [num_sources, dim]")
+    if w.shape != h.shape:
+        raise ValueError("weights shape mismatch")
+
+    C = np.diag(w) - np.outer(w, w)
+    A = G.T @ C @ G
+    b = G.T @ C @ h
+    native = float(h.T @ C @ h)
+
+    explained = float(b.T @ np.linalg.pinv(A, rcond=1e-12) @ b) if A.size else 0.0
+    residual = max(0.0, native - explained)
+
+    if native <= 1e-15:
+        confounding = 0.0
+    else:
+        confounding = min(1.0, max(0.0, explained / native))
+
+    return residual, confounding, native
+
+
 def _self_test():
     # zero radius exactly reproduces native
     h = np.array([0.1, 0.5, 0.9])
@@ -135,6 +170,16 @@ def _self_test():
     assert robust < 1e-10
     assert abs(abs(a[0]) - 0.3) < 1e-8
 
+    # Nuisance-orthogonal score: common shifts do not remove source information.
+    residual, confounding, native = nuisance_orthogonal_source_variance(h, G_common, w)
+    assert abs(residual - native) < 1e-10
+    assert confounding < 1e-10
+
+    # When source variation lies in the nuisance span, the residual is zero.
+    residual, confounding, native = nuisance_orthogonal_source_variance(h2, G2, w2)
+    assert residual < 1e-10
+    assert abs(confounding - 1.0) < 1e-10
+
 
 if __name__ == "__main__":
     _self_test()
@@ -149,9 +194,12 @@ if __name__ == "__main__":
     w = np.array([0.15, 0.25, 0.35, 0.25])
 
     robust, a, native = sati_trust_region(h, G, w, radius=0.20)
-    print("SATI F0 algebra tests: PASS")
+    residual, confounding, _ = nuisance_orthogonal_source_variance(h, G, w)
+    print("SATI/NOSI F0 algebra tests: PASS")
     print(f"native_variance={native:.10f}")
     print(f"robust_variance={robust:.10f}")
+    print(f"nuisance_orthogonal_variance={residual:.10f}")
+    print(f"transport_confounding_ratio={confounding:.10f}")
     print(f"ratio={robust/native:.6f}")
     print(f"adversarial_drift={a.tolist()}")
     print(f"adversarial_norm={np.linalg.norm(a):.10f}")
