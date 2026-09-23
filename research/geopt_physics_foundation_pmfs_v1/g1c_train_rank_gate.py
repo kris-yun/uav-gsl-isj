@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Offline M6 G1-C/G1-D gate on the frozen House02 compact bank.
 
-This is deliberately a narrow, auditable representation probe.  It never
-starts ROS or PMFS.  The learned arms use the same official 8-layer
-Transolver, the same 4->64->256 source adapter, optimizer, epochs, and source
-fractions.  The pretrained arm loads only the audited internal GeoPT tensors;
-the final scalar task head and adapter are trained in both arms.  Candidate
-rank is computed only after the models are frozen.
+This is deliberately a narrow, auditable offline probe.  It never starts ROS
+or PMFS.  The learned arms use the same official 8-layer Transolver, the same
+4->64->256 source adapter, optimizer, epochs, and source fractions.  The
+scratch arm trains the complete randomly initialized Transolver and adapter
+end to end.  The pretrained arm loads only the audited internal GeoPT tensors
+and trains the adapter plus scalar task head.  Candidate rank is computed only
+after each model is frozen.  The analytical kernel below is a labelled proxy
+baseline; it is not the repaired Native PMFS simulator.
 """
 from __future__ import annotations
 
@@ -126,10 +128,18 @@ class SourceArm:
         else:
             self.loaded_keys = 0
         self.model.to(device)
-        for p in self.model.parameters(): p.requires_grad_(False)
-        # Same trainable task head in both arms; internal representation remains frozen.
-        for name, p in self.model.blocks[-1].named_parameters():
-            if name.startswith("ln_3") or name.startswith("mlp2"):
+        if pretrained:
+            # Keep the audited GeoPT representation frozen.  Only the scalar
+            # task head and source adapter are fitted in this transfer arm.
+            for p in self.model.parameters():
+                p.requires_grad_(False)
+            for name, p in self.model.blocks[-1].named_parameters():
+                if name.startswith("ln_3") or name.startswith("mlp2"):
+                    p.requires_grad_(True)
+        else:
+            # Scratch is a genuine same-architecture from-scratch control:
+            # every Transolver and adapter parameter is trainable.
+            for p in self.model.parameters():
                 p.requires_grad_(True)
         self.adapter = nn.Sequential(nn.Linear(4, 64), nn.GELU(), nn.Linear(64, 256)).to(device)
         self.device = device
@@ -151,7 +161,7 @@ class SourceArm:
         return {"model": self.model.state_dict(), "adapter": self.adapter.state_dict()}
 
 
-def native_field(pos, fx, source, torch):
+def proxy_pmfs_field(pos, fx, source, torch):
     rel = pos[None, :, :] - source[:, None, :]
     u = fx[:, 7:10][None, :, :]
     speed = fx[:, 10][None, :]
@@ -259,19 +269,21 @@ def main():
                 "final_train_bce": losses[-1], "loss_curve": losses, "seconds": time.time() - t0,
                 "validation_seed": seeds[0], "validation": val_metrics, "test_independent_seed": seeds[1],
                 "test_field": case_metrics, "truth_rank": rank_cases, "loaded_internal_keys": arm.loaded_keys}
-        # Native PMFS analytic kernel is frozen and scored with identical candidates/targets.
+        # Frozen analytical proxy is scored with identical candidates/targets.
+        # It must not be described as current repaired Native PMFS: no ROS or
+        # PMFS simulator is started in this offline gate.
         candidates = [source_pos[sid] for sid in train_ids + val_ids + test_ids]
         candidate_ids = train_ids + val_ids + test_ids
         cand_t = torch.from_numpy(np.stack(candidates)).to(device)
-        with torch.inference_mode(): native = native_field(pos, fx, cand_t)
+        with torch.inference_mode(): native = proxy_pmfs_field(pos, fx, cand_t, torch)
         native_cases = {}; native_ranks = {}
         for sid in test_ids:
             target = torch.from_numpy(by_id[sid]["cases"][seeds[1]]).to(device)
             errors = torch.sqrt(torch.mean((native - target[None, :]) ** 2, dim=1)); order = torch.argsort(errors).cpu().tolist(); truth_idx = candidate_ids.index(sid)
             native_cases[sid] = metrics(native[truth_idx], target, torch)
             native_ranks[sid] = {"rank": order.index(truth_idx) + 1, "candidate_count": len(candidate_ids), "top5": [candidate_ids[i] for i in order[:5]], "truth_rmse": float(errors[truth_idx].item())}
-        out["fractions"][fraction_key]["arms"]["native_pmfs_kernel"] = {"test_field": native_cases, "truth_rank": native_ranks,
-            "note": "offline analytic PMFS anisotropic hit kernel; no ROS/live loop"}
+        out["fractions"][fraction_key]["arms"]["proxy_pmfs_kernel"] = {"test_field": native_cases, "truth_rank": native_ranks,
+            "note": "offline analytical anisotropic PMFS-like proxy; not current Native PMFS simulator; no ROS/live loop"}
     (args.out / "g1c_g1d_results.json").write_text(json.dumps(out, indent=2, sort_keys=True) + "\n")
     print(json.dumps(out, indent=2, sort_keys=True))
 
