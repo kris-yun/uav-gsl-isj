@@ -1,0 +1,51 @@
+name: ACI continuous-channel H01 zero gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - research/aci-continuous-cause-smoothing-v1
+    paths:
+      - ".github/workflows/aci_continuous_channel_h01.yml"
+      - "research/aci_continuous_cause_v1/h01_continuous_channel_zero_gate.py"
+
+permissions:
+  contents: write
+
+jobs:
+  h01-zero-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch frozen replay and accepted real trace
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin research/standalone-candidate-replay-20260923
+          git fetch origin research/hcmc-v1-independent-validation-20260922
+          git show origin/research/standalone-candidate-replay-20260923:evidence/standalone_candidate_replay/H01_R2026092201/occupied_cells.csv.zst > /tmp/occupied_cells.csv.zst
+          git show origin/research/standalone-candidate-replay-20260923:evidence/standalone_candidate_replay/H01_R2026092201/parity_all.csv > /tmp/parity_all.csv
+          git show origin/research/hcmc-v1-independent-validation-20260922:evidence/hcmc_v1/independent_raw_native_20260922_verified/H01_R2026092201/sensor_trace.csv > /tmp/sensor_trace.csv
+          git show origin/research/hcmc-v1-independent-validation-20260922:evidence/hcmc_v1/independent_raw_native_20260922_verified/H01_R2026092201/context_bank/source_update_timing.csv > /tmp/source_update_timing.csv
+          python3 -m pip install --quiet --upgrade "zstandard>=0.23.0" pandas numpy
+
+      - name: Run frozen source-blind zero gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 research/aci_continuous_cause_v1/h01_continuous_channel_zero_gate.py
+
+      - name: Commit result evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evidence/aci_continuous_cause_v1/H01_ACI_CONTINUOUS_CHANNEL_ZERO_GATE_RESULT_20260923.json
+          git add evidence/aci_continuous_cause_v1/H01_ACI_CONTINUOUS_CHANNEL_ZERO_GATE_RESULT_20260923.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "evidence: run H01 ACI continuous-channel zero gate"
+          git push origin HEAD:research/aci-continuous-cause-smoothing-v1
