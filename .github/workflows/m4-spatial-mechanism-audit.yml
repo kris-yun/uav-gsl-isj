@@ -8,6 +8,7 @@ on:
       - ".github/workflows/m4-spatial-mechanism-audit.yml"
       - "research/m4_spatial_mechanism_audit_v1/spatial_oracle_kill.py"
       - "research/m4_spatial_mechanism_audit_v1/vertical_oracle_kill.py"
+      - "research/m4_spatial_mechanism_audit_v1/mechanism_overlap_audit.py"
 
 permissions:
   contents: read
@@ -36,3 +37,8 @@ jobs:
           python research/m4_spatial_mechanism_audit_v1/vertical_oracle_kill.py --repo-root "$GITHUB_WORKSPACE" --dynamic-wind evidence/causal_compositional_plume_world_model_v1/m4_v3_dynamic_wind_house02 --d0-out evidence/causal_compositional_plume_world_model_v1/m4_v3_d0_house02_20260923 --output /tmp/vertical_oracle.json
           echo "===VERTICAL_ORACLE_RESULT==="
           cat /tmp/vertical_oracle.json
+      - name: Run descriptive mechanism-overlap audit
+        run: |
+          python research/m4_spatial_mechanism_audit_v1/mechanism_overlap_audit.py --repo-root "$GITHUB_WORKSPACE" --dynamic-wind evidence/causal_compositional_plume_world_model_v1/m4_v3_dynamic_wind_house02 --d0-out evidence/causal_compositional_plume_world_model_v1/m4_v3_d0_house02_20260923 --output /tmp/mechanism_overlap.json
+          echo "===MECHANISM_OVERLAP_RESULT==="
+          cat /tmp/mechanism_overlap.json
