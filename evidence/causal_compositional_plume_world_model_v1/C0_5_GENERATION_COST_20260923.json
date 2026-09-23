@@ -1,0 +1,66 @@
+{
+  "contract": "C0_5_REAL_GADEN_GENERATION_COST_V1",
+  "date": "2026-09-23",
+  "house": "House02",
+  "source_id": "S1",
+  "source_xyz_m": [-2.242730141, -2.200880051, 0.2],
+  "wind_id": "W1",
+  "wind_directory": "/mnt/hgfs/workspace/GADEN_files/scenarios/House02/gas_simulations/3,5-1_fast/FilamentSimulation_gasType_10_sourcePosition_0.00_-1.00_0.20/wind",
+  "plume_seed": 2026092301,
+  "occupancy_sha256": "9402690152be4568ced8f2256e9098d82691aaaa1f22a1887eeac55d0e5d098d",
+  "wind_iteration_0_sha256": "35c2b2d3f5d059f8f219befb75bc51c6154bb573d9a298d9a75c4c7e03d8e88f",
+  "generator_binary": "/home/zyc/hcmc_gaden_seed_build_20260922/install/gaden_filament_simulator/lib/gaden_filament_simulator/filament_simulator",
+  "generator_binary_sha256": "4127b9ba4f42186ba2d6d33c84fba8d4b92749da59b83750fa4847dbd9957ce1",
+  "fixed_parameters": {
+    "time_step_s": 0.1,
+    "num_filaments_sec": 7,
+    "variable_rate": true,
+    "filament_stop_steps": 0,
+    "ppm_filament_center": 10.0,
+    "filament_initial_std": 10.0,
+    "filament_growth_gamma": 15.0,
+    "filament_noise_std": 0.01,
+    "gas_type": 10,
+    "results_time_step_s": 0.5,
+    "writeConcentrations": false
+  },
+  "runs": [
+    {
+      "sim_time_s": 30.0,
+      "elapsed_wall_s": 0.89,
+      "user_cpu_s": 4.41,
+      "system_cpu_s": 0.19,
+      "cpu_percent": 512,
+      "max_rss_kb": 89560,
+      "iteration_file_count": 58,
+      "realization_bytes": 34005248,
+      "terminal_log": "Filament simulator finished correctly! Ran for 0.71s"
+    },
+    {
+      "sim_time_s": 120.0,
+      "elapsed_wall_s": 0.88,
+      "user_cpu_s": 5.12,
+      "system_cpu_s": 0.21,
+      "cpu_percent": 604,
+      "max_rss_kb": 89656,
+      "iteration_file_count": 209,
+      "realization_bytes": 35186904,
+      "terminal_log": "Filament simulator finished correctly! Ran for 0.75s"
+    },
+    {
+      "sim_time_s": 300.0,
+      "elapsed_wall_s": 1.89,
+      "user_cpu_s": 16.49,
+      "system_cpu_s": 0.29,
+      "cpu_percent": 886,
+      "max_rss_kb": 89524,
+      "iteration_file_count": 566,
+      "realization_bytes": 42961851,
+      "terminal_log": "Filament simulator finished correctly! Ran for 1.75s"
+    }
+  ],
+  "raw_output_root": "/home/zyc/c0_5_cost_benchmark_20260923",
+  "raw_outputs_committed": false,
+  "active_filament_count_reported": false,
+  "duration_selection": "300 s selected because the run is inexpensive and matches the project evaluation horizon; selection did not use plume truth or source rank."
+}
