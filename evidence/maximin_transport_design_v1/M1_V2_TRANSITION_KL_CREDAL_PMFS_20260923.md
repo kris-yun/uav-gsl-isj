@@ -483,3 +483,26 @@ Risk:
 - physical calibration must use relative-entropy rate / accumulated drift discrepancy, not source truth.
 
 Compare transition-operator Level B and path-law DRO only after Level A gives a positive rank signal.
+
+
+## 15. Additional GSL collision — Dempster–Shafer source maps already exist
+
+Set-valued / non-Bayesian source uncertainty is **not itself novel in GSL**.
+
+Relevant prior art includes:
+- Li et al., 2015, mobile-robot multiple odor-source localization in time-varying airflow using Dempster–Shafer inference; source occupancy is represented on a grid with belief masses and the search route is planned using grid uncertainty.
+- Staples et al., Sensors 2023, comparison of Independent Posterior and Dempster–Shafer multiple odor-source localization algorithms.
+
+Therefore the following claims are forbidden:
+- first interval/set-valued source map in GSL;
+- first non-single-probability representation of source uncertainty;
+- first evidence-theoretic source grid;
+- first uncertainty-aware source-map path planning.
+
+The defensible contribution remains causal/mechanistic in the forward model:
+
+**PMFS filament transport law -> explicit transport ambiguity set -> robust forward hit envelope -> source belief set / robust action.**
+
+The credal source map is a downstream representation, not the primary novelty.
+
+This makes the preferred paper name more accurately **Distributionally Robust Transport PMFS (DRT-PMFS)**, with "credal source map" used as a consequence rather than the headline novelty.
