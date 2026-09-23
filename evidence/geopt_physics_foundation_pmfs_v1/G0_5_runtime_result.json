@@ -1,0 +1,65 @@
+{
+  "checkpoint": "D:\\ZYC\\A-gas\\_staging\\GeoPT_8layers.pt",
+  "checkpoint_bytes": 15556600,
+  "checkpoint_parameter_count": 3865673,
+  "checkpoint_tensor_keys": 169,
+  "device": "cuda",
+  "excluded_keys": [
+    "blocks.7.ln_3.weight",
+    "blocks.7.ln_3.bias",
+    "blocks.7.mlp2.weight",
+    "blocks.7.mlp2.bias"
+  ],
+  "excluded_layer_substrings": [
+    "mlp2",
+    "ln_3"
+  ],
+  "gpu_name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+  "input_fx_shape": [
+    1,
+    4096,
+    11
+  ],
+  "input_x_shape": [
+    1,
+    4096,
+    3
+  ],
+  "loaded_fraction_of_model_parameters": 0.9994685505609198,
+  "loaded_parameter_count": 3862848,
+  "loaded_tensor_keys": 165,
+  "model_total_parameter_count": 3864902,
+  "official_config": {
+    "act": "gelu",
+    "checkpoint": 0,
+    "dropout": 0.0,
+    "fun_dim": 11,
+    "geotype": "unstructured",
+    "mlp_ratio": 2,
+    "n_heads": 8,
+    "n_hidden": 256,
+    "n_layers": 8,
+    "out_dim": 6,
+    "shapelist": null,
+    "slice_num": 32,
+    "space_dim": 3,
+    "unified_pos": false
+  },
+  "output_shape": [
+    1,
+    4096,
+    6
+  ],
+  "peak_rss_bytes": 1218969600,
+  "peak_vram_allocated_bytes": 54855168,
+  "peak_vram_reserved_bytes": 81788928,
+  "rss_after_bytes": 1218985984,
+  "rss_before_bytes": 935305216,
+  "rss_delta_bytes": 283680768,
+  "shape_mismatch_keys": [
+    "blocks.7.mlp2.weight",
+    "blocks.7.mlp2.bias"
+  ],
+  "tokens": 4096,
+  "wall_seconds": 0.2860934999771416
+}
