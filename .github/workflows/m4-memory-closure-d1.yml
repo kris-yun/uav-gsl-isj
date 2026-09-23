@@ -1,0 +1,32 @@
+name: M4 memory closure D1
+
+on:
+  push:
+    branches:
+      - research/m4-memory-closure-v1
+    paths:
+      - ".github/workflows/m4-memory-closure-d1.yml"
+      - "research/m4_memory_closure_v1/m4_memory_closure_d1.py"
+
+permissions:
+  contents: read
+
+jobs:
+  d1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Run D1
+        run: |
+          python research/m4_memory_closure_v1/m4_memory_closure_d1.py --repo-root "$GITHUB_WORKSPACE" --dynamic-wind evidence/causal_compositional_plume_world_model_v1/m4_v3_dynamic_wind_house02 --d0-out evidence/causal_compositional_plume_world_model_v1/m4_v3_d0_house02_20260923 --output-dir /tmp/m4_memory_d1
+          echo "===M4_MEMORY_D1_RESULT==="
+          cat /tmp/m4_memory_d1/d1_result.json
