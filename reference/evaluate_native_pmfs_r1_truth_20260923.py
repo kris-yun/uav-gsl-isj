@@ -86,7 +86,11 @@ def main():
         ids = ", ".join(row["candidate_id"] for row in top)
         wind = " / ".join(audit[f"wind_{key}"] for key in ("min", "median", "max"))
         lines.append(f"| {arm} | {len(rows)} | {truth['candidate_id']} | {rank} | {truth['source_score']} | {ids} | {wind} | `{frozen['arms'][arm]['scores_sha256']}` |")
-    lines += ["", "Arm A: GMRF observer wind with frozen R2 PMFS parameters. Arm B: ground-truth wind with frozen R2 PMFS parameters. Arm C: ground-truth wind with official humble PMFS forward and hit-map parameters.",
+    r2_source = bool(frozen.get("r2_replay_binary_sha256"))
+    arm_note = ("Arms A/B link the frozen R2 PMFS source and event-keyed candidate RNG; A uses GMRF observer wind and B uses ground-truth wind. Arm C links the official humble PMFS source with ground-truth wind."
+                if r2_source else
+                "Arm A: GMRF observer wind with frozen R2 PMFS parameters. Arm B: ground-truth wind with frozen R2 PMFS parameters. Arm C: ground-truth wind with official humble PMFS forward and hit-map parameters.")
+    lines += ["", arm_note,
               "", "Top-5 centroid is secondary. The smoke capture has no 300 s endpoint. Candidate map hashes and repeat checks are in `r1_scores_frozen_manifest.json`.",
               "", "Truth-source candidate rank is the primary scientific comparison. No arm was selected or retuned after truth evaluation."]
     (run / "R1_three_arm_truth_evaluation.json").write_text(json.dumps(report, indent=2) + "\n")

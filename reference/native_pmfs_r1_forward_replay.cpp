@@ -3,6 +3,9 @@
 #include <gsl_server/algorithms/Common/Grid2D.hpp>
 #include <gsl_server/algorithms/PMFS/PMFSLib.hpp>
 #include <gsl_server/algorithms/PMFS/internal/Simulations.hpp>
+#ifdef R1_R2_REFERENCE_SOURCE
+#include <gsl_server/algorithms/PMFS/internal/EventKeyedRng.hpp>
+#endif
 #include <opencv2/core.hpp>
 #include <algorithm>
 #include <cmath>
@@ -65,9 +68,19 @@ public:
     std::pair<long double, std::vector<float>> score(const Utils::NQA::Node& leaf)
     {
         std::vector<float> map(measuredHitProb.data.size(), 0.0f);
+#ifdef R1_R2_REFERENCE_SOURCE
+        // The frozen R2 PMFS::onGetMap calls configureNativeDeterminism with
+        // algorithm seed 0 and this literal substream. Its runSimulation
+        // constructs a fresh EventKeyedTransportRng per candidate at update 1.
+        EventKeyedTransportRng rng(EventKey{0, 1, 0, 0x4E4154495645504DULL});
+        SimulationSource source(&leaf, measuredHitProb.metadata, &rng);
+        simulateSourceInPosition(source, map, true, settings.iterationsToRecord,
+                                 settings.deltaTime, settings.noiseSTDev, nullptr, &rng);
+#else
         SimulationSource source(&leaf, measuredHitProb.metadata);
         simulateSourceInPosition(source, map, true, settings.iterationsToRecord,
                                  settings.deltaTime, settings.noiseSTDev);
+#endif
         if (settings.blurSigmaX > 0 || settings.blurSigmaY > 0) {
             cv::Mat image(map);
             image = image.reshape(1, measuredHitProb.metadata.dimensions.y);

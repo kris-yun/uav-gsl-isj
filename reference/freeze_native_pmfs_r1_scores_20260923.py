@@ -17,6 +17,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("run", type=Path)
     ap.add_argument("--replay-binary", type=Path, required=True)
+    ap.add_argument("--r2-replay-binary", type=Path,
+                    help="when supplied, A/B use this frozen-R2-source binary and C uses --replay-binary")
     args = ap.parse_args()
     run = args.run
     target = run / "r1_scores_frozen_manifest.json"
@@ -30,6 +32,7 @@ def main():
         "frozen_utc": datetime.now(timezone.utc).isoformat(),
         "truth_inputs_read": False,
         "replay_binary_sha256": sha(args.replay_binary),
+        "r2_replay_binary_sha256": sha(args.r2_replay_binary) if args.r2_replay_binary else None,
         "source_blind_inputs": {name: sha(run / name) for name in inputs},
         "arms": {},
     }
@@ -68,6 +71,7 @@ def main():
         if first_scores != second_scores:
             raise RuntimeError(f"non-deterministic CSV bytes for arm {arm}")
         document["arms"][arm] = {
+            "replay_binary_sha256": sha(args.r2_replay_binary) if args.r2_replay_binary and arm in "AB" else sha(args.replay_binary),
             "candidate_count": len(rows),
             "scores_sha256": first_scores,
             "repeated_scores_sha256": second_scores,
