@@ -1,0 +1,60 @@
+{
+  "mode": "train",
+  "holdout_unopened": [
+    "S2_W2_A",
+    "S2_W2_B"
+  ],
+  "train_pairs": [
+    "S1_W1",
+    "S2_W1",
+    "S1_W2"
+  ],
+  "plume_seeds": [
+    "A",
+    "B"
+  ],
+  "train_seeds": [
+    1729,
+    2718
+  ],
+  "epochs": 20,
+  "lr": 0.01,
+  "physics_dt_s": 0.1,
+  "effective_cell_m": 0.2,
+  "target_times_s": [
+    50,
+    75,
+    100,
+    125,
+    150,
+    175,
+    200,
+    225,
+    250,
+    275
+  ],
+  "wind_manifest_sha256": "2b8d594c650d16b94c29a6b7684ebfc0b547fe27c6cbac950294e374748f866f",
+  "model_script_sha256": "2fa3f43de3a105007a47eec22e876273c75c8786c81f6fea1c416af2711636a8",
+  "d0_script_sha256": "cb8b9640d650cad68d3a1638d16dfff8a170d9f650fb6e3439fd3166db9039c7",
+  "runtime": {
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+    "torch": "2.12.1+cpu",
+    "numpy": "1.26.4",
+    "device": "cpu",
+    "cpu_threads": 4,
+    "deterministic_algorithms": true
+  },
+  "fits": {
+    "m4v3_seed1729": {
+      "loss_first": 0.3334220349788666,
+      "loss_last": 0.22776824235916138,
+      "checkpoint_sha256": "347fc3868f288f6736ec1a3ae4f91778dff55808d1eed647086fdd744d3fd20e"
+    },
+    "m4v3_seed2718": {
+      "loss_first": 0.3357870578765869,
+      "loss_last": 0.23013009130954742,
+      "checkpoint_sha256": "e764417cdcf8d2809a5e9cf1de2de471846edb69820135db146bc16dd995da17"
+    }
+  }
+}
