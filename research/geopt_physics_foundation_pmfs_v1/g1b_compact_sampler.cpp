@@ -101,21 +101,28 @@ int main(int argc, char** argv) {
         constexpr int kSteps = 3000, kBurnInStep = 500, kSampleStep = 10, kSampleCount = 250;
         constexpr float kThreshold = 0.1f; const std::size_t n = grid.size();
         std::vector<std::uint8_t> hit_samples(static_cast<std::size_t>(kSampleCount) * n, 0);
+        std::vector<int> diagnostic20_hits(n, 0); int diagnostic20_count = 0;
         std::vector<double> sum(n, 0.0), sum_sq(n, 0.0); int sample_idx = 0;
         for (int step = 1; step <= kSteps; ++step) {
             sim.AdvanceTimestep();
-            if (step < kBurnInStep || step >= kSteps || ((step - kBurnInStep) % kSampleStep) != 0) continue;
-            if (sample_idx >= kSampleCount) throw std::runtime_error("too many samples");
+            if (step < 200 || step >= kSteps || ((step - 200) % kSampleStep) != 0) continue;
+            const bool is_primary = step >= kBurnInStep;
+            if (is_primary && sample_idx >= kSampleCount) throw std::runtime_error("too many samples");
             for (std::size_t j = 0; j < n; ++j) {
                 float c = sim.SampleConcentration(Vector3{grid[j].x, grid[j].y, 0.30f});
                 if (!std::isfinite(c)) throw std::runtime_error("non-finite concentration");
-                sum[j] += c; sum_sq[j] += static_cast<double>(c) * c;
-                hit_samples[static_cast<std::size_t>(sample_idx) * n + j] = static_cast<std::uint8_t>(c > kThreshold);
+                const bool hit = c > kThreshold;
+                diagnostic20_hits[j] += hit;
+                if (is_primary) {
+                    sum[j] += c; sum_sq[j] += static_cast<double>(c) * c;
+                    hit_samples[static_cast<std::size_t>(sample_idx) * n + j] = static_cast<std::uint8_t>(hit);
+                }
             }
-            ++sample_idx;
+            ++diagnostic20_count;
+            if (is_primary) ++sample_idx;
         }
-        if (sample_idx != kSampleCount) throw std::runtime_error("sample count mismatch");
-        std::vector<float> hit_frequency(n), mean_concentration(n), variance(n), hit_frequency_100(n);
+        if (sample_idx != kSampleCount || diagnostic20_count != 280) throw std::runtime_error("sample count mismatch");
+        std::vector<float> hit_frequency(n), mean_concentration(n), variance(n), hit_frequency_20(n), hit_frequency_100(n);
         for (std::size_t j = 0; j < n; ++j) {
             int hits = 0, hits100 = 0;
             for (int i = 0; i < sample_idx; ++i) {
@@ -123,6 +130,7 @@ int main(int argc, char** argv) {
                 if (i >= 50) hits100 += hit_samples[static_cast<std::size_t>(i) * n + j] != 0;
             }
             hit_frequency[j] = static_cast<float>(hits) / sample_idx;
+            hit_frequency_20[j] = static_cast<float>(diagnostic20_hits[j]) / diagnostic20_count;
             hit_frequency_100[j] = static_cast<float>(hits100) / (sample_idx - 50);
             mean_concentration[j] = static_cast<float>(sum[j] / sample_idx);
             double m = sum[j] / sample_idx; variance[j] = static_cast<float>(std::max(0.0, sum_sq[j] / sample_idx - m * m));
@@ -131,6 +139,7 @@ int main(int argc, char** argv) {
         write_binary(out_dir / "hit_frequency_f32.bin", hit_frequency);
         write_binary(out_dir / "mean_concentration_f32.bin", mean_concentration);
         write_binary(out_dir / "variance_concentration_f32.bin", variance);
+        write_binary(out_dir / "hit_frequency_window20_f32.bin", hit_frequency_20);
         write_binary(out_dir / "hit_frequency_window100_f32.bin", hit_frequency_100);
         std::ofstream meta(out_dir / "metadata.json", std::ios::trunc);
         meta << std::setprecision(9) << "{\n"
@@ -140,6 +149,7 @@ int main(int argc, char** argv) {
              << "  \"source_xyz\": [" << source_x << ", " << source_y << ", " << source_z << "],\n"
              << "  \"sensor_z\": 0.30, \"threshold\": 0.1, \"horizon_s\": 300, \"burn_in_s\": 50,\n"
              << "  \"sample_start_s\": 50, \"sample_end_s_exclusive\": 300, \"sample_hz\": 1, \"sample_count\": " << sample_idx << ",\n"
+             << "  \"diagnostic_window20_sample_count\": " << diagnostic20_count << ", \"diagnostic_window100_sample_count\": 200,\n"
              << "  \"grid_count_free\": " << n << ", \"delta_time_s\": 0.1, \"wind_iteration_delta_s\": 1.0,\n"
              << "  \"wind_loop\": [1, 10], \"gas_type\": \"butane\", \"num_filaments_sec\": 7.0,\n"
              << "  \"filament_ppm_center\": 10.0, \"filament_initial_sigma_cm\": 10.0,\n"
