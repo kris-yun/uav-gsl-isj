@@ -12,6 +12,8 @@ import hashlib
 import importlib.util
 import json
 import math
+import platform
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -62,16 +64,20 @@ def load_static_context(bank:Path):
 
 def load_dynamic_winds(dynamic:Path):
     out={}
+    manifest=json.loads((dynamic/"wind_sequence_manifest.json").read_text())
+    if not manifest["iteration1_matches_existing_contract"]["pass"]:
+        raise ValueError("dynamic wind iteration-1 anchor failed")
     for wid in ("W1","W2"):
         p=dynamic/f"wind_{wid}_sequence_z0p20.npy"
+        expected=manifest[wid]["export_sha256"]
+        actual=sha256(p)
+        if actual != expected:
+            raise ValueError(f"dynamic wind export hash drift {wid}: {actual} != {expected}")
         a=np.load(p,allow_pickle=False).astype(np.float32)
         if a.shape!=(11,83,119,3) or not np.isfinite(a).all():
             raise ValueError(f"dynamic wind contract drift {wid}: {a.shape}")
         t=torch.from_numpy(a).permute(0,3,1,2)[:,:2]
         out[wid]=F.avg_pool2d(t,2,ceil_mode=True)
-    manifest=json.loads((dynamic/"wind_sequence_manifest.json").read_text())
-    if not manifest["iteration1_matches_existing_contract"]["pass"]:
-        raise ValueError("dynamic wind iteration-1 anchor failed")
     return out,manifest
 
 def target(bank:Path,sid:str,wid:str,ps:str):
@@ -161,6 +167,10 @@ def checkpoint_hash_ok(out:Path,manifest,key):
     return p
 
 def train(args):
+    torch.use_deterministic_algorithms(True)
+    if args.device != "cpu":
+        raise ValueError("D0 freeze requires --device cpu for reproducible development execution")
+    torch.set_num_threads(args.cpu_threads)
     module=load_module(args.model_script)
     sources,free=load_static_context(args.bank)
     winds,wmanifest=load_dynamic_winds(args.dynamic_wind)
@@ -186,6 +196,17 @@ def train(args):
       "effective_cell_m":0.2,
       "target_times_s":TARGET_TIMES_S,
       "wind_manifest_sha256":sha256(args.dynamic_wind/"wind_sequence_manifest.json"),
+      "model_script_sha256":sha256(args.model_script),
+      "d0_script_sha256":sha256(Path(__file__)),
+      "runtime":{
+        "python":sys.version,
+        "platform":platform.platform(),
+        "torch":torch.__version__,
+        "numpy":np.__version__,
+        "device":str(device),
+        "cpu_threads":torch.get_num_threads(),
+        "deterministic_algorithms":torch.are_deterministic_algorithms_enabled(),
+      },
       "fits":{}
     }
     for seed in TRAIN_SEEDS:
@@ -218,6 +239,10 @@ def train(args):
     print(json.dumps(result,indent=2))
 
 def evaluate(args):
+    torch.use_deterministic_algorithms(True)
+    if args.device != "cpu":
+        raise ValueError("D0 freeze requires --device cpu for reproducible development execution")
+    torch.set_num_threads(args.cpu_threads)
     module=load_module(args.model_script)
     sources,free=load_static_context(args.bank)
     winds,_=load_dynamic_winds(args.dynamic_wind)
@@ -321,8 +346,11 @@ def main():
     ap.add_argument("--dynamic-wind",type=Path,required=True)
     ap.add_argument("--model-script",type=Path,required=True)
     ap.add_argument("--out",type=Path,required=True)
-    ap.add_argument("--device",default="cuda" if torch.cuda.is_available() else "cpu")
+    ap.add_argument("--device",default="cpu")
+    ap.add_argument("--cpu-threads",type=int,default=4)
     args=ap.parse_args()
+    if args.cpu_threads < 1:
+        raise ValueError("--cpu-threads must be >= 1")
     if args.mode=="train": train(args)
     else: evaluate(args)
 
