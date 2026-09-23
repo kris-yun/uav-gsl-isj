@@ -22,3 +22,11 @@ even if all eight comparisons are favorable. It is useful only to detect a
 failure of source identity or transport conditioning before building a fuller
 offline PMFS replay. The implementation is
 `research/causal_compositional_plume_world_model_v1/c05_sparse_rank_diagnostic.py`.
+
+## Geometry-only repair before target inspection
+
+The first run stopped at the uniqueness assertion before loading either
+S2-W2 concentration file: two tile centers selected the same nearest free
+cell. The selection now takes the nearest **unused** free cell in each tile,
+preserving the source-blind 5×6 layout and all scoring rules. No rank score
+or target concentration was read before this repair.

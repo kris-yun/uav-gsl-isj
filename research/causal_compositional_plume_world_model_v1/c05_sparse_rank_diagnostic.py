@@ -51,13 +51,16 @@ def probe_points(mask: np.ndarray) -> list[list[int]]:
     """One closest free cell per 5x6 equal-area tile, independent of plume."""
     free = np.argwhere(mask == 0)
     points: list[list[int]] = []
+    used: set[tuple[int, int]] = set()
     for row in range(5):
         for col in range(6):
             target = np.array(((row + .5) * mask.shape[0] / 5,
                                (col + .5) * mask.shape[1] / 6))
             distances = ((free - target) ** 2).sum(axis=1)
-            p = free[int(np.argmin(distances))]
+            p = next(free[int(i)] for i in np.argsort(distances, kind="stable")
+                     if tuple(free[int(i)]) not in used)
             points.append([int(p[0]), int(p[1])])
+            used.add((int(p[0]), int(p[1])))
     if len({tuple(p) for p in points}) != 30:
         raise ValueError("probe points are not unique")
     return points
