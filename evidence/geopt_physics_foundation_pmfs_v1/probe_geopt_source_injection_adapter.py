@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""M6 G0.6 probe: source-injection adapter for GeoPT without changing its 11-D input.
+"""M6 G0.6 probe: source-injection adapter for GeoPT without changing its official 11-D fx contract.
 
 Design goals
 ------------
@@ -96,12 +96,14 @@ class GeoPTSourceConditionedWrapper(nn.Module):
                 "geometry+dynamics feature tensor"
             )
 
-        # Official GeoPT preprocessing receives xyz plus the remaining
-        # non-coordinate pointwise features. The gas contract is:
-        # pos = features[..., :3], env_fx = features[..., 3:].
-        env_fx = fx11[..., 3:]
-
-        h = self.geopt.preprocess(torch.cat([pos, env_fx], dim=-1))
+        # IMPORTANT OFFICIAL CONTRACT:
+        #   space_dim = 3  -> pos is passed separately
+        #   fun_dim   = 11 -> fx11 contains:
+        #       [x,y,z,SDF,dir_x,dir_y,dir_z,dyn_x,dyn_y,dyn_z,dyn_mag]
+        # GeoPT then concatenates pos (3) + fx11 (11), so preprocess sees 14 dims.
+        # The xyz coordinates are intentionally present in both pos and fx11,
+        # matching the released GeoPT data loader / forward path.
+        h = self.geopt.preprocess(torch.cat([pos, fx11], dim=-1))
         h = h + self.geopt.placeholder[None, None, :]
         h = h + self.source_adapter(pos, source_xyz, sigma_s)
 
