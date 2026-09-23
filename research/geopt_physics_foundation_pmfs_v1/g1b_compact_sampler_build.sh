@@ -39,8 +39,10 @@ g++ -O3 -std=gnu++20 -DGADEN_ROS=1 \
   -isystem /opt/ros/humble/include/geometry_msgs \
   -isystem /opt/ros/humble/include/sensor_msgs \
   "$SRC" -o "$OUT" \
-  -Wl,-rpath,/opt/ros/humble/lib:"$PREFIX/install/gaden_common/lib" \
+  -L"$PREFIX/build/gaden_common/third_party/gaden_core/third_party/libbsc" \
+  -Wl,-rpath,/opt/ros/humble/lib:"$PREFIX/install/gaden_common/lib":"$PREFIX/build/gaden_common/third_party/gaden_core/third_party/libbsc" \
   "$PREFIX/install/gaden_common/lib/libgaden.so" /usr/lib/x86_64-linux-gnu/libfmt.so \
+  -lbsc \
   /opt/ros/humble/lib/librclcpp.so /opt/ros/humble/lib/librcl.so \
   /opt/ros/humble/lib/librmw_implementation.so /opt/ros/humble/lib/libament_index_cpp.so \
   /opt/ros/humble/lib/librcl_logging_spdlog.so /opt/ros/humble/lib/librcl_logging_interface.so \
