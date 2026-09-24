@@ -162,33 +162,10 @@ done < "$OUT_ROOT/source_rows.tsv"
 
 [[ "$(tail -n +2 "$inventory"|wc -l)" -eq 2688 ]] || exit 22
 
-python3 - "$PANEL" "$OUT_ROOT" "$E/CESS_D1R_REFERENCE_SUMMARY.json" <<'PY'
-import sys,json,pandas as pd,numpy as np
-p=pd.read_csv(sys.argv[1],sep="	"); root=sys.argv[2]
-B=[]; masses=[]
-for i,r in p.iterrows():
- arr=[]
- for rep in range(1,17):
-  seed=2026105000+16*i+rep
-  x=np.load(f"{root}/{r.source_id}/rep_{rep:02d}_seed_{seed}/pooled.npy",allow_pickle=False)
-  arr.append(x)
- a=np.stack(arr); B.append((a>0).astype(float)); masses.append(a.sum(axis=(1,2)))
-B=np.stack(B); masses=np.stack(masses)
-def cos(a,b):
- num=(a*b).sum(1); den=np.linalg.norm(a,axis=1)*np.linalg.norm(b,axis=1)
- return np.divide(num,den,out=np.zeros_like(num),where=den>0)
-p1=B[:,:8].mean(1).reshape(len(p),-1); p2=B[:,8:].mean(1).reshape(len(p),-1)
-c=cos(p1,p2)
-rel=np.linalg.norm(p1-p2,axis=1)/(np.linalg.norm((p1+p2)/2,axis=1)+1e-12)
-out={"decision":"CESS_D1R_REFERENCE_BANK_COMPLETE","sources":168,"reps_per_source":16,
-     "total":2688,"split_profile_cosine_median":float(np.median(c)),
-     "split_profile_cosine_q10":float(np.quantile(c,.1)),
-     "split_profile_relative_error_median":float(np.median(rel)),
-     "split_profile_relative_error_q75":float(np.quantile(rel,.75)),
-     "median_total_mass":float(np.median(masses))}
-open(sys.argv[3],"w").write(json.dumps(out,indent=2)+"\n")
-print(json.dumps(out,indent=2))
-PY
+python3 "$R/summarize_cess_d1r_reference.py" \
+  --panel "$PANEL" \
+  --data-root "$OUT_ROOT" \
+  --out "$E/CESS_D1R_REFERENCE_SUMMARY.json"
 
 {
  echo "branch=$(git -C "$ROOT" branch --show-current)"
@@ -198,10 +175,12 @@ PY
 
 sha256sum \
  "$R/CESS_D1R_REFERENCE_PROTOCOL_20260925.md" \
+ "$R/CESS_D1R_REFERENCE_FREEZE_20260925.md" \
  "$R/build_cess_d1a_panel.py" \
+ "$R/summarize_cess_d1r_reference.py" \
  "$R/run_cess_d1r_reference_vm.sh" \
  "$SOURCE_BANK" "$CONTRACT" "$PANEL" \
  "$E/CESS_D1R_REFERENCE_SUMMARY.json" \
  > "$E/CESS_D1R_FROZEN_SHA256.txt"
 
-echo "CESS_D1R_REFERENCE_BANK_COMPLETE"
+echo "CESS_D1R_REFERENCE_BANK_READY"
