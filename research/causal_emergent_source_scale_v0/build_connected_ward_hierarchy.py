@@ -110,7 +110,10 @@ def build(bank):
             clusters[u]["neighbors"].discard(a)
             clusters[u]["neighbors"].discard(b)
             clusters[u]["neighbors"].add(c)
-            clusters[u]["version"]+=1
+            # u's centroid/size did not change, so existing heap edges from u
+            # to its unchanged neighbors remain valid. Bumping u.version here
+            # would incorrectly invalidate those candidates without re-pushing
+            # them, distorting the constrained-Ward merge order.
             valid_neigh.append(u)
         clusters[c]["neighbors"]=set(valid_neigh)
         active.add(c)
