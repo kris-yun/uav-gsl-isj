@@ -2,65 +2,75 @@
 
 Decision: **NO_GO_143_CANDIDATE_TRANSFER_GATE**
 
-## Frozen setup
+## Corrected frozen timing
 
-- Development environment: House02
-- Train cells only: S1-W1 A/B, S2-W1 A/B, S1-W2 A/B
+The C0.5 ten snapshots correspond to approximately:
+55.0997, 85.0993, 115.0988, 142.2995, 167.3010,
+192.3025, 217.3041, 242.3056, 267.3071, 292.3086 s.
+
+All final ranks below use this corrected timing.
+
+## Setup
+
+- Train: S1-W1 A/B, S2-W1 A/B, S1-W2 A/B
 - Holdout: S2-W2 A/B
-- Real UAV geometry: frozen House02 TNQC/PMFS navigation seed0 and seed1 trajectories
-- Times: 50,75,100,125,150,175,200,225,250,275 s
-- Candidate set: 142 frozen PMFS quadtree candidates plus exact S2 reference
-- Nearest actual quadtree candidate to S2:
-  `quadtree_1_30_3_5`, distance 0.6708208 m
-- No candidate selection from holdout truth
+- Two frozen House02 PMFS UAV navigation trajectories
+- 142 frozen PMFS quadtree candidates + exact S2 reference
+- Nearest real quadtree candidate: `quadtree_1_30_3_5`, 0.6708208 m from S2
 
-## Result
+## 143-candidate result
 
-### Linear source-to-sensor transfer
+Exact S2 ranks, nav0-A / nav0-B / nav1-A / nav1-B:
 
-Exact S2, nav0-A / nav0-B / nav1-A / nav1-B:
-- MSE rank: **1 / 20 / 2 / 23**
-- temporal-correlation rank: **2 / 2 / 15 / 17**
+### Linear transfer
+- MSE: **3 / 22 / 19 / 25**
+- temporal correlation: **4 / 3 / 11 / 9**
 
-Nearest real quadtree candidate:
-- MSE rank: **2 / 18 / 1 / 15**
-- temporal-correlation rank: **3 / 3 / 5 / 5**
+### Nonlinear transfer
+- MSE: **3 / 38 / 7 / 24**
+- temporal correlation: **9 / 5 / 3 / 4**
 
-Median exact-S2 ranks:
-- MSE: 11.0
-- correlation: 8.5
+No all-four Top3 gate passes.
 
-### Nonlinear source-to-sensor transfer
+## Discrete path-action / Onsager-Machlup proxy
 
-Exact S2:
-- MSE rank: **2 / 41 / 4 / 29**
-- temporal-correlation rank: **3 / 6 / 11 / 5**
+A source-blind AR(1) residual law was fitted on the same training combinations
+only and used as a discrete path action on the 143 candidates.
 
-Nearest real quadtree candidate:
-- MSE rank: **5 / 31 / 2 / 21**
-- temporal-correlation rank: **8 / 8 / 6 / 3**
+### Linear mean model
+- exact S2 action rank: **9 / 27 / 22 / 27**
+- nearest-quadtree action rank: **20 / 26 / 1 / 16**
 
-Median exact-S2 ranks:
-- MSE: 16.5
-- correlation: 5.5
+### Nonlinear mean model
+- exact S2 action rank: **8 / 31 / 3 / 18**
+- nearest-quadtree action rank: **1 / 29 / 2 / 12**
 
-No model achieved all-four Top3 for either metric, for either exact truth or the actual nearest PMFS candidate.
+Decision: **NO_GO_OM_143_GATE**.
 
-## Interpretation
+## Scientific interpretation
 
-The earlier two-source S1-vs-S2 signal was only a necessary-condition result.
-It does not survive the real many-candidate inverse problem.
+The earlier pairwise S1-vs-S2 signal was a necessary condition only.
+It collapses in the many-source inverse problem.
 
-Failure mode: source non-identifiability.
-- many distant candidates generate similar sparse temporal signatures;
-- MSE can favor low-amplitude candidates;
-- correlation can favor far-away candidates with similar temporal shape;
-- training at only two source locations does not identify a continuous source-to-sensor transfer map over the PMFS candidate domain.
+The central limitation is now identifiable:
+only two distinct training source locations are available, yet the model is asked
+to identify a continuous two-dimensional source-to-sensor transfer law over 142
+quadtree candidates. The source-coordinate dependence is underdetermined.
 
-Therefore this route does NOT justify closed-loop PMFS integration or confirmatory House01/03 work.
+Observed failure modes:
+- distant sources can have similar temporal shape;
+- low-amplitude candidates can win MSE;
+- temporal correlation is not spatially identifying;
+- a generic residual path action does not restore identifiability.
 
 ## Stop rule
 
-**STOP this route.**
+STOP:
+- direct observation-space source-to-sensor regression;
+- this Onsager-Machlup/AR residual-action implementation;
+- closed-loop escalation from either signal.
 
-Future candidates must pass a many-source rank gate early. Field MSE, wind-response cosine, two-source discrimination, or source-pair classification alone are not sufficient evidence.
+Any next learned source-coordinate mechanism must be tested on a genuinely
+multi-source intervention bank with held-out source positions and must face the
+many-candidate rank gate early. Pairwise discrimination, field MSE, or cosine
+are no longer sufficient evidence.
