@@ -1,4 +1,4 @@
-# FSEI Information-Fidelity Partition Objective v0
+# SUPERSEDED AS PRIMARY CANDIDATE — RETAINED AS BASELINE\n\nPrimary candidate is now defined in `01_idea/IFCV_CANDIDATE_FREEZE_V1_20260925.md`.\n\nThe local first-order rule in this document remains useful as a theory/MDL-style pooling baseline, but its summed marginal-query fidelity term must not be interpreted as full-path information loss.\n\n---\n\n# FSEI Information-Fidelity Partition Objective v0
 
 Date: 2026-09-25
 
