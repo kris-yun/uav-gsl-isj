@@ -154,15 +154,24 @@ Forbidden:
 
 Evaluate on S2-W2 A/B.
 
-Required evidence:
-1. full 3-D lineage model must beat a matched 2-D particle baseline on one-step absolute displacement;
-2. mean absolute plume-trajectory error must improve by >=25% for BOTH A and B;
-3. held-out transport-direction cosine must exceed 0.5 for BOTH A and B;
-4. improvement must survive source-label permutation / lineage-destruction control.
+Two gates are separated to prevent overclaiming.
 
-Failure: **STOP PARTICLE/LAGRANGIAN MAINLINE**.
+**State gate** (3-D lineage state vs matched 2-D particle baseline), BOTH A/B:
+1. mean next-plume-centroid trajectory error improves by >=25%;
+2. held-out transport-direction cosine >0.5.
 
-Pass only authorizes L2.
+**Operator gate** (learned source-agnostic transition vs deterministic 3-D physics), BOTH A/B:
+1. mean next-centroid error improves by >=10%;
+2. filament XY displacement RMSE improves by >=10%;
+3. held-out transport-direction cosine >0.5;
+4. destroying lineage successor correspondence makes centroid error >=10% worse.
+
+Decisions:
+- state FAIL -> **STOP PARTICLE/LAGRANGIAN MAINLINE**;
+- state PASS + operator FAIL -> **STATE REPRESENTATION SIGNAL ONLY; LEARNED OPERATOR NO-GO**;
+- state PASS + operator PASS -> **L1 OPERATOR PASS**, which alone authorizes L2.
+
+This distinction prevents claiming a neural/learned operator innovation if ordinary 3-D particle physics already explains the gain.
 
 ## 6. L2 — inverse source test before ROS
 
