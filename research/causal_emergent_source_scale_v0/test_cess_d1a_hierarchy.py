@@ -55,7 +55,7 @@ def naive_prefix(p,steps=120):
             C[u]["nb"].discard(a); C[u]["nb"].discard(b); C[u]["nb"].add(c)
         C[c]={"n":nn,"c":cen,"m":mem,"nb":set(valid)}
         active.add(c)
-        out.append((nn,float(co),min(mem)))
+        out.append((min(A["m"]),min(B["m"]),nn,float(co),min(mem)))
     return out
 
 def main():
@@ -69,7 +69,9 @@ def main():
         got=pd.read_csv(lf,sep="\t").head(120)
     ref=naive_prefix(p,120)
     for i,(r,e) in enumerate(zip(got.itertuples(index=False),ref)):
-        nn,co,mn=e
+        lm,rm,nn,co,mn=e
+        assert int(r.left_min_panel_row)==lm,(i,r,e)
+        assert int(r.right_min_panel_row)==rm,(i,r,e)
         assert int(r.new_size)==nn,(i,r,e)
         assert int(r.new_min_panel_row)==mn,(i,r,e)
         assert np.isclose(float(r.ward_cost),co,rtol=0,atol=1e-12),(i,r,e)
