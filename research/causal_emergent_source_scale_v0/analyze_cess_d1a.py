@@ -4,7 +4,8 @@ import argparse,json
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from scipy.special import logsumexp\nfrom scipy.sparse import csr_matrix
+from scipy.special import logsumexp
+from scipy.sparse import csr_matrix
 
 ALPHA=.5
 LEVELS=(168,126,84,63,42,28,21,14,10,7,5,3,2)
