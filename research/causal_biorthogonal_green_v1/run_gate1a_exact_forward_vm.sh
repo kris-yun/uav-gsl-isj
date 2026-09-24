@@ -146,6 +146,12 @@ run_one() {
     echo "${source_id} seed=${seed}: expected 566 frames, got ${frame_count}" >&2; exit 22;
   }
 
+  # GADEN clears the results directory when saving a realization, including
+  # the occupancy symlink placed before the simulation. The frozen extractor
+  # reads that file from the realization directory, so restore the same link.
+  [[ -e "${work}/realization/OccupancyGrid3D.csv" ]] ||
+    ln -s "${OCCUPANCY}" "${work}/realization/OccupancyGrid3D.csv"
+
   "${EXTRACTOR}"     "${work}/realization" "${work}/realization"     "${work}/spatial/concentration.npy" "${work}/spatial/metadata.json"     "-5.39273" "-7.45088" "0.1" "1" "0.20" "83" "119" "${ITERS[@]}"     >"${log_root}/${source_id}.extract.log" 2>&1
 
   python3 "${RESEARCH}/extract_gate1a_probe_vector.py"     --concentration "${work}/spatial/concentration.npy"     --contract "${OUT_ROOT}/gate1a_contract.json"     --out "${pred}" >/dev/null
