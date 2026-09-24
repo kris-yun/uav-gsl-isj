@@ -19,6 +19,8 @@ EXPECTED_BINARY_SHA="4127b9ba4f42186ba2d6d33c84fba8d4b92749da59b83750fa4847dbd99
 EXPECTED_OCC_SHA="9402690152be4568ced8f2256e9098d82691aaaa1f22a1887eeac55d0e5d098d"
 EXPECTED_W2_ITER1_SHA="54d7bc338ea681611f66004a3230f29feffc495446814607141b0623ef1dd9a8"
 EXPECTED_EXTRACTOR_SHA="206cc92384866dcb7d966c6f8f9ec87862e15c7fee460a43c04014b58e3cae91"
+EXPECTED_BANK_SHA="0e835c3a3d0f4651f9c4aa87b28a34892589cfb073a73daf6a84896d081824fb"
+EXPECTED_CONTRACT_SHA="68121bc9225646e37fcf0233e769b694d9dbaec382723f45b8e80ffc73cea334"
 
 R="$ROOT/research/causal_emergent_source_scale_v0"
 E="$ROOT/evidence/causal_emergent_source_scale_v0/d1r"
@@ -39,6 +41,8 @@ check_sha "$OCC" "$EXPECTED_OCC_SHA" occupancy
 check_sha "$W2/wind_iteration_1" "$EXPECTED_W2_ITER1_SHA" w2_iter1
 check_sha "$EXTRACTOR" "$EXPECTED_EXTRACTOR_SHA" extractor
 [[ -f "$SOURCE_BANK" && -f "$CONTRACT" ]] || { echo "missing frozen Gate1A inputs" >&2; exit 5; }
+check_sha "$SOURCE_BANK" "$EXPECTED_BANK_SHA" source_bank
+check_sha "$CONTRACT" "$EXPECTED_CONTRACT_SHA" gate1a_contract
 
 python3 "$R/build_cess_d1a_panel.py" --source-bank "$SOURCE_BANK" --out "$PANEL"
 
@@ -74,12 +78,36 @@ while IFS=$'\t' read -r panel_index source_id sx sy sz; do
    mkdir -p "$work"
    valid=0
    if [[ -f "$spatial/concentration.npy" && -f "$pooled" && -f "$work/manifest.tsv" ]]; then
-     if python3 - "$spatial/concentration.npy" "$pooled" <<'PY' >/dev/null 2>&1
+     if python3 - "$spatial/concentration.npy" "$pooled" "$work/manifest.tsv" \
+       "$panel_index" "$source_id" "$rep" "$seed" \
+       "$EXPECTED_BINARY_SHA" "$EXPECTED_OCC_SHA" "$EXPECTED_W2_ITER1_SHA" \
+       "$EXPECTED_EXTRACTOR_SHA" "$EXPECTED_BANK_SHA" "$EXPECTED_CONTRACT_SHA" <<'PY' >/dev/null 2>&1
 import sys,numpy as np
-c=np.load(sys.argv[1],allow_pickle=False); p=np.load(sys.argv[2],allow_pickle=False)
-assert c.shape==(10,83,119) and p.shape==(10,30)
-assert np.isfinite(c).all() and np.isfinite(p).all()
-assert (c>=0).all() and (p>=0).all()
+cube=np.load(sys.argv[1],allow_pickle=False)
+pooled=np.load(sys.argv[2],allow_pickle=False)
+assert cube.shape==(10,83,119) and pooled.shape==(10,30)
+assert np.isfinite(cube).all() and np.isfinite(pooled).all()
+assert (cube>=0).all() and (pooled>=0).all()
+d={}
+for line in open(sys.argv[3]):
+    k,v=line.rstrip("\n").split("\t",1)
+    d[k]=v
+expected={
+ "panel_index":sys.argv[4],
+ "source_id":sys.argv[5],
+ "replicate":sys.argv[6],
+ "rng_seed":sys.argv[7],
+ "house":"House02",
+ "wind":"3,5-1_slow",
+ "binary_sha256":sys.argv[8],
+ "occupancy_sha256":sys.argv[9],
+ "w2_iteration1_sha256":sys.argv[10],
+ "extractor_sha256":sys.argv[11],
+ "source_bank_sha256":sys.argv[12],
+ "gate1a_contract_sha256":sys.argv[13],
+}
+for k,v in expected.items():
+    assert d.get(k)==v,(k,d.get(k),v)
 PY
      then valid=1; fi
    fi
@@ -120,6 +148,8 @@ binary_sha256	$EXPECTED_BINARY_SHA
 occupancy_sha256	$EXPECTED_OCC_SHA
 w2_iteration1_sha256	$EXPECTED_W2_ITER1_SHA
 extractor_sha256	$EXPECTED_EXTRACTOR_SHA
+source_bank_sha256	$EXPECTED_BANK_SHA
+gate1a_contract_sha256	$EXPECTED_CONTRACT_SHA
 EOF
      rm -rf "$real"
    fi
@@ -165,5 +195,13 @@ PY
  echo "head=$(git -C "$ROOT" rev-parse HEAD)"
  echo "status:"; git -C "$ROOT" status --short
 } > "$E/CESS_D1R_GIT_STATE.txt"
+
+sha256sum \
+ "$R/CESS_D1R_REFERENCE_PROTOCOL_20260925.md" \
+ "$R/build_cess_d1a_panel.py" \
+ "$R/run_cess_d1r_reference_vm.sh" \
+ "$SOURCE_BANK" "$CONTRACT" "$PANEL" \
+ "$E/CESS_D1R_REFERENCE_SUMMARY.json" \
+ > "$E/CESS_D1R_FROZEN_SHA256.txt"
 
 echo "CESS_D1R_REFERENCE_BANK_COMPLETE"
