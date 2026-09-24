@@ -4,7 +4,7 @@ import argparse,json
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from scipy.special import logsumexp
+from scipy.special import logsumexp\nfrom scipy.sparse import csr_matrix
 
 ALPHA=.5
 LEVELS=(168,126,84,63,42,28,21,14,10,7,5,3,2)
@@ -47,11 +47,9 @@ def macro_eval(post,true_s,micro_true,micro_ei,labels,rng):
     N,R=micro_true.shape
     groups=np.unique(labels); M=len(groups)
     sizes=np.array([np.sum(labels==g) for g in groups],dtype=int)
-    G=np.zeros((N,M),dtype=float)
-    for g in groups:
-        idx=np.where(labels==g)[0]
-        G[idx,g]=1.0/len(idx)
-    score=post@G
+    data=1.0/sizes[labels]
+    G=csr_matrix((data,(np.arange(N),labels)),shape=(N,M))
+    score=np.asarray(G.T.dot(post.T).T)
     score/=score.sum(axis=1,keepdims=True)
     true_g=labels[true_s]
     macro_true=np.log(score[np.arange(len(score)),true_g]+EPS).reshape(N,R)
@@ -79,10 +77,10 @@ def macro_ei_only(post,true_s,labels):
     N=post.shape[1]; R=len(true_s)//N
     groups=np.unique(labels); M=len(groups)
     sizes=np.array([np.sum(labels==g) for g in groups],dtype=int)
-    G=np.zeros((N,M),float)
-    for g in groups:
-        idx=np.where(labels==g)[0]; G[idx,g]=1/len(idx)
-    score=post@G; score/=score.sum(axis=1,keepdims=True)
+    data=1.0/sizes[labels]
+    G=csr_matrix((data,(np.arange(N),labels)),shape=(N,M))
+    score=np.asarray(G.T.dot(post.T).T)
+    score/=score.sum(axis=1,keepdims=True)
     tg=labels[true_s]
     lt=np.log(score[np.arange(len(score)),tg]+EPS).reshape(N,R)
     w=1.0/(M*sizes[labels])
