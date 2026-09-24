@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract the frozen 30x10 Gate-1A probe vector from a GADEN spatial cube."""
+"""Extract the frozen 30x10 Gate-1A pooled-probe vector from a GADEN cube."""
 from __future__ import annotations
 
 import argparse
@@ -7,6 +7,19 @@ import json
 from pathlib import Path
 
 import numpy as np
+
+
+def pooled_probe_vector(a: np.ndarray, points: list[dict]) -> np.ndarray:
+    vals = []
+    for p in points:
+        x0, x1 = int(p["native_x0"]), int(p["native_x1_exclusive"])
+        y0, y1 = int(p["native_y0"]), int(p["native_y1_exclusive"])
+        block = a[:, x0:x1, y0:y1]
+        if block.shape[1:] != (x1 - x0, y1 - y0):
+            raise ValueError(f"probe block shape drift: {p}")
+        vals.append(block.mean(axis=(1, 2)))
+    # time-major then probe-major, matching pooled target sampling.
+    return np.stack(vals, axis=1).astype(np.float32).reshape(-1)
 
 
 def main() -> int:
@@ -23,10 +36,10 @@ def main() -> int:
         raise ValueError("invalid concentration values")
 
     c = json.loads(args.contract.read_text(encoding="utf-8"))
-    points = c["probe_points"]
-    gx = np.asarray([int(p["grid_x"]) for p in points], dtype=np.int64)
-    gy = np.asarray([int(p["grid_y"]) for p in points], dtype=np.int64)
-    v = a[:, gx, gy].astype(np.float32).reshape(-1)
+    op = c.get("probe_operator", {})
+    if op.get("type") != "avg_pool_2x2_then_sample":
+        raise ValueError(f"unexpected probe operator: {op}")
+    v = pooled_probe_vector(a, c["probe_points"])
     if v.size != 300:
         raise ValueError(f"expected 300 values, got {v.size}")
 
@@ -40,6 +53,7 @@ def main() -> int:
         "count": int(v.size),
         "nonzero": int(np.count_nonzero(v > 0)),
         "max": float(v.max(initial=0)),
+        "probe_operator": op["type"],
     }))
     return 0
 
