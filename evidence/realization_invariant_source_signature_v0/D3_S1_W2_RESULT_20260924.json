@@ -1,0 +1,151 @@
+{
+  "decision": "D3_FAIL_STOP_MZ_SOURCE_INFERENCE_MAINLINE",
+  "truth_source_id": "pmfs_10_17",
+  "source_count": 630,
+  "prediction_seeds": [
+    2026092401,
+    2026092402
+  ],
+  "memory_horizon": 7,
+  "lag_correlations": [
+    0.5800333120862907,
+    0.47837190309417243,
+    0.37634022805020556,
+    0.2967710028363055,
+    0.2156392934257309,
+    0.1330408013756273,
+    0.055404087401230866,
+    -0.009348971157748626,
+    -0.025592348484298272
+  ],
+  "targets": {
+    "A": {
+      "raw_rank": 1,
+      "d0_static_rank": 9,
+      "diagonal_rank": 6,
+      "d2_memory_rank": 5,
+      "top10_memory": [
+        {
+          "source_id": "pmfs_10_19",
+          "score": 31.86923160397418,
+          "distance_to_truth_m": 0.600000000000001
+        },
+        {
+          "source_id": "pmfs_9_19",
+          "score": 35.07335887083619,
+          "distance_to_truth_m": 0.6708203932499379
+        },
+        {
+          "source_id": "pmfs_10_18",
+          "score": 36.98770916325018,
+          "distance_to_truth_m": 0.30000000000000027
+        },
+        {
+          "source_id": "pmfs_8_19",
+          "score": 38.55233523291621,
+          "distance_to_truth_m": 0.8485281374238578
+        },
+        {
+          "source_id": "pmfs_10_17",
+          "score": 43.79906254499397,
+          "distance_to_truth_m": 0.0
+        },
+        {
+          "source_id": "pmfs_9_18",
+          "score": 64.15998648493698,
+          "distance_to_truth_m": 0.4242640687119289
+        },
+        {
+          "source_id": "pmfs_8_20",
+          "score": 66.35335253139058,
+          "distance_to_truth_m": 1.0816653826391975
+        },
+        {
+          "source_id": "pmfs_9_20",
+          "score": 68.52412141259776,
+          "distance_to_truth_m": 0.9486832980505147
+        },
+        {
+          "source_id": "pmfs_10_20",
+          "score": 83.87374721582162,
+          "distance_to_truth_m": 0.9000000000000008
+        },
+        {
+          "source_id": "pmfs_9_16",
+          "score": 88.68400480218753,
+          "distance_to_truth_m": 0.4242640687119283
+        }
+      ]
+    },
+    "B": {
+      "raw_rank": 1,
+      "d0_static_rank": 1,
+      "diagonal_rank": 1,
+      "d2_memory_rank": 1,
+      "top10_memory": [
+        {
+          "source_id": "pmfs_10_17",
+          "score": 20.832164428465486,
+          "distance_to_truth_m": 0.0
+        },
+        {
+          "source_id": "pmfs_9_16",
+          "score": 28.40808052041717,
+          "distance_to_truth_m": 0.4242640687119283
+        },
+        {
+          "source_id": "pmfs_8_20",
+          "score": 29.081455529369588,
+          "distance_to_truth_m": 1.0816653826391975
+        },
+        {
+          "source_id": "pmfs_7_19",
+          "score": 31.61381376215481,
+          "distance_to_truth_m": 1.0816653826391973
+        },
+        {
+          "source_id": "pmfs_9_20",
+          "score": 32.80312429785704,
+          "distance_to_truth_m": 0.9486832980505147
+        },
+        {
+          "source_id": "pmfs_7_20",
+          "score": 34.18497865009408,
+          "distance_to_truth_m": 1.2727922061357861
+        },
+        {
+          "source_id": "pmfs_8_18",
+          "score": 34.238815361411014,
+          "distance_to_truth_m": 0.6708203932499371
+        },
+        {
+          "source_id": "pmfs_6_19",
+          "score": 34.62615231937437,
+          "distance_to_truth_m": 1.3416407864998745
+        },
+        {
+          "source_id": "pmfs_9_18",
+          "score": 37.15633310252692,
+          "distance_to_truth_m": 0.4242640687119289
+        },
+        {
+          "source_id": "pmfs_8_19",
+          "score": 39.789401393828626,
+          "distance_to_truth_m": 0.8485281374238578
+        }
+      ]
+    }
+  },
+  "rank_sums": {
+    "raw": 2,
+    "d0_static": 10,
+    "diagonal": 7,
+    "d2_memory": 6
+  },
+  "pass_rule": {
+    "both_memory_rank_le_3": true,
+    "memory_rank_sum_le_raw": true,
+    "memory_rank_sum_le_d0_static": true,
+    "memory_rank_sum_lt_diagonal": true
+  }
+}
