@@ -34,3 +34,9 @@ with tempfile.TemporaryDirectory() as td:
     legacy(td/"iteration_2",5)
     legacy(td/"iteration_3",6)
 print("GADEN_FILAMENT_EXPORTER_SYNTHETIC_PASS")
+
+steps,times=m.gaden_save_schedule(566,0.1,0.5)
+assert len(steps)==566
+assert steps[:7].tolist()==[0,6,11,16,22,28,34]
+assert steps[-1]==2998
+assert abs(times[-1]-299.80908203125)<1e-9
