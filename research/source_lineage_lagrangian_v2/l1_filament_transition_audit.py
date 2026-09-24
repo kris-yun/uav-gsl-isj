@@ -42,7 +42,8 @@ def read_occ(path:Path):
 
 
 def idx_of(pos,env):
-    q=np.floor((pos-env["min"])/env["cell"]).astype(np.int64)
+    # Match glm float->ivec conversion used by GADEN: truncate toward zero.
+    q=np.trunc((pos-env["min"])/env["cell"]).astype(np.int64)
     return q  # x,y,z
 
 
@@ -214,6 +215,8 @@ def standardize_fit(X):
 
 
 def ridge_fit(X,Y,alpha):
+    if alpha==0:
+        return np.linalg.lstsq(X,Y,rcond=None)[0]
     A=X.T@X
     reg=np.eye(A.shape[0])*alpha
     reg[-1,-1]=0
@@ -283,8 +286,9 @@ def main():
         errs=[]
         for g in sorted(set(groups)):
             m=groups!=g; v=~m
-            B=ridge_fit(augment(Xtr[m],mu,sd),Ytr[m],a)
-            pred=augment(Xtr[v],mu,sd)@B
+            mu_g,sd_g=standardize_fit(Xtr[m])
+            Bcv=ridge_fit(augment(Xtr[m],mu_g,sd_g),Ytr[m],a)
+            pred=augment(Xtr[v],mu_g,sd_g)@Bcv
             errs.append(float(np.sqrt(np.mean((pred-Ytr[v])**2))))
         cv[str(a)]=float(np.mean(errs))
     alpha=min(ALPHAS,key=lambda a:cv[str(a)])
@@ -310,26 +314,44 @@ def main():
         c3=centroid_error(start,y,d["P3"],tr)
         cr=centroid_error(start,y,pred,tr)
         cn=centroid_error(start,y,pnull,tr)
-        improve=(c2-cr)/c2 if c2>0 else float("nan")
+        state_improve=(c2-c3)/c2 if c2>0 else float("nan")
+        operator_improve=(c3-cr)/c3 if c3>0 else float("nan")
+        operator_rmse_improve=(r3-rr)/r3 if r3>0 else float("nan")
+        cos2=flat_cos(d["P2"][:,:2],y[:,:2])
+        cos3=flat_cos(d["P3"][:,:2],y[:,:2])
         cos=flat_cos(pred[:,:2],y[:,:2])
         null_gap=(cn-cr)/cn if cn>0 else float("nan")
-        gate={
-          "beats_2d_filament_rmse":rr<r2,
-          "centroid_trajectory_improvement_ge_25pct":improve>=.25,
-          "transport_direction_cosine_gt_0p5":cos>.5,
+        state_gate={
+          "3d_centroid_improvement_vs_2d_ge_25pct":state_improve>=.25,
+          "3d_transport_direction_cosine_gt_0p5":cos3>.5,
+        }
+        operator_gate={
+          "operator_centroid_improvement_vs_3d_ge_10pct":operator_improve>=.10,
+          "operator_rmse_improvement_vs_3d_ge_10pct":operator_rmse_improve>=.10,
+          "operator_transport_direction_cosine_gt_0p5":cos>.5,
           "lineage_null_worse_by_ge_10pct":null_gap>=.10,
         }
-        passes.append(all(gate.values()))
+        passes.append((all(state_gate.values()),all(operator_gate.values())))
         result["holdout"][cell]={
           "xy_rmse_m":{"2d":r2,"3d_physics":r3,"lineage_residual":rr,"destroyed_lineage_null":rn},
           "mean_next_centroid_error_m":{"2d":c2,"3d_physics":c3,"lineage_residual":cr,"destroyed_lineage_null":cn},
-          "centroid_improvement_vs_2d":improve,
+          "centroid_improvement":{"3d_vs_2d":state_improve,"operator_vs_3d":operator_improve},
+          "operator_rmse_improvement_vs_3d":operator_rmse_improve,
           "lineage_null_relative_gap":null_gap,
-          "transport_direction_cosine":cos,
-          "gates":gate,
+          "transport_direction_cosine":{"2d":cos2,"3d_physics":cos3,"lineage_residual":cos},
+          "state_gates":state_gate,
+          "operator_gates":operator_gate,
         }
 
-    decision="L1_PASS_FREEZE_BEFORE_L2" if all(passes) else "L1_FAIL_STOP_SOURCE_LINEAGE_MAINLINE"
+    state_pass=all(x[0] for x in passes)
+    operator_pass=all(x[1] for x in passes)
+    if state_pass and operator_pass:
+        decision="L1_OPERATOR_PASS_FREEZE_BEFORE_L2"
+    elif state_pass:
+        decision="L1_STATE_PASS_OPERATOR_NO_GO"
+    else:
+        decision="L1_FAIL_STOP_SOURCE_LINEAGE_MAINLINE"
+    result["summary"]={"state_pass":state_pass,"operator_pass":operator_pass}
     result["decision"]=decision
     args.out.parent.mkdir(parents=True,exist_ok=True)
     args.out.write_text(json.dumps(result,indent=2,allow_nan=True)+"\n")
