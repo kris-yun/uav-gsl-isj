@@ -215,3 +215,45 @@ Do not:
 
 Current next action:
 **export the existing House02 raw GADEN filament snapshots and run L1.**
+
+
+## 9. Frozen raw-bank availability and exact generator contract
+
+No new GADEN generation is required for L1.
+
+The eight raw filament realizations already exist on the VM under:
+
+`/home/zyc/c0_5_real_gaden_bank_20260923/{CELL}/realization/iteration_*`
+
+Cells:
+- S1_W1_A/B
+- S1_W2_A/B
+- S2_W1_A/B
+- S2_W2_A/B
+
+Each cell has exactly 566 saved snapshots.
+
+Frozen generator:
+- binary SHA-256: `4127b9ba4f42186ba2d6d33c84fba8d4b92749da59b83750fa4847dbd9957ce1`;
+- simulation dt: 0.1 s;
+- save dt: 0.5 s;
+- emission rate: 7 filaments/s;
+- initial sigma: 10;
+- growth gamma: 15;
+- filament noise std parameter: 0.01;
+- W1/W2 canonical House02 winds;
+- source z: 0.20 m.
+
+Important wrapper audit:
+the historical ROS parameters `variable_rate=true` and `filament_stop_steps=0`
+are not consumed when this frozen wrapper builds `RunningSimulation::Parameters`.
+The effective emission law is therefore the core float32
+`releaseAccumulator += 7*0.1` rule.
+
+Snapshot indices are save counters, not physical 0.5-s multiples.
+The exact first save simulation steps are:
+`0, 6, 11, 16, 22, 28, 34, ...`
+and save index 565 is simulation step 2998 at about 299.809082 s.
+The exporter emulates this float32 strict-'>' timing contract.
+
+This contract is frozen before L1.
