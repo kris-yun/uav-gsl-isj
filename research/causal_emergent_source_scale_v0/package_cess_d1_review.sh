@@ -16,6 +16,7 @@ mkdir -p "$PKG"/{repo,data}
 cp "$RESEARCH/CESS_D1_PROTOCOL_FREEZE_20260924.md" "$PKG/repo/"
 cp "$RESEARCH/build_connected_ward_hierarchy.py" "$PKG/repo/"
 cp "$RESEARCH/analyze_cess_d1.py" "$PKG/repo/"
+cp "$RESEARCH/test_cess_d1_weighting.py" "$PKG/repo/"
 cp "$RESEARCH/run_cess_d1_vm.sh" "$PKG/repo/"
 cp "$RESEARCH/package_cess_d1_review.sh" "$PKG/repo/"
 cp "$GATE1A_ROOT/source_bank.tsv" "$PKG/repo/"
