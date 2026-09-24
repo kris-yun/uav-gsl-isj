@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """Prepare the frozen arbitrary-source and probe bank for Bi-Green Gate 1A.
 
-This script is read-only with respect to all frozen evidence. It expands the
+This script is read-only with respect to frozen evidence. It expands the
 House02 PMFS quadtree candidate manifest onto the native 0.30 m PMFS source
 support, filters occupied source cells using the frozen 3-D occupancy grid, and
-writes a deterministic 631-ish source-position bank plus the already-frozen
-geometry-only probe contract.
+reconstructs the already-frozen M4 probe contract correctly: points_xy are
+coordinates on the 2x2 pooled grid, not raw 83x119 grid coordinates.
 
 No plume concentration or source-rank result is read while constructing the
-source bank.
+source/probe bank.
 """
 from __future__ import annotations
 
@@ -24,6 +24,7 @@ TRUTH = np.array([-4.342730045, 2.899120331, 0.20], dtype=np.float64)
 TRUTH_PMFS_IJ = (3, 34)
 PMFS_CELL = 0.30
 GADEN_CELL_EXPECTED = 0.10
+PROBE_POOL = 2
 
 
 def sha256(path: Path) -> str:
@@ -58,7 +59,6 @@ def read_occ(path: Path):
 
 
 def fine_index(x: float, minimum: float, cell: float) -> int:
-    # Frozen GADEN convention: source points used here sit at cell centers.
     return int(np.floor((x - minimum) / cell))
 
 
@@ -82,14 +82,11 @@ def main() -> int:
     if not 0 <= z_index < nz:
         raise ValueError("source z outside occupancy grid")
 
-    rows: list[dict[str, str]] = []
     with args.candidate_manifest.open(newline="", encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
     if len(rows) < 143:
         raise ValueError(f"candidate manifest too small: {len(rows)}")
 
-    # PMFS cell (0,0) center is exactly env_min + PMFS_CELL/2 for this frozen
-    # House02 configuration. Verify every quadtree center against that contract.
     base_x = float(env_min[0]) + PMFS_CELL / 2
     base_y = float(env_min[1]) + PMFS_CELL / 2
 
@@ -108,18 +105,18 @@ def main() -> int:
                 support_to_parents.setdefault((i, j), []).append(r["candidate_id"])
 
     records = []
-    occupied = []
+    rejected = []
     for (i, j), parents in sorted(support_to_parents.items()):
         x = base_x + i * PMFS_CELL
         y = base_y + j * PMFS_CELL
         ix = fine_index(x, float(env_min[0]), cell)
         iy = fine_index(y, float(env_min[1]), cell)
         if not (0 <= ix < nx and 0 <= iy < ny):
-            occupied.append((i, j, "out_of_bounds"))
+            rejected.append((i, j, "out_of_bounds"))
             continue
         state = int(occ[z_index, ix, iy])
         if state != 0:
-            occupied.append((i, j, f"state_{state}"))
+            rejected.append((i, j, f"state_{state}"))
             continue
         records.append({
             "source_id": f"pmfs_{i}_{j}",
@@ -155,22 +152,37 @@ def main() -> int:
     probe = json.loads(args.probe_json.read_text(encoding="utf-8"))
     points = probe.get("points_xy")
     if not isinstance(points, list) or len(points) != 30:
-        raise ValueError("expected frozen 30-point probe set")
+        raise ValueError("expected frozen 30-point pooled probe set")
     if len({tuple(map(int, p)) for p in points}) != 30:
-        raise ValueError("probe points are not unique")
+        raise ValueError("pooled probe points are not unique")
 
-    probe_world = []
-    for ix, iy in points:
-        ix, iy = int(ix), int(iy)
-        if not (0 <= ix < nx and 0 <= iy < ny):
-            raise ValueError(f"probe outside grid: {(ix, iy)}")
-        if int(occ[z_index, ix, iy]) != 0:
-            raise ValueError(f"probe not free at source plane: {(ix, iy)}")
-        probe_world.append({
-            "grid_x": ix,
-            "grid_y": iy,
-            "x_m": float(env_min[0]) + (ix + 0.5) * cell,
-            "y_m": float(env_min[1]) + (iy + 0.5) * cell,
+    # c05_sparse_rank_diagnostic.py selects points AFTER 2x2 pooling:
+    # x_s2_w2[0,4] is the max-pooled occupancy mask and targets are avg-pooled.
+    # Therefore every (px,py) denotes a 2x2 native block, not a raw grid cell.
+    probe_blocks = []
+    pooled_nx = (nx + PROBE_POOL - 1) // PROBE_POOL
+    pooled_ny = (ny + PROBE_POOL - 1) // PROBE_POOL
+    for px, py in points:
+        px, py = int(px), int(py)
+        if not (0 <= px < pooled_nx and 0 <= py < pooled_ny):
+            raise ValueError(f"pooled probe outside grid: {(px, py)}")
+        x0, x1 = px * PROBE_POOL, min((px + 1) * PROBE_POOL, nx)
+        y0, y1 = py * PROBE_POOL, min((py + 1) * PROBE_POOL, ny)
+        block = occ[z_index, x0:x1, y0:y1]
+        if block.size == 0 or np.any(block != 0):
+            raise ValueError(f"pooled probe block not all-free: {(px, py)}")
+        xs = [float(env_min[0]) + (ix + 0.5) * cell for ix in range(x0, x1)]
+        ys = [float(env_min[1]) + (iy + 0.5) * cell for iy in range(y0, y1)]
+        probe_blocks.append({
+            "pool_x": px,
+            "pool_y": py,
+            "native_x0": x0,
+            "native_x1_exclusive": x1,
+            "native_y0": y0,
+            "native_y1_exclusive": y1,
+            "native_cell_count": int((x1 - x0) * (y1 - y0)),
+            "center_x_m": float(np.mean(xs)),
+            "center_y_m": float(np.mean(ys)),
             "z_m": float(TRUTH[2]),
         })
 
@@ -185,14 +197,21 @@ def main() -> int:
         "manifest_leaf_count": len(rows),
         "deduplicated_support_count_before_occupancy": len(support_to_parents),
         "free_source_count": len(records),
-        "rejected_support_count": len(occupied),
+        "rejected_support_count": len(rejected),
         "pmfs_source_cell_m": PMFS_CELL,
         "gaden_cell_m": cell,
         "truth_xyz_m": TRUTH.tolist(),
         "truth_pmfs_ij": list(TRUTH_PMFS_IJ),
         "truth_source_id": truth["source_id"],
-        "probe_count": len(probe_world),
-        "probe_points": probe_world,
+        "probe_count": len(probe_blocks),
+        "probe_operator": {
+            "type": "avg_pool_2x2_then_sample",
+            "kernel": 2,
+            "stride": 2,
+            "ceil_mode": True,
+            "source_contract": "c05_sparse_rank_diagnostic.py",
+        },
+        "probe_points": probe_blocks,
         "target_cells": ["S2_W2_A", "S2_W2_B"],
         "target_seeds": [2026092301, 2026092302],
         "prediction_seeds": [2026092401, 2026092402],
@@ -214,7 +233,8 @@ def main() -> int:
         "support_before_occupancy": len(support_to_parents),
         "free_sources": len(records),
         "truth_source_id": truth["source_id"],
-        "probe_count": len(probe_world),
+        "probe_count": len(probe_blocks),
+        "probe_coordinate_space": "2x2_pooled_grid",
         "contract": str(args.out / "gate1a_contract.json"),
     }, indent=2))
     return 0
