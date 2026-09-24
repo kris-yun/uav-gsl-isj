@@ -1,0 +1,39 @@
+name: Kinetic input CFL audit
+
+on:
+  push:
+    branches:
+      - research/kinetic-plume-belief-v1
+    paths:
+      - ".github/workflows/kinetic-input-audit.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install numpy
+      - name: Audit wind CFL
+        run: |
+          python - <<'PY'
+          import numpy as np, json
+          from pathlib import Path
+          p=Path("evidence/causal_compositional_plume_world_model_v1/m4_v3_dynamic_wind_house02")
+          out={}
+          for wid in ("W1","W2"):
+              a=np.load(p/f"wind_{wid}_sequence_z0p20.npy",allow_pickle=False)
+              sp=np.linalg.norm(a[...,:2],axis=-1)
+              out[wid]={
+                "max_xy_speed_mps":float(sp.max()),
+                "p99_xy_speed_mps":float(np.quantile(sp,.99)),
+                "max_lattice_courant_dx0p2_dt0p1":float(sp.max()*.1/.2),
+                "p99_lattice_courant_dx0p2_dt0p1":float(np.quantile(sp,.99)*.1/.2)
+              }
+          print(json.dumps(out,indent=2))
+          PY
