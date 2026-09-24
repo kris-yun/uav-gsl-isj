@@ -19,10 +19,15 @@ git status --short
 git rev-parse HEAD
 ```
 
+Before execution, require that the branch contains primary audit commit:
+
+`297ade4d7048b2562abff0a2aaa6d318b49a913f`
+
 Read:
 
 - `01_idea/CESS_POST_PRO_REVIEW_MAINLINE_REVISION_20260925.md`
 - `research/causal_emergent_source_scale_v0/CESS_D1R_REFERENCE_PROTOCOL_20260925.md`
+- `evidence/causal_emergent_source_scale_v0/D1R_PRIMARY_CODE_AUDIT_20260925.md`
 
 ## Static check
 
@@ -42,6 +47,8 @@ Expected:
 - 168 sources;
 - 16 fresh references/source;
 - 2688 runs;
+- exact Gate1A bank and observation-contract hashes verified before generation;
+- resumable outputs accepted only when full source/seed/environment provenance matches;
 - no replicate 17/18;
 - no final partition;
 - no mainline PASS/STOP.
@@ -73,7 +80,9 @@ Report only:
 5. split profile cosine median/q10;
 6. split profile relative-error median/q75;
 7. package path / bytes / SHA256;
-8. infrastructure-only patch if any.
+8. Gate1A source-bank SHA256 reported by the runner/package;
+9. Gate1A contract SHA256 reported by the runner/package;
+10. infrastructure-only patch if any.
 
 Then stop.
 
