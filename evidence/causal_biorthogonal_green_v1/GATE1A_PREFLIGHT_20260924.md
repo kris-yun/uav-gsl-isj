@@ -44,13 +44,31 @@ Verified counts:
 Thus the first physical source-rank test is over 630 arbitrary source
 coordinates, not the two S1/S2 training interventions.
 
-### Source-blind observation bank
+### Source-blind observation bank — coordinate contract correction
 
-The frozen 5x6 equal-area closest-free probe layout contains 30 unique points.
-Together with the 10 frozen W2 snapshots this yields exactly 300 observations
-per independent target realization.
+The frozen `points_xy` in
+`m4_c05_local_compare_20260923_frozen_v2/sparse_rank_diagnostic.json`
+were selected **after 2x2 pooling**:
 
-Probe construction uses occupancy only and is source/plume blind.
+- occupancy was `max_pool2d(kernel=2, ceil_mode=True)`;
+- target concentration was `avg_pool2d(kernel=2, ceil_mode=True)`.
+
+Therefore those 30 coordinates live on the pooled 42x60 grid, not on the raw
+83x119 grid.
+
+Gate 1A now reproduces that frozen observation operator exactly:
+
+1. take each raw `[83,119]` concentration slice;
+2. average the corresponding 2x2 native block;
+3. sample the same 30 frozen pooled-grid coordinates.
+
+All 30 selected blocks are geometry-valid/free. Together with 10 frozen W2
+snapshots this yields 300 observations per target realization.
+
+This correction was made **before any Gate-1A exact-physics batch was run and
+before any source rank was observed**. It is an implementation-contract repair,
+not result-driven tuning. Probe identities, target data, source bank, score and
+PASS/FAIL thresholds are unchanged.
 
 ## Frozen exact-physics predictor
 
@@ -66,7 +84,7 @@ the exact same W2 physics and frozen simulator parameters. Only the source
 coordinate and prediction RNG seed change.
 
 Raw realizations are streamed through the verified spatial extractor; only the
-300-point probe vector and provenance hashes are retained.
+300-value pooled-probe vector and provenance hashes are retained.
 
 ## Decision rule already frozen
 
