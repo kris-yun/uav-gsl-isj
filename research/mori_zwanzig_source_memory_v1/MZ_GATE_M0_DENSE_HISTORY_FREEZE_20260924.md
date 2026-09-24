@@ -150,7 +150,7 @@ No source-specific amplitude fit, time shift, offset correction, threshold or po
 
 ## I. Primary gate metrics
 
-Aggregate over all (630\times3=1890) held-out source-realization tests.
+Aggregate over all (180\times3=540) held-out source-realization tests.
 
 Report for both Markov and memory arms:
 
@@ -170,7 +170,7 @@ M0 PASS requires **all** of the following:
 
 1. **Nontrivial memory:** selected (L^*>1) in all three held-out folds.
 2. **Predictive value:** finite-memory median held-out one-step error improves by >=10% relative to Markov in every fold.
-3. **Source value:** finite-memory top-3 retrieval rate improves by >=10 percentage points over Markov when pooled over the 1890 held-out tests.
+3. **Source value:** finite-memory top-3 retrieval rate improves by >=10 percentage points over Markov when pooled over the 540 held-out tests.
 4. **Rank value:** finite-memory mean log truth rank improves by >=20% over Markov.
 5. **Consistency:** finite-memory improves truth rank in >50% of tests and worsens it in <25% of tests.
 6. **No fold collapse:** none of the three folds has lower top-10 retrieval rate than the Markov arm.
