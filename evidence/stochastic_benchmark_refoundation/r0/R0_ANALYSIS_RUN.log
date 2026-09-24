@@ -1,0 +1,59 @@
+{
+  "decision": "R0_PASS_STOCHASTIC_BENCHMARK_USABLE",
+  "panel_sources": 18,
+  "new_realizations_per_source": 16,
+  "total_new_realizations": 288,
+  "legacy_cd_used_for_r0_estimation": false,
+  "legacy_cd_vs_r0_variability_spearman": 0.5046439628482973,
+  "split_reproducibility": [
+    {
+      "split": "first8_vs_last8",
+      "variability_spearman": 0.7213622291021672,
+      "mass_spearman": 0.9793601651186791,
+      "variability_tertile_agreement": 0.6666666666666666,
+      "left_variability_median": 0.37132810856228493,
+      "right_variability_median": 0.3041919503519893
+    },
+    {
+      "split": "odd8_vs_even8",
+      "variability_spearman": 0.7420020639834881,
+      "mass_spearman": 0.9669762641898865,
+      "variability_tertile_agreement": 0.7222222222222222,
+      "left_variability_median": 0.35553244374782034,
+      "right_variability_median": 0.3507142705585863
+    }
+  ],
+  "min_variability_split_spearman": 0.7213622291021672,
+  "min_mass_split_spearman_diagnostic": 0.9669762641898865,
+  "min_variability_tertile_agreement": 0.6666666666666666,
+  "K8_to_K16_relative_change": {
+    "median": 0.15456427551055085,
+    "q75": 0.2636788411325522,
+    "max": 0.6345991601877116
+  },
+  "K12_to_K16_relative_change": {
+    "median": 0.10405020595112133,
+    "q75": 0.18921745638452975,
+    "max": 0.3799870745408915
+  },
+  "pass_predicates": {
+    "complete_18x16": true,
+    "both_split_variability_spearman_ge_0_70": true,
+    "both_split_tertile_agreement_ge_0_50": true,
+    "K8_to_K16_median_change_le_0_25": true,
+    "K8_to_K16_q75_change_le_0_40": true,
+    "K12_to_K16_median_change_le_0_15": true,
+    "K12_to_K16_q75_change_le_0_25": true
+  },
+  "hold_predicates": {
+    "complete_18x16": true,
+    "both_split_variability_spearman_ge_0_40": true,
+    "K12_to_K16_median_change_le_0_25": true,
+    "K12_to_K16_q75_change_le_0_40": true
+  },
+  "interpretation": {
+    "PASS": "16-realization source stochastic summaries are reproducible enough to support a new source-conditioned stochastic benchmark.",
+    "HOLD": "Statistics are partially stabilizing but 16 realizations are not yet enough; increase K before theory selection.",
+    "STOP": "Per-source stochastic descriptors remain too unstable under the frozen observation operator; do not build the next mainline on per-source path distributions."
+  }
+}
