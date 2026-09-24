@@ -1,0 +1,32 @@
+name: Stable D2Q9 kinetic plume D0
+
+on:
+  push:
+    branches:
+      - research/kinetic-plume-belief-v1
+    paths:
+      - ".github/workflows/kinetic-d2q9-d0.yml"
+      - "research/kinetic_plume_belief_v1/kinetic_d2q9_d0.py"
+
+permissions:
+  contents: read
+
+jobs:
+  d0:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Run stable D2Q9 screen
+        run: |
+          python research/kinetic_plume_belief_v1/kinetic_d2q9_d0.py --repo-root "$GITHUB_WORKSPACE" --dynamic-wind evidence/causal_compositional_plume_world_model_v1/m4_v3_dynamic_wind_house02 --out /tmp/d2q9_d0
+          echo "===D2Q9_D0_RESULT==="
+          cat /tmp/d2q9_d0/d2q9_result.json
