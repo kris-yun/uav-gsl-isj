@@ -257,3 +257,25 @@ and save index 565 is simulation step 2998 at about 299.809082 s.
 The exporter emulates this float32 strict-'>' timing contract.
 
 This contract is frozen before L1.
+
+
+## 10. Frozen development-bank wrapper caveat
+
+The old ROS-parameter wrapper used to generate C0.5 contains an upstream
+parameter-reading defect: in deprecated-parameter mode, both
+`RunningSimulation::Parameters::temperature` and `pressure` are read from
+the `wind_time_step` key rather than their own keys.
+
+The seed-build evidence preserved in this repository changes the RNG helper,
+not that wrapper logic.
+
+Consequences:
+- House02 C0.5 remains **development-only**;
+- all eight factorial cells share the same binary and therefore the same
+  systematic wrapper defect, so L1 relative state/transfer tests remain usable;
+- L1 v2 does not use requested temperature/pressure as transition features and
+  does not claim physical parameter identification;
+- any fresh House01/House03 confirmation must use a corrected/native GADEN
+  project configuration and explicitly hash/verify the resolved T/P values.
+
+Do not present the House02 C0.5 bank as final real-physics confirmation.
