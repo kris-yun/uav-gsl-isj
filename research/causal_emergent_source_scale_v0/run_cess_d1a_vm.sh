@@ -87,11 +87,29 @@ while IFS=$'\t' read -r panel_index source_id sx sy sz; do
     mkdir -p "$work"
     valid=0
     if [[ -f "$spatial/concentration.npy" && -f "$pooled" && -f "$work/manifest.tsv" ]]; then
-      if python3 - "$spatial/concentration.npy" "$pooled" <<'PY' >/dev/null 2>&1
+      if python3 - "$spatial/concentration.npy" "$pooled" "$work/manifest.tsv" \
+          "$panel_index" "$source_id" "$rep" "$seed" \
+          "$EXPECTED_BINARY_SHA" "$EXPECTED_OCC_SHA" "$EXPECTED_W2_ITER1_SHA" \
+          "$EXPECTED_EXTRACTOR_SHA" "$EXPECTED_BANK_SHA" "$EXPECTED_CONTRACT_SHA" <<'PY' >/dev/null 2>&1
 import sys,numpy as np
-c=np.load(sys.argv[1],allow_pickle=False); p=np.load(sys.argv[2],allow_pickle=False)
-assert c.shape==(10,83,119) and p.shape==(10,30)
-assert np.isfinite(c).all() and np.isfinite(p).all() and (c>=0).all() and (p>=0).all()
+cube=np.load(sys.argv[1],allow_pickle=False)
+pooled=np.load(sys.argv[2],allow_pickle=False)
+assert cube.shape==(10,83,119) and pooled.shape==(10,30)
+assert np.isfinite(cube).all() and np.isfinite(pooled).all()
+assert (cube>=0).all() and (pooled>=0).all()
+d={}
+for line in open(sys.argv[3]):
+    k,v=line.rstrip("\n").split("\t",1); d[k]=v
+expected={
+ "panel_index":sys.argv[4],"source_id":sys.argv[5],
+ "replicate":sys.argv[6],"rng_seed":sys.argv[7],
+ "house":"House02","wind_id":"W2","wind_name":"3,5-1_slow",
+ "binary_sha256":sys.argv[8],"occupancy_sha256":sys.argv[9],
+ "w2_iteration1_sha256":sys.argv[10],"extractor_sha256":sys.argv[11],
+ "source_bank_sha256":sys.argv[12],"gate1a_contract_sha256":sys.argv[13],
+}
+for k,v in expected.items():
+    assert d.get(k)==v,(k,d.get(k),v)
 PY
       then valid=1; fi
     fi
@@ -137,6 +155,7 @@ occupancy_sha256	$EXPECTED_OCC_SHA
 w2_iteration1_sha256	$EXPECTED_W2_ITER1_SHA
 extractor_sha256	$EXPECTED_EXTRACTOR_SHA
 source_bank_sha256	$EXPECTED_BANK_SHA
+gate1a_contract_sha256	$EXPECTED_CONTRACT_SHA
 EOF
       rm -rf "$real"
     else
@@ -163,6 +182,7 @@ set -e
 } > "$EVIDENCE/CESS_D1A_GIT_STATE.txt"
 
 sha256sum "$RESEARCH/CESS_D1A_PROTOCOL_FREEZE_20260925.md"  "$RESEARCH/build_cess_d1a_panel.py" "$RESEARCH/build_cess_d1a_hierarchy.py"  "$RESEARCH/analyze_cess_d1a.py" "$RESEARCH/test_cess_d1a_weighting.py" "$RESEARCH/test_cess_d1a_hierarchy.py" \
+  "$RESEARCH/CESS_D1B_STRONG_DECODER_CONTROL_FREEZE_20260925.md" "$RESEARCH/analyze_cess_d1b_markov.py" \
   "$ROOT/research/causal_emergent_source_scale_v0/run_cess_d1a_vm.sh"  "$SOURCE_BANK" "$CONTRACT" "$PANEL" "$HIER" "$EVIDENCE/CESS_D1A_RESULT.json"  > "$EVIDENCE/CESS_D1A_FROZEN_SHA256.txt"
 
 cat "$EVIDENCE/CESS_D1A_RESULT.json"
