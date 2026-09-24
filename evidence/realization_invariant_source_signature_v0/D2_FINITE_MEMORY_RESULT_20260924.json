@@ -1,0 +1,25 @@
+{
+  "decision": "D2_ADVANCE_FINITE_MEMORY_SOURCE_LIKELIHOOD",
+  "source_count": 630,
+  "truth_source_id": "pmfs_3_34",
+  "target_blind_horizon_rule": "retain lags before first non-positive mean temporal correlation in C-D prediction differences",
+  "memory_rank_curve": {
+    "0": {"A_rank": 1, "B_rank": 7},
+    "1": {"A_rank": 1, "B_rank": 4},
+    "2": {"A_rank": 1, "B_rank": 5},
+    "3": {"A_rank": 1, "B_rank": 3},
+    "4": {"A_rank": 1, "B_rank": 2},
+    "5": {"A_rank": 1, "B_rank": 2},
+    "6": {"A_rank": 1, "B_rank": 2},
+    "7": {"A_rank": 1, "B_rank": 2},
+    "8": {"A_rank": 1, "B_rank": 2},
+    "9": {"A_rank": 1, "B_rank": 2}
+  },
+  "robustness": {
+    "all": {"first_nonpositive_lag": 8, "memory_horizon": 7, "A_rank": 1, "B_rank": 2},
+    "even_index": {"first_nonpositive_lag": 9, "memory_horizon": 8, "A_rank": 1, "B_rank": 2},
+    "odd_index": {"first_nonpositive_lag": 8, "memory_horizon": 7, "A_rank": 1, "B_rank": 2},
+    "truth_excluded": {"first_nonpositive_lag": 8, "memory_horizon": 7, "A_rank": 1, "B_rank": 2}
+  },
+  "scope": "Offline finite-memory proxy only; cross-source/cross-house falsification required before mainline freeze."
+}
