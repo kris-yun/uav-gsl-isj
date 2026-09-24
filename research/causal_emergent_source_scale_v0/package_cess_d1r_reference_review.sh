@@ -9,7 +9,9 @@ ARCHIVE="${ARCHIVE:-/home/zyc/CESS_D1R_REFERENCE_REVIEW_20260925.tar.gz}"
 [[ -f "$E/CESS_D1R_REFERENCE_SUMMARY.json" ]] || exit 2
 rm -rf "$PKG"; mkdir -p "$PKG"/{repo,data}
 cp "$ROOT/research/causal_emergent_source_scale_v0/CESS_D1R_REFERENCE_PROTOCOL_20260925.md" "$PKG/repo/"
+cp "$ROOT/research/causal_emergent_source_scale_v0/CESS_D1R_REFERENCE_FREEZE_20260925.md" "$PKG/repo/"
 cp "$ROOT/research/causal_emergent_source_scale_v0/build_cess_d1a_panel.py" "$PKG/repo/"
+cp "$ROOT/research/causal_emergent_source_scale_v0/summarize_cess_d1r_reference.py" "$PKG/repo/"
 cp "$ROOT/research/causal_emergent_source_scale_v0/run_cess_d1r_reference_vm.sh" "$PKG/repo/"
 cp "$ROOT/CODEX_CESS_D1R_REFERENCE_HANDOFF_20260925.md" "$PKG/repo/" 2>/dev/null || true
 cp "$ROOT/01_idea/CESS_POST_PRO_REVIEW_MAINLINE_REVISION_20260925.md" "$PKG/repo/" 2>/dev/null || true
