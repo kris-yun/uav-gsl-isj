@@ -1,0 +1,28 @@
+name: Export local C0.5 bundle
+
+on:
+  push:
+    branches:
+      - research/kinetic-plume-belief-v1
+    paths:
+      - ".github/workflows/export-c05-local-bundle.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pack local-development bundle
+        run: |
+          tar -czf /tmp/c05_local_bundle.tar.gz             evidence/causal_compositional_plume_world_model_v1/c0_5_real_gaden_bank             evidence/causal_compositional_plume_world_model_v1/m4_v3_dynamic_wind_house02             research/causal_compositional_plume_world_model_v1/m4_v3_d0_house02.py             research/causal_compositional_plume_world_model_v1/m4_v3_interventional_evolution.py             research/kinetic_plume_belief_v1/kinetic_moment_d0.py
+          ls -lh /tmp/c05_local_bundle.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: c05-local-bundle
+          path: /tmp/c05_local_bundle.tar.gz
+          compression-level: 0
+          retention-days: 1
