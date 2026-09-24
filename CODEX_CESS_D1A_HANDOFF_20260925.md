@@ -70,13 +70,23 @@ Require a clean worktree.
 ## Static checks
 
 ```bash
-python3 -m py_compile   research/causal_emergent_source_scale_v0/build_cess_d1a_panel.py   research/causal_emergent_source_scale_v0/build_cess_d1a_hierarchy.py   research/causal_emergent_source_scale_v0/analyze_cess_d1a.py
+python3 -m py_compile \
+  research/causal_emergent_source_scale_v0/build_cess_d1a_panel.py \
+  research/causal_emergent_source_scale_v0/build_cess_d1a_hierarchy.py \
+  research/causal_emergent_source_scale_v0/analyze_cess_d1a.py \
+  research/causal_emergent_source_scale_v0/test_cess_d1a_weighting.py \
+  research/causal_emergent_source_scale_v0/test_cess_d1a_hierarchy.py
+
+python3 research/causal_emergent_source_scale_v0/test_cess_d1a_weighting.py
+python3 research/causal_emergent_source_scale_v0/test_cess_d1a_hierarchy.py
 
 bash -n research/causal_emergent_source_scale_v0/run_cess_d1a_vm.sh
 bash -n research/causal_emergent_source_scale_v0/package_cess_d1a_review.sh
 ```
 
-If a genuine infrastructure bug is found before result generation, fix only
+Both self-tests must print PASS before execution. They protect two audited implementation contracts: uniform-macro intervention weighting and true minimum-cost connected-Ward merge ordering.
+
+If a genuine additional infrastructure bug is found before result generation, fix only
 that bug, preserve every scientific contract, and commit it separately.
 
 ## Execute
