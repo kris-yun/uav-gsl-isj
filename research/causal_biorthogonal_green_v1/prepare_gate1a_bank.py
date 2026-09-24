@@ -94,8 +94,10 @@ def main() -> int:
     for r in rows:
         oi, oj = int(r["origin_i"]), int(r["origin_j"])
         si, sj = int(r["size_i"]), int(r["size_j"])
-        expected_cx = base_x + (oi + (si - 1) / 2) * PMFS_CELL
-        expected_cy = base_y + (oj + (sj - 1) / 2) * PMFS_CELL
+        # The native PMFS quadtree manifest stores the center of its central
+        # support cell. Even-sized leaves therefore use origin + size // 2.
+        expected_cx = base_x + (oi + si // 2) * PMFS_CELL
+        expected_cy = base_y + (oj + sj // 2) * PMFS_CELL
         if abs(expected_cx - float(r["center_x"])) > 1e-4:
             raise ValueError(f"x-center drift for {r['candidate_id']}")
         if abs(expected_cy - float(r["center_y"])) > 1e-4:
