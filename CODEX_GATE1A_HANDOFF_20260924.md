@@ -73,6 +73,45 @@ The runner expects these defaults:
 
 Do not substitute another binary, target bank, wind, occupancy, or extractor unless the runner itself reports the frozen path is unavailable. If anything is missing, STOP and report the missing asset rather than silently replacing it.
 
+## Mandatory wind-alignment audit
+
+This Gate must not mix the historical HCMC W1 trajectory wind with the W2 target/predictor contract.
+
+The historical HCMC replay files are used **only** for the geometry-only PMFS candidate manifest. Their W1 (`3,5-1_fast`) wind/plume traces are excluded from every Gate-1A score.
+
+Before launching the batch, verify and record that:
+
+- target `S2_W2_A` provenance is W2 `3,5-1_slow`;
+- target `S2_W2_B` provenance is W2 `3,5-1_slow`;
+- the forward runner uses exactly:
+  `House02/gas_simulations/3,5-1_slow/.../wind`;
+- wind iterations 1..10 exist and their SHA-256 values are recorded.
+
+Run:
+
+```bash
+W2="/mnt/hgfs/workspace/GADEN_files/scenarios/House02/gas_simulations/3,5-1_slow/FilamentSimulation_gasType_10_sourcePosition_0.00_-1.00_0.20/wind"
+
+for i in $(seq 1 10); do
+  test -f "$W2/wind_iteration_$i" || { echo "MISSING W2 iteration $i"; exit 41; }
+done
+
+{
+  echo "W2_PATH=$W2"
+  sha256sum "$W2"/wind_iteration_{1..10}
+  echo "--- S2_W2_A manifest ---"
+  cat /home/zyc/c0_5_real_gaden_bank_20260923/S2_W2_A/manifest.tsv
+  echo "--- S2_W2_B manifest ---"
+  cat /home/zyc/c0_5_real_gaden_bank_20260923/S2_W2_B/manifest.tsv
+} | tee evidence/causal_biorthogonal_green_v1/GATE1A_WIND_ALIGNMENT_20260924.txt
+```
+
+If either target manifest indicates `3,5-1_fast` / W1, or a different wind contract, **STOP before simulation** and report:
+
+`GATE1A_INFRA_STOP_WIND_CONTRACT_MISMATCH`
+
+Do not substitute another target or wind field.
+
 ## Preflight-only check
 
 Before launching the full batch, inspect:
