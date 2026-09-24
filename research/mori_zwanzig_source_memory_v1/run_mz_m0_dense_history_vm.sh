@@ -106,6 +106,25 @@ fi
   exit 7
 }
 
+python3 - "${OUT_ROOT}/m0_source_bank.tsv" "${RESEARCH}/MZ_M0_EXPECTED_FPS_ORDER_20260924.tsv" <<'PY'
+import csv, sys
+bank_path, expected_path = sys.argv[1:3]
+with open(bank_path, newline="", encoding="utf-8") as f:
+    rows=list(csv.DictReader(f, delimiter="\t"))
+actual=[r["source_id"] for r in sorted(rows, key=lambda r:int(r["fps_order"]))]
+expected=[]
+with open(expected_path, encoding="utf-8") as f:
+    for line in f:
+        if line.strip():
+            order,sid=line.rstrip("\n").split("\t")
+            if int(order) != len(expected)+1:
+                raise SystemExit("expected FPS order file is malformed")
+            expected.append(sid)
+if actual != expected:
+    raise SystemExit("M0 geometry-only source subset/order drift")
+print("M0_SOURCE_SUBSET_AUDIT_PASS")
+PY
+
 set +u
 source /opt/ros/humble/setup.bash
 source "${BUILD_ROOT}/install/setup.bash"
