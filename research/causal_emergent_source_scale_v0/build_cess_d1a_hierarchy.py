@@ -75,7 +75,7 @@ def main():
         for u in neigh:
             if u not in active: continue
             C[u]["neighbors"].discard(a0);C[u]["neighbors"].discard(b0)
-            C[u]["neighbors"].add(c);C[u]["version"]+=1;valid.append(u)
+            C[u]["neighbors"].add(c);valid.append(u)\n            # u centroid/size is unchanged; keep existing valid u-other heap edges.
         C[c]["neighbors"]=set(valid);active.add(c)
         for u in valid: push(c,u)
         log.append({"after_M":len(active),"new_size":nn,"ward_cost":co,
