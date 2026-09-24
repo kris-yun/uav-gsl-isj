@@ -1,0 +1,169 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${ROOT:-$(git rev-parse --show-toplevel)}"
+EXPECTED_BRANCH="research/causal-emergent-source-scale-v0"
+[[ "$(git -C "$ROOT" branch --show-current)" == "$EXPECTED_BRANCH" ]] || { echo "wrong branch" >&2; exit 2; }
+
+BUILD_ROOT="${BUILD_ROOT:-/home/zyc/hcmc_gaden_seed_build_20260922}"
+CANONICAL_ROOT="${CANONICAL_ROOT:-/mnt/hgfs/workspace/GADEN_files/scenarios}"
+GATE1A_ROOT="${GATE1A_ROOT:-/home/zyc/bigreen_gate1a_exact_20260924}"
+OUT_ROOT="${OUT_ROOT:-/home/zyc/cess_d1r_168x16_reference_20260925}"
+EXTRACTOR="${EXTRACTOR:-/home/zyc/rmfe_filament_extractor_omp}"
+
+BINARY="$BUILD_ROOT/install/gaden_filament_simulator/lib/gaden_filament_simulator/filament_simulator"
+OCC="$CANONICAL_ROOT/House02/OccupancyGrid3D.csv"
+W2="$CANONICAL_ROOT/House02/gas_simulations/3,5-1_slow/FilamentSimulation_gasType_10_sourcePosition_0.00_-1.00_0.20/wind"
+
+EXPECTED_BINARY_SHA="4127b9ba4f42186ba2d6d33c84fba8d4b92749da59b83750fa4847dbd9957ce1"
+EXPECTED_OCC_SHA="9402690152be4568ced8f2256e9098d82691aaaa1f22a1887eeac55d0e5d098d"
+EXPECTED_W2_ITER1_SHA="54d7bc338ea681611f66004a3230f29feffc495446814607141b0623ef1dd9a8"
+EXPECTED_EXTRACTOR_SHA="206cc92384866dcb7d966c6f8f9ec87862e15c7fee460a43c04014b58e3cae91"
+
+R="$ROOT/research/causal_emergent_source_scale_v0"
+E="$ROOT/evidence/causal_emergent_source_scale_v0/d1r"
+SOURCE_BANK="$GATE1A_ROOT/source_bank.tsv"
+CONTRACT="$GATE1A_ROOT/gate1a_contract.json"
+PANEL="$E/CESS_D1R_PANEL_168.tsv"
+ITERS=(100 150 200 250 300 350 400 450 500 550)
+mkdir -p "$OUT_ROOT" "$E"
+
+check_sha(){
+ local p="$1" e="$2" n="$3"
+ [[ -e "$p" ]] || { echo "missing $n: $p" >&2; exit 3; }
+ local a; a="$(sha256sum "$p"|awk '{print $1}')"
+ [[ "$a" == "$e" ]] || { echo "$n hash drift: $a expected $e" >&2; exit 4; }
+}
+check_sha "$BINARY" "$EXPECTED_BINARY_SHA" binary
+check_sha "$OCC" "$EXPECTED_OCC_SHA" occupancy
+check_sha "$W2/wind_iteration_1" "$EXPECTED_W2_ITER1_SHA" w2_iter1
+check_sha "$EXTRACTOR" "$EXPECTED_EXTRACTOR_SHA" extractor
+[[ -f "$SOURCE_BANK" && -f "$CONTRACT" ]] || { echo "missing frozen Gate1A inputs" >&2; exit 5; }
+
+python3 "$R/build_cess_d1a_panel.py" --source-bank "$SOURCE_BANK" --out "$PANEL"
+
+python3 - "$PANEL" <<'PY'
+import sys,pandas as pd
+p=pd.read_csv(sys.argv[1],sep="	")
+assert len(p)==168 and p.source_id.nunique()==168
+assert (p.pmfs_i.min(),p.pmfs_i.max(),p.pmfs_j.min(),p.pmfs_j.max())==(1,24,12,18)
+print("panel verified",len(p))
+PY
+
+set +u
+source /opt/ros/humble/setup.bash
+source "$BUILD_ROOT/install/setup.bash"
+set -u
+export LD_LIBRARY_PATH="$BUILD_ROOT/build/gaden_common/third_party/gaden_core/third_party/libbsc:$BUILD_ROOT/install/gaden_common/lib:${LD_LIBRARY_PATH:-}"
+
+inventory="$E/CESS_D1R_ARTIFACT_SHA256.tsv"
+printf "panel_index\tsource_id\treplicate\trng_seed\tconcentration_sha256\tpooled_sha256\n" > "$inventory"
+
+python3 - "$PANEL" <<'PY' > "$OUT_ROOT/source_rows.tsv"
+import sys,pandas as pd
+p=pd.read_csv(sys.argv[1],sep="	")
+for _,r in p.iterrows():
+ print(int(r.panel_index),r.source_id,repr(float(r.x_m)),repr(float(r.y_m)),repr(float(r.z_m)),sep="	")
+PY
+
+while IFS=$'\t' read -r panel_index source_id sx sy sz; do
+ for rep in $(seq 1 16); do
+   seed=$((2026105000 + 16*panel_index + rep))
+   work="$OUT_ROOT/$source_id/rep_$(printf '%02d' "$rep")_seed_$seed"
+   real="$work/realization"; spatial="$work/spatial"; pooled="$work/pooled.npy"
+   mkdir -p "$work"
+   valid=0
+   if [[ -f "$spatial/concentration.npy" && -f "$pooled" && -f "$work/manifest.tsv" ]]; then
+     if python3 - "$spatial/concentration.npy" "$pooled" <<'PY' >/dev/null 2>&1
+import sys,numpy as np
+c=np.load(sys.argv[1],allow_pickle=False); p=np.load(sys.argv[2],allow_pickle=False)
+assert c.shape==(10,83,119) and p.shape==(10,30)
+assert np.isfinite(c).all() and np.isfinite(p).all()
+assert (c>=0).all() and (p>=0).all()
+PY
+     then valid=1; fi
+   fi
+
+   if [[ "$valid" -eq 0 ]]; then
+     rm -rf "$real" "$spatial" "$pooled"; mkdir -p "$real" "$spatial"
+     ln -s "$OCC" "$real/OccupancyGrid3D.csv"
+     echo "RUN panel=$panel_index source=$source_id rep=$rep seed=$seed"
+     env GADEN_RNG_SEED="$seed" "$BINARY" --ros-args        -p verbose:=false -p wait_preprocessing:=false        -p sim_time:=300.0 -p time_step:=0.1        -p num_filaments_sec:=7 -p variable_rate:=true -p filament_stop_steps:=0        -p ppm_filament_center:=10.0 -p filament_initial_std:=10.0        -p filament_growth_gamma:=15.0 -p filament_noise_std:=0.01        -p gas_type:=10 -p temperature:=298.0 -p pressure:=1.0        -p concentration_unit_choice:=1 -p occupancy3D_data:="$OCC"        -p fixed_frame:=map -p wind_data:="$W2" -p wind_time_step:=1.0        -p allow_looping:=true -p loop_from_step:=1 -p loop_to_step:=10        -p source_position_x:="$sx" -p source_position_y:="$sy" -p source_position_z:="$sz"        -p save_results:=1 -p results_time_step:=0.5 -p results_min_time:=0.0        -p writeConcentrations:=false -p results_location:="$real"        >"$work/generation.log" 2>&1
+     grep -q 'Filament simulator finished correctly!' "$work/generation.log" || exit 20
+     n="$(find "$real" -maxdepth 1 -type f -name 'iteration_*'|wc -l)"
+     [[ "$n" -eq 566 ]] || exit 21
+     [[ -e "$real/OccupancyGrid3D.csv" ]] || ln -s "$OCC" "$real/OccupancyGrid3D.csv"
+
+     "$EXTRACTOR" "$real" "$real" "$spatial/concentration.npy" "$spatial/metadata.json"        "-5.39273" "-7.45088" "0.1" "1" "0.20" "83" "119" "${ITERS[@]}"        >"$work/extract.log" 2>&1
+
+     python3 - "$spatial/concentration.npy" "$CONTRACT" "$pooled" <<'PY'
+import sys,json,numpy as np
+cube=np.load(sys.argv[1],allow_pickle=False); c=json.load(open(sys.argv[2]))
+v=[]
+for p in c["probe_points"]:
+ x0,x1=int(p["native_x0"]),int(p["native_x1_exclusive"])
+ y0,y1=int(p["native_y0"]),int(p["native_y1_exclusive"])
+ v.append(cube[:,x0:x1,y0:y1].mean(axis=(1,2)))
+a=np.stack(v,axis=1).astype(np.float64)
+assert a.shape==(10,30) and np.isfinite(a).all() and (a>=0).all()
+np.save(sys.argv[3],a,allow_pickle=False)
+PY
+     cat > "$work/manifest.tsv" <<EOF
+panel_index	$panel_index
+source_id	$source_id
+source_xyz_m	$sx,$sy,$sz
+replicate	$rep
+rng_seed	$seed
+house	House02
+wind	3,5-1_slow
+binary_sha256	$EXPECTED_BINARY_SHA
+occupancy_sha256	$EXPECTED_OCC_SHA
+w2_iteration1_sha256	$EXPECTED_W2_ITER1_SHA
+extractor_sha256	$EXPECTED_EXTRACTOR_SHA
+EOF
+     rm -rf "$real"
+   fi
+
+   csha="$(sha256sum "$spatial/concentration.npy"|awk '{print $1}')"
+   psha="$(sha256sum "$pooled"|awk '{print $1}')"
+   printf "%s\t%s\t%s\t%s\t%s\t%s\n" "$panel_index" "$source_id" "$rep" "$seed" "$csha" "$psha" >> "$inventory"
+ done
+done < "$OUT_ROOT/source_rows.tsv"
+
+[[ "$(tail -n +2 "$inventory"|wc -l)" -eq 2688 ]] || exit 22
+
+python3 - "$PANEL" "$OUT_ROOT" "$E/CESS_D1R_REFERENCE_SUMMARY.json" <<'PY'
+import sys,json,pandas as pd,numpy as np
+p=pd.read_csv(sys.argv[1],sep="	"); root=sys.argv[2]
+B=[]; masses=[]
+for i,r in p.iterrows():
+ arr=[]
+ for rep in range(1,17):
+  seed=2026105000+16*i+rep
+  x=np.load(f"{root}/{r.source_id}/rep_{rep:02d}_seed_{seed}/pooled.npy",allow_pickle=False)
+  arr.append(x)
+ a=np.stack(arr); B.append((a>0).astype(float)); masses.append(a.sum(axis=(1,2)))
+B=np.stack(B); masses=np.stack(masses)
+def cos(a,b):
+ num=(a*b).sum(1); den=np.linalg.norm(a,axis=1)*np.linalg.norm(b,axis=1)
+ return np.divide(num,den,out=np.zeros_like(num),where=den>0)
+p1=B[:,:8].mean(1).reshape(len(p),-1); p2=B[:,8:].mean(1).reshape(len(p),-1)
+c=cos(p1,p2)
+rel=np.linalg.norm(p1-p2,axis=1)/(np.linalg.norm((p1+p2)/2,axis=1)+1e-12)
+out={"decision":"CESS_D1R_REFERENCE_BANK_COMPLETE","sources":168,"reps_per_source":16,
+     "total":2688,"split_profile_cosine_median":float(np.median(c)),
+     "split_profile_cosine_q10":float(np.quantile(c,.1)),
+     "split_profile_relative_error_median":float(np.median(rel)),
+     "split_profile_relative_error_q75":float(np.quantile(rel,.75)),
+     "median_total_mass":float(np.median(masses))}
+open(sys.argv[3],"w").write(json.dumps(out,indent=2)+"\n")
+print(json.dumps(out,indent=2))
+PY
+
+{
+ echo "branch=$(git -C "$ROOT" branch --show-current)"
+ echo "head=$(git -C "$ROOT" rev-parse HEAD)"
+ echo "status:"; git -C "$ROOT" status --short
+} > "$E/CESS_D1R_GIT_STATE.txt"
+
+echo "CESS_D1R_REFERENCE_BANK_COMPLETE"
