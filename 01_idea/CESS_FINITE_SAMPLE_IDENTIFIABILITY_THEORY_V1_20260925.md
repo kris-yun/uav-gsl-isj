@@ -181,72 +181,101 @@ Let
 
 be a macro-pooled estimator, lifted honestly to the same micro support.
 
-Define the finite-sample estimation regrets
+Define both finite-sample regrets under the same true joint
+distribution \(p(S,Y)\):
 
 \[
-\varepsilon_{\rm id}(n)
+\mathcal E_{\rm id,n}
 =
-\mathbb E
-D_{\rm KL}
-\left(
-p(S\mid Y)
-\Vert
-\hat q_{\rm id,n}(S\mid Y)
-\right)
+\mathbb E_{p(S,Y)}
+\left[
+\log
+\frac{p(S\mid Y)}
+{\hat q_{\rm id,n}(S\mid Y)}
+\right],
 \]
 
 and
 
 \[
-\varepsilon_g(n)
+\mathcal E_{g,n}
 =
-\mathbb E
-D_{\rm KL}
-\left(
-q_g^*(S\mid Y)
-\Vert
+\mathbb E_{p(S,Y)}
+\left[
+\log
+\frac{q_g^*(S\mid Y)}
+{\hat q_{g,n}(S\mid Y)}
+\right].
+\]
+
+Because \(q_g^*\) is the optimal posterior inside the honest
+macro-lifted family, both quantities are non-negative expected excess
+log-loss terms for their respective model families.
+
+The expected microcell log-score advantage of finite-sample coarse-graining is
+
+\[
+\Delta_n(g)
+=
+\mathbb E_{p(S,Y)}
+\left[
+\log
+\frac{
 \hat q_{g,n}(S\mid Y)
-\right)
+}{
+\hat q_{\rm id,n}(S\mid Y)
+}
+\right].
 \]
 
-with the second regret measured relative to the oracle model available within
-the partition-restricted family.
-
-Then the expected microcell log-score advantage of coarse-graining has the
-bias-variance/information form
+Insert the true posterior \(p(S\mid Y)\) and the oracle lifted posterior
+\(q_g^*(S\mid Y)\):
 
 \[
 \Delta_n(g)
 =
-\mathbb E
-[
-\log \hat q_{g,n}(S\mid Y)
+\mathcal E_{\rm id,n}
 -
-\log \hat q_{\rm id,n}(S\mid Y)
-]
+\mathcal E_{g,n}
+-
+\mathbb E
+\left[
+\log
+\frac{p(S\mid Y)}
+{q_g^*(S\mid Y)}
+\right].
 \]
 
-and, schematically,
+Using the oracle fidelity theorem above gives the **exact decomposition**
 
 \[
+\boxed{
 \Delta_n(g)
-\approx
+=
 \underbrace{
-\varepsilon_{\rm id}(n)-\varepsilon_g(n)
+\mathcal E_{\rm id,n}-\mathcal E_{g,n}
 }_{\text{finite-sample estimation-risk reduction}}
 -
 \underbrace{
 I(S;Y\mid M)
-}_{\text{irreducible coarse-graining fidelity loss}}.
+}_{\text{irreducible coarse-graining fidelity loss}}
+}
 \]
 
-Hence a macrostate is useful only when
+under logarithmic scoring.
+
+Therefore a macro representation improves expected microcell log score iff
 
 \[
-\varepsilon_{\rm id}(n)-\varepsilon_g(n)
+\boxed{
+\mathcal E_{\rm id,n}-\mathcal E_{g,n}
 >
-I(S;Y\mid M).
-\]
+I(S;Y\mid M)
+}
+\].
+
+This is not an appeal to asymptotic information creation. It is an exact
+finite-sample risk trade-off under the same microcell task and same prior.
 
 This is the central scientific criterion.
 
