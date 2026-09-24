@@ -1,0 +1,42 @@
+name: D2Q9 kinetic quick preview
+
+on:
+  push:
+    branches:
+      - research/kinetic-plume-belief-v1
+    paths:
+      - ".github/workflows/kinetic-d2q9-quick.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  quick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          pip install numpy
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Four-epoch one-seed preview
+        run: |
+          python - <<'PY'
+          import importlib.util,sys
+          p="research/kinetic_plume_belief_v1/kinetic_d2q9_d0.py"
+          s=importlib.util.spec_from_file_location("k",p)
+          m=importlib.util.module_from_spec(s); s.loader.exec_module(m)
+          m.EPOCHS=4
+          m.TRAIN_SEEDS=(1729,)
+          sys.argv=["kinetic_d2q9_d0.py",
+                    "--repo-root",".",
+                    "--dynamic-wind","evidence/causal_compositional_plume_world_model_v1/m4_v3_dynamic_wind_house02",
+                    "--out","/tmp/d2q9_quick"]
+          m.main()
+          PY
+          echo "===D2Q9_QUICK_RESULT==="
+          cat /tmp/d2q9_quick/d2q9_result.json
