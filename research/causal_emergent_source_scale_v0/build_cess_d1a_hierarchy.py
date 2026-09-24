@@ -78,7 +78,10 @@ def main():
             C[u]["neighbors"].add(c);valid.append(u)\n            # u centroid/size is unchanged; keep existing valid u-other heap edges.
         C[c]["neighbors"]=set(valid);active.add(c)
         for u in valid: push(c,u)
-        log.append({"after_M":len(active),"new_size":nn,"ward_cost":co,
+        log.append({"after_M":len(active),
+                    "left_min_panel_row":min(A["members"]),
+                    "right_min_panel_row":min(B["members"]),
+                    "new_size":nn,"ward_cost":co,
                     "new_min_panel_row":min(members)})
         if len(active) in target: out[len(active)]=snap(active,C,n).tolist()
     missing=sorted(target-set(out))
