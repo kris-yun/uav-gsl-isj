@@ -1,0 +1,35 @@
+name: Export local research cache
+
+on:
+  push:
+    branches:
+      - research/kinetic-plume-belief-v1
+    paths:
+      - ".github/workflows/export-local-research-cache.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bundle exact frozen inputs
+        run: |
+          mkdir -p /tmp/local-cache
+          cp -a evidence/causal_compositional_plume_world_model_v1/c0_5_real_gaden_bank /tmp/local-cache/
+          cp -a evidence/causal_compositional_plume_world_model_v1/m4_v3_dynamic_wind_house02 /tmp/local-cache/
+          cp -a evidence/causal_compositional_plume_world_model_v1/m4_v3_d0_house02_20260923 /tmp/local-cache/
+          mkdir -p /tmp/local-cache/research
+          cp research/causal_compositional_plume_world_model_v1/m4_v3_d0_house02.py /tmp/local-cache/research/
+          cp research/causal_compositional_plume_world_model_v1/m4_v3_interventional_evolution.py /tmp/local-cache/research/
+          cp research/kinetic_plume_belief_v1/kinetic_d2q9_d0.py /tmp/local-cache/research/
+          tar -C /tmp -czf /tmp/m4_local_research_cache.tar.gz local-cache
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m4-local-research-cache
+          path: /tmp/m4_local_research_cache.tar.gz
+          compression-level: 0
+          retention-days: 1
