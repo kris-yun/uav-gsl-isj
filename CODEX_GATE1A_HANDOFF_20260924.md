@@ -133,9 +133,12 @@ Prediction RNG seeds:
 
 Observations:
 
-- 30 source-blind geometry probes;
+- 30 source-blind geometry probes on the frozen **2x2 pooled grid**;
+- each probe value is the mean of its corresponding 2x2 native 83x119 concentration block;
 - 10 frozen W2 snapshot times;
 - 300 observations per target.
+
+Important: `points_xy` in the frozen M4 diagnostic are pooled-grid coordinates, not raw 83x119 indices. Do not reinterpret them as raw cells. The committed scripts already enforce the correct pooled observation operator.
 
 Primary score:
 
