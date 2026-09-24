@@ -1,0 +1,46 @@
+name: M5 L1 filament interface contract
+
+on:
+  push:
+    branches:
+      - research/m5-l1-filament-transition-v1
+    paths:
+      - ".github/workflows/m5-l1-filament-interface.yml"
+      - "research/generative_lagrangian_filament_world_model_v1/m5_export_filament_frames.cpp"
+      - "research/generative_lagrangian_filament_world_model_v1/build_m5_filament_exporter.sh"
+      - "research/generative_lagrangian_filament_world_model_v1/recover_filament_pseudo_ids.py"
+      - "research/generative_lagrangian_filament_world_model_v1/m5_build_transition_bundle.py"
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Python interface checks
+        run: |
+          python -m pip install numpy scipy
+          python research/generative_lagrangian_filament_world_model_v1/recover_filament_pseudo_ids.py
+          python -m py_compile research/generative_lagrangian_filament_world_model_v1/m5_build_transition_bundle.py
+          bash -n research/generative_lagrangian_filament_world_model_v1/build_m5_filament_exporter.sh
+      - name: Build exact gaden_core revision
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libfmt-dev zlib1g-dev libomp-dev cmake
+          git clone --recursive https://github.com/MAPIRlab/gaden_core.git /tmp/gaden_core
+          git -C /tmp/gaden_core checkout 1a20e35cd5f174ae9675a2ae3c796137a05c4ee5
+          git -C /tmp/gaden_core submodule update --init --recursive
+          cmake -S /tmp/gaden_core -B /tmp/gaden_core/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build /tmp/gaden_core/build -j2
+      - name: Compile M5 exporter against gaden_core
+        env:
+          GADEN_CORE: /tmp/gaden_core
+        run: |
+          bash research/generative_lagrangian_filament_world_model_v1/build_m5_filament_exporter.sh
+          test -x .m5_l1_bin
