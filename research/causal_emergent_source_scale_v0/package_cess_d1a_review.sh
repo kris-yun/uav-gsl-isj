@@ -9,8 +9,10 @@ ARCHIVE="${ARCHIVE:-/home/zyc/CESS_D1A_REVIEW_20260925.tar.gz}"
 [[ -f "$E/CESS_D1A_RESULT.json" ]] || { echo "missing result" >&2; exit 2; }
 rm -rf "$PKG"; mkdir -p "$PKG"/{repo,data}
 cp "$R/CESS_D1A_PROTOCOL_FREEZE_20260925.md" "$PKG/repo/"
-cp "$R/build_cess_d1a_panel.py" "$R/build_cess_d1a_hierarchy.py" "$R/analyze_cess_d1a.py" "$R/run_cess_d1a_vm.sh" "$PKG/repo/"
+cp "$R/build_cess_d1a_panel.py" "$R/build_cess_d1a_hierarchy.py" "$R/analyze_cess_d1a.py" "$R/run_cess_d1a_vm.sh" "$R/test_cess_d1a_weighting.py" "$R/test_cess_d1a_hierarchy.py" "$PKG/repo/"
 cp "$ROOT/CODEX_CESS_D1A_HANDOFF_20260925.md" "$PKG/repo/" 2>/dev/null || true
+cp "$ROOT/01_idea/CESS_MAINLINE_FREEZE_V1_20260925.md" "$PKG/repo/" 2>/dev/null || true
+cp "$ROOT/evidence/causal_emergent_source_scale_v0/CESS_D0_INTERVENTION_WEIGHTING_CORRECTION_20260925.md" "$PKG/repo/" 2>/dev/null || true
 cp "$E"/CESS_D1A_* "$PKG/repo/" 2>/dev/null || true
 
 python3 - "$E/CESS_D1A_PANEL_168.tsv" "$DATA_ROOT" "$PKG/data/pooled_168x16x10x30.npy" <<'PY'
