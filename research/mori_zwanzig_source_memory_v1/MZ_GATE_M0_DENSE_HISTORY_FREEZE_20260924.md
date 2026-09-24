@@ -63,10 +63,10 @@ Each compact history must include:
 For each held-out seed (R_h):
 
 - reference seeds = the other two seeds;
-- held-out target histories = all 630 sources under (R_h);
-- candidate models = all 630 source identities, fitted only from their two reference realizations.
+- held-out target histories = all 180 sources under (R_h);
+- candidate models = all 180 source identities, fitted only from their two reference realizations.
 
-Thus each fold evaluates 630 held-out targets against 630 candidate source models.
+Thus each fold evaluates 180 held-out targets against 180 candidate source models.
 
 No held-out realization may be used for model-order or regularization selection.
 
@@ -119,12 +119,12 @@ Candidate grid:
 
 Selection procedure:
 
-1. fit on R_ref1 and evaluate one-step prediction on R_ref2 across all 630 sources;
+1. fit on R_ref1 and evaluate one-step prediction on R_ref2 across all 180 M0 sources;
 2. fit on R_ref2 and evaluate on R_ref1;
 3. average normalized one-step error across all source identities;
 4. select one global pair ((L^*,lambda^*)), tie-breaking toward smaller L then larger regularization.
 
-The Markov arm selects its one global (lambda_0^*) using the same reference-seed swap procedure.
+The Markov arm selects its one global (lambda_0^*) using the same reference-seed swap procedure after (L^*) is frozen, and its validation error is measured over the same warm-up interval used by the memory arm.
 
 After selection, refit each candidate model on both reference realizations.
 
@@ -134,7 +134,7 @@ No target rank is inspected during selection.
 
 For a held-out target history, every candidate source model receives the same observed target history as input.
 
-Score by normalized one-step innovation energy after a fixed warm-up of (L^*) samples:
+Score by normalized one-step innovation energy after a fixed warm-up of (L^*) samples. Both arms use this same scoring interval; the Markov arm does not gain extra early samples:
 
 [
 E_s=
@@ -144,7 +144,7 @@ E_s=
 
 Lower is better.
 
-Compute true-source rank among all 630 candidate models.
+Compute true-source rank among all 180 candidate models.
 
 No source-specific amplitude fit, time shift, offset correction, threshold or post-hoc calibration.
 
