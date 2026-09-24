@@ -45,6 +45,11 @@ check_sha "$EXTRACTOR" "$EXPECTED_EXTRACTOR_SHA" extractor
 check_sha "$SOURCE_BANK" "$EXPECTED_BANK_SHA" source_bank
 check_sha "$CONTRACT" "$EXPECTED_CONTRACT_SHA" gate1a_contract
 
+# Fail fast before any GADEN generation if the frozen analysis/hierarchy
+# implementation has drifted.
+python3 "$RESEARCH/test_cess_d1a_weighting.py"
+python3 "$RESEARCH/test_cess_d1a_hierarchy.py"
+
 python3 "$RESEARCH/build_cess_d1a_panel.py" --source-bank "$SOURCE_BANK" --out "$PANEL"
 python3 "$RESEARCH/build_cess_d1a_hierarchy.py" --panel "$PANEL" --out-json "$HIER" --merge-log "$MERGES"
 
@@ -157,7 +162,8 @@ set -e
  echo "status:"; git -C "$ROOT" status --short
 } > "$EVIDENCE/CESS_D1A_GIT_STATE.txt"
 
-sha256sum "$RESEARCH/CESS_D1A_PROTOCOL_FREEZE_20260925.md"  "$RESEARCH/build_cess_d1a_panel.py" "$RESEARCH/build_cess_d1a_hierarchy.py"  "$RESEARCH/analyze_cess_d1a.py" "$ROOT/research/causal_emergent_source_scale_v0/run_cess_d1a_vm.sh"  "$SOURCE_BANK" "$CONTRACT" "$PANEL" "$HIER" "$EVIDENCE/CESS_D1A_RESULT.json"  > "$EVIDENCE/CESS_D1A_FROZEN_SHA256.txt"
+sha256sum "$RESEARCH/CESS_D1A_PROTOCOL_FREEZE_20260925.md"  "$RESEARCH/build_cess_d1a_panel.py" "$RESEARCH/build_cess_d1a_hierarchy.py"  "$RESEARCH/analyze_cess_d1a.py" "$RESEARCH/test_cess_d1a_weighting.py" "$RESEARCH/test_cess_d1a_hierarchy.py" \
+  "$ROOT/research/causal_emergent_source_scale_v0/run_cess_d1a_vm.sh"  "$SOURCE_BANK" "$CONTRACT" "$PANEL" "$HIER" "$EVIDENCE/CESS_D1A_RESULT.json"  > "$EVIDENCE/CESS_D1A_FROZEN_SHA256.txt"
 
 cat "$EVIDENCE/CESS_D1A_RESULT.json"
 exit "$rc"
