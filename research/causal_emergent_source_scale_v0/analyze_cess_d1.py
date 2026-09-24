@@ -80,28 +80,82 @@ def macro_posterior_from_micro(post, labels):
     # labels are compact in hierarchy builder
     return score,sizes
 
+def source_mean_logp(logp,n_sources,n_rep):
+    if len(logp)!=n_sources*n_rep:
+        raise ValueError("sample count is not source_count * heldout_reps")
+    return logp.reshape(n_sources,n_rep).mean(axis=1)
+
+def macro_uniform_ei_from_logtp(logtp,labels,n_rep):
+    """EI lower bound under the frozen macro intervention.
+
+    The intervention distribution is uniform over macrostates, then uniform
+    over micro source cells inside the selected macrostate. Held-out data are
+    stored uniformly over micro sources, so evaluation must reweight sources:
+    each micro source s has probability 1/(M*|S_{g(s)}|), not 1/N.
+    """
+    n_sources=len(labels)
+    groups=np.unique(labels)
+    M=len(groups)
+    src_log=source_mean_logp(logtp,n_sources,n_rep)
+    macro_log=np.array(
+        [src_log[labels==g].mean() for g in groups],dtype=np.float64
+    )
+    expected_log=float(macro_log.mean())
+    ce=-expected_log
+    ei=float(np.log(M)+expected_log)
+    return ce,ei,src_log
+
 def evaluate_macro(post,true_source,labels,micro_true_logp):
     mpost,sizes=macro_posterior_from_micro(post,labels)
     true_macro=labels[true_source]
     tp=mpost[np.arange(len(mpost)),true_macro]
     logtp=np.log(tp+EPS)
-    ce=-float(logtp.mean())
+
+    n_sources=post.shape[1]
+    if len(post)%n_sources:
+        raise ValueError("held-out sample count is not divisible by source count")
+    n_rep=len(post)//n_sources
     M=len(sizes)
-    ei=float(np.log(M)-ce)
-    # per-sample raw-EI-lower-bound contribution difference macro minus micro
-    delta=(np.log(M)+logtp)-(np.log(post.shape[1])+micro_true_logp)
+
+    # Critical contract: macro interventions are uniform over macrostates.
+    # Therefore held-out samples cannot be averaged uniformly over the 630
+    # micro sources when macro sizes are unequal.
+    ce,ei,macro_src_log=macro_uniform_ei_from_logtp(
+        logtp,labels,n_rep
+    )
+    micro_src_log=source_mean_logp(
+        micro_true_logp,n_sources,n_rep
+    )
+    micro_ei=float(np.log(n_sources)+micro_src_log.mean())
+    delta_ei=float(ei-micro_ei)
+
+    # Express the difference as an *unweighted mean over micro-source
+    # contributions* so the frozen source-cluster bootstrap can resample
+    # micro source cells while still estimating the uniform-macro target.
+    # E_macro log q = (1/N) sum_s N/(M*|S_g|) * l_macro(s).
+    source_weight_factor=n_sources/(M*sizes[labels].astype(np.float64))
+    delta_source_contrib=(
+        (np.log(M)-np.log(n_sources))
+        + source_weight_factor*macro_src_log
+        - micro_src_log
+    )
+    if not np.isclose(delta_source_contrib.mean(),delta_ei,rtol=1e-11,atol=1e-11):
+        raise AssertionError("uniform-macro delta decomposition mismatch")
+
     return {
         "M":M,"CE":ce,"EI_lower_nats":ei,
         "eta_lower":float(ei/np.log(M)),
-        "delta_EI_nats":float(delta.mean()),
+        "delta_EI_nats":delta_ei,
         "sizes":sizes,
-        "delta_samples":delta,
+        "delta_source_contrib":delta_source_contrib,
         "true_macro":true_macro,
     }
 
-def bootstrap_source_delta(delta,n_sources,n_rep,rng):
-    a=delta.reshape(n_sources,n_rep).mean(axis=1)
-    # cluster bootstrap at micro-source level
+def bootstrap_source_delta(source_contrib,n_sources,rng):
+    a=np.asarray(source_contrib,dtype=np.float64)
+    if a.shape!=(n_sources,):
+        raise ValueError(f"expected {n_sources} source contributions, got {a.shape}")
+    # Nonparametric cluster bootstrap at the frozen micro-source-cell unit.
     idx=rng.integers(0,n_sources,size=(BOOTSTRAPS,n_sources))
     vals=a[idx].mean(axis=1)
     q=np.quantile(vals,[.025,.5,.975])
@@ -120,13 +174,17 @@ def random_ei_controls(post,true_source,sizes,n_random,seed):
     rng=np.random.default_rng(seed)
     vals=[]
     n=post.shape[1]
+    if len(post)%n:
+        raise ValueError("held-out sample count is not divisible by source count")
+    n_rep=len(post)//n
     for _ in range(n_random):
         lab=random_partition(rng,sizes,n)
         mpost,_=macro_posterior_from_micro(post,lab)
         tm=lab[true_source]
         tp=mpost[np.arange(len(mpost)),tm]
-        ce=-float(np.log(tp+EPS).mean())
-        vals.append(float(np.log(len(sizes))-ce))
+        logtp=np.log(tp+EPS)
+        _,ei,_=macro_uniform_ei_from_logtp(logtp,lab,n_rep)
+        vals.append(ei)
     return np.asarray(vals,dtype=float)
 
 def connected(labels,bank):
@@ -215,7 +273,7 @@ def main():
                 }
             else:
                 e=evaluate_macro(post,true_source,labels,micro_log)
-                q=bootstrap_source_delta(e["delta_samples"],630,4,brng)
+                q=bootstrap_source_delta(e["delta_source_contrib"],630,brng)
                 # fixed, level-specific random stream, common across split except offset
                 arr=random_ei_controls(
                     post,true_source,e["sizes"],RANDOM_PARTITIONS,
