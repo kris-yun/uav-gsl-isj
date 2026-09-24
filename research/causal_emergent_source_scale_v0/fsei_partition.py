@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""FSEI connected information-fidelity partition candidate.
+"""SUPERSEDED AS PRIMARY CANDIDATE: first-order FSEI/MDL merge baseline.
 
 This module contains no target-dependent logic.
 
