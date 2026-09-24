@@ -39,14 +39,22 @@ def load_bank(path: Path) -> list[dict[str, str]]:
     return rows
 
 
-def target_vector(path: Path, probe_points: list[dict]) -> np.ndarray:
+def pooled_probe_vector(a: np.ndarray, points: list[dict]) -> np.ndarray:
+    vals = []
+    for p in points:
+        x0, x1 = int(p["native_x0"]), int(p["native_x1_exclusive"])
+        y0, y1 = int(p["native_y0"]), int(p["native_y1_exclusive"])
+        vals.append(a[:, x0:x1, y0:y1].mean(axis=(1, 2)))
+    return np.stack(vals, axis=1).astype(np.float64).reshape(-1)
+
+
+def target_vector(path: Path, contract: dict) -> np.ndarray:
     a = np.load(path, allow_pickle=False)
     if a.shape != (10, 83, 119):
         raise ValueError(f"{path}: target shape drift {a.shape}")
-    gx = np.asarray([int(p["grid_x"]) for p in probe_points], dtype=np.int64)
-    gy = np.asarray([int(p["grid_y"]) for p in probe_points], dtype=np.int64)
-    # Frozen ordering: time-major, then the 30 probe points in contract order.
-    v = a[:, gx, gy].astype(np.float64).reshape(-1)
+    if contract.get("probe_operator", {}).get("type") != "avg_pool_2x2_then_sample":
+        raise ValueError("probe operator contract drift")
+    v = pooled_probe_vector(a, contract["probe_points"])
     if v.size != 300 or not np.isfinite(v).all():
         raise ValueError(f"{path}: invalid target vector")
     return v
@@ -95,6 +103,7 @@ def main() -> int:
     ap.add_argument("--out", type=Path, required=True)
     args = ap.parse_args()
 
+    args.out.parent.mkdir(parents=True, exist_ok=True)
     contract = json.loads(args.contract.read_text(encoding="utf-8"))
     bank_path = args.contract.parent / "source_bank.tsv"
     bank = load_bank(bank_path)
@@ -111,10 +120,8 @@ def main() -> int:
         raise ValueError(f"prediction seed drift: {seeds}")
 
     predictions: dict[int, dict[str, np.ndarray]] = {}
-    prediction_hashes: dict[int, dict[str, str]] = {}
     for seed in seeds:
         predictions[seed] = {}
-        prediction_hashes[seed] = {}
         root = args.prediction_root / f"seed_{seed}"
         for r in bank:
             sid = r["source_id"]
@@ -125,7 +132,6 @@ def main() -> int:
             if v.size != 300 or not np.isfinite(v).all():
                 raise ValueError(f"{p}: expected 300 finite values, got {v.shape}")
             predictions[seed][sid] = v
-            prediction_hashes[seed][sid] = sha256(p)
 
     target_cells = list(contract["target_cells"])
     result = {
@@ -135,6 +141,7 @@ def main() -> int:
         "source_count": len(bank),
         "truth_source_id": truth_id,
         "prediction_seeds": seeds,
+        "probe_operator": contract["probe_operator"],
         "targets": {},
     }
 
@@ -144,7 +151,7 @@ def main() -> int:
 
     for cell in target_cells:
         target_path = find_target(args.target_root, cell)
-        y = target_vector(target_path, contract["probe_points"])
+        y = target_vector(target_path, contract)
         raw_scores: dict[str, float] = {}
         log_scores: dict[str, float] = {}
         seed_scores: dict[int, dict[str, float]] = {s: {} for s in seeds}
@@ -201,7 +208,6 @@ def main() -> int:
         if all_gate
         else "GATE1A_FAIL_STOP_SOURCE_TO_SENSOR_GREEN_FAMILY"
     )
-    args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n",
                         encoding="utf-8")
     print(json.dumps({
