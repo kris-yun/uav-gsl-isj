@@ -68,13 +68,20 @@ Require clean worktree.
 ## Static checks
 
 ```bash
-python3 -m py_compile   research/causal_emergent_source_scale_v0/build_connected_ward_hierarchy.py   research/causal_emergent_source_scale_v0/analyze_cess_d1.py
+python3 -m py_compile \
+  research/causal_emergent_source_scale_v0/build_connected_ward_hierarchy.py \
+  research/causal_emergent_source_scale_v0/analyze_cess_d1.py \
+  research/causal_emergent_source_scale_v0/test_cess_d1_weighting.py
+
+python3 research/causal_emergent_source_scale_v0/test_cess_d1_weighting.py
 
 bash -n research/causal_emergent_source_scale_v0/run_cess_d1_vm.sh
 bash -n research/causal_emergent_source_scale_v0/package_cess_d1_review.sh
 ```
 
-If a syntax/infrastructure defect is found before scientific execution, fix only the defect, preserve every frozen scientific contract, and commit the infrastructure patch separately.
+The branch already contains one audited infrastructure-only repair: the D1 analyzer now evaluates held-out macro CE/EI under the frozen **uniform-macro intervention** rather than accidentally weighting macrostates by their number of microcells. The regression test above must print `CESS D1 weighting self-test: PASS`.
+
+If any additional syntax/infrastructure defect is found before scientific execution, fix only the defect, preserve every frozen scientific contract, and commit the infrastructure patch separately.
 
 ## Execute
 
