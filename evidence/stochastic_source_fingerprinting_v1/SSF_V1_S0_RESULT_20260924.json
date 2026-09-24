@@ -1,0 +1,63 @@
+{
+  "decision": "SSF_V1_S0_HOLD_SOURCE_CONDITIONED_VARIABILITY_REQUIRED",
+  "review_package_expected_sha256": "9f2c4e93c3833b00dd82d3f53a21e2286f23afdf3e5087328fc094cada1ba2be",
+  "source_count": 630,
+  "representation": "log1p",
+  "parity_fold_sizes": [153,159,156,162],
+  "parity_cv": {
+    "baseline": {
+      "C_to_D": {"top1":0.48412698412698413,"top3":0.7317460317460317,"top10":0.9301587301587302,"median_rank":2.0,"mean_rank":3.346031746031746,"p90_rank":8.100000000000023},
+      "D_to_C": {"top1":0.4936507936507937,"top3":0.7396825396825397,"top10":0.9365079365079365,"median_rank":2.0,"mean_rank":3.312698412698413,"p90_rank":8.0}
+    },
+    "ledoit_wolf": {
+      "C_to_D": {"top1":0.5968253968253968,"top3":0.8682539682539683,"top10":0.9746031746031746,"median_rank":1.0,"mean_rank":2.207936507936508,"p90_rank":5.0},
+      "D_to_C": {"top1":0.6031746031746031,"top3":0.8603174603174604,"top10":0.9793650793650793,"median_rank":1.0,"mean_rank":2.142857142857143,"p90_rank":4.0}
+    },
+    "oas": {
+      "C_to_D": {"top1":0.5936507936507937,"top3":0.8682539682539683,"top10":0.9777777777777777,"median_rank":1.0,"mean_rank":2.2,"p90_rank":5.0},
+      "D_to_C": {"top1":0.6063492063492063,"top3":0.8650793650793651,"top10":0.9809523809523809,"median_rank":1.0,"mean_rank":2.1142857142857143,"p90_rank":4.0}
+    },
+    "paired_bootstrap_ledoit_wolf": {
+      "top1":{"delta":0.1111111111111111,"ci95":[0.08095238095238096,0.14206349206349206],"bootstrap_nonpositive_fraction":0.0},
+      "top3":{"delta":0.12857142857142856,"ci95":[0.10396825396825397,0.15317460317460319],"bootstrap_nonpositive_fraction":0.0},
+      "top10":{"delta":0.04365079365079365,"ci95":[0.02857142857142857,0.05873015873015873],"bootstrap_nonpositive_fraction":0.0}
+    }
+  },
+  "truth_fold_excluded_S2": {
+    "truth_source_id":"pmfs_3_34",
+    "truth_parity_fold":2,
+    "log1p_euclidean":{"S2_W2_A_rank":1,"S2_W2_B_rank":5},
+    "ledoit_wolf_internal_variability":{"S2_W2_A_rank":1,"S2_W2_B_rank":3}
+  },
+  "mechanism": {
+    "covariance_variance_explained":{"top10":0.5522585321745039,"top50":0.8308476605191101,"top100":0.9198339458250216},
+    "S2_W2_A":{
+      "raw_residual_fraction":{"10":0.16096057476940726,"50":0.3527810128720062,"100":0.6611177524835257},
+      "precision_weighted_fraction":{"10":0.0026443854253512494,"50":0.032663046753504336,"100":0.22303717615144752}
+    },
+    "S2_W2_B":{
+      "raw_residual_fraction":{"10":0.2158758035755883,"50":0.7798202926895365,"100":0.8653110897794659},
+      "precision_weighted_fraction":{"10":0.010822275387375667,"50":0.18807037337411917,"100":0.3133040669845948}
+    }
+  },
+  "quadrant_fold_sizes":[176,153,142,159],
+  "contiguous_quadrant_cv":{
+    "baseline":{
+      "C_to_D":{"top1":0.48412698412698413,"top3":0.7317460317460317,"top10":0.9301587301587302,"median_rank":2.0,"mean_rank":3.346031746031746,"p90_rank":8.100000000000023},
+      "D_to_C":{"top1":0.4936507936507937,"top3":0.7396825396825397,"top10":0.9365079365079365,"median_rank":2.0,"mean_rank":3.312698412698413,"p90_rank":8.0}
+    },
+    "shared_full_ledoit_wolf":{
+      "C_to_D":{"top1":0.46984126984126984,"top3":0.7428571428571429,"top10":0.9111111111111111,"median_rank":2.0,"mean_rank":3.7698412698412698,"p90_rank":10.0},
+      "D_to_C":{"top1":0.48095238095238096,"top3":0.7523809523809524,"top10":0.9079365079365079,"median_rank":2.0,"mean_rank":3.950793650793651,"p90_rank":10.0}
+    },
+    "temporal_only_ledoit_wolf":{
+      "C_to_D":{"top1":0.48095238095238096,"top3":0.7761904761904762,"top10":0.9333333333333333,"median_rank":2.0,"mean_rank":3.2857142857142856,"p90_rank":7.0},
+      "D_to_C":{"top1":0.4936507936507937,"top3":0.7698412698412699,"top10":0.9428571428571428,"median_rank":2.0,"mean_rank":3.0714285714285716,"p90_rank":7.0}
+    },
+    "paired_bootstrap_temporal_top3":{"delta":0.0373015873015873,"ci95":[0.01507936507936508,0.06031746031746032],"bootstrap_nonpositive_fraction":0.00055}
+  },
+  "quadrant_covariance_heterogeneity_summary":{
+    "relative_frobenius_range":[1.2290374520495124,1.5648941929183053],
+    "top10_mean_principal_angle_deg_range":[67.45183435393285,78.93449318577407]
+  }
+}
