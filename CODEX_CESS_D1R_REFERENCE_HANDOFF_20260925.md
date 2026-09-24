@@ -32,7 +32,9 @@ Read:
 ## Static check
 
 ```bash
-python3 -m py_compile research/causal_emergent_source_scale_v0/build_cess_d1a_panel.py
+python3 -m py_compile \
+  research/causal_emergent_source_scale_v0/build_cess_d1a_panel.py \
+  research/causal_emergent_source_scale_v0/summarize_cess_d1r_reference.py
 bash -n research/causal_emergent_source_scale_v0/run_cess_d1r_reference_vm.sh
 bash -n research/causal_emergent_source_scale_v0/package_cess_d1r_reference_review.sh
 ```
@@ -75,7 +77,7 @@ Report only:
 
 1. branch;
 2. final commit;
-3. `CESS_D1R_REFERENCE_BANK_COMPLETE` or infrastructure stop;
+3. `CESS_D1R_REFERENCE_BANK_READY` or infrastructure stop;
 4. valid source count / realization count;
 5. split profile cosine median/q10;
 6. split profile relative-error median/q75;
