@@ -125,6 +125,26 @@ def parse_snapshot(path: Path) -> tuple[np.ndarray,dict]:
     return arr,{"major":int(major),"minor":int(minor),"compression":compression}
 
 
+def gaden_save_schedule(n_saves:int,sim_dt:float,save_dt:float):
+    """Exact RunningSimulation save schedule using float32 and strict '>'."""
+    current=np.float32(0.0)
+    last=np.float32(-np.finfo(np.float32).max)
+    dt=np.float32(sim_dt)
+    sdt=np.float32(save_dt)
+    steps=[]; times=[]
+    step=0
+    while len(steps)<n_saves:
+        if current > np.float32(last+sdt):
+            steps.append(step)
+            times.append(float(current))
+            last=current
+        current=np.float32(current+dt)
+        step+=1
+        if step>10000000:
+            raise RuntimeError("save schedule did not converge")
+    return np.asarray(steps,dtype=np.int32),np.asarray(times,dtype=np.float64)
+
+
 def select_iterations(results: Path,start:int|None,stop:int|None,stride:int):
     found=[]
     rx=re.compile(r"^iteration_(\d+)$")
@@ -150,7 +170,8 @@ def main():
     ap.add_argument("--start",type=int)
     ap.add_argument("--stop",type=int)
     ap.add_argument("--stride",type=int,default=1)
-    ap.add_argument("--snapshot-dt",type=float,default=0.5)
+    ap.add_argument("--sim-dt",type=float,default=0.1)
+    ap.add_argument("--save-dt",type=float,default=0.5)
     ap.add_argument("--hash-inputs",action="store_true")
     args=ap.parse_args()
     if args.stride<1: raise ValueError("--stride must be >=1")
@@ -166,18 +187,24 @@ def main():
     fil=np.concatenate(arrays,axis=0) if arrays else np.empty((0,4),np.float32)
     iterations=np.asarray([i for i,_ in items],dtype=np.int32)
     offsets=np.asarray(offsets,dtype=np.int64)
-    times=iterations.astype(np.float64)*float(args.snapshot_dt)
+    max_save_index=int(iterations.max())
+    all_steps,all_times=gaden_save_schedule(max_save_index+1,args.sim_dt,args.save_dt)
+    simulation_steps=all_steps[iterations]
+    times=all_times[iterations]
 
     args.output_npz.parent.mkdir(parents=True,exist_ok=True)
     np.savez_compressed(args.output_npz,filaments=fil,offsets=offsets,
-                        iterations=iterations,times_s=times)
+                        iterations=iterations,simulation_steps=simulation_steps,
+                        times_s=times)
     manifest={
         "format":"gaden_filament_npz_v1",
         "source_directory":str(args.results_dir.resolve()),
         "snapshots":len(items),"filaments_total":int(len(fil)),
         "versions":[list(x) for x in sorted(versions)],
         "compressions":sorted(comps),
-        "snapshot_dt_s":float(args.snapshot_dt),
+        "sim_dt_s":float(args.sim_dt),
+        "save_dt_s":float(args.save_dt),
+        "save_timing":"GADEN float32 currentTime > lastSaveTime + saveDeltaTime",
         "columns":["x_m","y_m","z_m","sigma_gaden"],
         "input_sha256":hashes,
         "output_sha256":sha256(args.output_npz),
