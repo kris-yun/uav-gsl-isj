@@ -56,3 +56,17 @@ The D2Q9 physical control is only a representation test.
 - If D2Q9 fails after a valid stable run, do not rescue it by arbitrary larger velocity sets on House02. Escalation to particle/age states requires an independent necessary-phenomenon justification.
 
 The previous first-moment central-difference run is INVALID as scientific evidence because its loss was NaN from epoch 1. It records a numerical-scheme failure, not a kinetic-state NO-GO.
+
+## Mandatory anti-overclaim ablation if D2Q9 is positive
+
+A positive D2Q9 result is not sufficient to attribute gain to kinetic memory.
+
+Force the trained model to `omega=1`, so directional populations instantaneously
+relax to the wind-conditioned equilibrium every step. This preserves the same
+positive conservative lattice transport/bounce-back discretization but removes
+persistent directional state.
+
+Interpretation:
+- full kinetic improves and omega=1 loses the gain -> directional hidden state is supported;
+- full and omega=1 are equivalent -> the gain is a numerical finite-volume/streaming improvement, not a kinetic-state innovation;
+- neither improves -> first directional moments are insufficient.
