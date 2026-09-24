@@ -1,0 +1,113 @@
+{
+  "mode": "SLL_V2_FILAMENT_L1",
+  "train_cells": [
+    "S1_W1_A",
+    "S1_W1_B",
+    "S2_W1_A",
+    "S2_W1_B",
+    "S1_W2_A",
+    "S1_W2_B"
+  ],
+  "holdout_cells": [
+    "S2_W2_A",
+    "S2_W2_B"
+  ],
+  "pairs_per_cell": {
+    "S1_W1_A": 8000,
+    "S1_W1_B": 8000,
+    "S2_W1_A": 8000,
+    "S2_W1_B": 8000,
+    "S1_W2_A": 8000,
+    "S1_W2_B": 8000,
+    "S2_W2_A": 8000,
+    "S2_W2_B": 8000
+  },
+  "ridge_alpha": 10.0,
+  "cv": {
+    "0.0": 0.02302400581827681,
+    "1e-05": 0.023024005816626503,
+    "0.0001": 0.023024005801773762,
+    "0.001": 0.02302400565324869,
+    "0.01": 0.02302400416823162,
+    "0.1": 0.02302398934140108,
+    "1.0": 0.023023843385149304,
+    "10.0": 0.02302259510947527
+  },
+  "holdout": {
+    "S2_W2_A": {
+      "xy_rmse_m": {
+        "2d": 0.036366173373144794,
+        "3d_physics": 0.022383718131759517,
+        "lineage_residual": 0.02231725938751033,
+        "destroyed_lineage_null": 0.02236403049213591
+      },
+      "mean_next_centroid_error_m": {
+        "2d": 0.037587266486679594,
+        "3d_physics": 0.009923902310616989,
+        "lineage_residual": 0.009747452100383086,
+        "destroyed_lineage_null": 0.009860036191175925
+      },
+      "centroid_improvement": {
+        "3d_vs_2d": 0.7359770146058937,
+        "operator_vs_3d": 0.01778032518973202
+      },
+      "operator_rmse_improvement_vs_3d": 0.0029690663480475277,
+      "lineage_null_relative_gap": 0.011418222875651756,
+      "transport_direction_cosine": {
+        "2d": 0.18465673885390407,
+        "3d_physics": 0.5221590409150185,
+        "lineage_residual": 0.5258930989122257
+      },
+      "state_gates": {
+        "3d_centroid_improvement_vs_2d_ge_25pct": true,
+        "3d_transport_direction_cosine_gt_0p5": true
+      },
+      "operator_gates": {
+        "operator_centroid_improvement_vs_3d_ge_10pct": false,
+        "operator_rmse_improvement_vs_3d_ge_10pct": false,
+        "operator_transport_direction_cosine_gt_0p5": true,
+        "lineage_null_worse_by_ge_10pct": false
+      }
+    },
+    "S2_W2_B": {
+      "xy_rmse_m": {
+        "2d": 0.03614959423474089,
+        "3d_physics": 0.021431150760638708,
+        "lineage_residual": 0.02134140523387745,
+        "destroyed_lineage_null": 0.02140209231168282
+      },
+      "mean_next_centroid_error_m": {
+        "2d": 0.039180386496519955,
+        "3d_physics": 0.009681463427447136,
+        "lineage_residual": 0.009685209398382097,
+        "destroyed_lineage_null": 0.00957942576325875
+      },
+      "centroid_improvement": {
+        "3d_vs_2d": 0.7529002571654811,
+        "operator_vs_3d": -0.0003869219734219567
+      },
+      "operator_rmse_improvement_vs_3d": 0.0041876205232100035,
+      "lineage_null_relative_gap": -0.011042795021082817,
+      "transport_direction_cosine": {
+        "2d": 0.09452530754504634,
+        "3d_physics": 0.42545840039421556,
+        "lineage_residual": 0.4319623351551635
+      },
+      "state_gates": {
+        "3d_centroid_improvement_vs_2d_ge_25pct": true,
+        "3d_transport_direction_cosine_gt_0p5": false
+      },
+      "operator_gates": {
+        "operator_centroid_improvement_vs_3d_ge_10pct": false,
+        "operator_rmse_improvement_vs_3d_ge_10pct": false,
+        "operator_transport_direction_cosine_gt_0p5": false,
+        "lineage_null_worse_by_ge_10pct": false
+      }
+    }
+  },
+  "summary": {
+    "state_pass": false,
+    "operator_pass": false
+  },
+  "decision": "L1_FAIL_STOP_SOURCE_LINEAGE_MAINLINE"
+}
