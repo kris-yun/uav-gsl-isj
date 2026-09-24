@@ -59,6 +59,7 @@ Require a clean worktree before scientific execution.
 ```bash
 cat research/mori_zwanzig_source_memory_v1/MZ_MAINLINE_FREEZE_20260924.md
 cat research/mori_zwanzig_source_memory_v1/MZ_GATE_M0_DENSE_HISTORY_FREEZE_20260924.md
+cat evidence/mori_zwanzig_source_memory_v1/MZ_M0_PREFLIGHT_20260924.md
 ```
 
 Do not modify the scientific contract after this point.
