@@ -1,0 +1,127 @@
+{
+  "decision": "PASI_D0_FAIL_STOP_PATH_ACTION_MAINLINE",
+  "truth_source_id": "pmfs_3_12",
+  "source_count": 630,
+  "prediction_seeds": [
+    2026092401,
+    2026092402
+  ],
+  "variance_contract": {
+    "local": "(C-D)^2/2 per source/time/probe",
+    "global_floor": "mean local variance over all 630 sources",
+    "floor_multiplier": 1.0
+  },
+  "targets": {
+    "E": {
+      "raw_rank": 4,
+      "homoscedastic_rank": 3,
+      "heteroscedastic_residual_only_rank": 3,
+      "path_action_rank": 3,
+      "truth_path_action_score": -1325.8073175536747,
+      "top10_path_action": [
+        {
+          "source_id": "pmfs_2_12",
+          "score": -1381.460802394784
+        },
+        {
+          "source_id": "pmfs_5_11",
+          "score": -1371.191536419023
+        },
+        {
+          "source_id": "pmfs_3_12",
+          "score": -1325.8073175536747
+        },
+        {
+          "source_id": "pmfs_4_11",
+          "score": -1238.5624634613278
+        },
+        {
+          "source_id": "pmfs_4_12",
+          "score": -1058.0911553901446
+        },
+        {
+          "source_id": "pmfs_2_13",
+          "score": -1014.5878145222252
+        },
+        {
+          "source_id": "pmfs_6_11",
+          "score": -1011.0686241970583
+        },
+        {
+          "source_id": "pmfs_3_13",
+          "score": -967.0176580397297
+        },
+        {
+          "source_id": "pmfs_1_12",
+          "score": -961.9026057232531
+        },
+        {
+          "source_id": "pmfs_5_12",
+          "score": -948.0370488585598
+        }
+      ]
+    },
+    "F": {
+      "raw_rank": 13,
+      "homoscedastic_rank": 14,
+      "heteroscedastic_residual_only_rank": 13,
+      "path_action_rank": 13,
+      "truth_path_action_score": 127.73573535405708,
+      "top10_path_action": [
+        {
+          "source_id": "pmfs_2_14",
+          "score": -1132.6390192972112
+        },
+        {
+          "source_id": "pmfs_1_18",
+          "score": -1114.5040582881447
+        },
+        {
+          "source_id": "pmfs_1_16",
+          "score": -1110.2444290343346
+        },
+        {
+          "source_id": "pmfs_1_17",
+          "score": -1107.9752486018522
+        },
+        {
+          "source_id": "pmfs_2_15",
+          "score": -992.3610603239079
+        },
+        {
+          "source_id": "pmfs_1_14",
+          "score": -984.1836181280866
+        },
+        {
+          "source_id": "pmfs_1_15",
+          "score": -945.2915489526279
+        },
+        {
+          "source_id": "pmfs_4_12",
+          "score": -888.7280233113265
+        },
+        {
+          "source_id": "pmfs_1_13",
+          "score": -882.255326381319
+        },
+        {
+          "source_id": "pmfs_2_13",
+          "score": -823.2941183938822
+        }
+      ]
+    }
+  },
+  "rank_sums": {
+    "raw": 17,
+    "homoscedastic": 17,
+    "heteroscedastic_residual_only": 16,
+    "path_action": 16
+  },
+  "pass_predicates": {
+    "both_action_rank_le_3": false,
+    "action_sum_le_raw": true,
+    "action_sum_le_homoscedastic": true,
+    "logdet_load_bearing_or_both_rank1": false
+  },
+  "scope": "Fresh S3 House02/W2 offline confirmation only."
+}
