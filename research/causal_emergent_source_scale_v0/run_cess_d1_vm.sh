@@ -54,6 +54,10 @@ assert len(d)==630 and d.source_id.nunique()==630
 print("source bank verified:",len(d))
 PY
 
+# Fail fast before any of the 5040 simulations if the intervention-weighting
+# implementation drifts from the frozen uniform-macro contract.
+python3 "$RESEARCH/test_cess_d1_weighting.py"
+
 python3 "$RESEARCH/build_connected_ward_hierarchy.py" \
   --source-bank "$SOURCE_BANK" \
   --out-json "$HIER" \
@@ -217,6 +221,7 @@ sha256sum \
   "$RESEARCH/CESS_D1_PROTOCOL_FREEZE_20260924.md" \
   "$RESEARCH/build_connected_ward_hierarchy.py" \
   "$RESEARCH/analyze_cess_d1.py" \
+  "$RESEARCH/test_cess_d1_weighting.py" \
   "$ROOT/research/causal_emergent_source_scale_v0/run_cess_d1_vm.sh" \
   "$SOURCE_BANK" \
   "$CONTRACT" \
