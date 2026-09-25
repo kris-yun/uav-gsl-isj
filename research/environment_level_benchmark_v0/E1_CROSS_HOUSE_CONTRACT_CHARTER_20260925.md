@@ -80,6 +80,31 @@ Only allowed if a preregistered geometry-only equivalence test passes without pl
 
 No concentration data may be used to choose between E1A/E1B.
 
+## 5A. Frozen benchmark source-height contract
+
+For the new cross-House benchmark, source height is a controlled variable, not a wind-family attribute.
+
+Freeze one common benchmark world-coordinate height:
+
+`z_source = 0.20 m`
+
+for House01, House02, and House03.
+
+Rationale:
+- the completed D1R source bank uses z=0.20 m throughout;
+- legacy canonical GADEN source files use wind-family-dependent heights in House01 and House03;
+- carrying those historical heights into E1 would confound wind/operator changes with source-height changes;
+- the future benchmark requires the same six source xyz positions within a House across all selected winds.
+
+Before source-panel acceptance, verify every proposed source cell at z=0.20 m against the House's frozen 3D occupancy/free-space representation.
+
+Hard rule:
+- if all six selected sources are valid at z=0.20 m, accept the common-height contract;
+- if any House cannot support a valid six-source panel at z=0.20 m under the frozen geometry-only rules, STOP E1 and report `SOURCE_HEIGHT_CONTRACT_INCOMPATIBLE`;
+- do not silently substitute a House-specific or wind-specific legacy z after inspecting geometry or plume outcomes.
+
+Historical source z values remain provenance only; they are not the E1 benchmark source-height contract.
+
 ## 6. Per-House six-source panel
 
 Select exactly six evaluation source cells per House using a deterministic geometry-only rule that balances local confusion and spatial coverage.
