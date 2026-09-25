@@ -176,8 +176,19 @@ def preflight() -> None:
 
 def lock_checked() -> tuple[dict, list[dict]]:
     lock = json.loads(INITIAL_LOCK.read_text(encoding="utf-8"))
-    if lock["branch"] != BRANCH or lock["runner_sha256"] != sha(Path(__file__)):
+    if lock["branch"] != BRANCH:
         raise RuntimeError("E2 initial lock/code drift")
+    runner_actual = sha(Path(__file__))
+    if runner_actual != lock["runner_sha256"]:
+        patch_path = EVIDENCE / "JTD_E2_REFERENCE_INFRA_PATCH.json"
+        patch = json.loads(patch_path.read_text(encoding="utf-8"))
+        committed_patch = subprocess.check_output(
+            ["git", "show", "HEAD:evidence/jtd_e2_20260925/JTD_E2_REFERENCE_INFRA_PATCH.json"], cwd=ROOT)
+        if (hashlib.sha256(committed_patch).hexdigest() != sha(patch_path) or
+                patch["initial_lock_sha256"] != sha(INITIAL_LOCK) or
+                patch["original_runner_sha256"] != lock["runner_sha256"] or
+                patch["patched_runner_sha256"] != runner_actual):
+            raise RuntimeError("unattested E2 acquisition runner change")
     committed = subprocess.check_output(["git", "show", "HEAD:evidence/jtd_e2_20260925/JTD_E2_INITIAL_LOCK.json"], cwd=ROOT)
     if hashlib.sha256(committed).hexdigest() != sha(INITIAL_LOCK):
         raise RuntimeError("initial lock must be committed before any E2 plume")
@@ -341,7 +352,11 @@ def acquire(phase: str) -> None:
         np.save(EVIDENCE / "JTD_E2_REFERENCE_12x10x30.npy", full, allow_pickle=False)
         historical = e1.rows(EVIDENCE / "JTD_E2_EXISTING_REFERENCE_MANIFEST.tsv")
         twelve = historical + [dict(r, reference_index=6+int(r["new_index"]), origin="E2_NEW_REFERENCE") for r in rows]
-        write_tsv(EVIDENCE / "JTD_E2_REFERENCE_12_MANIFEST.tsv", twelve)
+        # Historical E2/E1 rows and new-run rows have different provenance fields.
+        # Preserve their union explicitly instead of letting csv.DictWriter use only row 0.
+        columns = list(dict.fromkeys(k for row in twelve for k in row))
+        write_tsv(EVIDENCE / "JTD_E2_REFERENCE_12_MANIFEST.tsv",
+                  [{key: row.get(key, "") for key in columns} for row in twelve])
         write_json(EVIDENCE / "JTD_E2_REFERENCE_ACQUISITION.json", {
             "new_reference_runs": 108, "historical_open_development_runs": 108,
             "reference_count": 216, "realizations_per_source": 12,
