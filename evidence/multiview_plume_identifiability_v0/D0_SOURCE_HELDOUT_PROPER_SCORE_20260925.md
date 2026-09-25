@@ -1,3 +1,20 @@
+# SUPERSEDED — RR-MVSI D0 ADVANCE WITHDRAWN
+
+The earlier exploratory D0_ADVANCE conclusion in this file is withdrawn after a unified implementation audit.
+
+Reason:
+- identical full-168 candidate support;
+- common source-context RBF-KRR prototype mapping;
+- common latent standardization;
+- train-source-only posterior temperature selection;
+- two representative checkerboard source-heldout directions
+
+showed that paired-view CCA / LDA improve source rank but do not improve source-heldout proper log score over raw/PCA baselines.
+
+Current decision is documented in:
+`evidence/multiview_plume_identifiability_v0/RRMVSI_D1_HOLD_UNIFIED_SANITY_20260925.md`.
+
+---
 # RR-MVSI D0 Source-Heldout Proper-Score Audit — 2026-09-25
 
 Status: **D0_ADVANCE_MULTIVIEW_SOURCE_IDENTIFIABILITY_D1**
