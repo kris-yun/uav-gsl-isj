@@ -110,14 +110,18 @@ def audit_existing(groups: list[dict], probes: dict) -> tuple[np.ndarray, list[d
             if meta["requested_seed"] != requested or meta["cube_sha256"] != row["cube_sha256"]:
                 raise RuntimeError("OPEN historical run metadata drift")
             cube = e1.cube_qc(cube_path, house)
-            pooled = np.load(pooled_path, allow_pickle=False)
-            if not np.array_equal(e1.pool(cube, probes[house]), pooled) or not np.array_equal(pooled, pooled_expected):
+            repooled = e1.pool(cube, probes[house])
+            # E2 retained raw cubes and the aggregate OPEN tensor; E1 also retained per-run pooled.npy.
+            pooled = np.load(pooled_path, allow_pickle=False) if pooled_path.is_file() else repooled
+            if not np.array_equal(repooled, pooled) or not np.array_equal(pooled, pooled_expected):
                 raise RuntimeError("OPEN historical raw cube/pooled tensor mismatch")
             tensor[ei, si, r] = pooled
             manifest.append({"environment_index": ei, "house": house, "wind": wind,
                              "source_index": si, "source_id": sid, "reference_index": r,
                              "origin": origin, "requested_seed": requested, "cube_sha256": row["cube_sha256"],
-                             "pooled_sha256": sha(pooled_path), "run_dir": str(run)})
+                             "pooled_sha256": sha(pooled_path) if pooled_path.is_file() else "",
+                             "pooled_value_sha256": hashlib.sha256(pooled.tobytes()).hexdigest(),
+                             "run_dir": str(run)})
     assert len(manifest) == 108
     return tensor, manifest
 
