@@ -1,0 +1,97 @@
+{
+  "bootstrap": {
+    "draws": 10000,
+    "seed": 2026092503,
+    "unit": "six source units resampled with replacement within each of three environments; four fresh targets kept together"
+  },
+  "branch": "research/jtd-crossenv-k12-confirmation-v0",
+  "code_sha256": {
+    "fit_jtd_e2_models.py": "5918cdb32bd317c3e657278a11e875ef8c0f169f6223b72793bd4f57f01a9722",
+    "run_jtd_e2_vm.py": "3b503dca11dfccce9f4063bee4b6bb5e41e2fd855fda193692bce7edf64af052",
+    "run_jtd_e2_vm.sh": "5de764b88d9c8def02baf1d87870761fd1cda35797de568c99afa8727505306f",
+    "score_jtd_e2.py": "951bf3b172cb1ee0d40f79315a8b8ff6c21259bf8675cb827f0143fb7571ff49"
+  },
+  "gate_rules": {
+    "G1": "all three environment means >0 for both BP and MBD",
+    "G2": "both pooled environment-source bootstrap 95% lower bounds >0, 10000 draws",
+    "G3": "both >=13/18 positive source units and >=4/6 each environment",
+    "G4": "both pooled 20% trim and remove largest positive 5% target mean >0",
+    "G5": "FULL improves >=2/3 Brier, 1m mass, expected distance vs BP; none worsens >5% in any environment",
+    "G6": "no environment FULL mean truth NLL >1.10*BP or >1.10*MBD"
+  },
+  "initial_lock_sha256": "c5881f979b6d5fd937adc03b5e8bf1ec9c8f9898c6bc1c9e988fda053deda98e",
+  "model_contract": {
+    "BP": "five separate source-specific 2D sklearn OAS with G0 jitter",
+    "DIAG": "source-specific 10D OAS then diagonalize before G0 jitter",
+    "FULL": "source-specific 10D sklearn OAS, original G0 jitter",
+    "MBD": "FULL stabilized covariance block diagonal; exact FULL mean; no OAS refit or second jitter",
+    "SHUFFLED": "200 within-source nonanchor-block derangements; diagnostic only",
+    "blocks": [
+      [
+        0,
+        1
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        8,
+        9
+      ]
+    ],
+    "pca": "2 per block, full solver, reference only",
+    "prior": "uniform over six frozen sources",
+    "references_per_source": 12,
+    "standard_scaler": "per environment/block, reference only"
+  },
+  "model_lock_sha256": "073438dadddff899cdd285d387f9128d3ad9cf554435abdc96646c9b0183508b",
+  "nearest_neighbor_index_by_environment": [
+    [
+      1,
+      0,
+      3,
+      2,
+      5,
+      4
+    ],
+    [
+      1,
+      0,
+      3,
+      2,
+      5,
+      4
+    ],
+    [
+      1,
+      0,
+      3,
+      2,
+      5,
+      4
+    ]
+  ],
+  "no_sealed_input": true,
+  "no_target_seen": true,
+  "null_key_manifest_sha256": "86a4069b3e5f500c2bf468c6ac3d8423f8ec702dc3e0c57d93a6fea83010e8f4",
+  "null_model_lock_sha256": "4e97012056401b5ce6892a86cc7106b1fc74a6a4f43ea518f4c2d33f9cfea060",
+  "phase": "BEFORE_ANY_E2_FRESH_TARGET",
+  "reference_acquisition_sha256": "f02f51784a258748de8cbb3e15f109bdfa0eea89e460f452433b02fd72b520a8",
+  "reference_count": 216,
+  "reference_tensor_sha256": "dc990f9b20381e5a3014af6578a24815a7e5f4178f87624917a7cfbefdad78c7",
+  "software": {
+    "numpy": "1.26.4",
+    "sklearn": "1.7.2"
+  },
+  "target_count": 72,
+  "target_seed_plan_sha256": "9fc8b192db2235ca8739896e1fcb919f39afe20db4983aa305cc72ef61379d8c"
+}
