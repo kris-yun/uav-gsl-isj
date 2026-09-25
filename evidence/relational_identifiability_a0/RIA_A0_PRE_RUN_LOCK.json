@@ -1,0 +1,51 @@
+{
+  "bootstrap_resamples": 10000,
+  "bootstrap_seed": 202609260,
+  "bootstrap_unit": "84 CENTRAL pairs",
+  "branch": "research/relational-identifiability-a0-20260926",
+  "charter_sha256": "04dd43177262eca763f62758d5a6c107260864dd398bb4f348226d8bfe660ed6",
+  "code_sha256": "edc64c009e80f8f1b77ebff04653e6b0cd1f2710c717b4740306353f5cd66985",
+  "flip_rule": "strict utility sign flip; bounded agrees when both Delta_A and Delta_B have the sign of delta utility; risk agrees when -delta FULL tail excess has that sign",
+  "folds_heldout": [
+    [
+      0,
+      4,
+      8,
+      12
+    ],
+    [
+      1,
+      5,
+      9,
+      13
+    ],
+    [
+      2,
+      6,
+      10,
+      14
+    ],
+    [
+      3,
+      7,
+      11,
+      15
+    ]
+  ],
+  "input_sha256": {
+    "SPX_G0_CENTRAL_PAIR_PROBE.csv": "e50ce9451c2d773c583211ce3b0bcd30bf2cfaa06056f4b162823d498b32b7d1",
+    "SPX_G0_CENTRAL_P_E2_10x30.npy": "b17cbd3de8b96eea75503045e48835ae42eac6d0b6c9bc874860149631fd0dba",
+    "SPX_G0_CENTRAL_P_G1A_10x30.npy": "b21a089cb015ace71a448db58bd7a2f1fee25e9a8431cbb56728f48ca39573d9",
+    "SPX_G0_FROZEN_PAIRS.csv": "6c285036a4f7ef857c0157e4a08f2717d341b6379dad17c27c9483173211c404",
+    "SPX_G0_OFFSTRIP_PAIR_PROBE.csv": "a9925d74451d0036514c15c4fe3ee270683fa89aca895eeb6f0fa39e65885786",
+    "SPX_G0_OFFSTRIP_P_E2_10x30.npy": "7e09fbda751ddc243dde5d89efdd12c6f906f4aef6ef4f03843db2b76b2af63e",
+    "SPX_G0_OFFSTRIP_P_G1A_10x30.npy": "d7c2a6c4cc88f735ea901a0fbda8c529441f9cf62d0eb187ca6cd0dcca000ce3",
+    "SPX_G0_PRE_SCORE_LOCK.json": "970a7a2a0b10b9af1537519f2f12af0605af7d4adcd10a7f10daeb4692e9c6db",
+    "SPX_G0_TARGET_METRICS.csv": "7ccc1412361999ca3c822da23112f9879f15e733a5ccc4e4291b4005403ee0ad"
+  },
+  "normalizer_epsilon": "1e-12*max(1,W) independently for W and W_E",
+  "risk_materiality": "For either BP or MBD, Spearman(delta utility, delta FULL tail excess) <= -0.30 and 10000-pair-bootstrap 95% upper bound < 0.",
+  "spx_lock_sha256": "970a7a2a0b10b9af1537519f2f12af0605af7d4adcd10a7f10daeb4692e9c6db",
+  "spx_pairs_sha256": "6c285036a4f7ef857c0157e4a08f2717d341b6379dad17c27c9483173211c404",
+  "upstream_spx_commit": "666e7996b5b060516e32b2d93df0679171981745"
+}
