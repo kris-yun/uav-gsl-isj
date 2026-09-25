@@ -20,3 +20,9 @@ hash manifests; it excludes sealed raw cubes and scientific summaries.
 The patched seed source maps the requested decimal GADEN_RNG_SEED to uint32
 base and salted Gaussian/uniform engine seeds; these values and source SHA256
 are recorded for every run. No scientific mechanism is evaluated in E2.
+
+Preflight stopped before any plume because the first implementation pinned
+Windows CRLF byte hashes of the E1 probe/source TSVs. Git checks these files
+out as LF on the VM (`text=auto`, `eol=lf`). The E1 rows and values are
+unchanged; the runner now pins the SHA256 of the Git-checkout LF bytes on the
+VM. E1_RESULT.json was byte-identical. This is a pre-data infrastructure fix.
