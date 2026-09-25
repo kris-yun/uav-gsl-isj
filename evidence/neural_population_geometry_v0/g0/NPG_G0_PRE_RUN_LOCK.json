@@ -1,0 +1,90 @@
+{
+  "audit_utility_scored_at_lock": false,
+  "branch": "research/neural-population-geometry-g0-20260925",
+  "charter_sha256": "6a67aa65b3e5812f269c142687e8b4764e66ba7652ee2078f0e71eec4b14f61c",
+  "code_sha256": "6e946854011d27f906d09e56a4af0b6c3413e8beb8d8ac25fe01c9bdc0d64580",
+  "config": {
+    "aggregation": "primary Spearman and balanced accuracy use A/B mean for each of 84 pairs; MSE advantage averages both directions per pair; macro-band MSE advantage averages 42 split-pair observations",
+    "block_transform": "five contiguous two-time blocks; raw ppm; StandardScaler per 60-D block, PCA full SVD 2-D; fit all 168x8 DESIGN observations; global DESIGN z-coordinate StandardScaler after concatenation",
+    "bootstrap_ci": "percentile 2.5%,97.5%; lower bound must be strictly >0",
+    "bootstrap_draws": 10000,
+    "bootstrap_seed": 202609250,
+    "bootstrap_unit": "84 disjoint source pairs; both A/B directions remain clustered within sampled pair",
+    "data_shape": [
+      168,
+      16,
+      10,
+      30
+    ],
+    "gate_G0_1": "at least 9/84 positive and at least 9/84 negative A/B-mean utilities (ceil 10%)",
+    "gate_G0_2": "pooled Spearman >0, pair bootstrap CI lower >0, and each split Spearman >0",
+    "gate_G0_3": "mean paired squared-error advantage INNER_CV minus GEOMETRY >0 and pair bootstrap CI lower >0",
+    "gate_G0_4": "GEOMETRY pair-mean benefit-sign balanced accuracy >=0.60 and >=INNER_CV",
+    "gate_G0_5": "MSE advantage positive in at least 3 of 4 macro-bands",
+    "gate_precedence": "G0-1 false => HOLD; otherwise any G0-2..G0-5 false => STOP; all true => PASS",
+    "geometry": "seven DESIGN-only descriptors for base and interaction plus interaction-minus-base: center norm, sqrt(trace pooled within covariance), participation ratio, task-noise alignment, absolute leading within-axis dot, d/(2K)*traceW/(sep2+traceW), sep2/(traceW+1e-12)-PR/(2K); pooled within covariance uses ddof=1 per class; signed log1p of all 21 values",
+    "geometry_predictor": "Ridge with intercept; feature StandardScaler on 3 training bands; alpha selected by 3-fold leave-one-training-band-out mean MSE; ties smallest alpha",
+    "inner_cv": "within-pair first4/last4 and reverse, same globally selected C for each reader; Delta=base minus interaction DESIGN validation log loss",
+    "interaction": "u=z/sqrt(1+z^2); concatenate 2x2 u_b outer u_c for all b<c in lexicographic order to 40-D; no additional scaling",
+    "macro_bands": [
+      [
+        1,
+        6
+      ],
+      [
+        7,
+        12
+      ],
+      [
+        13,
+        18
+      ],
+      [
+        19,
+        24
+      ]
+    ],
+    "ordinary_fit": "for four scalar descriptors use same 3-band ridge protocol; INNER_CV is its direct DESIGN utility estimate",
+    "ordinary_predictors": [
+      "INNER_CV",
+      "CROSSBLOCK_COV_NORM",
+      "INTERACTION_ENERGY",
+      "RAW_MASS_DIFFERENCE",
+      "BASE_SNR"
+    ],
+    "pairs": "within each y-row adjacent x columns (1,2),(3,4),...,(23,24)",
+    "reader": "LogisticRegression L2 lbfgs, fit_intercept True, class_weight None, max_iter 500, tol 1e-8; base and interaction independent global C",
+    "reader_C_grid": [
+      0.01,
+      0.1,
+      1.0,
+      10.0,
+      100.0
+    ],
+    "reader_C_selection": "minimum mean pairwise 4/4-swap DESIGN log loss across 63 pairs in 3 non-held-out macro-bands; ties smallest C",
+    "ridge_alpha_grid": [
+      0.01,
+      0.1,
+      1.0,
+      10.0,
+      100.0,
+      1000.0
+    ],
+    "source_grid": "24 x-columns i=1..24 by 7 y-rows j=12..18, panel index=(i-1)*7+(j-12)",
+    "splits": {
+      "A": {
+        "audit": "odd zero-based indices",
+        "design": "even zero-based indices"
+      },
+      "B": {
+        "audit": "even zero-based indices",
+        "design": "odd zero-based indices"
+      }
+    }
+  },
+  "input_sha256": "b21a089cb015ace71a448db58bd7a2f1fee25e9a8431cbb56728f48ca39573d9",
+  "numpy": "2.3.5",
+  "pair_definition_sha256": "9555e21a151bcec7c598498f004cebecc6573d440094752bb27589f6b2a82ec8",
+  "panel_sha256": "5df11712dd0e7dbef6e454c8d146427407644b9f27245c447479185ab2129d8e",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]"
+}
