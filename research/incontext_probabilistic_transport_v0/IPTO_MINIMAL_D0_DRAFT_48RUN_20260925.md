@@ -38,6 +38,36 @@ Selection objective before any new plume generation:
 
 Exact source IDs must be frozen before execution.
 
+
+## 3A. Deterministic geometry-only 8-source proposal
+
+To remove source-selection freedom, the current draft proposes four adjacent source pairs distributed west-to-east across the complete D1R rectangle, chosen without using any plume, rank, NLL or confusability value:
+
+| Pair | Source ID | PMFS (i,j) | x (m) | y (m) |
+|---|---|---|---:|---:|
+| A | pmfs_3_13 | (3,13) | -4.34273 | -3.40088 |
+| A | pmfs_4_13 | (4,13) | -4.04273 | -3.40088 |
+| B | pmfs_9_17 | (9,17) | -2.54273 | -2.20088 |
+| B | pmfs_10_17 | (10,17) | -2.24273 | -2.20088 |
+| C | pmfs_15_13 | (15,13) | -0.74273 | -3.40088 |
+| C | pmfs_16_13 | (16,13) | -0.44273 | -3.40088 |
+| D | pmfs_21_17 | (21,17) | 1.05727 | -2.20088 |
+| D | pmfs_22_17 | (22,17) | 1.35727 | -2.20088 |
+
+Provisional held-out-W_D context sources:
+- west anchor: pmfs_3_13;
+- east anchor: pmfs_22_17.
+
+The other six sources are query sources.
+
+This choice deliberately provides:
+- broad x-axis coverage for operator identification;
+- four exact 0.30 m local pairs for distinguishability evaluation;
+- query sources that include the adjacent partner of each context anchor;
+- no outcome-based source selection.
+
+These exact IDs are still **draft-only** until the Pro audit returns. They may be rejected for a pre-data scientific reason, but must never be replaced after new plume outcomes are inspected.
+
 ## 4. Data budget
 
 For every source/wind cell use exactly two independent plume seeds.
