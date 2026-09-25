@@ -73,8 +73,8 @@ def one_direction(X,edges,train,test):
       "energy":ed.tolist(),
       "fresh_error":err.tolist(),
       "bhat_confusion_proxy":bp.tolist(),
-      "rho_energy_error":float(spearmanr(ed,err).statistic),
-      "rho_bhat_error":float(spearmanr(bp,err).statistic),
+      "rho_energy_error":float(spearmanr(ed,err)[0]),
+      "rho_bhat_error":float(spearmanr(bp,err)[0]),
       "hard_minus_easy_error":float(err[hard].mean()-err[easy].mean()),
     }
 
@@ -96,10 +96,11 @@ def main():
     p8=panel.set_index("source_id").loc[SOURCE_IDS].reset_index()
     edges=edges_from_panel(p8)
 
-    W0=subset_w0(np.load(a.w0,allow_pickle=False),panel)
+    # The D1R anchor stores 16 replicates; G5 uses only its frozen first eight.
+    W0=subset_w0(np.load(a.w0,allow_pickle=False),panel)[:, :8]
     W1=np.load(a.w1,allow_pickle=False)
     W2=np.load(a.w2,allow_pickle=False)
-    if W0.shape!=(8,16,10,30): raise ValueError(("W0",W0.shape))
+    if W0.shape!=(8,8,10,30): raise ValueError(("W0",W0.shape))
     for n,x in [("W1",W1),("W2",W2)]:
         if x.shape!=(8,8,10,30): raise ValueError((n,x.shape))
         if not np.isfinite(x).all() or (x<0).any(): raise ValueError(f"{n} invalid values")
@@ -111,14 +112,14 @@ def main():
     B0=one_direction(W0,edges,np.arange(4,8),np.arange(4))
     e0a=np.asarray(A0["energy"]); e0b=np.asarray(B0["energy"])
     out["winds"]["W0_D1R_anchor"]={"A":A0,"B":B0,
-      "rho_split_energy":float(spearmanr(e0a,e0b).statistic)}
+      "rho_split_energy":float(spearmanr(e0a,e0b)[0])}
 
     per=[]
     for name,X in [("W1_3,5-1_fast",W1),("W2_4,5-3_slow",W2)]:
         A=one_direction(X,edges,np.arange(4),np.arange(4,8))
         B=one_direction(X,edges,np.arange(4,8),np.arange(4))
         out["winds"][name]={"A":A,"B":B,
-          "rho_split_energy":float(spearmanr(A["energy"],B["energy"]).statistic)}
+          "rho_split_energy":float(spearmanr(A["energy"],B["energy"])[0])}
         per.append((name,A,B))
 
     for d in ("A","B"):
@@ -127,13 +128,13 @@ def main():
             q=A if d=="A" else B
             E.extend(q["energy"]); R.extend(q["fresh_error"])
         out.setdefault("pooled",{})[d]={
-          "rho_energy_error":float(spearmanr(E,R).statistic)
+          "rho_energy_error":float(spearmanr(E,R)[0])
         }
 
     allEa=[]; allEb=[]
     for _,A,B in per:
         allEa.extend(A["energy"]); allEb.extend(B["energy"])
-    out["pooled"]["rho_split_energy"]=float(spearmanr(allEa,allEb).statistic)
+    out["pooled"]["rho_split_energy"]=float(spearmanr(allEa,allEb)[0])
 
     g1=all(out["pooled"][d]["rho_energy_error"]<=-0.50 for d in ("A","B"))
     g2=all((A["rho_energy_error"]<0 and B["rho_energy_error"]<0) for _,A,B in per)
