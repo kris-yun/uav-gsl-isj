@@ -172,3 +172,77 @@ If SOURCE_PROBE_INTERACTION:
 future theory must model relational source–sensor–flow context rather than source-only or observation-only codes.
 
 No new mother-theory candidate is authorized before SPX-G0 completes.
+
+---
+
+# Amendment A — after independent Pro transport audit
+
+This amendment is authoritative and narrows SPX-G0. It does not change the zero-plume requirement.
+
+## A1. Asset-recovery gate before any scientific scoring
+
+Before cross-extraction, confirm that the VM/archive contains readable numerical assets, not only hashes or historical paths:
+
+1. all required CENTRAL G1A raw concentration cubes;
+2. all required OFFSTRIP E2 H02/W0 raw concentration cubes;
+3. exact P_G1A and P_E2 probe contracts;
+4. the actual H02/W0 wind-vector arrays used by the simulator;
+5. the actual H02 occupancy array/grid and coordinate transform;
+6. source xyz, probe xyz, time index, z-height and pooling metadata sufficient to reproduce both historical tensors exactly.
+
+Produce `SPX_G0_ASSET_AUDIT.json` with:
+- located path;
+- bytes;
+- SHA256;
+- numeric shape/dtype for arrays;
+- whether the asset is sufficient for cross-extraction or later physical-context computation.
+
+If the required raw cubes or exact probe contracts are not recoverable, return:
+`SPX_G0_DATA_CONTRACT_STOP`
+and stop. Do not generate new plume, interpolate a substitute operator, or infer arrays from filenames.
+
+Wind/occupancy are required to be inventoried now. They are NOT yet used to create a transport predictor in SPX-G0.
+
+## A2. Primary scientific object is fixed to H02/W0 adjacent-pair discrimination
+
+SPX-G0 does NOT attempt to explain all historical JTD failures.
+
+Its primary object is only:
+
+> under the same House02 / 3,5-1_slow physical environment, does the sign/value of FULL-vs-BP/MBD adjacent-pair discrimination follow source regime, probe protocol, or their interaction?
+
+The three frozen OFFSTRIP 0.3 m pairs and the 84 frozen CENTRAL disjoint 0.3 m pairs remain the only primary pair units.
+
+This is intentionally a local-neighbor problem.
+
+The H02 W2 distant-aliasing failure and generic Gaussian overconfidence are explicitly OUT OF SCOPE for the SPX-G0 primary decision. They remain frozen postmortem facts for any later theory.
+
+## A3. Candidate-support and prior are not allowed to confound the primary result
+
+Primary scoring remains two-source conditional scoring for each frozen pair with uniform two-source prior.
+
+Do not compare 168-way CENTRAL posterior scores directly with 6-way OFFSTRIP posterior scores as a causal contrast.
+
+Full-support scores may be exported as secondary diagnostics only, separately within each panel.
+
+## A4. Exact historical reproduction is mandatory
+
+Before any crossed-cell scientific result is accepted:
+
+- CENTRAL × P_G1A must reproduce the historical G1A extracted tensors for matched runs to numerical tolerance <=1e-12 absolute where serialization permits;
+- OFFSTRIP × P_E2 must reproduce the historical E2 extracted tensors to the same tolerance.
+
+If not, return `SPX_G0_DATA_CONTRACT_STOP`.
+
+## A5. Deployment-context inventory
+
+SPX-G0 must include a non-scoring table marking which context variables are realistically available at deployment:
+
+- candidate/source geometry: AVAILABLE if map known;
+- probe/sensor geometry: AVAILABLE;
+- local onboard wind observations: POTENTIALLY AVAILABLE;
+- full simulator wind field: ORACLE unless a real estimator is specified;
+- occupancy/building geometry: AVAILABLE only if mapped;
+- target-environment dense source stochastic bank: NOT ALLOWED as deployment context.
+
+No later mother theory may use an ORACLE variable without an explicit realistic estimator.
