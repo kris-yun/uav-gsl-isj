@@ -1,0 +1,46 @@
+{
+  "raw_iteration0_total": 107,
+  "raw_roots": {
+    "SCTT_DISCOVERY_DATASET_20260817": 9,
+    "SCTT_DISCOVERY_DATASET_V2_20260817": 36,
+    "SCTT_DISCOVERY_DATASET_V2_R2_20260817": 36,
+    "c0_5_cost_benchmark_20260923": 3,
+    "c0_5_real_gaden_bank_20260923": 8,
+    "enva_vgr": 3,
+    "hcmc_v1_independent_data_20260922": 9,
+    "rmfe_current_h03_realization_20260813": 1,
+    "rmfe_forward_truth_diag_20260813": 1,
+    "rmfe_h03_plume_smoke_v2": 1
+  },
+  "concentration_cube_total": 3196,
+  "cube_roots": {
+    "BIGREEN_GATE1A_REVIEW_20260924": 2,
+    "BIGREEN_GATE1A_REVIEW_20260924_FAILED_SELFHASH": 2,
+    "MZ_D3_S1_W2_REVIEW_20260924": 2,
+    "PASI_D0_S3_W2_REVIEW_20260924": 2,
+    "bigreen_gate1a_repo_20260924": 8,
+    "c0_5_real_gaden_bank_20260923": 8,
+    "cess_d1r_168x16_reference_20260925": 2688,
+    "cess_d1r_reference_repo_20260925": 8,
+    "lsc_crosswind_d0_128_runs_20260925": 128,
+    "lsc_crosswind_d0_repo_20260925": 8,
+    "m4_v3_d0_repo_20260923": 8,
+    "mz_d3_s1_w2_20260924": 2,
+    "mz_d3_s1_w2_repo_20260924": 8,
+    "pasi_d0_s3_repo_20260924": 8,
+    "pasi_d0_s3_w2_20260924": 2,
+    "r0_stochastic_benchmark_20260924": 288,
+    "r0_stochastic_benchmark_repo_20260924": 8,
+    "sll_v2_l1_repo_20260924": 8,
+    "wcig_r0_repo_20260925": 8
+  },
+  "counting_exclusions": {
+    "SCTT_DISCOVERY_DATASET_V2_R2_20260817": "same named source/wind/seed cases as V2; mirror, not new realizations",
+    "SCTT_DISCOVERY_DATASET_20260817": "five retained frames per oracle case; lacks D1R time indices",
+    "hcmc_v1_independent_data_20260922/smoke": "runtime smoke cases, not formal independent data",
+    "c0_5_cost_benchmark_20260923": "duration variants reuse seed 2026092301 and source/wind of C0.5 bank",
+    "enva_vgr": "noncanonical environment outside E0 12-operator universe",
+    "rmfe_*": "historical diagnostic raw assets without frozen source/seed/operator provenance; quarantined from independent counts",
+    "*_repo_20260924/25": "Git worktree copies of tracked reference data, not new realizations"
+  }
+}
