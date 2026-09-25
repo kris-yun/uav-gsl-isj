@@ -1,0 +1,208 @@
+{
+  "decision": "JTD_E2_STOP_CROSSBLOCK_VALUE_NOT_ENVIRONMENT_GENERAL",
+  "delta_bp": {
+    "ci_95_environment_source_panel": [
+      -59.39171338521808,
+      7.400598963590569
+    ],
+    "largest_negative": -1235.526032479061,
+    "largest_positive": 367.63226501496297,
+    "mean": -21.344562239708303,
+    "positive_units": 6,
+    "positive_units_per_environment": [
+      2,
+      1,
+      3
+    ],
+    "remove_largest_positive_1pct_count": 1,
+    "remove_largest_positive_1pct_mean": -26.823109102450157,
+    "remove_largest_positive_5pct_count": 4,
+    "remove_largest_positive_5pct_mean": -28.073831075167906,
+    "trimmed_10_mean": -0.014813083520297957,
+    "trimmed_20_mean": -0.0010465454411601183
+  },
+  "delta_mbd": {
+    "ci_95_environment_source_panel": [
+      -82.9067440653084,
+      2.7196922021811543
+    ],
+    "largest_negative": -1805.1384397388392,
+    "largest_positive": 183.32965403686137,
+    "mean": -31.133837468100346,
+    "positive_units": 10,
+    "positive_units_per_environment": [
+      3,
+      2,
+      5
+    ],
+    "remove_largest_positive_1pct_count": 1,
+    "remove_largest_positive_1pct_mean": -34.15445002450826,
+    "remove_largest_positive_5pct_count": 4,
+    "remove_largest_positive_5pct_mean": -35.762901587213086,
+    "trimmed_10_mean": 0.014292384647930036,
+    "trimmed_20_mean": 0.00011378118895086488
+  },
+  "environment_count": 3,
+  "environment_summaries": [
+    {
+      "bp_mean_nll": 15.463224045399336,
+      "environment_index": 0,
+      "full_mean_nll": 0.008213376133534381,
+      "house": "House01",
+      "mbd_mean_nll": 7.732483268583738,
+      "mean_delta_bp": 15.455010669265803,
+      "mean_delta_mbd": 7.724269892450203,
+      "positive_sources_bp": 2,
+      "positive_sources_mbd": 3,
+      "wind": "1,3-2,4_fast"
+    },
+    {
+      "bp_mean_nll": 6.671220818437281,
+      "environment_index": 1,
+      "full_mean_nll": 34.28223723865143,
+      "house": "House02",
+      "mbd_mean_nll": 8.080398056135573,
+      "mean_delta_bp": -27.611016420214153,
+      "mean_delta_mbd": -26.201839182515865,
+      "positive_sources_bp": 1,
+      "positive_sources_mbd": 2,
+      "wind": "3,5-1_slow"
+    },
+    {
+      "bp_mean_nll": 120.27798036943405,
+      "environment_index": 2,
+      "full_mean_nll": 172.1556613376106,
+      "house": "House02",
+      "mbd_mean_nll": 97.2317182233752,
+      "mean_delta_bp": -51.877680968176556,
+      "mean_delta_mbd": -74.92394311423539,
+      "positive_sources_bp": 3,
+      "positive_sources_mbd": 5,
+      "wind": "4,5-3_slow"
+    }
+  ],
+  "fresh_target_count": 72,
+  "fresh_targets_per_source": 4,
+  "gates": {
+    "E2_G1": false,
+    "E2_G2": false,
+    "E2_G3": false,
+    "E2_G4": false,
+    "E2_G5": false,
+    "E2_G6": false
+  },
+  "interpretation_boundary": "Three already OPEN environments, two Houses; House01 DEV and all House03 remain sealed. Bootstrap intervals describe this 18-unit panel, not an environment population.",
+  "new_reference_runs": 108,
+  "new_target_runs": 72,
+  "pooled_model_metrics": {
+    "BLOCK_PRODUCT": {
+      "mean_brier": 0.151712002165568,
+      "mean_expected_distance_m": 0.10601959885416327,
+      "mean_map_error_m": 0.10051921582290874,
+      "mean_mass_0p5m": 0.9861111111111102,
+      "mean_mass_1m": 0.9861111111111102,
+      "mean_nll": 47.47080841109022,
+      "mean_rank": 1.097222222222222,
+      "mean_true_vs_nearest_logodds": 3481.59011569719,
+      "nearest_confusion_rate": 0.05555555555555555,
+      "top1": 0.9305555555555555,
+      "top3": 0.9861111111111112
+    },
+    "DIAG_COV": {
+      "mean_brier": 0.25480731650129584,
+      "mean_expected_distance_m": 0.12801116412181157,
+      "mean_map_error_m": 0.12509915017345258,
+      "mean_mass_0p5m": 0.9861111095993312,
+      "mean_mass_1m": 0.9861111095993312,
+      "mean_nll": 33.962819263170964,
+      "mean_rank": 1.1666666666666667,
+      "mean_true_vs_nearest_logodds": 44.52254006308609,
+      "nearest_confusion_rate": 0.125,
+      "top1": 0.8611111111111112,
+      "top3": 0.9861111111111112
+    },
+    "FULL": {
+      "mean_brier": 0.16178951649015708,
+      "mean_expected_distance_m": 0.1129730535551395,
+      "mean_map_error_m": 0.11259915017345261,
+      "mean_mass_0p5m": 0.9861111109123217,
+      "mean_mass_1m": 0.9861111109123217,
+      "mean_nll": 68.81537065079853,
+      "mean_rank": 1.1388888888888886,
+      "mean_true_vs_nearest_logodds": 91.84226631444672,
+      "nearest_confusion_rate": 0.08333333333333333,
+      "top1": 0.9027777777777778,
+      "top3": 0.9861111111111112
+    },
+    "MATCHED_BLOCK_DIAG": {
+      "mean_brier": 0.25083405144539056,
+      "mean_expected_distance_m": 0.12927633671053296,
+      "mean_map_error_m": 0.12926581684011923,
+      "mean_mass_0p5m": 0.9861111110946755,
+      "mean_mass_1m": 0.9861111110946755,
+      "mean_nll": 37.68153318269817,
+      "mean_rank": 1.1944444444444444,
+      "mean_true_vs_nearest_logodds": 39.64537789450105,
+      "nearest_confusion_rate": 0.13888888888888887,
+      "top1": 0.8472222222222222,
+      "top3": 0.9861111111111112
+    }
+  },
+  "pre_target_lock_sha256": "0389ec3a5ef07c0fa56dc64d514167b36ecb5bf15e1661e2222eb15a4b7ced5e",
+  "reference_count_per_source": 12,
+  "shuffled_continuity": {
+    "full_mean_nll": 68.81537065079854,
+    "mean_targetwise_median_null_minus_full": -34.31720042002902,
+    "median_pooled_aggregate_null_mean_nll": 35.09023897155069
+  },
+  "source_units": 18,
+  "spatial_utility": {
+    "environment_relative_harm": [
+      {
+        "environment_index": 0,
+        "improvements": [
+          0.16042325041584587,
+          -1.890332335108269e-11,
+          0.02272013057411542
+        ],
+        "worsening_over_5pct": [
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "environment_index": 1,
+        "improvements": [
+          -0.11795977333788321,
+          -4.827994670719704e-10,
+          -0.024287604724988927
+        ],
+        "worsening_over_5pct": [
+          true,
+          false,
+          true
+        ]
+      },
+      {
+        "environment_index": 2,
+        "improvements": [
+          -0.07269602005172995,
+          -9.466238903854673e-11,
+          -0.019292889952055192
+        ],
+        "worsening_over_5pct": [
+          true,
+          false,
+          true
+        ]
+      }
+    ],
+    "pooled_improved_brier_mass1m_expected_distance": [
+      false,
+      false,
+      false
+    ]
+  },
+  "target_acquisition_sha256": "9dee02881c2cde1eae274ffa376918fb44b44482d4295bf5bb6db4c5df7734f9"
+}
