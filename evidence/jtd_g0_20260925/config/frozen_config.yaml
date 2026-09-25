@@ -1,0 +1,70 @@
+experiment: JTD_G0
+date: '2026-09-25'
+base:
+  branch: research/stochastic-benchmark-refoundation-20260924
+  commit: e527beea07c33cdbc362d156545409245f029968
+  required_decision: R0_PASS_STOCHASTIC_BENCHMARK_USABLE
+expected_input:
+  n_sources: 18
+  n_realizations_per_source: 16
+  time_steps: 10
+  probe_or_query_count: 30
+  independent_unit: full_realization
+representation:
+  n_blocks: 5
+  time_indices_per_block:
+  - - 0
+    - 1
+  - - 2
+    - 3
+  - - 4
+    - 5
+  - - 6
+    - 7
+  - - 8
+    - 9
+  pca_components_per_block: 2
+  standardize: true
+  pca_fit_scope: reference_only_pooled_sources
+  covariance: OAS
+  prior: uniform
+cv:
+  folds:
+    F0:
+    - 0
+    - 4
+    - 8
+    - 12
+    F1:
+    - 1
+    - 5
+    - 9
+    - 13
+    F2:
+    - 2
+    - 6
+    - 10
+    - 14
+    F3:
+    - 3
+    - 7
+    - 11
+    - 15
+'null':
+  n_shuffles: 200
+  anchor_block: 0
+  permutation: independent_derangement_within_source_per_nonanchor_block
+  base_seed: 2026092501
+bootstrap:
+  draws: 5000
+  scheme: hierarchical_source_then_realization
+  seed: 2026092502
+gate:
+  go_rel_nll_gain_min: 0.05
+  go_empirical_p_max: 0.01
+  go_positive_sources_min: 12
+  go_fold_positive_required: 4
+  go_loso_positive_required: 18
+  max_top3_absolute_drop: 0.02
+  hold_empirical_p_max: 0.05
+  hold_rel_nll_gain_min: 0.02
