@@ -1,3 +1,16 @@
+# SUPERSEDED FOR EXECUTION — RETAINED AS EARLY DESIGN NOTE
+
+The 48-new-run House02-only design is NOT authorized after the Pro theory/prior-art review.
+
+Reasons:
+- IPTO is not yet shown to be distinct from NP/GP/meta-learning;
+- one locked target operator is insufficient for a strong cross-operator main-innovation claim;
+- the current mainline has been narrowed to source-contrast operator identifiability;
+- no new simulation is allowed until that mechanism is independently distinguished from ordinary calibration.
+
+See `01_idea/IPTO_POST_PRO_SOURCE_CONTRAST_REVISION_20260925.md`.
+
+---
 # IPTO Minimal Cross-Operator D0 — 48-New-Run Draft
 
 Date: 2026-09-25
