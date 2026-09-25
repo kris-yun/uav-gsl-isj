@@ -35,7 +35,7 @@ EXPECTED = {
     "inventory": "dec3b877783b606fc3bd1fceaa06acb32e6616b2cae2d2f2e2f7f52fc4ed71fb",
     "occupancy": "9402690152be4568ced8f2256e9098d82691aaaa1f22a1887eeac55d0e5d098d",
     "panel": "71c2aa0680d9fb8d317def1d76168792f579427211d3ab0041870368cd6072f4",
-    "lsc_result": "c545e5e4a2db547ddbb1be5e2e173d4f8532a6b1d0789ad5442b4f476d627dd82",
+    "lsc_result": "c545e5e4a2db547ddb1be5e2e173d4f8532a6b1d0789ad5442b4f476d627dd82",
 }
 
 
