@@ -141,7 +141,7 @@ def bootstrap_rho(x,y,draws):
     a=rankdata(x[draws],axis=1);b=rankdata(y[draws],axis=1)
     a-=a.mean(axis=1,keepdims=True);b-=b.mean(axis=1,keepdims=True)
     denom=np.sqrt(np.sum(a*a,axis=1)*np.sum(b*b,axis=1))
-    return np.divide(np.sum(a*b,axis=1),den,out=np.zeros(len(draws)),where=denom>0)
+    return np.divide(np.sum(a*b,axis=1),denom,out=np.zeros(len(draws)),where=denom>0)
 
 def agreement(x,y):
     use=(np.abs(x)>=1e-10)&(np.abs(y)>=1e-10)
