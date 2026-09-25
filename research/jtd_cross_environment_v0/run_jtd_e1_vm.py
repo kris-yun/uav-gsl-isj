@@ -262,8 +262,16 @@ def build_pre_run_lock() -> dict:
 def validate_lock(lock: dict) -> None:
     if lock["branch"] != "research/jtd-cross-environment-v0" or lock["planned_new_plume_runs"] != 36:
         raise RuntimeError("E1 lock identity drift")
+    attestation_path = OUT / "JTD_E1_INFRA_PATCH_ATTESTATION.json"
+    attestation = json.loads(attestation_path.read_text(encoding="utf-8")) if attestation_path.exists() else None
+    if attestation is not None and attestation.get("pre_run_lock_sha256") != sha(OUT / "JTD_E1_PRE_RUN_LOCK.json"):
+        raise RuntimeError("infrastructure attestation references a different lock")
     for name, expected in lock["code_sha256"].items():
-        if sha(ROOT / "research/jtd_cross_environment_v0" / name) != expected:
+        actual = sha(ROOT / "research/jtd_cross_environment_v0" / name)
+        if actual != expected and not (attestation is not None and
+                                       name in ("run_jtd_e1_vm.py", "score_jtd_e1.py") and
+                                       attestation.get("original_code_sha256", {}).get(name) == expected and
+                                       attestation.get("patched_code_sha256", {}).get(name) == actual):
             raise RuntimeError(f"pre-run code hash drift: {name}")
     if sha(OUT / "JTD_E1_NULL_DERANGEMENTS.npy") != lock["null_derangements_sha256"]:
         raise RuntimeError("null derangement matrix drift")
@@ -310,13 +318,23 @@ def acquire_one(item: dict, lock: dict, probes: dict[str, list[dict]]) -> dict:
     if existing is not None:
         return existing
     run = Path(item["run_dir"])
+    resume_extraction = False
     if run.exists() and any(run.iterdir()):
-        raise RuntimeError(f"incomplete target run; infrastructure repair required: {run}")
-    run.mkdir(parents=True)
+        real_existing = run / "realization"
+        log_existing = run / "generation.log"
+        resume_extraction = (real_existing.is_dir() and log_existing.is_file() and
+                             "Filament simulator finished correctly!" in log_existing.read_text(errors="replace") and
+                             len(list(real_existing.glob("iteration_*"))) == 566 and
+                             not (run / "concentration.npy").exists())
+        if not resume_extraction:
+            raise RuntimeError(f"incomplete target run; infrastructure repair required: {run}")
+    else:
+        run.mkdir(parents=True)
     real = run / "realization"
-    real.mkdir()
     occ = CANONICAL / item["house"] / "OccupancyGrid3D.csv"
-    real.joinpath("OccupancyGrid3D.csv").symlink_to(occ)
+    if not resume_extraction:
+        real.mkdir()
+        real.joinpath("OccupancyGrid3D.csv").symlink_to(occ)
     wind = lock["winds"][item["environment_index"]]["wind_dir"]
     sx, sy, sz = item["source_xyz"]
     options = {
@@ -334,12 +352,17 @@ def acquire_one(item: dict, lock: dict, probes: dict[str, list[dict]]) -> dict:
     }
     cmd = [str(BINARY), "--ros-args"] + [token for k, v in options.items() for token in ("-p", f"{k}:={v}")]
     env = dict(os.environ, GADEN_RNG_SEED=str(item["requested_seed"]))
-    with (run / "generation.log").open("w", encoding="utf-8") as stream:
-        subprocess.run(cmd, env=env, stdout=stream, stderr=subprocess.STDOUT, check=True)
+    if not resume_extraction:
+        with (run / "generation.log").open("w", encoding="utf-8") as stream:
+            subprocess.run(cmd, env=env, stdout=stream, stderr=subprocess.STDOUT, check=True)
     if "Filament simulator finished correctly!" not in (run / "generation.log").read_text(errors="replace"):
         raise RuntimeError(f"fresh target simulator completion missing: {run}")
     if len(list(real.glob("iteration_*"))) != 566:
         raise RuntimeError(f"fresh target iteration count drift: {run}")
+    # The simulator removes the pre-run occupancy symlink from its results directory;
+    # the extractor requires it. This matches the frozen E2 acquisition behavior.
+    if not real.joinpath("OccupancyGrid3D.csv").exists():
+        real.joinpath("OccupancyGrid3D.csv").symlink_to(occ)
     header = occ.read_text().splitlines()[:4]
     origin = [float(v) for v in header[0].split()[1:]]
     dims = [int(v) for v in header[2].split()[1:]]
@@ -391,6 +414,12 @@ def acquire(lock: dict) -> None:
     committed = subprocess.check_output(["git", "show", f"HEAD:{rel}"], cwd=ROOT)
     if hashlib.sha256(committed).hexdigest() != sha(OUT / "JTD_E1_PRE_RUN_LOCK.json"):
         raise RuntimeError("pre-run lock is not committed at HEAD")
+    patch_path = OUT / "JTD_E1_INFRA_PATCH_ATTESTATION.json"
+    if patch_path.exists():
+        patch_rel = "evidence/jtd_e1_20260925/JTD_E1_INFRA_PATCH_ATTESTATION.json"
+        committed_patch = subprocess.check_output(["git", "show", f"HEAD:{patch_rel}"], cwd=ROOT)
+        if hashlib.sha256(committed_patch).hexdigest() != sha(patch_path):
+            raise RuntimeError("infrastructure patch attestation is not committed")
     probes = probe_rows()
     for index, item in enumerate(lock["fresh_target_plan"], 1):
         meta = acquire_one(item, lock, probes)

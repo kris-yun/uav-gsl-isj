@@ -1,0 +1,26 @@
+{
+  "first_fixed_target": {
+    "environment_index": 0,
+    "requested_seed": 2026120000,
+    "source_index": 0,
+    "target_replicate": 0
+  },
+  "initial_failure_evidence_sha256": {
+    "extract_failure.log": "261c2964cb3d0172bd5e7925f35e9868149ddb08a3fc4441d1def0360e6cd245",
+    "generation_before_fix.log": "c9ffad08e2ce692dec6880a42faf6533996be3dcd5f4e42eab2c47651b0d05c3"
+  },
+  "original_code_sha256": {
+    "run_jtd_e1_vm.py": "f519c0b0ba6300f4fb331bdae77780854b5c17b346291ce2fa8f17f65f6beafd",
+    "score_jtd_e1.py": "5d4ad771bc06f186669640b50df9a9c3f448f45c80d80f24592b5cdf7c67a9ea"
+  },
+  "patched_code_sha256": {
+    "run_jtd_e1_vm.py": "438e418fd8f837bdeef6879bf084ed730f34113076f46e99facd52d928532ffb",
+    "score_jtd_e1.py": "09f763e653de1007ede54983fcd682323246e5f3bb409e55395371843c2b4dd8"
+  },
+  "pre_run_lock_sha256": "ae0797c0daa5dc08d6bfa48c76dcdda1d076190fb7719cf6cc045faa34ed99d0",
+  "reason": "The simulator removed realization/OccupancyGrid3D.csv; E2 acquisition re-created this symlink before extraction, while initial E1 runner omitted that step.",
+  "repair": "Restore the E2 occupancy symlink before extractor; resume extraction from the already completed first simulation without another GADEN run; attest only the runner and its score-time hash check.",
+  "scientific_contract_changed": false,
+  "target_concentration_or_rank_seen_before_patch": false,
+  "type": "infrastructure_only_post_first_simulation_pre_scoring_patch"
+}

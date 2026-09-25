@@ -88,8 +88,16 @@ def main() -> None:
         raise RuntimeError("refuse existing E1 scientific result")
     lock_path = out / "JTD_E1_PRE_RUN_LOCK.json"
     lock = json.loads(lock_path.read_text(encoding="utf-8"))
+    attestation_path = out / "JTD_E1_INFRA_PATCH_ATTESTATION.json"
+    attestation = json.loads(attestation_path.read_text(encoding="utf-8")) if attestation_path.exists() else None
+    if attestation is not None and attestation.get("pre_run_lock_sha256") != sha(lock_path):
+        raise RuntimeError("infrastructure attestation references a different lock")
     for name, expected in lock["code_sha256"].items():
-        if sha(ROOT / "research/jtd_cross_environment_v0" / name) != expected:
+        actual = sha(ROOT / "research/jtd_cross_environment_v0" / name)
+        if actual != expected and not (attestation is not None and
+                                       name in ("run_jtd_e1_vm.py", "score_jtd_e1.py") and
+                                       attestation.get("original_code_sha256", {}).get(name) == expected and
+                                       attestation.get("patched_code_sha256", {}).get(name) == actual):
             raise RuntimeError(f"frozen E1 code hash drift: {name}")
     ref_path = out / "JTD_E1_REFERENCE_10x30.npy"
     target_path = out / "JTD_E1_FRESH_TARGETS_10x30.npy"
