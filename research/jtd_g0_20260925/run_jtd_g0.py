@@ -246,7 +246,7 @@ def main() -> None:
                     raise RuntimeError("SHUFFLED cross-block covariance did not change")
             prediction = evaluate(log_likelihood(fit_density(shuffled), targets), truth, xy)
             for k in null:
-                null[k][mi, :, eval_ix] = prediction[k].reshape(N_SOURCE, 4)
+                null[k][mi][:, eval_ix] = prediction[k].reshape(N_SOURCE, 4)
         print(f"F{fi} complete: full_mean_nll={full['nll'][:,eval_ix].mean():.8f}", flush=True)
     np.savez_compressed(out / "models/pca_transforms.npz", mean=pca_means, scale=pca_scales, components=pca_components)
     write_json(out / "models/pca_manifest.json", {"fold_blocks": pca_manifest, "transforms_sha256": sha(out / "models/pca_transforms.npz")})
