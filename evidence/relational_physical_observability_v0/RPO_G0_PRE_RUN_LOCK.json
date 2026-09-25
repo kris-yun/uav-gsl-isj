@@ -1,0 +1,30 @@
+{
+  "alpha_grid": [
+    0.0001,
+    0.001,
+    0.01,
+    0.1,
+    1,
+    10,
+    100,
+    1000
+  ],
+  "asset_check_sha256": "3eef3acf89e7c7e3221b8dc5d346d664d429c97ec56b93ba553cb97fb2ba20fd",
+  "bootstrap_draws": 10000,
+  "bootstrap_seed": 2026092601,
+  "branch": "research/relational-physical-observability-g0-20260926",
+  "charter_sha256": "deb2796c09e4c6429c637bebeaebb140a41af52a4a901f11bc6f30902aff7222",
+  "code_sha256": "b57b2271e2a5b999e3e51f048ee0feac392c66729c6252d426a731a5bfb17afe",
+  "geometric_path": "source/probe grid-cell center to grid-cell center; same-cell path uses exact source-probe direct segment",
+  "los": "line segment at <=0.05m spacing including both endpoints; all visited z=0.20 voxels free",
+  "occupancy": "z=floor((0.20-env_min_z)/cell); voxel value 0 is free; 8-neighbor grid, diagonal allowed only if both orthogonal side voxels free; metric edge length; scipy Dijkstra; grid-center path length; disconnected geodesic sentinel 2*map diagonal, wind-path descriptors zero, travel sentinel geodesic/0.05, explicit disconnected flag",
+  "offstrip": "descriptive only after CENTRAL result file committed",
+  "pair_aggregation": "for each scalar h: mean abs difference, RMS difference, max abs difference, median abs difference, cosine similarity (zero-norm=0); protocol input is E2 minus G1A aggregation; SOURCE_ONLY is static pair geometry",
+  "position_to_voxel": "floor((world_coordinate-env_min)/cell), clipped only for interpolation, never for occupancy validation",
+  "ridge": "StandardScaler on training bands only; Ridge with intercept; alpha grid fixed; inner leave-one-training-band-out pooled MSE; ties smallest alpha; no Y scaling",
+  "sign_ties": "exclude |Y|<1e-10; predicted sign is >0, exact prediction zero is negative",
+  "simple_wind": "source-local wind unit direction dotted with direct source-probe unit vector, local speed, Euclidean distance; mean and RMS signed source-pair differences across 30 probes x 11 winds; E2 minus G1A",
+  "travel_floor_mps": 0.05,
+  "wind": "11 source files little-endian float64 (3,26,83,119); x/y components downwind map-frame; bilinear at z slice on voxel-center coordinates, edge midpoints; border-clipped interpolation; path statistics weighted by edge metric length; zero wind direction cosine=0",
+  "x_bands": "CENTRAL pair min(pmfs_i) 1..6,7..12,13..18,19..24; 21 pairs each"
+}
