@@ -1,0 +1,67 @@
+{
+  "a0_sha256": "a5d72e1f013416b4b3ef42e7486724f80640b08e3b173f66ce4726e6e5d62817",
+  "asset_audit_sha256": "ff232f4cf8c19db6c34438edf81713c4ce2dc66e262d327d9d20f9a26c93c0ca",
+  "branch": "research/source-probe-crossed-audit-20260925",
+  "charter_sha256": "bc66d60dfed9eb01a771d7112a819b35fb2b75f21d412f1ed97e30c585739055",
+  "code_sha256": "ea3edf3d9f46b27da1f4420b55ab7cfb1077a48ddbc487b6b5e2391a06391e7d",
+  "config": {
+    "BP": "five independent 2-D source-specific OAS Gaussians, one per block, product likelihood",
+    "Brier": "two-class sum of squared probability errors =2*(1-sigmoid(margin))^2",
+    "FULL": "two 10-D OAS Gaussians",
+    "MBD": "block-diagonal of the FULL post-jitter covariance; identical FULL means and fitted block marginals",
+    "NLL": "logaddexp(0,-margin) under uniform two-source prior",
+    "bootstrap_draws": 10000,
+    "bootstrap_seed": 202609251,
+    "bootstrap_unit": "84 CENTRAL disjoint pair units, resample pairs with replacement; 95% percentile intervals for paired probe-effect mean and median",
+    "density": "source-specific sklearn OAS(assume_centered=False, store_precision=False); jitter 1e-10*max(1,trace(covariance)/dimension) on diagonal",
+    "diagnosis_priority": "SOURCE_REGIME_DOMINANT, then PROBE_PROTOCOL_DOMINANT, otherwise SOURCE_PROBE_INTERACTION",
+    "folds": [
+      [
+        0,
+        4,
+        8,
+        12
+      ],
+      [
+        1,
+        5,
+        9,
+        13
+      ],
+      [
+        2,
+        6,
+        10,
+        14
+      ],
+      [
+        3,
+        7,
+        11,
+        15
+      ]
+    ],
+    "heavy_tail_trim": "10% and 20% scipy.stats.trim_mean over per-target delta",
+    "margin": "log p(y|true source) minus log p(y|the other pair member)",
+    "no_science_tuning_after_lock": true,
+    "observation": "raw ppm, 10x30, five contiguous two-time blocks",
+    "pair_aggregation": "mean across 4 held-out realizations within each source direction, then equal mean of two directions, equivalently 32 outcomes per pair/protocol",
+    "pairs": "84 frozen NPG horizontal CENTRAL pairs and 3 frozen E1 OFFSTRIP pairs, each at 0.3 m",
+    "physical_environment": "House02 / 3,5-1_slow only",
+    "positive_sign": "strictly greater than zero; exact zero is non-positive",
+    "preprocessing": "for each pair/protocol/fold, StandardScaler and PCA(n_components=2, svd_solver=full) independently on 24 pair reference samples per 60-D two-time block; no additional z scaling",
+    "prior": "uniform over the two pair members",
+    "probe_effect": "pair delta(P_E2) minus pair delta(P_G1A) using the same 32 raw realizations",
+    "probe_protocol_rule": "for each BP and MBD: >=ceil(0.40*84)=34 CENTRAL pair signs reverse under probe switch; >=2/3 OFFSTRIP paired probe effects share the sign of CENTRAL median paired effect; abs(CENTRAL median paired effect) > abs(CENTRAL median mean-of-probes delta - OFFSTRIP median mean-of-probes delta)",
+    "reference_test": "12 reference and 4 held-out realizations per source per fold",
+    "source_regime_rule": "for each BP and MBD: >=ceil(0.60*84)=51 CENTRAL pairs positive under both probes; >=2/3 OFFSTRIP pairs non-positive under both; abs(CENTRAL median paired probe effect) < abs(CENTRAL median pair delta averaged across probes - OFFSTRIP median pair delta averaged across probes)"
+  },
+  "crossed_tensor_sha256": {
+    "CENTRAL_P_E2": "b17cbd3de8b96eea75503045e48835ae42eac6d0b6c9bc874860149631fd0dba",
+    "CENTRAL_P_G1A": "b21a089cb015ace71a448db58bd7a2f1fee25e9a8431cbb56728f48ca39573d9",
+    "OFFSTRIP_P_E2": "7e09fbda751ddc243dde5d89efdd12c6f906f4aef6ef4f03843db2b76b2af63e",
+    "OFFSTRIP_P_G1A": "d7c2a6c4cc88f735ea901a0fbda8c529441f9cf62d0eb187ca6cd0dcca000ce3"
+  },
+  "pairs_sha256": "6c285036a4f7ef857c0157e4a08f2717d341b6379dad17c27c9483173211c404",
+  "score_calculated_before_lock": false
+}
