@@ -52,3 +52,26 @@ Final label exactly one:
 - `SPX_G0_DATA_CONTRACT_STOP`
 
 Stop immediately after SPX-G0.
+
+---
+
+## Amendment A execution requirements
+
+The charter's Amendment A is authoritative.
+
+Before any scoring:
+
+1. create `SPX_G0_ASSET_AUDIT.json`;
+2. verify readable numeric raw cubes, exact probe contracts, actual wind arrays and occupancy arrays;
+3. record bytes/SHA256/shape/dtype and asset usability;
+4. do not infer missing assets from filenames or hashes;
+5. if exact cross-extraction cannot be performed, return `SPX_G0_DATA_CONTRACT_STOP`.
+
+Primary science is ONLY House02 / `3,5-1_slow` adjacent-pair discrimination under a uniform two-source conditional support.
+
+Do not use H02 W2 distant-aliasing cases in the SPX-G0 primary decision.
+Do not use 168-way vs 6-way posterior magnitudes as a causal comparison.
+
+Historical tensor reproduction tolerance: <=1e-12 absolute where serialization permits.
+
+Also output a deployment-context inventory distinguishing realistic inputs from simulator-oracle inputs.
