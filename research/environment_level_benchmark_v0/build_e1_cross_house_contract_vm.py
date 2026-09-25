@@ -409,7 +409,8 @@ def main() -> None:
     for path in inputs:
         provenance.append(f"- `{path}`: `{sha(path)}`")
     (args.out / "E1_GEOMETRY_PROVENANCE.md").write_text("\n".join(provenance) + "\n")
-    manifest = [f"{sha(path)}  {path.name}" for path in sorted(args.out.iterdir()) if path.is_file()]
+    manifest = [f"{sha(path)}  {path.name}" for path in sorted(args.out.iterdir())
+                if path.is_file() and path.name != "SHA256SUMS.txt"]
     (args.out / "SHA256SUMS.txt").write_text("\n".join(manifest) + "\n")
     print(json.dumps({"decision": decision, "h02": h02_decision,
                       "provisional_new_run_count": total, "details": details}, indent=2))

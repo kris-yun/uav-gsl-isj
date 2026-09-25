@@ -10,13 +10,13 @@ House candidate counts: {"House01": {"gaden_num_cells": [87.0, 114.0, 33.0], "ob
 
 ## Input SHA256
 
-- `/home/zyc/wcig_r0_repo_20260925/research/causal_biorthogonal_green_v1/prepare_gate1a_bank.py`: `6c9d028933b856ae8807f9425065e49d9db60ea7c886cf1a5e80c0ba9c3eb1b6`
-- `/home/zyc/wcig_r0_repo_20260925/research/causal_biorthogonal_green_v1/extract_gate1a_probe_vector.py`: `e099fe249a7f1623784b1d372c4c9fc93892d413b662c1c3fdff1ca282da0453`
+- `/home/zyc/e1_repo_20260925/research/causal_biorthogonal_green_v1/prepare_gate1a_bank.py`: `6c9d028933b856ae8807f9425065e49d9db60ea7c886cf1a5e80c0ba9c3eb1b6`
+- `/home/zyc/e1_repo_20260925/research/causal_biorthogonal_green_v1/extract_gate1a_probe_vector.py`: `e099fe249a7f1623784b1d372c4c9fc93892d413b662c1c3fdff1ca282da0453`
 - `/home/zyc/bigreen_gate1a_exact_20260924/gate1a_contract.json`: `68121bc9225646e37fcf0233e769b694d9dbaec382723f45b8e80ffc73cea334`
 - `evidence/environment_level_benchmark_v0/e0/E0_ENVIRONMENT_ASSET_INVENTORY.tsv`: `5e7fd902a047fab8a1dbd303f1f41431c4acd5df6f8cccb7c34bb13392f67672`
-- `/home/zyc/wcig_r0_repo_20260925/research/environment_level_benchmark_v0/E1_CROSS_HOUSE_CONTRACT_CHARTER_20260925.md`: `78d073f083163373e8b13efe33c2a6d7398360355ea220687d92da7a8bc2ab96`
-- `/home/zyc/wcig_r0_repo_20260925/research/environment_level_benchmark_v0/E1_IMPLEMENTATION_RULES_20260925.md`: `b108cc220365733449cc3af87113c70aab1d6895797945837723f5e61da8f76c`
-- `/home/zyc/wcig_r0_repo_20260925/research/environment_level_benchmark_v0/build_e1_cross_house_contract_vm.py`: `a2dab021df2050c5a25fe41d33b99ec09c6fb27963d25209ee3359573d8667ed`
+- `/home/zyc/e1_repo_20260925/research/environment_level_benchmark_v0/E1_CROSS_HOUSE_CONTRACT_CHARTER_20260925.md`: `37f1ab628af449295b1daa6664ded7088e53b7ba36df0d76a00342803f1ec3c0`
+- `/home/zyc/e1_repo_20260925/research/environment_level_benchmark_v0/E1_IMPLEMENTATION_RULES_20260925.md`: `b108cc220365733449cc3af87113c70aab1d6895797945837723f5e61da8f76c`
+- `/home/zyc/e1_repo_20260925/research/environment_level_benchmark_v0/build_e1_cross_house_contract_vm.py`: `5194dbec8cb7aca31b8519c32dc8ea0fc81583d692ef10f9d8f9f204028177ac`
 - `/mnt/hgfs/workspace/GADEN_files/scenarios/House01/OccupancyGrid3D.csv`: `846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb`
 - `/home/zyc/rmfe_v2_runtime_causal_20260814_a2_002/house123/runs_2seed_v4/H01_air_seed0/off/geometry_export/pruned_meta.json`: `dabf0f188fc2d1723e2ffa1d5539c2945717569e17dceae3f05d18f67101088d`
 - `/home/zyc/rmfe_v2_runtime_causal_20260814_a2_002/house123/runs_2seed_v4/H01_air_seed0/off/geometry_export/pruned_occupancy.bin`: `697f4326ba74b2f5d5075e72dbce0924a7c0be487d3d78898737b67d0a4229aa`

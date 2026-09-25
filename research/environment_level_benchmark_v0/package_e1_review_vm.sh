@@ -3,8 +3,8 @@ set -Eeuo pipefail
 
 ROOT="$(git rev-parse --show-toplevel)"
 E="$ROOT/evidence/environment_level_benchmark_v0/e1"
-STAGE="/home/zyc/E1_CROSS_HOUSE_CONTRACT_REVIEW_20260925"
-OUT="/home/zyc/E1_CROSS_HOUSE_CONTRACT_REVIEW_20260925.tar.gz"
+STAGE="/home/zyc/E1_CROSS_HOUSE_CONTRACT_REVIEW_20260925_FINAL"
+OUT="/home/zyc/E1_CROSS_HOUSE_CONTRACT_REVIEW_20260925_FINAL.tar.gz"
 SCENARIOS="/mnt/hgfs/workspace/GADEN_files/scenarios"
 EXPORT="/home/zyc/rmfe_v2_runtime_causal_20260814_a2_002/house123/runs_2seed_v4"
 
