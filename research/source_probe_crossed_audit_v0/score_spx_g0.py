@@ -35,7 +35,7 @@ CONFIG = {
     "folds": [list(fold) for fold in FOLDS],
     "reference_test": "12 reference and 4 held-out realizations per source per fold",
     "observation": "raw ppm, 10x30, five contiguous two-time blocks",
-    "preprocessing": "for each pair/protocol/fold, StandardScaler and PCA(n_components=2, svd_solver=full) independently on 24 pair reference samples per 60-D two-time block; no additional z scaling",
+    "preprocessing": "for each pair/protocol/fold, StandardScaler and PCA(n_components=2, svd_solver=full) independently on 24 pair reference samples per 60-D two-time block; retain rank-deficient blocks with deterministic sklearn full SVD; no additional z scaling, pair removal or data substitution",
     "density": "source-specific sklearn OAS(assume_centered=False, store_precision=False); jitter 1e-10*max(1,trace(covariance)/dimension) on diagonal",
     "FULL": "two 10-D OAS Gaussians",
     "BP": "five independent 2-D source-specific OAS Gaussians, one per block, product likelihood",
@@ -181,8 +181,6 @@ def transformed(pair_values: np.ndarray, references: list[int]) -> np.ndarray:
     for block in range(5):
         raw = pair_values[:, :, 2 * block:2 * block + 2, :].reshape(2, 16, 60)
         training = raw[:, references].reshape(24, 60)
-        if np.count_nonzero(np.var(training, axis=0) > 0) < 2:
-            raise RuntimeError(f"pair PCA block {block} has fewer than 2 varying raw dimensions")
         scaling = StandardScaler().fit(training)
         pca = PCA(n_components=2, svd_solver="full").fit(scaling.transform(training))
         z[:, :, 2 * block:2 * block + 2] = pca.transform(scaling.transform(raw.reshape(32, 60))).reshape(2, 16, 2)

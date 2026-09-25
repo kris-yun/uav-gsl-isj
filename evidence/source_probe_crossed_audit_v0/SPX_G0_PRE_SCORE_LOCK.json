@@ -3,7 +3,7 @@
   "asset_audit_sha256": "ff232f4cf8c19db6c34438edf81713c4ce2dc66e262d327d9d20f9a26c93c0ca",
   "branch": "research/source-probe-crossed-audit-20260925",
   "charter_sha256": "bc66d60dfed9eb01a771d7112a819b35fb2b75f21d412f1ed97e30c585739055",
-  "code_sha256": "ea3edf3d9f46b27da1f4420b55ab7cfb1077a48ddbc487b6b5e2391a06391e7d",
+  "code_sha256": "f59e3e00ccdd3b7bcb7fe4bbfe91c56c69598a5387fbc8be3206b131a8d256b5",
   "config": {
     "BP": "five independent 2-D source-specific OAS Gaussians, one per block, product likelihood",
     "Brier": "two-class sum of squared probability errors =2*(1-sigmoid(margin))^2",
@@ -49,7 +49,7 @@
     "pairs": "84 frozen NPG horizontal CENTRAL pairs and 3 frozen E1 OFFSTRIP pairs, each at 0.3 m",
     "physical_environment": "House02 / 3,5-1_slow only",
     "positive_sign": "strictly greater than zero; exact zero is non-positive",
-    "preprocessing": "for each pair/protocol/fold, StandardScaler and PCA(n_components=2, svd_solver=full) independently on 24 pair reference samples per 60-D two-time block; no additional z scaling",
+    "preprocessing": "for each pair/protocol/fold, StandardScaler and PCA(n_components=2, svd_solver=full) independently on 24 pair reference samples per 60-D two-time block; retain rank-deficient blocks with deterministic sklearn full SVD; no additional z scaling, pair removal or data substitution",
     "prior": "uniform over the two pair members",
     "probe_effect": "pair delta(P_E2) minus pair delta(P_G1A) using the same 32 raw realizations",
     "probe_protocol_rule": "for each BP and MBD: >=ceil(0.40*84)=34 CENTRAL pair signs reverse under probe switch; >=2/3 OFFSTRIP paired probe effects share the sign of CENTRAL median paired effect; abs(CENTRAL median paired effect) > abs(CENTRAL median mean-of-probes delta - OFFSTRIP median mean-of-probes delta)",
