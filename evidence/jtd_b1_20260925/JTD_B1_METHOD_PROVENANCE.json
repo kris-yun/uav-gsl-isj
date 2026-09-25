@@ -1,0 +1,21 @@
+{
+  "bootstrap": "5000 paired hierarchical draws, seed 2026092502; resample sources and unique target realizations, retain all subpanel repetitions as cluster",
+  "g5": "remove ceil(5% of target-panel rows) largest strictly positive deltas",
+  "null": "G0 rejection-sampled within-source derangement for blocks 2-5; anchor block 1 fixed",
+  "null_count_per_fold_subpanel": 200,
+  "null_seed_rule": "G0 base+100000*fold+1000*null+10*source+block; for K<12 add 10000000*K+1000000*subpanel; K12 exact G0 seeds",
+  "pca": "per-panel training-only StandardScaler + PCA(n_components=2,svd_solver='full') per 2-time raw-ppm block",
+  "relative_gain_denominator": "mean of target-level shuffled-median truth NLL",
+  "runtime": {
+    "numpy": "2.3.5",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "sklearn": "1.9.0",
+    "threads": {
+      "MKL_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    }
+  },
+  "source_model": "per-source sklearn OAS(assume_centered=False), G0 jitter and uniform-prior posterior"
+}
