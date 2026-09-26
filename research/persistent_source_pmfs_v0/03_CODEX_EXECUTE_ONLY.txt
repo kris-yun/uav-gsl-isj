@@ -1,0 +1,77 @@
+You are the execution agent. Do not redesign the research question.
+
+Goal: run exactly the supplied Persistent-Source PMFS R1 mechanism ablation.
+
+1. Create branch `research/persistent-source-pmfs-v0-20260926` from the repository state that contains:
+   - `EventKeyedTransportRng`
+   - `Simulations::runPointForwardReplay`
+   The known compatible commit is `ee746226a16a1f81582107ad08cb1439d994786b`.
+   Do not modify or force-update any frozen historical branch.
+
+2. Obtain the already frozen R1 source-blind files from branch
+   `research/native-pmfs-baseline-recovery-v1`.
+   Preferred source is the existing local R1 run directory. If absent, extract
+   `evidence/native_pmfs_baseline_recovery_v1/R1_R2_source_corrected_House01_seed0_20260923/R1_R2_SOURCE_CORRECTED_House01_S0_20260923_FULL_RAW.tar.gz`
+   and locate exactly:
+   `measurement_events.csv`, `measured_map_at_update.csv`,
+   `frozen_candidate_geometry.csv`, `wind_source_update.csv`.
+   Verify them against the SHA256 values in the historical
+   `r1_scores_frozen_manifest.json`. Do not use truth while scoring.
+
+3. Copy `persistent_source_r1_replay.cpp` from this package to
+   `ros2_package/tools/persistent_source_r1_replay.cpp`.
+
+4. Add only this isolated build target to `ros2_package/CMakeLists.txt`:
+   add_executable(persistent_source_r1_replay tools/persistent_source_r1_replay.cpp)
+   ament_target_dependencies(persistent_source_r1_replay
+       ${COMMON_AMENT_DEPENDENCIES} gmrf_msgs ${CONDITIONAL_GADEN_MSGS})
+   target_link_libraries(persistent_source_r1_replay PMFS)
+   Do not wire it into ROS launch or online PMFS.
+
+5. Build the single package/executable using the repository's existing ROS2 build
+   environment. Do not run GADEN, do not generate plume data, do not train a network.
+
+6. Run:
+   persistent_source_r1_replay <R1_SOURCE_BLIND_DIR> <NEW_OUTPUT_DIR>
+
+7. Before opening truth, hash at least:
+   candidate_summary.csv
+   scores_long.csv
+   persistent_source_samples.csv
+   source_blind_audit.txt
+   executable
+   source file
+   Save to `<NEW_OUTPUT_DIR>/SCORES_SHA256.txt`.
+
+8. Only after step 7, obtain the frozen truth JSON from:
+   `research/native-pmfs-baseline-recovery-v1` /
+   `evidence/native_pmfs_baseline_recovery_v1/R1_R2_source_corrected_House01_seed0_20260923/R1_three_arm_truth_evaluation.json`
+
+9. Run the supplied:
+   python3 evaluate_persistent_source_r1.py <NEW_OUTPUT_DIR> <TRUTH_JSON> <NEW_OUTPUT_DIR>/truth_evaluation.json
+
+10. Write `DECISION.md`. Report every raw metric; do not rescue a negative result.
+    Allowed labels are exactly:
+    - MECHANISM_SIGNAL_STRONG
+    - MECHANISM_SIGNAL_POSITIVE
+    - MECHANISM_NULL_OR_ADVERSE
+
+11. Run a deterministic repeat into a second new output directory.
+    The two `candidate_summary.csv` files must be byte-identical. If not, report
+    `EXECUTION_HOLD_NONDETERMINISTIC` instead of a mechanism label.
+
+12. Commit code, hashes, raw CSV outputs, evaluator, decision, and a concise provenance README.
+    Do not commit newly generated plume data because none is authorized.
+
+Return only:
+- branch
+- final commit
+- decision
+- R/C/P truth ranks
+- R/C/P top1 center errors
+- truth scores R/C/P
+- Spearman R-vs-P
+- deterministic-repeat status
+- output ZIP path + SHA256
+
+No closed loop follows automatically from a positive result.

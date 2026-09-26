@@ -127,6 +127,11 @@ ament_target_dependencies(meaci_replay_true
     ${CONDITIONAL_GADEN_MSGS}
 )
 target_link_libraries(meaci_replay_true PMFS)
+
+add_executable(persistent_source_r1_replay tools/persistent_source_r1_replay.cpp)
+ament_target_dependencies(persistent_source_r1_replay
+    ${COMMON_AMENT_DEPENDENCIES} gmrf_msgs ${CONDITIONAL_GADEN_MSGS})
+target_link_libraries(persistent_source_r1_replay PMFS)
 #include(src/gsl_server/algorithms/Semantics/CMakeLists.txt) # There is further modularity inside of this file!
 
 
