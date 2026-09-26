@@ -19,6 +19,8 @@ def sha(path):
 
 
 def main():
+    lock = json.loads((OUT / "SOLICM_G0_PRE_SCORE_LOCK.json").read_text())
+    assert sha(Path(__file__).resolve()) == lock["independent_verifier_sha256"]
     logits = np.load(OUT / "SOLICM_G0_TARGET_LOGITS.npy").astype(np.float64)
     assert logits.shape == (2, 4, 3, 4, 24, 6)
     exported_prob = np.load(OUT / "SOLICM_G0_TARGET_PROBABILITIES.npy")

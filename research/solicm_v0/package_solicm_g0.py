@@ -21,6 +21,8 @@ def sha(path):
 
 
 def main():
+    lock = json.loads((OUT / "SOLICM_G0_PRE_SCORE_LOCK.json").read_text())
+    assert sha(Path(__file__).resolve()) == lock["review_packager_sha256"]
     result = json.loads((OUT / "SOLICM_G0_RESULT.json").read_text())
     independent = json.loads((OUT / "SOLICM_G0_INDEPENDENT_RECOMPUTATION.json").read_text())
     assert result["decision"] == independent["decision"] and independent["verification"] == "PASS"
