@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import hashlib, shutil, zipfile
+import hashlib, shutil, subprocess, zipfile
 from pathlib import Path
 
 root=Path(__file__).resolve().parents[2]
@@ -21,6 +21,10 @@ shutil.copyfile(root/'ros2_package/CMakeLists.txt',stage/'execution_code/CMakeLi
 shutil.copyfile('/home/zyc/persistent_source_build_20260926.log',stage/'build.log')
 shutil.copyfile('/home/zyc/persistent_source_run_20260926.log',stage/'source_blind_execution.log')
 shutil.copyfile('/home/zyc/persistent_source_truth_20260926.json',stage/'frozen_historical_truth.json')
+(stage/'GIT_PROVENANCE.txt').write_text(
+    'branch='+subprocess.check_output(['git','-C',str(root),'branch','--show-current'],text=True).strip()+'\n'
+    +'commit='+subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip()+'\n'
+    +'status='+subprocess.check_output(['git','-C',str(root),'status','--porcelain'],text=True).strip()+'\n')
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 files=sorted(p for p in stage.rglob('*') if p.is_file())
 (stage/'SHA256SUMS.txt').write_text(''.join(f'{sha(p)}  {p.relative_to(stage).as_posix()}\n' for p in files))

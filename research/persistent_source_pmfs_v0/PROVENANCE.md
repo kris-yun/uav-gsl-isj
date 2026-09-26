@@ -43,3 +43,19 @@ specification. Score freeze precedes loading the historical truth JSON.
 No GADEN process, new plume, network training, House03 data, or closed loop is
 authorized or launched. The evaluator's permitted development decision is
 retained without rescue or retuning.
+
+## Completed execution
+
+The first source-blind score freeze was committed and pushed as
+`fa90a2b6cd494dff8741c84fb69fefb7091d3e4b` before loading the historical
+truth JSON. Truth SHA256:
+`07ee4081fab67441f4bba9cde64f1828b369b6dca20b9c660dec9a5d542e4311`.
+The reconstructed hit-map log-odds and confidence differences were both zero.
+Each execution produced 6960 score rows: R=696, C=696, P=5568.
+All four raw output files passed byte-for-byte deterministic repeat.
+
+The supplied, unchanged evaluator returned `MECHANISM_NULL_OR_ADVERSE`:
+R/C/P truth ranks 52/53/54 out of 87. Full metrics, area diagnostics, frozen
+inputs and repeat outputs are committed under `evidence/persistent_source_pmfs_v0`.
+There was no infrastructure-only patch to the supplied replay or evaluator.
+Execution is complete and stopped without any follow-up experiment.
