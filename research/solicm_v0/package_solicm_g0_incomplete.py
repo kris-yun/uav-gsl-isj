@@ -80,7 +80,7 @@ def main():
         "upstream_pseudolabel_caveat": "Pinned classifier softmax followed by a second six-class softmax cannot exceed the 0.99 pseudo-label threshold."
     }
     resultfile = OUT / "SOLICM_G0_INCOMPLETE_RESULT.json"
-    resultfile.write_text(json.dumps(result, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    resultfile.write_bytes((json.dumps(result, sort_keys=True, indent=2) + "\n").encode("utf-8"))
     include = {}
     for p in OUT.rglob("*"):
         if p.is_file():
