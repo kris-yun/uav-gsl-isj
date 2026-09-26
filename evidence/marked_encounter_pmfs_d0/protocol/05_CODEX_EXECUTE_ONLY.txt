@@ -1,0 +1,49 @@
+Execute only this OPEN read-only mechanism bridge.
+
+Branch:
+`research/marked-encounter-pmfs-d0-20260927`
+
+1. Verify package SHA256SUMS.
+2. Copy package unchanged to the worktree.
+3. Base scientific PMFS kernel on the exact currently audited Native replay
+   implementation; record base commit.
+4. Implement the multiplicity counter exactly as
+   `02_CPP_READONLY_PATCH_CONTRACT.md`.
+5. With mark export disabled, reproduce at least the frozen House01 R1 P0
+   candidate hit maps byte-for-byte. If parity fails, stop:
+   `ME_PMFS_D0_HOLD_PARITY_OR_ASSET`.
+6. Locate the exact House01/House02 wind CSV families for the three OPEN
+   environments. Audit 11 states/environment and hashes.
+7. Generate only the 1584 read-only PMFS forward realizations specified.
+   No GADEN plume, no ROS closed loop.
+8. Aggregate wind/replica moments BEFORE reading/evaluating target source ranks.
+9. Freeze and commit:
+   - C++ patch;
+   - native parity report;
+   - source/probe/wind manifests;
+   - `candidate_mark_bank.csv`;
+   - all code and hashes.
+10. Then run `evaluate_marked_forward.py` on the already OPEN target cube.
+11. Separately compute the predeclared U upper diagnostic from the existing
+    12-reference GADEN bank using the same occurrence/conditional-mark
+    factorization; do not tune thresholds after seeing M.
+12. Apply one label from `03_GATE_AND_BASELINES.md`.
+13. Deterministic repeat: candidate bank and evaluator outputs byte-identical.
+14. Package review evidence and STOP.
+
+Return:
+- branch
+- base commit
+- pre-target/candidate-bank freeze commit
+- final commit
+- decision
+- native parity max error
+- forward count
+- per-environment B0 / M / ICRA-rank mean rank & Top1
+- per-environment mean Delta_pair
+- rescued/harmed targets
+- GADEN-reference U diagnostic summary
+- repeat PASS/FAIL
+- review ZIP path / bytes / SHA256
+
+No closed loop, no neural model, no House03, no new GADEN.
