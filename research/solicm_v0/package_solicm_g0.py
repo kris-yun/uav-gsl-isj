@@ -39,7 +39,7 @@ def main():
     assert len(complete) == 96
     for done in complete:
         run = done.parent
-        for basename in ("COMPLETE.json", "config.json", "training_history.json", "heldout_logits.npy"):
+        for basename in ("COMPLETE.json", "config.json", "training_history.json", "heldout_logits.npy", "best_checkpoint.pt"):
             p = run / basename
             include[f"runs/{run.name}/{basename}"] = p
         latent = run / "latent_structure.npz"
