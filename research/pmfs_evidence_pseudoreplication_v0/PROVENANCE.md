@@ -24,3 +24,17 @@ Two clean output directories produced byte-identical `candidate_scores.csv`,
 The source-blind freeze is committed and pushed before invoking the truth
 evaluator. The committed inputs include all 87 frozen C-arm maps to permit
 independent recomputation.
+
+Final source-blind freeze commit:
+`957781a646b748bcaec99c37d1759aa3218fdb48`.
+This commit was pushed before invoking the historical truth evaluator.
+All 100 frozen evidence files were verified byte-identical between working
+files and their Git blobs. The Git `-text` storage attribute was added to
+retain the scorer's original CSV line endings, with no scientific code change.
+
+Truth JSON SHA256:
+`07ee4081fab67441f4bba9cde64f1828b369b6dca20b9c660dec9a5d542e4311`.
+The unchanged evaluator returned `EVIDENCE_PSEUDOREPLICATION_NULL_OR_ADVERSE`.
+M/S/Elog/Ebrier truth ranks are 47/46/47/46. The full raw metrics and top-10
+lists are retained in truth_evaluation.json. Execution stops after evidence
+packaging; no subsequent temporal/state-closure experiment is run.
