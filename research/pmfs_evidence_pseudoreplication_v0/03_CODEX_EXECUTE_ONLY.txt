@@ -1,0 +1,52 @@
+Execute only. Do not redesign the experiment.
+
+Branch:
+`research/pmfs-evidence-pseudoreplication-v0-20260926`
+
+Use the existing VM historical R1 artifacts. Preferred local source:
+`/home/zyc/native_pmfs_recovery_v1/runs/R1_R2_SOURCE_CORRECTED_House01_S0_20260923`
+
+If the 87 C-arm `.f32` maps are not present there, extract the already-existing historical archive
+`R1_R2_SOURCE_CORRECTED_House01_S0_20260923_FULL_RAW.tar.gz`.
+Do NOT rerun PMFS/GADEN to recreate maps.
+
+Locate:
+- measurement_events.csv
+- measured_map_at_update.csv
+- C_candidate_scores.csv
+- the C-arm maps referenced by that CSV
+- r1_scores_frozen_manifest.json
+
+Verify all hashes exactly as `02_EXPERIMENT_SPEC.md` requires.
+
+Run `score_frozen_r1_maps.py` with no truth path available to the process.
+The script must pass Native score parity and produce `SCORES_SHA256.txt`.
+
+Commit and push the source-blind score freeze BEFORE loading truth.
+
+Only then use historical:
+`R1_three_arm_truth_evaluation.json`
+and run `evaluate_after_freeze.py`.
+
+Write `DECISION.md` without changing formulas, epsilon, thresholds, or labels after truth is seen.
+Run the source-blind scorer twice into two clean output directories; all three source-blind data files and parity JSON must be byte-identical.
+
+No forward simulation.
+No GADEN.
+No new plume.
+No parameter sweep.
+No network.
+No House02/03.
+No closed loop.
+
+Return:
+- branch
+- freeze commit
+- final commit
+- decision
+- M/S/Elog/Ebrier truth ranks
+- M/S/Elog/Ebrier top1 center errors
+- Spearman S/Elog/Ebrier vs M
+- Native parity max absolute error
+- deterministic repeat status
+- review ZIP path, bytes, SHA256
