@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 import numpy as np
+from sklearn.metrics import f1_score
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "evidence/solicm_v0/g0"
@@ -25,6 +26,46 @@ def main():
     e = np.exp(logits - logits.max(axis=-1, keepdims=True))
     assert np.allclose(exported_prob, e / e.sum(axis=-1, keepdims=True), atol=1e-12)
     labels = np.repeat(np.arange(6), 4)
+    target_rows = list(csv.DictReader((OUT / "SOLICM_G0_TARGET_METRICS.csv").open(newline="")))
+    assert len(target_rows) == 2 * 4 * 3 * 4 * 24
+    run_rows = list(csv.DictReader((OUT / "SOLICM_G0_RUN_METRICS.csv").open(newline="")))
+    assert len(run_rows) == 96
+    row_i = 0
+    run_i = 0
+    for d in range(2):
+        for fold in range(4):
+            for seed in range(3):
+                for v, variant in enumerate(VARIANTS):
+                    x = logits[d, fold, seed, v]
+                    e = np.exp(x - x.max(axis=1, keepdims=True))
+                    p = e / e.sum(axis=1, keepdims=True)
+                    rr = run_rows[run_i]
+                    run_i += 1
+                    assert rr["direction"] == DIRECTIONS[d] and rr["variant"] == variant
+                    assert int(rr["fold"]) == fold and int(rr["seed"]) == seed
+                    assert abs(float(rr["macro_f1"]) - f1_score(labels, x.argmax(axis=1), labels=list(range(6)), average="macro", zero_division=0)) < 5e-6
+                    for i, truth in enumerate(labels):
+                        row = target_rows[row_i]
+                        row_i += 1
+                        partner = truth + 1 if truth % 2 == 0 else truth - 1
+                        rank = 1 + int((x[i] > x[i, truth]).sum())
+                        pair_p = p[i, truth] / (p[i, truth] + p[i, partner])
+                        expected = {
+                            "nll": -np.log(p[i, truth]),
+                            "brier": ((p[i] - np.eye(6)[truth]) ** 2).sum(),
+                            "accuracy": int(x[i].argmax() == truth),
+                            "truth_rank": rank,
+                            "top3": int(rank <= 3),
+                            "entropy": -(p[i] * np.log(p[i])).sum(),
+                            "truth_vs_partner_log_odds": x[i, truth] - x[i, partner],
+                            "pair_restricted_brier": 2 * (1 - pair_p) ** 2,
+                            "pair_restricted_accuracy": int(pair_p > .5),
+                        }
+                        assert row["direction"] == DIRECTIONS[d] and row["variant"] == variant
+                        assert int(row["fold"]) == fold and int(row["seed"]) == seed
+                        assert int(row["source_index"]) == truth and int(row["replicate_index"]) == fold*4+i%4
+                        for metric, value in expected.items():
+                            assert abs(float(row[metric]) - value) < 5e-6, (metric, d, fold, seed, v, i)
     unit_nll = np.empty((2, 6, 4), dtype=np.float64)
     unit_brier = np.empty_like(unit_nll)
     unit_accuracy = np.empty_like(unit_nll)
