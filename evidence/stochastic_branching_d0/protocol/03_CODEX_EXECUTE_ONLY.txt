@@ -1,0 +1,86 @@
+Execute only the frozen development test. Do not redesign it.
+
+Branch:
+`research/stochastic-branching-d0-20260926`
+
+Base:
+use the latest clean repository state that contains the R0 branch assets. Do
+not modify historical R0 evidence.
+
+## Before seeing D0 results
+
+1. Verify this package's SHA256SUMS.
+2. Copy this package under a new evidence namespace.
+3. Verify the canonical R0 review/data assets exist:
+   - `/home/zyc/r0_stochastic_benchmark_20260924`, or
+   - extract `/home/zyc/R0_STOCHASTIC_BENCHMARK_REVIEW_20260924.tar.gz`.
+4. Verify exactly 18 source IDs x16 realizations and every `pooled.npy` is 10x30.
+5. Run the included synthetic self-test:
+   `python3 self_test_branching_d0.py`
+6. Commit the unchanged protocol + analyzer BEFORE scientific execution.
+   Report this as `freeze_commit`.
+
+No result-driven code edits after this commit.
+
+## Scientific execution
+
+Canonical direct-data invocation:
+
+python3 analyze_branching_d0.py \
+  --data-root /home/zyc/r0_stochastic_benchmark_20260924 \
+  --seed-matrix research/stochastic_benchmark_refoundation/R0_SEED_MATRIX_18x16.tsv \
+  --out-dir evidence/stochastic_branching_d0/result
+
+If using the review archive, point `--data-root` at its extracted top directory;
+the analyzer also understands its `compact_data/` layout.
+
+Required output:
+- input_inventory.csv
+- mean_preserving_residual_null_500.csv
+- D0_RESULT.json
+
+Run the scientific analysis a second time into a separate repeat directory.
+All three output files must be byte-identical. If not, stop infrastructure.
+
+Do not run GADEN.
+Do not run PMFS.
+Do not add seeds.
+Do not train a network.
+Do not change the representation, norm, score, null, RNG seed, split or gate.
+
+## After result
+
+Apply exactly the decision produced by the frozen analyzer:
+- STOCHASTIC_BRANCHING_D0_STRONG_SIGNAL
+- STOCHASTIC_BRANCHING_D0_SIGNAL
+- STOCHASTIC_BRANCHING_D0_MEAN_ONLY
+- STOCHASTIC_BRANCHING_D0_NULL_OR_ADVERSE
+
+Use HOLD only for a genuine R0 data/schema/integrity failure:
+`STOCHASTIC_BRANCHING_D0_HOLD_DATA_CONTRACT`.
+
+Commit all evidence and package a review ZIP/TAR containing:
+- this protocol;
+- frozen analyzer;
+- self-test;
+- input inventory;
+- result;
+- 500-null table;
+- repeat result;
+- hashes;
+- git state.
+
+Return only:
+1. branch
+2. freeze commit
+3. final commit
+4. decision
+5. A/B/C/D M0 vs M1 top1 and mean true-source rank
+6. pooled primary M0/M1 top1 and mean rank
+7. primary null fractions for mean rank and top1
+8. robustness null fractions
+9. deterministic repeat PASS/FAIL
+10. review package path / bytes / SHA256
+
+Then STOP. Even a positive result does not authorize fresh simulations or
+closed-loop work.
