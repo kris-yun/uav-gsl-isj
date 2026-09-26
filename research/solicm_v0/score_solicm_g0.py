@@ -76,7 +76,10 @@ def lock_stage():
     entries=audit_runs()
     writecsv(OUT/"SOLICM_G0_RUN_MANIFEST.csv",entries)
     lock={"branch":"research/solicm-latent-causal-g0-20260926",
-          "scorer_sha256":digest(CODE),"training_lock_sha256":digest(OUT/"SOLICM_G0_PRE_RUN_LOCK.json"),
+          "scorer_sha256":digest(CODE),
+          "independent_verifier_sha256":digest(CODE.with_name("verify_solicm_g0.py")),
+          "review_packager_sha256":digest(CODE.with_name("package_solicm_g0.py")),
+          "training_lock_sha256":digest(OUT/"SOLICM_G0_PRE_RUN_LOCK.json"),
           "run_manifest_sha256":digest(OUT/"SOLICM_G0_RUN_MANIFEST.csv"),
           "run_count":96,"target_count_per_run":24,"target_source_ids_from_frozen_data_audit":json.loads((OUT/"SOLICM_G0_DATA_AUDIT.json").read_text())["source_ids"],
           "seed_aggregation":"average metrics over seeds at each target realization, then average targets within source/direction",
