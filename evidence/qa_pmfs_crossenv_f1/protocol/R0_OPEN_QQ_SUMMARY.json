@@ -1,0 +1,125 @@
+{
+  "input_dependence_review_sha256": "5016e8a56ff747d153c332d0346a0e4f8beed648757e4136b5e808f9267d6c7f",
+  "model": {
+    "candidate_L": [
+      1,
+      2,
+      5,
+      10
+    ],
+    "candidate_rho": [
+      0.0,
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8
+    ],
+    "latent_family": "marginal-preserving probit random-environment factor",
+    "marginal_estimator": "Jeffreys-smoothed Bernoulli: (hits+0.5)/(K+1)",
+    "quadrature": "40-point Gauss-Hermite",
+    "selection": "reference-only leave-one-realization-out predictive log likelihood"
+  },
+  "primary_A_plus_B": {
+    "P0": {
+      "mean_rank": 1.125,
+      "mrr": 0.9458912037037036,
+      "top1": 0.8993055555555556
+    },
+    "QQ": {
+      "mean_rank": 1.0625,
+      "mrr": 0.9751157407407407,
+      "top1": 0.9548611111111112
+    }
+  },
+  "robustness_C_plus_D": {
+    "P0": {
+      "mean_rank": 1.1423611111111112,
+      "mrr": 0.9409722222222222,
+      "top1": 0.8923611111111112
+    },
+    "QQ": {
+      "mean_rank": 1.0625,
+      "mrr": 0.972511574074074,
+      "top1": 0.9479166666666666
+    }
+  },
+  "splits": {
+    "A_first8_to_last8": {
+      "P0": {
+        "mean_nll": 1.9477036384312203,
+        "mean_rank": 1.1388888888888888,
+        "mean_true_posterior": 0.8978104569910124,
+        "mrr": 0.945023148148148,
+        "top1": 0.9027777777777778
+      },
+      "QQ": {
+        "mean_nll": 0.6196591590593632,
+        "mean_rank": 1.0902777777777777,
+        "mean_true_posterior": 0.9422574619863894,
+        "mrr": 0.9675925925925924,
+        "top1": 0.9444444444444444
+      },
+      "selected_L": 10,
+      "selected_rho": 0.6
+    },
+    "B_last8_to_first8": {
+      "P0": {
+        "mean_nll": 1.220089637426991,
+        "mean_rank": 1.1111111111111112,
+        "mean_true_posterior": 0.9018460296625608,
+        "mrr": 0.9467592592592591,
+        "top1": 0.8958333333333334
+      },
+      "QQ": {
+        "mean_nll": 0.5153590748110694,
+        "mean_rank": 1.0347222222222223,
+        "mean_true_posterior": 0.9594732519697019,
+        "mrr": 0.9826388888888888,
+        "top1": 0.9652777777777778
+      },
+      "selected_L": 10,
+      "selected_rho": 0.6
+    },
+    "C_odd_to_even": {
+      "P0": {
+        "mean_nll": 2.80828977905416,
+        "mean_rank": 1.125,
+        "mean_true_posterior": 0.8915077808509196,
+        "mrr": 0.9467592592592591,
+        "top1": 0.9027777777777778
+      },
+      "QQ": {
+        "mean_nll": 0.7194224167202262,
+        "mean_rank": 1.0486111111111112,
+        "mean_true_posterior": 0.9376281105527625,
+        "mrr": 0.9756944444444444,
+        "top1": 0.9513888888888888
+      },
+      "selected_L": 10,
+      "selected_rho": 0.6
+    },
+    "D_even_to_odd": {
+      "P0": {
+        "mean_nll": 1.1695636263406384,
+        "mean_rank": 1.1597222222222223,
+        "mean_true_posterior": 0.8944963704274566,
+        "mrr": 0.9351851851851853,
+        "top1": 0.8819444444444444
+      },
+      "QQ": {
+        "mean_nll": 0.2976797579584047,
+        "mean_rank": 1.0763888888888888,
+        "mean_true_posterior": 0.9355111902725501,
+        "mrr": 0.9693287037037036,
+        "top1": 0.9444444444444444
+      },
+      "selected_L": 10,
+      "selected_rho": 0.6
+    }
+  },
+  "status": "OPEN_DEVELOPMENT_ONLY"
+}

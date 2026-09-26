@@ -1,0 +1,60 @@
+Run only the QA-PMFS cross-environment confirmation gate.
+
+Branch:
+`research/qa-pmfs-crossenv-f1-20260926`
+
+Scientific mainline:
+`QA-PMFS — quasi-quenched / annealed random-environment source inference`.
+
+Do NOT run the older FULLFIELD_CROSSTIME_F1 package.
+
+Steps:
+
+1. Copy this package unchanged into the worktree and verify SHA256SUMS.
+2. Locate the exact raw JTD E2 reference/target banks used by the frozen
+   `JTD_E2_STOP_CROSSBLOCK_VALUE_NOT_ENVIRONMENT_GENERAL` experiment.
+3. Verify their existing hashes/manifests.  Do not substitute new data.
+4. If exact raw banks are unavailable, commit an audit and stop with
+   `QA_F1_HOLD_EXISTING_CROSSENV_ASSETS_NOT_FOUND`.
+5. Before reading fresh-target truth/ranks:
+   - freeze source support;
+   - freeze observation operator;
+   - freeze smoothing;
+   - freeze implementations of M0/M1/M2/M3;
+   - freeze reference-only selection code;
+   - record code hashes and commit.
+6. M0/M1/M2/M3 are exactly as specified in `04_FRESH_CROSS_ENV_GATE.md`.
+7. Use `qa_pmfs_core.py` as the likelihood reference.
+8. All hyperparameter selection is reference-only.
+9. Score all fresh targets only after the model-selection freeze.
+10. Evaluate environment-wise and pooled metrics.
+11. Repeat the entire scoring/evaluation stage once; require byte-identical
+    score files.
+12. Apply exactly one decision label from the spec.
+13. Package all manifests, selected parameters, candidate scores, per-target
+    metrics, decision JSON, repeat hashes and git state.
+
+Forbidden:
+- no neural network;
+- no MaxCal;
+- no JTD FULL rescue;
+- no new plume simulation unless separately authorized;
+- no closed-loop PMFS;
+- no House03;
+- no target-driven rho/L changes;
+- no score mixing.
+
+Return:
+- branch
+- asset-audit commit
+- pre-target freeze commit
+- final commit
+- decision
+- per-environment selected `(L,rho)`
+- per-environment M0/M1/M2/M3 mean rank, Top-1, MRR, posterior NLL, MAP error
+- improved/harmed source counts
+- pooled metrics
+- deterministic repeat
+- review ZIP path / bytes / SHA256
+
+STOP.
