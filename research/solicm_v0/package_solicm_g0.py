@@ -57,6 +57,14 @@ def main():
         info = tarfile.TarInfo("SHA256SUMS")
         info.size = len(inventory)
         tar.addfile(info, io.BytesIO(inventory))
+    with tarfile.open(PACKAGE, "r:gz") as tar:
+        recorded = {}
+        for line in tar.extractfile("SHA256SUMS").read().decode().splitlines():
+            expected, name = line.split("  ", 1)
+            recorded[name] = expected
+        assert set(recorded) == set(include)
+        for name, expected in recorded.items():
+            assert hashlib.sha256(tar.extractfile(name).read()).hexdigest() == expected, name
     print(json.dumps({"package": str(PACKAGE), "bytes": PACKAGE.stat().st_size,
                       "sha256": sha(PACKAGE), "files": len(include) + 1,
                       "decision": result["decision"]}, indent=2))
