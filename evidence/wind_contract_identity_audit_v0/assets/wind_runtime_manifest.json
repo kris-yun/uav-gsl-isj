@@ -1,0 +1,41 @@
+{
+  "USE_GADEN_compiled": true,
+  "algorithm_binary": "/home/zyc/native_pmfs_recovery_v1/install/gsl_server/lib/gsl_server/gsl_actionserver_node",
+  "algorithm_sha256": "fe244bed5fdc7905b16d5ab1cc55a78ccda2f5960a9a8983cdb1526cd5e9bb83",
+  "contract": "NATIVE_PMFS_BASELINE_RECOVERY_V1",
+  "evaluation_budget_s": 300,
+  "gmrf_in_native_forward": false,
+  "gmrf_observer_only": {
+    "binary": "/home/zyc/ros2_ws/install/gmrf_wind_mapping/lib/gmrf_wind_mapping/gmrf_wind_mapping_node",
+    "binary_sha256": "a97a118f98174c168272e61c802fac48c0968778360110fef2e6507d96aecc13",
+    "service": "/WindEstimation",
+    "service_type": "gmrf_msgs/srv/WindEstimation",
+    "source": "/home/zyc/ros2_ws/src/GMRF-wind/gmrf_wind_mapping/src/gmrf_node.cpp",
+    "source_repo_commit": "2ec7a5db7bf5f2597e9d62ba662d3efcfc788d71",
+    "source_repo_dirty_at_preflight": true,
+    "source_sha256": "84e4cba3dac5ed76b25f3eb86703b98db79a939eec491ba5475288bc893b4e74"
+  },
+  "house": "House01",
+  "launch_file": "/home/zyc/native_pmfs_recovery_v1/vgr_native_pmfs_recovery_20260923.launch.py",
+  "launch_sha256": "880ed605ac04a7d6e5ccfd31801ef8f594065995fb03888da79effd0ee73f932",
+  "run_id": "NATIVE_RECOVERY_R1_House01_S0_20260923T071027Z",
+  "seed": 0,
+  "smoke_stop": "first completed PMFS source update",
+  "stage": "R1",
+  "useWindGroundTruth_requested": true,
+  "wind_launch_arguments": [
+    "vgr_data_path:=/mnt/hgfs/workspace/GADEN_files/scenarios/House01",
+    "config_id:=2,4-1_fast",
+    "flight_height:=0.3",
+    "seed:=0",
+    "run_id:=NATIVE_RECOVERY_R1_House01_S0_20260923T071027Z",
+    "run_dir:=/home/zyc/native_pmfs_recovery_v1/runs/NATIVE_RECOVERY_R1_House01_S0_20260923T071027Z",
+    "realtime_factor:=1.0",
+    "gas_backend:=raw_house1_snapshot",
+    "raw_query_executable:=/home/zyc/hcmc_gaden_seed_build_20260922/house1_raw_query"
+  ],
+  "wind_server_sha256": "e94becb2d72f82b9e040bb7a12d2b7132dc85283176cf0ee0b309b4804347116",
+  "wind_server_source": "/home/zyc/ros2_ws/src/vgr_bridge/vgr_bridge/wind_value_server.py",
+  "wind_service": "/wind_value",
+  "wind_service_type": "gaden_msgs/srv/WindPosition"
+}

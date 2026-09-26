@@ -1,0 +1,53 @@
+Execution-only task. Do not redesign the experiment.
+
+1. Work on a fresh branch:
+   `research/wind-contract-identity-audit-v0-20260926`.
+
+2. Copy this package unchanged into the worktree/evidence directory.
+
+3. Do **not** launch ROS, GADEN, gaden_player, PMFS, or any plume simulation.
+
+4. Read and hash the exact local assets listed in `02_AUDIT_SPEC.md`.
+
+5. Produce `ADAPTER_CONTRACT.md` with exact file hashes and line references.
+   This is source inspection, not a theory review.
+
+6. Using the existing House01 wind files and the exact
+   `wind_value_server.py` loader/interpolation convention, produce
+   `wind_state_probe.csv` for all available wind states at A/B/C/D and the
+   predeclared z arm(s).
+
+7. Run:
+   `python3 analyze_wind_state_match.py event_vectors.csv wind_state_probe.csv event_state_match.csv`
+   Save stdout as `MATCH_SUMMARY.json` (valid JSON).
+
+8. Separately verify the matched state sequence against the time/index/loop rule
+   found in the adapter code/config. Do not infer the rule from source truth.
+
+9. Decision must be exactly one:
+   - MATCH_SEQUENCE_RECOVERED
+   - SAME_ASSETS_BUT_NO_EVENT_MATCH
+   - WIND_CONTRACT_DIFFERENT_ASSETS
+   - HOLD_Z_OR_TIME_SEMANTICS_UNRESOLVED
+
+10. Commit:
+    - ADAPTER_CONTRACT.md
+    - hashes
+    - wind_state_probe.csv
+    - event_state_match.csv
+    - MATCH_SUMMARY.json
+    - copied bridge/config text required for review (small text only)
+    - DECISION.md
+
+Return:
+- branch
+- final commit
+- decision
+- wind state count
+- exact z arm(s)
+- per-site/event best-match angular and speed errors summary
+- matched state sequence (20 ids)
+- whether sequence obeys documented time/index rule
+- review ZIP path + SHA256
+
+No localization scoring and no next experiment is authorized by this task.
