@@ -1,0 +1,213 @@
+{
+  "adapter_sha256": "6f18cb6816cfc4be8092901e80fb631149379e17bb94c3d552436aecce3109e6",
+  "batch_size": 32,
+  "bootstrap_clusters": 12,
+  "bootstrap_draws": 10000,
+  "bootstrap_seed": 2026092602,
+  "branch": "research/solicm-latent-causal-g0-20260926",
+  "charter_sha256": "00c9be4638eb008abaefdd21e5fdee2612cf31335c9d50da4550c33519a2bccf",
+  "device": "cuda",
+  "directions": [
+    "W0_to_W2",
+    "W2_to_W0"
+  ],
+  "epochs": 40,
+  "folds_heldout": [
+    [
+      0,
+      1,
+      2,
+      3
+    ],
+    [
+      4,
+      5,
+      6,
+      7
+    ],
+    [
+      8,
+      9,
+      10,
+      11
+    ],
+    [
+      12,
+      13,
+      14,
+      15
+    ]
+  ],
+  "isolated_input_sha256": "1e08b6e26d143a51098a2abc192c359c1d838aecdf7bb5289ae050bed007b00d",
+  "latent_audit": "descriptive mean abs transition Jacobian per-domain on source/all target-unlabeled arrays at best checkpoint; learned threa applied as soft_quantile on signed Jacobian; no gate",
+  "model_configs": {
+    "LCA_FULL": {
+      "data_config": {
+        "dropout": 0.5,
+        "features_len": 1,
+        "final_out_channels": 128,
+        "kernel_size": 5,
+        "mid_channels": 64,
+        "stride": 1
+      },
+      "input_shape": [
+        10,
+        30
+      ],
+      "lca_config": {
+        "No_prior": false,
+        "activation": "leakyReLU",
+        "class_weight": 1,
+        "d_model": 512,
+        "dropout_rate": 0,
+        "emb_dim": 32,
+        "is_ln": false,
+        "lags": 1,
+        "layer_nums": 1,
+        "lr": 0.001,
+        "patch_size": 32,
+        "rec_weight": 0.1,
+        "sparsity_weight": 0.001,
+        "start_psuedo_step": 30,
+        "structure_weight": 0.1,
+        "tar_psuedo_thre": 0.99,
+        "threshold": 0.5,
+        "type": "type1",
+        "z_dim": 9,
+        "z_kl_weight": 0.001
+      },
+      "num_classes": 6
+    },
+    "LCA_NO_ALIGN": {
+      "data_config": {
+        "dropout": 0.5,
+        "features_len": 1,
+        "final_out_channels": 128,
+        "kernel_size": 5,
+        "mid_channels": 64,
+        "stride": 1
+      },
+      "input_shape": [
+        10,
+        30
+      ],
+      "lca_config": {
+        "No_prior": false,
+        "activation": "leakyReLU",
+        "class_weight": 1,
+        "d_model": 512,
+        "dropout_rate": 0,
+        "emb_dim": 32,
+        "is_ln": false,
+        "lags": 1,
+        "layer_nums": 1,
+        "lr": 0.001,
+        "patch_size": 32,
+        "rec_weight": 0.1,
+        "sparsity_weight": 0.001,
+        "start_psuedo_step": 30,
+        "structure_weight": 0.0,
+        "tar_psuedo_thre": 0.99,
+        "threshold": 0.5,
+        "type": "type1",
+        "z_dim": 9,
+        "z_kl_weight": 0.001
+      },
+      "num_classes": 6
+    },
+    "PL_ONLY": {
+      "data_config": {
+        "dropout": 0.5,
+        "features_len": 1,
+        "final_out_channels": 128,
+        "kernel_size": 5,
+        "mid_channels": 64,
+        "stride": 1
+      },
+      "input_shape": [
+        10,
+        30
+      ],
+      "lca_config": {
+        "No_prior": true,
+        "activation": "leakyReLU",
+        "class_weight": 1,
+        "d_model": 512,
+        "dropout_rate": 0,
+        "emb_dim": 32,
+        "is_ln": false,
+        "lags": 1,
+        "layer_nums": 1,
+        "lr": 0.001,
+        "patch_size": 32,
+        "rec_weight": 0.0,
+        "sparsity_weight": 0.0,
+        "start_psuedo_step": 30,
+        "structure_weight": 0.0,
+        "tar_psuedo_thre": 0.99,
+        "threshold": 0.5,
+        "type": "type1",
+        "z_dim": 9,
+        "z_kl_weight": 0.0
+      },
+      "num_classes": 6
+    },
+    "SOURCE_ONLY": {
+      "data_config": {
+        "dropout": 0.5,
+        "features_len": 1,
+        "final_out_channels": 128,
+        "kernel_size": 5,
+        "mid_channels": 64,
+        "stride": 1
+      },
+      "input_shape": [
+        10,
+        30
+      ],
+      "lca_config": {
+        "No_prior": true,
+        "activation": "leakyReLU",
+        "class_weight": 1,
+        "d_model": 512,
+        "dropout_rate": 0,
+        "emb_dim": 32,
+        "is_ln": false,
+        "lags": 1,
+        "layer_nums": 1,
+        "lr": 0.001,
+        "patch_size": 32,
+        "rec_weight": 0.0,
+        "sparsity_weight": 0.0,
+        "start_psuedo_step": 30,
+        "structure_weight": 0.0,
+        "tar_psuedo_thre": 0.99,
+        "threshold": 0.5,
+        "type": "type1",
+        "z_dim": 9,
+        "z_kl_weight": 0.0
+      },
+      "num_classes": 6
+    }
+  },
+  "numpy_version": "2.2.6",
+  "official_implementation_notes": [
+    "classifier outputs softmax before CrossEntropyLoss",
+    "get_features returns z_std as third latent tuple element in pinned TSClassif code"
+  ],
+  "optimizer": "official LCA Adam lr=0.001 weight_decay=1e-4",
+  "pseudo_label": "official epoch>30, confidence>0.99, loss multiplier 0.5",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "selection": "minimum deterministic SOURCE-only CrossEntropyLoss on the 96 source training samples at epochs 10/20/30/40; no target labels",
+  "source_scaling": "channel-wise mean/std of all labeled SOURCE sequences and time points; std=1 only when exact zero; target unseen",
+  "target_unlabeled_loader": "72 sequences; batch32 shuffle/drop_last true; official zip(source,cycle(target)) schedule",
+  "torch_version": "2.9.1+cu130",
+  "training_code_sha256": "707eb58a221d3172d7d633c5970861b2ea901a12334dde829a6cfec612aad898",
+  "training_has_no_target_label_or_target_metric_path": true,
+  "upstream_code_manifest_sha256": "abcb317a28446853fee23cc2ca784e59b3adca1af70e01d780e1fb5807b3153c",
+  "upstream_commit": "45c091fca909ac13675c6ddac7e0464f0a186355"
+}
