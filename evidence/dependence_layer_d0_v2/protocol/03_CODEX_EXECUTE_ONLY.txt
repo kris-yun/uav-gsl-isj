@@ -1,0 +1,67 @@
+Execute the revised frozen dependence-layer development analysis only.
+
+Branch:
+`research/dependence-layer-d0-v2-20260926`
+
+IMPORTANT:
+- Do NOT execute `STOCHASTIC_BRANCHING_D0_20260926` as a licensing gate.
+- Preserve it unchanged as superseded/unexecuted history.
+- This V2 exists because the independent review found attribution confounds
+  before V1 scientific execution.
+
+Inputs:
+- existing R0 House02/W2 18x16 benchmark only;
+- `/home/zyc/r0_stochastic_benchmark_20260924`, or the existing R0 review archive;
+- repository seed matrix
+  `research/stochastic_benchmark_refoundation/R0_SEED_MATRIX_18x16.tsv`.
+
+Before scientific execution:
+1. verify this package `SHA256SUMS.txt`;
+2. run `python3 self_test_dependence_layers.py`;
+3. verify exactly 18 sources x 16 unique reps 1..16 and 288 unique seeds;
+4. copy the protocol/code unchanged to a new evidence namespace;
+5. commit that state and report it as `freeze_commit`.
+
+Scientific command:
+
+python3 analyze_dependence_layers_d0.py \
+  --data-root /home/zyc/r0_stochastic_benchmark_20260924 \
+  --seed-matrix research/stochastic_benchmark_refoundation/R0_SEED_MATRIX_18x16.tsv \
+  --out-dir evidence/dependence_layer_d0_v2/result
+
+Run a complete second execution to a repeat directory. Required byte-identical:
+- input_inventory.csv
+- within_source_surrogates_500.csv
+- D0_RESULT.json
+
+No GADEN.
+No PMFS.
+No new plume.
+No extra source/wind/House.
+No network.
+No alternate score.
+No residual clipping/rounding.
+No result-driven changes.
+
+Decision must be exactly one:
+- DEPENDENCE_D0_CROSS_TIME_SIGNAL
+- DEPENDENCE_D0_INSTANTANEOUS_JOINT_ONLY
+- DEPENDENCE_D0_MEAN_FIELD_ONLY
+- DEPENDENCE_D0_INCONSISTENT_HOLD
+- DEPENDENCE_D0_HOLD_DATA_CONTRACT
+
+Return:
+1. branch
+2. freeze commit
+3. final commit
+4. decision
+5. A/B/C/D RAW fair-ES mean rank + unique-top1
+6. pooled RAW primary/robust mean rank + MRR
+7. complete mean-field marginal-Brier primary/robust mean rank
+8. C1/C2 primary and robustness median mean ranks
+9. C1/C2 rank as-good-or-better fractions
+10. deterministic repeat status
+11. review package path / bytes / SHA256
+
+STOP after reporting. Even CROSS_TIME_SIGNAL does not authorize a world model,
+fresh simulation, or closed loop.
