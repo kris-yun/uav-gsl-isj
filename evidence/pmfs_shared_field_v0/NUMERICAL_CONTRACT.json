@@ -1,0 +1,154 @@
+{
+  "status": "SIGNED_BEFORE_OUTER_SCORING",
+  "authorization": "latest user pasted method request; package development policy adopted without scientific formula changes",
+  "input_zip_sha256": "efddf8c726d5fb358a4d3e0cc074f3360e47907b99c9da2bef69507a85302a68",
+  "scope": {
+    "house": "House02",
+    "wind": "3,5-1_slow",
+    "sources": 168,
+    "runs_per_source": 16,
+    "protocols": 60,
+    "reads_per_task": 2,
+    "snapshot_indices": [
+      100,
+      550
+    ],
+    "new_plumes": 0,
+    "sealed_data_read": false,
+    "classification": "OPEN method development CV, not fresh confirmation"
+  },
+  "inputs": [
+    {
+      "layout": "P_G1A",
+      "path": "D:\\ZYC\\A-gas\\_worktrees\\pmfs-shared-field-v0-20260926\\evidence\\source_probe_crossed_audit_v0\\SPX_G0_CENTRAL_P_G1A_10x30.npy",
+      "sha256": "b21a089cb015ace71a448db58bd7a2f1fee25e9a8431cbb56728f48ca39573d9",
+      "shape": [
+        168,
+        16,
+        10,
+        30
+      ]
+    },
+    {
+      "layout": "P_E2",
+      "path": "D:\\ZYC\\A-gas\\_worktrees\\pmfs-shared-field-v0-20260926\\evidence\\source_probe_crossed_audit_v0\\SPX_G0_CENTRAL_P_E2_10x30.npy",
+      "sha256": "b17cbd3de8b96eea75503045e48835ae42eac6d0b6c9bc874860149631fd0dba",
+      "shape": [
+        168,
+        16,
+        10,
+        30
+      ]
+    }
+  ],
+  "run_join_sha256": "6c48197d52a859593fc9e8ecd58654aace129fc4debf53a68f9e48ac64b675e9",
+  "source_panel_sha256": "5df11712dd0e7dbef6e454c8d146427407644b9f27245c447479185ab2129d8e",
+  "folds": [
+    [
+      0,
+      4,
+      8,
+      12
+    ],
+    [
+      1,
+      5,
+      9,
+      13
+    ],
+    [
+      2,
+      6,
+      10,
+      14
+    ],
+    [
+      3,
+      7,
+      11,
+      15
+    ]
+  ],
+  "inner_folds": "sorted outer-reference positions modulo3, 8reference/4validation",
+  "encoding": {
+    "positive_thresholds": "pooled training-only 1/3 and2/3 quantiles across sources/protocols/times",
+    "zero": "exact ppm=0",
+    "ties": "unique thresholds merge identical intervals; one alphabet shared by all arms",
+    "two_time_symbol": "first_bin*number_bins+last_bin",
+    "raw_ppm_retained": true
+  },
+  "channel": {
+    "onehot_scale": "R/(R+1)",
+    "uniform_scale": "1/(R+1)",
+    "uniform_symbols": "all current-fold alphabet symbols",
+    "interpretation": "common total Dirichlet pseudocount1; statistical smoothing, not sensor noise or posterior floor"
+  },
+  "prior": {
+    "source": "uniform168 microcells",
+    "protocol": "uniform60 alternative tasks"
+  },
+  "selection": {
+    "rho_grid": [
+      0,
+      0.05,
+      0.15,
+      0.35
+    ],
+    "temperature_grid": [
+      0.5,
+      1,
+      2,
+      4
+    ],
+    "shared_and_independent": "independent model-wide selection, same inner CV/mean log score policy",
+    "tie_break": "smallest rho; temperature nearest1 then smaller T, within1e-12 mean nats",
+    "shuffle": "same selected shared rho; no separate hyperparameter search"
+  },
+  "identity_ablation": {
+    "policy": "protocol0 unchanged; for each source/protocol>0 sort reference run IDs by domain-separated SHA256",
+    "domain": "PMFS_SHARED_FIELD_IDENTITY_ABLATION_V0|outer_fold|source_id|protocol|run_id",
+    "reads_concentration_to_set_permutation": false,
+    "per_protocol_marginal_invariance_required": true
+  },
+  "models": [
+    "NOMINAL",
+    "INDEPENDENT_DRO",
+    "TEMPERATURE",
+    "SHARED_FIELD",
+    "SHUFFLED_SHARED"
+  ],
+  "extra_background_baseline": "none; no Gaussian/JTD/PMFS proxy fitted",
+  "solver": {
+    "objective": "maximize conditional entropy under per-source KL weights; same as supplied SLSQP prototype",
+    "implementation": "sparse-channel entropic mirror ascent with KL-Bregman projection and independent KL dual risk certificate",
+    "saddle_gap_max_nats": 2e-06,
+    "constraint_violation_max": 2e-08,
+    "independent_protocol_max_gap_nats": 2e-06,
+    "max_iterations": 4000,
+    "max_wall_seconds_per_fit": 900,
+    "no_posterior_floor": true,
+    "failure": "implementation blocked, never scientific STOP"
+  },
+  "endpoint": "per-source mean over16runs and60protocols of paired log2 truth probability gain",
+  "bootstrap": {
+    "unit": "whole source, all runs/protocols/folds retained",
+    "replicates": 10000,
+    "seed": 2026092607,
+    "interpretation": "OPEN crossfit source-panel sensitivity interval, not fresh/generalization coverage"
+  },
+  "retention_rule": {
+    "primary": "shared gains over nominal/independent/temperature each>0 and source-panel95% lower>0",
+    "ablation": "shared gain over identity-shuffled comparator>0 and95% lower>0",
+    "effect_threshold_bits": 0,
+    "effect_size_and_cost_reported": "no claim that an arbitrarily tiny positive gain establishes a main innovation",
+    "secondary_metrics": "Brier/rank/distance/tails descriptive, cannot rescue primary comparison",
+    "positive_with_ordinary_baseline_loss": "stop shared-field main-innovation claim",
+    "result_names": [
+      "DEVELOPMENT_RETAIN_SHARED_FIELD_CANDIDATE",
+      "DEVELOPMENT_STOP_NO_INCREMENT_BEYOND_CONTROLS",
+      "DEVELOPMENT_IMPLEMENTATION_BLOCKED"
+    ]
+  },
+  "rank": "deterministic ties by ascending candidate index, no optimistic tie ranks",
+  "stop_after_results": true
+}
