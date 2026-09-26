@@ -1,0 +1,63 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+QA_F1_ENVIRONMENT_SCORED 0
+QA_F1_ENVIRONMENT_SCORED 1
+QA_F1_ENVIRONMENT_SCORED 2
+{
+  "decision": "QA_F1_NOT_CROSS_ENV_GENERAL",
+  "gates": {
+    "G1_M3_rank_nonadverse_all": false,
+    "G2_M3_rank_improves_at_least_two": false,
+    "G3_M3_top1_loss_at_most_one_target_each": true,
+    "G4_M2_persistent_at_least_two": true,
+    "G5_M2_rank_no_worse_than_M1_at_least_two": true,
+    "G6_M3_pooled_NLL_lower": true,
+    "G7_all_M3_NLL_deltas_lte_ln10": true
+  },
+  "pooled_metrics": {
+    "M0": {
+      "MAP_spatial_error_m": 0.0666666666666666,
+      "MAP_tie_fraction": 0.0,
+      "MRR": 0.8888888888888888,
+      "mean_rank": 1.2222222222222223,
+      "posterior_NLL": 2.001461716733483,
+      "source_units": 18,
+      "target_count": 72,
+      "top1": 0.7777777777777778,
+      "top3": 1.0
+    },
+    "M1": {
+      "MAP_spatial_error_m": 0.07916666666666661,
+      "MAP_tie_fraction": 0.0,
+      "MRR": 0.8680555555555556,
+      "mean_rank": 1.2638888888888888,
+      "posterior_NLL": 1.6466651617777346,
+      "source_units": 18,
+      "target_count": 72,
+      "top1": 0.7361111111111112,
+      "top3": 1.0
+    },
+    "M2": {
+      "MAP_spatial_error_m": 0.07499999999999993,
+      "MAP_tie_fraction": 0.0,
+      "MRR": 0.875,
+      "mean_rank": 1.25,
+      "posterior_NLL": 1.7020965058020499,
+      "source_units": 18,
+      "target_count": 72,
+      "top1": 0.75,
+      "top3": 1.0
+    },
+    "M3": {
+      "MAP_spatial_error_m": 0.07083333333333328,
+      "MAP_tie_fraction": 0.0,
+      "MRR": 0.8819444444444444,
+      "mean_rank": 1.2361111111111112,
+      "posterior_NLL": 1.7410479154477414,
+      "source_units": 18,
+      "target_count": 72,
+      "top1": 0.7638888888888888,
+      "top3": 1.0
+    }
+  }
+}
