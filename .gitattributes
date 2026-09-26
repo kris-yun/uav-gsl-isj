@@ -1,4 +1,12 @@
-* text=auto eol=lf
-*.zip binary
-artifacts/gsl_actionserver_node binary
-
+# This task vendors byte-hashed primitive and upstream evidence. Keep exact
+# bytes across platforms. New remote helper scripts use LF explicitly.
+evidence/emission_transport_v0/fixed_source/** -text
+evidence/emission_transport_v0/open_inputs/** -text
+evidence/emission_transport_v0/RunningSimulation.cpp -text
+evidence/emission_transport_v0/PlaybackSimulation.cpp -text
+evidence/emission_transport_v0/central_*.tsv -text
+evidence/emission_transport_v0/gate1a_contract.json -text
+research/emission_transport_v0/upstream/** -text
+research/emission_transport_v0/*.sh text eol=lf
+collect_fixed_primitive.sh text eol=lf
+primitive_readonly_inventory.sh text eol=lf

@@ -1,0 +1,32 @@
+任务：实现“随机释放—输运生成泛函的全源概率求解”这个具体候选，不继续寻找新缩写/网络，不续跑任何旧STOP路线。
+
+先读MAIN_REPORT.pdf第4—8节，然后运行：
+  cd code
+  python test_emission_transport.py
+  python demo_168.py
+已有17项数学/软件检查和168合成格点演示。它们不是GADEN性能。
+
+本次唯一新增工作：将当前固定版GADEN的真实primitive映射到分布求解器，并在已OPEN House02/W0 168×16资产上完成一次方法开发比较。不得再交一份泛泛理论建议代替实现。
+
+输入边界：只读现有OPEN资产、固定代码、地图/风数组/释放参数。0条新增完整plume，不打开H01 DEV/House03。若primitive构造确实需要新抽样，先记录该计算与数据新增性质，不暗中运行。
+
+方法核心不变：
+- 扩展Markov状态必须包括需要的年龄、宽度、浮力等；核对边界、出口、浓度截断、独立随机步骤以及共享环境。
+- 单释放单位反向分布场给所有源起点取值；按实际固定/随机释放规律组合，不能把固定释放改Poisson。
+- 公共环境先条件化组合，再整体积分；同一泄漏前缀不当独立环境适应集。
+- 完整raw幅值保留。不从每源12条路径新拟合候选方差，不加新网络。
+- 教育示例grid_kernel不是GADEN接口，不能直接当exact-forward。
+- 无噪声模拟数据按事前固定物理量化合同计算概率，不能添加为改善NLL而设计的Gaussian noise/floor。
+
+唯一开发比较：
+168源均匀prior；P_G1A全部30个probe，每个probe定义一个两次定点观测任务：原合同第一/最后时间点。同一任务只输入该probe两次读数。30个协议等权报告，禁止挑probe/源。
+三个对照同批：同一primitive的精确矩Gaussian；同物理模型标准逐源概率前推（或已有合法抽样）；reference-only有限选择的普通稳健密度oracle对照。不得称其目标多源训练数据为部署context。
+现有16条/源全部已OPEN，只作开发；保存原12/4切分给学习型oracle，不把该交叉验证叫fresh confirmation。
+
+评分前生成机器可读NUMERICAL_CONTRACT.json：primitive/释放/源/时间/probe/hash、网格/时间步、浓度量化与累积误差、边界概率质量、likelihood精度、候选prior、固定硬件/计算预算、baseline选择网格。字段从已有模型/数值需求确定，不看开发结果择优。缺字段记录实施阻断，不补造值。
+
+开发建议准入（须先写入合同）：平均log2真源概率增益≥0.05bit，source整簇95%区间下界>0，Brier不恶化；参考比较器为同kernel精确矩Gaussian。报告全部尾部贡献和共同观测输入。另报告达到同一分布/赔率精度的全部预计算、在线成本与内存，不仅单次推理计时。标准概率方法已给出全部收益且本法无额外资源优势，则不具有主创新资格。
+任何比较若实施无效，不写科学STOP。有效结果若失败，不换probe、源、floor、释放规律或likelihood继续救。一次开发完成后停止，不自动生成fresh target。旧JTD/NPG/RPO停止状态不变。
+
+交付：源代码、primitive映射与假设表、数值合同、逐source×realization×protocol后验与对照、源聚类统计、全成本曲线、一次性DEVELOPMENT_DECISION。
+创新若仅是标准Feynman–Kac接模拟器，必须如实写“独立增量不足”，不包装。若获得具体分布信息价值与资源优势，再提交主线程决定一次fresh confirmation；不是宣称真实UAV已可部署。

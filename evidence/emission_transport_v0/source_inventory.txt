@@ -1,0 +1,701 @@
+source_root=/home/zyc/ros2_ws/src/GADEN
+source_head=17adaf650a4f11d29aa049cf0661e9f9ea2e636f
+86727e26c7f799d213250a77a29fc4fb98c7262066a57614dd58990667fa2265  /home/zyc/ros2_ws/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp
+0a30c798bd4c413adc30748e70cb643f32a65c570d08b41ac0df2c5aabb2cfff  /home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp
+4127b9ba4f42186ba2d6d33c84fba8d4b92749da59b83750fa4847dbd9957ce1  /home/zyc/hcmc_gaden_seed_build_20260922/install/gaden_filament_simulator/lib/gaden_filament_simulator/filament_simulator
+aca55af4e39831f97c1480bb31c014eb06294ced8a71329c3aa216e6cf7991a8  /home/zyc/hcmc_gaden_seed_build_20260922/install/gaden_common/lib/libgaden.so
+6a38febca80ad25e648dc24c97705bec0cf30ae31c758218f6d5b70b5dd5384b  /home/zyc/hcmc_gaden_seed_build_20260922/install/gaden_player/lib/gaden_player/player
+diff -ru --exclude .git /home/zyc/ros2_ws/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp /home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp
+--- /home/zyc/ros2_ws/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp	2026-07-25 22:12:26.816791125 +0800
++++ /home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp	2026-09-22 13:59:55.223400793 +0800
+@@ -2,6 +2,8 @@
+ #include "gaden/core/Logging.hpp"
+ #include "gaden/core/Vectors.hpp"
+ #include <random>
++#include <cstdlib>
++#include <cstdint>
+ 
+ namespace gaden
+ {
+@@ -25,17 +27,34 @@
+         return val >= min && val < max;
+     }
+ 
++    // Optional seed binding for independent plume realizations.  When the
++    // environment variable is absent, this preserves std::mt19937's default
++    // seed (5489u), which is the historical GADEN behavior.
++    inline std::uint32_t configuredSeed(std::uint32_t salt)
++    {
++        std::uint64_t base = 5489u;
++        const char* raw = std::getenv("GADEN_RNG_SEED");
++        if (raw != nullptr && *raw != '\0')
++        {
++            char* end = nullptr;
++            const unsigned long long parsed = std::strtoull(raw, &end, 10);
++            if (end != raw)
++                base = static_cast<std::uint64_t>(parsed);
++        }
++        return static_cast<std::uint32_t>((base ^ (base >> 32)) + salt);
++    }
++
+     // thread-safe
+     inline float GaussianRandom(float mean, float stdDev)
+     {
+-        static thread_local std::mt19937 engine;
++        static thread_local std::mt19937 engine(configuredSeed(0x9e3779b9u));
+         static thread_local std::normal_distribution<> dist{0, 1};
+         return mean + dist(engine) * stdDev;
+     }
+ 
+     inline float uniformRandom(float min, float max)
+     {
+-        static thread_local std::mt19937 engine;
++        static thread_local std::mt19937 engine(configuredSeed(0x243f6a88u));
+         static thread_local std::uniform_real_distribution<float> distribution{0.0, 1.0};
+         return min + distribution(engine) * (max - min);
+     }
+@@ -45,8 +64,6 @@
+         return std::abs(x - y) < epsilon;
+     }
+ 
+-    // holds a long list of N(0,1) values, and returns them one at a time, scaled as requested.
+-    // obviously not as good as generating them on the fly, but it's not like we are doing cryptography here
+     template <int Size>
+     class PrecalculatedGaussian
+     {
+@@ -69,4 +86,4 @@
+         std::array<float, Size> m_precalculatedTable;
+     };
+ 
+-} // namespace gaden
+\ No newline at end of file
++} // namespace gaden
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/simulated_tdlas/src/simulated_tdlas.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/simulated_tdlas/src/simulated_tdlas.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_filament_simulator/src/filament_simulator.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_filament_simulator/src/filament_simulator.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/simulated_gas_sensor/src/fake_gas_sensor.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/simulated_gas_sensor/src/fake_gas_sensor.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_preprocessing/src/preprocessing.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_preprocessing/src/configureCoppeliaSim.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_preprocessing/src/preprocessing.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/include/gaden_common/Visualization.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/include/gaden_common/Utils.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/include/gaden_common/VectorConversions.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/core/Logging.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/core/GadenVersion.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/core/Assertions.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/core/ReadResult.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/core/Vectors.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/datatypes/SimulationMetadata.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/datatypes/GasTypes.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/datatypes/Color.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/datatypes/Model3D.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/datatypes/sources/BoxSource.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/datatypes/sources/SphereSource.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/datatypes/sources/CylinderSource.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/datatypes/sources/LineSource.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/datatypes/sources/PointSource.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/datatypes/sources/GasSource.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/datatypes/Filament.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/datatypes/LoopConfig.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/PlaybackSimulation.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/WindSequence.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/PathUtils.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/STL.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/fmt.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/Serialization.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/Triangle.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/GPUAcceleration.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/Pointers.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/Time.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/Profiling.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/compression.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/gaden.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/EnvironmentConfiguration.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/integration/MVSim.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/integration/CoppeliaSim.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/integration/Gazebo.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/Scene.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/RunningSimulation.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/AirflowDisturbance.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/Environment.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/Simulation.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/Preprocessing.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/include/gaden/EnvironmentConfigMetadata.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/GPU/GPUAcceleration.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/GPU/DefineTypes.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/Preprocessing.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/Scene.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/MVSim.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/CoppeliaSim.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/EnvironmentConfigMetadata.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/EnvironmentConfiguration.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/Simulation.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/GasSource.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/YAML_Conversions.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/Gazebo.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/RunningSimulation.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/preprocessing/TriangleBoxIntersection.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/Environment.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/PlaybackSimulation.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/WindSequence.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/utils/STL/src/OccupancyGridToSTL.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/utils/STL/src/AsciiToBin.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/utils/decompress/src/comp.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/emitter.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/noexcept.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/binary.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/fptostring.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/eventhandler.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/dll.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/contrib/graphbuilder.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/contrib/anchordict.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/exceptions.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/emitterdef.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/mark.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/emitterstyle.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/emitfromevents.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/parser.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/yaml.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/stlemitter.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/traits.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/node/type.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/node/convert.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/node/node.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/node/ptr.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/node/parse.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/node/iterator.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/node/emit.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/node/impl.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/ostream_wrapper.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/depthguard.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/anchor.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/emittermanip.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/include/yaml-cpp/null.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/util/api.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/util/sandbox.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/util/read.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/util/parse.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/cmake/main.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/ostream_wrapper_test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/parser_test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/main.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/specexamples.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/mock_event_handler.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/integration/error_messages_test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/integration/node_spec_test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/integration/gen_emitter_test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/integration/handler_spec_test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/integration/encoding_test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/integration/load_node_test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/integration/emitter_test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/integration/handler_test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/integration/handler_test.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/fptostring_test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/binary_test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/regex_test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/test/node/node_test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/exceptions.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/ptr_vector.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/emitter.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/singledocparser.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/fptostring.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/parser.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/tag.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/collectionstack.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/nodebuilder.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/directives.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/scanscalar.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/depthguard.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/emit.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/setting.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/scantoken.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/streamcharsource.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/binary.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/scanscalar.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/convert.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/node_data.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/regex_yaml.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/memory.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/simplekey.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/contrib/graphbuilderadapter.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/contrib/graphbuilder.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/contrib/dragonbox.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/contrib/graphbuilderadapter.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/emitterstate.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/emitterutils.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/indentation.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/scantag.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/emitterutils.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/scanner.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/null.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/nodebuilder.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/regeximpl.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/tag.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/scanner.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/stream.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/parse.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/emitterstate.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/scantag.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/directives.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/token.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/nodeevents.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/ostream_wrapper.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/nodeevents.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/singledocparser.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/exp.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/regex_yaml.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/stringsource.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/emitfromevents.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/node.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/stream.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp/src/exp.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/functional.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/platform.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/memory_object.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/allocator.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/function.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/system.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/image_format.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/type_traits.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/container.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/context.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/cl.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/version.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/image_sampler.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/closure.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/image3d.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/lambda.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/random.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/algorithm.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/core.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/program.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/buffer.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/event.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/svm.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/exception.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/device.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/utility.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/wait_list.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/pipe.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/iterator.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/image.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/async.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/memory.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/source.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/command_queue.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/cl_ext.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/user_event.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/types.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/config.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/image2d.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/include/boost/compute/kernel.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_attach_user_queue_error.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_constant_iterator.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_image_sampler.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_buffer.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_generate.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_context.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_discrete_distribution.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_stable_partition.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_is_permutation.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_mapped_view.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_random_shuffle.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_array.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_bernoulli_distribution.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_lexicographical_compare.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_equal_range.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_inner_product.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_replace.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_for_each.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_iota.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_partial_sum.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_reverse.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_set_intersection.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/quirks.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_transform_iterator.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_dynamic_bitset.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_adjacent_difference.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_buffer_allocator.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_stable_sort_by_key.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_async_wait.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_set_union.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_copy_if.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_complex.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/check_macros.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_valarray.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_uniform_int_distribution.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_counting_iterator.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_radix_sort_by_key.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_zip_iterator.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_insertion_sort.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_find.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_svm_ptr.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_unique_copy.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_extrema.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_pinned_allocator.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_amd_cpp_kernel_language.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_flat_map.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_accumulate.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_pipe.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_copy_type_mismatch.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_vector.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_is_sorted.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_reduce.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_gather.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_sha1.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_fill.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_unique.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_next_permutation.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_image3d.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_scatter.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_sort.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_stable_sort.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_sort_by_transform.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_program.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_types.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_rotate_copy.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_invoke.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_device.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_closure.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_no_device_found.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_inplace_reduce.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_tabulate.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_functional_get.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_system.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_unsupported_extension.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_image1d.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_platform.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_buffer_iterator.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/context_setup.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_functional_hash.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_string.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_any_all_none_of.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_pair.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_transform_reduce.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_program_cache.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_permutation_iterator.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_nth_element.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_adjacent_find.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_find_end.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_merge_sort_gpu.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_local_buffer.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_user_defined_types.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_tuple.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_random_fill.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_discard_iterator.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_reduce_by_key.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_count.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_inplace_merge.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_struct.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/opencl_version_check.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_threefry_engine.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_includes.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_user_event.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_radix_sort.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_flat_set.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_partition_point.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_transform_if.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_event.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_async_wait_guard.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_equal.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_function.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_lambda.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_rotate.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_merge.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_wait_list.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_set_symmetric_difference.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_literal_conversion.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_scatter_if.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_opencl_error.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_clamp_range.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_functional_bind.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_linear_congruential_engine.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_functional_convert.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_image2d.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_search_n.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_search.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_normal_distribution.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_stack.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_transform.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_result_of.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_context_error.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_attach_user_queue_thread_safety.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_partition.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/check/has_opencl.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_mismatch.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_extents.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_copy.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_type_traits.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_set_difference.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_functional_as.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/extra/test_interop_eigen.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/extra/test_multiple_objects1.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/extra/test_interop_vtk.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/extra/test_multiple_objects2.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/extra/test_interop_qt.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/extra/test_interop_opengl.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/extra/test_interop_opencv.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_binary_search.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_strided_iterator.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_kernel.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_mersenne_twister_engine.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_function_input_iterator.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_scan.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_uniform_real_distribution.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_remove.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_command_queue.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_malloc.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_functional_popcount.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_sort_by_key.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_functional_unpack.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_functional_identity.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/test/test_prev_permutation.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_count.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_sort.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_copy_to_device.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_bolt_saxpy.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_partition.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_count.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_merge.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_copy_if.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_merge.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_next_permutation.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_nth_element.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_bolt_max_element.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_search_n.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_partition_point.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_bolt_inner_product.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_set_difference.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_set_intersection.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_unique.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_random_number_engine.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_unique_copy.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_prev_permutation.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_exclusive_scan.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_next_permutation.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_comparison_sort.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_set_union.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stable_partition.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_inner_product.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_tbb_merge.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_rotate_copy.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_sort_float.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_bolt_accumulate.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_inner_product.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_saxpy.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_bolt_sort.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_reverse.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_tbb_accumulate.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_bolt_fill.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_find.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_rotate.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_includes.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_partition.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_accumulate.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_set_symmetric_difference.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_bolt_merge.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_set_union.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_reverse_copy.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_search_n.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_is_sorted.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_bolt_reduce_by_key.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_max_element.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_sort.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_is_permutation.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_rotate.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_bernoulli_distribution.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_prev_permutation.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_reverse.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_find_end.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_cart_to_polar.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_host_sort.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_max_element.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_partial_sum.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_set_difference.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_uniform_int_distribution.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_search.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_fill.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_bolt_partial_sum.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_set_symmetric_difference.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_is_permutation.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_find.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_bolt_count.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_sort_by_key.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_partial_sum.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_reverse_copy.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_partition_point.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_rotate_copy.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_tbb_sort.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_bolt_exclusive_scan.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_erase_remove.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_saxpy.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_binary_find.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_discrete_distribution.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_stable_partition.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_unique.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_accumulate.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_find_end.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_search.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_set_intersection.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_includes.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_reduce_by_key.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/perf/perf_stl_unique_copy.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/matrix_transpose.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/mapped_view.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/inline_ptx.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/batched_determinant.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/fizz_buzz.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/longest_vector.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/opencv_histogram.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/k_means.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/time_copy.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/opencv_flip.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/vector_addition.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/price_cross.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/mandelbrot.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/point_centroid.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/list_devices.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/amd_cpp_kernel.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/black_scholes.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/qimage_blur.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/opencv_sobel_filter.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/resize_image.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/opencl_test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/simple_moving_average.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/monte_carlo.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/opencv_convolution.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/memory_limits.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/threefry_engine.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/hello_world.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/opengl_sphere.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/nbody.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/sort_vector.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/print_vector.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/host_sort.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/copy_data.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/transform_sqrt.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/random_walk.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/simple_kernel.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute/example/opencv_optical_flow.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/include/DDA/3D/Map.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/include/DDA/3D/RayCast.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/include/DDA/3D/RayMarch.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/include/DDA/2D/Map.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/include/DDA/2D/RayCast.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/include/DDA/2D/RayMarch.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/include/DDA/Common.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/include/DDA/DDA.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/test/test.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/fwd.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/mat3x2.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/mat3x4.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/geometric.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/vec3.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/integer.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/mat4x2.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/exponential.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/glm.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/mat2x2.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/mat4x3.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/mat2x4.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/common.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/ext.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/mat2x3.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/vector_relational.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/matrix.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/trigonometric.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/vec2.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/packing.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/mat3x3.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/mat4x4.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm/glm/vec4.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/bsc.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/coder/coder.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/coder/common/tables.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/coder/common/rangecoder.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/coder/common/predictor.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/coder/coder.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/coder/qlfc/qlfc.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/coder/qlfc/qlfc.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/coder/qlfc/qlfc_model.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/coder/qlfc/qlfc_model.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/filters/tables.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/filters/preprocessing.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/filters/detectors.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/lzp/lzp.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/lzp/lzp.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/adler32/adler32.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/adler32/adler32.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/filters.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/st/st.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/st/st.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/libbsc.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/bwt/bwt.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/bwt/bwt.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/bwt/libsais/libsais.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/platform/platform.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/platform/platform.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc/libbsc/libbsc.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/ImGuiUtils.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/SimulationInfo.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Visualization/Scene.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Visualization/Transform.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Visualization/Camera.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Visualization/FilamentsViz.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Visualization/Scene.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Visualization/RenderModel.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Visualization/FilamentsViz.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Visualization/Utils.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Visualization/DrawCommand.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Visualization/Camera.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Visualization/Shader.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/main.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Project.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Application.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Modes/SceneMode.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Modes/ConfigurationMode.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Modes/SimulationListMode.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Modes/ConfigurationMode.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Modes/SceneListMode.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Modes/ProjectMode.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Modes/RunSimMode.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Modes/SimulationMode.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Modes/RunSimMode.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Modes/DefaultMode.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Modes/Mode.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Utils.hpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/glad/include/glad/glad.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/glad/include/KHR/khrplatform.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Application.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_gui/src/Project.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_player/src/simulation_player.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_player/src/simulation_player.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_environment/include/environment/environment.h
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_environment/src/environment.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/simulated_anemometer/src/fake_anemometer.cpp
+/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/simulated_anemometer/src/fake_anemometer.h
+
+SOURCE ROOT LINKS
+total 12
+drwxrwxr-x  3 zyc zyc 4096 Sep 22 13:41 .
+drwxrwxr-x  6 zyc zyc 4096 Sep 22 14:02 ..
+drwxrwxr-x 15 zyc zyc 4096 Jul 25 22:11 GADEN
+OccupancyGridToSTL_BINARY_DIR:STATIC=/home/zyc/hcmc_gaden_seed_build_20260922/build/gaden_common/third_party/gaden_core/utils/STL
+OccupancyGridToSTL_SOURCE_DIR:STATIC=/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/utils/STL
+YAML_CPP_BINARY_DIR:STATIC=/home/zyc/hcmc_gaden_seed_build_20260922/build/gaden_common/third_party/gaden_core/third_party/yaml-cpp
+YAML_CPP_SOURCE_DIR:STATIC=/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/yaml-cpp
+boost_compute_BINARY_DIR:STATIC=/home/zyc/hcmc_gaden_seed_build_20260922/build/gaden_common/third_party/gaden_core/third_party/compute
+boost_compute_SOURCE_DIR:STATIC=/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/compute
+bsc_BINARY_DIR:STATIC=/home/zyc/hcmc_gaden_seed_build_20260922/build/gaden_common/third_party/gaden_core/third_party/libbsc
+bsc_SOURCE_DIR:STATIC=/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/third_party/libbsc
+gaden_core_BINARY_DIR:STATIC=/home/zyc/hcmc_gaden_seed_build_20260922/build/gaden_common/third_party/gaden_core
+gaden_core_IS_TOP_LEVEL:STATIC=OFF
+gaden_core_SOURCE_DIR:STATIC=/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core
+gaden_decompress_BINARY_DIR:STATIC=/home/zyc/hcmc_gaden_seed_build_20260922/build/gaden_common/third_party/gaden_core/utils/decompress
+gaden_decompress_SOURCE_DIR:STATIC=/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/utils/decompress
+CMAKE_HOME_DIRECTORY:INTERNAL=/home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common

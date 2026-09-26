@@ -1,0 +1,144 @@
+{
+  "scope": "Mathematical finite-state toy tests ONLY; no plume/GADEN/held-out score",
+  "status": "ALL_UNIT_TESTS_PASSED",
+  "test_count": 17,
+  "seed": 2026092601,
+  "elapsed_seconds": 0.03166229999624193,
+  "records": [
+    {
+      "test": "all-source backward equals independent forward path enumeration",
+      "passed": true,
+      "details": {
+        "max_abs_probability_error": 5.551115123125783e-17,
+        "start_birth_cases": 12
+      }
+    },
+    {
+      "test": "fixed releases compose correctly",
+      "passed": true,
+      "details": null
+    },
+    {
+      "test": "all candidate laws conserve mass",
+      "passed": true,
+      "details": {
+        "candidate_count": 4,
+        "atom_counts": [
+          245,
+          245,
+          245,
+          245
+        ]
+      }
+    },
+    {
+      "test": "finite release-count PGF mixture",
+      "passed": true,
+      "details": null
+    },
+    {
+      "test": "equal moments can hide real source information",
+      "passed": true,
+      "details": {
+        "mean_A": [
+          1.0
+        ],
+        "mean_B": [
+          1.0
+        ],
+        "variance_A": [
+          [
+            1.0
+          ]
+        ],
+        "variance_B": [
+          [
+            1.0
+          ]
+        ],
+        "exact_noiseless_Bayes_accuracy": 0.8333333333333334,
+        "identical_Gaussian_moment_models_accuracy": 0.5,
+        "interpretation": "Constructed mathematical example; NOT GADEN performance"
+      }
+    },
+    {
+      "test": "equal-moment example is generated from transport transition",
+      "passed": true,
+      "details": null
+    },
+    {
+      "test": "noiseless quantized observations keep genuine zero likelihood",
+      "passed": true,
+      "details": null
+    },
+    {
+      "test": "out-of-support observation is not hidden by a floor",
+      "passed": true,
+      "details": null
+    },
+    {
+      "test": "shared regime must be integrated after release composition",
+      "passed": true,
+      "details": {
+        "correct_population_law": "{(0,): np.float64(0.5), (2,): np.float64(0.5)}",
+        "incorrect_per_packet_mix": "{(0,): 0.25, (1,): 0.5, (2,): 0.25}"
+      }
+    },
+    {
+      "test": "calibrated measurement-channel source posterior",
+      "passed": true,
+      "details": {
+        "illustrative_observation": [
+          2.0
+        ],
+        "sensor_sd": [
+          0.2
+        ],
+        "posterior": [
+          0.9999950311537935,
+          4.9688462065495955e-06
+        ]
+      }
+    },
+    {
+      "test": "indistinguishable sources preserve prior odds",
+      "passed": true,
+      "details": null
+    },
+    {
+      "test": "prefix conditional update avoids double counting",
+      "passed": true,
+      "details": null
+    },
+    {
+      "test": "example grid transition nonnegative and conservative",
+      "passed": true,
+      "details": {
+        "free_states": 11
+      }
+    },
+    {
+      "test": "unstable grid step is refused rather than renormalized",
+      "passed": true,
+      "details": null
+    },
+    {
+      "test": "computation-budget failure is explicit, not probability truncation",
+      "passed": true,
+      "details": null
+    },
+    {
+      "test": "packetization dependence is exposed",
+      "passed": true,
+      "details": {
+        "original_variance": 1.0,
+        "independent_split_variance": 0.5
+      }
+    },
+    {
+      "test": "nonnegative Laplace function bounded without plume moments",
+      "passed": true,
+      "details": null
+    }
+  ]
+}
