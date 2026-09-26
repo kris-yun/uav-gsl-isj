@@ -13,7 +13,8 @@ for mode in ('off','on'):
     for name,h in manifest['arms']['C']['candidate_map_sha256'].items():
         p=out/'maps'/f'{name}.f32'; assert sha(p)==h,name
         original=H/'historical_maps'/p.name
-        checks.append({'mode':mode,'candidate_id':name,'map_sha256':h,'max_abs_error':float(np.max(np.abs(np.fromfile(p,'<f4')-np.fromfile(original,'<f4')))))})
+        error=float(np.max(np.abs(np.fromfile(p,'<f4')-np.fromfile(original,'<f4'))))
+        checks.append({'mode':mode,'candidate_id':name,'map_sha256':h,'max_abs_error':error})
 result={'pass':True,'maps_per_mode':87,'map_max_abs_error':0.0,'native_score_max_abs_error':0.0,'all_maps_byte_identical':True,'all_native_scores_byte_identical':True,'counter_off_and_on_verified':True,'checks':checks}
 (R/'NATIVE_PARITY.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
 print('NATIVE_COUNTER_OFF_ON_PARITY_PASS 87 maps x 2; all scores exact')

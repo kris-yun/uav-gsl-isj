@@ -10,3 +10,9 @@ Preparation is restartable at the same frozen input contract. Nearest-row
 lookup uses an exact KD-tree with full argmin on ambiguous ties; the first two
 already exported wind families are independently checked byte-identical on
 restart. No scientific run or target statistics existed before this repair.
+
+The first parity-report invocation then encountered an extra closing
+parenthesis in check_parity_vm.py. The completed native OFF/ON map outputs
+were preserved; only the checker expression was repaired. Python compilation
+is required for every execution script before the bank starts. No forward
+kernel or scoring formula was changed by this checker repair.
