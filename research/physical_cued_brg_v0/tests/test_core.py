@@ -90,4 +90,11 @@ class Tests(unittest.TestCase):
  def test_26_shared_parameter_gradients(self):
   self.model.train();loss=torch.nn.functional.cross_entropy(self.model(self.o,self.c)[:,-1],torch.tensor([0,1]));loss.backward()
   self.assertGreater(float(self.model.feedback.weight.grad.abs().sum()),0)
+ def test_27_constant_presence_footprint_physical_bounds(self):
+  b=self.bank();b.p[:]=1.;b.u[:]=7.
+  p,u=b.project([[.5,.5],[1.7,.8]],(.2,.2))
+  self.assertTrue((p<=1).all() and (p>=0).all())
+  np.testing.assert_allclose(p,np.ones_like(p),atol=1e-14,rtol=0)
+  np.testing.assert_allclose(u,np.full_like(u,7.),atol=1e-13,rtol=0)
+  encode([0,1],[[.5,.5],[1.7,.8]],b.xy,p,u)
 if __name__=='__main__':unittest.main(verbosity=2)

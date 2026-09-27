@@ -17,7 +17,7 @@ def main():
         if p.returncode==0 and h01.returncode==0:
             subprocess.run(ssh+['bash '+remote+'/tools/run_bind_native_bank_views_vm.sh'],check=True)
             break
-        if p.returncode not in (1,255):raise RuntimeError('unexpected bank readiness status')
+        if p.returncode not in (0,1,255) or h01.returncode not in (0,1,255):raise RuntimeError('unexpected bank readiness status')
         print('BANK_PENDING',time.strftime('%Y-%m-%d %H:%M:%S'),flush=True);time.sleep(45)
     for name in ['LEGAL_SUPPORT_COMPLETE.json','LEGAL_MASKS_COMPLETE.json']+[f'env_{e}_bank.npz' for e in range(3)]:
         subprocess.run(scp+[host+':'+remote+'/legal_support_v2/'+name,str(banks/name)],check=True)

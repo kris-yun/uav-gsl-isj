@@ -36,7 +36,12 @@ class TemplateBank:
             if abs(w.sum()-1)>1e-8:raise ValueError('outside-map footprint; no support renormalization')
             ind=np.flatnonzero(w); ww=w[ind]
             values_p.append(self.p[:,ind]@ww);values_u.append(self.u[:,ind]@ww)
-        return np.stack(values_p),np.stack(values_u)
+        projected_p=np.stack(values_p)
+        # Floating overlap arithmetic can produce 1+4e-16 for an all-one field.
+        # Reject real contract violations; correct only roundoff at physical bounds.
+        if np.any(projected_p < -1e-12) or np.any(projected_p > 1+1e-12):
+            raise ValueError('projected presence probability outside physical bounds')
+        return np.clip(projected_p,0.,1.),np.stack(values_u)
 
     def planner_maps(self, q):
         q=np.asarray(q,dtype=float)
