@@ -66,6 +66,12 @@ def main():
         if x.endswith('.cpp.o'):command[i]=str(patched)
         if i>0 and command[i-1]=='-o':command[i]=str(out/'filament_simulator_timebase')
     command=command[:1]+flags+command[1:]
+    # The installed seeded library retains external bsc_init/bsc_compress
+    # symbols. Bind the existing compression library explicitly; no rebuild of
+    # the seeded numerical core, compression code, clock or writer is made.
+    bsc=G/'build/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc.so'
+    assert bsc.is_file()
+    command += [str(bsc), '-Wl,-rpath,'+str(bsc.parent)]
     with (out/'build.log').open('w') as log:
         log.write(shlex.join(command)+'\n');log.flush()
         subprocess.run(command,cwd=G/'build/gaden_filament_simulator',stdout=log,stderr=subprocess.STDOUT,check=True)
@@ -75,6 +81,7 @@ def main():
         seeded_numerical_library_sha256=sha(G/'install/gaden_common/lib/libgaden.so'),
         seeded_math_source_sha256=sha(G/'src/GADEN/gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp'),
         original_seeded_binary_sha256=sha(G/'install/gaden_filament_simulator/lib/gaden_filament_simulator/filament_simulator'),
+        compression_library_path=str(bsc),compression_library_sha256=sha(bsc),
         command=command,scope='logging only; no numerical core, clock, writer, parameters, RNG or gas outputs modified')
     (out/'LOGGER_BUILD_PROVENANCE.json').write_text(json.dumps(provenance,indent=2)+'\n')
     print('LOGGING_ONLY_TIMEBASE_NODE_BUILT',flush=True)
