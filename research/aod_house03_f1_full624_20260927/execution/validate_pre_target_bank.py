@@ -20,6 +20,19 @@ def main():
     rows = list(csv.DictReader(manifest.open(), delimiter='\t'))
     audit = json.loads((root / 'CANDIDATE_BANK_AUDIT.json').read_text())
     freeze = json.loads((root / 'TEMPLATE_FREEZE.json').read_text())
+    build = json.loads((root / 'BUILD_AND_ASSET_AUDIT.json').read_text())
+    assert build['passed']
+    assert sha(root / 'inputs/meta.json') == build['geometry_hashes']['pruned_meta.json']
+    assert sha(root / 'inputs/occupancy.u8') == build['geometry_hashes']['pruned_seed0.bin']
+    assert sha(root / 'inputs/sources.csv') == build['source_csv_sha256']
+    for wind in build['wind']:
+        assert sha(root / f"inputs/wind_{wind['state']}.csv") == wind['export_sha256']
+        assert sha(wind['csv_path']) == wind['csv_sha256']
+        assert sha(wind['binary_path']) == wind['binary_sha256']
+    assert sha(root / 'execution/marked_forward_full624.cpp') == build['wrapper_sha256']
+    assert sha(root / 'build/marked_forward_full624') == build['binary_sha256']
+    for path, digest in build['object_hashes'].items():
+        assert sha(path) == digest
     assert audit['passed'] and freeze['passed']
     assert audit['completed'] == len(rows) == len(audit['records']) == 54912
     assert audit['source_count'] == freeze['candidates'] == 624
@@ -58,6 +71,7 @@ def main():
                   template_freeze_sha256=sha(root / 'TEMPLATE_FREEZE.json'),
                   seed_manifest_sha256=sha(manifest), fresh_targets_generated=0,
                   fresh_target_values_read=False,
+                  initial_geometry_wind_sources_binary_and_objects_hashes_unchanged=True,
                   map_byte_validation='VM template builder verified all four files against each completed row hash',
                   scientific_parameters_changed=False)
     (root / 'PRE_TARGET_BANK_VALIDATION.json').write_text(json.dumps(result, indent=2) + '\n')
