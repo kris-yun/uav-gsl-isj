@@ -1,0 +1,569 @@
+{
+  "scope": "OPEN posthoc implementation reproduction; no scientific PASS/FAIL label",
+  "execution_git_head": "8c164f01b7b2705881015054cbbded24e9853d44",
+  "source_hashes": {
+    "amplitude_readout.py": "3ca045648350eb373cd64ae27f0e9ee4491a564accb2b152a4ccce2d95df86fc",
+    "package_review.py": "cbd47bb8fe255c943d243ca0db08da70d99eca9f4e70f85be1e28493e039cd33",
+    "run_saved_readout.py": "bf01fa24b157f574387b92abfe51b2ec35e956ac843e7e47dd57c92a3cbe65f4",
+    "test_amplitude_readout.py": "8cf2fb77711becd4f1b585a5988c1f7aecdca99dc799c4b6c7650722f8e02f89"
+  },
+  "historical_decision_unchanged": "ME_PMFS_D0_MARK_INFORMATION_FORWARD_INADEQUATE",
+  "new_forward_runs": 0,
+  "new_gaden_runs": 0,
+  "training_runs": 0,
+  "house03_or_sealed_data_read": false,
+  "inputs": {
+    "task": {
+      "path": "C:\\Users\\50176\\Downloads\\AMPLITUDE_OPERATOR_DECOUPLING_V0_20260927.zip",
+      "sha256": "1bb824cf3488379a4d973252e058160485e1c6a9c412dde73f6a45c18db2f0d8",
+      "bytes": 14652
+    },
+    "pro": {
+      "path": "C:\\Users\\50176\\Downloads\\ME_AMPLITUDE_READOUT_PROGRESS_20260927.zip",
+      "sha256": "79c26ccb52de73cf198c679a6c27fa93a9485cfd24e5913dcf287ea2315e491c",
+      "bytes": 672309
+    },
+    "d0": {
+      "path": "D:\\ZYC\\A-gas\\_staging\\MARKED_ENCOUNTER_PMFS_D0_REVIEW_20260927.zip",
+      "sha256": "7a3e436900ab2696c2d7148215cd58b6632a017e447583f77c9c864b56f9c56c",
+      "bytes": 26690530
+    }
+  },
+  "package_manifest_entries": {
+    "protocol": 14,
+    "pro_reference": 47
+  },
+  "d0_verified_entries": 12979,
+  "pro_full_reproduction": {
+    "bank_diagnostics.csv": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "source": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "p_zero": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "p_below_floor": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "p_above_ceiling": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "mu_min": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "mu_median_pos": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "mu_max": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "mu_nearone": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "u_max": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        }
+      }
+    },
+    "diagnostic_scores.csv": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "source": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "target": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "rank": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "unique_top1": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "top1": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "score_true": {
+          "max_absolute": 5.684341886080802e-14,
+          "max_relative_1plus": 7.020038538465306e-16
+        },
+        "pair_margin": {
+          "max_absolute": 6.039613253960852e-14,
+          "max_relative_1plus": 1.414118114652366e-14
+        }
+      }
+    },
+    "posthoc_fixed_slope_diagnostic.csv": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "source": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "target": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "fixed_slope_rank": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "old_M_rank": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "B0_rank": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "fixed_pair_mark": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        }
+      }
+    },
+    "posthoc_footprint_B2_score.csv": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "source": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "target": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "rank": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "top1": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "true_sse": {
+          "max_absolute": 9.094947017729282e-13,
+          "max_relative_1plus": 5.002004894443134e-16
+        }
+      }
+    },
+    "posthoc_footprint_readout.csv": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "source": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "probe_rank": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "projected_areal_density": {
+          "max_absolute": 1.8189894035458565e-12,
+          "max_relative_1plus": 2.276875109719847e-15
+        },
+        "covered_fraction": {
+          "max_absolute": 2.220446049250313e-15,
+          "max_relative_1plus": 1.1102230246251567e-15
+        },
+        "free_fraction": {
+          "max_absolute": 2.220446049250313e-15,
+          "max_relative_1plus": 1.1102230246251567e-15
+        }
+      }
+    },
+    "posthoc_readout_factorial_candidates.csv": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "source": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "target": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "candidate": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "sse": {
+          "max_absolute": 1.0913936421275139e-11,
+          "max_relative_1plus": 8.586631207171028e-16
+        },
+        "scale": {
+          "max_absolute": 9.43689570931383e-16,
+          "max_relative_1plus": 6.551553386702343e-16
+        }
+      }
+    },
+    "posthoc_readout_factorial_pairgeometry.csv": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "pair": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "cosine": {
+          "max_absolute": 3.3306690738754696e-16,
+          "max_relative_1plus": 1.6756334169115475e-16
+        },
+        "angular_gap": {
+          "max_absolute": 2.9989032090949053e-16,
+          "max_relative_1plus": 2.9943410721633525e-16
+        }
+      }
+    },
+    "posthoc_readout_factorial_summary.csv": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "mean_rank": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "unique_top1": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "n": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        }
+      }
+    },
+    "posthoc_readout_factorial_targets.csv": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "source": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "target": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "rank": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "unique_top1": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "map_source": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "true_sse": {
+          "max_absolute": 1.0913936421275139e-11,
+          "max_relative_1plus": 8.586631207171028e-16
+        },
+        "pair_delta_sse": {
+          "max_absolute": 7.275957614183426e-12,
+          "max_relative_1plus": 3.6774247914710476e-14
+        }
+      }
+    },
+    "posthoc_readout_factorial_templates.csv": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "source": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "probe": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "value": {
+          "max_absolute": 1.9895196601282805e-13,
+          "max_relative_1plus": 2.1388453335460265e-15
+        }
+      }
+    },
+    "profile_diagnostics.csv": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "source": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "target": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "candidate": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "ll": {
+          "max_absolute": 4.263256414560601e-14,
+          "max_relative_1plus": 2.1241332708137115e-15
+        },
+        "n": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "rho": {
+          "max_absolute": 5.551115123125783e-16,
+          "max_relative_1plus": 2.8300620341207884e-16
+        },
+        "slope": {
+          "max_absolute": 9.094947017729282e-13,
+          "max_relative_1plus": 8.980032123181835e-16
+        },
+        "den": {
+          "max_absolute": 3.637978807091713e-12,
+          "max_relative_1plus": 7.452863131013051e-16
+        },
+        "syy": {
+          "max_absolute": 2.2737367544323206e-13,
+          "max_relative_1plus": 3.000027622242159e-16
+        },
+        "r2": {
+          "max_absolute": 7.771561172376096e-16,
+          "max_relative_1plus": 4.038334281017942e-16
+        },
+        "zeros": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        }
+      }
+    },
+    "source_pair_geometry.csv": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "pair": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "rho_all": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "rho_positive": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "relative_affine_residual": {
+          "max_absolute": 2.220446049250313e-16,
+          "max_relative_1plus": 1.7377929368399777e-16
+        }
+      }
+    }
+  },
+  "implementation_vs_pro": {
+    "targets": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "source": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "target": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "rank": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "unique_top1": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "map_source": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "true_sse": {
+          "max_absolute": 1.0913936421275139e-11,
+          "max_relative_1plus": 8.586631207171028e-16
+        },
+        "pair_delta_sse": {
+          "max_absolute": 7.275957614183426e-12,
+          "max_relative_1plus": 3.6774247914710476e-14
+        }
+      }
+    },
+    "candidates": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "source": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "target": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "candidate": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "sse": {
+          "max_absolute": 1.0913936421275139e-11,
+          "max_relative_1plus": 8.586631207171028e-16
+        },
+        "scale": {
+          "max_absolute": 9.43689570931383e-16,
+          "max_relative_1plus": 6.551553386702343e-16
+        }
+      }
+    },
+    "templates": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "source": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "probe": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "value": {
+          "max_absolute": 1.9895196601282805e-13,
+          "max_relative_1plus": 2.1388453335460265e-15
+        }
+      }
+    },
+    "pairgeometry": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "pair": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "cosine": {
+          "max_absolute": 3.3306690738754696e-16,
+          "max_relative_1plus": 1.6756334169115475e-16
+        },
+        "angular_gap": {
+          "max_absolute": 2.9989032090949053e-16,
+          "max_relative_1plus": 2.9943410721633525e-16
+        }
+      }
+    },
+    "summary": {
+      "byte_identical": false,
+      "columns": {
+        "env": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "mean_rank": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "unique_top1": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        },
+        "n": {
+          "max_absolute": 0.0,
+          "max_relative_1plus": 0.0
+        }
+      }
+    }
+  },
+  "projection_same_runtime_pro_bitwise_equal": true,
+  "projection_archive_bitwise_equal": false,
+  "projection_archive_max_absolute_deviation": 2.220446049250313e-15,
+  "native_occurrence_files_unchanged": 1584,
+  "scoring_repeat_bitwise_equal": true,
+  "archived_B2_max_absolute_sse_deviation": 4.656612873077393e-10,
+  "rescued_targets": 10,
+  "harmed_targets": 0,
+  "rescued_source_units": 4,
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.3.5",
+  "pandas": "3.0.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "thread_environment": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONNOUSERSITE": "1",
+    "PYTHONUTF8": "1"
+  }
+}
