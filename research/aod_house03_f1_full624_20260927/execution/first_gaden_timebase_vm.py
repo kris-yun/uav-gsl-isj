@@ -38,9 +38,18 @@ def main():
     env=dict(os.environ,GADEN_RNG_SEED=item['requested_seed'],AOD_TIME_AUDIT_DIR=str(run),
              AOD_RUN_ID='House03_pmfs_24_13_replica_0',ROS_DOMAIN_ID='229',
              OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1')
+    seeded_lib=Path('/home/zyc/hcmc_gaden_seed_build_20260922/install/gaden_common/lib/libgaden.so')
+    env['LD_LIBRARY_PATH']=str(seeded_lib.parent)+':'+env.get('LD_LIBRARY_PATH','')
+    linkage=subprocess.check_output(['ldd',str(binary)],env=env,text=True)
+    loaded_gaden=next(line for line in linkage.splitlines() if 'libgaden.so =>' in line)
+    assert loaded_gaden.split('=>',1)[1].strip().split()[0]==str(seeded_lib)
+    build_provenance=json.loads((R/'timebase_logger/LOGGER_BUILD_PROVENANCE.json').read_text())
+    assert sha(seeded_lib)==build_provenance['seeded_numerical_library_sha256']
     start=time.monotonic()
     (run/'RUN_CONFIGURATION.json').write_text(json.dumps(dict(manifest_row=item,options=options,
         command=command,pre_target_freeze=freeze,binary_sha256=sha(binary),wind_hashes=wind,
+        runtime_ld_library_path=env['LD_LIBRARY_PATH'],runtime_linkage=linkage,
+        runtime_seeded_numerical_library_sha256=sha(seeded_lib),
         concentration_values_read=False),indent=2)+'\n')
     with (run/'generation.log').open('w') as log:
         subprocess.run(command,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
