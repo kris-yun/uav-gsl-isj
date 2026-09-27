@@ -21,7 +21,9 @@ def main():
                 if f.is_file() and '__pycache__' not in f.parts:
                     files[str(f.relative_to(R))]=f
     for f in R.iterdir():
-        if f.is_file() and f.suffix in ['.json','.log','.md']:
+        # stdout redirection creates the sidecar before packaging begins.
+        # Its final bytes describe this ZIP and therefore cannot be its input.
+        if f.is_file() and f.name != 'REVIEW_PACKAGE_METADATA.json' and f.suffix in ['.json','.log','.md']:
             files[f.name]=f
     signed=R/'AOD_HOUSE03_F1_FULL624_SIGNED_20260927.zip'
     assert hashlib.sha256(signed.read_bytes()).hexdigest()=='1318dd08c0754800b6fcea33100443ed6ebe77b72adb75fcb622b7cbaaa75502'
