@@ -1,0 +1,14 @@
+{
+  "purpose": "CLOSED_LOOP_DEVELOPMENT_COMPARE_NOT_NEW_SIGNAL_GATE",
+  "arms": ["native_pmfs", "candidate_gru", "brg", "brg_ungated"],
+  "cases": [],
+  "harness_argv": ["<existing-VM-runner>", "--arm", "{arm}", "--case-file", "{case_file}", "--budget-s", "{budget_s}", "--output", "{output}"],
+  "output_directory": "runs/closed_loop",
+  "radius_m": 0.5,
+  "budget_s": 500,
+  "wall_timeout_s": 7200,
+  "weights_sha256": "TO_BE_LOCKED_BEFORE_EVALUATION",
+  "bank_sha256": "TO_BE_LOCKED_BEFORE_EVALUATION",
+  "observation_contract_id": "ACTUAL_VM_SENSOR_WINDOW_HEIGHT_TIME_CONTRACT",
+  "interpretation": "Numerical choices are proposed closed-loop development settings, not historical frozen F1 gates. Native termination/planner remains same across arms. Any true source/time used only by evaluator. Closed-loop trajectories are not forced identical."
+}

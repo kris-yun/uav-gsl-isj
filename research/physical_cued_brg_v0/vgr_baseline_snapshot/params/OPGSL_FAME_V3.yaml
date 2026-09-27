@@ -1,0 +1,24 @@
+gsl_server:
+  ros__parameters:
+    method: OPGSL_FAME_V3
+    maxSearchTime: 120.0
+    distanceThreshold: -1.0
+    useWindGroundTruth: false
+    anemometer_frame: base_link
+    th_gas_present: 0.1
+    th_wind_present: 0.1
+    stop_and_measure_time: 2.0
+    enable_haem_retrieval: false
+    opgsl:
+      fame:
+        mode: 1
+        seed: 35
+        max_steps: 300
+        max_search_time: 120.0
+        grid: {nx: 30, ny: 30}
+        flight: {height: 0.30}
+        actions: {angular_samples: 16, radial_samples: 2, min_radius: 0.60, max_radius: 1.80}
+        target_radius: 1.50
+        controller_margin_seconds: 1.15
+        credible_mass: 0.90
+        horizontal_speed: 0.40

@@ -1,0 +1,75 @@
+Execute the supplied
+`PMFS_BRG_CLOSED_LOOP_IMPLEMENTATION_20260927.zip`
+with this amendment.
+
+New branch:
+`research/physical-cued-brg-closedloop-v0-20260927`
+
+Do not reopen AOD/JTD/SOLICM or run new signal-discovery experiments.
+
+PHASE 1 — software/integration smoke
+- verify both ZIP hashes;
+- rerun supplied 26 tests;
+- compile C++ client;
+- dry-run/apply hooks against the actual PMFS fork;
+- use supplied six-candidate warmstart only for functional smoke;
+- prove native-disabled equivalence.
+
+PHASE 2 — full-support OPEN training alignment
+- build auditable FULL legal candidate banks for the existing H01/H02 OPEN
+  training environments using PMFS p/rawu predictions only;
+- preserve the exact original train/dev plume split;
+- train candidate_gru, brg and brg_ungated with the exact same frozen training
+  budget and seed;
+- do not use House03 gas for training/checkpoint selection;
+- freeze checkpoints, candidate banks and hashes before closed-loop scoring.
+
+If the full-support training banks cannot be constructed, STOP:
+`BRG_HOLD_FULL_SUPPORT_TRAINING_BANK`.
+Do not score 624-candidate deployment with six-candidate weights as if valid.
+
+PHASE 3 — OPEN House03 full624 closed loop
+- reuse the already generated House03 F1 96 plume realizations;
+- no new GADEN;
+- 12 truth sources x 8 independent plumes;
+- full 624 candidate bank;
+- four arms:
+  native_pmfs / candidate_gru / brg / brg_ungated;
+- identical case context and initial pose across arms;
+- each arm chooses its own trajectory;
+- 300 s maximum search time;
+- geometric success radius 0.5 m;
+- no learned-arm fallback.
+
+Use the existing VM runner. Bind its actual argv in campaign config; do not
+invent a runner.
+
+PHASE 4 — scoring
+Report both native algorithm declaration and truth-blind runtime outputs, but
+primary development endpoint is evaluator geometric source-estimate success
+within 0.5 m by 300 s.
+
+Source-weight all results; independent plume is the resampling unit within
+source.
+
+Apply the interpretation in `03_INTERPRETATION_CONTRACT.md`.
+
+Return:
+- branch/base/full-support-bank freeze/checkpoint freeze/final commits;
+- full-support candidate counts for each training environment;
+- train/dev plume counts and leakage audit;
+- final OPEN dev metrics for GRU/BRG/ungated;
+- ROS build + native equivalence result;
+- 96 x 4 campaign completeness;
+- per-arm geometric success;
+- paired deltas and source-stratified intervals;
+- mean/median/failure-aware final error;
+- declaration time and wrong declarations;
+- path length and measurement/hit counts;
+- service/navigation failures;
+- compute latency;
+- interpretation label;
+- full review ZIP path/bytes/SHA256.
+
+STOP after this bounded four-arm campaign.
+No new architecture or closed-loop rescue in the same branch.

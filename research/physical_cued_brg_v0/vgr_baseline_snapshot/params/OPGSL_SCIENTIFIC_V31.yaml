@@ -1,0 +1,72 @@
+﻿gsl_server:
+  ros__parameters:
+    method: OPGSL_SCIENTIFIC_V31
+    maxSearchTime: 300.0
+    # Disable base-class truth-distance stopping. V3 overrides source stopping.
+    distanceThreshold: -1.0
+    useWindGroundTruth: false
+    anemometer_frame: base_link
+    th_gas_present: 0.1
+    th_wind_present: 0.1
+    stop_and_measure_time: 2.0
+
+    opgsl:
+      v3:
+        scientific_mode: true
+        # Must be overridden at launch with a grouped calibration artifact.
+        calibration_file: ""
+        seed: 0
+        max_steps: 300
+
+        grid:
+          nx: 30
+          ny: 30
+          nz: 1
+          source_z_min: 0.0
+          source_z_max: 0.0
+
+        flight:
+          nominal_height: 0.30
+          min_height: 0.30
+          max_height: 0.30
+          max_vertical_step: 0.30
+
+        platform:
+          # Replace only with measured platform values and record provenance.
+          horizontal_speed_mps: 0.40
+          vertical_speed_mps: 0.20
+
+        actions:
+          # Height is intentionally off until the calibration vertical gate passes.
+          enable_vertical: false
+          include_vertical_probe: true
+          include_elevated_traverse: true
+          vertical_samples_each_direction: 1
+          vertical_model_lower_quantile: 0.05
+          angular_samples: 16
+          radial_samples: 2
+          min_radius: 0.60
+          max_radius: 1.80
+
+        stop:
+          target_credible_radius_m: 1.50
+          credible_mass: 0.90
+          null_prior_hit: 0.50
+          null_prior_miss: 0.50
+
+        statistics:
+          # Family-wise alpha for the anytime Brier-skill lower bound.
+          alpha: 0.05
+
+        ablation:
+          evidence_mode: proper_joint
+          use_skill_verifier: true
+          radius_only_stop: false
+          conservative_vertical_gate: true
+
+        trace:
+          evidence: ""
+          planner: ""
+          stop: ""
+          parameter_snapshot: ""
+

@@ -1,0 +1,94 @@
+"""Minimal result_contract stub for gsl_benchmark_runner.
+
+Provides the utility functions needed by the benchmark runner.
+"""
+import hashlib
+import json
+import subprocess
+import csv
+from pathlib import Path
+from datetime import datetime
+
+
+# Canonical method list
+CANONICAL = {
+    "B4_PMFS_official": {"algorithm": "PMFS", "type": "baseline"},
+    "B5_GrGSL_official": {"algorithm": "GrGSL", "type": "baseline"},
+    "B3_surge_cast_pf_official": {"algorithm": "SurgeCast", "type": "baseline"},
+    "M7_full_saisc_pf": {"algorithm": "OPGSL", "type": "proposed"},
+}
+
+
+def git_commit_or_fail(repo_root="."):
+    """Get current git commit hash, or 'unknown' if not a git repo."""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=repo_root, capture_output=True, text=True, timeout=5
+        )
+        if result.returncode == 0:
+            return result.stdout.strip()
+    except Exception:
+        pass
+    return "unknown"
+
+
+def compute_path_length_xy(positions):
+    """Compute total XY path length from list of (t, x, y, z) tuples."""
+    if len(positions) < 2:
+        return 0.0
+    total = 0.0
+    for i in range(1, len(positions)):
+        dx = positions[i][1] - positions[i-1][1]
+        dy = positions[i][2] - positions[i-1][2]
+        total += (dx*dx + dy*dy) ** 0.5
+    return total
+
+
+def max_speed_xy(positions):
+    """Compute max XY speed from list of (t, x, y, z) tuples."""
+    if len(positions) < 2:
+        return 0.0
+    max_spd = 0.0
+    for i in range(1, len(positions)):
+        dt = positions[i][0] - positions[i-1][0]
+        if dt <= 0:
+            continue
+        dx = positions[i][1] - positions[i-1][1]
+        dy = positions[i][2] - positions[i-1][2]
+        spd = (dx*dx + dy*dy) ** 0.5 / dt
+        max_spd = max(max_spd, spd)
+    return max_spd
+
+
+def sha256_file(path):
+    """Compute SHA256 hash of a file."""
+    if isinstance(path, str):
+        path = Path(path)
+    if not path.exists():
+        return "missing"
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(8192), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def sha256_json(obj):
+    """Compute SHA256 hash of a JSON-serializable object."""
+    return hashlib.sha256(json.dumps(obj, sort_keys=True, default=str).encode()).hexdigest()
+
+
+def make_run_record(**kwargs):
+    """Create a run record dict from keyword arguments."""
+    return kwargs
+
+
+def write_record(path, record):
+    """Write a run record to a CSV file."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=record.keys())
+        writer.writeheader()
+        writer.writerow(record)

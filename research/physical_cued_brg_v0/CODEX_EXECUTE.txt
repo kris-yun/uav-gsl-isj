@@ -1,0 +1,21 @@
+本次任务：把可训练的BRG-PMFS接入现有闭环器，直接与经典PMFS比较；不要再设计信号检验。
+
+一、保留历史所有标签/分支。新建research/physical-cued-brg-closedloop-v0-20260927。不要重新判AOD、JTD、SOLICM。
+
+二、本包已做网络实现、OPEN数据导入、3种模型训练冒烟、26项测试、C++客户端编译、624候选TCP往返。先读取README、STATUS和INTEGRATION，重跑软件单元测试，而不是开展新的科学A0。
+
+三、执行tools/start_open.sh，三个模型使用相同OPEN输入/划分/种子/固定训练预算。现有训练权重也可直接做功能联调。它们是6候选任务热启动，不是已确认的624候选模型。不要只挑BRG最好epoch以外的结果、不给普通GRU相同预算。
+
+四、若使用现有OPEN闭环日志补训练，按tools/train.py --episodes接入。每条episode只能由一个未知泄漏的实际观测组成；同一plume的裁剪/不同起点全部留在同一数据分区。标签只供训练，sidecar不允许source truth字段。无需目标多源无标签适应，不新增world-model或网络模块。
+
+五、在现有VM里编译接入：integration/apply_humble_patch.py先dry-run；精确锚点不匹配就按INTEGRATION的两处hook显式移植并记录diff，不猜整仓路径。必须同时更新sourceProbability和simulations.varianceOfHitProb，不能只改可视化；更新节奏沿用原timeToSimulate。Native关闭开关时做一次回放等价性软件检查。不要将此称为又一个科学gate。
+
+六、做一轮小批OPEN开发闭环：native_pmfs、同输入候选GRU、BRG、BRG反馈关闭。使用同一已存在plume回放/初始位姿/风合同/可达域/预算，但路径让算法各自闭环产生。优先复用已有cube，不先生成新plume。完整candidate support相同。需要的PMFS预测必须来自合法模型，不读取每个candidate的GADEN未来值。
+
+七、先提交现有VM闭环runner的实际argv到configs/campaign.json，填case清单和记录原生参数，不发明新runner名称。tools/run_campaign.py负责锁定、配对执行；tools/evaluate_closed_loop.py负责最终空间成功统计。预算/radius示例为500s/0.5m，需与现有闭环目标一次明确，不能照搬F1的unique-rank门；若已有签署closedloop口径则用既有口径并记录。
+
+八、主要问题只有：相同资源约束下，最终定位成功/距离是否优于classic PMFS？所有timeout、no-hit、wrong declaration、navigation failure、service error都保留。报告原始成功数、源内成组区间、终止误差、path/time和计算费用；不以任意一个rank/NLL好就算闭环成功。
+
+九、BRG对native有改善但不超过GRU/反馈关闭，则有学习器效用而无BRG主创新证据；如闭环不改善，停止这个固定版本，不事后改测试case或宣布新标签救模型。开发期合法改进以后可新版本研究，但不得继续使用同一批结果作新的fresh确认。
+
+十、交付运行日志、路径、源图序列和闭环对比表。不再交母理论综述，不再增加信号查找实验。此包没有在VM运行，须如实区分本地组件通过与真实闭环完成。

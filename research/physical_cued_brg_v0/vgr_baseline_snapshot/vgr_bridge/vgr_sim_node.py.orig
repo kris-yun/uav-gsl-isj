@@ -1,0 +1,346 @@
+"""VGR UAV Simulation Node - with REAL wind CSV data from VGR dataset.
+
+Reads actual wind field measurements from VGR CSV files instead of constant fallback.
+Publishes ROS2 topics for official GSL server.
+"""
+import rclpy
+from rclpy.node import Node
+from rclpy.action import ActionServer
+from rclpy.qos import QoSProfile, DurabilityPolicy
+from nav_msgs.msg import OccupancyGrid, MapMetaData, Path
+from geometry_msgs.msg import PoseWithCovarianceStamped, Pose, PoseStamped, TransformStamped
+from nav2_msgs.action import NavigateToPose
+from olfaction_msgs.msg import GasSensor, Anemometer
+from std_msgs.msg import Header
+from tf2_ros import TransformBroadcaster
+
+# ComputePathToPose may not be available in all nav2_msgs versions
+CPTP_AVAILABLE = False
+try:
+    from nav2_msgs.action import ComputePathToPose
+    CPTP_AVAILABLE = True
+except ImportError:
+    pass
+import numpy as np
+import math
+import os
+import re
+import csv
+import time
+
+GADEN_AVAILABLE = False
+try:
+    from gadentools.Simulation import Simulation as GadenSim
+    from gadentools.Utils import Vector3 as GVec
+    GADEN_AVAILABLE = True
+except ImportError:
+    pass
+
+
+class VGRUAVSimNode(Node):
+    def __init__(self):
+        super().__init__('vgr_uav_sim')
+
+        self.declare_parameter('vgr_data_path', '')
+        self.declare_parameter('config_id', '2,4-1_fast')
+        self.declare_parameter('flight_height', 1.0)
+        self.declare_parameter('start_x', -5.0)
+        self.declare_parameter('start_y', -5.0)
+        self.declare_parameter('step_size', 0.3)
+        self.declare_parameter('move_delay', 0.05)
+
+        self.vgr_path = self.get_parameter('vgr_data_path').get_parameter_value().string_value
+        self.config_id = self.get_parameter('config_id').get_parameter_value().string_value
+        self.flight_height = self.get_parameter('flight_height').get_parameter_value().double_value
+        self.step_size = self.get_parameter('step_size').get_parameter_value().double_value
+        self.move_delay = self.get_parameter('move_delay').get_parameter_value().double_value
+
+        start_x = self.get_parameter('start_x').get_parameter_value().double_value
+        start_y = self.get_parameter('start_y').get_parameter_value().double_value
+
+        self.get_logger().info(f'Loading VGR data from {self.vgr_path}, config={self.config_id}')
+        self._load_occupancy()
+        self._load_wind_csv()  # REAL wind data
+        self._find_source_position()
+        self._load_gaden()
+
+        self.uav_pos = np.array([start_x, start_y, self.flight_height])
+        self.uav_yaw = 0.0
+        self.step_count = 0
+
+        map_qos = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
+        self.map_pub = self.create_publisher(OccupancyGrid, '/map', map_qos)
+        self.costmap_pub = self.create_publisher(OccupancyGrid, '/global_costmap/costmap', map_qos)
+        self.pose_pub = self.create_publisher(PoseWithCovarianceStamped, '/amcl_pose', 1)
+        self.gas_pub = self.create_publisher(GasSensor, '/PID/Sensor_reading', 1)
+        self.wind_pub = self.create_publisher(Anemometer, '/Anemometer/WindSensor_reading', 1)
+        self.tf_broadcaster = TransformBroadcaster(self)
+
+        self.nav_server = ActionServer(self, NavigateToPose, 'navigate_to_pose',
+                                       execute_callback=self._nav_callback)
+
+        # ComputePathToPose action server (replaces nav2 MAKE_PLAN)
+        if CPTP_AVAILABLE:
+            self.plan_server = ActionServer(self, ComputePathToPose, 'compute_path_to_pose',
+                                            execute_callback=self._plan_callback)
+        else:
+            self.get_logger().warn('ComputePathToPose not available, PMFS path planning will fail')
+
+        self.map_timer = self.create_timer(1.0, self._publish_map_once)
+        self.sensor_timer = self.create_timer(0.2, self._publish_all)
+
+        self.get_logger().info(f'UAV Sim ready. Source={self.source_pos}, Start=({start_x},{start_y})')
+        self.get_logger().info(f'Real wind CSV: {len(self.wind_iterations)} iterations loaded')
+
+    def _load_occupancy(self):
+        occ_file = os.path.join(self.vgr_path, 'OccupancyGrid3D.csv')
+        self.env_min = np.array([-7.55, -7.88])
+        self.env_max = np.array([1.15, 3.471])
+        self.num_cells = np.array([87, 114, 33])
+        self.cell_size = 0.1
+        self.z_min, self.z_max = -1.019, 2.232
+        with open(occ_file, 'r') as f:
+            for line in f:
+                if line.startswith('#'):
+                    parts = line.strip().split()
+                    if 'env_min' in line: self.env_min = np.array([float(parts[1]), float(parts[2])]); self.z_min = float(parts[3])
+                    elif 'env_max' in line: self.env_max = np.array([float(parts[1]), float(parts[2])]); self.z_max = float(parts[3])
+                    elif 'num_cells' in line: self.num_cells = np.array([int(parts[1]), int(parts[2]), int(parts[3])])
+                    elif 'cell_size' in line: self.cell_size = float(parts[1])
+                    continue
+                break
+        data = []
+        with open(occ_file, 'r') as f:
+            for line in f:
+                if line.startswith('#') or not line.strip(): continue
+                data.extend([int(x) for x in re.findall(r'\d+', line)])
+        nx, ny, nz = self.num_cells
+        grid_3d = np.array(data).reshape(nz, ny, nx)
+        grid_2d = np.min(grid_3d, axis=0).T
+        self.occupancy_2d = grid_2d
+        self.nx, self.ny = nx, ny
+        self.get_logger().info(f'Occupancy: {nx}x{ny} cells')
+
+    def _load_wind_csv(self):
+        """Load REAL wind CSV data from VGR dataset."""
+        wind_dir = os.path.join(self.vgr_path, 'wind_simulations', self.config_id)
+        self.wind_iterations = {}
+        if not os.path.exists(wind_dir):
+            self.get_logger().warn(f'Wind dir not found: {wind_dir}')
+            return
+        for fname in sorted(os.listdir(wind_dir)):
+            if not fname.endswith('.csv') or '_U' in fname or '_V' in fname or '_W' in fname:
+                continue
+            match = re.search(r'_(\d+)\.csv$', fname)
+            if not match:
+                continue
+            iteration = int(match.group(1))
+            filepath = os.path.join(wind_dir, fname)
+            positions, vectors = [], []
+            try:
+                with open(filepath, 'r') as f:
+                    reader = csv.reader(f)
+                    next(reader)
+                    for row in reader:
+                        if len(row) >= 6:
+                            vectors.append([float(row[0]), float(row[1]), float(row[2])])
+                            positions.append([float(row[3]), float(row[4]), float(row[5])])
+                self.wind_iterations[iteration] = {
+                    'pos': np.array(positions), 'vec': np.array(vectors),
+                }
+            except:
+                pass
+        self.get_logger().info(f'Loaded {len(self.wind_iterations)} real wind iterations')
+
+    def _find_source_position(self):
+        gas_dir = os.path.join(self.vgr_path, 'gas_simulations', self.config_id)
+        self.source_pos = np.array([0.0, 0.0, 0.0])
+        if os.path.exists(gas_dir):
+            for d in os.listdir(gas_dir):
+                if d.startswith('FilamentSimulation') and 'sourcePosition' in d:
+                    parts = d.split('_')
+                    try:
+                        idx = parts.index('sourcePosition')
+                        self.source_pos = np.array([float(parts[idx+1]), float(parts[idx+2]), float(parts[idx+3])])
+                        self.get_logger().info(f'Source: {self.source_pos}')
+                    except: pass
+                    break
+
+    def _load_gaden(self):
+        self.gaden_sim = None
+        if GADEN_AVAILABLE:
+            gas_dir = os.path.join(self.vgr_path, 'gas_simulations', self.config_id)
+            for d in os.listdir(gas_dir):
+                if d.startswith('FilamentSimulation'):
+                    gaden_path = os.path.join(gas_dir, d)
+                    occ_file = os.path.join(self.vgr_path, 'OccupancyGrid3D.csv')
+                    try:
+                        self.gaden_sim = GadenSim(gaden_path, occ_file)
+                        self.gaden_sim.playSimulation(100, 0.0)
+                        self.get_logger().info(f'GadenTools loaded')
+                    except Exception as e:
+                        self.get_logger().warn(f'GadenTools failed: {e}')
+                    break
+
+    def _sample_gas(self):
+        if self.gaden_sim is not None:
+            try:
+                v = GVec(float(self.uav_pos[0]), float(self.uav_pos[1]), float(self.uav_pos[2]))
+                return float(self.gaden_sim.getCurrentConcentration(v))
+            except: pass
+        dist = np.linalg.norm(self.uav_pos[:2] - self.source_pos[:2])
+        return max(0.0, math.exp(-dist**2 / 4.0) + np.random.normal(0, 0.005))
+
+    def _sample_wind(self):
+        """Sample REAL wind at UAV position from VGR CSV data."""
+        if not self.wind_iterations:
+            return np.array([0.5, 0.2, 0.0])
+        # Use iteration closest to current step
+        iterations = sorted(self.wind_iterations.keys())
+        iter_idx = min(self.step_count, len(iterations) - 1)
+        iteration = iterations[iter_idx]
+        wd = self.wind_iterations[iteration]
+        pos, vec = wd['pos'], wd['vec']
+        if len(pos) == 0:
+            return np.array([0.5, 0.2, 0.0])
+        # Find nearest wind measurement (3D)
+        query = self.uav_pos
+        dists = np.linalg.norm(pos - query[np.newaxis, :], axis=1)
+        idx = np.argmin(dists)
+        return vec[idx]
+
+    def _publish_map_once(self):
+        msg = OccupancyGrid()
+        msg.header = Header(stamp=self.get_clock().now().to_msg(), frame_id='map')
+        msg.info = MapMetaData()
+        # Publish at 0.01m resolution to match PMFS paper occupancy.yaml
+        # Upscale factor from GADEN cell_size (0.1m) to target (0.01m)
+        target_res = 0.01
+        upsample = max(1, int(round(self.cell_size / target_res)))
+        msg.info.resolution = self.cell_size / upsample
+        msg.info.width = int(self.nx * upsample)
+        msg.info.height = int(self.ny * upsample)
+        msg.info.origin = Pose()
+        msg.info.origin.position.x = float(self.env_min[0])
+        msg.info.origin.position.y = float(self.env_min[1])
+        msg.info.origin.orientation.w = 1.0
+        # Upscale grid: each cell -> upsample x upsample block
+        import numpy as np
+        grid = self.occupancy_2d.T  # shape: (ny, nx) -> after T: (nx, ny)
+        grid_up = np.repeat(np.repeat(grid, upsample, axis=0), upsample, axis=1)
+        grid_flat = grid_up.flatten()
+        msg.data = [int(v * 100) for v in grid_flat]
+        self.map_pub.publish(msg)
+        self.costmap_pub.publish(msg)
+
+    def _publish_all(self):
+        now = self.get_clock().now().to_msg()
+
+        # Pose
+        pose_msg = PoseWithCovarianceStamped()
+        pose_msg.header = Header(stamp=now, frame_id='map')
+        pose_msg.pose.pose.position.x = float(self.uav_pos[0])
+        pose_msg.pose.pose.position.y = float(self.uav_pos[1])
+        pose_msg.pose.pose.position.z = float(self.uav_pos[2])
+        pose_msg.pose.pose.orientation.z = math.sin(self.uav_yaw / 2.0)
+        pose_msg.pose.pose.orientation.w = math.cos(self.uav_yaw / 2.0)
+        pose_msg.pose.covariance[0] = 0.01
+        pose_msg.pose.covariance[7] = 0.01
+        pose_msg.pose.covariance[35] = 0.01
+        self.pose_pub.publish(pose_msg)
+
+        # TF
+        tf_msg = TransformStamped()
+        tf_msg.header = Header(stamp=now, frame_id='map')
+        tf_msg.child_frame_id = 'base_link'
+        tf_msg.transform.translation.x = float(self.uav_pos[0])
+        tf_msg.transform.translation.y = float(self.uav_pos[1])
+        tf_msg.transform.translation.z = float(self.uav_pos[2])
+        tf_msg.transform.rotation.z = math.sin(self.uav_yaw / 2.0)
+        tf_msg.transform.rotation.w = math.cos(self.uav_yaw / 2.0)
+        self.tf_broadcaster.sendTransform(tf_msg)
+
+        # Gas sensor (from GADEN simulation)
+        gas_msg = GasSensor()
+        gas_msg.header = Header(stamp=now, frame_id='base_link')
+        gas_msg.technology = GasSensor.TECH_PID
+        gas_msg.raw_units = GasSensor.UNITS_PPM
+        gas_msg.raw = float(self._sample_gas())
+        self.gas_pub.publish(gas_msg)
+
+        # Wind sensor (from REAL VGR wind CSV)
+        wind = self._sample_wind()
+        wind_msg = Anemometer()
+        wind_msg.header = Header(stamp=now, frame_id='base_link')
+        wind_msg.wind_speed = float(np.linalg.norm(wind[:2]))
+        wind_msg.wind_direction = float(math.atan2(wind[1], wind[0]))
+        self.wind_pub.publish(wind_msg)
+
+        self.step_count += 1
+
+    async def _plan_callback(self, goal_handle):
+        """ComputePathToPose: return straight-line path from current pos to goal."""
+        goal = goal_handle.request.goal.pose.position
+        start = self.uav_pos
+
+        # Generate straight-line path
+        path = Path()
+        path.header.frame_id = 'map'
+        path.header.stamp = self.get_clock().now().to_msg()
+
+        dist = np.linalg.norm([goal.x - start[0], goal.y - start[1]])
+        n_pts = max(2, int(dist / 0.5))
+        for i in range(n_pts + 1):
+            t = i / max(n_pts, 1)
+            ps = PoseStamped()
+            ps.header = path.header
+            ps.pose.position.x = start[0] + t * (goal.x - start[0])
+            ps.pose.position.y = start[1] + t * (goal.y - start[1])
+            ps.pose.position.z = self.flight_height
+            ps.pose.orientation.w = 1.0
+            path.poses.append(ps)
+
+        result = ComputePathToPose.Result()
+        result.path = path
+        goal_handle.succeed()
+        return result
+
+    async def _nav_callback(self, goal_handle):
+        target = goal_handle.request.pose.pose.position
+        target_pos = np.array([target.x, target.y, self.flight_height])
+        self.get_logger().info(f'UAV navigating to ({target.x:.2f}, {target.y:.2f})')
+
+        direction = target_pos - self.uav_pos
+        dist = np.linalg.norm(direction[:2])
+        for _ in range(500):
+            if dist < self.step_size: break
+            step_dir = direction[:2] / dist * self.step_size
+            self.uav_pos[0] += step_dir[0]
+            self.uav_pos[1] += step_dir[1]
+            self.uav_pos[2] = self.flight_height
+            self.uav_yaw = math.atan2(step_dir[1], step_dir[0])
+            self.uav_pos[0] = np.clip(self.uav_pos[0], self.env_min[0], self.env_max[0])
+            self.uav_pos[1] = np.clip(self.uav_pos[1], self.env_min[1], self.env_max[1])
+            self._publish_all()
+            direction = target_pos - self.uav_pos
+            dist = np.linalg.norm(direction[:2])
+            time.sleep(self.move_delay)
+
+        self.uav_pos[:2] = target_pos[:2]
+        self._publish_all()
+        goal_handle.succeed()
+        return NavigateToPose.Result()
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = VGRUAVSimNode()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()

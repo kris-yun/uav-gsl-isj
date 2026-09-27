@@ -1,0 +1,817 @@
+﻿"""VGR UAV Simulation Node v2 - Deterministic GADEN replay.
+
+Fixes all fatal issues from v1:
+A: Uses getConcentration(iteration, location) directly - deterministic iteration access
+B: Gas and wind use the SAME iteration index
+C: Wind direction published in map frame (not base_link)
+D: Navigation checks obstacles via checkPositionForObstacles(), no teleportation
+E: 2D occupancy built from fixed altitude slice, not min across all heights
+F: Deterministic iteration stepping
+"""
+import rclpy
+from rclpy.executors import ExternalShutdownException
+from rclpy.task import Future
+from rclpy.node import Node
+from rclpy.action import ActionServer
+from rclpy.qos import QoSProfile, DurabilityPolicy
+from nav_msgs.msg import OccupancyGrid, MapMetaData, Path
+from geometry_msgs.msg import PoseWithCovarianceStamped, Pose, PoseStamped, TransformStamped
+from nav2_msgs.action import NavigateToPose
+from olfaction_msgs.msg import GasSensor, Anemometer
+from std_msgs.msg import Header
+from std_msgs.msg import Bool
+from rosgraph_msgs.msg import Clock
+from builtin_interfaces.msg import Time as TimeMsg
+from tf2_ros import TransformBroadcaster
+from std_srvs.srv import Trigger, SetBool
+
+CPTP_AVAILABLE = False
+try:
+    from nav2_msgs.action import ComputePathToPose
+    CPTP_AVAILABLE = True
+except ImportError:
+    pass
+
+import numpy as np
+import math
+from collections import deque
+import os
+import time
+import json
+
+GADEN_AVAILABLE = False
+try:
+    from gadentools.Simulation import Simulation as GadenSim
+    from gadentools.Utils import Vector3 as GVec
+    GADEN_AVAILABLE = True
+except ImportError:
+    pass
+
+from .sensor_model import SensorModel
+from .sim_timebase import DeterministicTimebase
+from .mcos_motion_profiles import MotionLimits, generate_profile
+
+
+class VGRUAVSimNode(Node):
+    def __init__(self):
+        super().__init__('vgr_uav_sim')
+
+        self.declare_parameter('vgr_data_path', '')
+        self.declare_parameter('config_id', '2,4-1_fast')
+        self.declare_parameter('flight_height', 0.3)
+        self.declare_parameter('start_x', -5.0)
+        self.declare_parameter('start_y', -5.0)
+        self.declare_parameter('step_size', 0.3)
+        self.declare_parameter('max_uav_speed', 1.5)
+        self.declare_parameter('realtime_factor', 4.0)
+        self.declare_parameter('allow_vertical_motion', False)
+        self.declare_parameter('open_loop_profile', '')
+        self.declare_parameter('motion_duration_s', 8.0)
+        self.declare_parameter('motion_heading_rad', 0.0)
+        self.declare_parameter('seed', 0)
+        self.declare_parameter('sensor_model_mode', 'fopdt')
+        self.declare_parameter('sensor_gain', 1.0)
+        self.declare_parameter('sensor_baseline_ppm', 0.0)
+        self.declare_parameter('sensor_tau_rise_s', 1.2)
+        self.declare_parameter('sensor_tau_recovery_s', 1.2)
+        self.declare_parameter('sensor_dead_time_s', 0.4)
+        self.declare_parameter('sensor_noise_std_ppm', 0.0)
+        self.declare_parameter('sensor_drift_rate_ppm_s', 0.0)
+        self.declare_parameter('sensor_saturation_min_ppm', 0.0)
+        self.declare_parameter('sensor_saturation_max_ppm', 1.0e6)
+        self.declare_parameter('sensor_initial_state_ppm', 0.0)
+        self.declare_parameter('sensor_initial_input_ppm', 0.0)
+        self.declare_parameter('gaden_iteration_mode', 'seeded_time_replay')
+        self.declare_parameter('sensor_trace_file', '')
+        self.declare_parameter('wind_trace_file', '')
+        self.declare_parameter('pose_trace_file', '')
+        self.declare_parameter('measurement_trace_file', '')
+        self.declare_parameter('continuous_measurement_samples_file', '')
+        self.declare_parameter('sensor_manifest_file', '')
+        self.declare_parameter('sim_dt_s', 0.2)
+
+        self.vgr_path = self.get_parameter('vgr_data_path').get_parameter_value().string_value
+        self.config_id = self.get_parameter('config_id').get_parameter_value().string_value
+        self.flight_height = self.get_parameter('flight_height').get_parameter_value().double_value
+        self.step_size = self.get_parameter('step_size').get_parameter_value().double_value
+        self.max_uav_speed = self.get_parameter('max_uav_speed').get_parameter_value().double_value
+        self.realtime_factor = float(self.get_parameter('realtime_factor').value)
+        self.allow_vertical_motion = bool(self.get_parameter('allow_vertical_motion').value)
+        self.open_loop_profile_name = str(self.get_parameter('open_loop_profile').value)
+        self.motion_duration_s = float(self.get_parameter('motion_duration_s').value)
+        self.motion_heading_rad = float(self.get_parameter('motion_heading_rad').value)
+        self.sim_dt_s = float(self.get_parameter('sim_dt_s').value)
+        if self.sim_dt_s <= 0.0:
+            raise ValueError('sim_dt_s must be positive')
+        if self.realtime_factor <= 0.0:
+            raise ValueError('realtime_factor must be positive')
+        self.timebase = DeterministicTimebase(self.sim_dt_s, self.realtime_factor)
+        self.wall_step_delay_s = self.timebase.wall_step_period_s
+
+        start_x = self.get_parameter('start_x').get_parameter_value().double_value
+        start_y = self.get_parameter('start_y').get_parameter_value().double_value
+
+        self.seed = int(self.get_parameter('seed').value)
+        self.rng = np.random.default_rng(self.seed)
+        self.sensor_model = SensorModel(
+            mode=str(self.get_parameter('sensor_model_mode').value),
+            seed=self.seed,
+            gain=float(self.get_parameter('sensor_gain').value),
+            baseline=float(self.get_parameter('sensor_baseline_ppm').value),
+            tau_rise_s=float(self.get_parameter('sensor_tau_rise_s').value),
+            tau_recovery_s=float(self.get_parameter('sensor_tau_recovery_s').value),
+            dead_time_s=float(self.get_parameter('sensor_dead_time_s').value),
+            noise_std_ppm=float(self.get_parameter('sensor_noise_std_ppm').value),
+            drift_rate_ppm_s=float(self.get_parameter('sensor_drift_rate_ppm_s').value),
+            saturation_min_ppm=float(self.get_parameter('sensor_saturation_min_ppm').value),
+            saturation_max_ppm=float(self.get_parameter('sensor_saturation_max_ppm').value),
+            initial_state_ppm=float(self.get_parameter('sensor_initial_state_ppm').value),
+            initial_input_ppm=float(self.get_parameter('sensor_initial_input_ppm').value),
+        )
+        self._sensor_trace_file = str(self.get_parameter('sensor_trace_file').value)
+        self._wind_trace_file = str(self.get_parameter('wind_trace_file').value)
+        self._pose_trace_file = str(self.get_parameter('pose_trace_file').value)
+        self._measurement_trace_file = str(self.get_parameter('measurement_trace_file').value)
+        self._continuous_measurement_samples_file = str(self.get_parameter('continuous_measurement_samples_file').value)
+        self._sensor_manifest_file = str(self.get_parameter('sensor_manifest_file').value)
+        self._trace_headers_written = False
+        self._write_sensor_manifest()
+
+        self.get_logger().info(f'Loading VGR data from {self.vgr_path}, config={self.config_id}')
+
+        self._load_occupancy()
+        self._load_gaden()
+
+        self.uav_pos = np.array([start_x, start_y, self.flight_height])
+        self.uav_yaw = 0.0
+        self.step_count = 0
+        self.t_sim_s = 0.0
+        self.total_distance = 0.0
+        self._last_trace_pos = self.uav_pos.copy()
+        # Navigation callbacks never advance simulation time.  The single timer
+        # below owns pose, gas, wind, FOPDT and /clock progression.
+        self._nav_target = None
+        self._nav_goal_handle = None
+        self._nav_completion_future = None
+        self.simulation_paused = True
+        self.planner_paused = False
+        self._last_advanced_step = 0
+        self.open_loop_profile = self._prepare_open_loop_profile()
+        self._initialize_trace_files()
+
+        map_qos = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
+        self.map_pub = self.create_publisher(OccupancyGrid, '/map', map_qos)
+        self.costmap_pub = self.create_publisher(OccupancyGrid, '/global_costmap/costmap', map_qos)
+        self.pose_pub = self.create_publisher(PoseWithCovarianceStamped, '/amcl_pose', 1)
+        self.gas_pub = self.create_publisher(GasSensor, '/PID/Sensor_reading', 1)
+        self.wind_pub = self.create_publisher(Anemometer, '/Anemometer/WindSensor_reading', 1)
+        self.clock_pub = self.create_publisher(Clock, '/clock', 10)
+        self.tf_broadcaster = TransformBroadcaster(self)
+        self.start_service = self.create_service(Trigger, 'start_simulation', self._start_simulation)
+        self.pause_service = self.create_service(SetBool, 'set_simulation_paused', self._set_simulation_paused)
+        self.create_subscription(Bool, 'opgsl_planner_busy', self._on_planner_busy, 1)
+
+        self.nav_server = ActionServer(self, NavigateToPose, 'navigate_to_pose',
+                                       execute_callback=self._nav_callback)
+        if CPTP_AVAILABLE:
+            self.plan_server = ActionServer(self, ComputePathToPose, 'compute_path_to_pose',
+                                            execute_callback=self._plan_callback)
+
+        self.map_timer = self.create_timer(1.0, self._publish_map_once)
+        self.sensor_timer = self.create_timer(self.wall_step_delay_s, self._simulation_tick)
+
+        self.get_logger().info(
+            f'UAV Sim v3 ready. Start=({start_x},{start_y}), '
+            f'sim_dt={self.sim_dt_s:.3f}s, realtime_factor={self.realtime_factor:.2f}, '
+            f'sensor={self.sensor_model.cfg.mode}, vertical_motion={self.allow_vertical_motion}, '
+            f'open_loop_profile={self.open_loop_profile_name or "hover"}'
+        )
+
+    def _start_simulation(self, _request, response):
+        self.simulation_paused = False
+        response.success = True
+        response.message = f'started at step={self.step_count}, t_sim={self.t_sim_s:.6f}'
+        return response
+
+    def _set_simulation_paused(self, request, response):
+        self.simulation_paused = bool(request.data)
+        response.success = True
+        response.message = 'paused' if self.simulation_paused else 'resumed'
+        return response
+
+    def _on_planner_busy(self, message):
+        self.planner_paused = bool(message.data)
+
+    def _simulation_tick(self):
+        # Paused state remains observable for deterministic readiness but never
+        # advances time, sensor state, GADEN iteration or trace counters.
+        advancing = not self.simulation_paused and not self.planner_paused
+        self._publish_all(advance=advancing, record=advancing)
+
+    def _load_occupancy(self):
+        occ_file = os.path.join(self.vgr_path, 'OccupancyGrid3D.csv')
+        self.env_min = np.array([-7.55, -7.88])
+        self.env_max = np.array([1.15, 3.471])
+        self.num_cells = np.array([87, 114, 33])
+        self.cell_size = 0.1
+        self.z_min, self.z_max = -1.019, 2.232
+
+        with open(occ_file, 'r') as f:
+            for line in f:
+                if line.startswith('#'):
+                    parts = line.strip().split()
+                    if 'env_min' in line:
+                        self.env_min = np.array([float(parts[1]), float(parts[2])])
+                        self.z_min = float(parts[3])
+                    elif 'env_max' in line:
+                        self.env_max = np.array([float(parts[1]), float(parts[2])])
+                        self.z_max = float(parts[3])
+                    elif 'num_cells' in line:
+                        self.num_cells = np.array([int(parts[1]), int(parts[2]), int(parts[3])])
+                    elif 'cell_size' in line:
+                        self.cell_size = float(parts[1])
+
+        nx, ny, nz = int(self.num_cells[0]), int(self.num_cells[1]), int(self.num_cells[2])
+
+        with open(occ_file, 'r') as f:
+            all_lines = f.readlines()
+
+        header_count = sum(1 for l in all_lines if l.startswith('#'))
+        grid_3d = np.zeros((nz, nx, ny), dtype=int)
+        z = 0
+        row_in_layer = 0
+        for i in range(header_count, len(all_lines)):
+            line = all_lines[i].strip()
+            if not line:
+                if row_in_layer > 0:
+                    z += 1
+                    row_in_layer = 0
+                continue
+            if z >= nz:
+                break
+            vals = line.split()
+            if len(vals) >= ny and row_in_layer < nx:
+                grid_3d[z, row_in_layer, :] = [int(v) for v in vals[:ny]]
+                row_in_layer += 1
+
+        z_idx = int((self.flight_height - self.z_min) / self.cell_size)
+        z_idx = max(0, min(z_idx, nz - 1))
+        grid_2d = grid_3d[z_idx, :, :].T
+
+        self.nx, self.ny = grid_2d.shape
+        self.occupancy_2d = grid_2d.astype(np.float32)
+        self.occupancy_3d = grid_3d
+
+        self.get_logger().info(f'Occupancy: {self.nx}x{self.ny} 2D slice at z_idx={z_idx} (z={self.flight_height}m)')
+
+    def _load_gaden(self):
+        if not GADEN_AVAILABLE:
+            self.get_logger().error('GADEN not available!')
+            return
+
+        gas_base = os.path.join(self.vgr_path, 'gas_simulations', self.config_id)
+        gas_dirs = [d for d in os.listdir(gas_base) if d.startswith('FilamentSimulation')]
+        if not gas_dirs:
+            self.get_logger().error(f'No gas simulation found in {gas_base}')
+            return
+
+        gas_dir = os.path.join(gas_base, gas_dirs[0])
+        occ_file = os.path.join(self.vgr_path, 'OccupancyGrid3D.csv')
+
+        self.gaden_sim = GadenSim(gas_dir, occ_file)
+        self.max_iteration = 0
+        for fname in os.listdir(gas_dir):
+            if fname.startswith('iteration_'):
+                try:
+                    idx = int(fname.split('_')[1])
+                    self.max_iteration = max(self.max_iteration, idx)
+                except ValueError:
+                    pass
+
+        self._load_wind_csv()
+
+        self.get_logger().info(f'GADEN loaded. max_iteration={self.max_iteration}')
+        self.get_logger().info(f'Wind iterations: {len(self.wind_iterations)}')
+
+    def _load_wind_csv(self):
+        import csv
+        wind_base = os.path.join(self.vgr_path, 'wind_simulations', self.config_id)
+        self.wind_iterations = []
+        if not os.path.exists(wind_base):
+            self.get_logger().warn(f'Wind data not found at {wind_base}')
+            return
+
+        csv_files = sorted([f for f in os.listdir(wind_base)
+                           if f.endswith('.csv') and not any(f.endswith(s) for s in ['_U', '_V', '_W'])])
+
+        for csv_file in csv_files:
+            filepath = os.path.join(wind_base, csv_file)
+            u_list, v_list, w_list, x_list, y_list, z_list = [], [], [], [], [], []
+            try:
+                with open(filepath, 'r') as f:
+                    reader = csv.reader(f)
+                    next(reader)
+                    for row in reader:
+                        if len(row) >= 6:
+                            u_list.append(float(row[0]))
+                            v_list.append(float(row[1]))
+                            w_list.append(float(row[2]))
+                            x_list.append(float(row[3]))
+                            y_list.append(float(row[4]))
+                            z_list.append(float(row[5]))
+                self.wind_iterations.append({
+                    'u': np.array(u_list), 'v': np.array(v_list), 'w': np.array(w_list),
+                    'x': np.array(x_list), 'y': np.array(y_list), 'z': np.array(z_list),
+                })
+            except Exception as e:
+                self.get_logger().warn(f'Failed to load {csv_file}: {e}')
+
+    def _get_iteration_for_step(self):
+        mode = str(self.get_parameter('gaden_iteration_mode').value)
+        return self.timebase.replay_iteration(self.max_iteration, self.seed, mode)
+
+    def _get_wind_at_position(self, iteration):
+        if not self.wind_iterations:
+            return np.array([0.0, 0.0, 0.0])
+        iter_idx = min(iteration, len(self.wind_iterations) - 1)
+        wind_data = self.wind_iterations[iter_idx]
+        dx = wind_data['x'] - self.uav_pos[0]
+        dy = wind_data['y'] - self.uav_pos[1]
+        dz = wind_data['z'] - self.uav_pos[2]
+        dist = np.sqrt(dx**2 + dy**2 + dz**2)
+        nearest_idx = np.argmin(dist)
+        return np.array([wind_data['u'][nearest_idx], wind_data['v'][nearest_idx], wind_data['w'][nearest_idx]])
+
+    def _prepare_open_loop_profile(self):
+        if not self.open_loop_profile_name:
+            return None
+        profile = generate_profile(
+            self.open_loop_profile_name,
+            duration_s=self.motion_duration_s,
+            dt_s=self.sim_dt_s,
+            start_xy_m=(float(self.uav_pos[0]), float(self.uav_pos[1])),
+            heading_rad=self.motion_heading_rad,
+        )
+        if not profile.satisfies(MotionLimits()):
+            raise ValueError(
+                f'open-loop profile {profile.name} violates the registered motion envelope'
+            )
+        blocked = [
+            index for index, position in enumerate(profile.position_xy_m)
+            if not self._is_position_free(float(position[0]), float(position[1]))
+        ]
+        if blocked:
+            raise ValueError(
+                f'open-loop profile {profile.name} intersects occupancy/out-of-bounds '
+                f'at sample indices {blocked[:8]}'
+            )
+        return profile
+
+    def _apply_open_loop_profile(self):
+        if self.open_loop_profile is None:
+            return
+        index = min(self.step_count, self.open_loop_profile.time_s.size - 1)
+        target = self.open_loop_profile.position_xy_m[index]
+        velocity = self.open_loop_profile.velocity_xy_m_s[index]
+        previous = self.uav_pos.copy()
+        self.uav_pos[0] = float(target[0])
+        self.uav_pos[1] = float(target[1])
+        self.uav_pos[2] = self.flight_height
+        self.total_distance += float(np.linalg.norm(self.uav_pos - previous))
+        if np.linalg.norm(velocity) > 1e-12:
+            self.uav_yaw = float(math.atan2(velocity[1], velocity[0]))
+
+    @staticmethod
+    def _ensure_parent(path):
+        parent = os.path.dirname(path)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+
+    def _write_sensor_manifest(self):
+        if not self._sensor_manifest_file:
+            return
+        self._ensure_parent(self._sensor_manifest_file)
+        payload = {
+            "schema_version": "mcos-vgr-manifest-v1",
+            "sim_dt_s": self.sim_dt_s,
+            "realtime_factor": self.realtime_factor,
+            "gaden_iteration_mode": str(self.get_parameter('gaden_iteration_mode').value),
+            "sensor": self.sensor_model.manifest(),
+            "truth_policy": {
+                "source_coordinates_published": False,
+                "true_gas_trace_is_offline_diagnostic_only": True,
+            },
+        }
+        with open(self._sensor_manifest_file, 'w', encoding='utf-8') as f:
+            json.dump(payload, f, indent=2, sort_keys=True)
+
+    def _initialize_trace_files(self):
+        import csv as _csv
+        trace_specs = (
+            (
+                self._sensor_trace_file,
+                ['t_sim_s','step','iteration','x','y','z','true_gas_ppm',
+                 'measured_gas_ppm','sensor_mode','seed'],
+            ),
+            (
+                self._wind_trace_file,
+                ['t_sim_s','step','iteration','x','y','z','wind_u','wind_v',
+                 'wind_w','wind_speed','wind_direction_rad','seed'],
+            ),
+            (
+                self._pose_trace_file,
+                ['t_sim_s','step','x','y','z','yaw','is_moving','seed'],
+            ),
+            (
+                self._measurement_trace_file,
+                ['t_sim_s','step','iteration','x','y','z','yaw','is_moving',
+                 'true_gas_ppm','measured_gas_ppm','wind_u','wind_v','wind_w',
+                 'wind_speed','wind_direction_rad','sensor_mode','seed'],
+            ),
+            (
+                self._continuous_measurement_samples_file,
+                ['t_sim_s','step','iteration','replay_time_s','x','y','z','raw_gas_ppm','fopdt_output_ppm','gas_query_time_ms','seed'],
+            ),
+        )
+        for path, header in trace_specs:
+            if not path:
+                continue
+            self._ensure_parent(path)
+            with open(path, 'w', newline='') as f:
+                _csv.writer(f).writerow(header)
+        self._trace_headers_written = True
+
+    def _sim_stamp(self):
+        seconds, nanoseconds = self.timebase.stamp_parts()
+        return TimeMsg(sec=seconds, nanosec=nanoseconds)
+
+    def _sample_gas(self, iteration):
+        query_started = time.perf_counter()
+        if not GADEN_AVAILABLE or not hasattr(self, 'gaden_sim'):
+            true_gas = 0.0
+        else:
+            pos = GVec(self.uav_pos[0], self.uav_pos[1], self.uav_pos[2])
+            try:
+                true_gas = float(self.gaden_sim.getConcentration(iteration, pos))
+            except Exception as e:
+                self.get_logger().warn(f'getConcentration error: {e}')
+                true_gas = 0.0
+        measured = self.sensor_model.process(true_gas, self.sim_dt_s)
+        self._last_gas_query_time_ms = (time.perf_counter() - query_started) * 1000.0
+        if abs(self.sensor_model.time_s - self.t_sim_s) > 1e-9:
+            raise RuntimeError(
+                f'sensor/simulation clock mismatch: sensor={self.sensor_model.time_s}, '
+                f'sim={self.t_sim_s}'
+            )
+        return true_gas, measured
+
+    def _append_continuous_measurement_sample(self, iteration, true_gas, measured):
+        if not self._continuous_measurement_samples_file:
+            return
+        import csv as _csv
+        with open(self._continuous_measurement_samples_file, 'a', newline='') as f:
+            _csv.writer(f).writerow([f'{self.t_sim_s:.6f}', self.step_count, iteration, f'{self.t_sim_s:.6f}',
+                f'{self.uav_pos[0]:.4f}', f'{self.uav_pos[1]:.4f}', f'{self.uav_pos[2]:.4f}',
+                f'{true_gas:.9f}', f'{measured:.9f}', f'{self._last_gas_query_time_ms:.6f}', self.seed])
+
+    def _sample_wind(self, iteration):
+        return self._get_wind_at_position(iteration)
+
+    def _append_sensor_trace(self, iteration, true_gas, measured):
+        if not self._sensor_trace_file:
+            return
+        import csv as _csv
+        with open(self._sensor_trace_file, 'a', newline='') as f:
+            w = _csv.writer(f)
+            w.writerow([f'{self.t_sim_s:.6f}', self.step_count, iteration,
+                       f'{self.uav_pos[0]:.4f}', f'{self.uav_pos[1]:.4f}', f'{self.uav_pos[2]:.4f}',
+                       f'{true_gas:.6f}', f'{measured:.6f}', self.sensor_model.cfg.mode, self.seed])
+
+    def _append_wind_trace(self, iteration, wind):
+        if not self._wind_trace_file:
+            return
+        import csv as _csv
+        ws = float(np.linalg.norm(wind[:2]))
+        wd = float(math.atan2(wind[1], wind[0]))
+        with open(self._wind_trace_file, 'a', newline='') as f:
+            w = _csv.writer(f)
+            w.writerow([f'{self.t_sim_s:.6f}', self.step_count, iteration,
+                       f'{self.uav_pos[0]:.4f}', f'{self.uav_pos[1]:.4f}', f'{self.uav_pos[2]:.4f}',
+                       f'{wind[0]:.6f}', f'{wind[1]:.6f}', f'{wind[2]:.6f}',
+                       f'{ws:.6f}', f'{wd:.6f}', self.seed])
+
+    def _append_pose_trace(self, is_moving):
+        if not self._pose_trace_file:
+            return
+        import csv as _csv
+        with open(self._pose_trace_file, 'a', newline='') as f:
+            w = _csv.writer(f)
+            w.writerow([f'{self.t_sim_s:.6f}', self.step_count,
+                       f'{self.uav_pos[0]:.4f}', f'{self.uav_pos[1]:.4f}', f'{self.uav_pos[2]:.4f}',
+                       f'{self.uav_yaw:.4f}', int(is_moving), self.seed])
+
+    def _append_measurement_trace(self, iteration, true_gas, measured, wind, is_moving):
+        if not self._measurement_trace_file:
+            return
+        import csv as _csv
+        wind_speed = float(np.linalg.norm(wind[:2]))
+        wind_direction = float(math.atan2(wind[1], wind[0]))
+        with open(self._measurement_trace_file, 'a', newline='') as f:
+            _csv.writer(f).writerow([
+                f'{self.t_sim_s:.6f}', self.step_count, iteration,
+                f'{self.uav_pos[0]:.4f}', f'{self.uav_pos[1]:.4f}',
+                f'{self.uav_pos[2]:.4f}', f'{self.uav_yaw:.4f}', int(is_moving),
+                f'{true_gas:.6f}', f'{measured:.6f}',
+                f'{wind[0]:.6f}', f'{wind[1]:.6f}', f'{wind[2]:.6f}',
+                f'{wind_speed:.6f}', f'{wind_direction:.6f}',
+                self.sensor_model.cfg.mode, self.seed,
+            ])
+
+
+    def _publish_map_once(self):
+        msg = OccupancyGrid()
+        msg.header = Header(stamp=self._sim_stamp(), frame_id='map')
+        msg.info = MapMetaData()
+        msg.info.resolution = float(self.cell_size)
+        msg.info.width = int(self.nx)
+        msg.info.height = int(self.ny)
+        msg.info.origin = Pose()
+        msg.info.origin.position.x = float(self.env_min[0])
+        msg.info.origin.position.y = float(self.env_min[1])
+        msg.info.origin.orientation.w = 1.0
+        grid_flat = self.occupancy_2d.T.flatten()
+        msg.data = [int(v * 100) for v in grid_flat]
+        self.map_pub.publish(msg)
+        self.costmap_pub.publish(msg)
+
+    def _publish_all(self, advance=True, record=True):
+        if advance:
+            expected_step = self.step_count + 1
+            self._advance_navigation_one_step()
+            self.step_count, self.t_sim_s = self.timebase.advance()
+            if self.step_count != expected_step or self.step_count != self._last_advanced_step + 1:
+                raise RuntimeError(f'non-monotone simulation step: {self._last_advanced_step}->{self.step_count}')
+            if abs(self.t_sim_s - self.step_count * self.sim_dt_s) > 1e-12:
+                raise RuntimeError(f'clock/step mismatch: step={self.step_count}, t={self.t_sim_s}')
+            self._last_advanced_step = self.step_count
+        # A paused readiness tick publishes the initial observation only.  In
+        # particular it must not move an open-loop profile or call the FOPDT
+        # transition, otherwise the algorithm sees a nonzero sensor time at
+        # /clock==0 and the first replay frame becomes launch-order dependent.
+        if advance:
+            self._apply_open_loop_profile()
+        now = self._sim_stamp()
+        if advance:
+            clock_msg = Clock()
+            clock_msg.clock = now
+            self.clock_pub.publish(clock_msg)
+
+        iteration = self._get_iteration_for_step()
+        if advance:
+            true_gas, measured_gas = self._sample_gas(iteration)
+        else:
+            true_gas = float(self.sensor_model.cfg.initial_input_ppm)
+            measured_gas = float(self.sensor_model.state_ppm)
+            self._last_gas_query_time_ms = 0.0
+        wind = self._sample_wind(iteration)
+        is_moving = bool(np.linalg.norm(self.uav_pos - self._last_trace_pos) > 1e-9)
+        if record:
+            self._append_sensor_trace(iteration, true_gas, measured_gas)
+            self._append_continuous_measurement_sample(iteration, true_gas, measured_gas)
+            self._append_wind_trace(iteration, wind)
+            self._append_pose_trace(is_moving)
+            self._append_measurement_trace(
+                iteration, true_gas, measured_gas, wind, is_moving
+            )
+            self._last_trace_pos = self.uav_pos.copy()
+
+        pose_msg = PoseWithCovarianceStamped()
+        pose_msg.header = Header(stamp=now, frame_id='map')
+        pose_msg.pose.pose.position.x = float(self.uav_pos[0])
+        pose_msg.pose.pose.position.y = float(self.uav_pos[1])
+        pose_msg.pose.pose.position.z = float(self.uav_pos[2])
+        pose_msg.pose.pose.orientation.z = math.sin(self.uav_yaw / 2.0)
+        pose_msg.pose.pose.orientation.w = math.cos(self.uav_yaw / 2.0)
+        pose_msg.pose.covariance[0] = 0.01
+        pose_msg.pose.covariance[7] = 0.01
+        pose_msg.pose.covariance[35] = 0.01
+        self.pose_pub.publish(pose_msg)
+
+        tf_msg = TransformStamped()
+        tf_msg.header = Header(stamp=now, frame_id='map')
+        tf_msg.child_frame_id = 'base_link'
+        tf_msg.transform.translation.x = float(self.uav_pos[0])
+        tf_msg.transform.translation.y = float(self.uav_pos[1])
+        tf_msg.transform.translation.z = float(self.uav_pos[2])
+        tf_msg.transform.rotation.z = math.sin(self.uav_yaw / 2.0)
+        tf_msg.transform.rotation.w = math.cos(self.uav_yaw / 2.0)
+        self.tf_broadcaster.sendTransform(tf_msg)
+
+        gas_msg = GasSensor()
+        gas_msg.header = Header(stamp=now, frame_id='base_link')
+        gas_msg.technology = GasSensor.TECH_PID
+        gas_msg.raw_units = GasSensor.UNITS_PPM
+        gas_msg.raw = float(measured_gas)
+        self.gas_pub.publish(gas_msg)
+
+        wind_msg = Anemometer()
+        wind_msg.header = Header(stamp=now, frame_id='map')
+        wind_msg.wind_speed = float(np.linalg.norm(wind[:2]))
+        wind_msg.wind_direction = float(math.atan2(wind[1], wind[0]))
+        self.wind_pub.publish(wind_msg)
+
+    def _advance_navigation_one_step(self):
+        if self._nav_target is None:
+            return
+        direction = self._nav_target - self.uav_pos
+        dist_xy = float(np.linalg.norm(direction[:2]))
+        effective_step = self.timebase.maximum_motion_distance(self.max_uav_speed, self.step_size)
+        if dist_xy <= effective_step:
+            if dist_xy > 1e-12:
+                self.total_distance += dist_xy
+                self.uav_pos[:2] = self._nav_target[:2]
+                self.uav_yaw = float(math.atan2(direction[1], direction[0]))
+            self.uav_pos[2] = self.flight_height
+            self._nav_target = None
+            if self._nav_completion_future is not None and not self._nav_completion_future.done():
+                self._nav_completion_future.set_result(True)
+            return
+        step_dir = direction[:2] / dist_xy * effective_step
+        next_x, next_y = self.uav_pos[0] + step_dir[0], self.uav_pos[1] + step_dir[1]
+        if not self._is_position_free(next_x, next_y):
+            self.get_logger().warn(f'Obstacle while timer-moving at ({next_x:.2f}, {next_y:.2f})')
+            self._nav_target = None
+            if self._nav_completion_future is not None and not self._nav_completion_future.done():
+                self._nav_completion_future.set_result(False)
+            return
+        self.total_distance += effective_step
+        self.uav_pos[0] = float(np.clip(next_x, self.env_min[0], self.env_max[0]))
+        self.uav_pos[1] = float(np.clip(next_y, self.env_min[1], self.env_max[1]))
+        self.uav_pos[2] = self.flight_height
+        self.uav_yaw = float(math.atan2(step_dir[1], step_dir[0]))
+
+    def _is_position_free(self, x, y):
+        ix = int((x - self.env_min[0]) / self.cell_size)
+        iy = int((y - self.env_min[1]) / self.cell_size)
+        if 0 <= ix < self.nx and 0 <= iy < self.ny:
+            return self.occupancy_2d[ix, iy] == 0
+        return False
+
+    def _bfs_path(self, start_world, goal_world):
+        """BFS on 2D occupancy grid."""
+        def to_grid(wx, wy):
+            return int((wx - self.env_min[0]) / self.cell_size), int((wy - self.env_min[1]) / self.cell_size)
+        def to_world(ix, iy):
+            return self.env_min[0] + (ix + 0.5) * self.cell_size, self.env_min[1] + (iy + 0.5) * self.cell_size
+        sx, sy = to_grid(start_world[0], start_world[1])
+        gx, gy = to_grid(goal_world[0], goal_world[1])
+        sx = max(0, min(sx, self.nx - 1))
+        sy = max(0, min(sy, self.ny - 1))
+        gx = max(0, min(gx, self.nx - 1))
+        gy = max(0, min(gy, self.ny - 1))
+        if self.occupancy_2d[gx, gy] != 0:
+            best_dist = float("inf")
+            best_cell = None
+            for ddx in range(-5, 6):
+                for ddy in range(-5, 6):
+                    cx, cy = gx + ddx, gy + ddy
+                    if 0 <= cx < self.nx and 0 <= cy < self.ny and self.occupancy_2d[cx, cy] == 0:
+                        d = ddx*ddx + ddy*ddy
+                        if d < best_dist:
+                            best_dist = d
+                            best_cell = (cx, cy)
+            if best_cell is None: return []
+            gx, gy = best_cell
+        if self.occupancy_2d[sx, sy] != 0: return []
+        from collections import deque
+        visited = set()
+        parent = {}
+        queue = deque([(sx, sy)])
+        visited.add((sx, sy))
+        found = False
+        while queue:
+            cx, cy = queue.popleft()
+            if cx == gx and cy == gy:
+                found = True
+                break
+            for ddx, ddy in [(-1,0),(1,0),(0,-1),(0,1),(-1,-1),(-1,1),(1,-1),(1,1)]:
+                nx_, ny_ = cx + ddx, cy + ddy
+                if 0 <= nx_ < self.nx and 0 <= ny_ < self.ny and (nx_, ny_) not in visited and self.occupancy_2d[nx_, ny_] == 0:
+                    visited.add((nx_, ny_))
+                    parent[(nx_, ny_)] = (cx, cy)
+                    queue.append((nx_, ny_))
+        if not found: return []
+        path_cells = []
+        cell = (gx, gy)
+        while cell != (sx, sy):
+            path_cells.append(cell)
+            cell = parent[cell]
+        path_cells.append((sx, sy))
+        path_cells.reverse()
+        subsampled = [path_cells[j] for j in range(0, len(path_cells), 3)]
+        if subsampled[-1] != path_cells[-1]: subsampled.append(path_cells[-1])
+        return [to_world(cx, cy) for cx, cy in subsampled]
+
+    async def _plan_callback(self, goal_handle):
+        gx = goal_handle.request.goal.pose.position.x
+        gy = goal_handle.request.goal.pose.position.y
+        self.get_logger().warn(f"PLAN_CB: called with goal=({gx:.2f},{gy:.2f})")
+        goal = goal_handle.request.goal.pose.position
+        start = self.uav_pos
+        path = Path()
+        path.header.frame_id = "map"
+        path.header.stamp = self._sim_stamp()
+        world_path = self._bfs_path(start[:2], [goal.x, goal.y])
+        for wx, wy in world_path:
+            ps = PoseStamped()
+            ps.header = path.header
+            ps.pose.position.x = wx
+            ps.pose.position.y = wy
+            ps.pose.position.z = self.flight_height
+            ps.pose.orientation.w = 1.0
+            path.poses.append(ps)
+        result = ComputePathToPose.Result()
+        result.path = path
+        self.get_logger().warn(f"PLAN_CB: returning {len(path.poses)} poses")
+        goal_handle.succeed()
+        return result
+
+
+
+
+    async def _nav_callback(self, goal_handle):
+        if self.open_loop_profile is not None:
+            self.get_logger().warn(
+                'Acknowledging NavigateToPose without changing pose because a '
+                'deterministic MCOS open-loop profile owns the motion timeline'
+            )
+            goal_handle.succeed()
+            return NavigateToPose.Result()
+        target = goal_handle.request.pose.pose.position
+        requested_z = target.z if abs(target.z) > 0.01 else self.flight_height
+        if self.allow_vertical_motion:
+            self.get_logger().error(
+                'Vertical motion requested, but the audited bridge currently supports '
+                'only fixed-altitude 2-D smoke tests'
+            )
+            goal_handle.abort()
+            return NavigateToPose.Result()
+        target_z = self.flight_height
+        if abs(requested_z - self.flight_height) > 1e-6:
+            self.get_logger().warn(
+                f'Rejecting unaudited altitude command z={requested_z:.3f}; '
+                f'holding fixed smoke-test altitude z={self.flight_height:.3f}'
+            )
+        target_pos = np.array([target.x, target.y, target_z])
+
+        if not self._is_position_free(target.x, target.y):
+            self.get_logger().warn(f'Target ({target.x:.2f}, {target.y:.2f}) is in obstacle')
+            direction = target_pos - self.uav_pos
+            dist = np.linalg.norm(direction[:2])
+            if dist > 0:
+                for t in np.arange(0.9, 0.0, -0.1):
+                    check_pos = self.uav_pos + direction * t
+                    if self._is_position_free(check_pos[0], check_pos[1]):
+                        target_pos = check_pos
+                        break
+                else:
+                    self.get_logger().warn('No free fallback target; rejecting navigation without advancing simulation')
+                    goal_handle.abort()
+                    return NavigateToPose.Result()
+
+        self.get_logger().info(
+            f'UAV navigating in audited 2-D mode to '
+            f'({target_pos[0]:.2f}, {target_pos[1]:.2f}, {target_pos[2]:.2f})'
+        )
+
+        self._nav_target = target_pos
+        # Await a ROS Future completed by the single simulation timer.  Do not
+        # use asyncio.sleep(): rclpy action callbacks do not own an asyncio
+        # event loop, and do not advance/publish from this callback.
+        self._nav_completion_future = Future()
+        reached = await self._nav_completion_future
+        if goal_handle.is_cancel_requested:
+            self._nav_target = None
+            goal_handle.canceled()
+            return NavigateToPose.Result()
+        if not reached:
+            goal_handle.abort()
+            return NavigateToPose.Result()
+        goal_handle.succeed()
+        return NavigateToPose.Result()
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = VGRUAVSimNode()
+    try:
+        rclpy.spin(node)
+    except (KeyboardInterrupt, ExternalShutdownException):
+        pass
+    finally:
+        node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()

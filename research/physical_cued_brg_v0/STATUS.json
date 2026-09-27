@@ -1,0 +1,171 @@
+{
+  "status": "IMPLEMENTED_TRAINED_WARMSTART_COMPONENT_TESTED_NOT_ROS_CLOSEDLOOP_VALIDATED",
+  "mother_algorithm": "Bidirectional Recurrent Gating, Nature Communications 2026",
+  "implementation": "Independent small candidate-conditioned adaptation; not original visual network reproduction",
+  "new_plume_runs": 0,
+  "new_pmfs_forward_runs": 0,
+  "training_runs_this_delivery": 4,
+  "independent_training_plumes": 216,
+  "independent_development_plumes": 72,
+  "training_sources_per_environment": 6,
+  "training_environments": 3,
+  "trained_versions": {
+    "brg": {
+      "active_parameters": 13120,
+      "allocated_parameters": 13120,
+      "best_epoch": 7,
+      "best_open_dev": {
+        "nll": 1.024132490158081,
+        "accuracy": 0.4305555555555556,
+        "brier": 0.5867725610733032,
+        "n_sparse_augmentations": 144
+      },
+      "summary": {
+        "initial": {
+          "nll": 1.7991941769917805,
+          "accuracy": 0.16666666666666666,
+          "brier": 0.8358303705851237,
+          "n_sparse_augmentations": 144
+        },
+        "last": {
+          "nll": 1.3272341622246637,
+          "accuracy": 0.4444444444444444,
+          "brier": 0.6191512213812934,
+          "n_sparse_augmentations": 144
+        },
+        "best_dev_nll": 1.024132490158081,
+        "seconds": 11.353907108306885,
+        "parameters": 13120,
+        "independent_train_plumes": 216,
+        "independent_dev_plumes": 72,
+        "status": "TRAINING_PIPELINE_COMPLETED_NOT_SCIENTIFIC_PASS"
+      },
+      "sha256": "f77d1a792ce24a70c839a59e824c233909f99d05fbf5c808f66da9a9457867b3"
+    },
+    "gru": {
+      "active_parameters": 13125,
+      "allocated_parameters": 15610,
+      "best_epoch": 7,
+      "best_open_dev": {
+        "nll": 1.0194667710198297,
+        "accuracy": 0.4305555555555556,
+        "brier": 0.5965674718221029,
+        "n_sparse_augmentations": 144
+      },
+      "summary": {
+        "initial": {
+          "nll": 1.8010008600023057,
+          "accuracy": 0.1597222222222222,
+          "brier": 0.8363469176822238,
+          "n_sparse_augmentations": 144
+        },
+        "last": {
+          "nll": 1.269493818283081,
+          "accuracy": 0.5208333333333334,
+          "brier": 0.6311405897140503,
+          "n_sparse_augmentations": 144
+        },
+        "best_dev_nll": 1.0194667710198297,
+        "seconds": 5.0259668827056885,
+        "parameters": 15610,
+        "active_parameters": 13125,
+        "independent_train_plumes": 216,
+        "independent_dev_plumes": 72,
+        "status": "TRAINING_PIPELINE_COMPLETED_NOT_SCIENTIFIC_PASS"
+      },
+      "sha256": "2e6b1207a18c6de249539056a27a80d0f45dfd408dd257d0b36a8aa83661c9df"
+    },
+    "ungated": {
+      "active_parameters": 11040,
+      "allocated_parameters": 13120,
+      "best_epoch": 6,
+      "best_open_dev": {
+        "nll": 1.0090447796715631,
+        "accuracy": 0.4375,
+        "brier": 0.588401820924547,
+        "n_sparse_augmentations": 144
+      },
+      "summary": {
+        "initial": {
+          "nll": 1.7999448246426053,
+          "accuracy": 0.16666666666666666,
+          "brier": 0.8360660076141357,
+          "n_sparse_augmentations": 144
+        },
+        "last": {
+          "nll": 1.2066739400227864,
+          "accuracy": 0.4513888888888889,
+          "brier": 0.6050239933861626,
+          "n_sparse_augmentations": 144
+        },
+        "best_dev_nll": 1.0090447796715631,
+        "seconds": 9.441470861434937,
+        "parameters": 13120,
+        "independent_train_plumes": 216,
+        "independent_dev_plumes": 72,
+        "status": "TRAINING_PIPELINE_COMPLETED_NOT_SCIENTIFIC_PASS"
+      },
+      "sha256": "718d45efa0f684c4fdc2445eed4d7a9709beea5e15923186c6ed99e2493afbe4"
+    },
+    "gru_width32_initial": {
+      "active_parameters": 11040,
+      "allocated_parameters": 13120,
+      "best_epoch": 7,
+      "best_open_dev": {
+        "nll": 1.0165062480502658,
+        "accuracy": 0.4166666666666667,
+        "brier": 0.5933120912975736,
+        "n_sparse_augmentations": 144
+      },
+      "summary": {
+        "initial": {
+          "nll": 1.7968794504801433,
+          "accuracy": 0.16666666666666666,
+          "brier": 0.8350152969360352,
+          "n_sparse_augmentations": 144
+        },
+        "last": {
+          "nll": 1.1717342535654705,
+          "accuracy": 0.4861111111111111,
+          "brier": 0.6146287785636054,
+          "n_sparse_augmentations": 144
+        },
+        "best_dev_nll": 1.0165062480502658,
+        "seconds": 4.645714282989502,
+        "parameters": 13120,
+        "independent_train_plumes": 216,
+        "independent_dev_plumes": 72,
+        "status": "TRAINING_PIPELINE_COMPLETED_NOT_SCIENTIFIC_PASS"
+      },
+      "sha256": "eeee08d093ca04a1742779bf0fdcd18199341938ba3b63d040dc9e6e6df2e8b9"
+    }
+  },
+  "unit_tests_passed": 26,
+  "cpp_client_compiled": true,
+  "actual_local_tcp_roundtrip": true,
+  "complete_ros_workspace_compiled": false,
+  "native_fork_patch_executed": false,
+  "vm_access": false,
+  "closed_loop_executed": false,
+  "house03_gas_targets_read_this_delivery": false,
+  "house03_prediction_only_interface_test": true,
+  "performance_claim": "No claim of superiority; warm-start BRG does not beat the ordinary GRU/ungated dev NLL",
+  "interface_benchmark": {
+    "candidate_count": 624,
+    "map_cells": 1242,
+    "model_parameters": 13120,
+    "bank_hash": "da4e1a4ea3d3939203f2386a097d4570dc60ad1a83cf6a1a872f000c894dc029",
+    "latency_ms_median_excluding_first": 3.4587950000286583,
+    "latency_ms_p95_excluding_first": 4.50156049994348,
+    "bank_array_payload_bytes": 12415104,
+    "cpp_build_returncode": 0,
+    "cpp_build_stderr": "",
+    "cpp_socket_result": "OK 624 1242 1",
+    "read_target_gas_arrays": false,
+    "closed_loop_executed": false,
+    "ros_workspace_compiled": false,
+    "benchmark": "CPU single thread; complete Python event projection+network+variance+serialization-to-lists, excludes TCP latency/planner/forward"
+  },
+  "remaining_execution": "Codex compiles native-fork hooks and runs existing VM paired closed-loop harness. No further signal-discovery experiment is requested.",
+  "fairness": "GRU h=35 analytically matches BRG h=32 active parameter count (13125 vs 13120). Earlier width32 GRU remains archived. Ungated is same-width mechanism ablation, not active-parameter-matched."
+}

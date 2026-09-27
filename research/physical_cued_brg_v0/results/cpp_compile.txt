@@ -1,0 +1,8 @@
+In file included from integration/client_smoke.cpp:1:
+integration/NeuralEvidenceClient.hpp: In member function 'pmfs_brg::Result pmfs_brg::Client::observe(uint64_t, double, double, double, double, double)':
+integration/NeuralEvidenceClient.hpp:57:3: warning: this 'for' clause does not guard... [-Wmisleading-indentation]
+   57 |   for(auto v:r.hitVariance)if(v>0.250001)throw std::runtime_error("BRG variance range error");return r;
+      |   ^~~
+integration/NeuralEvidenceClient.hpp:57:95: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'for'
+   57 |   for(auto v:r.hitVariance)if(v>0.250001)throw std::runtime_error("BRG variance range error");return r;
+      |                                                                                               ^~~~~~
