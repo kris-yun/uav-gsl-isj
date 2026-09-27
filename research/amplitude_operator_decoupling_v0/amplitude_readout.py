@@ -13,10 +13,11 @@ EPS = 1e-9  # Archived B2 contract, never selected on targets.
 
 
 class Arm(str, Enum):
-    U_NEAREST = 'u_nearest'
-    U_FOOTPRINT = 'u_footprint'
+    # Preserve the supplied Pro CSV traversal order as well as the arithmetic.
     RAWU_NEAREST = 'rawu_nearest'
     RAWU_FOOTPRINT = 'rawu_footprint'
+    U_NEAREST = 'u_nearest'
+    U_FOOTPRINT = 'u_footprint'
 
     @property
     def map_kind(self):
