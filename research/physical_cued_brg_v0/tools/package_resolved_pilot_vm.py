@@ -23,6 +23,8 @@ def main():
  native=Path('/home/zyc/ros2_ws/brg_closedloop_20260927/src/gsl_server/src/gsl_server')
  for part in ['algorithms/PMFS','algorithms/Common/Utils']:
   addfolder(native/part,'execution/native_source/'+part)
+ for p in (native/'algorithms/Common').glob('*'):
+  if p.is_file():files['execution/native_source/algorithms/Common/'+p.name]=p
  for n in ['h03_native_legal_bank.npz','LEGAL_MASKS_COMPLETE.json','LEGAL_SUPPORT_COMPLETE.json']+[f'env_{e}_occupancy.u8' for e in range(3)]+['h03_occupancy.u8']:
   files['legal_support/'+n]=ROOT/'legal_support_v2'/n
  for n in ['PRE_FORWARD_FREEZE.json','BANK_COMPLETE.json']:files['H01_rebuild_provenance/'+n]=ROOT/'h01_native_rebuild'/n
