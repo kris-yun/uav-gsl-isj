@@ -9,7 +9,7 @@ def main():
     assert binding['P1_STOP_NO_AUTOMATIC_FULL_CAMPAIGN'] and binding['P1_cumulative_runs']==16
     weights=json.loads((ROOT/'CHECKPOINT_FREEZE.json').read_text())
     for v,h in weights['weights_sha256'].items():assert sha(ROOT/f'trained_full/{v}/best.pt')==h
-    out=Path('/mnt/hgfs/workspace/_staging/BRG_NATIVE615_PILOT_P1_20260927');out.mkdir(exist_ok=False)
+    out=Path('/mnt/hgfs/workspace/_staging/BRG_NATIVE615_PILOT_P1_V2_20260927');out.mkdir(exist_ok=False)
     sources=[ROOT/'tools/bind_native_case_vm.py',ROOT/'tools/run_bound_case_vm.sh',ROOT/'integration/brg_existing_native.launch.py']
     for package in ['pmfs_brg','../vgr_execution_v2/vgr_bridge']:
         folder=(ROOT/package).resolve()

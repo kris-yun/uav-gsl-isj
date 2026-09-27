@@ -148,7 +148,7 @@ class GSLBenchmarkRunner(Node):
                 timer.cancel()
         self.start_wall = time.time()
         self._action_start_ros_s = self.get_clock().now().nanoseconds / 1e9
-        if not self.gsl_client.wait_for_server(timeout_sec=10.0):
+        if not self.gsl_client.wait_for_server(timeout_sec=120.0):
             self._save_result(
                 termination_reason="action_failure",
                 declared_success=False,

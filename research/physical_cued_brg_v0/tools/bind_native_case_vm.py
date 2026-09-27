@@ -32,7 +32,7 @@ def main():
     for var,name in {'NATIVE_RECOVERY_WIND_QUERY_CSV':'wind_query.csv','NATIVE_RECOVERY_WIND_UPDATE_CSV':'wind_source_update.csv',
         'NATIVE_RECOVERY_MEASUREMENT_EVENTS_CSV':'measurement_events.csv','NATIVE_RECOVERY_MEASURED_MAP_CSV':'measured_map_at_update.csv',
         'NATIVE_RECOVERY_CANDIDATES_CSV':'frozen_candidate_geometry.csv','NATIVE_RECOVERY_UPDATE_COMPLETE_FILE':'source_update_complete.txt'}.items():env[var]=str(run/name)
-    view=Path('/dev/shm/brg_case_views')/out.stem;view.mkdir(parents=True,exist_ok=False);scenario=Path(case['scenario_root']);wind=case['wind']
+    view=Path('/dev/shm/brg_case_views')/(out.stem+'_'+hashlib.sha256(str(out.resolve()).encode()).hexdigest()[:8]);view.mkdir(parents=True,exist_ok=False);scenario=Path(case['scenario_root']);wind=case['wind']
     for n in ['OccupancyGrid3D.csv','wind_simulations']:(view/n).symlink_to(scenario/n,target_is_directory=(scenario/n).is_dir())
     gas=view/'gas_simulations'/wind;gas.mkdir(parents=True)
     (gas/'FilamentSimulation_existing_open_case').symlink_to(Path(case['realization']),target_is_directory=True)
