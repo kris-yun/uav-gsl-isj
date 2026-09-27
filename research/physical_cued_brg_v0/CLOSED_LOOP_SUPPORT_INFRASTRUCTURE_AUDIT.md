@@ -20,6 +20,15 @@ at the fixed House03 start (2.0, 0.0) invokes `PruneUnreachableCells` and leaves
 The nine bank cells removed by Native are:
 577, 622, 624, 700, 746, 792, 1002, 1048, 1094.
 
+Update after the user's explicit condition: these nine bank exclusions are
+coarse occupancy rejections, not reachability rejections. Native requires all
+nine underlying fine voxels to be free. Frozen truth pmfs_24_13 is among them:
+its center is free, but three fine voxels inside its coarse cell are obstacles.
+The fine grid reduces to 630 free coarse cells; Native reachability then removes
+15 other cells, yielding exactly the runtime 615 mask. The twelve-truth panel
+therefore cannot simply be evaluated under the proposed 615 support. Formal
+campaign HOLD; the original bank generator continues.
+
 Grid dimensions/origin/resolution otherwise match the bank. Thus the package's
 requirements of full624 and exact Native legal support conflict for the actual
 runtime. No candidate has been silently removed from a neural bank; Native
