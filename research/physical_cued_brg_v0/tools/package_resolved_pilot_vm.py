@@ -15,16 +15,21 @@ def main():
  addfolder(Path('/mnt/hgfs/workspace/_staging/BRG_NATIVE615_PILOT_P1_20260927'),'historical_p0_v1_infrastructure_batch_excluded_from_main')
  addfolder(Path('/home/zyc/brg_closedloop_20260927/vgr_execution_v2/vgr_bridge'),'execution/vgr_bridge')
  addfolder(ROOT/'amendment','amendment')
+ addfolder(ROOT/'review_extra','provenance')
  for part in ['pmfs_brg','integration']:
   addfolder(ROOT/part,'execution/'+part)
- for n in ['bind_native_case_vm.py','run_bound_case_vm.sh','run_resolved_p0_p1_vm.py','evaluate_closed_loop.py','freeze_resolved_pilot_vm.py','prepare_native_legal_support_vm.py','bind_native_bank_views_vm.py','rebuild_h01_native_bank_vm.py','train.py','align_full_support_training.py']:
+ for n in ['bind_native_case_vm.py','run_bound_case_vm.sh','run_resolved_p0_p1_vm.py','evaluate_closed_loop.py','freeze_resolved_pilot_vm.py','prepare_native_legal_support_vm.py','bind_native_bank_views_vm.py','rebuild_h01_native_bank_vm.py','train.py','align_full_support_training.py','verify_p1_independent_vm.py','audit_native_source_continuity_vm.py','serve.py','package_resolved_pilot_vm.py']:
   files['execution/tools/'+n]=ROOT/'tools'/n
+ native=Path('/home/zyc/ros2_ws/brg_closedloop_20260927/src/gsl_server/src/gsl_server')
+ for part in ['algorithms/PMFS','algorithms/Common/Utils']:
+  addfolder(native/part,'execution/native_source/'+part)
  for n in ['h03_native_legal_bank.npz','LEGAL_MASKS_COMPLETE.json','LEGAL_SUPPORT_COMPLETE.json']+[f'env_{e}_occupancy.u8' for e in range(3)]+['h03_occupancy.u8']:
   files['legal_support/'+n]=ROOT/'legal_support_v2'/n
  for n in ['PRE_FORWARD_FREEZE.json','BANK_COMPLETE.json']:files['H01_rebuild_provenance/'+n]=ROOT/'h01_native_rebuild'/n
  for n in ['PRE_FORWARD_FREEZE.json','BANK_COMPLETE.json']:files['original_cache_provenance/'+n]=ROOT/'full_support'/n
  for variant in ['gru','brg','ungated']:
   for n in ['best.pt','run_config.json','routes.json','history.json','summary.json']:files['weights/'+variant+'/'+n]=ROOT/'trained_full'/variant/n
+ files['native_source_continuity.json']=ROOT/'native_source_continuity.json'
  files['CHECKPOINT_FREEZE.json']=ROOT/'CHECKPOINT_FREEZE.json';files['software_common615_result.json']=ROOT/'software_common615_result.json'
  hashes={name:sha(p) for name,p in sorted(files.items())};manifest=''.join(h+'  '+name+'\n' for name,h in hashes.items())
  with zipfile.ZipFile(DEST,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=6) as z:
