@@ -178,10 +178,17 @@ def main():
             table.to_csv(out/f'posthoc_readout_factorial_{name}.csv', index=False)
         comparisons = {name: compare_csv(out/f'posthoc_readout_factorial_{name}.csv',
                          HERE/f'pro_reference/results/posthoc_readout_factorial_{name}.csv') for name in tables}
-        with np.load(HERE/'pro_reference/results/geometric_projection_weights.npz') as old:
+        projection_deviation = 0.
+        archived_projection_bitwise = True
+        with np.load(HERE/'pro_reference/results/geometric_projection_weights.npz') as old, np.load(out.parent/'pro_reproduction/geometric_projection_weights.npz') as replay:
             for e in range(3):
-                if not np.array_equal(matrices[f'env_{e}_footprint'], old[str(e)]):
-                    raise ValueError('Projection matrix differs from Pro')
+                mat = matrices[f'env_{e}_footprint']
+                if not np.array_equal(mat, replay[str(e)]):
+                    raise ValueError('Projection differs from supplied Pro code on this runtime')
+                if not np.allclose(mat, old[str(e)], rtol=0., atol=1e-14):
+                    raise ValueError('Projection matrix differs numerically from Pro archive')
+                projection_deviation = max(projection_deviation, float(np.max(np.abs(mat-old[str(e)]))))
+                archived_projection_bitwise &= np.array_equal(mat, old[str(e)])
         np.savez(out/'observation_operators.npz', **matrices)
         np.savez(out/'amplitude_templates.npz', **{
             f'env_{e}_{arm.value}': bank.values for e, banks in prepared.items() for arm, bank in banks.items()})
@@ -208,7 +215,10 @@ def main():
             new_forward_runs=0, new_gaden_runs=0, training_runs=0, house03_or_sealed_data_read=False,
             inputs=hashes, package_manifest_entries=package_entries, d0_verified_entries=count,
             pro_full_reproduction=pro_checks, implementation_vs_pro=comparisons,
-            projection_matrices_bitwise_equal=True, native_occurrence_files_unchanged=len(p_before),
+            projection_same_runtime_pro_bitwise_equal=True,
+            projection_archive_bitwise_equal=bool(archived_projection_bitwise),
+            projection_archive_max_absolute_deviation=projection_deviation,
+            native_occurrence_files_unchanged=len(p_before),
             scoring_repeat_bitwise_equal=True, archived_B2_max_absolute_sse_deviation=baseline_error,
             rescued_targets=sum(r['rescued'] for r in rescue), harmed_targets=sum(r['harmed'] for r in rescue),
             rescued_source_units=sum(r['rescued'] > 0 for r in rescue),
