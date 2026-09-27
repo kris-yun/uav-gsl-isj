@@ -39,17 +39,23 @@ def main():
              AOD_RUN_ID='House03_pmfs_24_13_replica_0',ROS_DOMAIN_ID='229',
              OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1')
     seeded_lib=Path('/home/zyc/hcmc_gaden_seed_build_20260922/install/gaden_common/lib/libgaden.so')
-    env['LD_LIBRARY_PATH']=str(seeded_lib.parent)+':'+env.get('LD_LIBRARY_PATH','')
+    build_provenance=json.loads((R/'timebase_logger/LOGGER_BUILD_PROVENANCE.json').read_text())
+    bsc_lib=Path(build_provenance['compression_library_path'])
+    assert sha(bsc_lib)==build_provenance['compression_library_sha256']
+    env['LD_LIBRARY_PATH']=str(seeded_lib.parent)+':'+str(bsc_lib.parent)+':'+env.get('LD_LIBRARY_PATH','')
     linkage=subprocess.check_output(['ldd',str(binary)],env=env,text=True)
+    assert 'not found' not in linkage,linkage
     loaded_gaden=next(line for line in linkage.splitlines() if 'libgaden.so =>' in line)
     assert loaded_gaden.split('=>',1)[1].strip().split()[0]==str(seeded_lib)
-    build_provenance=json.loads((R/'timebase_logger/LOGGER_BUILD_PROVENANCE.json').read_text())
+    loaded_bsc=next(line for line in linkage.splitlines() if 'libbsc.so =>' in line)
+    assert loaded_bsc.split('=>',1)[1].strip().split()[0]==str(bsc_lib)
     assert sha(seeded_lib)==build_provenance['seeded_numerical_library_sha256']
     start=time.monotonic()
     (run/'RUN_CONFIGURATION.json').write_text(json.dumps(dict(manifest_row=item,options=options,
         command=command,pre_target_freeze=freeze,binary_sha256=sha(binary),wind_hashes=wind,
         runtime_ld_library_path=env['LD_LIBRARY_PATH'],runtime_linkage=linkage,
         runtime_seeded_numerical_library_sha256=sha(seeded_lib),
+        runtime_compression_library_sha256=sha(bsc_lib),
         concentration_values_read=False),indent=2)+'\n')
     with (run/'generation.log').open('w') as log:
         subprocess.run(command,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)

@@ -13,7 +13,8 @@ def main():
     out=Path('/home/zyc/AOD_HOUSE03_F1_FULL624_REVIEW_20260927.zip')
     files={}
     for folder in ['protocol','execution','amplitude_implementation','f0','open_regression',
-                   'inputs','templates','timebase_logger','review_metadata','evaluation','provenance']:
+                   'inputs','templates','timebase_logger','timebase_logger_compile_attempt_1',
+                   'review_metadata','evaluation','provenance']:
         p=R/folder
         if p.exists():
             for f in p.rglob('*'):

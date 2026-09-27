@@ -14,3 +14,15 @@ are unchanged. The failed build directory is preserved as
 
 This is a build/dependency repair only. It does not authorize any timebase
 adaptation, nearest-frame substitution, retiming or additional plume budget.
+
+## Compression-library runtime search path
+
+The isolated node then built successfully, but the dynamic loader could not
+locate the transitive `libbsc.so` dependency. The simulator main function was
+not entered, and no realization directory, time map or plume was generated.
+That loader attempt is preserved separately.
+
+The launch environment now includes the existing codec directory in
+`LD_LIBRARY_PATH`, checks that `ldd` has no missing libraries, and verifies both
+the loaded seeded GADEN library and codec paths and hashes. No numerical code,
+parameters, time clock or save schedule changed.
