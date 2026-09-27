@@ -1,0 +1,612 @@
+SOURCE: execution/Simulations_marked.cpp
+
+0001: #include "gsl_server/algorithms/PMFS/internal/HitProbability.hpp"
+0002: #include <cstddef>
+0003: #include <gsl_server/algorithms/Common/Utils/Math.hpp>
+0004: #include <gsl_server/algorithms/Common/Utils/Time.hpp>
+0005: #include <gsl_server/algorithms/PMFS/PMFS.hpp>
+0006: #include <gsl_server/algorithms/PMFS/PMFSLib.hpp>
+0007: #include <gsl_server/algorithms/PMFS/internal/Simulations.hpp>
+0008: #include <chrono>
+0009: #include <cmath>
+0010: #include <cstdlib>
+0011: #include <filesystem>
+0012: #include <fstream>
+0013: #include <iomanip>
+0014: #include <stdexcept>
+0015: #include <gsl_server/core/Logging.hpp>
+0016: 
+0017: #include <opencv2/core/hal/interface.h>
+0018: #include <opencv2/core/saturate.hpp>
+0019: #include <opencv2/core/types.hpp>
+0020: #include <opencv2/highgui.hpp>
+0021: #include <opencv2/imgproc.hpp>
+0022: 
+0023: #include <DDA/DDA.h>
+0024: #include <gsl_server/core/Profiling.hpp>
+0025: 
+0026: namespace GSL::PMFS_internal
+0027: {
+0028:     namespace NQA = Utils::NQA;
+0029:     using HashSet = std::unordered_set<Vector2Int>;
+0030: 
+0031:     // We have a long list of pre-calculated random values for Speeeeeeeeeeeeeeeeed
+0032:     static thread_local Utils::PrecalculatedGaussian<2500> gaussian;
+0033:     static thread_local std::vector<float>* markedMultiplicityCounter = nullptr;
+0034:     void setMarkedMultiplicityCounter(std::vector<float>* counter) { markedMultiplicityCounter = counter; }
+0035: 
+0036:     static void weighted_incremental_variance(double value, double weight, double& mean, double& weight_sum, double& weight_squared_sum,
+0037:                                               double& variance)
+0038:     {
+0039:         // Updating Mean and Variance Estimates: An Improved Method D.H.D. West 1979
+0040:         weight_sum = weight_sum + weight;
+0041:         weight_squared_sum = weight_squared_sum + weight * weight;
+0042:         double mean_old = mean;
+0043:         mean = mean_old + (weight / weight_sum) * (value - mean_old);
+0044:         variance = variance + weight * (value - mean_old) * (value - mean);
+0045:     }
+0046: 
+0047:     // create the occupancy Quadtree
+0048:     void Simulations::initializeMap(const std::vector<std::vector<uint8_t>>& occupancyMap)
+0049:     {
+0050:         ZoneScoped;
+0051:         quadtree = std::make_unique<Utils::NQA::Quadtree>(occupancyMap);
+0052:         QTleaves = quadtree->fusedLeaves(settings.maxRegionSize);
+0053: 
+0054:         mapSegmentation.resize(occupancyMap.size(), std::vector<Utils::NQA::Node*>(occupancyMap[0].size(), nullptr));
+0055: 
+0056:         GSL_INFO("Number of cells after fusing quadtree: {0}", QTleaves.size());
+0057:         // generate the image of indices so you can map a cell in the map to the corresponding leaf of the quatree
+0058:         for (int i = 0; i < QTleaves.size(); i++)
+0059:         {
+0060:             Utils::NQA::Node& node = QTleaves[i];
+0061:             Vector2Int start = node.origin;
+0062:             Vector2Int end = node.origin + node.size;
+0063: 
+0064:             for (int r = start.x; r < end.x; r++)
+0065:             {
+0066:                 for (int c = start.y; c < end.y; c++)
+0067:                 {
+0068:                     GSL_ASSERT_MSG(mapSegmentation[r][c] == nullptr, "fused cells are overlapping");
+0069:                     mapSegmentation[r][c] = &node;
+0070:                 }
+0071:             }
+0072:         }
+0073:         sourceProbInternal.resize(sourceProb.data.size(), 0.0);
+0074: 
+0075:         // we want to have the occupancy mask as a cv image so we can correct the blur later
+0076:         freeSpaceMask = cv::Mat(
+0077:             cv::Size(measuredHitProb.metadata.dimensions.x, measuredHitProb.metadata.dimensions.y),
+0078:             CV_32F,
+0079:             cv::Scalar(0, 0, 0));
+0080: 
+0081:         for (int j = 0; j < measuredHitProb.metadata.dimensions.y; j++)
+0082:         {
+0083:             for (int i = 0; i < measuredHitProb.metadata.dimensions.x; i++)
+0084:             {
+0085:                 if (measuredHitProb.freeAt(i, j))
+0086:                     freeSpaceMask.at<float>(j, i) = 1;
+0087:             }
+0088:         }
+0089:     }
+0090: 
+0091:     void Simulations::updateSourceProbability(float refineFraction)
+0092:     {
+0093:         ZoneScoped;
+0094:         GSL_INFO_COLOR(fmt::terminal_color::yellow, "Started simulations. Might take a while!");
+0095:         Utils::Time::Stopwatch stopwatch;
+0096:         const char* auditPath = std::getenv("NATIVE_RECOVERY_WIND_UPDATE_CSV");
+0097:         if (!auditPath || !*auditPath)
+0098:             throw std::runtime_error("NATIVE_RECOVERY_SOURCE_UPDATE_AUDIT_PATH_MISSING");
+0099:         const bool writeHeader = !std::filesystem::exists(auditPath) || std::filesystem::file_size(auditPath) == 0;
+0100:         std::ofstream windAudit(auditPath, std::ios::app);
+0101:         if (!windAudit) throw std::runtime_error("NATIVE_RECOVERY_SOURCE_UPDATE_AUDIT_OPEN_FAILED");
+0102:         if (writeHeader) windAudit << "steady_ns,source_update_id,cell_index,x,y,internal_u,internal_v,magnitude\n";
+0103:         windAudit << std::setprecision(17);
+0104:         static unsigned long long sourceUpdateId = 0;
+0105:         ++sourceUpdateId;
+0106:         const auto steadyNs = std::chrono::duration_cast<std::chrono::nanoseconds>(
+0107:             std::chrono::steady_clock::now().time_since_epoch()).count();
+0108:         for (size_t i = 0; i < wind.data.size(); ++i)
+0109:         {
+0110:             if (wind.occupancy[i] != Occupancy::Free) continue;
+0111:             const auto coords = wind.metadata.indexToCoordinates(i);
+0112:             const auto vector = wind.data[i];
+0113:             const double magnitude = std::hypot(vector.x, vector.y);
+0114:             if (!std::isfinite(magnitude)) throw std::runtime_error("NATIVE_RECOVERY_INTERNAL_WIND_NONFINITE");
+0115:             windAudit << steadyNs << ',' << sourceUpdateId << ',' << i << ','
+0116:                       << coords.x << ',' << coords.y << ',' << vector.x << ',' << vector.y << ','
+0117:                       << magnitude << '\n';
+0118:         }
+0119:         windAudit.flush();
+0120:         if (!windAudit) throw std::runtime_error("NATIVE_RECOVERY_SOURCE_UPDATE_AUDIT_WRITE_FAILED");
+0121:         GSL_INFO("NATIVE_RECOVERY_SOURCE_UPDATE_WIND_EXPORTED={}", sourceUpdateId);
+0122:         const char* measuredPath = std::getenv("NATIVE_RECOVERY_MEASURED_MAP_CSV");
+0123:         const char* candidatesPath = std::getenv("NATIVE_RECOVERY_CANDIDATES_CSV");
+0124:         if (!measuredPath || !*measuredPath || !candidatesPath || !*candidatesPath)
+0125:             throw std::runtime_error("NATIVE_RECOVERY_SNAPSHOT_PATH_MISSING");
+0126:         const bool measuredHeader = !std::filesystem::exists(measuredPath) || std::filesystem::file_size(measuredPath) == 0;
+0127:         std::ofstream measuredAudit(measuredPath, std::ios::app);
+0128:         if (!measuredAudit) throw std::runtime_error("NATIVE_RECOVERY_MEASURED_MAP_OPEN_FAILED");
+0129:         if (measuredHeader) measuredAudit << "source_update_id,cell_index,grid_i,grid_j,x,y,occupancy,probability,log_odds,confidence,omega,distance_from_robot,propagation_x,propagation_y,grid_width,grid_height,cell_size,origin_x,origin_y\n";
+0130:         measuredAudit << std::setprecision(17);
+0131:         for (size_t i = 0; i < measuredHitProb.data.size(); ++i)
+0132:         {
+0133:             const auto coords = measuredHitProb.metadata.indexToCoordinates(i);
+0134:             const auto cell = measuredHitProb.metadata.indices2D(i);
+0135:             auto& hit = measuredHitProb.data[i];
+0136:             measuredAudit << sourceUpdateId << ',' << i << ',' << cell.x << ',' << cell.y << ','
+0137:                           << coords.x << ',' << coords.y << ','
+0138:                           << (measuredHitProb.occupancy[i] == Occupancy::Free ? "Free" : "Obstacle") << ','
+0139:                           << hit.probability() << ',' << hit.logOdds << ',' << hit.confidence << ','
+0140:                           << hit.omega << ',' << hit.distanceFromRobot << ','
+0141:                           << hit.originalPropagationDirection.x << ',' << hit.originalPropagationDirection.y << ','
+0142:                           << measuredHitProb.metadata.dimensions.x << ',' << measuredHitProb.metadata.dimensions.y << ','
+0143:                           << measuredHitProb.metadata.cellSize << ',' << measuredHitProb.metadata.origin.x << ','
+0144:                           << measuredHitProb.metadata.origin.y << '\n';
+0145:         }
+0146:         measuredAudit.flush();
+0147:         if (!measuredAudit) throw std::runtime_error("NATIVE_RECOVERY_MEASURED_MAP_WRITE_FAILED");
+0148:         const bool candidateHeader = !std::filesystem::exists(candidatesPath) || std::filesystem::file_size(candidatesPath) == 0;
+0149:         std::ofstream candidateAudit(candidatesPath, std::ios::app);
+0150:         if (!candidateAudit) throw std::runtime_error("NATIVE_RECOVERY_CANDIDATES_OPEN_FAILED");
+0151:         if (candidateHeader) candidateAudit << "source_update_id,candidate_id,origin_i,origin_j,size_i,size_j,center_x,center_y\n";
+0152:         candidateAudit << std::setprecision(17);
+0153:         for (const auto& leaf : QTleaves)
+0154:         {
+0155:             if (leaf.value != 1) continue;
+0156:             const double centerX = measuredHitProb.metadata.origin.x +
+0157:                 (leaf.origin.x + leaf.size.x * 0.5) * measuredHitProb.metadata.cellSize;
+0158:             const double centerY = measuredHitProb.metadata.origin.y +
+0159:                 (leaf.origin.y + leaf.size.y * 0.5) * measuredHitProb.metadata.cellSize;
+0160:             candidateAudit << sourceUpdateId << ",quadtree_" << leaf.origin.x << '_' << leaf.origin.y
+0161:                            << '_' << leaf.size.x << '_' << leaf.size.y << ','
+0162:                            << leaf.origin.x << ',' << leaf.origin.y << ',' << leaf.size.x << ','
+0163:                            << leaf.size.y << ',' << centerX << ',' << centerY << '\n';
+0164:         }
+0165:         candidateAudit.flush();
+0166:         if (!candidateAudit) throw std::runtime_error("NATIVE_RECOVERY_CANDIDATES_WRITE_FAILED");
+0167:         std::vector<NQA::Node> localCopyLeaves = QTleaves;
+0168: 
+0169:         // first, coarse simulation based on the quadtree decomposition of the map
+0170:         //------------------------------------------------------------------------
+0171:         //------------------------------------------------------------------------
+0172: 
+0173:         // store the score of each region to figure out which ones are worth subdividing for finer simulation
+0174:         std::vector<LeafScore> scores(localCopyLeaves.size());
+0175:         for (int leafIndex = 0; leafIndex < scores.size(); leafIndex++)
+0176:             scores[leafIndex].leaf = &localCopyLeaves[leafIndex];
+0177: 
+0178:         // this is used to calculate how much the state of this cell depends on where the source is. It is used for the movemente strategy
+0179:         struct VarianceCalculationData
+0180:         {
+0181:             double mean = 0;
+0182:             double weight_sum = 0;
+0183:             double weight_squared_sum = 0;
+0184:             double variance = 0;
+0185:         };
+0186:         std::vector<VarianceCalculationData> varianceCalculationData(measuredHitProb.data.size());
+0187: 
+0188:         int numberOfSimulations = 0;
+0189:         resultsFirstLevel.clear();
+0190:         resultsFirstLevel.reserve(scores.size());
+0191: // iterate over the leaves of the quadtree, doing one simulation for each and calculating how well it fits our measured gas map
+0192: #pragma omp parallel for schedule(dynamic)
+0193:         for (int leafIndex = 0; leafIndex < scores.size(); leafIndex++)
+0194:         {
+0195:             SimulationResult result = runSimulation(scores, leafIndex);
+0196:             if (!result.valid)
+0197:                 continue;
+0198: 
+0199: // update the information for the variance calulation
+0200: #pragma omp critical
+0201:             {
+0202:                 resultsFirstLevel.push_back(result);
+0203:                 numberOfSimulations++;
+0204:                 for (int cell = 0; cell < result.hitMap.size(); cell++)
+0205:                 {
+0206:                     auto& var = varianceCalculationData[cell];
+0207:                     weighted_incremental_variance(result.hitMap[cell],
+0208:                                                   result.sourceProb,
+0209:                                                   var.mean,
+0210:                                                   var.weight_sum,
+0211:                                                   var.weight_squared_sum,
+0212:                                                   var.variance);
+0213:                 }
+0214:             }
+0215:         }
+0216: 
+0217: // update the variance thing (for the movement strategy)
+0218: #pragma omp parallel for
+0219:         for (int cellI = 0; cellI < measuredHitProb.data.size(); cellI++)
+0220:         {
+0221:             if (measuredHitProb.occupancy[cellI] == Occupancy::Free)
+0222:                 varianceOfHitProb[cellI] = varianceCalculationData[cellI].variance / varianceCalculationData[cellI].weight_sum;
+0223:         }
+0224: 
+0225:         GSL_TRACE("First simulation level done");
+0226:         // now, finer simulation where it is deemed relevant
+0227:         //------------------------------------------------------
+0228:         //------------------------------------------------------
+0229: 
+0230:         int numberOfLevelsSimulated = 1;
+0231:         // Choose the most interesting quadtree leaves (the ones with the best result in the previous iteration) and subdivide them to do more
+0232:         // simulations. Keep going until none of the leaves can be subdivided any more
+0233:         while (scores.size() > 0)
+0234:         {
+0235:             std::sort(scores.begin(), scores.end(), [](LeafScore result1, LeafScore result2)
+0236:                       {
+0237:                           return result1.score > result2.score;
+0238:                       });
+0239: 
+0240:             // subdivide the good cells and add the children to the list of cells to simulate
+0241:             std::vector<LeafScore> newLevel;
+0242:             for (int leafIndex = 0; leafIndex < scores.size() * refineFraction; leafIndex++)
+0243:             {
+0244:                 NQA::Node* leaf = scores[leafIndex].leaf;
+0245:                 bool hasChildren = leaf->subdivide();
+0246:                 if (hasChildren)
+0247:                 {
+0248:                     for (int childI = 0; childI < 4; childI++)
+0249:                         if (leaf->children[childI])
+0250:                             newLevel.push_back({0, (leaf->children[childI]).get()});
+0251:                 }
+0252:             }
+0253:             scores = newLevel;
+0254: 
+0255:             numberOfLevelsSimulated++;
+0256:             numberOfSimulations += scores.size();
+0257: 
+0258: // run the simulations of the new level and get scores for each node
+0259: #pragma omp parallel for schedule(dynamic)
+0260:             for (int leafIndex = 0; leafIndex < scores.size(); leafIndex++)
+0261:                 SimulationResult result = runSimulation(scores, leafIndex);
+0262: 
+0263:             GSL_TRACE("Simulation level {} done", numberOfLevelsSimulated);
+0264:         }
+0265: 
+0266:         GSL_INFO("Number of levels in the simulation: {0}", numberOfLevelsSimulated);
+0267:         GSL_INFO("Total number of simulations: {0}", numberOfSimulations);
+0268: 
+0269:         Utils::NormalizeDistributionLong(
+0270:             sourceProbInternal,
+0271:             sourceProb.occupancy);
+0272: 
+0273:         for (size_t i = 0; i < sourceProb.data.size(); i++)
+0274:             sourceProb.data[i] = (double)sourceProbInternal[i];
+0275: 
+0276:         GSL_INFO("Time ellapsed in simulation = {} s", stopwatch.ellapsed());
+0277:         const char* completePath = std::getenv("NATIVE_RECOVERY_UPDATE_COMPLETE_FILE");
+0278:         if (!completePath || !*completePath)
+0279:             throw std::runtime_error("NATIVE_RECOVERY_UPDATE_COMPLETE_PATH_MISSING");
+0280:         std::ofstream complete(completePath, std::ios::app);
+0281:         if (!complete) throw std::runtime_error("NATIVE_RECOVERY_UPDATE_COMPLETE_OPEN_FAILED");
+0282:         complete << sourceUpdateId << '\n';
+0283:         complete.flush();
+0284:         if (!complete) throw std::runtime_error("NATIVE_RECOVERY_UPDATE_COMPLETE_WRITE_FAILED");
+0285:         GSL_INFO("NATIVE_RECOVERY_SOURCE_UPDATE_COMPLETE={}", sourceUpdateId);
+0286:     }
+0287: 
+0288:     Simulations::SimulationResult Simulations::runSimulation(std::vector<LeafScore>& scores, size_t index)
+0289:     {
+0290:         SimulationResult result{.valid = false};
+0291:         NQA::Node* node = scores[index].leaf;
+0292:         if (node->value != 1)
+0293:             return result;
+0294: 
+0295:         result.valid = true;
+0296:         result.hitMap.resize(measuredHitProb.data.size(), 0.0);
+0297: 
+0298:         SimulationSource source(node, measuredHitProb.metadata);
+0299:         simulateSourceInPosition(source, result.hitMap, true, settings.iterationsToRecord, settings.deltaTime,
+0300:                                  settings.noiseSTDev);
+0301: 
+0302:         if (settings.blurSigmaX > 0 || settings.blurSigmaY > 0)
+0303:         {
+0304:             cv::Mat asImage(result.hitMap);
+0305:             asImage = asImage.reshape(1, measuredHitProb.metadata.dimensions.y);
+0306:             blurHitMap(asImage);
+0307:         }
+0308: 
+0309:         result.sourceProb = sourceProbFromMaps(measuredHitProb, result.hitMap);
+0310: 
+0311:         scores[index].score = result.sourceProb;
+0312: 
+0313:         // assign this probability to all cells that fall inside this region
+0314:         for (int cellI = node->origin.x; cellI < (node->origin.x + node->size.x); cellI++)
+0315:             for (int cellJ = node->origin.y; cellJ < (node->origin.y + node->size.y); cellJ++)
+0316:                 sourceProbInternal[sourceProb.metadata.indexOf({cellI, cellJ})] = result.sourceProb;
+0317:         return result;
+0318:     }
+0319: 
+0320:     long double Simulations::sourceProbFromMaps(const Grid2D<HitProbability>& measuredHitProb, const std::vector<float>& hitMap) const
+0321:     {
+0322:         ZoneScoped;
+0323:         long double total = 1;
+0324:         for (int i = 0; i < measuredHitProb.data.size(); i++)
+0325:         {
+0326:             if (measuredHitProb.occupancy[i] != Occupancy::Free)
+0327:                 continue;
+0328: 
+0329:             const double& simulated = hitMap[i];
+0330:             double sourceGivenThisCell = probabilityFromSingleCell(measuredHitProb.data[i], simulated);
+0331:             total *= sourceGivenThisCell;
+0332:             GSL_ASSERT(!std::isnan(total));
+0333:         }
+0334:         return total;
+0335:     }
+0336: 
+0337:     double Simulations::probabilityFromSingleCell(HitProbability hitProb, double simulated) const
+0338:     {
+0339: #define FREQUENCY_DISTRIBUTION_METHOD 0
+0340: #if FREQUENCY_DISTRIBUTION_METHOD
+0341:         auto frequencyDistribution = hitProb.frequencyDistribution();
+0342:         double result = 0;
+0343:         for (int freqIndex = 0; freqIndex < frequencyDistribution.size(); freqIndex++)
+0344:         {
+0345:             float measured = HitProbability::frequencyOfBucket(freqIndex);
+0346:             result += frequencyDistribution[freqIndex] * probabilitySingleFrequency(measured, simulated);
+0347:             GSL_ASSERT(!std::isnan(result));
+0348:         }
+0349:         return result;
+0350: #else
+0351:         return Utils::lerp(1, probabilitySingleFrequency(hitProb.probability(), simulated), hitProb.confidence);
+0352: #endif
+0353:     }
+0354: 
+0355:     double Simulations::probabilitySingleFrequency(double measured, double simulated) const
+0356:     {
+0357:         return 1 - std::abs(measured - simulated) * settings.sourceDiscriminationPower;
+0358:     }
+0359: 
+0360:     void Simulations::moveFilament(Filament& filament, Vector2Int& indices, float deltaTime, float noiseSTDev) const
+0361:     {
+0362:         Vector2 velocity = wind.dataAt(indices.x, indices.y) + Vector2(gaussian.nextValue(0, noiseSTDev), gaussian.nextValue(0, noiseSTDev));
+0363: 
+0364:         Vector2 newPos = filament.position + deltaTime * velocity;
+0365:         moveAlongPath(filament.position, newPos);
+0366:     }
+0367: 
+0368:     bool Simulations::filamentIsOutside(const Filament& filament) const
+0369:     {
+0370:         Vector2Int newIndices = measuredHitProb.metadata.coordinatesToIndices(filament.position.x, filament.position.y);
+0371:         return !measuredHitProb.metadata.indicesInBounds(newIndices);
+0372:     }
+0373: 
+0374:     void Simulations::simulateSourceInPosition(const SimulationSource& source, std::vector<float>& hitMap, bool warmup,
+0375:                                                int timesteps, float deltaTime, float noiseSTDev) const
+0376:     {
+0377:         constexpr int numFilamentsIteration = 5;
+0378:         size_t max_filaments = settings.maxWarmupIterations * numFilamentsIteration + timesteps * numFilamentsIteration;
+0379: 
+0380:         // To avoid having to delete filaments from the middle of the vector, which is quite slow, we will ping-pong the active filaments between two vectors
+0381:         // at the start of any iteration, one vector (active) will contain all the released filaments and the other one will be empty
+0382:         // after each filament has been moved, if it is still active, it will be copied to the other vector
+0383:         // then, the active vector changes and the old one is cleared
+0384:         std::vector<Filament> filaments1;
+0385:         std::vector<Filament> filaments2;
+0386:         filaments1.reserve(max_filaments);
+0387:         filaments2.reserve(max_filaments);
+0388:         std::vector<Filament>* activeFilamentVec = &filaments1;
+0389:         std::vector<Filament>* otherFilamentVec = &filaments2;
+0390: 
+0391:         std::vector<uint16_t> updated(hitMap.size(), 0); // index of the last iteration in which this cell was updated, to avoid double-counting
+0392: 
+0393:         // warm-up: we don't want to start recording frequency of hits until the shape of the plume has stabilized. Wait until a filament exits the
+0394:         // environment through an outlet, or a maximum number of steps
+0395:         {
+0396:             ZoneScopedN("Warmup");
+0397: 
+0398:             bool stable = false;
+0399:             int iterationCount = 0;
+0400:             while (iterationCount < settings.minWarmupIterations || (!stable && iterationCount < settings.maxWarmupIterations))
+0401:             {
+0402:                 for (size_t i = 0; i < numFilamentsIteration; i++)
+0403:                 {
+0404:                     activeFilamentVec->emplace_back();
+0405:                     activeFilamentVec->back().position = source.getPoint();
+0406:                 }
+0407: 
+0408:                 for (Filament& filament : *activeFilamentVec)
+0409:                 {
+0410:                     auto indices = measuredHitProb.metadata.coordinatesToIndices(filament.position.x, filament.position.y);
+0411: 
+0412:                     // move active filaments
+0413:                     moveFilament(filament, indices, deltaTime * 2, noiseSTDev);
+0414: 
+0415:                     // remove filaments
+0416:                     if (filamentIsOutside(filament))
+0417:                         stable = true;
+0418:                     else
+0419:                         otherFilamentVec->push_back(filament);
+0420:                 }
+0421:                 iterationCount++;
+0422: 
+0423:                 // "other" now contains the list of all the filaments that are still available, so swap the vectors and remove the old list
+0424:                 activeFilamentVec->clear();
+0425:                 std::swap(activeFilamentVec, otherFilamentVec);
+0426:             }
+0427:         }
+0428: 
+0429:         ZoneScopedN("Recording");
+0430:         // now, we do the thing
+0431:         for (int t = 1; t < timesteps + 1; t++)
+0432:         {
+0433:             for (int i = 0; i < numFilamentsIteration; i++)
+0434:             {
+0435:                 activeFilamentVec->emplace_back();
+0436:                 activeFilamentVec->back().position = source.getPoint();
+0437:             }
+0438: 
+0439:             for (Filament& filament : *activeFilamentVec)
+0440:             {
+0441:                 // update map
+0442:                 auto indices = measuredHitProb.metadata.coordinatesToIndices(filament.position.x, filament.position.y);
+0443:                 size_t index = measuredHitProb.metadata.indexOf(indices);
+0444:                 GSL_ASSERT(measuredHitProb.metadata.indicesInBounds(indices));
+0445:                 if (markedMultiplicityCounter) (*markedMultiplicityCounter)[index] += 1.0f;
+0446:                 // mark as updated so it doesn't count multiple filaments in the same timestep
+0447:                 if (updated[index] < t)
+0448:                 {
+0449:                     hitMap[index]++;
+0450:                     updated[index] = t;
+0451:                 }
+0452: 
+0453:                 // move active filaments
+0454:                 moveFilament(filament, indices, deltaTime, noiseSTDev);
+0455: 
+0456:                 // remove filaments
+0457:                 if (!filamentIsOutside(filament))
+0458:                     otherFilamentVec->push_back(filament);
+0459:             }
+0460:             activeFilamentVec->clear();
+0461:             std::swap(activeFilamentVec, otherFilamentVec);
+0462:         }
+0463: 
+0464:         // convert the total hit count into relative frequency
+0465:         for (int i = 0; i < measuredHitProb.data.size(); i++)
+0466:         {
+0467:             if (measuredHitProb.occupancy[i] == Occupancy::Free)
+0468:             {
+0469:                 hitMap[i] = hitMap[i] / timesteps;
+0470:                 if (markedMultiplicityCounter) (*markedMultiplicityCounter)[i] /= timesteps;
+0471:             }
+0472:         }
+0473:     }
+0474: 
+0475:     Vector2 SimulationSource::getPoint() const
+0476:     {
+0477:         if (mode == Mode::Point)
+0478:             return point;
+0479: 
+0480:         Vector2 start = metadata.indicesToCoordinates(nqaNode->origin.x, nqaNode->origin.y, false);
+0481:         Vector2 end = metadata.indicesToCoordinates(nqaNode->origin.x + nqaNode->size.x, nqaNode->origin.y + nqaNode->size.y, false);
+0482: 
+0483:         Vector2 randP(Utils::uniformRandomF(start.x, end.x), Utils::uniformRandomF(start.y, end.y));
+0484:         GSL_ASSERT(randP.x >= start.x && randP.x < end.x && randP.y >= start.y && randP.y < end.y);
+0485:         return randP;
+0486:     }
+0487: 
+0488:     bool Simulations::moveAlongPath(Vector2& currentPosition, const Vector2& end) const
+0489:     {
+0490:         Vector2Int indexEnd = measuredHitProb.metadata.coordinatesToIndices(end.x, end.y);
+0491:         Vector2Int indexOrigin = measuredHitProb.metadata.coordinatesToIndices(currentPosition.x, currentPosition.y);
+0492: 
+0493:         if (!measuredHitProb.freeAt(indexOrigin.x, indexOrigin.y))
+0494:         {
+0495:             return false;
+0496:         }
+0497: 
+0498:         // try to avoid doing the raycast by looking at the pre-computed visibilityMap
+0499:         if (indexOrigin == indexEnd || (measuredHitProb.metadata.indicesInBounds(indexEnd) && measuredHitProb.freeAt(indexEnd.x, indexEnd.y) &&
+0500:                                         visibilityMap->isVisible(indexOrigin, indexEnd) == Visibility::Visible))
+0501:         {
+0502:             currentPosition = end;
+0503:             return true;
+0504:         }
+0505: 
+0506: #define USE_DDA 0
+0507: #if USE_DDA
+0508:         Vector2 movement = end - currentPosition;
+0509:         DDA::_2D::RayCastInfo raycastInfo =
+0510:             DDA::_2D::castRay<GSL::Occupancy>(currentPosition, movement, vmath::length(movement),
+0511:                                               DDA::_2D::Map<GSL::Occupancy>(measuredHitProb.occupancy, measuredHitProb.metadata.origin,
+0512:                                                                             measuredHitProb.metadata.cellSize, measuredHitProb.metadata.dimensions),
+0513:                                               [](const GSL::Occupancy& occ)
+0514:                                               {
+0515:                                                   return occ == GSL::Occupancy::Free;
+0516:                                               });
+0517:         // This is a completely hacky arbitrary value to try and stop filaments from getting stuck right next to a wall
+0518:         // ideally, we should implement a "deflection" instead so they move along the wall a bit rather than stopping dead
+0519:         constexpr float wallStoppingProportion = 0.7;
+0520:         currentPosition += movement * raycastInfo.distance * wallStoppingProportion;
+0521: 
+0522:         return true;
+0523: #else
+0524:         const auto& metadata = measuredHitProb.metadata;
+0525:         bool pathIsFree = true;
+0526: 
+0527:         Vector2 vector = end - currentPosition;
+0528:         float travelDistance = vmath::length(vector);
+0529:         float stepSize = std::min(travelDistance, metadata.cellSize * 0.5f);
+0530:         Vector2 increment = vmath::normalized(vector) * stepSize;
+0531:         int steps = travelDistance / stepSize;
+0532: 
+0533:         int index = 0;
+0534:         while (index < steps && pathIsFree)
+0535:         {
+0536:             currentPosition += increment;
+0537:             index++;
+0538:             Vector2Int pair = metadata.coordinatesToIndices(currentPosition.x, currentPosition.y);
+0539:             pathIsFree = !metadata.indicesInBounds(pair) || measuredHitProb.freeAt(pair.x, pair.y);
+0540:             if (!pathIsFree)
+0541:                 currentPosition -= increment;
+0542:         }
+0543:         return pathIsFree;
+0544: #endif
+0545:     }
+0546: 
+0547:     void Simulations::makeSimulationImage(const SimulationSource& source)
+0548:     {
+0549:         std::vector<float> hitMap(measuredHitProb.data.size(), 0.0);
+0550:         simulateSourceInPosition(source, hitMap, true, settings.iterationsToRecord, settings.deltaTime,
+0551:                                  settings.noiseSTDev);
+0552:         displayImage(hitMap);
+0553:     }
+0554: 
+0555:     static void show(const cv::Mat& mat, std::string name)
+0556:     {
+0557:         cv::Mat resized;
+0558:         cv::resize(mat, resized, cv::Size(mat.size[1] * 10, mat.size[0] * 10), 0, 0, cv::INTER_NEAREST);
+0559:         cv::imshow(name, resized);
+0560:         cv::waitKey();
+0561:         cv::destroyAllWindows();
+0562:     }
+0563: 
+0564:     void Simulations::displayImage(const std::vector<float>& hitMap, const std::string& imageName) const
+0565:     {
+0566:         cv::Mat asImage(hitMap);
+0567:         asImage = asImage.reshape(1, measuredHitProb.metadata.dimensions.y);
+0568:         if (settings.blurSigmaX > 0 || settings.blurSigmaY > 0)
+0569:         {
+0570:             blurHitMap(asImage);
+0571:         }
+0572: 
+0573:         cv::Mat inColor;
+0574:         cv::cvtColor(asImage, inColor, cv::COLOR_GRAY2BGR);
+0575: 
+0576:         for (int j = 0; j < measuredHitProb.metadata.dimensions.y; j++)
+0577:         {
+0578:             for (int i = 0; i < measuredHitProb.metadata.dimensions.x; i++)
+0579:             {
+0580:                 if (!measuredHitProb.freeAt(i, j))
+0581:                     inColor.at<cv::Vec3f>(j, i) = cv::Vec3f(0, 0, 1);
+0582:             }
+0583:         }
+0584: 
+0585: #if 0
+0586:         cv::flip(inColor, inColor, 0);
+0587:         inColor *= 255;
+0588:         cv::imwrite(fmt::format("{}.png", imageName), inColor);
+0589:         GSL_WARN("hitMap image saved");
+0590: #else
+0591:         cv::flip(inColor, inColor, 0);
+0592:         show(inColor, imageName);
+0593: #endif
+0594:     }
+0595: 
+0596:     void Simulations::blurHitMap(cv::Mat& asImage) const
+0597:     {
+0598:         cv::GaussianBlur(asImage, asImage, cv::Size(0, 0), settings.blurSigmaX, settings.blurSigmaY);
+0599:         // divide by the blurred mask to correct the edges always getting lower
+0600:         // TODO measure performance of doing this repeatedly. Is it worth it to pre-compute and only redo it if the blur sigma has changed?
+0601:         cv::Mat blurredMask;
+0602:         cv::GaussianBlur(freeSpaceMask, blurredMask, cv::Size(0, 0), settings.blurSigmaX, settings.blurSigmaY);
+0603: 
+0604:         for (int i = 0; i < measuredHitProb.metadata.dimensions.y; i++)
+0605:             for (int j = 0; j < measuredHitProb.metadata.dimensions.x; j++)
+0606:                 if (blurredMask.at<float>(i, j) != 0)
+0607:                     asImage.at<float>(i, j) = Utils::clamp(asImage.at<float>(i, j) / blurredMask.at<float>(i, j), 0, 1);
+0608:     }
+0609: 
+0610: } // namespace GSL::PMFS_internal

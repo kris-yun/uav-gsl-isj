@@ -1,0 +1,61 @@
+TASK: implement and reproduce the already-observed OPEN amplitude readout.
+Do NOT run a new scientific experiment.
+
+Branch:
+`research/amplitude-operator-decoupling-v0-20260927`
+
+Supersedes:
+the unexecuted `marked-encounter-pmfs-d1-footprint` replay plan.
+
+Inputs:
+1. `ME_AMPLITUDE_READOUT_PROGRESS_20260927.zip`
+   expected SHA256:
+   79c26ccb52de73cf198c679a6c27fa93a9485cfd24e5913dcf287ea2315e491c
+2. frozen D0 review:
+   `MARKED_ENCOUNTER_PMFS_D0_REVIEW_20260927.zip`
+   expected SHA256:
+   7a3e436900ab2696c2d7148215cd58b6632a017e447583f77c9c864b56f9c56c
+
+No new PMFS forward.
+No GADEN.
+No ROS closed loop.
+No new source/probe.
+No target resampling.
+No parameter search.
+No theory search.
+No network.
+
+Steps:
+1. verify both input hashes;
+2. run the supplied Pro unit tests and full reproduction;
+3. reproduce all four `u/rawu × nearest/footprint` arms;
+4. create a clean amplitude-readout module in the repository;
+5. preserve native occurrence path byte-for-byte;
+6. expose raw amplitude templates from saved/raw PMFS forward products;
+7. implement frozen rectangular probe projection as an explicit observation
+   operator, with outside-support checks;
+8. keep archived B2 scoring exactly unchanged;
+9. save all candidate templates/scores/gains/ranks/unique-Top1;
+10. benchmark template preparation and per-target score cost;
+11. add regression tests that guarantee:
+    - changing amplitude arm cannot change native hit probabilities;
+    - u/rawu selection is explicit;
+    - no hidden Gaussian blur is applied to rawu amplitude;
+    - projection weights are deterministic;
+12. reproduce the expected OPEN summary from `02_IMPLEMENTATION_FREEZE.md`.
+13. commit implementation + evidence and STOP.
+
+Return:
+- branch
+- base commit
+- implementation commit
+- final commit
+- four-arm reproduction table
+- max numeric deviation from Pro package
+- regression tests PASS/FAIL
+- offline/online compute cost
+- files/hash manifest
+- review ZIP path/bytes/SHA256
+
+Do NOT assign a new scientific PASS/FAIL label.
+Do NOT read House03 or any sealed/fresh target.

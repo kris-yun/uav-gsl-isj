@@ -1,0 +1,103 @@
+SOURCE: kernel/Simulations.hpp
+
+0001: #pragma once
+0002: #include <gsl_server/algorithms/Common/Utils/NQAQuadtree.hpp>
+0003: #include <gsl_server/algorithms/PMFS/internal/HitProbability.hpp>
+0004: #include <gsl_server/algorithms/PMFS/internal/Settings.hpp>
+0005: #include <gsl_server/algorithms/PMFS/internal/VisibilityMap.hpp>
+0006: #include <opencv2/core.hpp>
+0007: 
+0008: namespace GSL
+0009: {
+0010:     class PMFS;
+0011: }
+0012: 
+0013: namespace GSL::PMFS_internal
+0014: {
+0015: 
+0016:     struct Filament
+0017:     {
+0018:         Vector2 position;
+0019:     };
+0020: 
+0021:     struct SimulationSource
+0022:     {
+0023:         enum Mode
+0024:         {
+0025:             Quadtree,
+0026:             Point
+0027:         };
+0028: 
+0029:         const Mode mode;
+0030:         const Utils::NQA::Node* nqaNode;
+0031:         const Vector2 point;
+0032:         const Grid2DMetadata& metadata;
+0033: 
+0034:         SimulationSource(const Vector2& _point, const Grid2DMetadata& _metadata)
+0035:             : mode(Mode::Point), nqaNode(nullptr), point(_point), metadata(_metadata)
+0036:         {}
+0037:         SimulationSource(const Utils::NQA::Node* _node, const Grid2DMetadata& _metadata)
+0038:             : mode(Mode::Quadtree), nqaNode(_node), point(0, 0), metadata(_metadata)
+0039:         {}
+0040: 
+0041:         Vector2 getPoint() const;
+0042:     };
+0043: 
+0044:     class Simulations
+0045:     {
+0046:         using HashSet = std::unordered_set<Vector2Int>;
+0047: 
+0048:     public:
+0049:         struct SimulationResult
+0050:         {
+0051:             bool valid = false;
+0052:             std::vector<float> hitMap;
+0053:             long double sourceProb;
+0054:         };
+0055: 
+0056:     public:
+0057:         Simulations(Grid2D<HitProbability> _measuredHitProb, Grid2D<double> _sourceProb, Grid2D<Vector2> _wind,
+0058:                     const PMFS_internal::SimulationSettings& _settings)
+0059:             : settings(_settings), measuredHitProb(_measuredHitProb), sourceProb(_sourceProb), wind(_wind)
+0060:         {}
+0061: 
+0062:         void initializeMap(const std::vector<std::vector<uint8_t>>& occupancyMap);
+0063:         void updateSourceProbability(float refineFraction);
+0064:         void makeSimulationImage(const SimulationSource& source);
+0065:         double probabilitySingleFrequency(double measured, double simulated) const;
+0066:         double probabilityFromSingleCell(HitProbability measured, double simulated) const;
+0067:         long double sourceProbFromMaps(const Grid2D<HitProbability>& hitRandomVariable, const std::vector<float>& hitMap) const;
+0068: 
+0069:         std::vector<std::vector<Utils::NQA::Node*>> mapSegmentation;
+0070:         std::unique_ptr<Utils::NQA::Quadtree> quadtree;
+0071:         std::vector<Utils::NQA::Node> QTleaves;
+0072:         std::vector<double> varianceOfHitProb; // calculated from the simulations, used for movement
+0073:         std::vector<SimulationResult> resultsFirstLevel;
+0074:         VisibilityMap* visibilityMap;
+0075: 
+0076:     protected:
+0077: 
+0078:         struct LeafScore
+0079:         {
+0080:             long double score;
+0081:             Utils::NQA::Node* leaf;
+0082:         };
+0083: 
+0084:         std::vector<long double> sourceProbInternal; // calculated from the simulations, used for movement
+0085:         const PMFS_internal::SimulationSettings& settings;
+0086:         Grid2D<HitProbability> measuredHitProb;
+0087:         Grid2D<double> sourceProb;
+0088:         Grid2D<Vector2> wind;
+0089:         cv::Mat freeSpaceMask;
+0090: 
+0091:         SimulationResult runSimulation(std::vector<LeafScore>& nodes, size_t index);
+0092:         void moveFilament(Filament& filament, Vector2Int& indices, float deltaTime, float noiseSTDev) const;
+0093:         void simulateSourceInPosition(const SimulationSource& source, std::vector<float>& hitMap, bool warmup,
+0094:                                       int timesteps, float deltaTime, float noiseSTDev) const;
+0095:         bool filamentIsOutside(const Filament& filament) const;
+0096:         bool moveAlongPath(Vector2& beginning, const Vector2& end) const;
+0097: 
+0098:         void blurHitMap(cv::Mat& asImage) const;
+0099:         void displayImage(const std::vector<float>& hitMap, const std::string& imageName = "simResult") const;
+0100:     };
+0101: } // namespace GSL::PMFS_internal

@@ -1,0 +1,142 @@
+SOURCE: protocol/evaluate_marked_forward.py
+
+0001: #!/usr/bin/env python3
+0002: from __future__ import annotations
+0003: import argparse, math, json
+0004: from pathlib import Path
+0005: import numpy as np, pandas as pd
+0006: 
+0007: EPS=1e-9
+0008: 
+0009: def edf(x):
+0010:     x=np.asarray(x,float).reshape(-1)
+0011:     s=np.sort(x)
+0012:     return np.searchsorted(s,x,side="right")/len(x)
+0013: 
+0014: def rank_of(scores,true_idx,higher=True):
+0015:     s=np.asarray(scores,float)
+0016:     v=s[true_idx]
+0017:     return float(1+np.sum(s>v)) if higher else float(1+np.sum(s<v))
+0018: 
+0019: def profiled_mark_ll(obs, pred):
+0020:     obs=np.asarray(obs,float)
+0021:     pred=np.asarray(pred,float)
+0022:     m=obs>0
+0023:     n=int(m.sum())
+0024:     if n<4:
+0025:         return 0.0
+0026:     y=np.log(obs[m])
+0027:     x=np.log(np.clip(pred[m],EPS,None))
+0028:     xc=x-x.mean(); yc=y-y.mean()
+0029:     den=float(xc@xc)
+0030:     b=max(0.0,float(xc@yc/den)) if den>1e-12 else 0.0
+0031:     a=float(y.mean()-b*x.mean())
+0032:     r=y-(a+b*x)
+0033:     rss=max(float(r@r),1e-12)
+0034:     return -0.5*n*math.log(rss/n)
+0035: 
+0036: def source_partner(panel,house,sid):
+0037:     p=panel[(panel.house==house)&(panel.source_id==sid)].iloc[0]
+0038:     q=panel[(panel.house==house)&(panel.pair_id==p.pair_id)&(panel.source_id!=sid)]
+0039:     return str(q.iloc[0].source_id)
+0040: 
+0041: def main():
+0042:     ap=argparse.ArgumentParser()
+0043:     ap.add_argument("--bank",type=Path,required=True,
+0044:       help="CSV: environment_index,house,wind,source_index,source_id,probe_rank,presence_prob,multiplicity_mean_unconditional,multiplicity_mean_conditional")
+0045:     ap.add_argument("--targets",type=Path,required=True)
+0046:     ap.add_argument("--target-manifest",type=Path,required=True)
+0047:     ap.add_argument("--panel",type=Path,required=True)
+0048:     ap.add_argument("--out",type=Path,required=True)
+0049:     a=ap.parse_args(); a.out.mkdir(parents=True,exist_ok=True)
+0050: 
+0051:     bank=pd.read_csv(a.bank)
+0052:     targ=np.load(a.targets,allow_pickle=False)
+0053:     man=pd.read_csv(a.target_manifest,sep="\t")
+0054:     panel=pd.read_csv(a.panel,sep="\t")
+0055: 
+0056:     req={"environment_index","house","wind","source_index","source_id","probe_rank",
+0057:          "presence_prob","multiplicity_mean_unconditional","multiplicity_mean_conditional"}
+0058:     if not req.issubset(bank.columns): raise SystemExit(f"bank columns missing {req-set(bank.columns)}")
+0059:     if targ.shape!=(3,6,4,10,30): raise SystemExit(f"target shape {targ.shape}")
+0060: 
+0061:     rows=[]
+0062:     envsum=[]
+0063:     for e in range(3):
+0064:         b=bank[bank.environment_index==e].copy()
+0065:         sources=(b[["source_index","source_id","house","wind"]].drop_duplicates()
+0066:                  .sort_values("source_index"))
+0067:         if len(sources)!=6: raise SystemExit(f"env {e}: source count {len(sources)}")
+0068:         house=str(sources.iloc[0].house)
+0069:         pmat=np.zeros((6,30)); umat=np.zeros((6,30)); cmat=np.zeros((6,30))
+0070:         for si in range(6):
+0071:             g=b[b.source_index==si].sort_values("probe_rank")
+0072:             if len(g)!=30: raise SystemExit(f"env {e} source {si}: probe count {len(g)}")
+0073:             pmat[si]=np.clip(g.presence_prob.to_numpy(float),1e-6,1-1e-6)
+0074:             umat[si]=np.clip(g.multiplicity_mean_unconditional.to_numpy(float),EPS,None)
+0075:             cmat[si]=np.clip(g.multiplicity_mean_conditional.to_numpy(float),EPS,None)
+0076: 
+0077:         env_delta=[]; ranks0=[]; ranksM=[]; ranksR=[]; rescue=harm=0
+0078:         for si in range(6):
+0079:           sid=str(sources[sources.source_index==si].iloc[0].source_id)
+0080:           partner=source_partner(panel,house,sid)
+0081:           pi=int(sources.index[sources.source_id==partner][0]) if partner in set(sources.source_id) else None
+0082:           # safer mapping
+0083:           pi=int(sources[sources.source_id==partner].iloc[0].source_index)
+0084:           for j in range(4):
+0085:             y=targ[e,si,j]
+0086:             h=(y>0).astype(int)
+0087:             occ=np.array([(h*np.log(pmat[k][None,:])+
+0088:                            (1-h)*np.log1p(-pmat[k][None,:])).sum() for k in range(6)])
+0089:             # candidate mark repeated across ten observed times
+0090:             mark=np.array([profiled_mark_ll(y, np.tile(cmat[k],(10,1))) for k in range(6)])
+0091:             comb=occ+mark
+0092: 
+0093:             # ICRA rank analogue, expected concentration proxy = unconditional multiplicity
+0094:             my=edf(y)
+0095:             rankdist=[]
+0096:             for k in range(6):
+0097:                 pred=np.tile(umat[k],(10,1))
+0098:                 rankdist.append(float(((edf(pred)-my)**2).sum()))
+0099:             rankdist=np.asarray(rankdist)
+0100: 
+0101:             r0=rank_of(occ,si,True)
+0102:             rm=rank_of(comb,si,True)
+0103:             rr=rank_of(rankdist,si,False)
+0104:             ranks0.append(r0); ranksM.append(rm); ranksR.append(rr)
+0105:             env_delta.append((mark[si]-mark[pi]))
+0106:             if r0>1 and rm==1: rescue+=1
+0107:             if r0==1 and rm>1: harm+=1
+0108:             rows.append(dict(environment_index=e,house=house,source_id=sid,target_index=j,
+0109:                              paired_neighbor=partner,rank_B0=r0,rank_M=rm,rank_ICRA_rank=rr,
+0110:                              delta_pair_mark=float(mark[si]-mark[pi]),
+0111:                              mark_true=float(mark[si]),mark_partner=float(mark[pi])))
+0112: 
+0113:         envsum.append(dict(
+0114:           environment_index=e,house=house,
+0115:           B0_mean_rank=float(np.mean(ranks0)),B0_top1=float(np.mean(np.asarray(ranks0)==1)),
+0116:           M_mean_rank=float(np.mean(ranksM)),M_top1=float(np.mean(np.asarray(ranksM)==1)),
+0117:           ICRA_rank_mean_rank=float(np.mean(ranksR)),ICRA_rank_top1=float(np.mean(np.asarray(ranksR)==1)),
+0118:           mean_delta_pair_mark=float(np.mean(env_delta)),
+0119:           rescued_top1=int(rescue),harmed_top1=int(harm)
+0120:         ))
+0121: 
+0122:     detail=pd.DataFrame(rows); summ=pd.DataFrame(envsum)
+0123:     detail.to_csv(a.out/"TARGET_DETAIL.csv",index=False,float_format="%.17g")
+0124:     summ.to_csv(a.out/"ENVIRONMENT_SUMMARY.csv",index=False,float_format="%.17g")
+0125: 
+0126:     g=[
+0127:       bool((summ.mean_delta_pair_mark>0).all()),
+0128:       bool((summ.M_mean_rank<=summ.B0_mean_rank).all()),
+0129:       int((summ.M_mean_rank<summ.B0_mean_rank).sum())>=2,
+0130:       bool((summ.M_top1>=summ.B0_top1).all()),
+0131:       bool((summ.M_mean_rank<=summ.ICRA_rank_mean_rank).all()),
+0132:       bool(not ((detail.rank_B0==1)&(detail.rank_M>3)).any()),
+0133:     ]
+0134:     decision="ME_PMFS_D0_MARK_FORWARD_SIGNAL" if all(g) else "ME_PMFS_D0_MARK_INFORMATION_FORWARD_INADEQUATE"
+0135:     result={"decision":decision,"gates":g,"environment_summary":envsum,
+0136:             "note":"If decision is FORWARD_INADEQUATE, verify the predeclared GADEN-reference upper diagnostic before interpreting."}
+0137:     (a.out/"RESULT.json").write_text(json.dumps(result,indent=2,sort_keys=True)+"\n")
+0138:     print(json.dumps(result,indent=2))
+0139: 
+0140: if __name__=="__main__": main()

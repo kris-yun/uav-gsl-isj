@@ -1,0 +1,33 @@
+任务：实现已获得OPEN改善的幅度读出，不再启动理论检索、网络或新forward。
+
+原判决保留：ME_PMFS_D0_MARK_INFORMATION_FORWARD_INADEQUATE。
+本任务属于独立开发分支上的实现与重复验证，不改历史实验、不赋予科学PASS。
+
+一、输入与禁止事项
+1. 使用原review、冻结maps、相同3环境×6候选×4target；全部是OPEN数据。
+2. 原review SHA256必须匹配7a3e436900ab2696c2d7148215cd58b6632a017e447583f77c9c864b56f9c56c。
+3. 不生成plume、不重跑1584条forward、不读H01 DEV/House03、不扩选source或probe、不运行随机抽样。
+4. 保持Native hit概率p、风混合、释放、动力学、阈值与规划器不变。
+
+二、直接交付可用读出
+1. 先运行code/test_readout.py与reproduce.py，复算四格表。所有比较都保留，不只交最好一格。
+2. 在新开发分支添加幅度读出路径，读取已经保存的rawu（时间平均原始计数，未进行GaussianBlur），而不是u。
+3. 按已有probe合同作矩形面积平均；PMFS粗网格上的count可除以cell area成为二维密度代理。不能将其冒称三维浓度。
+4. 保持原B2正比例最小二乘规则，使用全部观测（包括零）；原EPS和并列规则不变。不要同时改为M的log-profile、加B0或调温度。
+5. 同次保留u_nearest、u_footprint、rawu_nearest、rawu_footprint四个arm，并保存全部候选分数、gain、排名、唯一Top1及source级救回／损害。
+6. 保存候选计数图到观测模板的投影矩阵、数据轴和对应合同；路径接口须明确是两维面积代理，并检测出界面积，不悄悄归一化。
+7. 记录预计算与在线代价、代码diff与hash；不得只报速度、遗漏模板生成成本。
+
+三、预计应复现的OPEN结果（不是新增PASS门）
+u_nearest与u_footprint：mean rank1.333333/1.500000/1.458333；Top1 75%/58.3333%/58.3333%。
+rawu_nearest与rawu_footprint：mean rank1.333333/1.291667/1.208333；Top1 75%/79.1667%/79.1667%。
+相对原B2新增正确10条，原正确损害0条；改善集中4个environment–source单元。
+若不能复现，定位代码与数据对应差异，不调整参数逼近这些数字。
+
+四、概率图与后续确认
+负SSE当前只是排序分数。没有合法、预先确定的噪声／gain模型时，不把softmax(-SSE)当作校准后验。
+下一次科学确认必须在独立target生成/读取前冻结：同一幅度likelihood、候选support、prior、观测协议、误差模型、比较器与效应门槛。
+其目的只能是验证读出改动的新增价值，不能根据新结果选blur、换kernel或换source。
+本任务不自动授权上述新确认，更不自动读取封存数据。
+
+完成后提交：代码、原四格完整分数、数值一致性、成本与限制。到此停止，不另开mark网络、年龄核、DRO、时间模型或世界模型。

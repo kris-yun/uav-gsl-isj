@@ -1,0 +1,57 @@
+SOURCE: execution/run_bank_vm.py
+
+0001: #!/usr/bin/env python3
+0002: import argparse, concurrent.futures, csv, hashlib, json, os, subprocess, time
+0003: from pathlib import Path
+0004: import numpy as np
+0005: R=Path('/home/zyc/marked_encounter_pmfs_d0_20260927')
+0006: sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+0007: def dump(p,v):p.write_text(json.dumps(v,indent=2,sort_keys=True)+'\n')
+0008: ap=argparse.ArgumentParser();ap.add_argument('--repeat',action='store_true');a=ap.parse_args()
+0009: assert json.loads((R/'NATIVE_PARITY.json').read_text())['pass']
+0010: envs=json.loads((R/'inputs/environment_manifest.json').read_text())
+0011: out=R/('forward_repeat' if a.repeat else 'forward');assert not out.exists();out.mkdir()
+0012: log=out/'run.log'; start=time.monotonic()
+0013: os.environ.update(OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',MKL_NUM_THREADS='1')
+0014: tasks=[(e,s,k,r) for e in range(3) for s in range(6) for k in range(11) for r in range(1,9)]
+0015: def run(t):
+0016:     e,s,k,r=t;prefix=out/f'env_{e}'/f'source_{s}'/f'state_{k}_replica_{r}'
+0017:     cmd=[str(R/'build/marked_forward'),str(R/'inputs'/f'env_{e}'),str(s),str(k),str(r),str(prefix)]
+0018:     p=subprocess.run(cmd,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+0019:     if p.returncode:raise RuntimeError((t,p.returncode,p.stdout))
+0020:     return t,p.stdout
+0021: with log.open('w') as f,concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+0022:     for n,(t,output) in enumerate(executor.map(run,tasks),1):
+0023:         f.write(output);f.flush()
+0024:         if n%24==0: print('FORWARD_PROGRESS',n,'/',len(tasks),'elapsed_s',round(time.monotonic()-start,1),flush=True)
+0025: rows=[]; per_run=[]
+0026: for env in envs:
+0027:     e=env['environment_index'];inp=R/'inputs'/f'env_{e}'
+0028:     sources=list(csv.DictReader((inp/'sources.csv').open()));probes=list(csv.DictReader((inp/'probes.csv').open()))
+0029:     n=env['metadata']['width']*env['metadata']['height'];free=np.fromfile(inp/'occupancy.u8',np.uint8)==1
+0030:     for s,sr in enumerate(sources):
+0031:         ps=[];us=[]
+0032:         for k in range(11):
+0033:           for r in range(1,9):
+0034:             prefix=out/f'env_{e}'/f'source_{s}'/f'state_{k}_replica_{r}'
+0035:             maps={key:np.fromfile(str(prefix)+'.'+key+'.f32','<f4') for key in ('p','u','rawp','rawu')}
+0036:             assert all(v.size==n and np.isfinite(v).all() and (v>=0).all() for v in maps.values())
+0037:             assert (maps['p'][free]<=1).all() and (maps['rawp'][free]<=1).all()
+0038:             assert (maps['rawu'][free]>=maps['rawp'][free]).all()
+0039:             assert (maps['u'][free]+1e-5>=maps['p'][free]).all()
+0040:             ps.append(maps['p'].astype(float));us.append(maps['u'].astype(float))
+0041:             per_run.append({'environment_index':e,'source_index':s,'state':k,'replica_seed':r,'moment_hashes':{key:sha(Path(str(prefix)+'.'+key+'.f32')) for key in maps}})
+0042:         p=np.mean(ps,axis=0);u=np.mean(us,axis=0);mu=np.divide(u,p,out=np.zeros_like(u),where=p>0)
+0043:         for pr in probes:
+0044:             ix=int(pr['cell_index'])
+0045:             rows.append(dict(environment_index=e,house=env['house'],wind=env['wind'],source_index=s,source_id=sr['source_id'],probe_rank=int(pr['probe_rank']),presence_prob=p[ix],multiplicity_mean_unconditional=u[ix],multiplicity_mean_conditional=mu[ix],state_count=11,replica_count=8,total_forward_count=88))
+0046: with (out/'candidate_mark_bank.csv').open('w',newline='') as f:
+0047:     w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader()
+0048:     for row in rows:w.writerow({k:format(v,'.17g') if isinstance(v,float) else v for k,v in row.items()})
+0049: dump(out/'FORWARD_MANIFEST.json',{'forward_count':len(per_run),'environment_count':3,'source_units':18,'rows':per_run,'candidate_bank_sha256':sha(out/'candidate_mark_bank.csv'),'worker_count':4,'all_checks_passed':True})
+0050: if a.repeat:
+0051:     first=R/'forward'
+0052:     assert sha(first/'candidate_mark_bank.csv')==sha(out/'candidate_mark_bank.csv')
+0053:     assert sha(first/'FORWARD_MANIFEST.json')==sha(out/'FORWARD_MANIFEST.json')
+0054:     dump(R/'BANK_REPEAT.json',{'pass':True,'forward_realizations_each_run':1584,'full_float_maps_compared':6336,'candidate_bank_byte_identical':True,'forward_manifest_byte_identical':True,'candidate_bank_sha256':sha(out/'candidate_mark_bank.csv')})
+0055: print('MARKED_BANK_COMPLETE',len(per_run),sha(out/'candidate_mark_bank.csv'),flush=True)
