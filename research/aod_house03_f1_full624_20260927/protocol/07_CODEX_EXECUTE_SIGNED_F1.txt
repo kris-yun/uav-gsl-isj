@@ -1,0 +1,54 @@
+Execute the FINAL signed full-support House03 F1.
+
+Branch:
+`research/aod-house03-f1-full624-20260927`
+
+Base:
+F0 final `1008e2db20e74cfdcbdcb511d484e64a4bc6e49a`
+
+Implementation:
+AOD V0 final `25803d287aa299f78a06458e37437a91c3fa3890`
+
+This package explicitly APPROVES:
+- 96 fresh GADEN realizations;
+- 54,912 PMFS candidate forward realizations.
+
+It supersedes the earlier 12-candidate/neighbor-margin F1 draft.
+
+Do exactly `06_EXECUTION_ORDER.md`.
+
+Critical differences from the old draft:
+1. inference support is ALL 624 legal House03 candidates;
+2. primary endpoint is paired unique Top-1 improvement, not neighbour SSE margin;
+3. observation is ONE physical snapshot at each 50..500 s slot;
+4. 3 s dwell is a movement/settling budget only, not a temporal average;
+5. state0 is a reduced-state/reduced-template-depth stress condition, not a
+   pure wind-error experiment;
+6. failed stress non-inferiority is NOT automatically called tradeoff.
+
+Allowed final labels:
+- `AOD_F1_HOLD_FULL624_BUDGET`
+- `AOD_F1_HOLD_TIMEBASE`
+- `AOD_F1_HOLD_ASSET_OR_PARITY`
+- `AOD_F1_FULL624_NOT_CONFIRMED`
+- `AOD_F1_FULL624_CONFIRMED_STRESS_NONINFERIOR`
+- `AOD_F1_FULL624_CONFIRMED_STRESS_UNCERTAIN`
+- `AOD_F1_FULL624_CONFIRMED_TRADEOFF`
+
+Return:
+- branch, base, pre_target_freeze, timebase_freeze, final commit;
+- 54,912/54,912 PMFS forward audit and wall time;
+- 96/96 GADEN audit;
+- physical-time/release/wind-index audit;
+- nominal Delta_acc + exact bootstrap CI;
+- state0 Delta_acc + exact bootstrap CI;
+- final label;
+- full-support mean rank/Top1/Top3/MAP diagnostics;
+- six neighbour-pair diagnostic margins;
+- rescued/harmed target/source counts;
+- B0/ICRA secondary results;
+- zero-target count;
+- deterministic repeat;
+- review ZIP path/bytes/SHA256.
+
+STOP. No closed loop.
