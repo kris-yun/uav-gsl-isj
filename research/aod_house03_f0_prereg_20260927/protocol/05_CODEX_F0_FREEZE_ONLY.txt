@@ -1,0 +1,56 @@
+Execute ONLY the House03 F0 preregistration freeze.
+
+Branch:
+`research/aod-house03-f0-prereg-20260927`
+
+Base:
+`research/amplitude-operator-decoupling-v0-20260927`
+final `25803d287aa299f78a06458e37437a91c3fa3890`.
+
+DO NOT generate/read House03 fresh gas.
+DO NOT run scientific PMFS forward.
+DO NOT score u/rawu.
+DO NOT inspect any House03 source truth outcome.
+DO NOT tune a path with plume information.
+
+Steps:
+
+1. Verify this package SHA256SUMS.
+2. Locate and hash the canonical House03 full source geometry bank.
+3. Run `select_house03_pairs.py` exactly.
+   - retain the three existing E1 anchor pairs;
+   - add exactly three geometry-only pairs;
+   - require 12 unique sources and >=1.50m minimum pair-center spacing.
+4. Freeze `HOUSE03_F1_SOURCE_PANEL_12.tsv`.
+5. Verify the supplied `HOUSE03_FROZEN_30_PROBES.tsv` against the canonical E1
+   geometry contract.
+6. Recover frozen House03 navigation map, robot start `(2.00,0.00)` and nominal
+   navigation speed.
+7. Build path A and B exactly according to `02_PATH_FREEZE.md`.
+8. Verify every segment travel time <=47s and record geodesic distance.
+9. Audit House03 `1-2,5_fast` and all 11 wind states; hash all assets.
+10. Freeze the nominal 11-state average and state0-only mismatch semantics.
+11. Generate, but DO NOT execute, deterministic seed manifests for:
+    - 8 future GADEN realizations/source = 96 rows;
+    - 8 future PMFS transport replicas x11 states x12 sources = 1056 rows.
+12. Commit all F0 manifests, scripts, geometry/path/wind audits and hashes.
+13. Package review evidence and STOP.
+
+Allowed F0 decisions:
+- `AOD_H03_F0_READY_FOR_PREREG`
+- `AOD_H03_F0_HOLD_SOURCE_BANK`
+- `AOD_H03_F0_HOLD_PANEL_GEOMETRY`
+- `AOD_H03_F0_HOLD_NAV_SPEED`
+- `AOD_H03_F0_HOLD_PATH_GEOMETRY`
+- `AOD_H03_F0_HOLD_WIND_ASSET`
+
+Return:
+branch, base commit, final commit, decision,
+12-source panel,
+minimum pair-center separation,
+path A/B ordered probes + route distances + max travel times + overlap,
+wind hashes/state count,
+future seed-manifest hashes,
+review ZIP path/bytes/SHA256.
+
+STOP. Do not generate fresh plume until the main thread signs F1 gates.
