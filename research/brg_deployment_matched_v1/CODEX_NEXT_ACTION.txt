@@ -1,0 +1,19 @@
+建议主线程批准后执行：一次部署匹配的BRG/GRU开发，不恢复旧P1，不扩跑旧384。
+
+1. 复用现有接口、candidate bank、Native支持、occurrence/rawu和planner。新分支不改网络核心层数、hidden size和rounds，不更换模型母体。先补存实际full-support GPU训练入口及label mapping，禁止使用旧六类loader。
+
+2. 以现有OPEN H01/H02连续资产创建source/plume/policy分组清单，source组跨wind绑定；train/dev/eval按物理位置隔离。不得读取H03来训练或选参数。候选数不能写成positive truth source数。清单先一次固定；无合法连续资产或无足够源位置时如实报告，不补零模板，不插值十帧伪造高频物理，不自行新增plume。
+
+3. 采集与线上同一VGR sensor、同一窗口、同一驻留/移动流程的完整300s日志。训练采集可以将成功声明转为shadow，不实际终止；该模式不得报闭环成绩。所有真实时钟、原始窗口起止、n_raw和位置写入数据。
+
+4. 增加三个同实现的输入：采集结束时间差、窗口时长、位移。原浓度三通道及candidate六通道保留；obs_dim=6；三网络输入完全相同。使用code/training_contract.py验证线上离线特征一致。运行时max_events按任务时长和实际采样最小间隔设置，不固定只有10或128，不静默截窗/重置。
+
+5. 训练总预算30epoch建议为warm10+final20。先由Native/预定coverage采train，再用三个warm模型各自planner在相同train cases仅运行一轮，自采日志共享合并给三网络，然后继续训练20epoch。source标签仅离线监督，动作不得看真源；不将dev/eval轨迹加入训练。模型所有prefix监督，按source/plume平衡。原版已经有10步prefix CE，不把加prefix loss宣称新方法。
+
+6. 用独立dev的实际source-update前缀NLL选checkpoint；记录source位置、prefix风险与错误收缩。使用共同dev日志集，不按H03结果选模型。温度T=1，原停止阈值保持，本版不开发新停止器。
+
+7. 完成后直接做按源组留出的8个OPEN cases（4源×2realizations），四臂32次闭环。正式evaluation恢复原生早停，四臂同一预算、成功半径、估计器、候选prior，各自走路。第一例功能检查计入32次；不因轨迹相同就认定接口有错。训练采集未停的长日志不能与Native早停结果直接比较。
+
+8. 返回32行完整结果与配对比较，停止自动扩跑。若BRG不优于普通GRU，不继续为了生物学名称调反馈；若均差于Native，结束这一开发版本，不无限回灌；若有收益再由主线程决定下一批，8例不作主创新科学PASS。
+
+本包未生成新权重或闭环结果。它解决的是下一版训练/数据与对照如何做，不预支效果。此任务是开发，不是修复旧实验后的追认。

@@ -1,0 +1,57 @@
+{
+  "status": "DEVICE_AND_MODEL_INPUT_CHECK_ONLY",
+  "torch": "2.11.0+cu130",
+  "python": "3.12.13",
+  "cuda_available": true,
+  "cuda_version": "13.0",
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU",
+  "gpu_total_bytes": 8546484224,
+  "models": [
+    {
+      "variant": "gru",
+      "hidden": 35,
+      "rounds": 1,
+      "obs_dim": 6,
+      "cue_dim": 6,
+      "parameters": 15715,
+      "active_parameters": 13230,
+      "output_shape": [
+        1,
+        630
+      ],
+      "finite": true
+    },
+    {
+      "variant": "brg",
+      "hidden": 32,
+      "rounds": 3,
+      "obs_dim": 6,
+      "cue_dim": 6,
+      "parameters": 13216,
+      "active_parameters": 13216,
+      "output_shape": [
+        1,
+        630
+      ],
+      "finite": true
+    },
+    {
+      "variant": "ungated",
+      "hidden": 32,
+      "rounds": 3,
+      "obs_dim": 6,
+      "cue_dim": 6,
+      "parameters": 13216,
+      "active_parameters": 11136,
+      "output_shape": [
+        1,
+        630
+      ],
+      "finite": true
+    }
+  ],
+  "trained_weights_created": 0,
+  "plumes_read": 0,
+  "model_source_sha256": "5ae50ee7e2ef765e07292e5ff4a0db6edff9da39936908b671163c74103ecc98"
+}

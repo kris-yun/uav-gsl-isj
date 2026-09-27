@@ -1,0 +1,555 @@
+
+===== execution/pmfs_brg/features.py SHA256=91d83c218818dee5309e556770fa5e8c18cdffdac5c9735281e322aefcf4b0df =====
+0001 """Fixed, unit-aware feature map: no per-domain fitted z-score, no batch statistics."""
+0002 import numpy as np
+0003 from dataclasses import dataclass, asdict
+0004 
+0005 @dataclass(frozen=True)
+0006 class FeatureConfig:
+0007     concentration_unit_ppm: float = 1.0
+0008     count_unit: float = 1.0
+0009     geometry_unit_m: float = 10.0
+0010     hit_threshold_ppm: float = 0.0
+0011     def __post_init__(self):
+0012         if min(self.concentration_unit_ppm,self.count_unit,self.geometry_unit_m)<=0:
+0013             raise ValueError("positive feature units required")
+0014         if self.hit_threshold_ppm < 0: raise ValueError("negative threshold")
+0015 
+0016 def encode(concentrations, positions, source_positions, p, rawu, cfg=FeatureConfig()):
+0017     """T observations, S sources, p/rawu shape[T,S]. No source labels as inputs.
+0018 
+0019     rawu remains an area-averaged cell-count proxy, NOT claimed to be ppm.
+0020     Two monotone magnitude channels keep magnitude; no trajectory normalization.
+0021     The first model does not use time intervals or wind measurements as learned
+0022     features: those fields are still logged in the runtime contract.
+0023     """
+0024     c=np.asarray(concentrations,dtype=np.float64); x=np.asarray(positions,dtype=np.float64)
+0025     s=np.asarray(source_positions,dtype=np.float64); p=np.asarray(p,dtype=np.float64)
+0026     u=np.asarray(rawu,dtype=np.float64)
+0027     if c.ndim!=1 or x.shape!=(len(c),2) or s.ndim!=2 or s.shape[1]!=2 or p.shape!=(len(c),len(s)) or u.shape!=p.shape:
+0028         raise ValueError("feature shape mismatch")
+0029     if any(not np.isfinite(v).all() for v in [c,x,s,p,u]) or (c<0).any() or (u<0).any() or ((p<0)|(p>1)).any():
+0030         raise ValueError("invalid physical input")
+0031     a=c/cfg.concentration_unit_ppm; b=u/cfg.count_unit
+0032     obs=np.stack((np.log1p(a)/8,a/(1+a),(c>cfg.hit_threshold_ppm).astype(float)),-1)
+0033     d=(x[:,None,:]-s[None,:,:])/cfg.geometry_unit_m
+0034     cues=np.concatenate((p[...,None],(np.log1p(b)/8)[...,None],(b/(1+b))[...,None],d,np.linalg.norm(d,axis=-1)[...,None]),-1)
+0035     obs=obs.astype('float32');cues=cues.astype('float32')
+0036     if not np.isfinite(obs).all() or not np.isfinite(cues).all(): raise ValueError("feature overflow")
+0037     return obs,cues
+
+===== execution/pmfs_brg/model.py SHA256=5ae50ee7e2ef765e07292e5ff4a0db6edff9da39936908b671163c74103ecc98 =====
+0001 """Clean implementation inspired by Salehi et al., Nat. Commun. 2026.
+0002 
+0003 Not the authors' visual BRG architecture or a reproduction of its experiments.
+0004 Temporal recurrence is causal. 'Bidirectional' means bottom-up/top-down within
+0005 one observed event; the implementation never reads a future observation.
+0006 """
+0007 from __future__ import annotations
+0008 from dataclasses import dataclass, asdict
+0009 import torch
+0010 from torch import nn
+0011 
+0012 @dataclass(frozen=True)
+0013 class ModelConfig:
+0014     hidden: int = 32
+0015     rounds: int = 3
+0016     variant: str = "brg"  # brg, ungated, gru
+0017     obs_dim: int = 3
+0018     cue_dim: int = 6
+0019     def __post_init__(self):
+0020         if self.hidden < 4 or self.rounds < 1 or self.variant not in {"brg", "ungated", "gru"}:
+0021             raise ValueError("invalid model configuration")
+0022 
+0023 class CandidateBRG(nn.Module):
+0024     def __init__(self, cfg: ModelConfig = ModelConfig()):
+0025         super().__init__(); self.cfg = cfg; h = cfg.hidden
+0026         self.obs = nn.Sequential(nn.Linear(cfg.obs_dim,h),nn.LayerNorm(h),nn.Tanh())
+0027         self.cue = nn.Sequential(nn.Linear(cfg.cue_dim,h),nn.LayerNorm(h),nn.Tanh())
+0028         self.fuse = nn.Sequential(nn.Linear(4*h,h),nn.LayerNorm(h),nn.Tanh())
+0029         self.feedback = nn.Linear(2*h,h)
+0030         self.cell = nn.GRUCell(h,h)
+0031         self.head = nn.Linear(h,1,bias=False)
+0032 
+0033     def initial(self, batch: int, candidates: int, device=None):
+0034         if candidates < 2: raise ValueError("at least two candidates required")
+0035         return torch.zeros(batch,candidates,self.cfg.hidden,
+0036                            device=device or next(self.parameters()).device)
+0037 
+0038     def step(self, observed, cue, state, valid=None):
+0039         """observed:[B,3], cue:[B,S,6], state:[B,S,H]; returns logits,state.
+0040 
+0041         The shared scorer has no candidate-ID embedding and no environment label.
+0042         Its logits represent the entire prefix; DO NOT add them to old log odds.
+0043         """
+0044         b,s,_ = cue.shape
+0045         if observed.shape != (b,self.cfg.obs_dim) or state.shape != (b,s,self.cfg.hidden):
+0046             raise ValueError("shape mismatch")
+0047         if not (torch.isfinite(observed).all() and torch.isfinite(cue).all() and torch.isfinite(state).all()):
+0048             raise ValueError("non-finite input")
+0049         o = self.obs(observed)[:,None,:].expand(-1,s,-1)
+0050         v = self.cue(cue); old = state; h = state
+0051         steps = 1 if self.cfg.variant == "gru" else self.cfg.rounds
+0052         for _ in range(steps):
+0053             if self.cfg.variant == "brg":
+0054                 gate = 1 + 0.5 * torch.tanh(self.feedback(torch.cat((h,v),-1)))
+0055             else:
+0056                 gate = torch.ones_like(h)
+0057             # The physical hypothesis modulates bottom-up evidence; no oracle cue.
+0058             z = self.fuse(torch.cat((o*gate,v,o-v,o*v),-1))
+0059             h = self.cell(z.reshape(b*s,-1),h.reshape(b*s,-1)).reshape(b,s,-1)
+0060         if valid is not None:
+0061             h = torch.where(valid[:,None,None].bool(),h,old)
+0062         return self.head(h).squeeze(-1),h
+0063 
+0064     def forward(self, observed, cues, valid=None):
+0065         # [B,T,O], [B,T,S,C] -> [B,T,S]
+0066         if observed.ndim != 3 or cues.ndim != 4 or observed.shape[:2] != cues.shape[:2]:
+0067             raise ValueError("expected batched causal trajectories")
+0068         b,t,_ = observed.shape
+0069         h = self.initial(b,cues.shape[2],observed.device); out=[]
+0070         for i in range(t):
+0071             z,h = self.step(observed[:,i],cues[:,i],h,None if valid is None else valid[:,i])
+0072             out.append(z)
+0073         return torch.stack(out,1)
+0074 
+0075     @property
+0076     def parameter_count(self): return sum(p.numel() for p in self.parameters())
+0077     @property
+0078     def active_parameter_count(self):
+0079         n=self.parameter_count
+0080         return n if self.cfg.variant=='brg' else n-sum(p.numel() for p in self.feedback.parameters())
+0081 
+0082 def log_posterior(logits, prior=None, temperature: float=1.):
+0083     """Fixed positive prior applied ONCE, not once per observed event."""
+0084     if not temperature > 0: raise ValueError("temperature must be positive")
+0085     if prior is None:
+0086         return torch.log_softmax(logits/temperature,-1)
+0087     prior = torch.as_tensor(prior,device=logits.device,dtype=logits.dtype)
+0088     if (prior <= 0).any() or not torch.isfinite(prior).all(): raise ValueError("positive prior required")
+0089     prior = prior/prior.sum(-1,keepdim=True)
+0090     return torch.log_softmax(logits/temperature+prior.log(),-1)
+0091 
+0092 def save_checkpoint(path, model, metadata):
+0093     torch.save({"config":asdict(model.cfg),"state_dict":model.state_dict(),"metadata":metadata},path)
+0094 
+0095 def load_checkpoint(path, device="cpu"):
+0096     ck = torch.load(path,map_location=device,weights_only=True)
+0097     model=CandidateBRG(ModelConfig(**ck["config"])).to(device)
+0098     model.load_state_dict(ck["state_dict"],strict=True); model.eval()
+0099     if not all(torch.isfinite(x).all() for x in model.state_dict().values()):
+0100         raise ValueError("non-finite checkpoint")
+0101     return model,ck["metadata"]
+
+===== execution/pmfs_brg/data.py SHA256=869be12a009e04a793d7cfb6d12be44f7ef0ecad5b5c6f56c583ee8c805994fa =====
+0001 from __future__ import annotations
+0002 import json,heapq
+0003 from pathlib import Path
+0004 import numpy as np
+0005 import torch
+0006 from torch.utils.data import Dataset
+0007 from .features import FeatureConfig,encode
+0008 
+0009 def reachable_probe_distances(occ,meta,xy):
+0010     nx=int(meta['width']);ny=int(meta['height']);step=float(meta['resolution'])
+0011     free=np.asarray(occ).reshape(ny,nx)>0
+0012     points=np.rint((xy-np.array([meta['origin_x'],meta['origin_y']]))/step-.5).astype(int)
+0013     answer=np.full((len(points),len(points)),np.inf)
+0014     for i,(x0,y0) in enumerate(points):
+0015         if not(0<=x0<nx and 0<=y0<ny and free[y0,x0]):raise ValueError('probe not on free projection')
+0016         ds={(x0,y0):0.};heap=[(0.,x0,y0)]
+0017         while heap:
+0018             d,x,y=heapq.heappop(heap)
+0019             if d!=ds[(x,y)]:continue
+0020             for a,b in [(1,0),(-1,0),(0,1),(0,-1)]:
+0021                 xx,yy=x+a,y+b
+0022                 if 0<=xx<nx and 0<=yy<ny and free[yy,xx]:
+0023                     dd=d+step
+0024                     if dd<ds.get((xx,yy),np.inf):ds[(xx,yy)]=dd;heapq.heappush(heap,(dd,xx,yy))
+0025         for j,(xx,yy) in enumerate(points):answer[i,j]=ds.get((xx,yy),np.inf)
+0026     return answer
+0027 
+0028 def fixed_routes(dist,count,length,rng,max_leg_m=30.):
+0029     """Geometry-only sparse sub-trajectories; not a closed-loop policy simulation."""
+0030     routes=[]
+0031     for r in range(count):
+0032         current=int(rng.integers(len(dist)));path=[]
+0033         for _ in range(length):
+0034             path.append(current)
+0035             legal=np.flatnonzero(np.isfinite(dist[current])&(dist[current]<=max_leg_m))
+0036             fresh=np.array([i for i in legal if i not in path],dtype=int)
+0037             choices=fresh if len(fresh) else legal
+0038             current=int(rng.choice(choices))
+0039         routes.append(path)
+0040     return np.array(routes,dtype=int)
+0041 
+0042 class OpenPaths(Dataset):
+0043     def __init__(self,directory,split,route_count=8,seed=2026092701,feature_cfg=FeatureConfig()):
+0044         if split not in {'train','dev'}:raise ValueError(split)
+0045         self.items=[];self.groups=set();self.feature_cfg=feature_cfg; self.routes=[]
+0046         for e in range(3):
+0047             with np.load(Path(directory)/f'env_{e}_open.npz',allow_pickle=False) as z:
+0048                 yy=z['concentration'];xy=z['probe_xy'];sxy=z['source_xy'];p=z['p'];u=z['rawu'];meta=json.loads(z['metadata'].item())
+0049                 dist=reachable_probe_distances(z['occupancy'],meta,xy)
+0050             rng=np.random.default_rng(np.random.SeedSequence([seed,e,0 if split=='train' else 1]))
+0051             routes=fixed_routes(dist,route_count,10,rng)
+0052             self.routes.append(routes.tolist())
+0053             reps=range(12) if split=='train' else range(12,16)
+0054             for s in range(6):
+0055                 for r in reps:
+0056                     group=f'{e}/{s}/{r}';self.groups.add(group)
+0057                     for path in routes:
+0058                         c=yy[s,r,np.arange(10),path]
+0059                         obs,cue=encode(c,xy[path],sxy,p[path],u[path],feature_cfg)
+0060                         self.items.append((obs,cue,s,e,r,group))
+0061     def __len__(self):return len(self.items)
+0062     def __getitem__(self,i):
+0063         o,c,s,e,r,g=self.items[i]
+0064         return torch.from_numpy(o),torch.from_numpy(c),torch.tensor(s,dtype=torch.long)
+0065 
+0066 class LoggedEpisodes(Dataset):
+0067     """General sparse causal episodes collected by an existing OPEN harness.
+0068     Each JSON line: bank_npz, split, plume_group, source_id, events.
+0069     Every event: concentration_ppm,x,y,z,time_s. Labels live ONLY in this
+0070     training file, not the sidecar protocol. Variable candidate counts supported
+0071     with batch_size=1 in train.py. All augmentations of a plume share a split.
+0072     """
+0073     def __init__(self,path,split,feature_cfg=FeatureConfig()):
+0074         from .bank import TemplateBank
+0075         path=Path(path);rows=[json.loads(x) for x in path.read_text().splitlines() if x.strip()]
+0076         assignment={};self.items=[];self.groups=set();self.routes=[]
+0077         for row in rows:
+0078             key=row['plume_group'];part=row['split']
+0079             if part not in {'train','dev'}:raise ValueError('only explicit OPEN train/dev episodes accepted')
+0080             if key in assignment and assignment[key]!=part:raise ValueError('same plume across splits')
+0081             assignment[key]=part
+0082         cache={}
+0083         for row in rows:
+0084             if row['split']!=split:continue
+0085             bp=(path.parent/row['bank_npz']).resolve()
+0086             if bp not in cache:cache[bp]=TemplateBank.load(bp)
+0087             b=cache[bp];ev=row['events']
+0088             if not ev or len(ev)>128:raise ValueError('invalid episode length')
+0089             times=[float(x['time_s']) for x in ev]
+0090             if not np.isfinite(times).all() or np.any(np.diff(times)<=0):raise ValueError('bad event times')
+0091             if any(abs(float(x['z'])-float(b.meta['height_m']))>1e-4 for x in ev):raise ValueError('height contract mismatch')
+0092             xy=np.array([[x['x'],x['y']] for x in ev]);c=np.array([x['concentration_ppm'] for x in ev])
+0093             p,u=b.project(xy,(b.meta['footprint_x_m'],b.meta['footprint_y_m']))
+0094             obs,cue=encode(c,xy,b.xy,p,u,feature_cfg);truth=b.ids.index(row['source_id'])
+0095             self.items.append((obs,cue,truth));self.groups.add(row['plume_group'])
+0096         if not self.items:raise ValueError('empty split')
+0097     def __len__(self):return len(self.items)
+0098     def __getitem__(self,i):
+0099         a,b,c=self.items[i];return torch.from_numpy(a),torch.from_numpy(b),torch.tensor(c,dtype=torch.long)
+
+===== execution/tools/train.py SHA256=439401a043e99f33a666dc486b2a7ac9972e75aed41de35533db6d8ce3a761ad =====
+0001 #!/usr/bin/env python3
+0002 """Train an OPEN development model, not a scientific confirmation.
+0003 
+0004 Fixed architecture, seed and optimization configuration. Save last plus
+0005 source-only development-loss selected checkpoint. Never use closed-loop test
+0006 outcomes to select it. Runtime requires an explicit flag for warm-start weights.
+0007 """
+0008 import argparse,json,sys,time,random,hashlib
+0009 from pathlib import Path
+0010 import numpy as np
+0011 import torch
+0012 from torch.utils.data import DataLoader
+0013 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
+0014 from pmfs_brg.model import CandidateBRG,ModelConfig,save_checkpoint
+0015 from pmfs_brg.data import OpenPaths, LoggedEpisodes
+0016 from pmfs_brg.features import FeatureConfig
+0017 from dataclasses import asdict
+0018 
+0019 def evaluate(model,loader):
+0020     model.eval(); loss=0;correct=0;n=0;brier=0.
+0021     with torch.no_grad():
+0022         for o,c,y in loader:
+0023             z=model(o,c)[:,-1];p=z.softmax(-1)
+0024             loss+=torch.nn.functional.cross_entropy(z,y,reduction='sum').item()
+0025             correct+=(z.argmax(-1)==y).sum().item();n+=len(y)
+0026             brier+=((p-torch.nn.functional.one_hot(y,z.shape[-1]))**2).sum().item()
+0027     return dict(nll=loss/n,accuracy=correct/n,brier=brier/n,n_sparse_augmentations=n)
+0028 
+0029 def main():
+0030  ap=argparse.ArgumentParser();g=ap.add_mutually_exclusive_group(required=True);g.add_argument('--data');g.add_argument('--episodes');ap.add_argument('--out',required=True);ap.add_argument('--variant',choices=['brg','ungated','gru'],default='brg');ap.add_argument('--epochs',type=int,default=30);ap.add_argument('--hidden',type=int,default=32);ap.add_argument('--routes',type=int,default=8);ap.add_argument('--batch',type=int,default=48);ap.add_argument('--threads',type=int,default=2);ap.add_argument('--seed',type=int,default=2026092701);a=ap.parse_args()
+0031  out=Path(a.out);out.mkdir(parents=True,exist_ok=True)
+0032  torch.set_num_threads(a.threads);torch.manual_seed(a.seed);np.random.seed(a.seed);random.seed(a.seed);torch.use_deterministic_algorithms(True)
+0033  fcfg=FeatureConfig()
+0034  if a.episodes:
+0035   train=LoggedEpisodes(a.episodes,'train',fcfg);dev=LoggedEpisodes(a.episodes,'dev',fcfg);a.batch=1
+0036  else:
+0037   train=OpenPaths(a.data,'train',a.routes,a.seed,fcfg);dev=OpenPaths(a.data,'dev',max(2,a.routes//2),a.seed,fcfg)
+0038  if train.groups&dev.groups:raise RuntimeError('plume leakage')
+0039  gen=torch.Generator().manual_seed(a.seed)
+0040  tr=DataLoader(train,batch_size=a.batch,shuffle=True,generator=gen);dv=DataLoader(dev,batch_size=a.batch)
+0041  model=CandidateBRG(ModelConfig(hidden=a.hidden,variant=a.variant));opt=torch.optim.AdamW(model.parameters(),lr=1e-3,weight_decay=1e-4)
+0042  meta={'deployment_status':'OPEN_WARMSTART_NOT_VALIDATED_CLOSED_LOOP','feature_config':asdict(fcfg),'variant':a.variant,'training_args':vars(a),'training_groups':sorted(train.groups),'development_groups':sorted(dev.groups),'training_candidate_count': 'variable_per_episode' if a.episodes else 6,'weights_selected_on':'OPEN dev final-prefix NLL, not a new test','input_manifest_sha256':hashlib.sha256((Path(a.episodes) if a.episodes else Path(a.data)/'manifest.json').read_bytes()).hexdigest(),'parameter_count':model.parameter_count,'active_parameter_count':model.active_parameter_count,'temperature':1.0,'max_tested_history':max(len(x[0]) for x in train.items)}
+0043  (out/'run_config.json').write_text(json.dumps(meta,indent=2));(out/'routes.json').write_text(json.dumps({'train':train.routes,'dev':dev.routes}))
+0044  history=[];best=float('inf');start=time.time()
+0045  initial=evaluate(model,dv);print('initial',initial,flush=True)
+0046  for epoch in range(1,a.epochs+1):
+0047   model.train();total=0;n=0
+0048   for o,c,y in tr:
+0049    opt.zero_grad(set_to_none=True);z=model(o,c);target=y[:,None].expand(-1,z.shape[1])
+0050    loss=torch.nn.functional.cross_entropy(z.reshape(-1,z.shape[-1]),target.reshape(-1))
+0051    if not torch.isfinite(loss):raise RuntimeError('nonfinite loss, no automatic recovery')
+0052    loss.backward();norm=torch.nn.utils.clip_grad_norm_(model.parameters(),1.,error_if_nonfinite=True);opt.step();total+=loss.item()*len(y);n+=len(y)
+0053   metrics=evaluate(model,dv);row=dict(epoch=epoch,train_prefix_nll=total/n,**metrics);history.append(row)
+0054   print(json.dumps(row),flush=True)
+0055   if metrics['nll']<best:
+0056    best=metrics['nll'];save_checkpoint(out/'best.pt',model,{**meta,'epoch':epoch,'dev':metrics})
+0057   (out/'history.json').write_text(json.dumps(history,indent=2))
+0058  save_checkpoint(out/'last.pt',model,{**meta,'epoch':a.epochs,'dev':metrics})
+0059  summary={'initial':initial,'last':metrics,'best_dev_nll':best,'seconds':time.time()-start,'parameters':model.parameter_count,'active_parameters':model.active_parameter_count,'independent_train_plumes':len(train.groups),'independent_dev_plumes':len(dev.groups),'status':'TRAINING_PIPELINE_COMPLETED_NOT_SCIENTIFIC_PASS'}
+0060  (out/'summary.json').write_text(json.dumps(summary,indent=2));print(json.dumps(summary,indent=2))
+0061 if __name__=='__main__':main()
+
+===== execution/pmfs_brg/runtime.py SHA256=1ef207d251353d572ba25d958b414349f1b37a461c06ec7840dec23ea3de8db6 =====
+0001 """Stateful causal inference + PMFS planner-cache update. No target labels allowed."""
+0002 from __future__ import annotations
+0003 import hashlib,json,math
+0004 import numpy as np
+0005 import torch
+0006 from .features import FeatureConfig,encode
+0007 from .model import load_checkpoint,log_posterior
+0008 
+0009 class InferenceSession:
+0010     def __init__(self,model,metadata,bank,allow_warmstart=False,max_events=128):
+0011         if metadata.get('deployment_status')!='VALIDATED_FOR_LOCKED_CLOSED_LOOP' and not allow_warmstart:
+0012             raise ValueError('warm-start weights require explicit --allow-warmstart; no validated policy shipped')
+0013         self.model=model.eval();self.metadata=metadata;self.bank=bank
+0014         self.feature_cfg=FeatureConfig(**metadata['feature_config'])
+0015         self.max_events=max_events;self.run_id=None;self.temperature=float(metadata.get('temperature',1.))
+0016         self.prior=np.ones(len(bank.ids))/len(bank.ids)
+0017     def reset(self,run_id,expected_bank,prior=None):
+0018         if expected_bank!=self.bank.fingerprint:raise ValueError('template version mismatch')
+0019         if not run_id or not isinstance(run_id,str):raise ValueError('explicit run id required')
+0020         self.run_id=run_id;self.h=self.model.initial(1,len(self.bank.ids));self.last_event=None;self.last_digest=None;self.last_response=None;self.last_time=-np.inf;self.count=0
+0021         if prior is not None:
+0022             prior=np.asarray(prior,dtype=float)
+0023             if prior.shape!=(len(self.bank.ids),) or not np.isfinite(prior).all() or (prior<=0).any():raise ValueError('bad prior')
+0024             self.prior=prior/prior.sum()
+0025         else:self.prior=np.ones(len(self.bank.ids))/len(self.bank.ids)
+0026         return {'status':'RESET','bank_id':self.bank.fingerprint,'sources':len(self.bank.ids),'map_cells':self.bank.n}
+0027 
+0028     @torch.inference_mode()
+0029     def observe(self,event):
+0030         allowed={'run_id','event_id','time_s','x','y','z','concentration_ppm'}
+0031         if set(event)!=allowed:raise ValueError(f'event schema mismatch; extra/missing: {set(event)^allowed}')
+0032         if self.run_id is None or event['run_id']!=self.run_id:raise ValueError('reset/run mismatch')
+0033         eid=event['event_id']
+0034         if not isinstance(eid,int) or eid<0:raise ValueError('integer monotonic event id required')
+0035         nums=[float(event[k]) for k in ['time_s','x','y','z','concentration_ppm']]
+0036         if not all(math.isfinite(v) for v in nums) or nums[-1]<0:raise ValueError('invalid event values')
+0037         digest=hashlib.sha256(json.dumps(event,sort_keys=True,allow_nan=False).encode()).hexdigest()
+0038         if self.last_event==eid:
+0039             if digest!=self.last_digest:raise ValueError('same event id with different contents')
+0040             return self.last_response
+0041         if self.last_event is not None and eid<=self.last_event:raise ValueError('stale/reordered event')
+0042         if nums[0]<=self.last_time:raise ValueError('non-increasing event time')
+0043         if self.count>=self.max_events:raise ValueError('history budget exceeded; no silent reset')
+0044         if abs(nums[3]-float(self.bank.meta['height_m']))>1e-4:raise ValueError('height outside template contract')
+0045         footprint=(float(self.bank.meta.get('footprint_x_m',.2)),float(self.bank.meta.get('footprint_y_m',.2)))
+0046         p,u=self.bank.project([[nums[1],nums[2]]],footprint)
+0047         o,c=encode([nums[4]],[[nums[1],nums[2]]],self.bank.xy,p,u,self.feature_cfg)
+0048         logits,h=self.model.step(torch.from_numpy(o),torch.from_numpy(c),self.h)
+0049         lp=log_posterior(logits.double(),self.prior,self.temperature)[0]
+0050         q=lp.exp().cpu().numpy()
+0051         if not np.isfinite(q).all() or abs(q.sum()-1)>1e-8:raise ValueError('invalid model probabilities')
+0052         src,var=self.bank.planner_maps(q)
+0053         self.h=h;self.count+=1;self.last_time=nums[0];self.last_event=eid;self.last_digest=digest
+0054         self.last_response={'status':'OK','run_id':self.run_id,'event_id':eid,'bank_id':self.bank.fingerprint,'q':q.tolist(),'log_q':lp.cpu().numpy().tolist(),'source_map':src.tolist(),'variance_of_hit_prob':var.tolist(),'observations':self.count,'history_extrapolated':self.count>int(self.metadata.get('max_tested_history',10))}
+0055         return self.last_response
+
+===== execution/native_source/algorithms/PMFS/PMFS_utils.cpp SHA256=2359589d9103a9fce4f41c4a0af3a7510a191fe3c5b2184c1fa4f392b688ddbe =====
+0001 #include <stdexcept>
+0002 #include <iomanip>
+0003 #include <cstdlib>
+0004 #include "gsl_server/algorithms/Common/Grid2D.hpp"
+0005 #include "gsl_server/algorithms/Common/Utils/Math.hpp"
+0006 #include <fstream>
+0007 #include <gsl_server/algorithms/PMFS/PMFS.hpp>
+0008 
+0009 namespace GSL
+0010 {
+0011     void PMFS::OnCompleteNavigation(GSLResult result, State* previousState)
+0012     {
+0013         if (result == GSLResult::Success)
+0014             stateMachine.forceSetState(stopAndMeasureState.get());
+0015         else
+0016         {
+0017             functionQueue.submit([&]()
+0018                                  {
+0019                                      movingState->chooseGoalAndMove();
+0020                                  });
+0021         }
+0022     }
+0023 
+0024     GSLResult PMFS::checkSourceFound()
+0025     {
+0026         if (stateMachine.getCurrentState() == waitForMapState.get())
+0027             return GSLResult::Running;
+0028 
+0029         rclcpp::Duration time_spent = node->now() - startTime;
+0030         if (time_spent.seconds() > resultLogging.maxSearchTime)
+0031         {
+0032             saveResultsToFile(GSLResult::Failure);
+0033             return GSLResult::Failure;
+0034         }
+0035 
+0036         if (resultLogging.navigationTime == -1)
+0037         {
+0038             if (sqrt(pow(currentRobotPose.pose.pose.position.x - resultLogging.sourcePositionGT.x, 2) +
+0039                      pow(currentRobotPose.pose.pose.position.y - resultLogging.sourcePositionGT.y, 2)) < 0.5)
+0040             {
+0041                 resultLogging.navigationTime = time_spent.seconds();
+0042             }
+0043         }
+0044 
+0045         double variance = Utils::Variance(Grid2D<double>(sourceProbability, occupancy, gridMetadata));
+0046         GSL_INFO("Variance: {:.2f}", variance);
+0047 
+0048         if (variance < settings.declaration.threshold)
+0049         {
+0050             saveResultsToFile(GSLResult::Success);
+0051             return GSLResult::Success;
+0052         }
+0053 
+0054         return GSLResult::Running;
+0055     }
+0056 
+0057     void PMFS::saveResultsToFile(GSLResult result)
+0058     {
+0059         auditBelief(result == GSLResult::Success ? "declared_success" : "terminal_failure");
+0060         // 1. Search time.
+0061         rclcpp::Duration time_spent = node->now() - startTime;
+0062         double search_t = time_spent.seconds();
+0063 
+0064         Vector2 sourceLocationAll = Utils::ExpectedValue(Grid2D<double>(sourceProbability, occupancy, gridMetadata), 1);
+0065         Vector2 sourceLocation = Utils::ExpectedValue(Grid2D<double>(sourceProbability, occupancy, gridMetadata), 0.05);
+0066 
+0067         double error = sqrt(pow(resultLogging.sourcePositionGT.x - sourceLocation.x, 2) + pow(resultLogging.sourcePositionGT.y - sourceLocation.y, 2));
+0068         double errorAll = sqrt(pow(resultLogging.sourcePositionGT.x - sourceLocationAll.x, 2) + pow(resultLogging.sourcePositionGT.y - sourceLocationAll.y, 2));
+0069 
+0070         std::string resultString = fmt::format("RESULT IS: Success={}, Search_t={:.2f}, Error={:.2f}", (int)result, search_t, error);
+0071         GSL_INFO_COLOR(fmt::terminal_color::blue, "{}", resultString);
+0072 
+0073         // Save to file
+0074         if (resultLogging.resultsFile != "")
+0075         {
+0076             std::ofstream file;
+0077             file.open(resultLogging.resultsFile, std::ios_base::app);
+0078             if (result != GSLResult::Success)
+0079                 file << "FAILED ";
+0080 
+0081             file << resultLogging.navigationTime << " " << search_t << " " << errorAll << " " << error << " " << iterationsCounter << " "
+0082                  << Utils::Variance(Grid2D<double>(sourceProbability, occupancy, gridMetadata)) << "\n";
+0083             file.close();
+0084         }
+0085         else
+0086             GSL_WARN("No file provided for logging result. Skipping it.");
+0087 
+0088         if (resultLogging.navigationPathFile != "")
+0089         {
+0090             std::ofstream file;
+0091             file.open(resultLogging.navigationPathFile, std::ios_base::app);
+0092             file << "------------------------\n";
+0093             for (PoseWithCovarianceStamped p : resultLogging.robotPosesVector)
+0094                 file << p.pose.pose.position.x << ", " << p.pose.pose.position.y << "\n";
+0095             file.close();
+0096         }
+0097         else
+0098             GSL_WARN("No file provided for logging path. Skipping it.");
+0099     }
+0100 
+0101 } // namespace GSL
+0102 // Optional output only: never changes source, variance, RNG, planner, or stopping.
+0103 namespace GSL {
+0104 void PMFS::auditBelief(const char* stage) {
+0105     const char* path = std::getenv("BRG_BELIEF_AUDIT_JSONL");
+0106     if (!path || !*path) return;
+0107     std::ofstream f(path, std::ios::app);
+0108     if (!f) throw std::runtime_error("BRG belief audit cannot open");
+0109     Vector2 estimate = Utils::ExpectedValue(Grid2D<double>(sourceProbability, occupancy, gridMetadata), 0.05);
+0110     f << std::setprecision(17) << "{\"stage\":\"" << stage << "\",\"time_s\":" << node->now().seconds()
+0111       << ",\"search_time_s\":" << (node->now()-startTime).seconds()
+0112       << ",\"iterations_counter\":" << iterationsCounter
+0113       << ",\"brg_event_count\":" << brgEvent << ",\"width\":" << gridMetadata.dimensions.x
+0114       << ",\"height\":" << gridMetadata.dimensions.y << ",\"resolution\":" << gridMetadata.cellSize
+0115       << ",\"origin_x\":" << gridMetadata.origin.x << ",\"origin_y\":" << gridMetadata.origin.y
+0116       << ",\"estimate_xy\":[" << estimate.x << ',' << estimate.y << "],\"free_cells\":[";
+0117     bool first=true;
+0118     for(size_t i=0;i<occupancy.size();++i) if(occupancy[i]==Occupancy::Free){if(!first)f<<',';f<<i;first=false;}
+0119     f << "],\"source_map\":[";
+0120     for(size_t i=0;i<sourceProbability.size();++i){if(i)f<<',';f<<sourceProbability[i];}
+0121     f << "],\"variance_map\":[";
+0122     for(size_t i=0;i<simulations.varianceOfHitProb.size();++i){if(i)f<<',';f<<simulations.varianceOfHitProb[i];}
+0123     f << "]}\n";
+0124     f.flush(); if(!f)throw std::runtime_error("BRG belief audit write failed");
+0125 }
+0126 }
+
+===== provenance/native_support_resolution_v2/TRAINING_MANIFEST.json SHA256=35df54032e709c8050120fe11c46b5c922ffe5a07c9937a535421b981edcad25 =====
+0001 {
+0002   "role": "NATIVE_LEGAL_FULL_SUPPORT_OPEN_TRAINING",
+0003   "original_manifest_sha256": "426f07ad423b144f28dd612181be0fccc62994fcfd163a8bcd0a16744c069585",
+0004   "environments": [
+0005     {
+0006       "environment": 0,
+0007       "candidates": 596,
+0008       "truth_candidate_indices": [
+0009         291,
+0010         309,
+0011         595,
+0012         594,
+0013         20,
+0014         38
+0015       ],
+0016       "bank_id": "ce18a95c7bb44cda91395c6febf19b967ebf477e6bd174c7f5e2ed7e048509b7",
+0017       "bank_sha256": "bf213e252dd44dde1077c678f881bf703e2c7ab86144e569bb5d581bf1f2d390",
+0018       "data_sha256": "fef2e8a804e18c185af5a2c5677081a214b5bd21b20bbdd141e472a841ecbdbd",
+0019       "original_data_sha256": "d871dfbd51f523e0da7a86e575aec59aa14e87ab4bd3021ad9b0d3b03452d3ae"
+0020     },
+0021     {
+0022       "environment": 1,
+0023       "candidates": 630,
+0024       "truth_candidate_indices": [
+0025         338,
+0026         337,
+0027         0,
+0028         1,
+0029         622,
+0030         614
+0031       ],
+0032       "bank_id": "9c77674d7ebaff306b81b2f5c36e893bbb57099b661afe6e030a2eb57b04adeb",
+0033       "bank_sha256": "d5b67429907a4d3d02b71f355ba857451627813d8059e49ae1298d8bbebc6d66",
+0034       "data_sha256": "6db8e53c3410b824834034121ee7808baa650e154ad6ec4fece520bf05a3d2a5",
+0035       "original_data_sha256": "bb2240bb41ffeb2911c6b09afa5a678ce76b9c560ae5e5c153e37ebe5dee1744"
+0036     },
+0037     {
+0038       "environment": 2,
+0039       "candidates": 630,
+0040       "truth_candidate_indices": [
+0041         338,
+0042         337,
+0043         0,
+0044         1,
+0045         622,
+0046         614
+0047       ],
+0048       "bank_id": "3974e8c9b24ad8ae46afe68cf828d319a08228522acdf2e8e926d3458cff73c0",
+0049       "bank_sha256": "7231705c2befad5882a980212fcc7c7617c0304336b64c2c40ad27f86d23f60d",
+0050       "data_sha256": "602c8862f8ae4b50b9e323d4f53b0c7c479987092bf79765d4cd6210464a7c09",
+0051       "original_data_sha256": "5b92ac715b6dbd90f281aa2ef0062eaebfcf29b403e50622d7ba82236f0b923f"
+0052     }
+0053   ],
+0054   "route_geometry_unchanged": true,
+0055   "candidate_legality": "actual fine z0.20 slice -> Native scale3 reduction -> Native prune",
+0056   "new_plumes": 0,
+0057   "house03_training_observations": 0,
+0058   "train_groups": "e/s/r, r=0..11 unchanged",
+0059   "dev_groups": "e/s/r, r=12..15 unchanged",
+0060   "independent_train_plumes": 216,
+0061   "independent_dev_plumes": 72
+0062 }
