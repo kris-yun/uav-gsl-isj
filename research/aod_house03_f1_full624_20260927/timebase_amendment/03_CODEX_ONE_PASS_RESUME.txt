@@ -1,0 +1,20 @@
+AOD F1：只完成一次时间修订与原实验续跑，不开新算法
+
+当前原判决：AOD_F1_HOLD_TIMEBASE；scientific_pass_or_fail=null。此记录不可修改成PASS。
+本任务书本身不是授权。先将02_TIMEBASE_AMENDMENT_PROPOSED.md与十状态表交主线程签署；未签署时只可做元数据/哈希检查，不读浓度、不再生成plume。
+
+审批前一次完成：
+1. 核对原上传ZIP SHA与冻结commit，运行只读04_READONLY_AUDIT.py。
+2. 确认metadata-only首条没有发生浓度读取、ranking或结果调参；保留原日志/输出和旧HOLD。
+3. 将“0秒启用释放”和“约0.1秒出现首个离散批次”分开。不得改AddFilaments、RNG、float时钟或源强。
+4. 采样表按02中的唯一规则冻结为10个原生保存状态；它改变了采样定义，不可登记为旧精确时间gate已满足。保存原生clock、step、POST_MOVE阶段、wind index。
+5. 保持624支持、12源96seed、已完成54912 bank及所有评分/门槛不变。禁止借此加入dANN、temperature、gain/profile、blur调参或更换source/path。
+
+主线程批准后：
+6. 实现只按固定十状态表提取的读取器；用状态/时间元数据做单元检查，不凭浓度选择帧。文件序号只作为已核验的标识，不当作秒。
+7. 首条现有seed输出继续计入96，不重新生成；95条按原清单逐条运行。每条先验完整时间map与文件hash。状态表不符即停止，不能逐run找新帧。
+8. 用原目录保护规则防止RunningSimulation构造器覆盖旧目录。每条输出归档到C盘并验证；磁盘不足暂停，不能删不利target或用缺失值继续。所有工作副本清理须有明确批准，唯一副本永不删除。
+9. 96条完整后仅执行原F1评分和CI：nominal Delta_acc>=0.05且L95>0；state0按原非劣/负效应/不确定三分支。完整支持624，strict unique Top1，两路径保持成组，bootstrap源身份不重抽样。B2不输出伪后验。
+10. 交付整合复核包：旧HOLD、新amendment、采样状态表、首条复用记录、96条元数据与哈希、完整源评分及CI、模板哈希不变证明、重复评分结果。结束，不自行部署闭环或启动新路线。
+
+禁止：改float为double、改 > 为 >=、修改原生writer、换释放率、插入首个filament、最近帧/插值/时间重标、用target来挑时间容差、取消state0压力条件、删源/换seed、对House03训练或校准新网络。

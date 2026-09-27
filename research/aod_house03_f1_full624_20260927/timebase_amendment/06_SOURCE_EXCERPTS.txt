@@ -1,0 +1,748 @@
+[E01] EXECUTION_REPORT.md | original SHA256 c653df75ca580789e9930510f87a182c1f6e846e17e34ded341b12aa04275376
+L1: # Signed AOD House03 F1 full624 execution
+L2: 
+L3: Decision: **AOD_F1_HOLD_TIMEBASE**. Execution stopped at signed stage B.
+L4: No scientific PASS/FAIL or source-discrimination result was produced.
+L5: 
+L6: ## Frozen provenance
+L7: 
+L8: - Branch: `research/aod-house03-f1-full624-20260927`
+L9: - Base: `1008e2db20e74cfdcbdcb511d484e64a4bc6e49a`
+L10: - Pre-target freeze: `10dd251eba10b14bca3e0334dbac6ae8af93911a`
+L11: - Timebase HOLD freeze: `c5223b092f217d5bd4fb8063e0d5ae3f4e6761f4`
+L12: - Original signed ZIP: `1318dd08c0754800b6fcea33100443ed6ebe77b72adb75fcb622b7cbaaa75502`
+L13: - Seed manifest: `00bf64ab0d1ce55fda58303b11208019473313b97c4de11f7a2305d16143327d`
+L14: 
+L15: ## Candidate bank and capacity
+L16: 
+L17: All **54,912 / 54,912** scheduled PMFS forwards completed, covering all 624
+L18: candidates, 11 states and 8 replicas. Four map channels came from each identical
+L19: realization. The row keys, requested seeds, complete template support, array
+L20: hashes and unchanged geometry/wind/executable/object hashes were independently
+L21: validated before the first GADEN run.
+L22: 
+L23: Candidate wall time was **5597.447198803013 s** (93.29 minutes), using four
+L24: single-threaded workers on a 12-vCPU VM. The full bank remains at
+L25: `/home/zyc/aod_house03_f1_full624_20260927/candidate_forward`.
+L26: Allocated bank size is **2,041,757,696 bytes**. After the first metadata run,
+L27: available VM disk was **1,520,279,552 bytes**, and available RAM was
+L28: **4,846,854,144 bytes**. No old data was deleted.
+L29: 
+L30: ## First-run metadata gate
+L31: 
+L32: Exactly one scheduled fresh plume was generated, for `pmfs_24_13`, replica 0,
+L33: requested seed `869241781`, duration 510 s. The remaining **95 runs were not
+L34: started**. Only configuration, release, writer and wind-index metadata were read.
+L35: 
+L36: Release was enabled at 0 s, but the first nonzero filament appeared at
+L37: **0.10000000149011612 s**. All ten required exact timestamps had zero matching
+L38: saved records at the signed tolerance of 1e-9 s.
+L39: 
+L40: The following nearest timestamps are metadata diagnostics only and were never
+L41: substituted as observations:
+L42: 
+L43: | Required time (s) | Nearest actual writer time (s) | File ID | Wind index |
+L44: | --- | --- | --- | --- |
+L45: | 50 | 50.2998046875 | 92 | 8 |
+L46: | 100 | 100.09904479980469 | 175 | 3 |
+L47: | 150 | 149.79994201660156 | 265 | 10 |
+L48: | 200 | 199.80299377441406 | 365 | 10 |
+L49: | 250 | 249.80604553222656 | 465 | 10 |
+L50: | 300 | 299.80908203125 | 565 | 10 |
+L51: | 350 | 349.8121337890625 | 665 | 10 |
+L52: | 400 | 399.815185546875 | 765 | 10 |
+L53: | 450 | 449.8182373046875 | 865 | 10 |
+L54: | 500 | 499.8212890625 | 965 | 10 |
+L55: 
+L56: The original seeded numerical core, float clock, release, RNG, save interval and
+L57: wind schedule were preserved. The independent metadata verifier reproduced the
+L58: HOLD and returned byte-identical output in two executions.
+L59: 
+L60: ## Scientific evaluation status
+L61: 
+L62: Concentration extraction and all scoring were blocked by the signed timebase
+L63: gate. Nominal/stress Delta_acc, bootstrap CIs, rank/Top1/Top3/MAP diagnostics,
+L64: six pair margins, rescued/harmed counts, secondary B0/ICRA results and zero-target
+L65: counts are **not computed**. The requested scientific scoring repeat was not run.
+L66: The metadata-verification repeat is a separate integrity check.
+L67: 
+L68: ## Infrastructure repairs
+L69: 
+L70: The isolated logger required two dependency repairs before any actual plume:
+L71: 
+L72: - `1fd219be8870a307c876bb41819c7cec100ba805`: explicit linkage to the existing
+L73:   historical `libbsc.so`.
+L74: - `661bbd88aa8858a61c1541336c4e352209635c7c`: runtime codec search path and loaded
+L75:   library/hash verification. The failed loader did not enter the simulator.
+L76: 
+L77: Failed build and loader metadata were preserved. Numerical libraries, scientific
+L78: parameters and all frozen contracts were unchanged.
+L79: 
+L80: ## Review scope and stop boundary
+L81: 
+L82: The review ZIP includes the original signed package, source/seed manifests,
+L83: all frozen full-map and path templates, all 54,912 forward hash records,
+L84: implementation sources, exact historical kernels/parity records, logger sources
+L85: and build provenance, timestamp/release metadata, independent verification and
+L86: execution reports. The unread raw target gas is excluded from the review ZIP.
+L87: All raw candidate products and the first raw GADEN output remain preserved on VM.
+L88: 
+L89: No nearest-frame substitution, clock repair, extra source/path/seed selection,
+L90: additional GADEN run, neural training or closed loop followed the HOLD.
+
+[E02] protocol/01_TIME_AND_OBSERVATION_CONTRACT.md | original SHA256 48d108d717cb0ab82cee3e503943da7965018c155e217cfd661f403cfddd0fb2
+L1: # Physical time / observation contract
+L2: 
+L3: This contract replaces the earlier 3-second concentration averaging draft.
+L4: 
+L5: ## Time origin
+L6: 
+L7: F1 defines:
+L8: 
+L9: `t=0` = GADEN simulator start = configured gas-release start = path schedule
+L10: origin.
+L11: 
+L12: Before reading concentration, runtime metadata/logging must verify that gas
+L13: emission actually begins at physical simulator time 0.0 s under the frozen
+L14: configuration.
+L15: 
+L16: If simulator/runtime semantics show a nonzero or ambiguous release offset,
+L17: STOP:
+L18: `AOD_F1_HOLD_TIMEBASE`.
+L19: 
+L20: Do NOT redefine t=0 after inspecting gas.
+L21: 
+L22: ## Main observation slots
+L23: 
+L24: Exactly one concentration snapshot per path slot:
+L25: 
+L26: `50,100,150,200,250,300,350,400,450,500 s`.
+L27: 
+L28: The frozen 3-second dwell remains only a motion/settling budget used by F0 path
+L29: feasibility. It is NOT a 3-second concentration average and does not create
+L30: multiple observations.
+L31: 
+L32: At each slot, use the frozen probe footprint and the concentration field at the
+L33: single exact physical time `t`.
+L34: 
+L35: ## Simulation/save configuration
+L36: 
+L37: Keep:
+L38: - integration `time_step=0.1 s`;
+L39: - saved result interval `0.5 s`;
+L40: - `results_min_time=0.0`;
+L41: - House03 / `1-2,5_fast`;
+L42: - frozen 96 GADEN seeds and source xyz.
+L43: 
+L44: Set total simulation duration to **510.0 s** solely to ensure the final 500 s
+L45: sample exists with write-out margin.
+L46: 
+L47: Scientific target times stop at 500.0 s; data after 500 s are never scored.
+L48: 
+L49: ## Timestamp mapping
+L50: 
+L51: Never infer physical time by multiplying an ordinal filename/index by 0.5.
+L52: 
+L53: Instrumentation must write:
+L54: 
+L55: `RESULT_TIME_MAP.tsv`
+L56: 
+L57: with at least:
+L58: - run_id
+L59: - save_record_id
+L60: - physical_sim_time_s
+L61: - output path/file identifier
+L62: - active wind index/state at that physical time
+L63: 
+L64: Before concentration extraction:
+L65: 1. generate only the first scheduled GADEN run;
+L66: 2. inspect timestamp/writer/wind metadata only;
+L67: 3. do not read concentration values;
+L68: 4. verify all ten exact target times exist within 1e-9 s;
+L69: 5. verify source release start is 0.0 s;
+L70: 6. freeze the mapping implementation/commit.
+L71: 
+L72: If any target time is missing:
+L73: do not nearest-neighbour, clip, wrap or reuse legacy 300 s output.
+L74: STOP `AOD_F1_HOLD_TIMEBASE`.
+L75: 
+L76: ## Wind-phase reporting
+L77: 
+L78: Archived config includes `wind_time_step=1.0`, looping steps 1..10.
+L79: Because 50 s slot spacing may phase-lock to the wind schedule, record the
+L80: actual wind index at every scored target timestamp.
+L81: 
+L82: Do NOT phase sweep or alter target times.
+L83: 
+L84: If all ten slots land on the same wind phase, report that as a limitation:
+L85: this F1 remains a fresh source-location confirmation, not a claim of independent
+L86: sampling of ten wind phases.
+
+[E03] provenance/historical_gaden/RunningSimulation.cpp | original SHA256 00d0763dc7f369bb716cb8ddf151b3f1112b9b832f137e3cea2d1ee852aabb9a
+L78:     void RunningSimulation::AdvanceTimestep()
+L79:     {
+L80:         AddFilaments();
+L81:         MoveFilaments();
+L82: 
+L83:         if (parameters.saveResults && currentTime > lastSaveTime + parameters.saveDeltaTime)
+L84:         {
+L85:             if (parameters.preCalculateConcentrations)
+L86: #if GPU_ACCELERATION
+L87:                 UpdateConcentrationsGPU();
+L88: #else
+L89:                 UpdateConcentrationsCPU();
+L90: #endif
+L91: 
+L92:             SaveResults();
+L93:             lastSaveTime = currentTime;
+L94:         }
+L95: 
+L96:         if (parameters.windLoop && currentTime > lastWindUpdateTime + parameters.windIterationDeltaTime)
+L97:         {
+L98:             config->windSequence.AdvanceTimeStep();
+L99:             lastWindUpdateTime = currentTime;
+L100:         }
+L101: 
+L102:         currentTime += parameters.deltaTime;
+L103:         currentIteration++;
+L104:     }
+L105: 
+L106:     const std::vector<Filament>& RunningSimulation::GetFilaments() const
+L107:     {
+L108:         return *activeFilaments;
+L109:     }
+L110: 
+L111:     Vector3 RunningSimulation::SampleWind(const Vector3i& indices) const
+L112:     {
+L113:         size_t cellIndex = config->environment.indexFrom3D(indices);
+L114:         gaden::Vector3 windVec = config->windSequence.GetCurrent().at(cellIndex) + config->localAirflowDisturbances.at(cellIndex);
+L115:         return windVec;
+L116:     }
+L117: 
+L118:     void RunningSimulation::AddFilaments()
+L119:     {
+L120:         ZoneScoped;
+L121:         float numFilaments_iteration = parameters.numFilaments_sec * parameters.deltaTime;
+L122: 
+L123:         releaseAccumulator += numFilaments_iteration;
+L124: 
+L125:         for (size_t i = 0; i < std::floor(releaseAccumulator); i++)
+L126:         {
+L127:             constexpr size_t safetyLimit = 10;
+L128:             size_t attempts = 0;
+L129: 
+L130:             Vector3 position;
+L131:             do
+L132:             {
+L133:                 position = simulationMetadata.source->Emit();
+L134:                 attempts++;
+L135:             } while (!config->environment.IsInBounds(position) && attempts < safetyLimit);
+L136: 
+L137:             GADEN_VERIFY(attempts < safetyLimit, "Could not spawn filaments around source position! Is it inside the environment bounds?");
+L138: 
+L139:             activeFilaments->emplace_back(position, parameters.filamentInitialSigma);
+L140:         }
+L141: 
+L142:         releaseAccumulator = releaseAccumulator - std::floor(releaseAccumulator);
+L143:     }
+
+[E04] timebase_logger/filament_simulator_timebase.cpp | original SHA256 3cfe21c7bf13bef274d0c40c606b1e1a34f1099749abd0bca0d1ca70ad640e23
+L148:     bool limitRate = getParameter("limitRate", false);
+L149:     float runRate = limitRate ? getParameter("runRate", 10.0) : 10.0;
+L150:     rclcpp::Rate rate(runRate);
+L151: 
+L152:     const char* auditDir = std::getenv("AOD_TIME_AUDIT_DIR");
+L153:     if (!auditDir) throw std::runtime_error("AOD_TIME_AUDIT_DIR required");
+L154:     const char* runIdEnv = std::getenv("AOD_RUN_ID");
+L155:     const std::string auditRunId = runIdEnv ? runIdEnv : "unknown";
+L156:     std::ofstream aodMap(std::filesystem::path(auditDir)/"RESULT_TIME_MAP.tsv");
+L157:     std::ofstream aodRelease(std::filesystem::path(auditDir)/"RELEASE_TIME_METADATA.tsv");
+L158:     aodMap << "run_id\tsave_record_id\tphysical_sim_time_s\toutput_path\twind_index\tintegration_step\n" << std::setprecision(17);
+L159:     aodRelease << "event\tphysical_sim_time_s\tfilament_count\tdelta_time_s\n" << std::setprecision(17);
+L160:     aodRelease << "release_enabled_first_step\t" << sim->GetCurrentTime() << "\t0\t" << params.deltaTime << "\n";
+L161:     size_t aodNextSave = 0, aodStep = 0;
+L162:     bool aodFirstGasLogged = false;
+L163: 
+L164:     while (rclcpp::ok() && sim->GetCurrentTime() < maxSimTime)
+L165:     {
+L166: 
+L167:         // SaveResults executes before the core increments currentTime or wind
+L168:         // index. These getters record the exact state/time used by the writer.
+L169:         const float aodTimeBefore = sim->GetCurrentTime();
+L170:         const size_t aodWindBefore = envConfig->windSequence.GetCurrentIndex();
+L171:         sim->AdvanceTimestep();
+L172:         const auto aodOutput = params.saveDataDirectory / ("iteration_" + std::to_string(aodNextSave));
+L173:         if (std::filesystem::exists(aodOutput)) {
+L174:             aodMap << auditRunId << "\t" << aodNextSave << "\t" << aodTimeBefore << "\t" << aodOutput.string()
+L175:                    << "\t" << aodWindBefore << "\t" << aodStep << "\n";
+L176:             aodMap.flush();
+L177:             ++aodNextSave;
+L178:         }
+L179:         if (!aodFirstGasLogged && !sim->GetFilaments().empty()) {
+L180:             aodRelease << "first_nonzero_filament_count\t" << aodTimeBefore << "\t" << sim->GetFilaments().size()
+L181:                        << "\t" << params.deltaTime << "\n";
+L182:             aodRelease.flush();
+L183:             aodFirstGasLogged = true;
+L184:         }
+L185:         ++aodStep;
+
+[E05] protocol/03_PRIMARY_ENDPOINT_AND_CI.md | original SHA256 bb4537039ae419ac0a965a3090d295d3c825b3d2b0d93e8b3c4ade6998656e3b
+L1: # Primary endpoint and confidence interval
+L2: 
+L3: ## Unit of fresh stochastic replication
+L4: 
+L5: There are:
+L6: - 12 fixed truth sources;
+L7: - 8 independent GADEN realizations/source;
+L8: - 2 frozen paths per realization.
+L9: 
+L10: The two paths are correlated measurements of the SAME plume realization and
+L11: are never counted as two independent plumes.
+L12: 
+L13: ## Unique Top-1
+L14: 
+L15: For arm a, source s, realization r and path p:
+L16: 
+L17: `I_a(s,r,p)=1`
+L18: 
+L19: iff the true source is the unique minimum-B2-SSE candidate among ALL 624 legal
+L20: candidates.
+L21: 
+L22: Otherwise `I=0`.
+L23: 
+L24: Use the exact unique-tie semantics of the frozen amplitude-operator
+L25: implementation. Do not introduce a new tie tolerance after targets are read.
+L26: 
+L27: An all-zero target is retained and counted as not uniquely correct for both
+L28: arms.
+L29: 
+L30: ## Paired source-realization effect
+L31: 
+L32: First average the two paths:
+L33: 
+L34: `d_sr = 0.5 * sum_p [I_rawu(s,r,p)-I_u(s,r,p)]`.
+L35: 
+L36: Then:
+L37: 
+L38: `Delta_acc = (1/12) sum_s (1/8) sum_r d_sr`.
+L39: 
+L40: This is the PRIMARY F1 endpoint.
+L41: 
+L42: ## Frozen practical-effect threshold
+L43: 
+L44: Nominal confirmation requires:
+L45: 
+L46: `Delta_acc >= 0.05`.
+L47: 
+L48: Interpretation:
+L49: at least five percentage points of paired unique-Top1 improvement across the
+L50: fixed 12-source panel.
+L51: 
+L52: This threshold is signed prospectively and is not estimated from the old OPEN
+L53: House01/House02 effect.
+L54: 
+L55: ## Paired stratified bootstrap
+L56: 
+L57: Use exactly:
+L58: - 10,000 bootstrap replicates;
+L59: - RNG seed `2026092703`;
+L60: - NumPy PCG64;
+L61: - percentile interval;
+L62: - quantiles 0.025 and 0.975;
+L63: - NumPy `quantile(..., method="linear")`.
+L64: 
+L65: For each bootstrap replicate:
+L66: for EACH of the 12 sources independently, sample 8 realization indices with
+L67: replacement from its frozen 8 realizations.
+L68: 
+L69: Whenever a realization index is selected, keep grouped:
+L70: - both paths;
+L71: - both arms u/rawu;
+L72: - nominal and state0 stress scores.
+L73: 
+L74: Source identities are NOT resampled.
+L75: 
+L76: Thus the main CI is conditional on:
+L77: - this fixed 12-source truth panel;
+L78: - the frozen 624-candidate template banks.
+L79: 
+L80: It quantifies plume-realization variability, not whole-House source-selection
+L81: uncertainty.
+L82: 
+L83: Nominal CI gate:
+L84: 
+L85: `95% lower bound of Delta_acc > 0`.
+L86: 
+L87: Both the 0.05 point-effect gate and lower-bound gate are required.
+L88: 
+L89: ## Stress non-inferiority
+L90: 
+L91: Compute `Delta_acc_state0` using the same definition and the SAME bootstrap
+L92: draws.
+L93: 
+L94: Stress non-inferiority is supported iff:
+L95: 
+L96: `95% lower bound >= -0.05`.
+L97: 
+L98: Failure of this non-inferiority condition is NOT automatically a proven
+L99: resolution-robustness tradeoff.
+
+[E06] protocol/05_FINAL_DECISION_LOGIC.md | original SHA256 092d9120b14cb097f2b9007e2efda6a5d2ef18cc07b12a8bb1e52a19c0c22fa3
+L1: # Final F1 labels
+L2: 
+L3: ## Infrastructure holds
+L4: 
+L5: Before scientific scoring:
+L6: 
+L7: `AOD_F1_HOLD_TIMEBASE`
+L8: for physical-time/release-time/writer ambiguity.
+L9: 
+L10: `AOD_F1_HOLD_ASSET_OR_PARITY`
+L11: for candidate/source/wind/template/hash/implementation failure.
+L12: 
+L13: `AOD_F1_HOLD_FULL624_BUDGET`
+L14: only if the approved 54,912-candidate-forward bank cannot be completed.
+L15: If this occurs, DO NOT generate fresh GADEN and DO NOT silently shrink support
+L16: to 12.
+L17: 
+L18: ## Nominal confirmation
+L19: 
+L20: Nominal full-support AOD confirmation requires BOTH:
+L21: 
+L22: N1. `Delta_acc_nominal >= 0.05`.
+L23: 
+L24: N2. nominal paired-bootstrap 95% lower bound `> 0`.
+L25: 
+L26: If either fails:
+L27: 
+L28: `AOD_F1_FULL624_NOT_CONFIRMED`.
+L29: 
+L30: Do not change sources, seeds, candidate support, score, blur or path and retry
+L31: the same confirmation.
+L32: 
+L33: ## Stress interpretation, only after nominal confirmation
+L34: 
+L35: Let state0 stress CI be `[L0,U0]`.
+L36: 
+L37: ### Non-inferior under the frozen stress
+L38: 
+L39: If:
+L40: 
+L41: `L0 >= -0.05`
+L42: 
+L43: final:
+L44: 
+L45: `AOD_F1_FULL624_CONFIRMED_STRESS_NONINFERIOR`.
+L46: 
+L47: ### Supported negative stress effect
+L48: 
+L49: If non-inferiority fails AND:
+L50: 
+L51: `U0 < 0`
+L52: 
+L53: final:
+L54: 
+L55: `AOD_F1_FULL624_CONFIRMED_TRADEOFF`.
+L56: 
+L57: Interpretation:
+L58: nominal resolution improvement is confirmed, and rawu has supported negative
+L59: relative performance under the predeclared reduced-state/reduced-depth stress
+L60: condition.
+L61: 
+L62: Do NOT call this a pure wind-error causal effect.
+L63: 
+L64: ### Stress uncertainty
+L65: 
+L66: If:
+L67: 
+L68: `L0 < -0.05` and `U0 >= 0`
+L69: 
+L70: final:
+L71: 
+L72: `AOD_F1_FULL624_CONFIRMED_STRESS_UNCERTAIN`.
+L73: 
+L74: Interpretation:
+L75: nominal improvement is confirmed, but 96 fresh plume realizations do not
+L76: establish non-inferiority or a supported negative stress effect.
+L77: 
+L78: This avoids converting a failed non-inferiority test into a decorative
+L79: “tradeoff” claim.
+
+[E07] TIMEBASE_AUDIT.json | original SHA256 39e1d8890242097a829423e69ddb10b8384b2bdeb50b23e55af3427202fe3df2
+L1: {
+L2:   "passed": false,
+L3:   "decision": "AOD_F1_HOLD_TIMEBASE",
+L4:   "actual_gaden_run_count": 1,
+L5:   "planned_gaden_run_count": 96,
+L6:   "wall_seconds": 3.729698201001156,
+L7:   "release_enabled": {
+L8:     "event": "release_enabled_first_step",
+L9:     "physical_sim_time_s": "0",
+L10:     "filament_count": "0",
+L11:     "delta_time_s": "0.10000000149011612"
+L12:   },
+L13:   "first_actual_nonzero_filament_metadata": {
+L14:     "event": "first_nonzero_filament_count",
+L15:     "physical_sim_time_s": "0.10000000149011612",
+L16:     "filament_count": "1",
+L17:     "delta_time_s": "0.10000000149011612"
+L18:   },
+L19:   "release_enabled_at_zero": true,
+L20:   "actual_emission_at_zero": false,
+L21:   "all_ten_exact_writer_times_present": false,
+L22:   "slot_checks": [
+L23:     {
+L24:       "required_time_s": 50,
+L25:       "exact_match_count": 0,
+L26:       "match": [],
+L27:       "nearest_writer_metadata_only": {
+L28:         "run_id": "House03_pmfs_24_13_replica_0",
+L29:         "save_record_id": "92",
+L30:         "physical_sim_time_s": "50.2998046875",
+L31:         "output_path": "/home/zyc/ros2_ws/aod_house03_f1_full624_targets_20260927/source_0_replica_0/realization/iteration_92",
+L32:         "wind_index": "8",
+L33:         "integration_step": "503"
+L34:       },
+L35:       "nearest_absolute_error_s": 0.2998046875
+L36:     },
+L37:     {
+L38:       "required_time_s": 100,
+L39:       "exact_match_count": 0,
+L40:       "match": [],
+L41:       "nearest_writer_metadata_only": {
+L42:         "run_id": "House03_pmfs_24_13_replica_0",
+L43:         "save_record_id": "175",
+L44:         "physical_sim_time_s": "100.09904479980469",
+L45:         "output_path": "/home/zyc/ros2_ws/aod_house03_f1_full624_targets_20260927/source_0_replica_0/realization/iteration_175",
+L46:         "wind_index": "3",
+L47:         "integration_step": "1001"
+L48:       },
+L49:       "nearest_absolute_error_s": 0.0990447998046875
+L50:     },
+L51:     {
+L52:       "required_time_s": 150,
+L53:       "exact_match_count": 0,
+L54:       "match": [],
+L55:       "nearest_writer_metadata_only": {
+L56:         "run_id": "House03_pmfs_24_13_replica_0",
+L57:         "save_record_id": "265",
+L58:         "physical_sim_time_s": "149.79994201660156",
+L59:         "output_path": "/home/zyc/ros2_ws/aod_house03_f1_full624_targets_20260927/source_0_replica_0/realization/iteration_265",
+L60:         "wind_index": "10",
+L61:         "integration_step": "1498"
+L62:       },
+L63:       "nearest_absolute_error_s": 0.2000579833984375
+L64:     },
+L65:     {
+L66:       "required_time_s": 200,
+L67:       "exact_match_count": 0,
+L68:       "match": [],
+L69:       "nearest_writer_metadata_only": {
+L70:         "run_id": "House03_pmfs_24_13_replica_0",
+L71:         "save_record_id": "365",
+L72:         "physical_sim_time_s": "199.80299377441406",
+L73:         "output_path": "/home/zyc/ros2_ws/aod_house03_f1_full624_targets_20260927/source_0_replica_0/realization/iteration_365",
+L74:         "wind_index": "10",
+L75:         "integration_step": "1998"
+L76:       },
+L77:       "nearest_absolute_error_s": 0.1970062255859375
+L78:     },
+L79:     {
+L80:       "required_time_s": 250,
+L81:       "exact_match_count": 0,
+L82:       "match": [],
+L83:       "nearest_writer_metadata_only": {
+L84:         "run_id": "House03_pmfs_24_13_replica_0",
+L85:         "save_record_id": "465",
+L86:         "physical_sim_time_s": "249.80604553222656",
+L87:         "output_path": "/home/zyc/ros2_ws/aod_house03_f1_full624_targets_20260927/source_0_replica_0/realization/iteration_465",
+L88:         "wind_index": "10",
+L89:         "integration_step": "2498"
+L90:       },
+L91:       "nearest_absolute_error_s": 0.1939544677734375
+L92:     },
+L93:     {
+L94:       "required_time_s": 300,
+L95:       "exact_match_count": 0,
+L96:       "match": [],
+L97:       "nearest_writer_metadata_only": {
+L98:         "run_id": "House03_pmfs_24_13_replica_0",
+L99:         "save_record_id": "565",
+L100:         "physical_sim_time_s": "299.80908203125",
+L101:         "output_path": "/home/zyc/ros2_ws/aod_house03_f1_full624_targets_20260927/source_0_replica_0/realization/iteration_565",
+L102:         "wind_index": "10",
+L103:         "integration_step": "2998"
+L104:       },
+L105:       "nearest_absolute_error_s": 0.19091796875
+L106:     },
+L107:     {
+L108:       "required_time_s": 350,
+L109:       "exact_match_count": 0,
+L110:       "match": [],
+L111:       "nearest_writer_metadata_only": {
+L112:         "run_id": "House03_pmfs_24_13_replica_0",
+L113:         "save_record_id": "665",
+L114:         "physical_sim_time_s": "349.8121337890625",
+L115:         "output_path": "/home/zyc/ros2_ws/aod_house03_f1_full624_targets_20260927/source_0_replica_0/realization/iteration_665",
+L116:         "wind_index": "10",
+L117:         "integration_step": "3498"
+L118:       },
+L119:       "nearest_absolute_error_s": 0.1878662109375
+L120:     },
+L121:     {
+L122:       "required_time_s": 400,
+L123:       "exact_match_count": 0,
+L124:       "match": [],
+L125:       "nearest_writer_metadata_only": {
+L126:         "run_id": "House03_pmfs_24_13_replica_0",
+L127:         "save_record_id": "765",
+L128:         "physical_sim_time_s": "399.815185546875",
+L129:         "output_path": "/home/zyc/ros2_ws/aod_house03_f1_full624_targets_20260927/source_0_replica_0/realization/iteration_765",
+L130:         "wind_index": "10",
+L131:         "integration_step": "3998"
+L132:       },
+L133:       "nearest_absolute_error_s": 0.184814453125
+L134:     },
+L135:     {
+L136:       "required_time_s": 450,
+L137:       "exact_match_count": 0,
+L138:       "match": [],
+L139:       "nearest_writer_metadata_only": {
+L140:         "run_id": "House03_pmfs_24_13_replica_0",
+L141:         "save_record_id": "865",
+L142:         "physical_sim_time_s": "449.8182373046875",
+L143:         "output_path": "/home/zyc/ros2_ws/aod_house03_f1_full624_targets_20260927/source_0_replica_0/realization/iteration_865",
+L144:         "wind_index": "10",
+L145:         "integration_step": "4498"
+L146:       },
+L147:       "nearest_absolute_error_s": 0.1817626953125
+L148:     },
+L149:     {
+L150:       "required_time_s": 500,
+L151:       "exact_match_count": 0,
+L152:       "match": [],
+L153:       "nearest_writer_metadata_only": {
+L154:         "run_id": "House03_pmfs_24_13_replica_0",
+L155:         "save_record_id": "965",
+L156:         "physical_sim_time_s": "499.8212890625",
+L157:         "output_path": "/home/zyc/ros2_ws/aod_house03_f1_full624_targets_20260927/source_0_replica_0/realization/iteration_965",
+L158:         "wind_index": "10",
+L159:         "integration_step": "4998"
+L160:       },
+L161:       "nearest_absolute_error_s": 0.1787109375
+L162:     }
+L163:   ],
+L164:   "writer_record_count": 986,
+L165:   "last_writer_time_s": 509.8218994140625,
+L166:   "result_time_map_sha256": "fe04f283273623dbbb2ae2e3b8e007baa38b7e12e5176f5ce9bca692afe5ba5a",
+L167:   "release_metadata_sha256": "298168fd02b2ca6e0d494b51400775d5463a186c2709050ce158090614baa5fa",
+L168:   "concentration_values_read": false,
+L169:   "concentration_extraction_executed": false,
+L170:   "nearest_metadata_not_used_as_observations": true,
+L171:   "run_directory": "/home/zyc/ros2_ws/aod_house03_f1_full624_targets_20260927/source_0_replica_0"
+L172: }
+
+[E08] protocol/02_FULL624_TEMPLATE_CONTRACT.md | original SHA256 95adf3d711e07ac3d78ebc06d00a665605db250d32ec2127ccd38d16aab03bbb
+L1: # Full 624-candidate template contract
+L2: 
+L3: ## Support
+L4: 
+L5: Candidate support is the complete frozen:
+L6: `HOUSE03_CANONICAL_SOURCE_GEOMETRY_BANK_624.tsv`.
+L7: 
+L8: No candidate may be removed because:
+L9: - its template is weak;
+L10: - it is far from the 12 truth sources;
+L11: - u/rawu are poorly separated;
+L12: - it causes a rank error.
+L13: 
+L14: The 12 truth sources are members of this 624 set.
+L15: 
+L16: ## Forward bank
+L17: 
+L18: Use exactly:
+L19: `HOUSE03_FUTURE_PMFS_SEEDS_FULL624_54912.tsv`.
+L20: 
+L21: For every candidate:
+L22: - 11 states;
+L23: - 8 replicas/state;
+L24: - same Native PMFS forward settings;
+L25: - same occurrence operator;
+L26: - export u and rawu from the same forward realization.
+L27: 
+L28: ## Nominal template
+L29: 
+L30: For each candidate, average:
+L31: - 8 replicas inside each state;
+L32: - then states 0..10 with weight 1/11.
+L33: 
+L34: ## Stress template
+L35: 
+L36: Use only the same 8 state-0 realizations already present in the nominal bank.
+L37: 
+L38: Terminology:
+L39: this is a **reduced wind-state coverage + reduced template Monte Carlo depth
+L40: stress condition**.
+L41: 
+L42: It is NOT a pure causal wind-error experiment, because nominal uses 88 forward
+L43: samples/candidate while the stress condition uses 8.
+L44: 
+L45: Do not add a replica-depth control, alternate wind, rotation or sigma sweep in
+L46: this F1.
+L47: 
+L48: ## Observation operator
+L49: 
+L50: Primary arms:
+L51: 
+L52: C0 = `u_footprint` + archived B2
+L53: 
+L54: C1 = `rawu_footprint` + same archived B2.
+L55: 
+L56: Nearest readout remains an implementation regression only.
+L57: 
+L58: Do not change B2, fit a new gain model, add B0 to the score or form a softmax
+L59: posterior.
+
+[E09] review_metadata/source_0_replica_0/RELEASE_TIME_METADATA.tsv | original SHA256 298168fd02b2ca6e0d494b51400775d5463a186c2709050ce158090614baa5fa
+L1: event	physical_sim_time_s	filament_count	delta_time_s
+L2: release_enabled_first_step	0	0	0.10000000149011612
+L3: first_nonzero_filament_count	0.10000000149011612	1	0.10000000149011612
+
+[E10] execution/first_gaden_timebase_vm.py | original SHA256 0429bb7db496ec12204458b6201b1b44440cfc1c605c3572f7c15fe3436ec7c0
+L23:     occ=Path('/mnt/hgfs/workspace/GADEN_files/scenarios/House03/OccupancyGrid3D.csv')
+L24:     assert sha(occ)=='ac8c9e69e762c8941dab46cd7e804684c2aa50dc6f0912806d19b070c135c4af'
+L25:     options={
+L26:         'verbose':'false','wait_preprocessing':'false','sim_time':'510.0','time_step':'0.1',
+L27:         'num_filaments_sec':'7','variable_rate':'true','filament_stop_steps':'0',
+L28:         'ppm_filament_center':'10.0','filament_initial_std':'10.0','filament_growth_gamma':'15.0',
+L29:         'filament_noise_std':'0.01','gas_type':'10','temperature':'298.0','pressure':'1.0',
+L30:         'concentration_unit_choice':'1','occupancy3D_data':str(occ),'fixed_frame':'map',
+L31:         'wind_data':wind_dir,'wind_time_step':'1.0','allow_looping':'true',
+L32:         'loop_from_step':'1','loop_to_step':'10','source_position_x':item['x_m'],
+L33:         'source_position_y':item['y_m'],'source_position_z':item['z_m'],
+L34:         'save_results':'1','results_time_step':'0.5','results_min_time':'0.0',
+L35:         'writeConcentrations':'false','results_location':str(real)}
+L36:     binary=R/'timebase_logger/filament_simulator_timebase'
+L37:     command=[str(binary),'--ros-args']+[v for k,x in options.items() for v in ('-p',f'{k}:={x}')]
+L38:     env=dict(os.environ,GADEN_RNG_SEED=item['requested_seed'],AOD_TIME_AUDIT_DIR=str(run),
+L39:              AOD_RUN_ID='House03_pmfs_24_13_replica_0',ROS_DOMAIN_ID='229',
+L40:              OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1')
+L41:     seeded_lib=Path('/home/zyc/hcmc_gaden_seed_build_20260922/install/gaden_common/lib/libgaden.so')
+L42:     build_provenance=json.loads((R/'timebase_logger/LOGGER_BUILD_PROVENANCE.json').read_text())
+L43:     bsc_lib=Path(build_provenance['compression_library_path'])
+L44:     assert sha(bsc_lib)==build_provenance['compression_library_sha256']
+L45:     env['LD_LIBRARY_PATH']=str(seeded_lib.parent)+':'+str(bsc_lib.parent)+':'+env.get('LD_LIBRARY_PATH','')
+L46:     linkage=subprocess.check_output(['ldd',str(binary)],env=env,text=True)
+L47:     assert 'not found' not in linkage,linkage
+L48:     loaded_gaden=next(line for line in linkage.splitlines() if 'libgaden.so =>' in line)
+L49:     assert loaded_gaden.split('=>',1)[1].strip().split()[0]==str(seeded_lib)
+L50:     loaded_bsc=next(line for line in linkage.splitlines() if 'libbsc.so =>' in line)
+L51:     assert loaded_bsc.split('=>',1)[1].strip().split()[0]==str(bsc_lib)
+L52:     assert sha(seeded_lib)==build_provenance['seeded_numerical_library_sha256']
+L53:     start=time.monotonic()
+L54:     (run/'RUN_CONFIGURATION.json').write_text(json.dumps(dict(manifest_row=item,options=options,
+L55:         command=command,pre_target_freeze=freeze,binary_sha256=sha(binary),wind_hashes=wind,
+L56:         runtime_ld_library_path=env['LD_LIBRARY_PATH'],runtime_linkage=linkage,
+L57:         runtime_seeded_numerical_library_sha256=sha(seeded_lib),
+L58:         runtime_compression_library_sha256=sha(bsc_lib),
+L59:         concentration_values_read=False),indent=2)+'\n')
