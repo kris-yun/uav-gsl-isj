@@ -32,11 +32,13 @@ def main():
     for var,name in {'NATIVE_RECOVERY_WIND_QUERY_CSV':'wind_query.csv','NATIVE_RECOVERY_WIND_UPDATE_CSV':'wind_source_update.csv',
         'NATIVE_RECOVERY_MEASUREMENT_EVENTS_CSV':'measurement_events.csv','NATIVE_RECOVERY_MEASURED_MAP_CSV':'measured_map_at_update.csv',
         'NATIVE_RECOVERY_CANDIDATES_CSV':'frozen_candidate_geometry.csv','NATIVE_RECOVERY_UPDATE_COMPLETE_FILE':'source_update_complete.txt'}.items():env[var]=str(run/name)
-    view=run/'asset_view';view.mkdir();scenario=Path(case['scenario_root']);wind=case['wind']
+    view=Path('/dev/shm/brg_case_views')/out.stem;view.mkdir(parents=True,exist_ok=False);scenario=Path(case['scenario_root']);wind=case['wind']
     for n in ['OccupancyGrid3D.csv','wind_simulations']:(view/n).symlink_to(scenario/n,target_is_directory=(scenario/n).is_dir())
     gas=view/'gas_simulations'/wind;gas.mkdir(parents=True)
     (gas/'FilamentSimulation_existing_open_case').symlink_to(Path(case['realization']),target_is_directory=True)
-    bank=TemplateBank.load(ROOT/'example_banks/h03_model_only.npz');assert len(bank.ids)==624
+    bank_path=ROOT/'legal_support_v2/h03_native_legal_bank.npz';bank=TemplateBank.load(bank_path);assert len(bank.ids)==615
+    assert case['candidate_support_id']==bank.fingerprint
+    assert case['truth_in_support']==(case['source_id'] in bank.ids)
     port=18000+a.domain;children=[];handles=[];commands=[]
     def start(cmd,log,child_env=None):
         f=(run/log).open('w');handles.append(f);commands.append(cmd)
@@ -61,7 +63,7 @@ def main():
         if a.arm!='native_pmfs':
             variant={'candidate_gru':'gru','brg':'brg','brg_ungated':'ungated'}[a.arm]
             checkpoint=ROOT/('trained' if a.software_smoke else 'trained_full')/variant/'best.pt'
-            side=start(['python3',str(ROOT/'tools/serve.py'),'--checkpoint',str(checkpoint),'--bank',str(ROOT/'example_banks/h03_model_only.npz'),
+            side=start(['python3',str(ROOT/'tools/serve.py'),'--checkpoint',str(checkpoint),'--bank',str(bank_path),
                 '--allow-warmstart','--tcp-port',str(port),'--threads','1','--log',str(run/'sidecar_events.jsonl')],'sidecar.log',
                 dict(env,PYTHONPATH='/home/zyc/.local/lib/python3.10/site-packages:'+env['PYTHONPATH']))
             for _ in range(100):
@@ -78,12 +80,12 @@ def main():
             'seed':'0','run_id':out.stem,'run_dir':str(run),'timeout_sec':str(a.budget_s),'realtime_factor':'1.0','sim_stop_at_s':str(a.budget_s),
             'gas_backend':'gaden_player','raw_query_executable':'/bin/true','shadow_gmrf':'false','convergence_thr':'0.5',
             'recorded_snapshot_time_map':case['time_map'],'repo_root':'/home/zyc/native_pmfs_recovery_v1/checkout',
-            'brg_enabled':str(a.arm!='native_pmfs').lower(),'brg_port':str(port),'brg_candidates':'624','brg_bank_sha256':bank.fingerprint,
+            'brg_enabled':str(a.arm!='native_pmfs').lower(),'brg_port':str(port),'brg_candidates':'615','brg_bank_sha256':bank.fingerprint,
             'brg_run_id':out.stem,'brg_sensor_offset_z_m':'0.0','pmfs_belief_file':str(run/'beliefs.jsonl')}
         child=start(['ros2','launch',str(launch)]+[k+':='+v for k,v in args.items()],'launch.log')
         (run/'runtime_binding.json').write_text(json.dumps({'argv':commands,'effective_launch_args':args,'bank_id':bank.fingerprint,
-            'bank_file_sha256':sha(ROOT/'example_banks/h03_model_only.npz'),'software_smoke':a.software_smoke,
-            'source_truth_in_sidecar_inputs':False,'candidate_support_count':624,'replay':'causal actual-writer-time snapshot hold; no cyclic or seed offset'},indent=2)+'\n')
+            'bank_file_sha256':sha(bank_path),'software_smoke':a.software_smoke,
+            'source_truth_in_sidecar_inputs':False,'candidate_support_count':615,'replay':'causal actual-writer-time snapshot hold; no cyclic or seed offset'},indent=2)+'\n')
         deadline=time.monotonic()+100
         while time.monotonic()<deadline:
             if (run/'beliefs.jsonl').exists() and (run/'beliefs.jsonl').stat().st_size:
@@ -137,7 +139,7 @@ def main():
     if beliefs:
         row=beliefs[0];assert (row['width'],row['height'])==(bank.nx,bank.ny)
         support_matches=row['free_cells']==bank.cells.tolist()
-        if not a.software_smoke:assert support_matches,'native/full624 support mismatch'
+        if not a.software_smoke:assert support_matches,'native/common615 support mismatch'
     log=(run/'launch.log').read_text(errors='replace') if (run/'launch.log').exists() else ''
     nav_failures=log.count("Couldn't reach the target")+log.count('Waypoint execution geometry violation')
     timed_out=status=='time_budget'
@@ -149,7 +151,7 @@ def main():
     proximity=[float(r['t_sim_s']) for r,x in zip(poses,xy) if np.linalg.norm(x-truth)<=.5]
     events=csvrows(run/'measurement_events.csv');error=float(np.linalg.norm(np.array(estimate)-truth)) if estimate is not None else None
     geometric=int(status in ('completed','time_budget') and error is not None and error<=.5)
-    result={k:case[k] for k in ['case_id','source_id','plume_id','initial_pose_id','observation_contract_id','candidate_support_id','truth_xy']}
+    result={k:case[k] for k in ['case_id','source_id','plume_id','initial_pose_id','observation_contract_id','candidate_support_id','truth_xy','truth_in_support','reporting_stratum']}
     result.update(arm=a.arm,budget_s=a.budget_s,status=status,failure_reason=reason,estimate_xy=estimate,
         geometric_success=geometric,final_source_error_m=error,algorithm_declared_success=int(declared),timeout=int(timed_out),
         wrong_declaration=int(declared and (error is None or error>.5)),declaration_time_s=(beliefs[-1]['search_time_s'] if declared and beliefs else None),
@@ -157,6 +159,8 @@ def main():
         measurement_count=len(events),hit_count=sum(int(r['hit']) for r in events),navigation_failure_count=nav_failures,invalid_belief_rows=invalid_belief_rows,
         wall_time_s=time.monotonic()-start_wall,raw_run_directory=str(run),software_smoke=a.software_smoke)
     result['actual_native_support_count']=len(beliefs[0]['free_cells']) if beliefs else None
-    result['full624_support_matches']=bool(beliefs and beliefs[0]['free_cells']==bank.cells.tolist())
+    result['common615_support_matches']=bool(beliefs and beliefs[0]['free_cells']==bank.cells.tolist())
+    if not case['truth_in_support']:
+        result.update(exact_cell_rank=None,exact_cell_metric_reason='truth outside Native615 support; no nearest-label substitution',extended_true_label_probability=0.,extended_true_label_nll='positive_infinity')
     out.write_text(json.dumps(result,indent=2,allow_nan=False)+'\n');print(json.dumps(result),flush=True)
 if __name__=='__main__':main()

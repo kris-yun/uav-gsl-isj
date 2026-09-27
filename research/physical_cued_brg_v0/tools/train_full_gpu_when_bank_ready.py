@@ -9,16 +9,19 @@ def main():
     key=str(Path.home()/'.ssh/id_ed25519_vm');host='zyc@192.168.111.128'
     ssh=['ssh','-o','BatchMode=yes','-o','ConnectTimeout=8','-i',key,host]
     scp=['scp','-i',key]
-    banks=root/'full_support';banks.mkdir(exist_ok=True)
+    banks=root/'legal_training_banks';banks.mkdir(exist_ok=True)
     print('WAITING_FOR_FULL_SUPPORT_BANK_NOT_USING_SIX_CANDIDATE_WEIGHTS',flush=True)
     while True:
         p=subprocess.run(ssh+['test -f '+remote+'/full_support/BANK_COMPLETE.json'],capture_output=True)
-        if p.returncode==0:break
+        h01=subprocess.run(ssh+['test -f '+remote+'/h01_native_rebuild/BANK_COMPLETE.json'],capture_output=True)
+        if p.returncode==0 and h01.returncode==0:
+            subprocess.run(ssh+['bash '+remote+'/tools/run_bind_native_bank_views_vm.sh'],check=True)
+            break
         if p.returncode not in (1,255):raise RuntimeError('unexpected bank readiness status')
         print('BANK_PENDING',time.strftime('%Y-%m-%d %H:%M:%S'),flush=True);time.sleep(45)
-    for name in ['BANK_COMPLETE.json','PRE_FORWARD_FREEZE.json']+[f'env_{e}_bank.npz' for e in range(3)]:
-        subprocess.run(scp+[host+':'+remote+'/full_support/'+name,str(banks/name)],check=True)
-    complete=json.loads((banks/'BANK_COMPLETE.json').read_text())
+    for name in ['LEGAL_SUPPORT_COMPLETE.json','LEGAL_MASKS_COMPLETE.json']+[f'env_{e}_bank.npz' for e in range(3)]:
+        subprocess.run(scp+[host+':'+remote+'/legal_support_v2/'+name,str(banks/name)],check=True)
+    complete=json.loads((banks/'LEGAL_SUPPORT_COMPLETE.json').read_text())
     for row in complete['banks']:
         p=banks/f'env_{row["environment"]}_bank.npz'
         assert hashlib.sha256(p.read_bytes()).hexdigest()==row['bank_sha256']
@@ -39,11 +42,11 @@ def main():
     assert not set(configs[0]['training_groups']) & set(configs[0]['development_groups'])
     routes=[(root/'trained_full'/v/'routes.json').read_bytes() for v in ['gru','brg','ungated']];assert routes[0]==routes[1]==routes[2]
     weights={v:hashlib.sha256((root/'trained_full'/v/'best.pt').read_bytes()).hexdigest() for v in ['gru','brg','ungated']}
-    freeze={'purpose':'OPEN_FULL_SUPPORT_CHECKPOINT_FREEZE_BEFORE_CLOSED_LOOP','weights_sha256':weights,
-        'bank_complete_sha256':hashlib.sha256((banks/'BANK_COMPLETE.json').read_bytes()).hexdigest(),
+    freeze={'purpose':'OPEN_NATIVE_LEGAL_FULL_SUPPORT_CHECKPOINT_FREEZE_BEFORE_P0_P1','weights_sha256':weights,
+        'native_legal_support_complete_sha256':hashlib.sha256((banks/'LEGAL_SUPPORT_COMPLETE.json').read_bytes()).hexdigest(),
         'manifest_sha256':hashlib.sha256((dest/'manifest.json').read_bytes()).hexdigest(),
         'train_dev_leakage':False,'independent_train_plumes':216,'independent_dev_plumes':72,
-        'same_routes':True,'same_full_support':True,'house03_gas_used_for_training':False}
+        'same_routes':True,'same_full_support':True,'legal_rule':'Native fine z0.20 slice / scale3 / fixed-start prune','pilot_only_until_P1_STOP':True,'house03_gas_used_for_training':False}
     (root/'CHECKPOINT_FREEZE.json').write_text(json.dumps(freeze,indent=2)+'\n')
     subprocess.run(ssh+['mkdir -p '+remote+'/trained_full'],check=True)
     subprocess.run(scp+['-r',str(root/'trained_full/gru'),str(root/'trained_full/brg'),str(root/'trained_full/ungated'),host+':'+remote+'/trained_full/'],check=True)

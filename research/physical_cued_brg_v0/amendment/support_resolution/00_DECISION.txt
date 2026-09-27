@@ -1,0 +1,41 @@
+BRG闭环支持合同的唯一建议
+日期：2026-09-27
+状态：待主线程签署；本包没有执行或修改任何闭环、训练、forward。
+
+决定
+保留原 BRG_HOLD_FROZEN_TRUTH_EXCLUDED_FROM_NATIVE_SUPPORT 记录。
+建议显式修订“所有真源必须位于候选集合”这一前置条件：本轮采用Native实际615个合法候选，四臂同支持、同初始先验，完整保留12个真源与96个评测案例。用此前已确定的0.5m几何定位成功与物理位置误差评价；pmfs_24_13的8条另标记为support_misspecification，不改源、seed、标签或plume。
+签署后恢复既定训练与Stage-P0/P1，不新增模型、不重做地图、不再生成同一批bank。
+
+为什么有条件继续
+本轮从原始occupancy独立重建630个粗格可用中心的掩码，再按归档Native代码的8邻接连通语义得到615格，与实际初始化记录逐字节一致。原16项文件哈希通过。
+pmfs_24_13确实不在615候选中。但是其0.5m圆内有5个Native合法候选中心，最近约0.30m。所以“不能选出这个exact source cell”和“不能定位到其0.5m范围”不是同一个命题。
+上述只是几何可行性，不预测任何方法会成功，也不是对simulator/world/model的物理验证。
+
+研究对象的明确改变
+这不再是12/12真源都在离散支持中的闭集分类。它是固定Native支持下的几何闭环开发比较，其中11源在支持内、1源在支持外。全部96例是主表，88例与8例分别作预先声明的描述性分层，不以88例结果代替96例结果。
+12源源对中，第一对不是两个都可被615候选直接输出的exact-cell对。不能声称这份实验验证了全部6对的精确cell分辨能力。
+
+评分
+遵循既有06_GEOMETRIC_SUCCESS_CLARIFICATION.md，保持成功半径0.5m、预算、源位置估计器、声明/超时规则不变。
+本次ZIP没有06正文，只有它的引用和说明。不能臆造其提前停止或超时细则；Codex应原样附入并冻结哈希，不按本包重写。
+现归档说明指定所有臂统一使用Native的top-5%-probability-weighted source估计器。不要替换为机器人位置，也不要针对支持外源改成最近格中心。
+支持外源的exact-cell rank为不适用；exact-cell命中不可达。将概率延拓到原624标签时，其真标签概率为0、NLL为正无穷。不得加floor或重标邻源产生一个假的有限proper score。几何误差仍按原真源坐标计算。
+
+模型与基础设施
+保留Native粗格占据规则、PruneUnreachableCells、导航和planner，不把3个障碍细体素改free。
+所有神经臂用同一固定615支持，先选择合法candidate轴再归一化；更新source map、varianceOfHitProb与planner的候选映射保持同一掩码和顺序。
+合法先验为1/615。日志source_map的存储长度为1242；初始化在所有存储槽位填入值，不代表所有槽位都是有效类别。有效支持依据free_cells，不能把整张存储数组当候选概率分布。
+完整bank是缓存资产。可继续既有生成并保留额外条目；运行时以合法支持视图使用，不为裁剪候选而重跑forward，也不声称本包验证了完整bank的physics parity。
+
+不做的替代方案
+不删掉8条，不换真源，不重标pmfs_24_14，不为真源额外放行1格，不让BRG624与Native615比较，不把Native全部改为624后仍称原生基线，不提高0.5m阈值。
+理论上可以另外研究“源假设集合与机器人可达集合分离”，但那改变Native方法与物理接口，不并入本次闭环。
+
+复核范围
+读取用户上传包的几何、冻结审计、Native源代码和time-zero初始化；未使用其余software-smoke belief作为科学结果。没有读取气体浓度、运行Native二进制或访问VM。独立Python连通性实现与保存掩码一致。
+依据：audit/RESULT.json；execution/amendment/07_VGR_NATIVE_LEGAL_SUPPORT_CLARIFICATION.md；execution/CLOSED_LOOP_SUPPORT_INFRASTRUCTURE_AUDIT.md；audit/HOUSE03_F1_TRUTH_PANEL_12.tsv；inputs/OccupancyGrid3D.csv。
+
+运行几何复算
+python code/verify_support.py --input input/BRG_NATIVE_SUPPORT_HOLD_REVIEW_20260927.zip --out /tmp/brg_support_verification
+此命令只做静态计算，不会训练、修改合同或启动ROS。

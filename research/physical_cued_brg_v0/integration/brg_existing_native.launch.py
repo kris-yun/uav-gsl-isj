@@ -121,6 +121,7 @@ def generate_launch_description():
             "measurement_deduplicate_sim_timestamps": _typed("measurement_deduplicate_sim_timestamps", bool),
             "resultsFile": _file("official_gsl_results.csv"),
             "navigationPathFile": _file("official_navigation_path.csv"),
+            "navigation_trace_file": _file("navigation_trace.csv"),
         }],
     )
     benchmark = Node(
