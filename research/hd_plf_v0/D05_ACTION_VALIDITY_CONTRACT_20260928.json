@@ -13,9 +13,10 @@
   "model_action": "Call the existing HDPLFActionSelector with unchanged u/rawu mean maps, uniform six-source q, first-positive anchor memory cell, and identical feasible goals. Preserve 0.60-1.20 m radius, 2.70 m path limit, and 0.01/m movement penalty",
   "evidence_score": "For each arm and goal, perform the existing nonnegative-gain B2 profile SSE on the two observations [anchor, future goal] with the same arm templates. One-observation prefix is scored with the same B2 rule",
   "primary_gain": "Tie-aware true-source rank gain: expected rank under uniform tie breaking before minus after; SSE tie tolerance is 1e-10 * max(1, squared observed-vector norm)",
-  "secondary_gain": "Change in true-source versus best competing-source B2 SSE margin, divided by max(1e-9, squared observed-vector norm)",
+  "secondary_gain": "Change in raw true-source versus best competing-source B2 SSE margin: [min wrong SSE - truth SSE] after minus before, with no observation-norm normalization",
   "association": "Within each target episode, Spearman correlation across all feasible goals between frozen action value and each observation-grounded gain. Undefined correlations are reported and excluded, never set to zero. Summarize by environment and source, not by treating all goals as independent samples",
   "selected_goal_check": "Compare each arm's selected goal gain with the median gain over the same feasible goals, without choosing a goal using target values",
-  "inference_limit": "This is a six-source counterfactual cube audit with frozen snapshot spacing and synthetic uniform q. It does not establish Native posterior coupling, VGR execution, or a full-support deployment benefit",
+  "inference_limit": "This is a six-source counterfactual cube audit with frozen snapshot spacing and synthetic uniform q. B2 SSE is not converted into a calibrated posterior. It does not establish Native posterior coupling, VGR execution, or a full-support deployment benefit",
+  "amendment_provenance": "User clarified before any action-validity score or rank was computed that the secondary outcome must be raw B2 truth-vs-best-wrong SSE margin and no calibrated posterior may be constructed. One retained cube's shape, range, and metadata had been inspected solely for the spatial contract; no action-validity outcome had been computed.",
   "prohibited": ["new plume", "new PMFS forward", "House03", "model training", "radius or weight search", "VGR closed loop", "changing the existing action function during this audit"]
 }
