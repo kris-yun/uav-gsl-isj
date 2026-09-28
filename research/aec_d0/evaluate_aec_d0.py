@@ -84,7 +84,7 @@ def main():
         x=g.delta_c_rawu_minus_u.to_numpy();y=g.delta_g.to_numpy()
         corr=float(spearmanr(x,y).statistic) if np.unique(x).size>1 and np.unique(y).size>1 else None
         valid=g.sign_agree.dropna()
-        signs=sorted(set(np.sign(x).astype(int)))
+        signs=[int(v) for v in sorted(set(np.sign(x).astype(int)))]
         mean_u=float(g.mean_rank_u.mean());mean_raw=float(g.mean_rank_rawu.mean())
         mean_selected=float(g.selected_rank.mean())
         houses[house]=dict(source_count=len(g),spearman_delta_c_vs_delta_g=corr,
