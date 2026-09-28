@@ -13,7 +13,7 @@ import numpy as np
 
 ROOT = Path('/home/zyc/brg_closedloop_20260927/PMFS_BRG_CLOSED_LOOP_STARTER_20260927')
 H03 = Path('/home/zyc/aod_house03_f1_full624_20260927')
-OUT = Path('/home/zyc/aec_d0_20260929')
+OUT = Path('/home/zyc/aec_d0_20260929_v2')
 ROUTES = Path('/home/zyc/aec_d0_routes.json')
 cv2.setNumThreads(1)
 os.environ['OMP_NUM_THREADS'] = '1'
@@ -79,6 +79,9 @@ def generate_h01_h02(routes, vectors, manifest):
             assert source_id in ids
             rawu_mean = bank['rawu'][ids.index(source_id)]
             meta = json.loads(bank['metadata'].item())
+        width,height=int(meta['width']),int(meta['height'])
+        mask=np.fromfile(ROOT/f'legal_support_v2/env_{env}_occupancy.u8',np.uint8).astype(np.float32).reshape(height,width)
+        den=cv2.GaussianBlur(mask,(0,0),1.5,1.5)
         weights = [(ri, route_weights(meta, route['xy'])) for ri, route in group]
         projected = {ri: {kind: [] for kind in ('u', 'rawu')} for ri, _ in group}
         rawu_sum = np.zeros_like(rawu_mean, dtype=np.float64)
@@ -95,9 +98,15 @@ def generate_h01_h02(routes, vectors, manifest):
                     path = Path(str(prefix)+'.'+kind+'.f32')
                     digest[kind] = sha(path)
                     assert digest[kind] == expected[kind], (env,source_id,state,seed,kind)
-                    if kind in ('u','rawu'):
+                    if kind == 'rawu':
                         maps[kind] = np.fromfile(path, '<f4').astype(np.float64)
                     path.unlink()
+                # The archived ABS-B2 u bank is reconstructed by this exact
+                # OpenCV blur of rawu. C++ .u is hash-checked above but has a
+                # different low-signal numerical path and is not its template.
+                src=maps['rawu'].reshape(height,width).astype(np.float32)
+                num=cv2.GaussianBlur(src,(0,0),1.5,1.5)
+                maps['u']=np.divide(num,den,out=np.zeros_like(num),where=den!=0).ravel().astype(np.float64)
                 rawu_sum += maps['rawu']
                 for ri, w in weights:
                     for kind in ('u','rawu'):
@@ -172,7 +181,9 @@ def main():
     manifest = dict(protocol='AEC-D0 simulator-only competence',
                     route_sha256=sha(ROUTES),new_gaden_runs=0,new_vgr_runs=0,
                     h01_h02_pmfs_runs=13*88,h03_pmfs_runs=0,
-                    target_concentrations_read=False)
+                    target_concentrations_read=False,
+                    u_operator='OpenCV GaussianBlur(rawu, sigma=1.5) / GaussianBlur(legal free mask, sigma=1.5); matches archived B2 bank',
+                    previous_infrastructure_stop='/home/zyc/aec_d0_20260929: C++ u means differ from archived OpenCV-reconstructed u')
     vectors = {}
     generate_h01_h02(routes,vectors,manifest)
     project_h03(vectors,manifest)
