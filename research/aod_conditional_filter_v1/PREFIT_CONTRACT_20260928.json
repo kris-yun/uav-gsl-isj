@@ -1,0 +1,36 @@
+{
+  "status": "AOD_V1_JOINT_CALIBRATION_PREFIT_FROZEN",
+  "purpose": "Development repair of the existing two-state positive-gain model, before any new parameter fit. This is not a fresh scientific confirmation.",
+  "review_zip_sha256": "bb9c1168f7c6f010b81ddc26da85b3a067dd04a633daee54c9e1e38d22cfbf12",
+  "training_split": "Original 40 Native VGR episodes marked train in v1_cases; original source and environment groups unchanged. No eval episodes or House03 data are used in fitting.",
+  "development_split": "Original 8 Native VGR episodes marked dev in v1_cases; used once for fixed-model diagnostics, not hyperparameter selection.",
+  "bank_sha256": {
+    "0": "bf213e252dd44dde1077c678f881bf703e2c7ab86144e569bb5d581bf1f2d390",
+    "1": "d5b67429907a4d3d02b71f355ba857451627813d8059e49ae1298d8bbebc6d66",
+    "2": "7231705c2befad5882a980212fcc7c7617c0304336b64c2c40ad27f86d23f60d"
+  },
+  "model": "y_e = m_{s_e} g_e + d_e + epsilon_e; common positive-truncated Gaussian envelope g_e~N(g0,vg), d_e covariance vd*exp(-abs(t_i-t_j)/tau), epsilon_e iid N(0,R). The m template uses the existing causal sensor and event-window operator.",
+  "observations": "Use actual event times and every observed continuous gas value, including all-zero episodes. No threshold-based deletion, invented zero censoring, or saturation model. This working likelihood may be misspecified at zero and must be reported as such.",
+  "objective": "Maximize equal-environment mean of equal-episode mean predictive log density: for each environment average log p(y_e|true source,theta)/N_e, then average equally over the three training environments. The gain is analytically integrated and truncated at g>=0.",
+  "parameters_and_bounds": {
+    "gain_mean": [0.005, 3.0],
+    "gain_sd": [0.02, 3.0],
+    "discrepancy_sd": [0.02, 10.0],
+    "correlation_time_s": [0.5, 300.0],
+    "measurement_sd": [0.02, 10.0]
+  },
+  "optimizer": {
+    "algorithm": "scipy.optimize.minimize L-BFGS-B on log parameters",
+    "fixed_starts": [
+      [0.25, 0.25, 1.2, 10.0, 0.6],
+      [1.0, 1.0, 2.0, 30.0, 1.0],
+      [0.5, 0.5, 0.2, 100.0, 2.0],
+      [0.1, 0.1, 4.0, 3.0, 0.1]
+    ],
+    "maxiter_per_start": 120,
+    "ftol": 1e-8,
+    "selection": "Lowest train-only objective among all four fixed starts. A failed start is retained in the audit. No additional starts or bounds after viewing output."
+  },
+  "fixed_dev_screen_before_planner": "On the 8 original dev paths, new mean true-source posterior NLL must be lower than both old AOD and the uniform-support NLL, and new mean truth rank must be lower than old AOD. Otherwise stop before building or running a new planner. Report every case and all boundary parameters regardless of result.",
+  "future_closed_loop_limit_if_screen_passes": "At most the existing three OPEN cases x two development arms (new calibration with original planner; same calibration with model-consistent planner). Reuse cached Native only if the full runtime contract matches. No new plume, network, or candidate bank. These cases cannot become fresh confirmation."
+}
