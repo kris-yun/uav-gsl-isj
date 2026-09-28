@@ -33,6 +33,14 @@ installed. In the first 18 archived Native episodes, cases 003, 004, 005,
 mapped every event to ten distinct VGR publications, and observed callback
 clock lag was at most 0.2 s. The original PMFS event averages are retained.
 
+Final Native training/development collection completed 48/48 archives: 40
+training and 8 development episodes, with 51--69 measurement events per
+episode. The independent host extractor rechecked all 48 archives. Fifteen
+episodes had 119 callback-clock collisions in total; every raw sample matched
+a distinct VGR publication, and the maximum clock lag remained 0.2 s. The
+frozen `OPEN_EPISODE_INVENTORY.json` records each episode's source/plume
+split, raw archive SHA, feature SHA, and publication-integrity result.
+
 The model-facing V1 sidecar reads only the current PMFS measurement block and
 its raw samples, plus VGR sensor rows published by that time. It never reads
 source truth or a future measurement. The original C++ `STEP` protocol and
