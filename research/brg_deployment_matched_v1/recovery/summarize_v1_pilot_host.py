@@ -54,7 +54,8 @@ def main() -> None:
         ordinal, case_id = case['ordinal'], case['case_id']
         case_rows = []
         for arm in ARMS:
-            stem = f'pilot_{arm}_{ordinal:03d}_{case_id}'
+            prefix = 'pilot' if arm == 'native_pmfs' else 'pilot_fix1'
+            stem = f'{prefix}_{arm}_{ordinal:03d}_{case_id}'
             receipt_path = RECEIPTS / f'{stem}.json'
             archive = ARCHIVE / f'{stem}.tar.zst'
             if not receipt_path.is_file() and not archive.is_file():

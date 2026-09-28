@@ -84,19 +84,24 @@ def main():
                 except (OSError,AssertionError):time.sleep(.2)
             else:raise TimeoutError('sidecar readiness')
         launch=Path('/home/zyc/brg_v1_recovery_20260928/v1_collection.launch.py') if a.coverage else ROOT/'integration/brg_existing_native.launch.py'
+        # The TCP client's RESET grammar admits only ASCII letters, digits, ._-.
+        # Case IDs contain wind-name commas, so use an identity-derived token
+        # without changing the scientific case ID, seed, plume, or file names.
+        run_token='run_'+hashlib.sha256(out.stem.encode('utf-8')).hexdigest()[:32]
         args={'vgr_data_path':str(view),'config_id':wind,'house':case['house'],'environment_id':'VGR_'+case['house'],'scenario_id':case['case_id'],
             'source_x':str(case['truth_xy'][0]),'source_y':str(case['truth_xy'][1]),'source_z':'.2','start_x':str(case['start_xy'][0]),'start_y':str(case['start_xy'][1]),'flight_height':'.2',
             'seed':'0','run_id':out.stem,'run_dir':str(run),'timeout_sec':str(a.budget_s),'realtime_factor':str(a.realtime_factor),'sim_stop_at_s':str(a.budget_s),
             'gas_backend':'gaden_player','raw_query_executable':'/bin/true','shadow_gmrf':'false','convergence_thr':'0.5',
             'recorded_snapshot_time_map':'/dev/null','gaden_iteration_mode':'physical_time_replay_300s','repo_root':'/home/zyc/native_pmfs_recovery_v1/checkout',
             'brg_enabled':str(a.arm!='native_pmfs').lower(),'brg_port':str(port),'brg_candidates':str(len(bank.ids)),'brg_bank_sha256':bank.fingerprint,
-            'brg_run_id':out.stem,'brg_sensor_offset_z_m':'0.0','pmfs_belief_file':str(run/'beliefs.jsonl')}
+            'brg_run_id':run_token,'brg_sensor_offset_z_m':'0.0','pmfs_belief_file':str(run/'beliefs.jsonl')}
         if a.training_collection:args['convergence_thr']='-1.0'
         if a.coverage:
             args.update(coverage_goal_file='/home/zyc/brg_v1_recovery_20260928/coverage_routes/COVERAGE_STOP_GOALS_FREEZE_V3.json',
                         coverage_environment_index=str(env_index))
         child=start(['ros2','launch',str(launch)]+[k+':='+v for k,v in args.items()],'launch.log')
         (run/'runtime_binding.json').write_text(json.dumps({'argv':commands,'effective_launch_args':args,'bank_id':bank.fingerprint,
+            'brg_run_token':run_token,
             'bank_file_sha256':sha(bank_path),'software_smoke':a.software_smoke,
             'source_truth_in_sidecar_inputs':False,'candidate_support_count':len(bank.ids),'replay':'causal actual-writer-time snapshot hold; no cyclic or seed offset',
             'training_collection':a.training_collection,'fixed_source_blind_coverage':a.coverage,

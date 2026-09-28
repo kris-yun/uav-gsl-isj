@@ -47,7 +47,8 @@ def main() -> None:
         native_receipt = ROOT / 'receipts' / f'{ordinal:03d}_{run_id}.json'
         files[f'frozen_eval_native_receipts/{native_receipt.name}'] = native_receipt
         for arm in ARMS:
-            stem = f'pilot_{arm}_{ordinal:03d}_{run_id}'
+            prefix = 'pilot' if arm == 'native_pmfs' else 'pilot_fix1'
+            stem = f'{prefix}_{arm}_{ordinal:03d}_{run_id}'
             receipt_path = RECEIPTS / f'{stem}.json'
             archive = ARCHIVE / f'{stem}.tar.zst'
             receipt = json.loads(receipt_path.read_text())
@@ -55,6 +56,15 @@ def main() -> None:
                 raise RuntimeError(f'pilot archive hash drift: {stem}')
             files[f'pilot_receipts/{receipt_path.name}'] = receipt_path
             files[f'pilot_raw_logs/{archive.name}'] = archive
+            if ordinal == 9 and arm != 'native_pmfs':
+                failed_stem = f'pilot_{arm}_{ordinal:03d}_{run_id}'
+                failed_receipt = RECEIPTS / f'{failed_stem}.json'
+                failed_archive = ARCHIVE / f'{failed_stem}.tar.zst'
+                failed = json.loads(failed_receipt.read_text())
+                if failed['status_detail'] != 'service_error' or sha(failed_archive) != failed['archive_sha256']:
+                    raise RuntimeError('original infrastructure failure evidence changed')
+                files[f'original_infrastructure_failure/{failed_receipt.name}'] = failed_receipt
+                files[f'original_infrastructure_failure/{failed_archive.name}'] = failed_archive
     files['pilot_summary/BRG_V1_PILOT_3CASE_SUMMARY.json'] = ARCHIVE / 'summary' / 'BRG_V1_PILOT_3CASE_SUMMARY.json'
     files['pilot_summary/BRG_V1_PILOT_3CASE_RUNS.csv'] = ARCHIVE / 'summary' / 'BRG_V1_PILOT_3CASE_RUNS.csv'
     files['pilot_models/PILOT_CHECKPOINT_FREEZE.json'] = MODELS / 'PILOT_CHECKPOINT_FREEZE.json'

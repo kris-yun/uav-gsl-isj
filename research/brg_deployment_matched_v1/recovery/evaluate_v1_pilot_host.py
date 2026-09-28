@@ -57,7 +57,8 @@ def verify_eval_package(path: Path, ordinal: int, arm: str) -> None:
     if proc.wait() or listing.returncode:
         raise RuntimeError('eval compressed archive integrity failure')
     names = listing.stdout.splitlines()
-    stem = f'pilot_{arm}_{ordinal:03d}_'
+    prefix = 'pilot' if arm == 'native_pmfs' else 'pilot_fix1'
+    stem = f'{prefix}_{arm}_{ordinal:03d}_'
     required = ('.json', '_raw/gaden_player.log')
     if not all(any(name.startswith(stem) and name.endswith(s) for name in names)
                for s in required):
@@ -72,7 +73,8 @@ def one(case: dict, arm: str) -> dict:
     native_receipt = list((ROOT / 'receipts').glob(f'{ordinal:03d}_{run_id}.json'))
     if len(native_receipt) != 1 or sha(native_asset) != json.loads(native_receipt[0].read_text())['archive_sha256']:
         raise RuntimeError('frozen eval plume archive missing')
-    stem = f'pilot_{arm}_{ordinal:03d}_{run_id}'
+    prefix = 'pilot' if arm == 'native_pmfs' else 'pilot_fix1'
+    stem = f'{prefix}_{arm}_{ordinal:03d}_{run_id}'
     package = ARCHIVE / (stem + '.tar.zst')
     receipt_path = RECEIPTS / (stem + '.json')
     if receipt_path.exists():

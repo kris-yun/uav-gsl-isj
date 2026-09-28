@@ -58,7 +58,8 @@ def pilot_checkpoint(arm: str) -> Path | None:
 
 
 def paths(ordinal: int, case: dict, arm: str):
-    stem = f'pilot_{arm}_{ordinal:03d}_{case["case_id"]}'
+    prefix = 'pilot' if arm == 'native_pmfs' else 'pilot_fix1'
+    stem = f'{prefix}_{arm}_{ordinal:03d}_{case["case_id"]}'
     return LOGS / (stem + '.json'), LOGS / (stem + '_raw'), PACKAGES / (stem + '.tar.zst')
 
 
