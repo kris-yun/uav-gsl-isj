@@ -1,0 +1,41 @@
+ORDINAL-BRIDGE D0 — CODEX EXECUTE ONLY
+
+Branch:
+  research/ordinal-bridge-d0-20260929
+
+Read first:
+  research/ordinal_bridge_d0/ORDINAL_D0_PREREG_20260929.md
+
+Task:
+1. Reuse exactly the frozen H01/H02 D1 and House03 F1 assets.
+2. Reproduce all parent ABS endpoint ranks / H03 AOD primary effects before
+   opening ordinal results.
+3. Implement the <= EDF transform and rank score exactly as preregistered.
+4. Primary = rawu-EDF. u-EDF is secondary only.
+5. Aggregate trajectory/path results to PHYSICAL SOURCE before House metrics.
+6. Apply the frozen cross-House gate.
+7. Repeat full calculation and require byte-identical outputs.
+8. STOP.
+
+Forbidden:
+- new simulation or PMFS scientific forward
+- VGR/ROS/planner changes
+- CENTERED/CD/HD-PLF/AEC/TCMA
+- learned routing or fusion
+- choosing u vs rawu after results
+- changing EDF tie rules
+- thresholds/weights/temperature
+- calling rank evidence novel
+
+Required outputs:
+  research/ordinal_bridge_d0/ORDINAL_D0_RESULT_20260929.md
+  evidence/ordinal_bridge_d0/ORDINAL_D0_RESULT.json
+  evidence/ordinal_bridge_d0/TARGET_RESULTS.csv
+  evidence/ordinal_bridge_d0/SOURCE_RESULTS.csv
+  evidence/ordinal_bridge_d0/ASSET_MANIFEST_SHA256.tsv
+  evidence/ordinal_bridge_d0/DETERMINISTIC_REPEAT.json
+
+Decision exactly one:
+  ORDINAL_D0_CROSS_HOUSE_SUBSTRATE
+  ORDINAL_D0_NO_CROSS_HOUSE_SUBSTRATE
+  ORDINAL_D0_HOLD_INFRASTRUCTURE
