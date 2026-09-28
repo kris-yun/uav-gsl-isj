@@ -1,0 +1,50 @@
+{
+  "status": "AOD_FILTER_HOUSE123_ONE_SEED_EACH_FROZEN",
+  "scope": "three pre-existing continuous plumes, one per House, Native versus non-neural AOD filter, 300 s VGR interactive closed loop",
+  "case_count": 3,
+  "total_arm_runs": 6,
+  "already_completed_house01_runs": 2,
+  "new_runs_planned": 4,
+  "new_gaden_plumes": 0,
+  "filter_calibration": "unchanged 40 OPEN train episodes; eight OPEN dev checks retained; no House03 tuning",
+  "filter_calibration_sha256": "4e90ac20a9976841590179293eaa248c629c355aee602c1ce7c5ae54782457c6",
+  "filter_sidecar_sha256": "18bc641db1ab8aeaf5be42391cdbeb9b8bb9a3bf75c147c393d238e87d9a062f",
+  "crosshouse_binder_sha256": "5e378195e514b4145a76fe4dbd290c29b1798f802f1f2d8f0af9e34c7d5c887e",
+  "cases": [
+    {
+      "house": "House01",
+      "case_id": "House01_1,3-2,4_fast_pmfs_26_36_seed1453872",
+      "seed": 1453872,
+      "source_id": "pmfs_26_36",
+      "candidate_support_count": 596,
+      "truth_in_support": true,
+      "paired_run_status": "completed_and_archived",
+      "review_zip_sha256": "b8601a83d4dcf48a41175521fedf15bf136a6298809cf9722c0847027cb37691"
+    },
+    {
+      "house": "House02",
+      "case_id": "House02_4,5-3_slow_pmfs_2_37_seed20702800",
+      "seed": 20702800,
+      "source_id": "pmfs_2_37",
+      "candidate_support_count": 630,
+      "truth_in_support": true,
+      "case_file_sha256": "bce80b4063231600afedfb49fc986b6078e61ac54f0436954d0a72c44f8d37d5",
+      "continuous_plume_archive_sha256": "1aed22063fc048b75dbe728806da1919ba2c7dabab76baab4d3665e2daccf748"
+    },
+    {
+      "house": "House03",
+      "case_id": "House03_1-2,5_fast_pmfs_24_13_seed869241781",
+      "seed": 869241781,
+      "source_id": "pmfs_24_13",
+      "candidate_support_count": 615,
+      "truth_in_support": false,
+      "case_file_sha256": "3f7f5631d624d48fe68cb46ef1eee4134bb1eb61eeecdf4cd71170c965637c4c",
+      "native_legal_bank_sha256": "fb06a96f96868566d52738fe844d3aeaa08c5025dfbbfd2985f2cf0adeb1d09e",
+      "f1_run_configuration_sha256": "972e28056e6b27ebfebcf49d3fd800687c6b515b65abc116d51cb147451327dd",
+      "continuous_plume_iteration_range": [0, 985],
+      "reporting_note": "truth lies outside Native 615 support; evaluate geometric error only, with no exact-cell rank or finite truth NLL"
+    }
+  ],
+  "primary_per_case_metric": "final Native source-map estimate Euclidean error to true XY at 300 s; geometric success threshold 0.5 m",
+  "reporting": "all three pairs plus per-House trajectory, timeout, declaration, navigation/service failure and measurement count; no population claim from one seed per House"
+}
