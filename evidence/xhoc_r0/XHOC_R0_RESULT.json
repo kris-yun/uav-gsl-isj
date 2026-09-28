@@ -1,0 +1,42 @@
+{
+  "decision": "XHOC_R0_COMMON_CONTRACT_PARTIAL",
+  "scope": "read-only asset and acquisition-contract audit; no mechanism test",
+  "candidate_common_contract": {
+    "source": "E1 geometry contract and E2 168-run bank",
+    "physical_observable": "GADEN concentration cube, not PMFS filament count proxy",
+    "spatial_rule": "30 source-blind House-specific probes selected by the same geometric rule; 2x2 mean on each 0.1 m native grid; z=0.20 m",
+    "temporal_rule": "single snapshot at saved record IDs 100,150,200,250,300,350,400,450,500,550; no stop average",
+    "physical_time_status": "record IDs verified; exact simulator seconds per record not certified by E2 manifest and must be audited before a physical-time claim",
+    "trajectory_rule": "fixed virtual probe panel, source-blind and method-independent; not a feasible single-UAV flight path",
+    "sources_per_house": 6,
+    "independent_realizations_per_source_per_environment": 4,
+    "environments": 7,
+    "runs": 168,
+    "house03_status": "E2 concentration data remain SEALED_FINAL_HOUSE"
+  },
+  "threshold": {
+    "required_sources_per_house": 8,
+    "required_realizations_per_source": 4,
+    "source_shortfall_per_house": 2,
+    "minimum_new_runs_for_one_environment_per_house_at_threshold": 24,
+    "minimum_new_runs_note": "2 new sources x 4 realizations x 3 Houses, conditional on predeclared geometry/seed and the same E2 acquisition operator; this is a coverage arithmetic lower bound, not an authorized campaign or adequate untouched confirmation design"
+  },
+  "verification": {
+    "e2_manifest_rows": 168,
+    "e2_cube_hash_matches": 168,
+    "e2_metadata_hash_matches": 168,
+    "e2_missing_or_mismatched": 0,
+    "jtd_e2_distinct_sources_per_open_environment": 6,
+    "jtd_e2_cube_count": 180,
+    "jtd_e2_seed_overlap_with_e2": 0,
+    "e2_sealed_scientific_values_read": false
+  },
+  "non_mergeable_asset_findings": [
+    "JTD E2 and BRG continuous data deepen the same six H01/H02 E1 source identities, not the source panel",
+    "R0 and CESS D1R add H02 sources only",
+    "AOD F1 provides 12 H03 sources x 8 realizations but its signed native snapshot schedule and two path positions are different from E2",
+    "49 Native H01/H02 episodes use adaptive trajectory and stop averaging, unlike fixed E2 probes and H03 F1 paths",
+    "PMFS count-proxy residuals and GADEN concentration residuals cannot be compared as one raw magnitude scale"
+  ],
+  "next_action": "Preserve E2 roles and sealed House03; freeze writer-time mapping and a physical-source split before any new cross-House mechanism gate. Propose acquisition only; no simulation authorized by R0."
+}
