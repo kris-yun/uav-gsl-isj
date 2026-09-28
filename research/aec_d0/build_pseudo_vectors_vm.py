@@ -159,8 +159,14 @@ def project_h03(vectors, manifest):
 
 
 def main():
-    assert not OUT.exists(), 'Preserve any prior AEC output; no overwrite'
-    OUT.mkdir()
+    if OUT.exists():
+        # The first launch may stop before any forward output if ROS shared
+        # libraries are absent from LD_LIBRARY_PATH. Resume only that exact
+        # empty scratch state; never overwrite a scientific output.
+        assert {p.name for p in OUT.iterdir()} == {'temporary'}
+        assert not list((OUT/'temporary').iterdir())
+    else:
+        OUT.mkdir()
     routes = json.loads(ROUTES.read_text())
     assert len(routes) == 49
     manifest = dict(protocol='AEC-D0 simulator-only competence',
