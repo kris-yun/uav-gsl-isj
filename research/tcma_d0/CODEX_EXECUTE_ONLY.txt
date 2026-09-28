@@ -1,0 +1,42 @@
+TCMA-D0 EXECUTE ONLY
+
+Branch:
+  research/tcma-d0-target-conditioned-adequacy-20260929
+
+Read:
+  research/tcma_d0/TCMA_D0_PREREG_20260929.md
+
+Use only frozen parent assets. Implement exactly the empirical adequacy
+percentile in the prereg for u-ABS and rawu-ABS.
+
+Critical order:
+1. reproduce parent asset/pseudo-vector parity;
+2. compute target-conditioned A_e WITHOUT reading/joining target rank outcomes;
+3. freeze/commit adequacy table + SHA256;
+4. only then join frozen Delta_G outcomes;
+5. evaluate the preregistered House/source gates;
+6. deterministic full repeat;
+7. STOP.
+
+Required outputs:
+  research/tcma_d0/TCMA_D0_RESULT_20260929.md
+  evidence/tcma_d0/TARGET_ADEQUACY.csv
+  evidence/tcma_d0/SOURCE_ADEQUACY.csv
+  evidence/tcma_d0/ADEQUACY_FREEZE.json
+  evidence/tcma_d0/TCMA_D0_RESULT.json
+  evidence/tcma_d0/ASSET_MANIFEST_SHA256.tsv
+  evidence/tcma_d0/DETERMINISTIC_REPEAT.json
+
+Forbidden:
+- new plume / new independent sample
+- VGR / ROS / planner edits
+- PMFS-Clean
+- CENTERED / CD / HD-PLF / AEC routing
+- neural training
+- changing gain, EPS, support, routes, TopK, thresholds after seeing outcomes
+- calling the adequacy percentile a conformal guarantee
+
+Decision must be exactly one of:
+  TCMA_D0_CROSS_HOUSE_TARGET_CONDITIONED_SIGNAL
+  TCMA_D0_NO_CROSS_HOUSE_TARGET_CONDITIONED_SIGNAL
+  TCMA_D0_HOLD_INFRASTRUCTURE
