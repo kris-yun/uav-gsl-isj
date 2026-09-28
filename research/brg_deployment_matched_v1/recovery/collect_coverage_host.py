@@ -51,10 +51,14 @@ def one(ordinal: int) -> dict:
             raise RuntimeError('copied native plume SHA mismatch')
         ssh(f'tar -I zstd -C {shlex.quote(ACTIVE)} -xf {shlex.quote(remote_tar)} && rm -f -- {shlex.quote(remote_tar)}')
     remote_out = f'/home/zyc/brg_v1_logs_20260928/{stem}.json'
+    remote_archive = f'/home/zyc/brg_v1_collection_packages_20260928/{stem}.tar.zst'
+    archived_prior = subprocess.run(['ssh', '-o', 'BatchMode=yes', '-i', str(KEY), VM,
+                                     f'test -f {shlex.quote(remote_archive)}'],
+                                    capture_output=True).returncode == 0
     completed_prior = subprocess.run(['ssh', '-o', 'BatchMode=yes', '-i', str(KEY), VM,
                                       f'test -f {shlex.quote(remote_out)}'],
                                      capture_output=True).returncode == 0
-    action = 'resume-encode' if completed_prior else 'collect'
+    action = 'adopt' if archived_prior else ('resume-encode' if completed_prior else 'collect')
     source = ('source /opt/ros/humble/setup.bash && '
               'source /home/zyc/ros2_ws/install/setup.bash && '
               'source /home/zyc/hcmc_gaden_seed_build_20260922/install/setup.bash && '

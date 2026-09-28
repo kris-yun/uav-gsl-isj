@@ -20,11 +20,11 @@ def paths(ordinal: int, case: dict):
     return out, raw, episode, archive
 
 
-def package(ordinal: int) -> dict:
+def package(ordinal: int, allow_existing: bool = False) -> dict:
     _, case = case_for(ordinal)
     out, raw, episode, archive = paths(ordinal, case)
     meta = episode.with_suffix('.json')
-    if archive.exists() or not all(x.exists() for x in (out, raw, episode, meta)):
+    if (archive.exists() and not allow_existing) or not all(x.exists() for x in (out, raw, episode, meta)):
         raise RuntimeError('coverage files incomplete or archive already exists')
     result = json.loads(out.read_text())
     episode_meta = json.loads(meta.read_text())
@@ -43,15 +43,19 @@ def package(ordinal: int) -> dict:
     if not goal_trace.is_file() or goal_trace.stat().st_size < 70:
         raise RuntimeError('stop-goal coverage trace missing')
     PACKAGES.mkdir(parents=True, exist_ok=True)
-    tar = subprocess.Popen(['tar', '-C', str(LOGS), '-cf', '-',
-                            out.name, raw.name, episode.name, meta.name],
-                           stdout=subprocess.PIPE)
-    assert tar.stdout is not None
-    zstd = subprocess.run(['zstd', '-T1', '-1', '-o', str(archive)],
-                          stdin=tar.stdout, capture_output=True, text=True)
-    tar.stdout.close()
-    if tar.wait() or zstd.returncode:
-        raise RuntimeError('coverage package tar/zstd failed')
+    if archive.exists():
+        subprocess.run(['zstd', '-t', str(archive)], check=True,
+                       capture_output=True)
+    else:
+        tar = subprocess.Popen(['tar', '-C', str(LOGS), '-cf', '-',
+                                out.name, raw.name, episode.name, meta.name],
+                               stdout=subprocess.PIPE)
+        assert tar.stdout is not None
+        zstd = subprocess.run(['zstd', '-T1', '-1', '-o', str(archive)],
+                              stdin=tar.stdout, capture_output=True, text=True)
+        tar.stdout.close()
+        if tar.wait() or zstd.returncode:
+            raise RuntimeError('coverage package tar/zstd failed')
     receipt = {'status': 'VGR_COVERAGE_COLLECTION_PACKAGE_READY', 'ordinal': ordinal,
                'case_id': case['case_id'], 'split': case['split'], 'archive': str(archive),
                'archive_bytes': archive.stat().st_size, 'archive_sha256': sha(archive),
@@ -118,7 +122,7 @@ def cleanup(ordinal: int, expected_sha: str) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument('action', choices=('collect', 'resume-encode', 'cleanup'))
+    ap.add_argument('action', choices=('collect', 'resume-encode', 'adopt', 'cleanup'))
     ap.add_argument('ordinal', type=int)
     ap.add_argument('expected_sha', nargs='?')
     args = ap.parse_args()
@@ -126,6 +130,11 @@ def main() -> None:
         collect(args.ordinal)
     elif args.action == 'resume-encode':
         resume_encode(args.ordinal)
+    elif args.action == 'adopt':
+        _, case = case_for(args.ordinal)
+        if not paths(args.ordinal, case)[-1].is_file():
+            raise RuntimeError('no existing coverage archive to adopt')
+        package(args.ordinal, allow_existing=True)
     else:
         if not args.expected_sha:
             raise RuntimeError('cleanup requires host-verified SHA')
