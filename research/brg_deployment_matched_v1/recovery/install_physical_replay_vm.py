@@ -9,11 +9,12 @@ import hashlib
 import json
 from pathlib import Path
 import py_compile
+import sys
 
 
-TARGET = Path("/home/zyc/ros2_ws/src/vgr_bridge/vgr_bridge/sim_timebase.py")
+BASE_TARGET = Path("/home/zyc/ros2_ws/src/vgr_bridge/vgr_bridge/sim_timebase.py")
+OVERLAY_TARGET = Path("/home/zyc/brg_closedloop_20260927/vgr_execution_v2/vgr_bridge/sim_timebase.py")
 EXPECTED = "a104873911f23c27dba39001d1919092a5f58195f03e37f86fc76b0040c4351f"
-BACKUP = TARGET.with_name(TARGET.name + ".pre_brg_v1_20260928")
 MARKER = '        if mode == "physical_time_replay_300s":'
 
 
@@ -22,16 +23,21 @@ def sha(path: Path) -> str:
 
 
 def main() -> None:
-    before = TARGET.read_text()
+    if len(sys.argv) != 2 or sys.argv[1] not in ("base", "overlay"):
+        raise SystemExit("usage: install_physical_replay_vm.py base|overlay")
+    target_kind = sys.argv[1]
+    target = BASE_TARGET if target_kind == "base" else OVERLAY_TARGET
+    backup = target.with_name(target.name + ".pre_brg_v1_20260928")
+    before = target.read_text()
     if MARKER in before:
         raise RuntimeError("optional physical replay already installed; inspect before rerun")
-    if sha(TARGET) != EXPECTED:
+    if sha(target) != EXPECTED:
         raise RuntimeError("VM VGR source drift; refusing automatic patch")
-    if BACKUP.exists():
-        if sha(BACKUP) != EXPECTED:
+    if backup.exists():
+        if sha(backup) != EXPECTED:
             raise RuntimeError("existing VGR backup SHA mismatch")
     else:
-        BACKUP.write_bytes(TARGET.read_bytes())
+        backup.write_bytes(target.read_bytes())
     import_anchor = "import math\n"
     if before.count(import_anchor) != 1:
         raise RuntimeError("VGR import anchor mismatch")
@@ -69,13 +75,14 @@ def _physical_frame_times_300s() -> tuple[float, ...]:
     if after.count(mode_anchor) != 1:
         raise RuntimeError("VGR mode anchor mismatch")
     after = after.replace(mode_anchor, mode_code + mode_anchor)
-    TARGET.write_text(after)
-    py_compile.compile(str(TARGET), doraise=True)
-    provenance = {"target": str(TARGET), "backup": str(BACKUP),
-                  "original_sha256": EXPECTED, "patched_sha256": sha(TARGET),
+    target.write_text(after)
+    py_compile.compile(str(target), doraise=True)
+    provenance = {"target": str(target), "backup": str(backup),
+                  "original_sha256": EXPECTED, "patched_sha256": sha(target),
                   "mode": "physical_time_replay_300s", "frame_count": 566,
                   "writer_config": {"duration_s": 300, "delta_s": 0.1, "save_interval_s": 0.5}}
-    out = Path("/home/zyc/brg_v1_recovery_20260928/VGR_PHYSICAL_REPLAY_PATCH.json")
+    suffix = "BASE" if target_kind == "base" else "OVERLAY"
+    out = Path(f"/home/zyc/brg_v1_recovery_20260928/VGR_PHYSICAL_REPLAY_PATCH_{suffix}.json")
     out.write_text(json.dumps(provenance, indent=2) + "\n")
     print(json.dumps(provenance))
 
