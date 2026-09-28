@@ -17,11 +17,13 @@ def csvrows(p):
     with open(p) as f:return list(csv.DictReader(f))
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--arm',required=True,choices=['native_pmfs','candidate_gru','brg','brg_ungated']);ap.add_argument('--case-file',required=True);ap.add_argument('--budget-s',type=float,required=True);ap.add_argument('--output',required=True);ap.add_argument('--domain',type=int,default=228);ap.add_argument('--software-smoke',action='store_true');ap.add_argument('--training-collection',action='store_true');ap.add_argument('--checkpoint');ap.add_argument('--realtime-factor',type=float,default=5.0);a=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument('--arm',required=True,choices=['native_pmfs','candidate_gru','brg','brg_ungated']);ap.add_argument('--case-file',required=True);ap.add_argument('--budget-s',type=float,required=True);ap.add_argument('--output',required=True);ap.add_argument('--domain',type=int,default=228);ap.add_argument('--software-smoke',action='store_true');ap.add_argument('--training-collection',action='store_true');ap.add_argument('--coverage',action='store_true');ap.add_argument('--checkpoint');ap.add_argument('--realtime-factor',type=float,default=5.0);a=ap.parse_args()
     case=json.loads(Path(a.case_file).read_text());out=Path(a.output);run=out.parent/(out.stem+'_raw')
     assert not out.exists() and not run.exists();run.mkdir(parents=True)
     assert 0<=a.domain<=232
     if not a.software_smoke:assert a.budget_s==300
+    if a.coverage and (not a.training_collection or a.arm!='native_pmfs' or case['split'] not in ('train','dev')):
+        raise RuntimeError('fixed coverage is only for OPEN Native training/development collection')
     if a.arm!='native_pmfs':
         if not a.checkpoint or not Path(a.checkpoint).is_file():raise RuntimeError('explicit V1 checkpoint required')
     if a.training_collection and a.arm=='native_pmfs' and a.checkpoint:raise RuntimeError('Native has no checkpoint')
@@ -65,8 +67,13 @@ def main():
         if a.arm!='native_pmfs':
             variant={'candidate_gru':'gru','brg':'brg','brg_ungated':'ungated'}[a.arm]
             checkpoint=Path(a.checkpoint)
-            side=start(['python3',str(ROOT/'tools/serve.py'),'--checkpoint',str(checkpoint),'--bank',str(bank_path),
-                '--allow-warmstart','--tcp-port',str(port),'--threads','1','--log',str(run/'sidecar_events.jsonl')],'sidecar.log',
+            side=start(['python3','/home/zyc/brg_v1_recovery_20260928/serve_v1_vm.py',
+                '--checkpoint',str(checkpoint),'--bank',str(bank_path),
+                '--measurement-blocks',str(run/'measurement_blocks.csv'),
+                '--measurement-samples',str(run/'measurement_samples.csv'),
+                '--sensor-trace',str(run/'sensor_trace.csv'),
+                '--start-x',str(case['start_xy'][0]),'--start-y',str(case['start_xy'][1]),
+                '--tcp-port',str(port),'--threads','1','--log',str(run/'sidecar_events.jsonl')],'sidecar.log',
                 dict(env,PYTHONPATH='/home/zyc/.local/lib/python3.10/site-packages:'+env['PYTHONPATH']))
             for _ in range(100):
                 if side.poll() is not None:raise RuntimeError('sidecar initialization failed')
@@ -76,7 +83,7 @@ def main():
                     break
                 except (OSError,AssertionError):time.sleep(.2)
             else:raise TimeoutError('sidecar readiness')
-        launch=ROOT/'integration/brg_existing_native.launch.py'
+        launch=Path('/home/zyc/brg_v1_recovery_20260928/v1_collection.launch.py') if a.coverage else ROOT/'integration/brg_existing_native.launch.py'
         args={'vgr_data_path':str(view),'config_id':wind,'house':case['house'],'environment_id':'VGR_'+case['house'],'scenario_id':case['case_id'],
             'source_x':str(case['truth_xy'][0]),'source_y':str(case['truth_xy'][1]),'source_z':'.2','start_x':str(case['start_xy'][0]),'start_y':str(case['start_xy'][1]),'flight_height':'.2',
             'seed':'0','run_id':out.stem,'run_dir':str(run),'timeout_sec':str(a.budget_s),'realtime_factor':str(a.realtime_factor),'sim_stop_at_s':str(a.budget_s),
@@ -85,11 +92,14 @@ def main():
             'brg_enabled':str(a.arm!='native_pmfs').lower(),'brg_port':str(port),'brg_candidates':str(len(bank.ids)),'brg_bank_sha256':bank.fingerprint,
             'brg_run_id':out.stem,'brg_sensor_offset_z_m':'0.0','pmfs_belief_file':str(run/'beliefs.jsonl')}
         if a.training_collection:args['convergence_thr']='-1.0'
+        if a.coverage:
+            args.update(open_loop_profile='reversal',motion_duration_s='300.0',motion_heading_rad='0.0')
         child=start(['ros2','launch',str(launch)]+[k+':='+v for k,v in args.items()],'launch.log')
         (run/'runtime_binding.json').write_text(json.dumps({'argv':commands,'effective_launch_args':args,'bank_id':bank.fingerprint,
             'bank_file_sha256':sha(bank_path),'software_smoke':a.software_smoke,
             'source_truth_in_sidecar_inputs':False,'candidate_support_count':len(bank.ids),'replay':'causal actual-writer-time snapshot hold; no cyclic or seed offset',
-            'training_collection':a.training_collection,'realtime_factor':a.realtime_factor},indent=2)+'\n')
+            'training_collection':a.training_collection,'fixed_source_blind_coverage':a.coverage,
+            'realtime_factor':a.realtime_factor},indent=2)+'\n')
         deadline=time.monotonic()+100
         while time.monotonic()<deadline:
             if (run/'beliefs.jsonl').exists() and (run/'beliefs.jsonl').stat().st_size:
@@ -161,7 +171,8 @@ def main():
         wrong_declaration=int(declared and (error is None or error>.5)),declaration_time_s=(beliefs[-1]['search_time_s'] if declared and beliefs else None),
         first_navigation_within_0_5m_time_s=min(proximity) if proximity else None,path_length_m=path_length,
         measurement_count=len(events),hit_count=sum(int(r['hit']) for r in events),navigation_failure_count=nav_failures,invalid_belief_rows=invalid_belief_rows,
-        wall_time_s=time.monotonic()-start_wall,raw_run_directory=str(run),software_smoke=a.software_smoke)
+        wall_time_s=time.monotonic()-start_wall,raw_run_directory=str(run),software_smoke=a.software_smoke,
+        fixed_source_blind_coverage=a.coverage)
     result['actual_native_support_count']=len(beliefs[0]['free_cells']) if beliefs else None
     result['common_legal_support_matches']=bool(beliefs and beliefs[0]['free_cells']==bank.cells.tolist())
     if not case['truth_in_support']:
