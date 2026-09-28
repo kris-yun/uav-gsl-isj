@@ -1,0 +1,29 @@
+XHOC-R0 AUDIT ONLY
+
+Branch:
+  research/cross-house-observation-contract-r0-20260929
+
+Read:
+  research/xhoc_r0/XHOC_R0_PREREG_20260929.md
+
+Task:
+1. Inventory all raw H01/H02/H03 assets capable of supporting a common
+   observation contract.
+2. Verify provenance/hashes where available.
+3. Do NOT inspect or use method outcomes to choose sources/routes/contracts.
+4. Decide whether one common raw acquisition contract is already possible.
+5. If not, specify the minimal new preregistered data campaign, but DO NOT run it.
+6. STOP.
+
+Required outputs:
+  research/xhoc_r0/XHOC_R0_RESULT_20260929.md
+  evidence/xhoc_r0/ASSET_INVENTORY.csv
+  evidence/xhoc_r0/CONTRACT_MATRIX.csv
+  evidence/xhoc_r0/XHOC_R0_RESULT.json
+  evidence/xhoc_r0/ASSET_MANIFEST_SHA256.tsv
+
+Decision exactly one:
+  XHOC_R0_COMMON_CONTRACT_AVAILABLE
+  XHOC_R0_COMMON_CONTRACT_PARTIAL
+  XHOC_R0_NEW_DATA_REQUIRED
+  XHOC_R0_HOLD_ASSET_INTEGRITY
