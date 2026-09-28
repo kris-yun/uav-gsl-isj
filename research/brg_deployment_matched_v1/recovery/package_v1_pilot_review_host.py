@@ -12,7 +12,7 @@ from evaluate_v1_pilot_host import ARCHIVE, RECEIPTS, ARMS
 
 DESKTOP_DATA = ARCHIVE.parent
 MODELS = DESKTOP_DATA / 'BRG_V1_MODELS_20260928'
-OUTPUT = DESKTOP_DATA / 'BRG_V1_THREE_CASE_PILOT_REVIEW_20260928.zip'
+OUTPUT = DESKTOP_DATA / 'BRG_V1_THREE_CASE_PILOT_REVIEW_V2_20260928.zip'
 
 
 def main() -> None:
@@ -34,7 +34,7 @@ def main() -> None:
         'freeze_v1_pilot_models_host.py', 'evaluate_v1_pilot_host.py',
         'evaluate_v1_pilot_vm.py', 'bind_v1_case_vm.py',
         'serve_v1_vm.py', 'sample_time_contract.py',
-        'summarize_v1_pilot_host.py',
+        'summarize_v1_pilot_host.py', 'audit_v1_pilot_navigation_host.py',
     ):
         files[f'contract_and_code/{name}'] = ROOT / name
     files['contract_and_code/model.py'] = ROOT / 'v0_reference' / 'model.py'
@@ -67,6 +67,7 @@ def main() -> None:
                 files[f'original_infrastructure_failure/{failed_archive.name}'] = failed_archive
     files['pilot_summary/BRG_V1_PILOT_3CASE_SUMMARY.json'] = ARCHIVE / 'summary' / 'BRG_V1_PILOT_3CASE_SUMMARY.json'
     files['pilot_summary/BRG_V1_PILOT_3CASE_RUNS.csv'] = ARCHIVE / 'summary' / 'BRG_V1_PILOT_3CASE_RUNS.csv'
+    files['pilot_summary/BRG_V1_PILOT_NAVIGATION_AUDIT.json'] = ARCHIVE / 'summary' / 'BRG_V1_PILOT_NAVIGATION_AUDIT.json'
     files['pilot_models/PILOT_CHECKPOINT_FREEZE.json'] = MODELS / 'PILOT_CHECKPOINT_FREEZE.json'
     for arm in ('candidate_gru', 'brg', 'brg_ungated'):
         files[f'pilot_models/pilot_{arm}_best.pt'] = MODELS / f'pilot_{arm}_best.pt'
@@ -89,10 +90,16 @@ def main() -> None:
         '8 Native dev episodes selected checkpoints by source-update NLL.\n'
         'Pilot cases are frozen original eval8 ordinals 009, 021, 065, each with '
         'Native, candidate-GRU, BRG, and ungated BRG.\n'
-        'The 12 VGR runs are interactive development examples, not Gazebo and '
+        'The 12 effective VGR runs are development examples, not Gazebo and '
         'not a confirmatory significance test. The inspected cases become '
         'development evidence. No new GADEN plume, candidate forward, extra '
         'coverage, or self-rollout data were generated.\n'
+        'Three earlier learned-arm runs stopped at a TCP run-token interface '
+        'error before any model observation. Their raw archives are preserved '
+        'separately; the identity-only patch and rerun paths are documented.\n'
+        'All 12 effective runs sent only (0,0) navigation goals, so this pilot '
+        'does not demonstrate policy-dependent navigation. See the navigation '
+        'audit and result/stop note.\n'
         'The raw VGR log tar.zst files, training episodes, code, checkpoint '
         'hashes, source splits, and per-run results are included. The original '
         'full native plume archives are external and identified by their '
