@@ -1,0 +1,45 @@
+R1 CENTERING × AOD ORTHOGONALITY — CODEX EXECUTE ONLY
+
+Branch:
+  research/r1-centered-aod-orthogonality-20260929
+
+Read first:
+  research/r1_centered_aod/R1_PREREG_20260929.md
+
+Authoritative House03 source:
+  commit 61ca0c34f81208f3c8050fe32eb25c075cb76517
+  evidence/aod_house03_f1_full624_20260927/amended/
+
+Task:
+1. Reproduce frozen amended AOD F1 ABS metrics exactly.
+2. Without changing any target/candidate/path/source support, compute CENTERED-B2
+   for both u and rawu using C=I-11^T/n on the ten-stop path vectors.
+3. Report source-balanced and target-level rank/Top1/Top3/MAP plus paired
+   attribution:
+      ABS -> CENTERED within u/rawu;
+      u -> rawu within ABS/CENTERED.
+4. Use a new frozen bootstrap seed committed before scientific output.
+5. Repeat full evaluator and require byte-identical output.
+6. Choose exactly one R1 label from the prereg.
+7. STOP.
+
+Forbidden:
+- no new GADEN
+- no new PMFS forward
+- no ROS/VGR
+- no planner repair
+- no AOD-KF
+- no probability fusion
+- no neural network
+- no source/path/radius/threshold selection
+- no changing gain or EPS after seeing results
+- no using H01/H02 to tune House03 scoring
+
+Required outputs:
+  research/r1_centered_aod/R1_RESULT_20260929.md
+  evidence/r1_centered_aod/R1_RESULT.json
+  evidence/r1_centered_aod/TARGET_METRICS.csv
+  evidence/r1_centered_aod/SOURCE_AGGREGATES.csv
+  evidence/r1_centered_aod/BOOTSTRAP.json
+  evidence/r1_centered_aod/ASSET_MANIFEST_SHA256.tsv
+  evidence/r1_centered_aod/DETERMINISTIC_REPEAT.json
