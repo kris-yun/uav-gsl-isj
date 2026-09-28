@@ -1,0 +1,58 @@
+{
+  "checks": [
+    {
+      "test": "prefix_batch_identity_positive_False",
+      "max_error": 8.881784197001252e-16,
+      "passed": true
+    },
+    {
+      "test": "duplicate_rejected_False",
+      "passed": true
+    },
+    {
+      "test": "prefix_batch_identity_positive_True",
+      "max_error": 8.881784197001252e-16,
+      "passed": true
+    },
+    {
+      "test": "duplicate_rejected_True",
+      "passed": true
+    },
+    {
+      "test": "shared_bias_example_not_real_data",
+      "correlated_q": [
+        0.6218745670207293,
+        0.3781254329792707
+      ],
+      "independent_q": [
+        0.9998873271161015,
+        0.0001126728838984711
+      ],
+      "passed": true
+    },
+    {
+      "test": "sensor_linear_gain_homogeneity",
+      "max_error": 2.220446049250313e-16,
+      "passed": true
+    },
+    {
+      "test": "exact_publication_window_averaging",
+      "passed": true
+    },
+    {
+      "test": "duplicate_raw_samples_rejected",
+      "passed": true
+    },
+    {
+      "test": "B2_recursive_sufficient_statistics",
+      "passed": true
+    },
+    {
+      "test": "no_EPS_injected_source_identity",
+      "passed": true
+    }
+  ],
+  "n": 10,
+  "all_pass": true,
+  "scope": "Deterministic algebra and software only; no real filter localization scoring or calibration."
+}
