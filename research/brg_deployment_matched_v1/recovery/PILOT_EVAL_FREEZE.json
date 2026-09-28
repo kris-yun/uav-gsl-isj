@@ -1,0 +1,58 @@
+{
+  "status": "BRG_V1_NATIVE_ONLY_THREE_CASE_PILOT_FROZEN",
+  "experiment_identity": "NATIVE_ONLY_INITIAL_PILOT_NOT_FULL_V1",
+  "proposal_sha256": "e547b80634a1f1cefee900d8343e2734a9c272dc4712b171d4144764db7e9a12",
+  "parent_eval_manifest_sha256": "6cd4768c52c135649ad72e526c14b5816ba120b860d565aa5bc630f4d9ee2ef8",
+  "pretrain_freeze_sha256": "a29d04d3380a9446be05165a9889c969d2ec2ce389562f2432fefcf860bfeaa8",
+  "cases": [
+    {
+      "ordinal": 9,
+      "case_id": "House01_1,3-2,4_fast_pmfs_26_36_seed1453872",
+      "case_file": "v1_cases/009_House01_1,3-2,4_fast_pmfs_26_36_seed1453872.json",
+      "case_file_sha256": "da808d069b8621624a5f568be551b7ffeca67cf0acab0807246867fbed47d25d",
+      "house": "House01",
+      "wind": "1,3-2,4_fast",
+      "source_id": "pmfs_26_36",
+      "historical_seed": 1453872,
+      "plume_id": "House01_1,3-2,4_fast_pmfs_26_36_seed1453872"
+    },
+    {
+      "ordinal": 21,
+      "case_id": "House01_1,3-2,4_fast_pmfs_27_36_seed127015129",
+      "case_file": "v1_cases/021_House01_1,3-2,4_fast_pmfs_27_36_seed127015129.json",
+      "case_file_sha256": "abf6a73e12805eb1ff7928b5480ee8da2e3322fa62cb8a3763e5f187b2d8f44b",
+      "house": "House01",
+      "wind": "1,3-2,4_fast",
+      "source_id": "pmfs_27_36",
+      "historical_seed": 127015129,
+      "plume_id": "House01_1,3-2,4_fast_pmfs_27_36_seed127015129"
+    },
+    {
+      "ordinal": 65,
+      "case_id": "House02_4,5-3_slow_pmfs_2_37_seed20702800",
+      "case_file": "v1_cases/065_House02_4,5-3_slow_pmfs_2_37_seed20702800.json",
+      "case_file_sha256": "bce80b4063231600afedfb49fc986b6078e61ac54f0436954d0a72c44f8d37d5",
+      "house": "House02",
+      "wind": "4,5-3_slow",
+      "source_id": "pmfs_2_37",
+      "historical_seed": 20702800,
+      "plume_id": "House02_4,5-3_slow_pmfs_2_37_seed20702800"
+    }
+  ],
+  "arms": [
+    "native_pmfs",
+    "candidate_gru",
+    "brg",
+    "brg_ungated"
+  ],
+  "expected_run_count": 12,
+  "sim_budget_s": 300,
+  "geometric_success_radius_m": 0.5,
+  "primary_metric": "final Native source-map position estimate within 0.5m",
+  "timeout_without_declaration_may_still_be_geometric_success": true,
+  "native_planner_and_stop_rules_unchanged": true,
+  "training_collection": false,
+  "fixed_source_blind_coverage": false,
+  "source_truth_used_for_training_or_model_selection": false,
+  "scope": "three developmental examples; not a scientific significance gate"
+}
