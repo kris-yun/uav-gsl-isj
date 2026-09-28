@@ -96,6 +96,14 @@ def main():
             'recorded_snapshot_time_map':'/dev/null','gaden_iteration_mode':'physical_time_replay_300s','repo_root':'/home/zyc/native_pmfs_recovery_v1/checkout',
             'brg_enabled':str(a.arm!='native_pmfs').lower(),'brg_port':str(port),'brg_candidates':str(len(bank.ids)),'brg_bank_sha256':bank.fingerprint,
             'brg_run_id':run_token,'brg_sensor_offset_z_m':'0.0','pmfs_belief_file':str(run/'beliefs.jsonl')}
+        if env_index==3:
+            # F1 House03 wrote 986 frames at measured writer times. The older
+            # 0..565 physical replay contract applies only to OPEN H01/H02.
+            schedule=Path('/home/zyc/aod_house03_f1_full624_20260927/review_metadata/source_0_replica_0/RESULT_TIME_MAP.tsv')
+            if sha(schedule)!='fe04f283273623dbbb2ae2e3b8e007baa38b7e12e5176f5ce9bca692afe5ba5a':
+                raise RuntimeError('House03 frozen writer-time schedule hash mismatch')
+            args.update(recorded_snapshot_time_map=str(schedule),
+                        gaden_iteration_mode='recorded_snapshot_time_replay')
         if a.training_collection:args['convergence_thr']='-1.0'
         if a.coverage:
             args.update(coverage_goal_file='/home/zyc/brg_v1_recovery_20260928/coverage_routes/COVERAGE_STOP_GOALS_FREEZE_V3.json',

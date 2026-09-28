@@ -1,0 +1,12 @@
+{
+  "status": "H03_TIMEBASE_INFRASTRUCTURE_ONLY_PATCH_BEFORE_ANY_H03_MEASUREMENT",
+  "failed_run": "/home/zyc/brg_v1_logs_20260928/crosshouse_native_pmfs_H03_seed869241781.json",
+  "failed_run_reason": "H03 has 986 physical writer frames, while the H01/H02 replay mode asserts exactly 566; VGR exited at paused t=0 before measurements or navigation",
+  "original_binder_sha256": "5e378195e514b4145a76fe4dbd290c29b1798f802f1f2d8f0af9e34c7d5c887e",
+  "patched_binder_sha256": "a35e4e896e15081ed2d004dd366caf2abe86671bde6f9edc49af3e80d5f68223",
+  "h03_result_time_map_sha256": "fe04f283273623dbbb2ae2e3b8e007baa38b7e12e5176f5ce9bca692afe5ba5a",
+  "h03_replay_mode": "recorded_snapshot_time_replay",
+  "h01_h02_replay_mode": "physical_time_replay_300s",
+  "unchanged": ["case selection", "plume", "seed", "source", "candidate bank", "filter calibration", "sensor model", "planner", "300 s budget", "0.5 m geometric endpoint"],
+  "restart_rule": "preserve failed H03 raw attempt, rerun the same H03 Native case under a new output name, then run its paired filter arm"
+}
