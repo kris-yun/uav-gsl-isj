@@ -1,0 +1,31 @@
+--- a/gsl_server/algorithms/PMFS/MovingStatePMFS.cpp
++++ b/gsl_server/algorithms/PMFS/MovingStatePMFS.cpp
+@@ -64,6 +64,7 @@
+         //------------------------------------------------------
+         if (!pmfs->brgEnabled) calculateMutualInformationGas();
+         NavigateToPose::Goal goal;
++        bool validGoal = false;
+ 
+         // We have a small random chance of using the explorationValue instead of the proper information value even in the second phase
+         // because it is beneficial to have at least some measurements spanning a large area of the map
+@@ -104,8 +105,15 @@
+             if (checkGoal(tempGoal))
+             {
+                 goal = tempGoal;
++                validGoal = true;
+                 break;
+             }
++        }
++
++        if (!validGoal)
++        {
++            GSL_ERROR("PMFS_NO_VALID_PLAN: no candidate passed checkGoal");
++            return;
+         }
+ 
+         if (closedMoveSet.find(pmfs->gridMetadata.coordinatesToIndices(pmfs->currentRobotPose.pose.pose)) == closedMoveSet.end())
+@@ -419,4 +427,4 @@
+         publishers.movementSets->publish(movementSetsMarker);
+     }
+ 
+-} // namespace GSL+} // namespace GSL

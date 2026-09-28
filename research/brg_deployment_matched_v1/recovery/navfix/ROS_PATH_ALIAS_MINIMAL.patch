@@ -1,0 +1,20 @@
+--- a/vgr_bridge/vgr_sim_node.py
++++ b/vgr_bridge/vgr_sim_node.py
+@@ -14,7 +14,7 @@
+ from rclpy.node import Node
+ from rclpy.action import ActionServer, GoalResponse
+ from rclpy.qos import QoSProfile, DurabilityPolicy
+-from nav_msgs.msg import OccupancyGrid, MapMetaData, Path
++from nav_msgs.msg import OccupancyGrid, MapMetaData, Path as RosPath
+ from geometry_msgs.msg import PoseWithCovarianceStamped, Pose, PoseStamped, TransformStamped
+ from nav2_msgs.action import NavigateToPose
+ from olfaction_msgs.msg import GasSensor, Anemometer
+@@ -1155,7 +1155,7 @@
+         gy = goal_handle.request.goal.pose.position.y
+         self.get_logger().warn(f"PLAN_CB: called with goal=({gx:.2f},{gy:.2f})")
+         goal = goal_handle.request.goal.pose.position
+-        path = Path()
++        path = RosPath()
+         path.header.frame_id = "map"
+         path.header.stamp = self._sim_stamp()
+         if self._is_position_free(goal.x, goal.y):

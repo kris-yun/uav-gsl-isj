@@ -4,7 +4,7 @@
 One process group per subprocess; truth stays in benchmark/evaluator only.
 Every algorithm/service failure produces a case result instead of fallback.
 """
-import argparse,csv,hashlib,json,math,os,resource,signal,socket,subprocess,sys,time
+import argparse,csv,hashlib,json,math,os,re,resource,signal,socket,subprocess,sys,time
 from pathlib import Path
 import numpy as np
 ROOT=Path('/home/zyc/brg_closedloop_20260927/PMFS_BRG_CLOSED_LOOP_STARTER_20260927')
@@ -123,6 +123,10 @@ def main():
         deadline=time.monotonic()+a.budget_s*6+600
         while time.monotonic()<deadline:
             log=(run/'launch.log').read_text(errors='replace')
+            if 'PMFS_NO_VALID_PLAN' in log:
+                status='algorithm_error';reason='no_valid_planner_goal';break
+            if any(x in log for x in ['Error executing callback', 'AttributeError:', 'Traceback (most recent call last)']):
+                status='service_error';reason='planner_callback_exception';break
             if any(x in log for x in ['terminate called','what():','BRG handshake mismatch','BRG/native grid geometry mismatch']):
                 status='service_error' if a.arm!='native_pmfs' else 'algorithm_error';reason='runtime_exception';break
             if (run/'run_status.json').exists():
@@ -161,7 +165,13 @@ def main():
         support_matches=row['free_cells']==bank.cells.tolist()
         if not a.software_smoke:assert support_matches,'native/legal support mismatch'
     log=(run/'launch.log').read_text(errors='replace') if (run/'launch.log').exists() else ''
-    nav_failures=log.count("Couldn't reach the target")+log.count('Waypoint execution geometry violation')
+    nav_failures=(log.count("Couldn't reach the target")+
+                  log.count('Waypoint execution geometry violation')+
+                  log.count('PMFS_NO_VALID_PLAN'))
+    planning_requests=log.count('PLAN_CB: called with goal=')
+    planning_returns=log.count('PLAN_CB: returning ')
+    nonempty_planning_returns=sum(int(n)>0 for n in re.findall(r'PLAN_CB: returning (\d+) poses',log))
+    issued_goals=log.count('Sending goal (')
     timed_out=status=='time_budget'
     if nav_failures and status in ('completed','time_budget'):status='navigation_failure';reason='navigation_failure_recorded'
     if invalid_belief_rows:status='algorithm_error';reason='invalid_or_nonfinite_belief_record'
@@ -177,6 +187,9 @@ def main():
         wrong_declaration=int(declared and (error is None or error>.5)),declaration_time_s=(beliefs[-1]['search_time_s'] if declared and beliefs else None),
         first_navigation_within_0_5m_time_s=min(proximity) if proximity else None,path_length_m=path_length,
         measurement_count=len(events),hit_count=sum(int(r['hit']) for r in events),navigation_failure_count=nav_failures,invalid_belief_rows=invalid_belief_rows,
+        planning_request_count=planning_requests,planning_return_count=planning_returns,
+        nonempty_planning_return_count=nonempty_planning_returns,issued_goal_count=issued_goals,
+        callback_exception_count=log.count('Error executing callback')+log.count('AttributeError:'),
         wall_time_s=time.monotonic()-start_wall,raw_run_directory=str(run),software_smoke=a.software_smoke,
         fixed_source_blind_coverage=a.coverage)
     result['actual_native_support_count']=len(beliefs[0]['free_cells']) if beliefs else None
