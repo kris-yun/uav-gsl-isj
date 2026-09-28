@@ -15,6 +15,7 @@ FILES = [
     "research/r1_centered_aod/R1_BOOTSTRAP_FREEZE_20260929.json",
     "research/r1_centered_aod/CODEX_EXECUTE_ONLY.txt",
     "research/r1_centered_aod/evaluate_r1.py",
+    "research/r1_centered_aod/package_r1_review.py",
     "research/r1_centered_aod/R1_RESULT_20260929.md",
     "evidence/r1_centered_aod/assets/TARGET_PATHS_12x8x2x10.npy",
     "evidence/r1_centered_aod/R1_RESULT.json",
