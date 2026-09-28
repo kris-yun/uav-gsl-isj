@@ -95,7 +95,6 @@ def aggregate(final_rows: list[dict]) -> dict:
 def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--inputs", type=Path, required=True)
-    p.add_argument("--f1", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
     args = p.parse_args()
     if sha_file(ASSET) != EXPECTED_ASSET_SHA or sha_file(EVENTS) != EXPECTED_EVENTS_SHA:
@@ -110,7 +109,8 @@ def main() -> None:
         for name in (f"env_{env}_bank.npz", f"env_{env}_occupancy.u8"):
             if sha_file(args.inputs / name) != manifest["input_sha256"][name]:
                 raise ValueError(f"frozen full-support bank changed: {name}")
-    banks = {env: bank_for_env(env, args.inputs, args.f1) for env in range(3)}
+    # env 0..2 use only their own Native-legal banks; House03 F1 is not an input.
+    banks = {env: bank_for_env(env, args.inputs, Path(".")) for env in range(3)}
     all_updates, finals = [], []
     for ordinal, episode in enumerate(episodes, 1):
         saved = by_case[episode["case_id"]]
