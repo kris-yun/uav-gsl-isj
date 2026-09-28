@@ -1,0 +1,43 @@
+{
+  "status": "BRG_V1_NATIVE_PILOT_MODELS_FROZEN_BEFORE_EVAL",
+  "phase": "native_pilot",
+  "training_scope": "40 Native train and 8 Native dev episodes only",
+  "training_manifest_sha256": "98fff64ae953839eb2540c4905ab12d92eb4a4c627a4a94f58f8149500281266",
+  "trainer_sha256": "10710dc65534f4e486c827e86db3f775e96ffd6e05ae5765a0c57278e3738faa",
+  "model_source_sha256": "5ae50ee7e2ef765e07292e5ff4a0db6edff9da39936908b671163c74103ecc98",
+  "evaluation_freeze_sha256": "2e8d6d123d2251e942487f207da14eb3e75ef73aa3338a9e8fdea90779a91a1e",
+  "checkpoint_selection": "development source-update prefix NLL",
+  "evaluation_cases_used_for_selection": false,
+  "arms": {
+    "candidate_gru": {
+      "path": "/home/zyc/brg_v1_models_20260928/pilot_candidate_gru_best.pt",
+      "sha256": "796f49cfb9ccfae6e5ef58e9454f0520f7292b0dbb73e0d876bcd2d8922b2a3c",
+      "bytes": 70250,
+      "variant": "gru",
+      "best_epoch": 1,
+      "best_dev_source_update_nll": 6.462785720825195,
+      "summary_sha256": "f0b38e8be0487975f7a60c18b94989c1c9b08a213febc892b5eeb3dd7b174f8f",
+      "history_sha256": "443645664b1978c68cadab9dee3bd4d98b032638953aa2fbe71f69bbe6374d8d"
+    },
+    "brg": {
+      "path": "/home/zyc/brg_v1_models_20260928/pilot_brg_best.pt",
+      "sha256": "ee57607060f7241bdc24edb2d71e97a2b6c5c0de1901b2d1462d5034dc5c2289",
+      "bytes": 60010,
+      "variant": "brg",
+      "best_epoch": 1,
+      "best_dev_source_update_nll": 6.5055946707725525,
+      "summary_sha256": "f957bdf7e67b6ad5ac2c8bcf5cb3738a031ae8b3ea7a2cc7c41d8c34330237f4",
+      "history_sha256": "ceac9648e254fdfd6243e2b30634fdf366b84bfb0adb79609529bb908a5a8046"
+    },
+    "brg_ungated": {
+      "path": "/home/zyc/brg_v1_models_20260928/pilot_brg_ungated_best.pt",
+      "sha256": "1661832cb1f781961c3f92df942196e4712f35a090c70d459b34dab843073188",
+      "bytes": 60010,
+      "variant": "ungated",
+      "best_epoch": 1,
+      "best_dev_source_update_nll": 6.4958882331848145,
+      "summary_sha256": "9d9ee1157dc0cc4160967850ec66e09b0d4831a3ec251e9f4403a7e4560608b6",
+      "history_sha256": "b84dacae9ce4ab5be196f1e22cb9444c9475455c3a88ec4fec6f99548d8322a7"
+    }
+  }
+}
