@@ -1,0 +1,21 @@
+{
+  "status": "OPEN_DEVELOPMENT_DIAGNOSTIC_NOT_CONFIRMATION",
+  "question": "Does the frozen HD-PLF action value predict B2 source discrimination gain from an actual future concentration observation?",
+  "environments": ["House01/1,3-2,4_fast", "House02/3,5-1_slow", "House02/4,5-3_slow"],
+  "target_support": "All 6 sources x 4 fresh OPEN target realizations per environment, no outcome-based selection",
+  "source_hypotheses": "The existing six OPEN source templates; full Native support and aligned Native runtime q are unavailable for these target episodes",
+  "action_weights": "Uniform 1/6 over the same six source hypotheses for both arms, explicitly a diagnostic substitute for Native q",
+  "anchor_rule": "For each target, scan times 0 through 8 then frozen probe rank 1 through 30 and take the first strictly positive pooled concentration; omit and count only if no such event exists or there are fewer than two feasible local goals",
+  "history": "One actual positive pooled reading at the selected frozen probe and its nearest coarse-grid memory cell",
+  "future_observation": "At the next frozen time snapshot, sample the retained raw concentration cube at each geometry-feasible coarse goal by an area-average 0.20 m by 0.20 m square centered on that goal; no interpolation in time",
+  "target_data_boundary": "Future values and source identity are used only to evaluate goals after model-only action values are frozen; the action function receives neither",
+  "observation_projection_check": "The same square operator at all 30 frozen probe centers must reproduce stored pooled.npy within 1e-5 absolute concentration units",
+  "model_action": "Call the existing HDPLFActionSelector with unchanged u/rawu mean maps, uniform six-source q, first-positive anchor memory cell, and identical feasible goals. Preserve 0.60-1.20 m radius, 2.70 m path limit, and 0.01/m movement penalty",
+  "evidence_score": "For each arm and goal, perform the existing nonnegative-gain B2 profile SSE on the two observations [anchor, future goal] with the same arm templates. One-observation prefix is scored with the same B2 rule",
+  "primary_gain": "Tie-aware true-source rank gain: expected rank under uniform tie breaking before minus after; SSE tie tolerance is 1e-10 * max(1, squared observed-vector norm)",
+  "secondary_gain": "Change in true-source versus best competing-source B2 SSE margin, divided by max(1e-9, squared observed-vector norm)",
+  "association": "Within each target episode, Spearman correlation across all feasible goals between frozen action value and each observation-grounded gain. Undefined correlations are reported and excluded, never set to zero. Summarize by environment and source, not by treating all goals as independent samples",
+  "selected_goal_check": "Compare each arm's selected goal gain with the median gain over the same feasible goals, without choosing a goal using target values",
+  "inference_limit": "This is a six-source counterfactual cube audit with frozen snapshot spacing and synthetic uniform q. It does not establish Native posterior coupling, VGR execution, or a full-support deployment benefit",
+  "prohibited": ["new plume", "new PMFS forward", "House03", "model training", "radius or weight search", "VGR closed loop", "changing the existing action function during this audit"]
+}
