@@ -27,14 +27,14 @@ def sha(path):
     return h.hexdigest()
 
 
-def competence(pseudo: np.ndarray, mean_bank: np.ndarray, truth: int) -> dict:
+def competence(pseudo: np.ndarray, mean_bank: np.ndarray, truth: int, label: str) -> dict:
     assert pseudo.shape[0] == 88 and mean_bank.shape[1] == pseudo.shape[1]
     assert len(mean_bank) in (596,630,624)
     assert np.isfinite(pseudo).all() and (pseudo >= 0).all()
     bank_self = mean_bank[truth]
     diff = np.mean(pseudo,axis=0)-bank_self
     relative = float(np.linalg.norm(diff)/max(np.linalg.norm(bank_self),1e-12))
-    assert relative <= 1e-4, ('simulator mean mismatch', relative)
+    assert relative <= 1e-4, ('simulator mean mismatch', label, relative)
     rank = []
     for x in pseudo:
         templates = np.maximum(mean_bank, EPS).copy()
@@ -53,6 +53,13 @@ def competence(pseudo: np.ndarray, mean_bank: np.ndarray, truth: int) -> dict:
 def main():
     routes = json.loads((EVID/'ROUTE_POSITIONS_ONLY.json').read_text())
     assert len(routes)==49
+    prior=json.loads((ROOT/'evidence/ds_pmfs_identity_d1/ASSET_FREEZE.json').read_text())
+    for env in range(3):
+        for name in (f'env_{env}_bank.npz',f'env_{env}_occupancy.u8'):
+            assert sha(EVID/'assets'/name)==prior['input_sha256'][name],name
+    f1_freeze=json.loads((ROOT/'evidence/aod_house03_f1_full624_20260927/TEMPLATE_FREEZE.json').read_text())
+    template_path=ROOT/'research/aod_house03_f1_full624_20260927/templates/candidate_path_templates.npz'
+    assert sha(template_path)==f1_freeze['arrays_sha256'][template_path.name]
     sim_manifest=json.loads((EVID/'SIMULATOR_ONLY_FREEZE.json').read_text())
     pseudo_path=EVID/'PSEUDO_VECTORS.npz'
     assert sha(pseudo_path)==sim_manifest['pseudo_vectors_sha256']
@@ -66,7 +73,7 @@ def main():
         xy=np.asarray(route['xy'],dtype=float)
         for kind in ('u','rawu'):
             m=project(maps[kind],meta,xy)
-            result=competence(a[f'route_{ri}_{kind}'],m,idx)
+            result=competence(a[f'route_{ri}_{kind}'],m,idx,f'route_{ri}_{kind}_{route["source_id"]}')
             rows.append(dict(house=route['house'],env=env,source_id=route['source_id'],
                              route_id=route['case_id'],operator=kind,candidate_count=len(ids),
                              route_stops=len(xy),**result))
@@ -81,7 +88,8 @@ def main():
         for path in ('A','B'):
             for kind in ('u','rawu'):
                 m=templates[f'nominal_{kind}_path_{path}']
-                result=competence(a[f'h03_source_{si}_path_{path}_{kind}'],m,idx)
+                result=competence(a[f'h03_source_{si}_path_{path}_{kind}'],m,idx,
+                                  f'h03_source_{si}_path_{path}_{kind}')
                 rows.append(dict(house='House03',env=3,source_id=s.source_id,
                                  route_id=f'H03_{s.source_id}_{path}',operator=kind,
                                  candidate_count=624,route_stops=10,**result))
