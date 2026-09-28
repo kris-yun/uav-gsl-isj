@@ -31,11 +31,17 @@ def package(ordinal: int) -> dict:
     binding = json.loads((raw / 'runtime_binding.json').read_text())
     if (not result['fixed_source_blind_coverage'] or
             not binding['fixed_source_blind_coverage'] or
-            binding['effective_launch_args']['open_loop_profile'] !=
-                f'brg_v1_file:/home/zyc/brg_v1_recovery_20260928/coverage_routes/env_{case["environment_index"]}_coverage.npz' or
+            binding['effective_launch_args']['coverage_goal_file'] !=
+                '/home/zyc/brg_v1_recovery_20260928/coverage_routes/COVERAGE_STOP_GOALS_FREEZE_V3.json' or
+            binding['effective_launch_args']['coverage_environment_index'] !=
+                str(case['environment_index']) or
+            'open_loop_profile' in binding['effective_launch_args'] or
             episode_meta['policy'] != 'coverage' or
             episode_meta['case_id'] != case['case_id']):
         raise RuntimeError('source-blind coverage policy binding mismatch')
+    goal_trace = raw / 'coverage_goal_trace.csv'
+    if not goal_trace.is_file() or goal_trace.stat().st_size < 70:
+        raise RuntimeError('stop-goal coverage trace missing')
     PACKAGES.mkdir(parents=True, exist_ok=True)
     tar = subprocess.Popen(['tar', '-C', str(LOGS), '-cf', '-',
                             out.name, raw.name, episode.name, meta.name],

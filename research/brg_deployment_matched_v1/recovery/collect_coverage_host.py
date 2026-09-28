@@ -72,7 +72,7 @@ def one(ordinal: int) -> dict:
     receipt = {**result, 'host_package': str(package),
                'native_archive_sha256': sha(native_asset),
                'case_binding_sha256': sha(files[0]),
-               'coverage_profile': 'frozen source-blind 300s legal-cell graph route',
+               'coverage_profile': 'frozen source-blind V3 legal-cell stop goals with Native VGR navigate-then-sample',
                'science_use': 'training/development only'}
     receipt_path.write_text(json.dumps(receipt, indent=2) + '\n')
     cleaned = remote_json(f'python3 {VM_CODE}/collect_coverage_vm.py cleanup {ordinal} {actual}')

@@ -24,7 +24,8 @@ DEFAULTS = {
     "timeout_sec": "300.0", "realtime_factor": "1.0", "sim_stop_at_s": "-1.0",
     # Source-blind training coverage only. Empty keeps exact Native motion.
     "open_loop_profile": "", "motion_duration_s": "300.0",
-    "motion_heading_rad": "0.0",
+    "motion_heading_rad": "0.0", "coverage_goal_file": "",
+    "coverage_environment_index": "-1",
     "gas_backend": "raw_house1_snapshot", "raw_query_executable": "/bin/false",
     "shadow_gmrf": "false",
     "recorded_snapshot_time_map": "", "gaden_iteration_mode": "recorded_snapshot_time_replay",
@@ -73,6 +74,8 @@ def generate_launch_description():
             "realtime_factor": _typed("realtime_factor", float),
             "sim_stop_at_s": _typed("sim_stop_at_s", float),
             "open_loop_profile": LC("open_loop_profile"),
+            "coverage_goal_file": LC("coverage_goal_file"),
+            "coverage_environment_index": _typed("coverage_environment_index", int),
             "motion_duration_s": _typed("motion_duration_s", float),
             "motion_heading_rad": _typed("motion_heading_rad", float),
             "nav_command_quantum_s": 2.0,

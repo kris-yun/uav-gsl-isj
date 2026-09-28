@@ -93,8 +93,8 @@ def main():
             'brg_run_id':out.stem,'brg_sensor_offset_z_m':'0.0','pmfs_belief_file':str(run/'beliefs.jsonl')}
         if a.training_collection:args['convergence_thr']='-1.0'
         if a.coverage:
-            args.update(open_loop_profile=f'brg_v1_file:/home/zyc/brg_v1_recovery_20260928/coverage_routes/env_{env_index}_coverage.npz',
-                        motion_duration_s='300.0',motion_heading_rad='0.0')
+            args.update(coverage_goal_file='/home/zyc/brg_v1_recovery_20260928/coverage_routes/COVERAGE_STOP_GOALS_FREEZE_V3.json',
+                        coverage_environment_index=str(env_index))
         child=start(['ros2','launch',str(launch)]+[k+':='+v for k,v in args.items()],'launch.log')
         (run/'runtime_binding.json').write_text(json.dumps({'argv':commands,'effective_launch_args':args,'bank_id':bank.fingerprint,
             'bank_file_sha256':sha(bank_path),'software_smoke':a.software_smoke,
