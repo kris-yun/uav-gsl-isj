@@ -26,6 +26,13 @@ channels use the recorded window start/end, event gas average, and pose. The
 individual publication-time check is an input integrity gate. Both original
 PMFS and VGR timestamp traces remain in the host log archive.
 
+The host episode extractor independently repeats the ordered matching for
+every archived case, including early runs encoded before this checker was
+installed. In the first 18 archived Native episodes, cases 003, 004, 005,
+017, 025, and 026 had at least one repeated callback clock stamp; all 18
+mapped every event to ten distinct VGR publications, and observed callback
+clock lag was at most 0.2 s. The original PMFS event averages are retained.
+
 The model-facing V1 sidecar reads only the current PMFS measurement block and
 its raw samples, plus VGR sensor rows published by that time. It never reads
 source truth or a future measurement. The original C++ `STEP` protocol and
