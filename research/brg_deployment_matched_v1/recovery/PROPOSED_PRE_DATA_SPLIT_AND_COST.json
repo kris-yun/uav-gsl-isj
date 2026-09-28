@@ -1,0 +1,189 @@
+{
+  "status": "PROPOSAL_ONLY_NOT_AUTHORIZED",
+  "split_salt": "BRG_V1_SOURCE_SPLIT_GEOMETRY_20260928_V1",
+  "source_pair_construction": "unique within-house Euclidean distance <0.301 m using frozen source coordinates",
+  "pairs": {
+    "House01": [
+      [
+        "pmfs_13_18",
+        "pmfs_13_19"
+      ],
+      [
+        "pmfs_26_36",
+        "pmfs_27_36"
+      ],
+      [
+        "pmfs_27_1",
+        "pmfs_27_2"
+      ]
+    ],
+    "House02": [
+      [
+        "pmfs_11_20",
+        "pmfs_12_20"
+      ],
+      [
+        "pmfs_1_1",
+        "pmfs_2_1"
+      ],
+      [
+        "pmfs_2_37",
+        "pmfs_2_38"
+      ]
+    ]
+  },
+  "eval_pairs": {
+    "House01": [
+      "pmfs_26_36",
+      "pmfs_27_36"
+    ],
+    "House02": [
+      "pmfs_2_37",
+      "pmfs_2_38"
+    ]
+  },
+  "dev_pair": {
+    "house": "House01",
+    "sources": [
+      "pmfs_13_18",
+      "pmfs_13_19"
+    ]
+  },
+  "source_splits": [
+    {
+      "house": "House01",
+      "source_id": "pmfs_13_18",
+      "split": "dev"
+    },
+    {
+      "house": "House01",
+      "source_id": "pmfs_13_19",
+      "split": "dev"
+    },
+    {
+      "house": "House01",
+      "source_id": "pmfs_26_36",
+      "split": "eval"
+    },
+    {
+      "house": "House01",
+      "source_id": "pmfs_27_1",
+      "split": "train"
+    },
+    {
+      "house": "House01",
+      "source_id": "pmfs_27_2",
+      "split": "train"
+    },
+    {
+      "house": "House01",
+      "source_id": "pmfs_27_36",
+      "split": "eval"
+    },
+    {
+      "house": "House02",
+      "source_id": "pmfs_11_20",
+      "split": "train"
+    },
+    {
+      "house": "House02",
+      "source_id": "pmfs_12_20",
+      "split": "train"
+    },
+    {
+      "house": "House02",
+      "source_id": "pmfs_1_1",
+      "split": "train"
+    },
+    {
+      "house": "House02",
+      "source_id": "pmfs_2_1",
+      "split": "train"
+    },
+    {
+      "house": "House02",
+      "source_id": "pmfs_2_37",
+      "split": "eval"
+    },
+    {
+      "house": "House02",
+      "source_id": "pmfs_2_38",
+      "split": "eval"
+    }
+  ],
+  "eval_h02_wind": "4,5-3_slow",
+  "eval_cases": [
+    {
+      "house": "House01",
+      "wind": "1,3-2,4_fast",
+      "source_id": "pmfs_26_36",
+      "historical_seed": 1453872,
+      "historical_cube_path": "/home/zyc/JTD_E2_K12_180_RUNS_20260925/reference/E0_House01/1,3-2,4_fast/pmfs_26_36/reference_05_seed_1453872/concentration.npy"
+    },
+    {
+      "house": "House01",
+      "wind": "1,3-2,4_fast",
+      "source_id": "pmfs_26_36",
+      "historical_seed": 139290499,
+      "historical_cube_path": "/home/zyc/JTD_E2_K12_180_RUNS_20260925/target/E0_House01/1,3-2,4_fast/pmfs_26_36/target_00_seed_139290499/concentration.npy"
+    },
+    {
+      "house": "House01",
+      "wind": "1,3-2,4_fast",
+      "source_id": "pmfs_27_36",
+      "historical_seed": 127015129,
+      "historical_cube_path": "/home/zyc/JTD_E2_K12_180_RUNS_20260925/target/E0_House01/1,3-2,4_fast/pmfs_27_36/target_00_seed_127015129/concentration.npy"
+    },
+    {
+      "house": "House01",
+      "wind": "1,3-2,4_fast",
+      "source_id": "pmfs_27_36",
+      "historical_seed": 321327923,
+      "historical_cube_path": "/home/zyc/JTD_E2_K12_180_RUNS_20260925/reference/E0_House01/1,3-2,4_fast/pmfs_27_36/reference_05_seed_321327923/concentration.npy"
+    },
+    {
+      "house": "House02",
+      "wind": "4,5-3_slow",
+      "source_id": "pmfs_2_37",
+      "historical_seed": 20702800,
+      "historical_cube_path": "/home/zyc/JTD_E2_K12_180_RUNS_20260925/target/E2_House02/4,5-3_slow/pmfs_2_37/target_03_seed_20702800/concentration.npy"
+    },
+    {
+      "house": "House02",
+      "wind": "4,5-3_slow",
+      "source_id": "pmfs_2_37",
+      "historical_seed": 576947609,
+      "historical_cube_path": "/home/zyc/JTD_E2_K12_180_RUNS_20260925/target/E2_House02/4,5-3_slow/pmfs_2_37/target_00_seed_576947609/concentration.npy"
+    },
+    {
+      "house": "House02",
+      "wind": "4,5-3_slow",
+      "source_id": "pmfs_2_38",
+      "historical_seed": 116964418,
+      "historical_cube_path": "/home/zyc/JTD_E2_K12_180_RUNS_20260925/target/E2_House02/4,5-3_slow/pmfs_2_38/target_01_seed_116964418/concentration.npy"
+    },
+    {
+      "house": "House02",
+      "wind": "4,5-3_slow",
+      "source_id": "pmfs_2_38",
+      "historical_seed": 153144426,
+      "historical_cube_path": "/home/zyc/JTD_E2_K12_180_RUNS_20260925/target/E2_House02/4,5-3_slow/pmfs_2_38/target_02_seed_153144426/concentration.npy"
+    }
+  ],
+  "72_run_units": 72,
+  "gaden_new_executions_if_no_matching_backup": 72,
+  "train_plume_units": 40,
+  "dev_plume_units": 8,
+  "eval_plume_units_produced": 24,
+  "formal_eval_cases": 8,
+  "formal_eval_arms": 4,
+  "formal_eval_vgr_runs": 32,
+  "train_collection_native_runs": 40,
+  "train_collection_coverage_runs": 40,
+  "one_self_trajectory_collection_runs": 120,
+  "dev_native_coverage_runs": 16,
+  "optional_warm_dev_runs_not_in_base_budget": 24,
+  "base_vgr_runs_including_evaluation": 248,
+  "all_case_trajectory_sharing": "same simulation asset may be queried by multiple policies; policy runs are not independent plume samples",
+  "V0_weights_allowed_as_initialization": false
+}
