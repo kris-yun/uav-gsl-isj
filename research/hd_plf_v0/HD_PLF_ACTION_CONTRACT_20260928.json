@@ -1,0 +1,17 @@
+{
+  "status": "DEVELOPMENT_ACTION_CONTRACT_NO_CLOSED_LOOP_RESULT",
+  "branch": "codex/hd-plf-controller-20260928",
+  "objective": "Choose a reachable next stop that separates current Native PMFS source hypotheses by their gain-invariant multi-position amplitude views.",
+  "inference_boundary": "Native PMFS alone produces and updates sourceProbability. This controller changes only a proposed next waypoint. It never writes a source posterior, prior, stopping rule, or truth estimate.",
+  "arms": {
+    "LF-u": "Original blurred u amplitude maps",
+    "LF-rawu": "Unblurred rawu amplitude maps; every other rule and input is identical"
+  },
+  "memory": "H contains unique grid cells at actually completed measurement stops in arrival order. A repeated cell is retained once for the design utility. No future observations, true source position, true distance, or MAP-as-home trigger enters.",
+  "trigger_and_budget": "Use the existing source-blind first complete ten-sample stop-hit trigger and one local cycle from LOCAL_ACTION_CONTRACT_20260928.json. Candidate next stops are 0.60-1.20 m from the measured anchor, collision-free under the existing VGR occupancy/BFS, with path length <=2.70 m; all time counts against the original 300 s.",
+  "source_support": "The q vector and u/rawu map rows must use exactly the same fixed legal Native candidate order. Invalid, missing, negative, or nonfinite values fail closed to Native. The six-source OPEN bank is only for offline software smoke, not full-support deployment evidence.",
+  "pair_separation": "For each candidate source s, form v_s=[m_s(h_1),...,m_s(h_k),m_s(x)]. For a<b with positive finite norms, D_ab=1-(dot(v_a,v_b)^2/(norm(v_a)^2*norm(v_b)^2)), clipped only for floating roundoff to [0,1]. If either norm is zero, set D_ab=0 conservatively. All map amplitudes must be nonnegative.",
+  "action_value": "J(x)=sum_{a<b} q_a*q_b*D_ab(x)-0.01*geodesic_travel_m(x). q is normalized to sum one. The 0.01 per metre cost coefficient is an implementation constant fixed before OPEN software smoke, not estimated from target outcomes. Choose maximum J; exact ties prefer shorter travel, then x, y, cell index. If no feasible candidate, return the unchanged Native goal.",
+  "comparison": "LF-u and LF-rawu use the same history, q, reachable goal set, cost coefficient, tie breaks, trigger, memory transitions, and 300 s accounting; only the amplitude map differs. Native and the frozen Native-plus-memory prototype remain separate controls.",
+  "current_gate": "Unit tests and H01/H02 OPEN offline software smoke only. No new plume, PMFS forward, training, House03 readout, or batch 300 s VGR campaign. A smoke difference does not establish localization gain or main innovation."
+}
