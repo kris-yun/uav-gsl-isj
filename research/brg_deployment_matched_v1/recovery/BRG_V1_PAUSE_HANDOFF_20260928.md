@@ -52,6 +52,12 @@ The other three V3 runs passed the same raw-publication encoding gate; they
 have not been used in model training. This establishes software/input
 parity for the pilot, not BRG localization value.
 
+The four V3 paths have 25/28/27/26 events and **one source-update prefix
+each**, versus 3--4 update prefixes in the Native collection. This is a
+material sampling-rate difference for the planned development NLL and should
+be assessed before collecting the remaining 44 coverage paths. The result
+comes from the actual run logs; no event or update was removed in encoding.
+
 ## Provenance and storage
 
 - GADEN acquisition result SHA256:
