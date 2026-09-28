@@ -1,0 +1,51 @@
+{
+  "status": "AOD_V1_H02_POSTSCREEN_EXPLANATION_ONLY",
+  "events": 50,
+  "truth_source_id": "pmfs_2_37",
+  "historical_wrong_source_id": "pmfs_6_36",
+  "raw_file_sha256": {
+    "sim_pose_trace.csv": "d6f53e1e0495afea8c1f03336949334f339ef69f756ca8975358e749166aa006",
+    "sensor_trace.csv": "aba2bdea10600593ea9c8020086e2ca672e2a122e9770a2e5e3e69570865300d",
+    "measurement_blocks.csv": "a537d1fe5dcd43c2e249fb67154435093f963f3d0d8f388aa96009f24129175e",
+    "measurement_samples.csv": "f5eedcab4c574ac939fbf1f231cb4a80f9c74f217eab9dcb3fdeecf7bc245055"
+  },
+  "bank_sha256": "7231705c2befad5882a980212fcc7c7617c0304336b64c2c40ad27f86d23f60d",
+  "calibration_sha256": "d24d241221123ea6c8f715e905e3aee8a9317c8b29952291e5b938b94d19127c",
+  "dev_screen_sha256": "a5fdd03364c6a0a2d2d3fc524c4d7f446e4b5373595a69a35e1618f71ec3f182",
+  "models": {
+    "old": {
+      "wrong_over_truth_log_odds": {
+        "shape": 0.10937578402775472,
+        "gain_prior": 7.32472608919745,
+        "determinant": -1.2419166731376254,
+        "positive_gain_truncation": 0.0,
+        "total": 6.19218520008758
+      },
+      "wrong_over_truth_odds": 488.9133131741682,
+      "true_source_posterior": 0.00019822292746687716,
+      "historical_wrong_source_posterior": 0.09691382821491377,
+      "true_source_rank": 35,
+      "unconstrained_gls_gains": {
+        "pmfs_2_37": 1.296730250931329,
+        "pmfs_6_36": 0.32825479352119996
+      }
+    },
+    "new": {
+      "wrong_over_truth_log_odds": {
+        "shape": 0.31560325662793787,
+        "gain_prior": 4.581930093885864,
+        "determinant": -1.3373258869789812,
+        "positive_gain_truncation": 0.0,
+        "total": 3.560207463534821
+      },
+      "wrong_over_truth_odds": 35.170492983065934,
+      "true_source_posterior": 0.002910290881584799,
+      "historical_wrong_source_posterior": 0.10235636502945895,
+      "true_source_rank": 27,
+      "unconstrained_gls_gains": {
+        "pmfs_2_37": 1.3044964176769906,
+        "pmfs_6_36": 0.33114722485054043
+      }
+    }
+  }
+}
