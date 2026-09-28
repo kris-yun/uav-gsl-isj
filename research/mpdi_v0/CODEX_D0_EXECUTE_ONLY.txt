@@ -1,0 +1,69 @@
+MPDI D0 — CODEX EXECUTE ONLY
+Date: 2026-09-28
+Branch: research/marginal-preserving-dependence-v0-20260928
+Current prereg commit: 1829ece66de52931059820a91e2c35e6b54db511
+
+Read first:
+  research/mpdi_v0/MPDI_D0_PREREG_20260928.md
+
+DO NOT modify the scientific contract after seeing any source-rank outcome.
+
+Authoritative prior OPEN assets are on:
+  origin/research/dependence-layer-d0-v2-20260926
+
+Use them read-only. Do NOT merge/cherry-pick that branch wholesale into this branch.
+Materialize/copy only the minimum required immutable assets into a fresh local execution
+workspace and record source branch/ref + SHA256 for every copied asset.
+
+The prior reference implementation/provenance lives under:
+  evidence/dependence_layer_d0_v2/
+  research/dependence_layer_d0_v2/
+
+First reproduce, byte-for-byte or numerically to frozen tolerance:
+  - 18 sources x 16 realizations contract;
+  - A/B/C/D directed splits;
+  - 300-D marginal-Brier metrics;
+  - intact fair U-statistic Energy Score;
+  - C2 preservation assertions and archived CROSS_TIME_SIGNAL reference values.
+
+If reproduction fails: STOP with MPDI_D0_HOLD_INFRASTRUCTURE.
+
+If reproduction passes:
+  1. Implement Q-time exactly as preregistered C2 semantics.
+  2. Implement Q-coordinate only as secondary diagnostic.
+  3. Use 500 fixed surrogate banks. Commit the RNG seed and implementation freeze BEFORE
+     printing or serializing scientific rankings.
+  4. Compute R_s(y)=median_b[ES(Q_s^b,y)-ES(P_s,y)].
+  5. Evaluate truth residual rank and G_D against the strongest wrong M0 candidate.
+  6. Run the three destructive controls.
+  7. Aggregate by source first, then source halves; do not treat target/goal rows as
+     independent scientific replications.
+  8. Repeat the complete deterministic evaluator and verify byte-identical outputs.
+
+Forbidden:
+  - no new GADEN;
+  - no House03;
+  - no PMFS forward regeneration;
+  - no ROS/VGR;
+  - no AOD fusion;
+  - no diffusion/flow/copula neural model;
+  - no tuned mixing coefficient;
+  - no radius/threshold/source/probe/time search;
+  - no result-driven smoothing or representation change.
+
+Required result files:
+  research/mpdi_v0/MPDI_D0_RESULT_20260928.md
+  evidence/mpdi_v0/d0/D0_RESULT.json
+  evidence/mpdi_v0/d0/PER_TARGET_RESIDUAL.csv
+  evidence/mpdi_v0/d0/SOURCE_AGGREGATES.csv
+  evidence/mpdi_v0/d0/DESTRUCTIVE_CONTROLS.json
+  evidence/mpdi_v0/d0/ASSET_MANIFEST_SHA256.tsv
+  evidence/mpdi_v0/d0/DETERMINISTIC_REPEAT.json
+
+Final output must choose exactly one frozen label:
+  MPDI_D0_ADVANCE_DEPENDENCE_RESIDUAL
+  MPDI_D0_DEPENDENCE_PRESENT_NOT_INCREMENTAL
+  MPDI_D0_NO_SOURCE_DEPENDENCE_SIGNAL
+  MPDI_D0_HOLD_INFRASTRUCTURE
+
+STOP after D0 and push all code, contracts, logs, outputs, and hashes.
