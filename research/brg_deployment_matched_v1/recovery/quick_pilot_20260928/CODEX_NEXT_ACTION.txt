@@ -1,0 +1,9 @@
+请先将下列变更登记为独立的NATIVE_ONLY_INITIAL_PILOT_NOT_FULL_V1开发合同，然后执行；不要覆盖原冻结V1计划或将其标成完成。
+
+1. 保留72条连续资产、48条Native日志、4条V3覆盖日志以及无效V2证据。暂停剩余44条覆盖、120条自身轨迹、完整32次评测；0新GADEN、0新forward、0新增覆盖采集。
+2. 使用原NATIVE_OPEN_EPISODE_INVENTORY_FROZEN.json中的40 train/8 dev Native轨迹，保留6/2物理源划分、全候选支持、事件时序和hash。首轮不混入4条coverage，绝不补造缺失路线。
+3. 采用本包train_v1_native_pilot.py的显式native_pilot模式，安装到原recovery目录。不要修改v0_reference/model.py、输入六通道、损失、原seed、optimizer或网络大小。三个模型从新权重各初训10轮；仅用原8条dev source-update prefix NLL选权重。模型训练即在缓存事件数组上运行，不重复启动VGR。
+4. 以新PILOT_CHECKPOINT_FREEZE记录三组权重及真实phase，不借用原FINAL完成状态。为评价入口增加独立pilot12模式，不能直接运行旧full入口。实施入口修改及只读验证需归档，不能绕过源组、hash、支持、事件或传感器检查。
+5. 根据THREE_CASE_PILOT_PROPOSAL.json，依次009、021、065，每个case运行Native/GRU/BRG/ungated四臂。每case恢复同一plume，各臂重置同一起点与状态，各自主动选择路径。覆盖目标替换必须关闭，training_collection=false，保留原300秒、0.5m、原位置估计器和正式停止规则。第一个case四臂完成就给逐项结果，12次全部结束后停止，不自动补跑其他案例。
+6. 每次保留完整观测、轨迹、goal、源图、声明/超时/错误状态及墙钟分解；不得选最好的重复、强制轨迹分叉或改阈值。实现故障与算法输赢分开。三个例子不作统计PASS。
+7. 三例查看后如修改网络/采集/训练，这三例成为新开发记录；不得仍称新的最终盲测。原余下eval案例保持不读。不得为节省存储删除唯一连续归档。

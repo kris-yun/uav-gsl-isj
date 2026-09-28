@@ -1,0 +1,82 @@
+--- frozen/train_v1_gpu.py
++++ proposed/train_v1_native_pilot.py
+@@ -1,4 +1,4 @@
+-"""Fresh-start, source-balanced V1 training on real OPEN VGR event histories.
++"""Fresh-start, source-balanced V1 training; native_pilot is a separate pre-training amendment.
+ 
+ Warm phase: ten epochs on Native+coverage routes. Final phase: continue the
+ same optimizer/model for twenty epochs after exactly one shared self-rollout
+@@ -86,15 +86,22 @@
+         raise RuntimeError('frozen six/two physical source split incomplete')
+     if len({x.plume for x in train}) != 40 or len({x.plume for x in dev}) != 8:
+         raise RuntimeError('frozen 40/8 plume coverage incomplete')
+-    required = {'native_pmfs', 'coverage'} if phase == 'warm' else {
+-        'native_pmfs', 'coverage', 'candidate_gru', 'brg', 'brg_ungated'}
++    if phase == 'native_pilot':
++        required = {'native_pmfs'}
++    elif phase == 'warm':
++        required = {'native_pmfs', 'coverage'}
++    elif phase == 'final':
++        required = {'native_pmfs', 'coverage', 'candidate_gru', 'brg', 'brg_ungated'}
++    else:
++        raise RuntimeError('unknown explicitly authorized training phase')
+     if train_policies != required:
+         raise RuntimeError(f'training policy set incomplete or changed: {train_policies}')
+     for plume in {x.plume for x in train}:
+         if {x.policy for x in train if x.plume == plume} != required:
+             raise RuntimeError(f'training routes incomplete for plume {plume}')
+     for plume in {x.plume for x in dev}:
+-        if {x.policy for x in dev if x.plume == plume} != {'native_pmfs', 'coverage'}:
++        expected_dev = {'native_pmfs'} if phase == 'native_pilot' else {'native_pmfs', 'coverage'}
++        if {x.policy for x in dev if x.plume == plume} != expected_dev:
+             raise RuntimeError(f'development routes incomplete for plume {plume}')
+     return train, dev
+ 
+@@ -145,7 +152,7 @@
+     ap = argparse.ArgumentParser()
+     ap.add_argument('--manifest', required=True)
+     ap.add_argument('--out', required=True)
+-    ap.add_argument('--phase', choices=('warm', 'final'), required=True)
++    ap.add_argument('--phase', choices=('warm', 'final', 'native_pilot'), required=True)
+     ap.add_argument('--variant', choices=('gru', 'brg', 'ungated'), required=True)
+     ap.add_argument('--resume-trainer')
+     args = ap.parse_args()
+@@ -153,7 +160,7 @@
+         raise RuntimeError('the signed local GPU training path requires CUDA')
+     if args.phase == 'final' and not args.resume_trainer:
+         raise RuntimeError('final phase must continue the frozen warm optimizer')
+-    if args.phase == 'warm' and args.resume_trainer:
++    if args.phase in ('warm', 'native_pilot') and args.resume_trainer:
+         raise RuntimeError('warm phase must initialize fresh weights')
+     seed = 2026092701
+     os.environ.setdefault('CUBLAS_WORKSPACE_CONFIG', ':4096:8')
+@@ -171,7 +178,8 @@
+     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
+     if args.resume_trainer:
+         saved = torch.load(args.resume_trainer, map_location='cuda', weights_only=True)
+-        if saved['variant'] != args.variant or saved['completed_epochs'] != 10:
++        if (saved['variant'] != args.variant or saved['completed_epochs'] != 10 or
++                saved.get('metadata', {}).get('phase') != 'warm'):
+             raise RuntimeError('warm trainer state mismatch')
+         model.load_state_dict(saved['model'])
+         optimizer.load_state_dict(saved['optimizer'])
+@@ -179,8 +187,8 @@
+     if out.exists():
+         raise RuntimeError('refuse to overwrite existing training output')
+     out.mkdir(parents=True)
+-    epochs = 10 if args.phase == 'warm' else 20
+-    metadata = {'deployment_status': 'OPEN_DEVELOPMENT_NOT_SCIENTIFIC_PASS',
++    epochs = 10 if args.phase in ('warm', 'native_pilot') else 20
++    metadata = {'deployment_status': ('NATIVE_ONLY_INITIAL_PILOT_NOT_FULL_V1' if args.phase == 'native_pilot' else 'OPEN_DEVELOPMENT_NOT_SCIENTIFIC_PASS'),
+                 'observation_contract_id': 'VGR_FOPDT_300S_PHYSICAL_FRAME_V1',
+                 'feature_config': {}, 'temperature': 1.0,
+                 'variant': args.variant, 'phase': args.phase, 'seed': seed,
+@@ -220,7 +228,7 @@
+     save_checkpoint(out / 'last.pt', model,
+                     {**metadata, 'epoch': epochs, 'dev_source_update_nll': metric})
+     torch.save({'model': model.state_dict(), 'optimizer': optimizer.state_dict(),
+-                'variant': args.variant, 'completed_epochs': 10 if args.phase == 'warm' else 30,
++                'variant': args.variant, 'completed_epochs': 10 if args.phase in ('warm', 'native_pilot') else 30,
+                 'metadata': metadata}, out / 'trainer_state.pt')
+     summary = {'status': 'V1_GPU_TRAINING_PHASE_COMPLETE_NOT_SCIENTIFIC_PASS',
+                'variant': args.variant, 'phase': args.phase, 'epochs': epochs,
