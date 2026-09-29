@@ -48,7 +48,8 @@ def main():
     assert len(manifest) == 640
     by_house = {}
     for p in rows(PROBES):
-        by_house.setdefault(p['house'], []).append(p)
+        if p['house'] in {'House01', 'House02'}:
+            by_house.setdefault(p['house'], []).append(p)
     assert set(by_house) == {'House01', 'House02'}
     assert all(len(v) == 30 for v in by_house.values())
     for house in by_house:
