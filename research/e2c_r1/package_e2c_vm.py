@@ -31,7 +31,11 @@ def main() -> None:
     freeze_names = [
         'TIMEBASE_MAP.csv', 'TIMEBASE_PROVENANCE.json',
         'SOURCE_PANEL_8x3.tsv', 'SOURCE_PANEL_SELECTION_AUDIT.json',
-        'PRIOR_EXPOSURE_AUDIT.json', 'SEED_MANIFEST_120.tsv',
+        'PRIOR_EXPOSURE_AUDIT.json',
+        'PRIOR_SOURCE_EXPOSURE_UNION.tsv', 'PRIOR_SOURCE_EXPOSURE_PROVENANCE.tsv',
+        'PRIOR_SOURCE_EXPOSURE_AUDIT.json', 'PRIOR_SOURCE_EXPOSURE_BRANCH_AUDIT.json',
+        'PRIOR_SOURCE_EXPOSURE_BRANCH_REFS.tsv',
+        'CONFIRMATION_SOURCE_UNSEEN_AUDIT.tsv', 'SEED_MANIFEST_144.tsv',
         'SPLIT_MANIFEST.tsv', 'PRE_RUN_ASSET_SHA256.tsv', 'PRE_RUN_FREEZE.json',
     ]
     data_names = [
@@ -41,8 +45,12 @@ def main() -> None:
     files = [(args.freeze_dir / name, 'freeze/' + name) for name in freeze_names]
     code_names = [
         'E2C_R1_PREREG_20260929.md', 'E2C_R1_PRE_RUN_FREEZE_20260929.md',
+        'E2C_R1_CONFIRMATION_REDESIGN_DECISION_20260929.md',
+        'E2C_R1_144_PRE_RUN_FREEZE_20260929.md',
         'E2C_R1_TIMEBASE_RESULT_20260929.md', 'audit_e2_timebase.py',
         'select_e2c_sources_vm.py', 'prepare_e2c_freeze.py',
+        'select_e2c_unexposed_sources_vm.py', 'build_prior_source_exposure_union.py',
+        'audit_all_branch_source_metadata.py',
         'run_e2c_vm.py', 'finalize_e2c_vm.py', 'package_e2c_vm.py',
     ]
     files.extend((args.code_dir / name, 'code/' + name) for name in code_names)

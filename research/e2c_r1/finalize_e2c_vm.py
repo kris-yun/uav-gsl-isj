@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract frozen E1 probes from 192 E2/E2C cubes; keep sealed values private."""
+"""Extract frozen E1 probes from 48 reused and 144 new cubes."""
 from __future__ import annotations
 
 import argparse
@@ -14,7 +14,7 @@ import numpy as np
 E2_REPO = Path('/home/zyc/e2_repo_20260925')
 E2_EVIDENCE = E2_REPO / 'evidence/environment_level_benchmark_v0/e2'
 E1_EVIDENCE = E2_REPO / 'evidence/environment_level_benchmark_v0/e1'
-DATA = Path('/home/zyc/ros2_ws/e2c_r1_120_runs_20260929')
+DATA = Path('/home/zyc/ros2_ws/e2c_r1_144_runs_20260929')
 CANONICAL = {0: ('House01', '1,3-2,4_fast'),
              1: ('House02', '3,5-1_slow'),
              5: ('House03', '1-2,5_fast')}
@@ -55,10 +55,10 @@ def main() -> None:
     probe_by_house = {h: sorted((p for p in probes if p['house'] == h), key=lambda x: int(x['probe_rank']))
                       for h in ('House01', 'House02', 'House03')}
     old = [r for r in read_tsv(E2_EVIDENCE / 'E2_RUN_MANIFEST.tsv')
-           if int(r['environment_index']) in CANONICAL]
+           if int(r['environment_index']) in (0, 1)]
     new = read_tsv(DATA / 'E2C_RUN_MANIFEST.tsv')
-    if len(old) != 72 or len(new) != 120:
-        raise RuntimeError('expected 72 original and 120 new canonical runs')
+    if len(old) != 48 or len(new) != 144:
+        raise RuntimeError('expected 48 original discovery and 144 new runs')
     rows = []
     open_cube = np.empty((2, 6, 8, 10, 30), dtype=np.float32)
     original_open = np.load(E2_EVIDENCE / 'E2_OPEN_DISCOVERY_10x30.npy', allow_pickle=False)
@@ -75,7 +75,7 @@ def main() -> None:
             si, rep = int(source['source_index']), int(r['replicate_index'])
             if phase == 'E2_ORIGINAL' and (si >= 6 or rep >= 4):
                 raise RuntimeError('original E2 source/replicate drift')
-            if phase == 'E2C_NEW' and ((si < 6 and rep < 4) or (si >= 6 and rep >= 8)):
+            if phase == 'E2C_NEW' and ((ei in (0, 1) and si < 6 and rep < 4) or rep >= 8):
                 raise RuntimeError('new source/replicate drift')
             cube = np.load(cube_path, allow_pickle=False)
             if cube.shape != (10, *{'House01': (87, 114), 'House02': (83, 119), 'House03': (138, 83)}[house]):
@@ -108,16 +108,17 @@ def main() -> None:
         raise RuntimeError('combined benchmark count drift')
     if Counter(r['panel_role'] for r in rows) != Counter(dict(DISCOVERY=96,
                                                             SEALED_WITHIN_HOUSE_CONFIRMATION=32,
-                                                            SEALED_EXTERNAL_HOUSE_CONFIRMATION=64)):
+                                                            SEALED_H03_SOURCE_UNSEEN_CONFIRMATION=64)):
         raise RuntimeError('role split drift')
     write_tsv(DATA / 'E2C_ALL192_HASH_MANIFEST.tsv', rows)
     open_path = DATA / 'E2C_OPEN_DISCOVERY_2H_6S_8R_10x30.npy'
     np.save(open_path, open_cube, allow_pickle=False)
     report = dict(decision='E2C_R1_BENCHMARK_COMPLETE_SEALED',
-                  original_runs=72, new_runs=120, total_runs=192,
+                  original_runs=48, new_runs=144, total_runs=192,
                   sources_per_house=8, realizations_per_source=8,
                   discovery_runs=96, within_house_confirmation_runs=32,
-                  external_house_confirmation_runs=64,
+                  house03_source_unseen_confirmation_runs=64,
+                  house03_environment_historically_untouched=False,
                   all_cube_and_pooled_hashes_verified=True,
                   e2_open_extractor_exact_parity=True,
                   open_array_sha256=sha(open_path),
