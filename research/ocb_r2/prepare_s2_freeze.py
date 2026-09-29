@@ -13,7 +13,7 @@ MASTER = EVIDENCE / 'OCB_R2_MASTER_MANIFEST_96.tsv'
 S1_CONFIGS = REPO / 'research/ocb_r2/OCB_R2_S1_FROZEN_CONFIGS.json'
 RUNLIST = EVIDENCE / 'OCB_R2_S2_DISCOVERY_RUNLIST_32.tsv'
 CONFIGS = REPO / 'research/ocb_r2/OCB_R2_S2_FROZEN_CONFIGS.json'
-ROOT = Path('/home/zyc/ocb_r2_s2_discovery')
+ROOT = '/home/zyc/ocb_r2_s2_discovery'
 
 
 def sha(path: Path) -> str:
@@ -44,7 +44,7 @@ def main() -> None:
         assert base['original_launch_sha256'] == row['original_launch_sha256']
         assert base['source_wind_prefix'] == row['wind_asset']
         params = dict(base['parameters'])
-        params['results_location'] = str(ROOT / run_id)
+        params['results_location'] = f'{ROOT}/{run_id}'
         assert int(row['master_seed']) == 2026900000 + 100 * cfg + int(row['replicate_index'])
         configs[run_id] = {
             **{k: v for k, v in base.items() if k != 'parameters'},
