@@ -1,0 +1,26 @@
+[WARN] [1790666852.773937002] [FilamentSimulator]: 
+--- Deprecation notice ---
+You are using ROS parameters to specify the Gaden configuration. This is now considered deprecated (though, for now, still valid).
+You should update your configuration to use a gaden project (see test_env for examples).
+You can easily configure a gaden project with 'ros2 run gaden_common gaden_gui
+----
+[INFO] [1790666852.775907158] [FilamentSimulator]: [34mParameter 'wind_data': '/home/zyc/ocb_r1_assets/h02_wind_reconstructed/3,5-1_slow/3,5-1_slow_'[0m
+[INFO] [1790666852.775954382] [FilamentSimulator]: Trying to load wind files with pattern '/home/zyc/ocb_r1_assets/h02_wind_reconstructed/3,5-1_slow/3,5-1_slow_/wind_iteration_i'
+[WARN] [1790666852.776408614] [FilamentSimulator]: File '/home/zyc/ocb_r1_assets/h02_wind_reconstructed/3,5-1_slow/3,5-1_slow_/wind_iteration_0' does not exist
+[INFO] [1790666852.776433095] [FilamentSimulator]: Trying to load wind files with pattern '/home/zyc/ocb_r1_assets/h02_wind_reconstructed/3,5-1_slow/3,5-1_slow__i.csv_gaden'
+[WARN] [1790666852.776448515] [FilamentSimulator]: File '/home/zyc/ocb_r1_assets/h02_wind_reconstructed/3,5-1_slow/3,5-1_slow__0.csv_gaden' does not exist
+[INFO] [1790666852.776454940] [FilamentSimulator]: Trying to load wind files with pattern '/home/zyc/ocb_r1_assets/h02_wind_reconstructed/3,5-1_slow/3,5-1_slow__i.csv_U'
+[WARN] [1790666852.776479535] [FilamentSimulator]: File '/home/zyc/ocb_r1_assets/h02_wind_reconstructed/3,5-1_slow/3,5-1_slow__0.csv_U' does not exist
+[ERROR] [1790666852.776486587] [FilamentSimulator]: Could not find wind files!
+[WARN] [1790666852.776493922] [FilamentSimulator]: Trying to find wind files with the naming convention of old projects (pre gaden 2.0)
+[INFO] [1790666852.776500984] [FilamentSimulator]: [34mParameter 'wind_data': '/home/zyc/ocb_r1_assets/h02_wind_reconstructed/3,5-1_slow/3,5-1_slow'[0m
+[INFO] [1790666852.776506890] [FilamentSimulator]: Trying to load wind files with pattern '/home/zyc/ocb_r1_assets/h02_wind_reconstructed/3,5-1_slow/3,5-1_slow/wind_iteration_i'
+[WARN] [1790666852.777159396] [FilamentSimulator]: File '/home/zyc/ocb_r1_assets/h02_wind_reconstructed/3,5-1_slow/3,5-1_slow/wind_iteration_0' does not exist
+[INFO] [1790666852.777176931] [FilamentSimulator]: Trying to load wind files with pattern '/home/zyc/ocb_r1_assets/h02_wind_reconstructed/3,5-1_slow/3,5-1_slow_i.csv_gaden'
+[WARN] [1790666852.777357263] [FilamentSimulator]: File '/home/zyc/ocb_r1_assets/h02_wind_reconstructed/3,5-1_slow/3,5-1_slow_0.csv_gaden' does not exist
+[INFO] [1790666852.777365599] [FilamentSimulator]: Trying to load wind files with pattern '/home/zyc/ocb_r1_assets/h02_wind_reconstructed/3,5-1_slow/3,5-1_slow_i.csv_U'
+[INFO] [1790666852.777437791] [FilamentSimulator]: Found the wind files!
+[ERROR] [1790666852.867985064] [GADEN]: The old style wind files (split into three files with suffixes like _U, _V, _W) are no longer supported. Please convert the files to the new format
+[ERROR] [1790666852.868035547] [GADEN]: File could not be parsed correctly! At '/home/zyc/ocb_r2_seeded_gaden/src/GADEN/gaden_common/third_party/gaden_core/src/WindSequence.cpp':19
+terminate called after throwing an instance of 'std::exception'
+  what():  std::exception

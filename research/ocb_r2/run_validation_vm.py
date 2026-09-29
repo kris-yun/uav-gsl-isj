@@ -46,12 +46,13 @@ def main() -> int:
     assert sha256(pathlib.Path(config['params']['occupancy3D_data'])) == config['occupancy_sha256']
     wind_prefix = pathlib.Path(config['params']['wind_data'])
     assert wind_prefix.parent.is_dir()
-    # The frozen legacy launch uses a trailing underscore. The ROS adapter
-    # strips it on fallback, then opens each triple as stem_i.csv_{U,V,W}.
-    wind_stem = str(wind_prefix).rstrip('_')
+    # Native v3 layout is converted only from the approved 999-header
+    # split-double staging; conversion provenance is frozen independently.
+    wind_stem = str(wind_prefix)
     for idx in range(11):
-        for axis in 'UVW':
-            assert pathlib.Path(f'{wind_stem}_{idx}.csv_{axis}').is_file(), f'missing wind state {idx}/{axis}'
+        assert pathlib.Path(f'{wind_stem}_{idx}.csv_gaden').is_file(), f'missing wind state {idx}'
+    wind_conversion_manifest = wind_prefix.parent / 'WIND_LAYOUT_CONVERSION_MANIFEST.json'
+    assert wind_conversion_manifest.is_file()
     assert ROOT.resolve() == pathlib.Path('/home/zyc/ocb_r2_validation')
     ROOT.mkdir(exist_ok=True)
     leaf = ROOT / f'RUN_{args.arm}'
@@ -106,6 +107,7 @@ def main() -> int:
         'source_running_simulation_sha256': sha256(SOURCE / 'gaden_common/third_party/gaden_core/src/RunningSimulation.cpp'),
         'occupancy_sha256': config['occupancy_sha256'],
         'h02_staging_plan_sha256': config['h02_staging_plan_sha256'],
+        'wind_layout_conversion_manifest_sha256': sha256(wind_conversion_manifest),
         'wind_prefix': str(wind_prefix),
         'source_xyz': [params['source_position_x'], params['source_position_y'], params['source_position_z']],
         'gas_type': params['gas_type'],

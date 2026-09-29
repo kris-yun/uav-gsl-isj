@@ -29,6 +29,13 @@ the approved reconstructed wind staging. The staging plan SHA256 is
 `102ff41a87b0af5efcb369f5d60a64eb2e4a97aefc312617b7f395dd1eb3990a`.
 Its separate asset audit established 176/176 staged-file checks and 44/44
 historical wind-state lineage checks; neither establishes stochastic replay.
+The current core cannot parse the staged legacy `999` header split-double
+`_U/_V/_W` layout. Before the first successful plume run, an isolated,
+hash-inventoried storage conversion casts each validated tuple to the core's
+native interleaved float vector format with version `(3,0)`. It neither
+interpolates nor rescales wind; the original staged files remain untouched.
+The current simulator already stores wind vectors as floats. Conversion and
+input/output hashes are recorded in `WIND_LAYOUT_CONVERSION_MANIFEST.json`.
 Occupancy SHA256 is
 `9402690152be4568ced8f2256e9098d82691aaaa1f22a1887eeac55d0e5d098d`.
 
