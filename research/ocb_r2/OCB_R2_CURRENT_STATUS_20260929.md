@@ -221,3 +221,7 @@ S2 data production is complete:
 - confirmation and H03 remain blind until the method is frozen
 
 No confirmation or H03 generation is authorized by S2 PASS. No localization, source ranking, PMFS, or dependence analysis was run during dataset qualification. See `research/ocb_r2/OCB_R2_S2_DISCOVERY_DATASET_REPORT.md` for the dataset result; any discovery-only mechanism analysis is a separate step.
+
+## Preregistered next scientific gate
+
+The next permitted analysis is `OCB_R2_D0_MARGINAL_PRESERVING_DEPENDENCE_GATE` using discovery data only. See `research/ocb_r2/OCB_R2_D0_MARGINAL_PRESERVING_DEPENDENCE_GATE.md`. Confirmation and H03 remain sealed.
