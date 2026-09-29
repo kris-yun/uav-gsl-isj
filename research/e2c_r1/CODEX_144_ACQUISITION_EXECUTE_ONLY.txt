@@ -1,0 +1,39 @@
+E2C-R1 144-RUN ACQUISITION — EXECUTE ONLY
+
+Authoritative freeze:
+  e6b9d9cbda969c7b8ed8eb9f85dad377c1b61e36
+
+Read:
+  research/e2c_r1/E2C_R1_144_PRE_RUN_FREEZE_20260929.md
+  research/e2c_r1/E2C_R1_144_ACQUISITION_AUTHORIZATION_20260929.md
+  evidence/e2c_r1/SOURCE_PANEL_8x3.tsv
+  evidence/e2c_r1/SEED_MANIFEST_144.tsv
+  evidence/e2c_r1/SPLIT_MANIFEST.tsv
+  evidence/e2c_r1/PRE_RUN_ASSET_SHA256.tsv
+
+Run exactly the 144 manifest rows. Do not alter source, wind, seed, record-ID,
+probe, footprint, extractor, or split roles.
+
+After each run:
+- preserve raw cube and metadata;
+- verify requested seed/source/wind against manifest;
+- extract with the unchanged E2 operator;
+- hash all artifacts.
+
+Failure rule:
+- if any run fails, preserve the failure metadata and STOP the affected batch;
+- do not silently retry with a different seed or scientific parameter.
+
+Sealing:
+- H01/H02 DISCOVERY may be opened only after all acquisition assets are frozen.
+- H01/H02 SEALED_WITHIN_HOUSE_CONFIRMATION stays sealed.
+- all House03 scientific values stay sealed.
+
+Required final outputs:
+  research/e2c_r1/E2C_R1_144_ACQUISITION_REPORT_20260929.md
+  evidence/e2c_r1/ACQUISITION_PROGRESS_144.json
+  evidence/e2c_r1/RAW_AND_EXTRACTED_SHA256.tsv
+  evidence/e2c_r1/POST_RUN_CONTRACT_AUDIT.json
+  evidence/e2c_r1/SEALED_ASSET_REGISTRY.json
+
+STOP after packaging. No scientific mechanism analysis.
