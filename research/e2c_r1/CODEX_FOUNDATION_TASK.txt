@@ -1,0 +1,46 @@
+E2C-R1 — CODEX FOUNDATION TASK
+
+Branch:
+  research/e2c-common-benchmark-r1-20260929
+
+Read:
+  research/e2c_r1/E2C_R1_PREREG_20260929.md
+
+Execute in order.
+
+STAGE A — NO SCIENTIFIC VALUES
+1. Recover and verify physical timestamp / writer index / wind index for E2
+   record IDs 100,150,...,550.
+2. Freeze TIMEBASE_MAP.csv and hashes.
+3. If mapping cannot be certified, output E2C_R1_HOLD_TIMEBASE and STOP.
+
+STAGE B — FREEZE BEFORE SIMULATION
+4. Keep existing 6 sources/House.
+5. Select 2 new source cells/House by the same E1 geometry-only rule, with no
+   method-outcome access.
+6. Freeze SOURCE_PANEL_8x3.tsv.
+7. Freeze 120 unique new seeds:
+     old 6 sources: +4 seeds/source;
+     new 2 sources: 8 seeds/source.
+8. Freeze discovery/confirmation roles exactly as preregistered.
+9. Commit all manifests before the first new GADEN run.
+
+STAGE C — ONLY AFTER THE ABOVE COMMIT
+10. Generate exactly 120 new runs under the common E2 acquisition contract.
+11. Extract with the unchanged E2 operator.
+12. Hash and package every raw cube, metadata file and extracted array.
+
+SEALING
+- H01/H02 old-source discovery may be opened after acquisition freeze.
+- H01/H02 2 new sources remain sealed.
+- ALL H03 scientific values remain sealed.
+- Do not run any mechanism scoring.
+
+STOP after packaging.
+
+Do NOT:
+- run Ordinal/CENTERED/AOD/CD/TCMA/AEC scores
+- run VGR or edit planner
+- inspect H03 concentration values
+- replace failed/missing seeds selectively
+- change probe/time/source rules after the first new run
