@@ -20,7 +20,7 @@ def main(run_id: str) -> None:
     assert ROOT.resolve() == ROOT
     leaf = ROOT / run_id
     assert leaf.parent.resolve() == ROOT and leaf.is_dir() and not leaf.is_symlink()
-    proof = json.loads((ROOT / f'{run_id}.ARCHIVE_PROOF.json').read_text())
+    proof = json.loads((ROOT / f'{run_id}.ARCHIVE_PROOF.json').read_text(encoding='utf-8-sig'))
     assert proof['run_id'] == run_id and proof['result'] == 'HASH_AFTER_COPY_PASS'
     assert proof['file_count'] == 1817
     assert proof['archive_path'] == f'C:\\GADEN_OCB_R2_ARCHIVE\\s2_discovery\\{run_id}'
