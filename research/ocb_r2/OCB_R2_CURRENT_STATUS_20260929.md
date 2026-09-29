@@ -4,7 +4,7 @@
 
 The benchmark refoundation has reached a reproducible prospective generator.
 
-**Current decision:** `OCB_R2_S1_H12_STRUCTURAL_PASS`
+**Current decision:** `OCB_R2_S2_DISCOVERY_DATASET_PASS`
 
 **Frozen generator binary SHA256:**
 
@@ -31,6 +31,7 @@ No 96-run production batch and no algorithm closed-loop experiment has been star
 | Historical simulator recovery | `e174590d1e25dba28a01adbcb8d0c759cc7064f0` | `HISTORICAL_SIMULATOR_RECOVERY_FAIL`; historical parity unrecoverable |
 | Prospective seeded generator qualification | `8c0d828641631f7a1332843b02cbab31e96e21ff` | `OCB_R2_GENERATOR_REFOUNDATION_PASS` |
 | H01/H02 structural smoke matrix | `55e63fff3ae57450a89d00b2588c9ed4c9154090` | `OCB_R2_S1_H12_STRUCTURAL_PASS` |
+| H01/H02 discovery dataset | runlist freeze `63935e8090b694851b899e468c2987fd793e2301` | `OCB_R2_S2_DISCOVERY_DATASET_PASS`; final evidence commit recorded in Git history |
 
 ## Disk / environment state
 
@@ -173,7 +174,7 @@ The intended progression is:
 
 1. **S0 — Generator qualification:** complete, PASS.
 2. **S1 — H01/H02 structural smoke matrix:** complete, PASS. H01 4/4 and H02 4/4 passed frozen-binary, asset, record/timeline, provenance and minimal output-sanity checks. Raw runs were hash-verified after archival to `C:\\GADEN_OCB_R2_ARCHIVE\\s1`. H03 remained `SEALED_NOT_RUN`.
-3. **S2 — H01/H02 discovery:** next permitted phase. 32 runs. Only this partition may be used for mechanism exploration / method development.
+3. **S2 — H01/H02 discovery:** complete, dataset PASS. All 32/32 runs passed structural QC and archive hash verification. Only this partition may be used for mechanism exploration / method development.
 4. **S3 — Method freeze:** formulas, hyperparameters, gates and analysis pipeline frozen.
 5. **S4 — H01/H02 independent confirmation:** 32 runs. No method tuning after opening confirmation.
 6. **S5 — H03 sealed confirmation:** 32 runs. H03 remains sealed until this phase.
@@ -205,12 +206,12 @@ S1 is a generator/configuration structural PASS only. It is not evidence that a 
 
 ## Current next action
 
-Run **S2 only**:
+S2 data production is complete:
 
 `OCB_R2_H12_DISCOVERY_32`
 
 - H01/H02 discovery partition only
-- 32 already-frozen prospective runs
+- 32/32 frozen prospective runs passed data qualification
 - preserve the frozen generator binary
 - preserve the frozen master seeds and runlist lineage
 - archive/hash each raw run
@@ -219,5 +220,4 @@ Run **S2 only**:
 - after data production/QC, discovery-only offline mechanism analysis is permitted
 - confirmation and H03 remain blind until the method is frozen
 
-See `research/ocb_r2/OCB_R2_S2_DISCOVERY_32_PLAN.md`.
-
+No confirmation or H03 generation is authorized by S2 PASS. No localization, source ranking, PMFS, or dependence analysis was run during dataset qualification. See `research/ocb_r2/OCB_R2_S2_DISCOVERY_DATASET_REPORT.md` for the dataset result; any discovery-only mechanism analysis is a separate step.
