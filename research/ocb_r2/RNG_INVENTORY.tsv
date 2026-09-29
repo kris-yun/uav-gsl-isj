@@ -1,0 +1,6 @@
+rng_id	source_file	function	engine	current_seed_source	consumer	thread_scope	physics_role
+gaussian	gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp	GaussianRandom	std::mt19937 + std::normal_distribution	GADEN_RNG_SEED folded + 0x9e3779b9	PrecalculatedGaussian constructor	thread_local	filament dispersion noise table
+uniform	gaden_common/third_party/gaden_core/include/gaden/internal/MathUtils.hpp	uniformRandom	std::mt19937 + std::uniform_real_distribution<float>	GADEN_RNG_SEED folded + 0x243f6a88	PrecalculatedGaussian index; geometric source classes	thread_local	initial noise-table index; non-point-source sampling
+noise_table	gaden_common/third_party/gaden_core/src/RunningSimulation.cpp	static gaussian; MoveSingleFilament	PrecalculatedGaussian<1000>	uses gaussian and uniform streams above	filament transport	thread_local	stochastic advection/dispersion
+wind	gaden_common/third_party/gaden_core/src/WindSequence.cpp	wind sequence access	no RNG	frozen 11 wind files	transport	shared read-only	deterministic wind state
+point_source	gaden_common/third_party/gaden_core/include/gaden/datatypes/sources/PointSource.hpp	Emit	no RNG	fixed xyz	filament release	main simulation thread	fixed configured source
