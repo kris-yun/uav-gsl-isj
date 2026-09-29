@@ -4,7 +4,7 @@
 
 The benchmark refoundation has reached a reproducible prospective generator.
 
-**Current decision:** `OCB_R2_S2_DISCOVERY_DATASET_PASS`
+**Current decision:** S2 dataset `OCB_R2_S2_DISCOVERY_DATASET_PASS`; D0 scientific preflight `OCB_R2_D0_HOLD_COMPARABILITY`.
 
 **Frozen generator binary SHA256:**
 
@@ -222,6 +222,6 @@ S2 data production is complete:
 
 No confirmation or H03 generation is authorized by S2 PASS. No localization, source ranking, PMFS, or dependence analysis was run during dataset qualification. See `research/ocb_r2/OCB_R2_S2_DISCOVERY_DATASET_REPORT.md` for the dataset result; any discovery-only mechanism analysis is a separate step.
 
-## Preregistered next scientific gate
+## D0A scientific preflight
 
-The next permitted analysis is `OCB_R2_D0_MARGINAL_PRESERVING_DEPENDENCE_GATE` using discovery data only. See `research/ocb_r2/OCB_R2_D0_MARGINAL_PRESERVING_DEPENDENCE_GATE.md`. Confirmation and H03 remain sealed.
+The preregistered D0A source-comparability audit is complete with `OCB_R2_D0_HOLD_COMPARABILITY`: each of the eight H01/H02 fixed House/wind/gas/generator strata has four realizations of only one source. Audited historical candidate banks do not supply an OCB-R2 compatible second source under the same conditions. D0 stopped before observation extraction or dependence scoring. See `research/ocb_r2/d0/D0A_SOURCE_COMPARABILITY_AUDIT.md`. Confirmation and H03 remain sealed.

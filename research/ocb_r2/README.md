@@ -4,13 +4,13 @@ OCB-R2 is the prospective, explicitly seeded, reproducible common benchmark crea
 
 ## Current status
 
-**Current benchmark state:** `OCB_R2_S2_DISCOVERY_DATASET_PASS`
+**Current benchmark state:** S2 dataset `OCB_R2_S2_DISCOVERY_DATASET_PASS`; D0 scientific preflight `OCB_R2_D0_HOLD_COMPARABILITY`.
 
 **Frozen binary SHA256:**
 
 `ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688`
 
-**Next permitted work:** execute the preregistered OCB-R2 D0 marginal-preserving dependence gate on the qualified H01/H02 discovery-32 dataset only. Confirmation and H03 remain sealed.
+**Next permitted work:** redesign and freeze a source-comparable discovery task before dependence scoring. Confirmation and H03 remain sealed.
 
 Start here:
 
@@ -19,6 +19,7 @@ Start here:
 - [S2 discovery plan](./OCB_R2_S2_DISCOVERY_32_PLAN.md)
 - [S2 dataset qualification](./OCB_R2_S2_DISCOVERY_DATASET_REPORT.md)
 - [D0 marginal-preserving dependence gate](./OCB_R2_D0_MARGINAL_PRESERVING_DEPENDENCE_GATE.md)
+- [D0A source-comparability audit](./d0/D0A_SOURCE_COMPARABILITY_AUDIT.md)
 - [Generator qualification evidence](../../evidence/ocb_r2/OCB_R2_GENERATOR_QUALIFICATION_RESULT.md)
 
 ## Experimental separation
