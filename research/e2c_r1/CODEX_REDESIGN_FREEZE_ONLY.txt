@@ -1,0 +1,30 @@
+E2C-R1 REDESIGN — CODEX AUDIT/FREEZE ONLY
+
+Current scientific decision:
+  PAUSE 120-RUN execution.
+
+Read:
+  research/e2c_r1/E2C_R1_CONFIRMATION_REDESIGN_DECISION_20260929.md
+
+Do NOT simulate yet.
+
+1. Construct a metadata-only union of all historically exposed source IDs for
+   H01/H02/H03 across prior scientific truth/source/validation panels.
+2. Freeze + hash this exposure union BEFORE choosing replacements.
+3. Keep the 6 H01/H02 E2 discovery sources.
+4. Choose:
+   - 2 historically unexposed H01 confirmation sources,
+   - 2 historically unexposed H02 confirmation sources,
+   - 8 historically unexposed H03 confirmation sources,
+   using deterministic geometry-only selection with the exposure union as an
+   exclusion mask.
+5. Create revised 144-run seed/split/source manifests:
+   H01 40, H02 40, H03 64.
+6. Verify all confirmation IDs are absent from the exposure union and all seeds
+   are new.
+7. Commit the revised pre-run freeze.
+8. STOP and report the new commit before any GADEN run.
+
+If 8 unexposed legal H03 sources cannot be selected without violating the
+geometry rule, STOP with a feasibility report; do not relax the rule after
+looking at scientific outcomes.
