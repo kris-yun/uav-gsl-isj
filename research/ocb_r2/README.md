@@ -10,7 +10,7 @@ OCB-R2 is the prospective, explicitly seeded, reproducible common benchmark crea
 
 `ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688`
 
-**Next permitted work:** separate discovery-only analysis on the qualified H01/H02 32-run dataset. Confirmation and H03 remain sealed.
+**Next permitted work:** execute the preregistered OCB-R2 D0 marginal-preserving dependence gate on the qualified H01/H02 discovery-32 dataset only. Confirmation and H03 remain sealed.
 
 Start here:
 
@@ -18,6 +18,7 @@ Start here:
 - [S1 structural smoke result](./OCB_R2_S1_STRUCTURAL_SMOKE_REPORT.md)
 - [S2 discovery plan](./OCB_R2_S2_DISCOVERY_32_PLAN.md)
 - [S2 dataset qualification](./OCB_R2_S2_DISCOVERY_DATASET_REPORT.md)
+- [D0 marginal-preserving dependence gate](./OCB_R2_D0_MARGINAL_PRESERVING_DEPENDENCE_GATE.md)
 - [Generator qualification evidence](../../evidence/ocb_r2/OCB_R2_GENERATOR_QUALIFICATION_RESULT.md)
 
 ## Experimental separation
