@@ -1,0 +1,9 @@
+item	version_or_status	evidence
+g++	11.4.0	g++ --version
+cmake	3.22.1	cmake --version
+installed_ROS	/opt/ros/humble	ls -d /opt/ros/*
+ROS1_catkin	ABSENT	CMake configure and catkinConfig.cmake path checks
+libboost-iostreams-dev	1.74.0.3ubuntu7	dpkg-query -W
+libopencv-dev	4.5.4+dfsg-9ubuntu4	dpkg-query -W
+libpcl-dev	1.12.1+dfsg-3build1	dpkg-query -W
+historical_CXX_flags	-lboost_iostreams -std=c++11 -fopenmp	archived gaden_filament_simulator/CMakeLists.txt

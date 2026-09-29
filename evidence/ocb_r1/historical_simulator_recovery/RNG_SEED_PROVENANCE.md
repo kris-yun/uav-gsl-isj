@@ -1,0 +1,10 @@
+# Historical plume RNG and seed provenance
+
+Reference examined: GADEN ROS1 source commit `2b5d1218d25cf8af6a789e99cd57ab0db07bce8e`, `gaden_filament_simulator/src/filament_simulator.cpp`, header `include/filament_simulator/filament_simulator.h`, and the House02 `3,5-1_slow/GADEN_ros1.launch` used for the inspected 2000-record directory.
+
+- The launch has no plume-seed parameter. `main()` constructs the simulator, then calls `srand(time(NULL))` at line 997. The first C `rand()` use after this seed is `add_new_filaments()`'s variable release-rate draw at line 512; its `random_number()` implementation takes `rand()%100` at lines 900–907. Source-position jitter consumes the same C RNG at lines 528–530.
+- Filament transport uses a **separate** `thread_local boost::mt19937 rng(static_cast<unsigned>(time(0)))` at line 796, sampled through a Boost normal variate generator at lines 797–802. `update_filaments_location()` invokes `update_filament_location()` inside an OpenMP parallel loop at lines 829–841. Thus the simulation has at least two wall-clock-seeded RNG mechanisms, and its per-thread RNG initialization depends on when each thread first enters this code.
+- The historical zlib version-1 result header serializes environment, source, gas and active wind state followed by filament records; it does **not** serialize either seed, thread count, per-thread RNG state or simulation clock (`save_state_to_file()`, lines 915–975). The file modification time is not the RNG seed: it is recorded at file write time with limited timestamp fidelity, after startup and possible preprocessing.
+- No explicit historical plume seed or thread RNG initialization record was established in the archived launch, inspected result headers, or retained source. Navigation/PMFS seeds and newer `GADEN_RNG_SEED` facilities cannot be substituted for the 2022 source's wall-clock seeds.
+
+**`seed_provenance=FAIL` for a claimed historical same-seed replay.** Even a binary with matching writer/wind semantics could run a new random realization, but it could not satisfy the signed same-seed parity gate on present evidence. No same-seed comparison was attempted or claimed.
