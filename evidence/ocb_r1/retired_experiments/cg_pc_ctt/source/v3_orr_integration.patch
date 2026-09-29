@@ -1,0 +1,573 @@
+diff --git a/closed_loop/cg_pc_ctt/build_v3_orr_isolated_20260827.sh b/closed_loop/cg_pc_ctt/build_v3_orr_isolated_20260827.sh
+new file mode 100755
+index 0000000..0ebea3c
+--- /dev/null
++++ b/closed_loop/cg_pc_ctt/build_v3_orr_isolated_20260827.sh
+@@ -0,0 +1,56 @@
++#!/usr/bin/env bash
++set -Eeo pipefail
++
++# Isolated, serial ROS2 build for the frozen V3-ORR candidate.  The script
++# never writes to the existing /home/zyc/ros2_ws install.
++REPO_ROOT="${REPO_ROOT:-/home/zyc/uav-gsl-isj}"
++PFDI_ROOT="${PFDI_ROOT:-/dev/shm/cg_pc_ctt_v3_orr_20260827}"
++LEGACY_LAUNCH="${LEGACY_LAUNCH:-/home/zyc/meaci_v12_m_freeze_20260825/launch/vgr_gsl_pmfs_pfdi.launch.py}"
++SOURCE_ROOT="${REPO_ROOT}/ros2_package"
++
++test -f "${SOURCE_ROOT}/package.xml"
++test -f "${LEGACY_LAUNCH}"
++test ! -e "${PFDI_ROOT}"
++mkdir -p "${PFDI_ROOT}/build" "${PFDI_ROOT}/install" "${PFDI_ROOT}/log" \
++  "${PFDI_ROOT}/tmp" "${PFDI_ROOT}/colcon" "${PFDI_ROOT}/launch"
++cp -a "${LEGACY_LAUNCH}" "${PFDI_ROOT}/launch/vgr_gsl_pmfs_pfdi.launch.py"
++
++source /opt/ros/humble/setup.bash
++# The historical workspace setup has stale entries, but the two live message
++# overlays below are the authoritative dependency providers used by the last
++# isolated RCEC build.
++source /home/zyc/ros2_ws/install/setup.bash || true
++source /dev/shm/house1_msgs_install/setup.bash
++source /dev/shm/house2_gaden_install/setup.bash
++set -u
++
++export CMAKE_BUILD_PARALLEL_LEVEL=1
++export MAKEFLAGS=-j1
++export TMPDIR="${PFDI_ROOT}/tmp"
++export COLCON_HOME="${PFDI_ROOT}/colcon"
++
++git -C "${REPO_ROOT}" diff --check
++git -C "${REPO_ROOT}" rev-parse HEAD | tee "${PFDI_ROOT}/git_sha.txt"
++sha256sum \
++  "${SOURCE_ROOT}/src/gsl_server/algorithms/PMFS/PMFS.cpp" \
++  "${SOURCE_ROOT}/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp" \
++  "${SOURCE_ROOT}/src/gsl_server/algorithms/PMFS/internal/ObservationResolvedV3.hpp" \
++  "${PFDI_ROOT}/launch/vgr_gsl_pmfs_pfdi.launch.py" \
++  | tee "${PFDI_ROOT}/prebuild_sha256.txt"
++
++cd /home/zyc
++colcon --log-base "${PFDI_ROOT}/log" build \
++  --base-paths "${SOURCE_ROOT}" \
++  --build-base "${PFDI_ROOT}/build" \
++  --install-base "${PFDI_ROOT}/install" \
++  --packages-select gsl_server \
++  --executor sequential \
++  --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O2\ -g0
++
++BINARY="${PFDI_ROOT}/install/gsl_server/lib/gsl_server/gsl_actionserver_node"
++test -x "${BINARY}"
++sha256sum "${BINARY}" | tee "${PFDI_ROOT}/online_binary.sha256.full"
++sha256sum "${BINARY}" | awk '{print $1}' > "${PFDI_ROOT}/online_binary.sha256"
++sha256sum "${PFDI_ROOT}/launch/vgr_gsl_pmfs_pfdi.launch.py" | awk '{print $1}' > "${PFDI_ROOT}/launch.sha256"
++ldd "${BINARY}" > "${PFDI_ROOT}/binary.ldd.txt"
++echo CG_PC_CTT_V3_ORR_ISOLATED_BUILD=PASS
+diff --git a/closed_loop/cg_pc_ctt/online_one_arm_v3_orr_20260827.sh b/closed_loop/cg_pc_ctt/online_one_arm_v3_orr_20260827.sh
+new file mode 100755
+index 0000000..6362e1d
+--- /dev/null
++++ b/closed_loop/cg_pc_ctt/online_one_arm_v3_orr_20260827.sh
+@@ -0,0 +1,49 @@
++#!/usr/bin/env bash
++set -Eeo pipefail
++
++# Truth-blind one-arm adapter used under run_case_after_online_build.sh.
++: "${HOUSE:?}" "${SEED:?}" "${ARM:?}" "${CASE_OUTPUT_DIR:?}" "${DOMAIN_ID:?}"
++TIMEOUT_SEC="${TIMEOUT_SEC:-300}"
++STEPS_SOURCE_UPDATE="${STEPS_SOURCE_UPDATE:-3}"
++PFDI_ROOT="${PFDI_ROOT:-/dev/shm/cg_pc_ctt_v3_orr_20260827}"
++REPO_ROOT="${REPO_ROOT:-/home/zyc/uav-gsl-isj}"
++INNER="${REPO_ROOT}/reference/run_meaci_case_20260824.sh"
++BINARY="${PFDI_ROOT}/install/gsl_server/lib/gsl_server/gsl_actionserver_node"
++
++test -f "${INNER}"
++test -x "${BINARY}"
++mkdir -p "${CASE_OUTPUT_DIR}"
++case "${ARM}" in
++  off) MODE=off ;;
++  on) MODE=v3_orr ;;
++  *) echo "unsupported ARM=${ARM}" >&2; exit 2 ;;
++esac
++
++RUNTIME_ROOT="${CASE_OUTPUT_DIR}/runtime"
++RUN_DIR="${RUNTIME_ROOT}/${HOUSE}_seed${SEED}_${ARM}_${MODE}"
++RUN_ID="V3_ORR_${HOUSE}_S${SEED}_${ARM}_${MODE}"
++
++HOUSE="${HOUSE}" SEED="${SEED}" ARM="${ARM}" RUN_ROOT="${RUNTIME_ROOT}" \
++PFDI_MODE="${MODE}" RUN_ID="${RUN_ID}" DOMAIN_ID="${DOMAIN_ID}" \
++TADM_REPLICAS=4 PFDI_INSTALL_ROOT="${PFDI_ROOT}" \
++TIMEOUT_SEC="${TIMEOUT_SEC}" OUTER_DEADLINE_SEC="${OUTER_DEADLINE_SEC:-600}" \
++STEPS_SOURCE_UPDATE="${STEPS_SOURCE_UPDATE}" TARGET_SOURCE_UPDATES=0 TARGET_ACCEPTED_UPDATES=0 \
++EVALUATOR_SCRIPT=/nonexistent/v3_truth_is_external_only.py \
++bash "${INNER}"
++
++test -s "${RUN_DIR}/run_status.json"
++LATEST_POSTERIOR="$(find "${RUN_DIR}/context_bank" -mindepth 2 -maxdepth 2 -type f -name source_posterior.csv | sort | tail -n 1)"
++test -n "${LATEST_POSTERIOR}"
++cp -a "${LATEST_POSTERIOR}" "${CASE_OUTPUT_DIR}/final_posterior.csv"
++sha256sum "${BINARY}" | awk '{print $1}' > "${CASE_OUTPUT_DIR}/online_binary.sha256"
++cp -a "${RUN_DIR}/run_status.json" "${CASE_OUTPUT_DIR}/run_status.json"
++
++if [[ "${MODE}" == v3_orr ]]; then
++  python3 "${REPO_ROOT}/closed_loop/cg_pc_ctt/verify_v3_orr_runtime_artifacts.py" \
++    --run-dir "${RUN_DIR}" --final-posterior "${CASE_OUTPUT_DIR}/final_posterior.csv" \
++    --out "${CASE_OUTPUT_DIR}/v3_orr_runtime_verdict.json"
++  awk -F, 'NR>1 && $14==1 {print $3; exit}' "${RUN_DIR}/tadm/v3_orr_update_audit.csv" \
++    > "${CASE_OUTPUT_DIR}/first_release_s.txt"
++fi
++
++echo "CG_PC_CTT_V3_ORR_ONE_ARM_COMPLETE HOUSE=${HOUSE} SEED=${SEED} ARM=${ARM} MODE=${MODE}"
+diff --git a/closed_loop/cg_pc_ctt/run_case_after_online_build.sh b/closed_loop/cg_pc_ctt/run_case_after_online_build.sh
+old mode 100644
+new mode 100755
+diff --git a/closed_loop/cg_pc_ctt/run_multiseed_matrix.sh b/closed_loop/cg_pc_ctt/run_multiseed_matrix.sh
+old mode 100644
+new mode 100755
+diff --git a/closed_loop/cg_pc_ctt/verify_v3_orr_runtime_artifacts.py b/closed_loop/cg_pc_ctt/verify_v3_orr_runtime_artifacts.py
+new file mode 100755
+index 0000000..3a2dda4
+--- /dev/null
++++ b/closed_loop/cg_pc_ctt/verify_v3_orr_runtime_artifacts.py
+@@ -0,0 +1,93 @@
++#!/usr/bin/env python3
++"""Truth-blind infrastructure verifier for one V3-ORR online arm."""
++from __future__ import annotations
++
++import argparse
++import csv
++import json
++import math
++from pathlib import Path
++
++
++FORBIDDEN = {"truth", "source_x", "source_y", "truth_x", "truth_y", "localization_error"}
++
++
++def read_rows(path: Path):
++    with path.open(newline="", encoding="utf-8-sig") as handle:
++        reader = csv.DictReader(handle)
++        fields = list(reader.fieldnames or [])
++        rows = list(reader)
++    return fields, rows
++
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument("--run-dir", type=Path, required=True)
++    parser.add_argument("--final-posterior", type=Path, required=True)
++    parser.add_argument("--out", type=Path, required=True)
++    args = parser.parse_args()
++
++    audit = args.run_dir / "tadm" / "v3_orr_update_audit.csv"
++    carriers = args.run_dir / "tadm" / "v3_orr_carrier_ids.csv"
++    if not audit.is_file() or not carriers.is_file():
++        raise SystemExit("missing V3-ORR audit/carrier artifact")
++    fields, rows = read_rows(audit)
++    if not rows:
++        raise SystemExit("empty V3-ORR audit")
++    lowered = {field.lower() for field in fields}
++    if lowered & FORBIDDEN:
++        raise SystemExit(f"truth leakage field in method audit: {sorted(lowered & FORBIDDEN)}")
++    released = 0
++    abstained = 0
++    for row in rows:
++        values = [float(row[key]) for key in (
++            "sim_time", "event_count", "carrier_count", "resolution_cells",
++            "resolved_edges", "unresolved_edges", "nuisance_rank", "source_probability_sum")]
++        if not all(math.isfinite(value) for value in values):
++            raise SystemExit("NaN/Inf in V3-ORR audit")
++        if abs(values[-1] - 1.0) > 1e-8:
++            raise SystemExit(f"posterior normalization failure: {values[-1]}")
++        flag = int(row["released"])
++        if flag not in (0, 1):
++            raise SystemExit(f"invalid released flag: {flag}")
++        released += flag
++        abstained += 1 - flag
++
++    _, carrier_rows = read_rows(carriers)
++    by_update = {}
++    for row in carrier_rows:
++        update = row["source_update_id"]
++        signature = (row["candidate_index"], row["candidate_id"], row["x"], row["y"], row["width"], row["height"])
++        by_update.setdefault(update, []).append(signature)
++    signatures = list(by_update.values())
++    if not signatures or any(signature != signatures[0] for signature in signatures[1:]):
++        raise SystemExit("persistent carrier identity drift")
++
++    posterior_fields, posterior_rows = read_rows(args.final_posterior)
++    required = {"x", "y", "source_probability"}
++    if not required.issubset(posterior_fields):
++        raise SystemExit("final posterior schema mismatch")
++    probabilities = [float(row["source_probability"]) for row in posterior_rows]
++    if not probabilities or any((not math.isfinite(value) or value < 0.0) for value in probabilities):
++        raise SystemExit("invalid final posterior values")
++    total = sum(probabilities)
++    if abs(total - 1.0) > 1e-6:
++        raise SystemExit(f"final posterior sum mismatch: {total}")
++
++    payload = {
++        "contract": "CG_PC_CTT_V3_ORR_RUNTIME_INFRASTRUCTURE_V1",
++        "verdict": "CG_PC_CTT_V3_ORR_RUNTIME_INFRASTRUCTURE_PASS",
++        "updates": len(rows),
++        "released_updates": released,
++        "abstained_updates": abstained,
++        "carrier_updates": len(signatures),
++        "carrier_count": len(signatures[0]),
++        "final_posterior_sum": total,
++        "truth_fields_in_method_audit": False,
++    }
++    args.out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
++    print(json.dumps(payload, indent=2))
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/experiments/cg_pc_ctt/ctt_bank_io.py b/experiments/cg_pc_ctt/ctt_bank_io.py
+index 48f087d..d8b7bef 100644
+--- a/experiments/cg_pc_ctt/ctt_bank_io.py
++++ b/experiments/cg_pc_ctt/ctt_bank_io.py
+@@ -53,7 +53,11 @@ def read_trace_fields(path: Path, selected_cells=None, expected_carrier=None, ex
+     occ=np.frombuffer(raw_occ,dtype='<u8').reshape(T,W)
+     idx=np.arange(C,dtype=np.int64) if selected_cells is None else np.asarray(selected_cells,dtype=np.int64).reshape(-1)
+     if len(idx)<1 or np.any(idx<0) or np.any(idx>=C): raise ValueError('selected cell out of range')
+-    words=idx//64; bits=idx%64
++    words=idx//64
++    # NumPy 1.26 rejects uint64 >> int64 under the safe-casting rule.  The
++    # shift count is non-negative and bounded by 63, so preserve the exact
++    # bitset operation while making the dtype explicit.
++    bits=(idx%64).astype(np.uint64,copy=False)
+     # Advanced indexing gives [T,D]. Each bit is native occupancy at one record step.
+     occupied=((occ[:,words] >> bits[None,:]) & np.uint64(1)).astype(np.float32)
+     freq=occupied.mean(axis=0,dtype=np.float64).astype(np.float32)
+diff --git a/ros2_package/src/gsl_server/algorithms/PMFS/PMFS.cpp b/ros2_package/src/gsl_server/algorithms/PMFS/PMFS.cpp
+index ef33570..46355d2 100644
+--- a/ros2_package/src/gsl_server/algorithms/PMFS/PMFS.cpp
++++ b/ros2_package/src/gsl_server/algorithms/PMFS/PMFS.cpp
+@@ -78,8 +78,8 @@ namespace GSL
+         pfdiMode = getParam<std::string>("pfdi_mode", tadmEnabled ? "joint" : "off");
+         if (pfdiMode != "off" && pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" &&
+             pfdiMode != "al" && pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" && pfdiMode != "ec_edcl" &&
+-            pfdiMode != "ec_edcl_shadow")
+-            throw std::invalid_argument("pfdi_mode must be off, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, or ec_edcl_shadow");
++            pfdiMode != "ec_edcl_shadow" && pfdiMode != "v3_orr")
++            throw std::invalid_argument("pfdi_mode must be off, sd, tadm, joint, al, pc_aci, me_aci, me_aci_shadow, ec_edcl, ec_edcl_shadow, or v3_orr");
+         tadmEnabled = pfdiMode != "off";
+         posteriorGuidanceWeight = std::clamp(getParam<double>("posterior_guidance_weight", 0.0), 0.0, 1.0);
+         tadmDirectory = getParam<std::string>("tadm_directory", "");
+@@ -270,7 +270,7 @@ namespace GSL
+         // Preserve one completed StopAndMeasure block event before PMFS
+         // spatial smoothing.  A9 consumes this analytic transport view
+         // without reading source truth or changing the native map update.
+-        if (tadmEnabled && (pfdiMode == "pc_aci" || pfdiMode == "ec_edcl" || pfdiMode == "ec_edcl_shadow" ||
++        if (tadmEnabled && (pfdiMode == "pc_aci" || pfdiMode == "ec_edcl" || pfdiMode == "ec_edcl_shadow" || pfdiMode == "v3_orr" ||
+                             pfdiMode == "me_aci" || pfdiMode == "me_aci_shadow"))
+             simulations.recordPCACIEvent(
+                 Vector2(currentRobotPosition.x, currentRobotPosition.y),
+diff --git a/ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp b/ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp
+index 5831a7c..63b5ab6 100644
+--- a/ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp
++++ b/ros2_package/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp
+@@ -6,6 +6,7 @@
+ #include <gsl_server/algorithms/PMFS/PMFSLib.hpp>
+ #include <gsl_server/algorithms/PMFS/internal/Simulations.hpp>
+ #include <gsl_server/algorithms/PMFS/internal/MEACIParams.hpp>
++#include <gsl_server/algorithms/PMFS/internal/ObservationResolvedV3.hpp>
+ #include <gsl_server/core/Logging.hpp>
+ 
+ #include <opencv2/core/hal/interface.h>
+@@ -541,7 +542,7 @@ namespace GSL::PMFS_internal
+         // reading truth or copying the native posterior ordering.
+         persistentCarrierMode = false;
+         if (tadmEnabled && (pfdiMode == "sd" || pfdiMode == "al" || pfdiMode == "pc_aci" || pfdiMode == "me_aci" || pfdiMode == "me_aci_shadow" ||
+-                            pfdiMode == "ec_edcl" || pfdiMode == "ec_edcl_shadow"))
++                            pfdiMode == "ec_edcl" || pfdiMode == "ec_edcl_shadow" || pfdiMode == "v3_orr"))
+         {
+             constexpr int carrierStride = 2;
+             std::vector<P2ShadowCandidate> carriers;
+@@ -608,7 +609,7 @@ namespace GSL::PMFS_internal
+         GSL_INFO("[RC2-DIAG] normalized_finite_count={} normalized_sum={}",
+                  finiteNormalized, static_cast<double>(normalizedSum));
+ 
+-        if ((pfdiMode == "pc_aci" || pfdiMode == "me_aci") && pcAciAcceptedThisUpdate)
++        if ((pfdiMode == "pc_aci" || pfdiMode == "me_aci" || pfdiMode == "v3_orr") && pcAciAcceptedThisUpdate)
+         {
+             // Only an accepted causal update advances the independent causal
+             // state.  Native PMFS values produced after a rejected gate are
+@@ -914,7 +915,8 @@ namespace GSL::PMFS_internal
+         tadmEnabled = enabled && !directory.empty() && replicas > 0 && (priorSet == 0 || priorSet == 1);
+         pfdiMode = tadmEnabled ? mode : "off";
+         if (pfdiMode != "sd" && pfdiMode != "tadm" && pfdiMode != "joint" && pfdiMode != "al" &&
+-            pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" && pfdiMode != "ec_edcl" && pfdiMode != "ec_edcl_shadow")
++            pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" && pfdiMode != "ec_edcl" && pfdiMode != "ec_edcl_shadow" &&
++            pfdiMode != "v3_orr")
+             pfdiMode = "joint";
+         tadmDirectory = directory;
+         tadmRunUUID = runUUID;
+@@ -966,6 +968,22 @@ namespace GSL::PMFS_internal
+                      << "}\n";
+             return;
+         }
++        if (pfdiMode == "v3_orr")
++        {
++            contract << std::setprecision(17)
++                     << "{\n"
++                     << "  \"method\": \"V3-Observation-Resolved-Reversible-Update\",\n"
++                     << "  \"mode\": \"v3_orr\",\n"
++                     << "  \"physical_response\": \"EC-ECDL raw candidate_by_keyed_member_by_completed_event bank\",\n"
++                     << "  \"member_split\": \"members_0_to_3_resolution_calibration_members_4_to_7_outcome_scoring\",\n"
++                     << "  \"prior\": \"fixed_uniform_free_cell_geometry_only\",\n"
++                     << "  \"posterior_rule\": \"recomputed_from_accumulated_completed_events_without_recursive_multiplication\",\n"
++                     << "  \"native_posterior_in_causal_prior\": false,\n"
++                     << "  \"truth_at_inference\": false,\n"
++                     << "  \"temperature_weight_or_outcome_fitted_threshold\": false\n"
++                     << "}\n";
++            return;
++        }
+         if (pfdiMode == "ec_edcl" || pfdiMode == "ec_edcl_shadow")
+         {
+             contract << std::setprecision(17)
+@@ -1034,7 +1052,8 @@ namespace GSL::PMFS_internal
+                                        double windSpeed, double windDirection,
+                                        uint64_t blockId, double simTime)
+     {
+-        if (!tadmEnabled || (pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" && pfdiMode != "ec_edcl" && pfdiMode != "ec_edcl_shadow"))
++        if (!tadmEnabled || (pfdiMode != "pc_aci" && pfdiMode != "me_aci" && pfdiMode != "me_aci_shadow" && pfdiMode != "ec_edcl" &&
++                             pfdiMode != "ec_edcl_shadow" && pfdiMode != "v3_orr"))
+             return;
+         pcAciPendingEvents.push_back(PCAciEvent{
+             position, hit ? 1.0 : 0.0, concentration, threshold, windSpeed, windDirection,
+@@ -1048,14 +1067,15 @@ namespace GSL::PMFS_internal
+         tadmSourceUpdateId = sourceUpdateId;
+         tadmSimTime = simTime;
+         std::filesystem::create_directories(tadmDirectory);
+-        if (pfdiMode == "pc_aci" || pfdiMode == "me_aci" || pfdiMode == "me_aci_shadow" || pfdiMode == "ec_edcl" || pfdiMode == "ec_edcl_shadow")
++        if (pfdiMode == "pc_aci" || pfdiMode == "me_aci" || pfdiMode == "me_aci_shadow" || pfdiMode == "ec_edcl" ||
++            pfdiMode == "ec_edcl_shadow" || pfdiMode == "v3_orr")
+         {
+             // Freeze exactly the raw events acquired since the previous
+             // source update.  Subsequent measurements accumulate in a new
+             // buffer and cannot leak into this inference window.
+             pcAciActiveEvents = std::move(pcAciPendingEvents);
+             pcAciPendingEvents.clear();
+-            if ((pfdiMode == "me_aci" || pfdiMode == "me_aci_shadow") &&
++            if ((pfdiMode == "me_aci" || pfdiMode == "me_aci_shadow" || pfdiMode == "v3_orr") &&
+                 !meAciEvidenceReservoir.empty())
+             {
+                 std::vector<PCAciEvent> accumulated = std::move(meAciEvidenceReservoir);
+@@ -1801,6 +1821,7 @@ namespace GSL::PMFS_internal
+         constexpr int totalReplicas = calibrationReplicas + scoringReplicas;
+         constexpr double responseFloor = 0.5 / 201.0;
+         constexpr double covarianceRidge = 1e-10;
++        const bool v3Mode = pfdiMode == "v3_orr";
+         const bool inject = pfdiMode == "ec_edcl";
+         const int sourceCount = static_cast<int>(p2LastEvaluatedCandidates.size());
+         const int eventCount = static_cast<int>(pcAciActiveEvents.size());
+@@ -1811,6 +1832,59 @@ namespace GSL::PMFS_internal
+             return false;
+         }
+ 
++        auto sourceProbabilitySum = [&]()
++        {
++            long double total = 0.0L;
++            for (size_t cell = 0; cell < sourceProbInternal.size(); ++cell)
++                if (measuredHitProb.occupancy[cell] == Occupancy::Free &&
++                    sourceProbInternal[cell] >= 0.0L &&
++                    std::isfinite(static_cast<double>(sourceProbInternal[cell])))
++                    total += sourceProbInternal[cell];
++            return total;
++        };
++        auto writeV3Audit = [&](const v3_orr::Result& result, long double probabilitySum)
++        {
++            std::filesystem::create_directories(tadmDirectory);
++            std::ofstream audit(tadmDirectory + "/v3_orr_update_audit.csv", std::ios::out | std::ios::app);
++            if (audit.tellp() == 0)
++                audit << "run_uuid,source_update_id,sim_time,event_count,even_events,even_hits,odd_events,odd_hits,carrier_count,resolution_cells,resolved_edges,unresolved_edges,nuisance_rank,released,reason,source_probability_sum\n";
++            audit << tadmRunUUID << ',' << tadmSourceUpdateId << ',' << std::setprecision(17) << tadmSimTime << ','
++                  << eventCount << ',' << result.evenEvents << ',' << result.evenHits << ','
++                  << result.oddEvents << ',' << result.oddHits << ',' << sourceCount << ','
++                  << result.resolutionCells << ',' << result.resolvedEdges << ',' << result.unresolvedEdges << ','
++                  << result.nuisanceRank << ',' << (result.released ? 1 : 0) << ',' << result.reason << ','
++                  << static_cast<double>(probabilitySum) << '\n';
++            audit.flush();
++        };
++        auto v3Abstain = [&](v3_orr::Result result)
++        {
++            pcAciAcceptedThisUpdate = false;
++            meAciEvidenceReservoir = pcAciActiveEvents;
++            const bool hasAcceptedPosterior = pcAciLastAcceptedUpdateId > 0 &&
++                pcAciCausalPosteriorGrid.size() == sourceProbInternal.size();
++            sourceProbInternal = hasAcceptedPosterior
++                ? pcAciCausalPosteriorGrid : pcAciDesignPriorGrid;
++            const long double total = sourceProbabilitySum();
++            if (!(total > 0.0L) || !std::isfinite(static_cast<double>(total)))
++            {
++                GSL_ERROR("V3-ORR abstention produced invalid causal/design posterior mass");
++                return false;
++            }
++            for (size_t cell = 0; cell < sourceProbInternal.size(); ++cell)
++                if (measuredHitProb.occupancy[cell] == Occupancy::Free)
++                    sourceProbInternal[cell] /= total;
++            writeV3Audit(result, sourceProbabilitySum());
++            GSL_WARN("V3_ORR_BRANCH_REACHED update {}: ABSTAIN reason={}, events={}, carriers={}",
++                     tadmSourceUpdateId, result.reason, eventCount, sourceCount);
++            return true;
++        };
++        if (v3Mode && eventCount <= 0)
++        {
++            v3_orr::Result result;
++            result.reason = "EMPTY_EVENT_SET";
++            return v3Abstain(std::move(result));
++        }
++
+         int positiveEvents = 0;
+         std::vector<double> observedWeights(static_cast<size_t>(eventCount), 0.0);
+         for (int i = 0; i < eventCount; ++i)
+@@ -1825,7 +1899,7 @@ namespace GSL::PMFS_internal
+         }
+         const double observedWeightSum = std::accumulate(
+             observedWeights.begin(), observedWeights.end(), 0.0);
+-        if (eventCount <= 0 || positiveEvents < 2 || !(observedWeightSum > 0.0))
++        if (!v3Mode && (eventCount <= 0 || positiveEvents < 2 || !(observedWeightSum > 0.0)))
+         {
+             if (!tadmDirectory.empty())
+             {
+@@ -1878,13 +1952,14 @@ namespace GSL::PMFS_internal
+                 GSL_ERROR("EC-ECDL persistent carrier coverage invalid at cell {}: multiplicity={}", cell, coverage[cell]);
+                 return false;
+             }
+-        if (totalFreeCells <= 0 || nativeTotal <= 0.0L)
++        if (totalFreeCells <= 0 || (!v3Mode && nativeTotal <= 0.0L))
+         {
+             GSL_ERROR("EC-ECDL has no free geometry or finite native shadow mass");
+             return false;
+         }
+-        for (long double& value : nativeCarrierMass)
+-            value /= nativeTotal;
++        if (nativeTotal > 0.0L)
++            for (long double& value : nativeCarrierMass)
++                value /= nativeTotal;
+ 
+         // Outcome-blind physical bank.  A replica id fixes the exogenous
+         // transport member across every candidate and source-update; source id
+@@ -1944,6 +2019,114 @@ namespace GSL::PMFS_internal
+         const double physicalWallSeconds = std::chrono::duration<double>(
+             std::chrono::steady_clock::now() - physicalStart).count();
+ 
++        if (v3Mode)
++        {
++            std::vector<unsigned char> observedHit(static_cast<size_t>(eventCount), 0U);
++            std::vector<uint64_t> blockId(static_cast<size_t>(eventCount), 0U);
++            for (int e = 0; e < eventCount; ++e)
++            {
++                observedHit[static_cast<size_t>(e)] =
++                    pcAciActiveEvents[static_cast<size_t>(e)].hit > 0.5 ? 1U : 0U;
++                blockId[static_cast<size_t>(e)] = pcAciActiveEvents[static_cast<size_t>(e)].blockId;
++            }
++            std::vector<std::array<int, 4>> rectangles;
++            std::vector<long double> priorMass(static_cast<size_t>(sourceCount), 0.0L);
++            rectangles.reserve(static_cast<size_t>(sourceCount));
++            std::ofstream carriers(tadmDirectory + "/v3_orr_carrier_ids.csv", std::ios::out | std::ios::app);
++            if (carriers.tellp() == 0)
++                carriers << "run_uuid,source_update_id,candidate_index,candidate_id,x,y,width,height\n";
++            for (int s = 0; s < sourceCount; ++s)
++            {
++                const auto& candidate = p2LastEvaluatedCandidates[static_cast<size_t>(s)];
++                const auto& rect = candidate.rect;
++                rectangles.push_back(rect);
++                carriers << tadmRunUUID << ',' << tadmSourceUpdateId << ',' << s << ',' << candidate.stableID << ','
++                         << rect[0] << ',' << rect[1] << ',' << rect[2] << ',' << rect[3] << '\n';
++                for (int x = rect[0]; x < rect[0] + rect[2]; ++x)
++                    for (int y = rect[1]; y < rect[1] + rect[3]; ++y)
++                    {
++                        const Vector2Int index{x, y};
++                        if (!measuredHitProb.metadata.indicesInBounds(index))
++                            continue;
++                        const size_t cell = measuredHitProb.metadata.indexOf(index);
++                        if (measuredHitProb.occupancy[cell] == Occupancy::Free)
++                            priorMass[static_cast<size_t>(s)] += pcAciDesignPriorGrid[cell];
++                    }
++            }
++            carriers.flush();
++
++            for (const auto& bySource : rawProbabilities)
++                for (const auto& byMember : bySource)
++                    for (const double probability : byMember)
++                        if (!std::isfinite(probability))
++                        {
++                            GSL_ERROR("V3-ORR raw probability bank contains NaN/Inf");
++                            return false;
++                        }
++
++            v3_orr::Result result;
++            try
++            {
++                result = GSL::PMFS_internal::v3_orr::compute(
++                    rawProbabilities, observedHit, blockId, rectangles, priorMass);
++            }
++            catch (const std::exception& error)
++            {
++                GSL_ERROR("V3-ORR runtime contract failure: {}", error.what());
++                return false;
++            }
++            if (!result.released)
++                return v3Abstain(std::move(result));
++            if (result.candidateMass.size() != static_cast<size_t>(sourceCount))
++            {
++                GSL_ERROR("V3-ORR candidate mass shape mismatch: got={}, expected={}",
++                          result.candidateMass.size(), sourceCount);
++                return false;
++            }
++
++            std::fill(sourceProbInternal.begin(), sourceProbInternal.end(), 0.0L);
++            for (int s = 0; s < sourceCount; ++s)
++            {
++                const int freeCells = freeCellsPerSource[static_cast<size_t>(s)];
++                if (freeCells <= 0)
++                {
++                    GSL_ERROR("V3-ORR carrier {} has no free cells", s);
++                    return false;
++                }
++                const long double perCell = result.candidateMass[static_cast<size_t>(s)] /
++                    static_cast<long double>(freeCells);
++                const auto& rect = p2LastEvaluatedCandidates[static_cast<size_t>(s)].rect;
++                for (int x = rect[0]; x < rect[0] + rect[2]; ++x)
++                    for (int y = rect[1]; y < rect[1] + rect[3]; ++y)
++                    {
++                        const Vector2Int index{x, y};
++                        if (!measuredHitProb.metadata.indicesInBounds(index))
++                            continue;
++                        const size_t cell = measuredHitProb.metadata.indexOf(index);
++                        if (measuredHitProb.occupancy[cell] == Occupancy::Free)
++                            sourceProbInternal[cell] = perCell;
++                    }
++            }
++            const long double total = sourceProbabilitySum();
++            if (!(total > 0.0L) || !std::isfinite(static_cast<double>(total)))
++            {
++                GSL_ERROR("V3-ORR RELEASE produced invalid posterior mass");
++                return false;
++            }
++            for (size_t cell = 0; cell < sourceProbInternal.size(); ++cell)
++                if (measuredHitProb.occupancy[cell] == Occupancy::Free)
++                    sourceProbInternal[cell] /= total;
++            pcAciCausalPosteriorGrid = sourceProbInternal;
++            pcAciCausalStateAvailable = true;
++            pcAciLastAcceptedUpdateId = tadmSourceUpdateId;
++            pcAciAcceptedThisUpdate = true;
++            meAciEvidenceReservoir.clear();
++            writeV3Audit(result, sourceProbabilitySum());
++            GSL_INFO("V3_ORR_BRANCH_REACHED update {}: RELEASE events={}, carriers={}, resolution_cells={}, physical_wall_s={}",
++                     tadmSourceUpdateId, eventCount, sourceCount, result.resolutionCells, physicalWallSeconds);
++            return true;
++        }
++
+         Eigen::VectorXd observed(eventCount);
+         for (int i = 0; i < eventCount; ++i)
+             observed(i) = 2.0 * std::sqrt(observedWeights[static_cast<size_t>(i)] / observedWeightSum);
+@@ -2793,7 +2976,7 @@ namespace GSL::PMFS_internal
+         // before the legacy candidate x replica forward-simulation path so
+         // PC-ACI cannot silently fall back to the old Hough/rank/event-Gaussian
+         // implementation.
+-        if (pfdiMode == "ec_edcl" || pfdiMode == "ec_edcl_shadow")
++        if (pfdiMode == "ec_edcl" || pfdiMode == "ec_edcl_shadow" || pfdiMode == "v3_orr")
+             return applyEnsembleEcEdcl();
+         if (pfdiMode == "pc_aci")
+             return applyA9TvSdTfei();

@@ -1,0 +1,44 @@
+{
+  "contract": "CG_PC_CTT_MULTI_SEED_CONFIRMATORY_V1",
+  "primary_metric": "PMFS_ExpectedValue_top_5_percent_error_m",
+  "pairs": 30,
+  "improved_pairs": 18,
+  "sign_test_one_sided_p": 0.1807973040267825,
+  "pooled_reduction": 0.04016577825514959,
+  "pooled_bootstrap_95ci": [
+    -0.08295382896495226,
+    0.1446779659740934
+  ],
+  "per_house": {
+    "House01": {
+      "n": 10,
+      "off_mean": 5.001302732443689,
+      "on_mean": 5.3432516601880105,
+      "pooled_reduction": -0.06837197147176918,
+      "improved_pairs": 5
+    },
+    "House02": {
+      "n": 10,
+      "off_mean": 3.2228656568918495,
+      "on_mean": 2.9907958951579663,
+      "pooled_reduction": 0.07200727130453609,
+      "improved_pairs": 6
+    },
+    "House03": {
+      "n": 10,
+      "off_mean": 7.322796526479642,
+      "on_mean": 6.588461415119982,
+      "pooled_reduction": 0.10028069313468758,
+      "improved_pairs": 7
+    }
+  },
+  "criteria": {
+    "complete_30_pairs": true,
+    "pooled_reduction_ge_0p10": false,
+    "paired_sign_p_le_0p05": false,
+    "no_house_degradation_gt_5pct": false,
+    "no_false_confident_collapse": false
+  },
+  "errors": [],
+  "verdict": "CG_PC_CTT_MULTI_SEED_NOT_GO"
+}

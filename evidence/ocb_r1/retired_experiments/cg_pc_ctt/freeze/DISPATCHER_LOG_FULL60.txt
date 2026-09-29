@@ -1,0 +1,104 @@
+[2026-08-27T04:04:46Z] START House01 seed=0 domain=210
+[2026-08-27T04:04:46Z] START House01 seed=1 domain=211
+[2026-08-27T04:04:46Z] START House01 seed=2 domain=212
+[2026-08-27T04:16:34Z] DONE House01 seed=2
+[2026-08-27T04:16:34Z] DONE House01 seed=1
+[2026-08-27T04:16:34Z] DONE House01 seed=0
+[2026-08-27T04:16:34Z] START House01 seed=3 domain=210
+[2026-08-27T04:16:34Z] START House01 seed=5 domain=212
+[2026-08-27T04:16:34Z] START House01 seed=4 domain=211
+[2026-08-27T04:28:21Z] DONE House01 seed=5
+[2026-08-27T04:28:23Z] DONE House01 seed=3
+[2026-08-27T04:28:23Z] DONE House01 seed=4
+[2026-08-27T04:28:23Z] START House01 seed=7 domain=211
+[2026-08-27T04:28:23Z] START House01 seed=8 domain=212
+[2026-08-27T04:28:23Z] START House01 seed=6 domain=210
+[2026-08-27T04:40:11Z] DONE House01 seed=7
+[2026-08-27T04:40:11Z] DONE House01 seed=6
+[2026-08-27T04:40:11Z] DONE House01 seed=8
+[2026-08-27T04:40:11Z] START House01 seed=9 domain=210
+[2026-08-27T04:40:11Z] START House02 seed=0 domain=211
+[2026-08-27T04:40:11Z] START House02 seed=1 domain=212
+[2026-08-27T04:52:00Z] DONE House01 seed=9
+[2026-08-27T04:52:02Z] DONE House02 seed=1
+[2026-08-27T04:52:02Z] DONE House02 seed=0
+[2026-08-27T04:52:02Z] START House02 seed=2 domain=210
+[2026-08-27T04:52:02Z] START House02 seed=4 domain=212
+[2026-08-27T04:52:02Z] START House02 seed=3 domain=211
+[2026-08-27T05:03:55Z] DONE House02 seed=4
+[2026-08-27T05:03:57Z] DONE House02 seed=3
+[2026-08-27T05:03:58Z] DONE House02 seed=2
+[2026-08-27T05:03:58Z] START House02 seed=5 domain=210
+[2026-08-27T05:03:58Z] START House02 seed=6 domain=211
+[2026-08-27T05:03:58Z] START House02 seed=7 domain=212
+[2026-08-27T05:15:48Z] DONE House02 seed=7
+[2026-08-27T05:15:49Z] DONE House02 seed=5
+[2026-08-27T05:15:51Z] DONE House02 seed=6
+[2026-08-27T05:15:51Z] START House03 seed=0 domain=212
+[2026-08-27T05:15:51Z] START House02 seed=9 domain=211
+[2026-08-27T05:15:51Z] START House02 seed=8 domain=210
+[2026-08-27T05:27:46Z] DONE House02 seed=8
+[2026-08-27T05:27:48Z] DONE House02 seed=9
+[2026-08-27T05:27:50Z] DONE House03 seed=0
+[2026-08-27T05:27:50Z] START House03 seed=1 domain=210
+[2026-08-27T05:27:50Z] START House03 seed=3 domain=212
+[2026-08-27T05:27:50Z] START House03 seed=2 domain=211
+[2026-08-27T05:39:43Z] DONE House03 seed=1
+[2026-08-27T05:39:48Z] DONE House03 seed=2
+[2026-08-27T05:39:48Z] DONE House03 seed=3
+[2026-08-27T05:39:48Z] START House03 seed=5 domain=211
+[2026-08-27T05:39:48Z] START House03 seed=4 domain=210
+[2026-08-27T05:39:48Z] START House03 seed=6 domain=212
+[2026-08-27T05:51:41Z] DONE House03 seed=6
+[2026-08-27T05:51:44Z] DONE House03 seed=4
+[2026-08-27T05:51:44Z] DONE House03 seed=5
+[2026-08-27T05:51:44Z] START House03 seed=7 domain=210
+[2026-08-27T05:51:44Z] START House03 seed=8 domain=211
+[2026-08-27T05:51:44Z] START House03 seed=9 domain=212
+[2026-08-27T06:03:41Z] DONE House03 seed=8
+[2026-08-27T06:03:41Z] DONE House03 seed=7
+[2026-08-27T06:03:42Z] DONE House03 seed=9
+{
+  "contract": "CG_PC_CTT_MULTI_SEED_CONFIRMATORY_V1",
+  "primary_metric": "PMFS_ExpectedValue_top_5_percent_error_m",
+  "pairs": 30,
+  "improved_pairs": 18,
+  "sign_test_one_sided_p": 0.1807973040267825,
+  "pooled_reduction": 0.04016577825514959,
+  "pooled_bootstrap_95ci": [
+    -0.08295382896495226,
+    0.1446779659740934
+  ],
+  "per_house": {
+    "House01": {
+      "n": 10,
+      "off_mean": 5.001302732443689,
+      "on_mean": 5.3432516601880105,
+      "pooled_reduction": -0.06837197147176918,
+      "improved_pairs": 5
+    },
+    "House02": {
+      "n": 10,
+      "off_mean": 3.2228656568918495,
+      "on_mean": 2.9907958951579663,
+      "pooled_reduction": 0.07200727130453609,
+      "improved_pairs": 6
+    },
+    "House03": {
+      "n": 10,
+      "off_mean": 7.322796526479642,
+      "on_mean": 6.588461415119982,
+      "pooled_reduction": 0.10028069313468758,
+      "improved_pairs": 7
+    }
+  },
+  "criteria": {
+    "complete_30_pairs": true,
+    "pooled_reduction_ge_0p10": false,
+    "paired_sign_p_le_0p05": false,
+    "no_house_degradation_gt_5pct": false,
+    "no_false_confident_collapse": false
+  },
+  "errors": [],
+  "verdict": "CG_PC_CTT_MULTI_SEED_NOT_GO"
+}
