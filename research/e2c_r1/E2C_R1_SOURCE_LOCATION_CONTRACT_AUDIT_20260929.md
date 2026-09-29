@@ -41,6 +41,9 @@ new seed is technically possible with the existing wind assets, but would
 still be a new realization, and exact replay of the historical run requires
 its original RNG provenance. Combining a source with a different configured
 wind family or moving its coordinate would create a new configuration.
+The nested `House02/House02` and `House03/House03` copies were also inspected;
+their gas-simulation directories repeat the same two source positions per
+House and add no distinct configured source location.
 
 ## Effect on the frozen E2C panel
 
