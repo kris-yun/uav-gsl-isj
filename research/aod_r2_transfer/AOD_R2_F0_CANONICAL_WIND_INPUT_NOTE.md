@@ -1,0 +1,7 @@
+# F0 canonical wind input note — frozen before first PMFS forward
+
+The old PMFS six-source exports were made from combined CFD CSVs. For at least House02 `4,5-3_slow`, that CSV has 180,750 rows while the canonical OCB-R2 split wind arrays have 256,802 3D grid cells. Therefore the historical CSV export is not bytewise or gridwise identical to the wind consumed by the prospective OCB-R2 target generator.
+
+F0 builds all eight new local candidate banks uniformly from the **same hashed split 3D wind arrays used by OCB-R2**. At each legal PMFS 2D candidate center and z=0.20 m, it applies GADEN's frozen `coordsToIndices`/`indexFrom3D` rule to take the canonical grid voxel's U/V downwind components. In GADEN core, the flat index is `ix + iy*nx + iz*nx*ny`. The resulting 2D Cartesian vector enters the unchanged PMFS marked forward. The builder records source asset hashes and every exported 2D wind CSV hash in `AOD_R2_F0_PRE_FORWARD_INPUTS.json`.
+
+This is a **prospective asset-matched PMFS input**, not an assertion that historical PMFS wind CSVs can be reused unchanged. Within each new F0 candidate realization, `u` and `rawu` still come from the same PMFS transport; the only arm difference is the Native amplitude blur/occupancy operator. The original B2 scoring formula, 11 states, eight PMFS keys, legal candidate geometry, and observation footprint remain fixed. The experiment must be reported as AOD-R2 F0 rather than House03 F1 exact replay.
