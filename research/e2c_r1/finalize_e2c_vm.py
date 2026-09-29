@@ -48,7 +48,7 @@ def main() -> None:
     args = ap.parse_args()
     panel = read_tsv(args.source_panel)
     seed_rows = read_tsv(args.seed_manifest)
-    if len(panel) != 24 or len(seed_rows) != 120:
+    if len(panel) != 24 or len(seed_rows) != 144:
         raise RuntimeError('panel or seed count mismatch')
     source_by_key = {(r['house'], r['source_id']): r for r in panel}
     probes = read_tsv(E1_EVIDENCE / 'E1_HOUSE_PROBE_CONTRACTS.tsv')
