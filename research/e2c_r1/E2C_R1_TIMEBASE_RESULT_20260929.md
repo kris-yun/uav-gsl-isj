@@ -1,0 +1,11 @@
+# E2C-R1 Stage A: E2 writer-time provenance
+
+**Decision: `E2C_R1_TIMEBASE_PASS`.** No concentration values were read for this audit.
+
+The E2 GADEN configuration ran for 300 s with integration `time_step=0.1`, writer interval `results_time_step=0.5`, wind interval `wind_time_step=1.0`, and wind looping through states 1–10. Its recorded executable SHA256 is `4127b9ba4f42186ba2d6d33c84fba8d4b92749da59b83750fa4847dbd9957ce1`. The writer control flow in `RunningSimulation.cpp` (SHA256 `00d0763dc7f369bb716cb8ddf151b3f1112b9b832f137e3cea2d1ee852aabb9a`) saves **after filament movement and before wind and clock updates** whenever the float32 clock passes the next save threshold. The first record is the initial record 0. The 300 s replay produces exactly 566 records, matching E2's retained run metadata.
+
+An independently instrumented AOD run used the same time step, save interval, wind interval, loop bounds and release parameters, and recorded a full 986-record writer map. Its binary has a distinct instrumentation hash; it is **not** asserted to be the E2 executable. The frozen replay matches that observed map on all first 566 `(record ID, float32 clock, wind index, integration step)` tuples. The source code and instrumented map hashes are in `TIMEBASE_PROVENANCE.json`. The original E2 native iteration files were deleted after cube extraction, so the check is code-level time reconstruction cross-validated by a later instrumented run, not a direct E2 per-run time log.
+
+The ten E2 IDs `100,150,...,550` map to float32 clock values about `55.10, 85.10, 115.10, 142.30, 167.30, 192.30, 217.30, 242.31, 267.31, 292.31 s`, with wind indices `2,9,6,2,7,2,7,2,7,2`. Their full precision, integration steps and state stage are frozen in `evidence/e2c_r1/TIMEBASE_MAP.csv`. These IDs **must not be described as 100–550 physical seconds**. Source emission is enabled in this GADEN configuration; the actual first nonzero filament batch is later than clock zero and is not used to relabel the ten observations.
+
+The common rule is the same across Houses because the writer and wind-loop control flow is independent of geometry, source position and wind-file values. The wind index identifies the active member of each House's own 11-state wind sequence; the physical wind vector is environment-specific. No new plume was generated in Stage A.
