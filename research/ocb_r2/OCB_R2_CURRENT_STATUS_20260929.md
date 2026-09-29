@@ -4,7 +4,7 @@
 
 The benchmark refoundation has reached a reproducible prospective generator.
 
-**Current decision:** `OCB_R2_GENERATOR_REFOUNDATION_PASS`
+**Current decision:** `OCB_R2_S1_H12_STRUCTURAL_PASS`
 
 **Frozen generator binary SHA256:**
 
@@ -30,6 +30,7 @@ No 96-run production batch and no algorithm closed-loop experiment has been star
 | Historical/current timebase audit | `1653576382dd21bd45f74f7bae6f2b53f04e7e12` | `TIMEBASE_APPROXIMATE_HOLD`; current 1803-record binary not eligible as historical reference |
 | Historical simulator recovery | `e174590d1e25dba28a01adbcb8d0c759cc7064f0` | `HISTORICAL_SIMULATOR_RECOVERY_FAIL`; historical parity unrecoverable |
 | Prospective seeded generator qualification | `8c0d828641631f7a1332843b02cbab31e96e21ff` | `OCB_R2_GENERATOR_REFOUNDATION_PASS` |
+| H01/H02 structural smoke matrix | `55e63fff3ae57450a89d00b2588c9ed4c9154090` | `OCB_R2_S1_H12_STRUCTURAL_PASS` |
 
 ## Disk / environment state
 
@@ -171,8 +172,8 @@ Do **not** generate all 96 runs at once.
 The intended progression is:
 
 1. **S0 — Generator qualification:** complete, PASS.
-2. **S1 — H01/H02 structural smoke matrix:** 8 source×wind configurations × 1 pre-frozen seed. No PMFS or method analysis.
-3. **S2 — H01/H02 discovery:** 32 runs. Only this partition may be used for mechanism exploration / method development.
+2. **S1 — H01/H02 structural smoke matrix:** complete, PASS. H01 4/4 and H02 4/4 passed frozen-binary, asset, record/timeline, provenance and minimal output-sanity checks. Raw runs were hash-verified after archival to `C:\\GADEN_OCB_R2_ARCHIVE\\s1`. H03 remained `SEALED_NOT_RUN`.
+3. **S2 — H01/H02 discovery:** next permitted phase. 32 runs. Only this partition may be used for mechanism exploration / method development.
 4. **S3 — Method freeze:** formulas, hyperparameters, gates and analysis pipeline frozen.
 5. **S4 — H01/H02 independent confirmation:** 32 runs. No method tuning after opening confirmation.
 6. **S5 — H03 sealed confirmation:** 32 runs. H03 remains sealed until this phase.
@@ -180,33 +181,43 @@ The intended progression is:
 
 The original frozen 96 unique seeds must be inherited as OCB-R2 `master_seed` values. Do **not** redraw or result-select seeds.
 
+## S1 structural smoke result
+
+Decision:
+
+`OCB_R2_S1_H12_STRUCTURAL_PASS`
+
+S1 was frozen before the first plume run and remained structural only.
+
+- House01: **4/4 PASS**
+- House02: **4/4 PASS**
+- total: **8/8 PASS**
+- frozen generator hash: unchanged
+- each run: **1803 records**
+- native timeline: **0 to 999.502991 s**
+- all configured wind states represented
+- record / asset / provenance / minimal scientific-sanity contracts: **8/8**
+- each raw run was copied to `C:\\GADEN_OCB_R2_ARCHIVE\\s1` and verified against the VM SHA256 inventory before local raw deletion
+- H03: **SEALED_NOT_RUN**
+- no PMFS, localization score, source ranking, dependence score, innovation metric, or remaining seed generation was run in S1
+
+S1 is a generator/configuration structural PASS only. It is not evidence that a localization method or research hypothesis is scientifically valid.
+
 ## Current next action
 
-Run **S1 only**:
+Run **S2 only**:
 
-`OCB_R2_H12_STRUCTURAL_SMOKE_MATRIX`
+`OCB_R2_H12_DISCOVERY_32`
 
-- H01/H02 only
-- 8 configurations
-- 1 pre-frozen seed per configuration
-- same frozen binary for all runs
-- structural/provenance checks only
-- H03 status must remain `SEALED_NOT_RUN`
-- no PMFS
-- no innovation metric
-- no localization ranking/error analysis
-- no 96-run batch
+- H01/H02 discovery partition only
+- 32 already-frozen prospective runs
+- preserve the frozen generator binary
+- preserve the frozen master seeds and runlist lineage
+- archive/hash each raw run
+- do not run H03
+- do not open the H01/H02 confirmation partition
+- after data production/QC, discovery-only offline mechanism analysis is permitted
+- confirmation and H03 remain blind until the method is frozen
 
-See `research/ocb_r2/OCB_R2_S1_H12_STRUCTURAL_SMOKE_PLAN.md`.
+See `research/ocb_r2/OCB_R2_S2_DISCOVERY_32_PLAN.md`.
 
-## Key evidence already in repository
-
-- `evidence/ocb_r2/OCB_R2_GENERATOR_QUALIFICATION_RESULT.md`
-- `research/ocb_r1/H02_WIND_PROVENANCE.md`
-- `research/ocb_r1/CONFLICT_FILE_FORENSICS.md`
-- `research/ocb_r1/OCB_R1_TIMEBASE_SOURCE_AUDIT.md`
-- `research/ocb_r1/OCB_R1_HISTORICAL_SIMULATOR_RECOVERY_R1.md`
-- `evidence/ocb_r1/timebase/RECORD_MAPPING_10.tsv`
-- `evidence/ocb_r1/historical_simulator_recovery/RNG_SEED_PROVENANCE.md`
-
-Large raw plume outputs are intentionally not committed to Git. Their hashes/manifests are the repository evidence; raw qualification output remains archival data outside Git.
