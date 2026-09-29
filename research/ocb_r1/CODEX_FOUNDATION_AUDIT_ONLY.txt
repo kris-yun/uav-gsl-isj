@@ -1,0 +1,30 @@
+OCB-R1 FOUNDATION AUDIT ONLY
+
+Branch:
+  research/original-config-common-benchmark-r1-20260929
+
+Read:
+  research/ocb_r1/OCB_R1_PREREG_20260929.md
+
+Do NOT simulate yet.
+
+Tasks:
+1. Reproduce the six original configured source coordinates and twelve original
+   source-wind launch configurations from the audited scenario tree.
+2. Verify a runner can vary ONLY RNG seed/output path while leaving source xyz,
+   gas type, wind assets, occupancy and launch configuration unchanged.
+3. Verify the common 30-probe extraction operator and the ten writer-record
+   selections are valid for all twelve original configurations.
+4. Freeze exactly 96 unique seeds: 8 per original source-wind configuration.
+5. Freeze splits:
+   - H01/H02 reps 1-4 DISCOVERY
+   - H01/H02 reps 5-8 SEALED_STOCHASTIC_CONFIRMATION
+   - H03 reps 1-8 SEALED_EXTERNAL_HOUSE_CONFIRMATION
+6. Commit manifests and STOP.
+
+Do not:
+- run GADEN
+- create runtime source-coordinate overrides
+- run Ordinal/AOD/CENTERED/CD/AEC/TCMA
+- run VGR
+- unseal House03 scientific outputs
