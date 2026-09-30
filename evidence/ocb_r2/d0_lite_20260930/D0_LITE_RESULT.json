@@ -1,0 +1,190 @@
+{
+  "GPU": "NVIDIA GeForce RTX 5060 Laptop GPU",
+  "PMFS_MAP_xy": [
+    -1.3999999463558197,
+    1.870000272989273
+  ],
+  "PMFS_error_m": 0.8320478542107147,
+  "PMFS_estimate_xy": [
+    -1.4079720973968506,
+    2.148707628250122
+  ],
+  "all_four_error_summary": {
+    "mean": 4.80585063065154,
+    "range": [
+      4.307897450632183,
+      5.665249339462184
+    ]
+  },
+  "budget_s": 300,
+  "case": {
+    "archive_path": "C:\\GADEN_OCB_R2_ARCHIVE\\s2_discovery\\ocb_r2_cfg00_r01",
+    "budget_s": "300.0",
+    "context": "X00",
+    "flight_height_m": "0.3",
+    "gas_type": "13",
+    "generator_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688",
+    "house": "House01",
+    "master_seed": "2026900001",
+    "native_result": "NOT_RUN",
+    "nav_seed": "0",
+    "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+    "phase": "S2",
+    "raw_inventory_sha256": "243f897f2a659bfc7e0eb22bdeb3ceea802c9fe6decf8f3d1465b45e8e1dc8ab",
+    "replicate": "1",
+    "role": "DISCOVERY_ONLY",
+    "run_id": "ocb_r2_cfg00_r01",
+    "run_manifest_sha256": "d514f316530be16c58ce72484b36df4fc4446acd8e33ae0fe4b5e181b7acae9b",
+    "source_id": "House01_configured_1",
+    "source_x": "-0.6",
+    "source_y": "1.95",
+    "source_z": "0.4",
+    "start_x": "-3.17",
+    "start_y": "-1.75",
+    "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+    "wind_id": "1,3-2,4_fast"
+  },
+  "caveats": [
+    "all-four weight semantics not uniquely documented",
+    "Native uses full field state0 forward wind; network only encounter-local wind",
+    "single case cannot decide overall deep-learning or PMFS performance"
+  ],
+  "confirmation_read": false,
+  "decision": "D0_LITE_ZERO_SHOT_TRANSFER_POOR",
+  "deterministic_inference_repeat": true,
+  "event_count": 80,
+  "formal_OFF_ON_parity": "NOT_EXECUTED; D1A PAUSED",
+  "hit_events": 36,
+  "house03_read": false,
+  "native_last_available_belief_s": 258.2,
+  "native_stop_reason": "declared_success",
+  "native_target_replays": 1,
+  "new_plumes": 0,
+  "no_second_case": true,
+  "primary_weight": null,
+  "scope": "single-case engineering transfer screen; no performance generalization",
+  "three_channel_error_summary": {
+    "mean": 4.813847963183796,
+    "range": [
+      4.307897450632183,
+      5.665249339462184
+    ]
+  },
+  "torch": "2.9.1+cu130",
+  "training_steps": 0,
+  "truth_xy": [
+    -0.6,
+    1.95
+  ],
+  "unique_encounter_pixels": 8,
+  "weights": [
+    {
+      "XY_error_m": 4.781858633054774,
+      "engineering_label": "D0_LITE_ZERO_SHOT_TRANSFER_POOR",
+      "estimate": {
+        "centroid_xy": [
+          -3.1691036146151133,
+          -2.083097891682277
+        ],
+        "peak_probability": 0.9999316930770874,
+        "peak_xy": [
+          -2.4499999240040777,
+          -7.5799999955296515
+        ],
+        "source_location_rule": "paper probability-weighted centroid"
+      },
+      "inference_runtime_s": 0.47684599994681776,
+      "input_channels": 2,
+      "input_semantics": "upstream commented two-channel marked-map+wind; checkpoint provenance ambiguous",
+      "mass_in_obstacles_fraction": 0.34836214780807495,
+      "output_sum": 8679.81640625,
+      "peak_error_m": 9.70790397735836,
+      "peak_in_obstacle": true,
+      "repeat_byte_equal": true,
+      "weight": "unet_model_final.pth",
+      "weight_load_and_GPU_transfer_s": 0.47707789996638894,
+      "weight_sha256": "1990d692b9ea5ef2bb135f57f0ddf29cee5a7f7cb5b4386192f2c1c38ce86137"
+    },
+    {
+      "XY_error_m": 5.665249339462184,
+      "engineering_label": "D0_LITE_ZERO_SHOT_TRANSFER_POOR",
+      "estimate": {
+        "centroid_xy": [
+          -3.1214599213690324,
+          -3.123193268859997
+        ],
+        "peak_probability": 0.37486711144447327,
+        "peak_xy": [
+          -2.1499999195337294,
+          -7.5799999955296515
+        ],
+        "source_location_rule": "paper probability-weighted centroid"
+      },
+      "inference_runtime_s": 0.04844300006516278,
+      "input_channels": 3,
+      "input_semantics": "audited three channels",
+      "mass_in_obstacles_fraction": 0.23310595750808716,
+      "output_sum": 976.9672241210938,
+      "peak_error_m": 9.655226546557556,
+      "peak_in_obstacle": true,
+      "repeat_byte_equal": true,
+      "weight": "unet_model_final_1.pth",
+      "weight_load_and_GPU_transfer_s": 0.23975499998778105,
+      "weight_sha256": "f177ae99d3098cdf7ca40737101f388c25bd0b0fcc4ade7d4945a48b2f8ae0c8"
+    },
+    {
+      "XY_error_m": 4.468397099457022,
+      "engineering_label": "D0_LITE_ZERO_SHOT_TRANSFER_POOR",
+      "estimate": {
+        "centroid_xy": [
+          -3.126880190255288,
+          -1.735301770890862
+        ],
+        "peak_probability": 0.9997269511222839,
+        "peak_xy": [
+          -4.549999955296516,
+          0.8200001296401025
+        ],
+        "source_location_rule": "paper probability-weighted centroid"
+      },
+      "inference_runtime_s": 0.049858600134029984,
+      "input_channels": 3,
+      "input_semantics": "audited three channels",
+      "mass_in_obstacles_fraction": 0.4440446197986603,
+      "output_sum": 5838.71826171875,
+      "peak_error_m": 4.108454618692516,
+      "peak_in_obstacle": true,
+      "repeat_byte_equal": true,
+      "weight": "unet_model_final_2.pth",
+      "weight_load_and_GPU_transfer_s": 0.22991200000979006,
+      "weight_sha256": "7146aa81205d3f720edac8f6de3ed533cce0229ddb6215c8947e3156a6d0da33"
+    },
+    {
+      "XY_error_m": 4.307897450632183,
+      "engineering_label": "D0_LITE_ZERO_SHOT_TRANSFER_POOR",
+      "estimate": {
+        "centroid_xy": [
+          -3.206624333371412,
+          -1.4797944588326724
+        ],
+        "peak_probability": 0.9995742440223694,
+        "peak_xy": [
+          -5.249999965727329,
+          1.320000137090683
+        ],
+        "source_location_rule": "paper probability-weighted centroid"
+      },
+      "inference_runtime_s": 0.05297370022162795,
+      "input_channels": 3,
+      "input_semantics": "audited three channels",
+      "mass_in_obstacles_fraction": 0.41855594515800476,
+      "output_sum": 5912.51611328125,
+      "peak_error_m": 4.692483298694832,
+      "peak_in_obstacle": true,
+      "repeat_byte_equal": true,
+      "weight": "unet_model_final_3.pth",
+      "weight_load_and_GPU_transfer_s": 0.23318549990653992,
+      "weight_sha256": "60bb5bdf64182bcaad74e10d23fbf4ff1f9e65e78829da8dbbb680ed1745b42d"
+    }
+  ]
+}
