@@ -1,0 +1,473 @@
+这个结果反而把理论又校正得更严谨了。**不要补同 seed 回放，也不要重新生成配对 plume。** 我前一版把“同随机扰动配对”设成必要条件，设得过强了。
+
+我们真正要证明的是：
+
+\[
+\boxed{
+p(\tau\mid do(S=A),C)
+\neq
+p(\tau\mid do(S=B),C)
+}
+\]
+
+其中随机 plume 扰动 \(\eta\) 应该被**积分掉**：
+
+\[
+p(\tau\mid do(S),C)
+=
+\int p(\tau\mid S,C,\eta)\,p(\eta\mid C)d\eta.
+\]
+
+所以 S2 和 S2X 使用**独立随机 realizations**并不是理论缺陷，反而正好是对这个边缘分布的 Monte-Carlo 采样。相同 seed 只是一种 common-random-number 方差削减技术，不是 source identifiability 的必要条件。
+
+因此保留：
+
+\[
+\texttt{CDSI\_T01\_MATCHED\_INTERVENTION\_FAIL}
+\]
+
+作为“原配对协议失败”，但**不能据此停 CDSI**。下一步改成一个新的、独立预注册协议：
+
+\[
+\boxed{\texttt{CDSI-T0.1B Independent-Realization Information Audit}}
+\]
+
+---
+
+### 现在三个问题也因此更精确
+
+**科学问题**不再是“同一随机羽流里把源挪一下会不会变”，而是：
+
+> 当随机湍流 realization 本来就不可控时，两个不同源位置是否仍诱导出统计上可区分的整条 plume trajectory 分布？
+
+这是实际部署真正需要的：
+
+\[
+\eta_{\rm train}\neq\eta_{\rm test}
+\]
+
+仍然要定位源。
+
+**现有方法为什么会失败**也更清楚：PMFS相当于用某个有限 forward realization / 固定模型去近似整个
+
+\[
+p(\tau\mid S,C),
+\]
+
+所以 realization/model mismatch 会被吸收到源位置上；普通 U-Net则可能直接利用训练 source prior。
+
+**我们的方法为什么有理论希望**：不是消除某一个 realization，而是寻找在
+
+\[
+\eta\sim p(\eta\mid C)
+\]
+
+积分之后仍然存在的 source-specific distributional signature：
+
+\[
+\boxed{
+P_A(\tau)\neq P_B(\tau)
+}
+\]
+
+如果连这个都不存在，CDSI直接 NO-GO。
+
+---
+
+## 下一刀不用新模拟，现有64条就够
+
+每个 context 现在有：
+
+\[
+4\times S_A
+\qquad\text{和}\qquad
+4\times S_B
+\]
+
+而且非 source 环境条件已经 32/32 匹配。
+
+所以每个 context 是一个标准的：
+
+\[
+4\text{ vs }4
+\]
+
+独立 two-sample problem。
+
+这里反而**不能再做 sign-flip**。正确 exact null 是：
+
+> 在8条 realization 中，若 source 对 trajectory 没影响，则 A/B 标签可交换。
+
+共有：
+
+\[
+\binom84=70
+\]
+
+种精确标签分配。
+
+70种全部穷举即可。
+
+---
+
+# 我建议 primary 不再用 crossnobis，而用 Energy two-sample distance
+
+原因很简单：我们现在不只关心均值差异。
+
+随机 plume 下可能出现：
+
+\[
+E[\tau\mid A]\approx E[\tau\mid B]
+\]
+
+但：
+
+- temporal structure；
+- variance；
+- multimodality；
+- cross-time dependence
+
+不同。
+
+Energy distance 检验的是整个分布：
+
+\[
+\boxed{
+P(\tau\mid A,C)
+=
+P(\tau\mid B,C)
+?
+}
+\]
+
+只要两个分布不同，population energy distance 就大于0。
+
+因此它比“平均 source tangent”更贴近我们现在真正的理论命题。
+
+而且每个 context 只有4+4，完全可以做 exact 70-permutation test，不需要正态假设。
+
+---
+
+## 仍然保留三个 representation
+
+这部分不用改。
+
+### FULL
+
+\[
+X^{F}\in\mathbb R^{10\times30}
+\]
+
+保留完整时间顺序。
+
+### STATIC
+
+\[
+X^{S}_j
+=
+\frac1{10}\sum_t X_{tj}
+\]
+
+变成30D，每个值仍然在 \([0,1]\)。
+
+### C2
+
+保持每时刻 snapshot multiset，破坏跨时间 realization association。
+
+然后真正回答：
+
+\[
+T_F>0
+\]
+
+——有没有 source information？
+
+\[
+T_F>T_S
+\]
+
+——动态 trajectory 是否比静态累计多信息？
+
+\[
+T_F>T_{C2}
+\]
+
+——跨时间 coupling 是否贡献 source information？
+
+这正好把你以前的 R0 信号重新用一个更正确的 independent-realization 统计设计验证一次。
+
+---
+
+## 这里还有一个必须现在写死的限制
+
+复核包还暴露了一个理论问题：
+
+> 当前每个 House 的 A/B source 不仅 XY 不同，**z 也不同**。
+
+因此这64条当前最多能证明：
+
+\[
+\boxed{
+\text{不同 source configuration }(x,y,z)
+\text{ 的动态分布可区分}
+}
+\]
+
+不能写成：
+
+> “二维 XY source displacement 可辨识”。
+
+这一点非常重要。
+
+所以 T0.1B 如果 PASS，结论只能叫：
+
+\[
+\boxed{
+\texttt{SOURCE-CONFIGURATION DYNAMIC INFORMATION PASS}
+}
+\]
+
+然后下一阶段才专门要求：
+
+\[
+z=\text{constant}
+\]
+
+只改变：
+
+\[
+(x,y)
+\]
+
+来证明二维 source localization。
+
+这也回答你上一轮问的“要不要现在把 PMFS改3D”：
+
+> **仍然不要。**
+
+现在只是承认原数据中的 source \(z\) 是一个混入的变量。我们先证明有没有 source-configuration information；之后如果目标论文继续做二维地面/已知高度源，就必须用 fixed-z source interventions 来验证 XY，而不是把整个 PMFS立刻3D化。
+
+---
+
+# 直接给 Codex 的下一步
+
+把下面发过去即可：
+
+> 保留现有最终状态：
+>
+> `CDSI_T01_MATCHED_INTERVENTION_FAIL`
+>
+> 不修改、不覆盖该结论。
+>
+> 该结果只否定 same-disturbance paired protocol，不是否定 CDSI。
+>
+> 新建：
+>
+> `research/cdsi-t01b-independent-information-audit-20261001`
+>
+> 执行：
+>
+> **CDSI-T0.1B — Independent-Realization Source-Distribution Information Audit**
+>
+> 不生成任何新 GADEN。
+>
+> 不创建 common-random-number source pairs。
+>
+> 不训练网络。
+>
+> 不运行 PMFS。
+>
+> 不打开 confirmation/H03。
+>
+> 只使用现有 OCB-R2 S2+S2X 64 discovery tensors。
+>
+> ### A. Independent-sample contract
+>
+> 对每个8个 context验证：
+>
+> - House一致；
+> - wind一致；
+> - gas一致；
+> - occupancy一致；
+> - generator/time-axis一致；
+> - source A有4个独立 realization；
+> - source B有4个独立 realization；
+> - 两组 RNG 均来自同一冻结 generator contract，只是独立 seed；
+> - 不要求 same master seed。
+>
+> 若任一 context 的两组随机生成机制不同，而不只是 seed不同：
+>
+> `CDSI_T01B_RANDOMIZATION_CONTRACT_FAIL`
+>
+> STOP。
+>
+> ### B. Frozen representations
+>
+> 严格复用 R0 frozen `10×30` binary tensors。
+>
+> 不重新选 probe/time。
+>
+> 三个 arm：
+>
+> `FULL_DYNAMIC_300D`
+>
+> `STATIC_COLLAPSED_30D`
+>
+> `C2_PAIRING_DESTROYED`
+>
+> C2必须严格复用 R0 operator。
+>
+> 为避免 FULL/STATIC 数值尺度差异：
+>
+> - FULL元素保持0/1；
+> - STATIC使用10个slot的平均值而不是sum，使每维也在[0,1]；
+> - 距离除以 `sqrt(d)`，报告 normalized Euclidean energy distance。
+>
+> 该归一化在查看科学结果之前冻结。
+>
+> ### C. Primary statistic
+>
+> 每个 context、每个 representation，计算两源4-vs-4的 **Energy Distance**：
+>
+> \[
+> \mathcal E(A,B)
+> =
+> \frac{2}{nm}\sum_{i,j}\|a_i-b_j\|
+> -
+> \frac1{n^2}\sum_{i,j}\|a_i-a_j\|
+> -
+> \frac1{m^2}\sum_{i,j}\|b_i-b_j\|.
+> \]
+>
+> primary使用同一固定实现。
+>
+> 不根据结果选择kernel/bandwidth。
+>
+> ### D. Exact null
+>
+> 每 context 有8个独立 realizations。
+>
+> 在 source-null 下穷举所有：
+>
+> \[
+> {8\choose4}=70
+> \]
+>
+> 种 A/B label assignments。
+>
+> 得到该 context exact one-sided permutation p-value和null percentile。
+>
+> 同时输出 source-blind standardized effect：
+>
+> \[
+> Z_E=
+> \frac{E_{\rm obs}-\operatorname{mean}(E_{\rm perm})}
+> {\operatorname{sd}(E_{\rm perm})}.
+> \]
+>
+> 不使用原 T0.1 sign-flip。
+>
+> ### E. Cross-context gate
+>
+> Primary G1：
+>
+> `FULL_SOURCE_DISTRIBUTION`
+>
+> 要求：
+>
+> - ≥7/8 context observed Energy Distance 高于 permutation null median；
+> - ≥6/8 context exact p≤0.05；
+> - 8-context effect方向 sign test one-sided p<0.05；
+> - pooled/stratified permutation aggregate p<0.05。
+>
+> 若不满足：
+>
+> `CDSI_T01B_NO_STABLE_SOURCE_DISTRIBUTION_INFORMATION_STOP`
+>
+> ### F. Dynamic-information gate
+>
+> 对每个 context计算 permutation-standardized effect：
+>
+> \[
+> Z_F,\quad Z_S,\quad Z_{C2}.
+> \]
+>
+> 比较：
+>
+> \[
+> \Delta_{\rm static}=Z_F-Z_S
+> \]
+>
+> 和
+>
+> \[
+> \Delta_{\rm pairing}=Z_F-Z_{C2}.
+> \]
+>
+> `G2_DYNAMIC_ADVANTAGE`：
+>
+> - median Δstatic>0；
+> - ≥6/8 context >0。
+>
+> `G3_PAIRING_ADVANTAGE`：
+>
+> - median Δpairing>0；
+> - ≥6/8 context >0。
+>
+> 对8个context使用exact sign test；不要把70-permutation p值直接相减。
+>
+> ### G. Secondary audit
+>
+> 可额外计算：
+>
+> - MMD（固定linear或预注册kernel）；
+> - nearest-centroid leave-one-out；
+> - mean-difference cosine；
+>
+> 但全部secondary，不得替换Energy primary。
+>
+> ### H. Source-geometry caveat
+>
+> 自动确认 A/B source xyz。
+>
+> 如果z不同，报告必须明确：
+>
+> **本轮检验的是 source-configuration `(x,y,z)` 信息，不是纯 XY identifiability。**
+>
+> 不允许写 `2D_SOURCE_IDENTIFIABLE`。
+>
+> ### I. Decisions
+>
+> 若 G1 fail：
+>
+> `CDSI_T01B_NO_STABLE_SOURCE_DISTRIBUTION_INFORMATION_STOP`
+>
+> 若 G1 pass、但 G2/G3均无优势：
+>
+> `CDSI_T01B_SOURCE_INFORMATION_STATIC_ONLY_HOLD`
+>
+> 若 G1 pass 且至少 G2/G3 中动态证据成立：
+>
+> `CDSI_T01B_DYNAMIC_SOURCE_INFORMATION_PASS`
+>
+> 即使 PASS，也只能说明：
+>
+> **独立随机 realizations 下存在稳定的 source-configuration dynamic information。**
+>
+> 不允许声明二维连续source identifiability。
+>
+> 完成后 STOP。
+
+我只会改一点我自己之前的判断：**这次不用因为“没有matched seed”去补数据。**
+
+恰恰相反，如果 CDSI 真想解决未来实飞，它必须在：
+
+\[
+\boxed{\text{不同随机 plume realization}}
+\]
+
+之间仍然成立。
+
+因此现在这64条独立 realization 比人为制造同 seed counterfactual 更接近真正的科学问题。
+
+如果 T0.1B 仍然过不了，那么我会明显降低 CDSI 优先级；如果它过了，我们才有充分理由去做下一步 **fixed-z、二维 source-support** 的最小实验。
