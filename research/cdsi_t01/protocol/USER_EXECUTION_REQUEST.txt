@@ -1,0 +1,831 @@
+现在**不要先把 PMFS 从 2D 改成 3D**。这一步会把两个问题混在一起：
+
+\[
+\text{“有没有稳定的 source-specific 动力学信息？”}
+\]
+
+和
+
+\[
+\text{“3D 风场是否能提高定位？”}
+\]
+
+我们现在先只回答第一个。因为如果现有 OCB-R2 的 2D/时序观测里已经存在**去掉随机 realization 后仍稳定的源信息**，CDSI 主理论才值得继续；如果连这个都没有，再讨论 3D 才有意义。
+
+而且第一篇建议先把目标冻结成：
+
+\[
+\boxed{S=(x_s,y_s)}
+\]
+
+即源位于已知高度/地面平面，**3D airflow 可以以后作为条件变量或辅助创新，但不先把 source parameter 扩成 xyz**。否则二维可辨识都没证明，就直接变三维：
+
+\[
+\operatorname{rank}=3
+\]
+
+门槛反而更高。
+
+---
+
+# 下一步最小实验其实不用新跑 GADEN
+
+你现有 OCB-R2：
+
+\[
+8\text{ contexts}\times2\text{ sources}\times4\text{ realizations}
+=64
+\]
+
+已经恰好适合先回答一个重要但有限的问题：
+
+> **沿当前 A→B 这一条 source displacement 方向，是否存在超过随机 plume 波动的、可跨 realization 重现的 source information？**
+
+注意这里只能证明 **1D directional identifiability**，不能证明二维连续定位，因为现在每个 context 只有两个源。
+
+所以这一步我建议正式叫：
+
+\[
+\boxed{\texttt{CDSI-T0.1 1D SOURCE-INFORMATION AUDIT}}
+\]
+
+通过了也只能得到：
+
+\[
+\texttt{CDSI\_T0\_1D\_INFORMATION\_PASS}
+\]
+
+绝对不能直接写 `THEORY_PASS`。
+
+---
+
+# 怎么审计最干净
+
+不要先训练任何网络，也不要先拟合 latent representation。
+
+直接使用你 R0 已经冻结的：
+
+\[
+10\times30
+\]
+
+完整 binary trajectory tensor。
+
+每条 run：
+
+\[
+X_{c,s,r}\in\mathbb R^{10\times30}
+\]
+
+其中：
+
+- \(c\)：8个 context；
+- \(s\in\{A,B\}\)：两个 source；
+- \(r=1,\dots,4\)：matched realizations。
+
+展平：
+
+\[
+x_{c,s,r}\in\mathbb R^{300}.
+\]
+
+---
+
+## 第一步：利用 S2/S2X 真正漂亮的 matched-source 设计
+
+如果 S2 和 S2X 已经确认每个：
+
+\[
+(c,r)
+\]
+
+下只有 source 位置改变，其余生成条件匹配，那么直接做：
+
+\[
+\boxed{
+\delta_{c,r}
+=
+x_{c,B,r}-x_{c,A,r}
+}
+\]
+
+这一步非常重要。
+
+因为同一 context、同一 replicate 下：
+
+\[
+E,R
+\]
+
+尽可能匹配。
+
+所以：
+
+\[
+\delta_{c,r}
+\]
+
+主要是：
+
+\[
+\text{source intervention}
+\]
+
+造成的 trajectory change。
+
+如果四个 realization 都能重复出现相似：
+
+\[
+\delta_{c,r},
+\]
+
+那才说明源移动留下了**稳定动态响应**。
+
+---
+
+# 第一项指标：source tangent 能否跨 realization 重现
+
+每个 context：
+
+\[
+\bar\delta_c
+=
+\frac14\sum_{r=1}^4\delta_{c,r}.
+\]
+
+做 leave-one-replicate-out：
+
+\[
+\bar\delta_{c,-r}
+=
+\frac13\sum_{j\neq r}\delta_{c,j}.
+\]
+
+然后看：
+
+\[
+q_{c,r}
+=
+\cos
+(
+\delta_{c,r},
+\bar\delta_{c,-r}
+).
+\]
+
+物理意义：
+
+> 用另外三个 plume realization 得到的“换源方向”，能不能预测第四个 realization 换源后 trajectory 往哪个方向变化？
+
+如果只是随机 plume：
+
+\[
+q\approx0.
+\]
+
+如果存在稳定 source tangent：
+
+\[
+q>0.
+\]
+
+这比训练分类器干净太多。
+
+---
+
+# 第二项指标：真正对应 \(I_{\rm eff}\) 的量
+
+前面理论里：
+
+\[
+I_{\rm eff}
+\]
+
+描述“source effect 相对于 nuisance variance 的强度”。
+
+当前只有一条 source displacement：
+
+\[
+\Delta S_c=S_B-S_A.
+\]
+
+所以先估计这个方向上的有效信息：
+
+\[
+\boxed{
+I_{\rm dir,c}
+=
+u_c^\top
+I_{\rm eff,c}
+u_c
+}
+\]
+
+其中：
+
+\[
+u_c=
+\frac{\Delta S_c}{\|\Delta S_c\|}.
+\]
+
+数据上不需要真正拟合 likelihood。
+
+使用 **cross-validated Mahalanobis distance / crossnobis**。
+
+直观形式：
+
+取独立两组 realization：
+
+\[
+d_1=\bar x_{B}^{(1)}-\bar x_A^{(1)},
+\]
+
+\[
+d_2=\bar x_B^{(2)}-\bar x_A^{(2)}.
+\]
+
+然后：
+
+\[
+\boxed{
+D_{\rm cv}
+=
+d_1^\top
+\Sigma_{\eta}^{-1}
+d_2
+}
+\]
+
+其中：
+
+\[
+\Sigma_\eta
+\]
+
+是 fixed-source realization variation 的 covariance，用 shrinkage covariance 防止 300 维、小样本奇异。
+
+为什么一定要 cross-validation？
+
+普通：
+
+\[
+d^\top\Sigma^{-1}d
+\]
+
+即使没有真实 source signal，也会因为噪声天然为正。
+
+crossnobis 在零信号情况下期望约为：
+
+\[
+0.
+\]
+
+因此：
+
+\[
+D_{\rm cv}>0
+\]
+
+才是非常漂亮的“真实 source information 超过 nuisance noise”的证据。
+
+---
+
+# 第三项：必须和静态压缩做对照
+
+否则我们只能证明“有 source information”，却不能证明为什么要做 dynamical source identification。
+
+同一批数据构造三个 arm。
+
+### Arm A — FULL DYNAMIC
+
+完整：
+
+\[
+10\times30=300D.
+\]
+
+保留时间顺序。
+
+### Arm B — STATIC COLLAPSED
+
+对时间求和/平均：
+
+\[
+10\times30
+\rightarrow30D.
+\]
+
+时间顺序消失，但各 probe 总 encounter evidence 保留。
+
+### Arm C — C2 pairing-destroyed
+
+使用你 R0 已经验证过的那个操作：
+
+> 每个时间点30D snapshot multiset保持不变，但破坏跨时间 realization pairing。
+
+这样三个问题一次分清楚：
+
+\[
+A>0
+\]
+
+说明有 source information。
+
+\[
+A>B
+\]
+
+说明完整动态信息比静态累计多。
+
+\[
+A>C
+\]
+
+说明真正关键的是跨时间 pairing，而不是单时间 marginal。
+
+这会和你之前 R0 的结果形成非常漂亮的闭环。
+
+---
+
+# 第四项：完全不用人工拍阈值，做 exact permutation
+
+因为每个 context 只有4个 matched source pairs。
+
+在 null hypothesis：
+
+> A/B source 不产生稳定差异
+
+下，每个 matched pair 的：
+
+\[
+\delta_r
+\]
+
+可以随机翻符号：
+
+\[
+\delta_r\rightarrow\pm\delta_r.
+\]
+
+四对只有：
+
+\[
+2^4=16
+\]
+
+种 exact sign-flip。
+
+所以每个 context 都可以**穷举精确置换**，不用正态假设。
+
+跨8 context 再做 aggregated sign-flip / paired permutation。
+
+这比“我规定 cosine > 0.5 就 PASS”科学得多。
+
+---
+
+# 我建议预注册的最小 Gate
+
+不要设得太复杂。
+
+### Gate 1：存在稳定 source information
+
+FULL-DYNAMIC 的 aggregate crossnobis：
+
+\[
+\operatorname{median}_c D_{\rm cv,c}>0
+\]
+
+并且 exact paired permutation：
+
+\[
+p<0.05.
+\]
+
+另外至少：
+
+\[
+6/8
+\]
+
+contexts 的 \(D_{\rm cv}>0\)。
+
+---
+
+### Gate 2：动态信息确实有额外价值
+
+比较：
+
+\[
+D_{\rm FULL}-D_{\rm STATIC}.
+\]
+
+要求：
+
+- aggregate median > 0；
+- 至少 6/8 context 为正；
+- paired exact permutation \(p<0.05\)。
+
+否则：
+
+> source information 有，但没有证据证明“动力系统轨迹”比静态 evidence 更重要。
+
+那 CDSI 的“Dynamical”主旨就弱了。
+
+---
+
+### Gate 3：跨时间 pairing 是真实贡献
+
+比较：
+
+\[
+D_{\rm FULL}-D_{\rm C2}.
+\]
+
+同样：
+
+- aggregate median > 0；
+- ≥6/8 contexts；
+- permutation \(p<0.05\)。
+
+如果这一关过，才能把你以前 R0 的机制结果和当前 identifiability 理论真正接起来。
+
+---
+
+# 最关键：这一刀不回答二维定位
+
+即使全部 PASS，也只能说：
+
+\[
+\boxed{
+u^\top I_{\rm eff}u>0
+}
+\]
+
+也就是：
+
+> **沿当前 A→B source displacement 方向存在 nuisance-adjusted source information。**
+
+还不能说：
+
+\[
+I_{\rm eff}\succ0.
+\]
+
+二维真正 PASS 仍需要第二个不共线 source displacement。
+
+所以流程应该是：
+
+\[
+\boxed{
+\text{T0.1：现有64条证明1D信息}
+}
+\]
+
+如果失败：
+
+\[
+\boxed{\text{CDSI STOP}}
+\]
+
+根本不用 R3A。
+
+如果通过：
+
+\[
+\boxed{
+\text{T0.2：再用最少新增source补二维rank}
+}
+\]
+
+那时才有理由启动 R3A 的少量新 source 数据，而不是一下子跑64条。
+
+---
+
+# 3D 在哪里进入？
+
+我建议非常明确：
+
+### 现在 T0.1
+
+只用当前冻结表示：
+
+\[
+(x,y),\quad
+2D/probe trajectory.
+\]
+
+**不改3D。**
+
+### 如果 T0.1 PASS
+
+说明主理论至少在现有信息上成立。
+
+然后 T0.2 做二维 source rank。
+
+### 如果后面发现某些 context：
+
+\[
+I_{\rm dir}\approx0
+\]
+
+并且这些 context 恰好对应：
+
+- vertical wind 强；
+- plume 高度变化大；
+- PMFS 失败；
+
+才做：
+
+\[
+\boxed{\text{2D vs 3D information recovery audit}}
+\]
+
+比较：
+
+\[
+I_{\rm eff}^{2D}
+\]
+
+和：
+
+\[
+I_{\rm eff}^{3D}.
+\]
+
+如果：
+
+\[
+I_{\rm eff}^{3D}\gg I_{\rm eff}^{2D},
+\]
+
+那时 **3D wind 就不是工程补丁了**。
+
+它会成为：
+
+> **恢复被2D投影丢失的可辨识信息**
+
+这个辅助创新。
+
+这比现在直接“PMFS 2D 改3D”科学得多。
+
+---
+
+# 现在给 Codex 的最小指令
+
+可以直接发：
+
+> 新建只读分析分支：
+>
+> `research/cdsi-t01-1d-information-audit-20261001`
+>
+> 当前任务：
+>
+> **CDSI-T0.1 — 1D nuisance-adjusted source-information audit**
+>
+> 本轮禁止：
+>
+> - 训练任何神经网络；
+> - 修改 PMFS；
+> - 3D-PMFS；
+> - 生成新 GADEN；
+> - 运行 R3A；
+> - H03；
+> - confirmation；
+> - 闭环。
+>
+> 只使用已经冻结的 OCB-R2 S2+S2X discovery：
+>
+> `8 contexts × 2 sources × 4 matched realizations = 64 runs`
+>
+> 和已经冻结的 R0 `10×30` binary trajectory tensors。
+>
+> ---
+>
+> ### A. 先验证 matched-source contract
+>
+> 对每个：
+>
+> `context × replicate`
+>
+> 必须存在 source A/B 一对。
+>
+> 核验 A/B 之间：
+>
+> - House相同；
+> - wind/gas/context相同；
+> - replicate/master-stream identity相同；
+> - 唯一有意改变的科学变量为 source location。
+>
+> 如果不能证明：
+>
+> `CDSI_T01_MATCHED_INTERVENTION_FAIL`
+>
+> STOP。
+>
+> ---
+>
+> ### B. Primary representation
+>
+> 使用 R0 frozen：
+>
+> `10 time slots × 30 probes`
+>
+> binary tensor，严格 `C>0`。
+>
+> 展平为300D：
+>
+> `x[c,s,r]`.
+>
+> 不重新选择 probe，不重新选择 time window。
+>
+> ---
+>
+> ### C. Paired source contrast
+>
+> 对每个 context c、replicate r：
+>
+> \[
+> \delta_{c,r}=x_{c,B,r}-x_{c,A,r}.
+> \]
+>
+> 计算 leave-one-replicate-out source-tangent cosine：
+>
+> \[
+> q_{c,r}
+> =
+> \cos(\delta_{c,r},
+> \mathrm{mean}_{j\ne r}\delta_{c,j}).
+> \]
+>
+> 输出每 context及aggregate结果。
+>
+> ---
+>
+> ### D. Directional effective-information proxy
+>
+> 实现 cross-validated Mahalanobis / crossnobis source distance。
+>
+> 4个 matched replicate 使用全部三个 2-vs-2 balanced partitions：
+>
+> `{12|34,13|24,14|23}`
+>
+> 并对三种 partition 取均值。
+>
+> nuisance covariance 只能来自 fixed-source within-context/within-source realization residual；
+>
+> 因300D小样本，primary covariance 使用预冻结 Ledoit-Wolf shrinkage。
+>
+> 再输出 diagonal covariance 作为 sensitivity audit，但不得选择较好者作为primary。
+>
+> 禁止使用 source truth distance调任何参数。
+>
+> ---
+>
+> ### E. 三个冻结表示
+>
+> 1. `FULL_DYNAMIC_300D`
+>    - 原始10×30，保持时间顺序。
+>
+> 2. `STATIC_COLLAPSED_30D`
+>    - 对10个时间slot求和/均值；
+>    - 保留probe边缘证据，移除时间顺序。
+>
+> 3. `C2_PAIRING_DESTROYED`
+>    - 严格复用 R0 已经冻结的 C2 operator；
+>    - 每个时间slot的30D snapshot multiset保持不变；
+>    - 只破坏跨时间 realization pairing。
+>
+> 不允许发明新的 surrogate。
+>
+> ---
+>
+> ### F. Exact null test
+>
+> 因每 context 有4个 matched source pairs，
+>
+> 对：
+>
+> \[
+> \delta_{c,r}
+> \]
+>
+> 做全部：
+>
+> \[
+> 2^4=16
+> \]
+>
+> source-pair sign-flip permutations。
+>
+> aggregate test 也采用 paired/sign-flip null。
+>
+> 不依赖 asymptotic normality。
+>
+> ---
+>
+> ### G. Frozen gates
+>
+> `G1_SOURCE_INFORMATION`
+>
+> FULL_DYNAMIC：
+>
+> - median context crossnobis > 0；
+> - ≥6/8 contexts >0；
+> - exact aggregate p < 0.05。
+>
+> `G2_DYNAMIC_ADVANTAGE`
+>
+> FULL_DYNAMIC − STATIC_COLLAPSED：
+>
+> - median >0；
+> - ≥6/8 contexts >0；
+> - paired exact p<0.05。
+>
+> `G3_PAIRING_ADVANTAGE`
+>
+> FULL_DYNAMIC − C2：
+>
+> - median >0；
+> - ≥6/8 contexts >0；
+> - paired exact p<0.05。
+>
+> 若 G1 fail：
+>
+> `CDSI_T01_NO_SOURCE_INFORMATION_STOP`
+>
+> 若 G1 pass 但 G2/G3 fail：
+>
+> `CDSI_T01_STATIC_INFORMATION_ONLY_HOLD`
+>
+> 若三门全部 pass：
+>
+> `CDSI_T01_1D_INFORMATION_PASS`
+>
+> 明确注明：
+>
+> **PASS 只证明当前 A→B source displacement 方向存在 nuisance-adjusted dynamic source information，不证明二维连续source identifiability。**
+>
+> ---
+>
+> ### H. 额外但只读的 source geometry audit
+>
+> 从冻结 manifests/configs 自动提取：
+>
+> - S2/S2X 所有 H01/H02 source XY；
+> - 已冻结但未运行的 R3A source XY。
+>
+> 每 House 构造 source displacement matrix：
+>
+> \[
+> D_S=[S_1-S_0,S_2-S_0,\dots]
+> \]
+>
+> 输出：
+>
+> - rank；
+> - singular values；
+> - condition number；
+> - convex-hull area；
+> - 是否足以支撑二维 T0.2。
+>
+> **只审计，不运行R3A。**
+>
+> ---
+>
+> ### I. 结果包
+>
+> 必须包含：
+>
+> - exact 64-run manifest；
+> - paired A/B audit；
+> - source coordinates；
+> - per-context q；
+> - per-context crossnobis；
+> - FULL/STATIC/C2 comparison；
+> - all exact permutation distributions；
+> - covariance estimator audit；
+> - scripts；
+> - hashes；
+> - `THEORY_INTERPRETATION.md`。
+>
+> 完成后 STOP。
+
+我认为这就是现在**最小、最干净、最值得做的一刀**。
+
+它很快，因为完全不用重新跑 300 s PMFS，也不用训练模型，本质上只是已有 64 个 tensor 的统计审计。正常情况下应该是分钟级而不是小时级。
+
+而且结果非常有决策力：
+
+\[
+\boxed{\text{T0.1 FAIL}}
+\]
+
+我们就不再救 CDSI。
+
+\[
+\boxed{\text{T0.1 PASS}}
+\]
+
+才有资格进入二维 source geometry / R3A 最小补点阶段。
+
+至于 3D，**先不动**。只有后面数据证明“2D 信息退化，而加入 \(z,w\) 可以恢复 \(I_{\rm eff}\)”时，我们才把 3D 升为有理论依据的辅助创新，而不是现在先做工程升级。
