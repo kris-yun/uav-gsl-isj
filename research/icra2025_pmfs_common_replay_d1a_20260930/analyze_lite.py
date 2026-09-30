@@ -33,9 +33,10 @@ def main():
     trace=[]
     for idx,b in enumerate(beliefs):
         full=np.asarray(b['source_map'],dtype='<f8');assert np.isfinite(full).all();nx,ny=b['width'],b['height']
-        cells=np.asarray(b['free_cells'],int);assert cells.shape[1]==2
+        free=np.asarray(b['free_cells'],int);assert free.ndim==1
+        cells=np.column_stack([free%nx,free//nx])
         # Native source_map storage is x + y*width; use only free_cells for diagnostics.
-        probs=full[cells[:,0]+cells[:,1]*nx];assert (probs>=0).all() and probs.sum()>0
+        probs=full[free];assert (probs>=0).all() and probs.sum()>0
         coords=np.array([b['origin_x'],b['origin_y']])+b['resolution']*(cells+.5)
         normalized=probs/probs.sum();mean=(normalized[:,None]*coords).sum(axis=0);peak=coords[int(probs.argmax())]
         entropy=-float(np.sum(normalized[normalized>0]*np.log(normalized[normalized>0])))
@@ -129,7 +130,7 @@ def main():
     with (run/'sim_pose_trace.csv').open() as f:poses=[r for r in csv.DictReader(f) if float(r['t_sim_s'])<=300]
     xy=np.array([[float(r['x']),float(r['y'])] for r in poses]);hits=np.array([[e['x'],e['y']] for e in events if e['encounter']])
     nx,ny=last['width'],last['height'];posterior=np.zeros((ny,nx));full=np.array(last['source_map'])
-    for i,j in last['free_cells']:posterior[j,i]=full[i+j*nx]
+    for index in last['free_cells']:posterior[index//nx,index%nx]=full[index]
     pextent=[last['origin_x'],last['origin_x']+nx*last['resolution'],last['origin_y'],last['origin_y']+ny*last['resolution']]
     panels=[(occupancy,extent,'Occupancy / actual trajectory'),(posterior,pextent,f'Native belief: {native_error:.3f} m'),
         (x[1,:h,:w],extent,'Encounter-local wind channel'),(x[2,:h,:w],extent,'Encounter channel')]
