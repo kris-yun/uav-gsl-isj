@@ -96,7 +96,9 @@ def main(out):
                 same_thread_contract=a['omp_num_threads']==b['omp_num_threads']==1,
                 crossed_source=a['source_id']!=b['source_id'])
             assert all(checks.values()), (aid, checks)
-            assert b['parent_s2_run_id'] == aid
+            # S2X references the context's r01 contract for all four new runs;
+            # parent_s2_run_id is provenance, not a paired-realization identity.
+            assert b['parent_s2_run_id'] == f'ocb_r2_cfg{c:02d}_r01'
             # The generator folds these 32-bit master seeds and adds fixed salts.
             # Different masters therefore initialize different streams; ordinal r is not a stream key.
             same_master = a['master_seed'] == b['master_seed']
@@ -104,6 +106,7 @@ def main(out):
             pairs.append(dict(context=f'X{c:02d}', replicate_ordinal=r, a_run_id=aid, b_run_id=bid,
                 **checks, a_master_seed=a['master_seed'], b_master_seed=b['master_seed'],
                 same_master_stream_identity=False, same_replicate_ordinal=True,
+                b_context_provenance_parent=b['parent_s2_run_id'],
                 parameter_differences=','.join(differences),
                 scientific_changes='source_xyz;master_rng_seed', gate_a='FAIL'))
     write_tsv(out/'EXACT_64_RUN_MANIFEST.tsv', inventory)
