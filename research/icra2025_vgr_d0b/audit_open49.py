@@ -8,7 +8,7 @@ OUT = ROOT / 'evidence/icra2025_vgr_d0b'
 CACHE = Path(r'C:\GADEN_OCB_R2_ARCHIVE\d0b_supervised_20260930')
 ZSTD = r'D:\Anaconda\Library\bin\zstd.exe'
 def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
-def dump(p,x): Path(p).write_text(json.dumps(x,indent=2,sort_keys=True,ensure_ascii=True)+'\n',encoding='utf-8')
+def dump(p,x): Path(p).write_text(json.dumps(x,indent=2,sort_keys=True,ensure_ascii=True)+'\n',encoding='utf-8',newline='\n')
 def load(p): return json.loads(Path(p).read_text(encoding='utf-8'))
 def rows(b): return list(csv.DictReader(io.StringIO(b.decode('utf-8'))))
 def archive_raw(p):
