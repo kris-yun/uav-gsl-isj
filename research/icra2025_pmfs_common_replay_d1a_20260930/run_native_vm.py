@@ -22,7 +22,7 @@ def main():
     gas=view/'gas_simulations'/row['wind_id'];gas.mkdir(parents=True);(gas/'FilamentSimulation_frozen_ocb').symlink_to(leaf,target_is_directory=True)
     with (leaf/'RECORD_TIMELINE.tsv').open() as f:timeline=list(csv.DictReader(f,delimiter='\t'))
     with (run/'record_time_map.csv').open('w') as f:
-        w=csv.writer(f);w.writerow(['physical_sim_time_s','save_record_id'])
+        w=csv.writer(f,delimiter='\t',lineterminator='\n');w.writerow(['physical_sim_time_s','save_record_id'])
         for t in timeline:w.writerow([t['internal_simulation_time_s'],t['record_index']])
     resource.setrlimit(resource.RLIMIT_CORE,(0,0))
     env=dict(os.environ,ROS_DOMAIN_ID='226',RMW_IMPLEMENTATION='rmw_fastrtps_cpp',ROS_LOG_DIR=str(run/'ros_log'),
@@ -71,6 +71,8 @@ def main():
             if p.exists() and p.stat().st_size:
                 initial=json.loads(p.read_text().splitlines()[0]);assert initial['time_s']==0 and initial['search_time_s']==0;break
             if child.poll() is not None:raise RuntimeError('launch exited before paused Native initialization')
+            if 'Traceback (most recent call last)' in (run/'launch.log').read_text(errors='replace'):
+                raise RuntimeError('pre-clock adapter initialization error')
             time.sleep(.2)
         else:raise TimeoutError('Native paused initialization')
         capture=subprocess.run(['python3',str(ROOT/'capture_map_vm.py'),str(run/'map_receipt.json')],env=env,capture_output=True,text=True,timeout=70)
