@@ -1,0 +1,16 @@
+--- /home/zyc/ros2_ws/brg_closedloop_20260927/src/gsl_server/src/gsl_server/algorithms/PMFS/PMFS_utils.cpp
++++ /home/zyc/d1a_common_replay_20260930/logger_build/PMFS_utils.cpp
+@@ -1,3 +1,5 @@
++#include <string>
++namespace GSL::Utils { std::string D1A_readonlyDrawDigest(); }
+ #include <stdexcept>
+ #include <iomanip>
+ #include <cstdlib>
+@@ -109,6 +111,7 @@
+     Vector2 estimate = Utils::ExpectedValue(Grid2D<double>(sourceProbability, occupancy, gridMetadata), 0.05);
+     f << std::setprecision(17) << "{\"stage\":\"" << stage << "\",\"time_s\":" << node->now().seconds()
+       << ",\"search_time_s\":" << (node->now()-startTime).seconds()
++      << ",\"scientific_random_stream_digest\":\"" << Utils::D1A_readonlyDrawDigest() << "\""
+       << ",\"iterations_counter\":" << iterationsCounter
+       << ",\"brg_event_count\":" << brgEvent << ",\"width\":" << gridMetadata.dimensions.x
+       << ",\"height\":" << gridMetadata.dimensions.y << ",\"resolution\":" << gridMetadata.cellSize

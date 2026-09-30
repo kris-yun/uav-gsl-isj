@@ -1,0 +1,47 @@
+--- /home/zyc/ros2_ws/brg_closedloop_20260927/src/gsl_server/src/gsl_server/algorithms/Common/States/StopAndMeasureState.cpp
++++ /home/zyc/d1a_common_replay_20260930/logger_build/StopAndMeasureState.cpp
+@@ -1,3 +1,7 @@
++#include <stdexcept>
++#include <iomanip>
++#include <fstream>
++#include <cstdlib>
+ #include <gsl_server/algorithms/Common/Algorithm.hpp>
+ #include <gsl_server/algorithms/Common/States/StopAndMeasureState.hpp>
+ #include <gsl_server/algorithms/Common/Utils/Math.hpp>
+@@ -56,6 +60,36 @@
+ 
+             GSL_INFO("avg_gas={:.2};  avg_windSpeed={:.2};  avg_wind_dir={:.2}", concentration, windSpeed, windDirection);
+             writeMeasurementTrace(concentration, windSpeed, windDirection);
++
++            // D1A output only: snapshot completed block; no topic/RNG/state/planner writes.
++            const char* d1aPath = std::getenv("D1A_EVENTS_RAW_JSONL");
++            if (d1aPath && *d1aPath) {
++                const char* run = std::getenv("D1A_RUN_ID");
++                std::ofstream stream(d1aPath, std::ios::app);
++                const auto& p = algorithm->currentRobotPose.pose.pose;
++                stream << std::setprecision(17)
++                  << "{\"run_id\":\"" << (run ? run : "UNSET") << "\",\"measurement_cycle_id\":" << measurement_cycle_counter_
++                  << ",\"physical_time_s\":" << algorithm->node->now().seconds()
++                  << ",\"window_start_s\":" << measure_window_start_.seconds()
++                  << ",\"window_end_s\":" << algorithm->node->now().seconds()
++                  << ",\"xyz\":[" << p.position.x << ',' << p.position.y << ',' << p.position.z
++                  << "],\"quaternion_xyzw\":[" << p.orientation.x << ',' << p.orientation.y << ',' << p.orientation.z << ',' << p.orientation.w
++                  << "],\"gas_value_used_ppm\":" << concentration << ",\"gas_threshold_ppm\":" << algorithm->thresholdGas
++                  << ",\"hit\":" << (concentration > algorithm->thresholdGas ? "true" : "false")
++                  << ",\"local_wind_speed_used_m_s\":" << windSpeed << ",\"map_downwind_direction_used_rad\":" << windDirection
++                  << ",\"gas_samples_ppm\":[";
++                for (size_t i=0;i<gas_v.size();++i) { if(i)stream << ','; stream << gas_v[i]; }
++                stream << "],\"gas_sample_clock_s\":[";
++                for (size_t i=0;i<gas_time_v.size();++i) { if(i)stream << ','; stream << gas_time_v[i].seconds(); }
++                stream << "],\"raw_local_wind_speed_samples_m_s\":[";
++                for (size_t i=0;i<windSpeed_v.size();++i) { if(i)stream << ','; stream << windSpeed_v[i]; }
++                stream << "],\"raw_map_downwind_direction_samples_rad\":[";
++                for (size_t i=0;i<windDirection_v.size();++i) { if(i)stream << ','; stream << windDirection_v[i]; }
++                stream << "]}\n";
++                stream.flush();
++                if (!stream) throw std::runtime_error("D1A_READONLY_LOG_WRITE_FAILED");
++            }
++
+             algorithm->processGasAndWindMeasurements(concentration, windSpeed, windDirection);
+         }
+     }

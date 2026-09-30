@@ -1,0 +1,39 @@
+--- /home/zyc/ros2_ws/brg_closedloop_20260927/src/gsl_server/src/gsl_server/algorithms/Common/Utils/Math.cpp
++++ /home/zyc/d1a_common_replay_20260930/logger_build/Math.cpp
+@@ -1,3 +1,20 @@
++
++#include <cstdint>
++#include <cstring>
++#include <sstream>
++namespace GSL::Utils {
++    static thread_local uint64_t D1A_draw_count=0;
++    static thread_local uint64_t D1A_draw_hash=14695981039346656037ULL;
++    template<typename T> T D1A_readonlyRecord(T value) {
++        unsigned char bytes[sizeof(T)]; std::memcpy(bytes,&value,sizeof(T));
++        for (auto b:bytes) { D1A_draw_hash^=b; D1A_draw_hash*=1099511628211ULL; }
++        ++D1A_draw_count; return value;
++    }
++    std::string D1A_readonlyDrawDigest() {
++        std::ostringstream stream; stream << D1A_draw_count << ':' << D1A_draw_hash;
++        return stream.str();
++    }
++}
+ #include <gsl_server/algorithms/Common/Utils/Math.hpp>
+ #include <random>
+ 
+@@ -57,13 +74,13 @@
+             previousStdev = stdev;
+         }
+ 
+-        return mean + dist(RNGengine);
++        return D1A_readonlyRecord(mean + dist(RNGengine));
+     }
+ 
+     template <typename T> T uniformRandomT(T min, T max)
+     {
+         static thread_local std::uniform_real_distribution<T> distribution{0.0, 0.999};
+-        return min + distribution(RNGengine) * (max - min);
++        return D1A_readonlyRecord(min + distribution(RNGengine) * (max - min));
+     }
+ 
+     float uniformRandomF(float min, float max)
