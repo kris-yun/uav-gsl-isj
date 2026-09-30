@@ -10,6 +10,7 @@ import zipfile
 ROOT=Path(__file__).resolve().parents[2]
 EV=ROOT/'evidence/cdsi_t01b'
 RESEARCH=ROOT/'research/cdsi_t01b'
+INPUT=ROOT/'evidence/ocb_r2/mechanism_census_r0/inputs'
 
 
 def digest(path):
