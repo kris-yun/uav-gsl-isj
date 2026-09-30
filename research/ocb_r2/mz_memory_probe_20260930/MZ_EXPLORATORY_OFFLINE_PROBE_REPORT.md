@@ -178,3 +178,46 @@ flow, or related model be developed.
 This analysis is post-hoc on discovery data and must not be used as a
 confirmation PASS. It is a theory-selection diagnostic only. H01/H02
 confirmation and H03 remain sealed.
+
+
+## Additional comparison — path-distribution signal remains much cleaner than naive predictive closure
+
+As a second post-hoc diagnostic, the already-frozen R1 lag effects were
+combined with **fixed equal weights**; no lag was selected by target result.
+
+For lags 1–3:
+
+`I_PATH_1_3 = (I_LAG1 + I_LAG2 + I_LAG3) / 3`
+
+Results:
+
+- pooled median: `+0.01214`
+- House01 median: `+0.01247`
+- House02 median: `+0.01007`
+- positive source×context groups: `16/16`
+- positive contexts: `8/8`
+
+For lags 1–5:
+
+`I_PATH_1_5 = mean(I_LAG1 ... I_LAG5)`
+
+Results:
+
+- pooled median: `+0.00914`
+- House01 median: `+0.00914`
+- House02 median: `+0.00747`
+- positive groups: `15/16`
+- positive contexts: `7/8`
+
+This contrast is informative:
+
+- a simple nearest-history **predictive** memory correction is not stably
+  source-discriminative across both Houses;
+- a simple multi-lag **path-distribution** dependence functional is stable
+  across both Houses.
+
+Therefore the next method should not begin from a first-order prediction model.
+The current evidence more directly supports a source-conditioned broad-memory
+path/dependence factor, with Mori-Zwanzig retained as a physical explanation
+for projection-induced memory unless a later conditional-memory gate supports
+a stronger closure claim.
