@@ -1,0 +1,82 @@
+{
+  "architecture": "exact upstream GSL_train.ipynb cell2 UNet(3,1)",
+  "audit_sha256": "21f5c3e8aa6a94f184645e19c65b66ddc95883b80ba32e84e1a4fa22058d2b66",
+  "batch_size": 8,
+  "budget_rationale": "One bounded target-domain engineering headroom test: 20 fixed epochs, same official loss/optimizer/LR/batch. Official notebook full run uses 100 epochs. No continuation or tuning after target.",
+  "checkpoint": "lowest grouped-validation official loss; strict decrease; earliest tie",
+  "checkpoint_directory": "C:\\GADEN_OCB_R2_ARCHIVE\\d0b_supervised_20260930\\training",
+  "code_sha256": {
+    "audit_open49.py": "e14b76508cb8f60eaec7bdbd20f5bfbaa9bd7bbb02c1703b80835d1c9ebc302d",
+    "evaluate_existing_target.py": "fa6cca373a38132406514a3664b50fc3dad3813119516d895837ee8f371b36fa",
+    "finalize_phase0.py": "f07eeda9bf8683c7d997ef8fa3c3b6a3902771399f73dbc66ff14c7083b0a00f",
+    "freeze_training.py": "158baa0a4cef4b1597b0bab19aa49e642656841a0386599e6f4a5f242b5651fd",
+    "prepare_open49.py": "c3159a016c1b4f3a546bfb0c2c937c9823900a70de412ba700ea65bc0525b1a6",
+    "train_exact_unet.py": "1e28b30e1bacc19b0f850373c6711c093199f4e887ade45a861145dee89ba0a7",
+    "verify_preparation.py": "bc8292bb8ce2f9fd1e835b855afc657ce71fbc5663844ac0d509994a7f8e84ff"
+  },
+  "confirmation": false,
+  "data_loader_workers": 0,
+  "deterministic": true,
+  "early_stopping": null,
+  "engineering_gate": {
+    "plausible_max_m": 3.0,
+    "pmfs_reference_m": 0.8320478542107147,
+    "promising_max_m": 1.5,
+    "promising_min_improvement_fraction": 0.5,
+    "zero_shot_mean_m": 4.813847963183796
+  },
+  "house03": false,
+  "inference_padding": 0,
+  "initialization": "random, no checkpoint warm start",
+  "input_manifest_sha256": "f8a14abd8d0563f6adf675757118593f6e12d107aedca4b750e6101a2c960369",
+  "learning_rate": 1e-05,
+  "local_python": "D:\\Anaconda\\envs\\DL_5060_New\\python.exe",
+  "loss": "exact upstream CustomLoss(positive_weight=5)",
+  "max_epochs": 20,
+  "normalization": "none",
+  "notebooks_sha256": {
+    "GSLInference.ipynb": "a719d5b80b2737e2e4a4deb3575d1fb726561187a1a7f691b7699310d9b7fb9b",
+    "GSL_train.ipynb": "6e18cff0eaeaeb1f3ae6423b93228849362c3ea31d4c77da68836630079df7a2",
+    "labeler.ipynb": "eede6ba1e4526f3a587a927a621401c80a4e07fe427b62ff634f8cf0f6178154"
+  },
+  "optimizer": "Adam",
+  "precision": "float32, no AMP",
+  "rotations": [
+    0,
+    90,
+    180,
+    270
+  ],
+  "scheduler": {
+    "factor": 0.5,
+    "mode": "min",
+    "name": "ReduceLROnPlateau",
+    "patience": 5
+  },
+  "seed": 2026093019,
+  "split": "Historical entire-source train/dev split preserved; additional historical OPEN H02 trajectory assigned train; no prefix/rotation leakage",
+  "target_case": "ocb_r2_cfg00_r01",
+  "target_new_run_forbidden": true,
+  "test_role": "Previously observed OPEN development test, not untouched validation; training z=.2 vs current target z=.3 and original source location differ.",
+  "train_augmented_samples": 2212,
+  "train_physical_runs": 36,
+  "train_prefixes": 553,
+  "train_sources": [
+    "House01/pmfs_27_1",
+    "House01/pmfs_27_2",
+    "House02/pmfs_11_20",
+    "House02/pmfs_12_20",
+    "House02/pmfs_1_1",
+    "House02/pmfs_2_1",
+    "House02/pmfs_2_37"
+  ],
+  "training_padding": -1,
+  "validation_augmented_samples": 576,
+  "validation_physical_runs": 8,
+  "validation_prefixes": 144,
+  "validation_sources": [
+    "House01/pmfs_13_18",
+    "House01/pmfs_13_19"
+  ],
+  "weight_decay": 0.1
+}
