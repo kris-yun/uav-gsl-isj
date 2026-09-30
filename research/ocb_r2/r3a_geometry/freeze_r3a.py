@@ -127,7 +127,7 @@ def main() -> None:
         "outputs": {"source_panel_sha256": sha(a.out / "R3A_NEW_SOURCES_4.tsv"),
                     "runlist_sha256": sha(a.out / "R3A_PROSPECTIVE_RUNLIST_64.tsv")},
         "run_count": len(runs), "seed_count": len(seeds), "seed_overlap_with_discovery": 0}
-    (a.out / "R3A_DESIGN_AUDIT.json").write_text(json.dumps(audit, indent=2, sort_keys=True) + "\n")
+    (a.out / "R3A_DESIGN_AUDIT.json").write_bytes((json.dumps(audit, indent=2, sort_keys=True) + "\n").encode())
     print(json.dumps({"selected": selected, "audit": audit}, indent=2, sort_keys=True))
 
 

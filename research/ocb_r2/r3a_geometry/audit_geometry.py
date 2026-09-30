@@ -111,7 +111,7 @@ def main() -> None:
                 "unexposed_clearance_ge_0p6_shell_counts": shell}
         out["houses"][house] = house_result
     a.out.mkdir(parents=True, exist_ok=True)
-    (a.out / "R3A_GEOMETRY_CENSUS.json").write_text(json.dumps(out, indent=2, sort_keys=True) + "\n")
+    (a.out / "R3A_GEOMETRY_CENSUS.json").write_bytes((json.dumps(out, indent=2, sort_keys=True) + "\n").encode())
     with (a.out / "R3A_ELIGIBLE_CELLS.tsv").open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(eligible_rows[0]), delimiter="\t", lineterminator="\n")
         w.writeheader(); w.writerows(eligible_rows)
