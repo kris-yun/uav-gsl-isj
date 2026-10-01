@@ -1,146 +1,234 @@
-# P3T-D0 — Physically grounded 3-D Gaussian-support kill test
+# P3T-D0 — Controlled Gaussian-support test for source evidence
 
 Date: 2026-10-01
-State: PRE-REGISTERED DEVELOPMENT TEST
-Execution: run only after R1P5 has completed and stopped.
+State: **FINAL PRE-REGISTRATION / NO SCIENTIFIC EXECUTION YET**
 
-## Scientific question
+Parent result: \`PMFS3D_R1P5_HOLD_PARTIAL_SELECTIVITY\`.
 
-R1 restored xyz filament transport but retained a hard observation rule: a filament contributes a hit only when its point center occupies the original PMFS xy cell and the sensor's exact 3-D voxel layer.
+## 1. Scientific question
 
-R1 produced:
-- identical Oracle-2D and Oracle-3D truth log scores in 4/4 cases;
-- zero truth-template support at confident observation cells in both oracle arms;
-- increased truth-tie plateaus in Oracle-3D.
+R1/R1P5 established two facts that must be separated:
 
-GADEN/Gaden-RT instead represents each physical filament by a 3-D Gaussian distribution whose support grows under diffusion.
+1. retained 3-D transport changes many false-source scores;
+2. it produces exactly zero true-source score gain in all four frozen cases.
 
-D0 asks:
+The R1 Oracle-3D observation operator is extremely sparse: a point filament contributes only when its center occupies the relevant PMFS xy cell and the sensor z-layer. Historical GADEN/Gaden-RT instead models a filament as a continuous 3-D Gaussian concentration distribution.
 
-If the exact same 3-D center trajectories are represented as physical Gaussian filaments rather than point hits, does 3-D transport begin to create positive evidence for the true source instead of only suppressing false sources?
+D0 asks two ordered questions:
 
-This is a representation kill test. It is not world-model training.
+### Q1 — support-restoration question
 
-## Frozen inputs
+Does replacing point support by the physically grounded Gaussian support create positive evidence at the true source?
 
-Exactly the same four historical R1 terminal cases, candidate leaves, measured hit/confidence maps, static CFD state0, occupancy, source heights, deterministic source draws and transport seeds as R1.
+### Q2 — 3-D-specific question
+
+If positive evidence is restored, is the gain materially larger/better when the same Gaussian observation operator is driven by 3-D transport trajectories rather than the collapsed 2-D trajectories?
+
+Q2 is required because a Gaussian kernel can improve overlap merely by smoothing. A D0 result cannot be used to support the 3-D world-model thesis unless the 3-D arm is distinguished from the matched 2-D Gaussian control.
+
+This is still a representation kill test. It is not world-model training.
+
+## 2. Frozen cases and inputs
+
+Exactly the four historical R1 terminal cases:
+
+- House01_seed0_off_off
+- House01_seed1_off_off
+- House02_seed0_off_off
+- House02_seed1_off_off
+
+Preserve:
+- active candidate leaves and source ownership;
+- measured hit-probability/confidence maps;
+- Oracle-2D and Oracle-3D transport centers;
+- state0 CFD contract;
+- occupancy/geometry;
+- source height convention;
+- deterministic source draws and transport keys;
+- PMFS likelihood and posterior normalization.
 
 No H03.
-No new GADEN.
-No new plume realization.
-No new trajectory.
+No confirmation.
+No new GADEN plume.
+No new trajectory seed.
 No training.
+No closed loop.
 
-## Arms
+## 3. Four arms
 
-A — R1 Oracle-3D Point:
-read frozen R1 output as the control.
+### P2 — frozen Oracle-2D Point
 
-B — Oracle-3D Gaussian:
-use exactly the same emitted filament centers and center dynamics as R1 Oracle-3D.
+Read the completed R1 Oracle-2D score/maps. No new computation except integrity checks.
 
-The only scientific change is the filament representation / observation operator.
+### P3 — frozen Oracle-3D Point
 
-For filament k at time t:
+Read the completed R1 Oracle-3D score/maps. No new computation except integrity checks.
 
-X_(k,t) follows Normal(mu_(k,t), Sigma_(k,t))
+### G2 — Oracle-2D Gaussian support control
 
-where:
-- mu_(k,t) is the exact R1 3-D filament-center trajectory;
-- Sigma_(k,t) is derived from the historical GADEN/Gaden-RT diffusion configuration associated with the dataset;
-- no covariance parameter may be fitted to source truth, rank, margin or R1 result.
+Use the exact frozen Oracle-2D filament center trajectories.
 
-If one physically supported covariance schedule cannot be recovered from existing configuration/provenance, D0 is INVALID/STOP. Do not tune sigma.
+The 2-D transport state has no resolved z coordinate. For the Gaussian observation calculation, embed its center trajectory on the frozen PMFS sensor plane. This is an intentionally optimistic 2-D support control: it asks whether continuous support alone, without retained vertical/path state, can explain the gain.
 
-Important semantic correction:
+Use the same Gaussian mass, diffusion schedule, sensor-query positions, gas-detection threshold and PMFS likelihood as G3.
 
-A GADEN Gaussian filament is a continuous gas-concentration distribution, not a random point whose cell-membership probability should be combined with an invented union rule. D0 must therefore use the native physical concentration semantics.
+No parameter may be separately selected for G2.
 
-For each frozen PMFS query location x_i and timestep t, compute only the on-demand concentration contributed by the Gaussian filaments:
+### G3 — Oracle-3D Gaussian support
 
-C_i,t = Sum_k C_k(x_i ; mu_(k,t), Sigma_(k,t), filament_mass)
+Use the exact frozen Oracle-3D xyz filament-center trajectories.
 
-using the historical GADEN/Gaden-RT concentration equation and the provenance-recovered filament mass and diffusion schedule.
+Use exactly the same Gaussian physical parameters and observation operator as G2.
 
-Convert concentration to a hit using exactly the same fixed gas-detection threshold that was used to define the measured PMFS hit/miss observations:
+The G2-vs-G3 difference is therefore the retained transport state/path, not a different smoothing width or scorer.
 
-hit_i,t = 1 if C_i,t >= C_detection, else 0.
+## 4. Gaussian concentration semantics
 
-The simulated hit probability is the temporal hit frequency:
+A GADEN filament is a continuous gas-concentration distribution, not a random point-membership probability.
 
-Hhat_i = mean_t hit_i,t.
+For every frozen query location x_i and timestep t:
 
-No dense 3-D concentration volume is required: concentration is queried only at the frozen PMFS observation/grid locations, following the on-demand Gaden-RT principle.
+\[
+C_{i,t}=\sum_k C_k(x_i;\mu_{k,t},\Sigma_{k,t},m_f)
+\]
 
-Filament mass, diffusion parameters and C_detection must all come from frozen historical configuration or sensor provenance. None may be selected by looking at source rank or truth location. If a unique compatible set cannot be recovered, D0 is INVALID/STOP rather than calibrated after the fact.
+using the historical GADEN/Gaden-RT concentration equation.
 
-For mechanism diagnostics only, also export continuous concentration support and the number of confident observation cells with nonzero Gaussian concentration. These diagnostics cannot replace the frozen hit-probability score.
+The physical parameters must be recovered from historical configuration/provenance:
 
-Use the same frozen PMFS likelihood to score the resulting hit-probability maps. Do not introduce a learned scorer.
+- filament mass or equivalent released mass convention;
+- diffusion/growth schedule defining Sigma;
+- gas-detection threshold used to create the PMFS hit/miss observations.
 
-## Software controls before truth scoring
+Convert concentration to a hit with the frozen threshold:
 
-All must pass:
+\[
+h_{i,t}=\mathbf{1}[C_{i,t}\ge C_{\rm det}]
+\]
 
-1. Tiny-covariance synthetic unit test recovers the expected point-support behavior under a controlled single-filament case; this is a software test, not a claim of exact equivalence to R1's discrete collision rule.
-2. On-demand Gaussian concentration matches an independent implementation of the historical GADEN/Gaden-RT concentration equation.
-3. Filament mass, diffusion schedule and gas-detection threshold are provenance-recovered before truth evaluation.
-4. Occupied geometry and outside-volume handling follow the frozen R1 geometry contract; no source-specific repair is allowed.
-5. Candidate/source draws, center trajectories and CFD queries match R1.
-6. Measured map and PMFS likelihood code are unchanged.
-7. Deterministic repeat is byte-identical or numerically identical under a frozen tolerance.
+and simulated hit probability:
 
-## Primary gate
+\[
+\hat H_i=\frac{1}{T}\sum_t h_{i,t}.
+\]
 
-A useful representation must create positive truth evidence. Merely suppressing another false source is insufficient.
+Only on-demand concentration at the frozen PMFS query locations is required. Do not build a dense 3-D concentration volume.
 
-P3T_D0_GAUSSIAN_SUPPORT_POSITIVE requires all:
+If a unique compatible physical parameter set cannot be recovered before truth evaluation:
+\`P3T_D0_INVALID_STOP\`.
 
-- Gaussian truth log score is greater than Point truth log score in at least 3/4 cases.
-- Truth rank improves in at least 3/4 cases.
-- Median active-leaf truth-rank improvement is at least 10 positions.
-- Truth-tie count decreases in at least 3/4 cases.
-- Truth-vs-best-wrong source margin improves in at least 3/4 cases.
-- No more than one case has worse truth rank.
+Do not tune sigma, mass or threshold against rank, truth or margin.
+
+## 5. Pre-scoring integrity/software gates
+
+All must pass before truth is opened:
+
+1. P2/P3 reproduce frozen R1 scores, ranks and maps.
+2. G2 and G3 use identical Gaussian mass/diffusion/threshold parameters.
+3. G2 and G3 use the correct corresponding frozen center trajectories.
+4. Gaussian concentration is independently checked against the historical GADEN/Gaden-RT equation on deterministic synthetic probes.
+5. Tiny-covariance synthetic behavior is qualitatively consistent with point support; do not claim byte equivalence to R1 collision semantics.
+6. measured PMFS maps and likelihood code are unchanged.
+7. no truth coordinate enters parameter selection.
+8. deterministic repeat passes.
+9. all input/code/config hashes are frozen before scientific scoring.
+
+Any failure -> \`P3T_D0_INVALID_STOP\`.
+
+## 6. Gate A — does physical Gaussian support restore true-source evidence?
+
+Compare G3 against P3.
+
+\`GAUSSIAN_SUPPORT_RESTORED\` requires:
+
+- G3 truth log score > P3 truth log score in at least 3/4 cases;
+- G3 has nonzero concentration support at at least one confident observation cell for the truth in at least 3/4 cases;
+- truth-tie count decreases versus P3 in at least 3/4 cases;
+- truth rank improves in at least 3/4 cases;
+- median active-leaf rank improvement >= 10;
+- truth-vs-best-wrong margin improves in at least 3/4 cases;
+- no more than one case has worse truth rank.
 
 If truth log score improves in fewer than 3/4:
-P3T_D0_NO_POSITIVE_TRUTH_SUPPORT_STOP.
+\`P3T_D0_NO_POSITIVE_TRUTH_SUPPORT_STOP\`.
 
-If truth support improves but the rank gate fails:
-P3T_D0_HOLD_SUPPORT_NOT_DISCRIMINATIVE.
+If support/log-score improves but the rank/tie/margin gate fails:
+\`P3T_D0_HOLD_SUPPORT_NOT_DISCRIMINATIVE\`.
 
-If physics/provenance/integrity fails:
-P3T_D0_INVALID_STOP.
+## 7. Gate B — is the useful gain genuinely 3-D rather than Gaussian smoothing?
 
-## Required diagnostics
+Run only as part of the same frozen analysis after Gate A metrics are available. Compare G3 against G2.
 
-Per case:
-- Point vs Gaussian truth log score;
-- Point vs Gaussian truth midrank and pessimistic rank;
-- number of confident observation cells with nonzero truth support;
-- truth-template total support;
-- equal-score wrong-leaf count;
+\`THREED_INCREMENT_PRESENT\` requires all:
+
+- G3 truth-vs-best-wrong margin > G2 in at least 3/4 cases;
+- median (G3 margin - G2 margin) > 0;
+- median G3 truth rank <= median G2 truth rank;
+- no more than one case has worse G3 truth rank than G2;
+- at least one positive G3-vs-G2 margin case occurs in House01 and at least one in House02.
+
+Interpretation:
+
+- Gate A pass + Gate B pass:
+  \`P3T_D0_3D_GAUSSIAN_SOURCE_EVIDENCE_PASS\`
+- Gate A pass + Gate B fail:
+  \`P3T_D0_GAUSSIAN_ONLY_HOLD\`
+  meaning continuous support matters, but D0 does not yet justify a 3-D world-state contribution.
+- Gate A fail:
+  use the Gate-A STOP/HOLD result above.
+- integrity/provenance fail:
+  \`P3T_D0_INVALID_STOP\`.
+
+No result is yet a paper-level main-innovation PASS.
+
+## 8. Required diagnostics
+
+For every case and all four arms report:
+
+- truth log score;
+- truth midrank and pessimistic rank;
 - truth-vs-best-wrong margin;
+- equal-score wrong-leaf count;
+- confident observation cells with nonzero truth concentration/support;
+- truth-template total hit support;
 - source-map entropy;
-- top-5 candidate IDs;
-- runtime and memory.
+- top-5 candidate IDs.
 
-Representation diagnostics:
-- active Gaussian count over time;
-- equivalent dense 3-D voxel count;
-- storage/computation ratio;
-- query cost at the frozen PMFS observation cells.
+For G2/G3 also report:
 
-## Stop boundary
+- continuous truth concentration at confident cells before thresholding;
+- active Gaussian/filament count;
+- on-demand query count;
+- runtime and peak memory;
+- equivalent dense-volume size for reference only.
 
-After D0 decision: STOP.
+Report pairwise deltas:
 
-A positive D0 authorizes only D1: persistent 3-D Gaussian state across source updates / partial observations.
+- G3-P3;
+- G2-P2;
+- G3-G2.
 
-D0 does not authorize:
-- neural world-model training;
-- H03;
-- confirmation;
+## 9. R1P5 interaction
+
+R1P5 showed broad false-source suppression but failed cross-seed stability because H01 suppression was unstable.
+
+Therefore:
+- do not implement counterexample/hypothesis elimination in D0;
+- do not reuse R1P5 pairwise suppression as a score;
+- do not let false-source suppression rescue Gate A;
+- positive truth evidence is mandatory.
+
+## 10. STOP boundary
+
+After the D0 decision and independent audit: **STOP**.
+
+Only \`P3T_D0_3D_GAUSSIAN_SOURCE_EVIDENCE_PASS\` authorizes D1 design for a persistent/task-sufficient 3-D transport state.
+
+\`P3T_D0_GAUSSIAN_ONLY_HOLD\` authorizes only a representation review: determine whether the main opportunity is a better continuous observation model rather than persistent 3-D state.
+
+No outcome authorizes:
+- neural world-model training in the same run;
+- H03/confirmation;
 - new GADEN plume generation;
-- PMFS/ROS closed loop;
+- ROS/300 s closed loop;
 - real flight.
