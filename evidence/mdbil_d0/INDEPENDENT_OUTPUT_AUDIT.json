@@ -1,0 +1,73 @@
+{
+  "all_seven_key_outputs_byte_identical": true,
+  "decision": "MDBIL_D0_INDEPENDENT_OUTPUT_AUDIT_PASS",
+  "input_count": 64,
+  "pass": true,
+  "pass_audits": [
+    {
+      "baseline_metric_max_abs": 0.0,
+      "folds": 8,
+      "independent_decision": "MDBIL_D0_SOURCE_BLOCK_SIGNAL_HOLD",
+      "independent_gate_flags": {
+        "G1": true,
+        "G2": true,
+        "G3": false,
+        "G4": true
+      },
+      "pass": "pass1",
+      "seed_aggregation_max_abs": 0.0,
+      "seed_metric_rows": 48,
+      "split_and_same_gas_cross_wind_audit": true
+    },
+    {
+      "baseline_metric_max_abs": 0.0,
+      "folds": 8,
+      "independent_decision": "MDBIL_D0_SOURCE_BLOCK_SIGNAL_HOLD",
+      "independent_gate_flags": {
+        "G1": true,
+        "G2": true,
+        "G3": false,
+        "G4": true
+      },
+      "pass": "pass2",
+      "seed_aggregation_max_abs": 0.0,
+      "seed_metric_rows": 48,
+      "split_and_same_gas_cross_wind_audit": true
+    }
+  ],
+  "repeat_hashes": [
+    {
+      "file": "INPUT_SHA256.tsv",
+      "sha256": "47116648c125ab2485af49799632cd1c3bfbc2b13acf8e2720f6519eca32fb0b"
+    },
+    {
+      "file": "DATA_CONTRACT.json",
+      "sha256": "cf898e1cbb573bf8cafaeaa25e36782ed362da8fbe72970c05b2ae279781828c"
+    },
+    {
+      "file": "MODEL_CONFIG.json",
+      "sha256": "f505dc1b3a95f0d2cb51f1e23a8bac82e777aa4a51908cdbc12efba1f8de6f2d"
+    },
+    {
+      "file": "SEED_METRICS.tsv",
+      "sha256": "ee7ebf841cacce73172d7647666cfb53b30a61dbd10bc76a63901feb5f094a25"
+    },
+    {
+      "file": "FOLD_METRICS.tsv",
+      "sha256": "1dac51973f80da2c59e35e516d59c5ee6154a00a1f9631b7515d348b6ded210e"
+    },
+    {
+      "file": "MDBIL_D0_RESULT.json",
+      "sha256": "117939fe15b469fbad9680eb92ab54f6cdd57402578b4400a480cca64f706cba"
+    },
+    {
+      "file": "DECISION.md",
+      "sha256": "c7a9d57840ebbb054287ac1b987ace270fddf9d4ab1499e21b6d8c9772b4f735"
+    }
+  ],
+  "scope_limits": [
+    "The frozen runner does not export trained weights or latent arrays. This audit independently checks inputs, baseline diagnostics, seed aggregation and gates; it does not independently recompute learned embeddings.",
+    "z_s/z_m context decoding is prototype leave-one-out on the 24 training-context samples, not decoding a held-out meteorological class.",
+    "A/B xyz differs including z; no pure XY/candidate-ranking/PMFS or causal-identifiability claim follows."
+  ]
+}

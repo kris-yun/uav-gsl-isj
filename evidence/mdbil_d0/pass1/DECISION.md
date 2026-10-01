@@ -1,0 +1,5 @@
+# MDBIL-D0
+
+Decision: MDBIL_D0_SOURCE_BLOCK_SIGNAL_HOLD
+
+STOP. No GADEN/PMFS/closed loop.
