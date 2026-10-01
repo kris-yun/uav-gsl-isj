@@ -35,6 +35,6 @@ Hard contract:
 
 Regardless of the D0 decision, do not integrate MDBIL into PMFS in this task.
 
-Return branch + final commit; D0 decision; input/SHA contract; all 8 FOLD_METRICS rows; G1-G4; median RAW/VANILLA/MDBIL held-out accuracy; general and same-gas cross-wind ratios; z_s context leakage and z_m context decoding; deterministic repeat; and confirmation that all prohibited run counts are zero.
+Return branch + final commit; D0 decision; input/SHA contract; all 8 FOLD_METRICS rows; G1-G4; median RAW/STATIC/VANILLA/MDBIL held-out accuracy; general and same-gas cross-wind ratios; z_s context leakage and z_m context decoding; deterministic repeat; and confirmation that all prohibited run counts are zero.
 
 Then STOP.
