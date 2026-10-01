@@ -60,7 +60,22 @@ Reference:
 Garcin et al., ICML 2026, PMLR 306.
 Code: https://github.com/francelico/PERSIST
 
-### 3.3 Structured-memory parent: Flow Equivariant World Models, ICML 2026
+### 3.3 Task-sufficient state compression, ICML 2026
+
+"Learning Task-Sufficient World Models by Synergizing Agentic Exploration and Structured Modeling" identifies a second problem that matters directly here: generic high-dimensional latent states retain task-irrelevant factors, increasing cost and hurting generalization. It instead distills compact representations that are minimal and sufficient for the downstream task.
+
+Transfer:
+- full 3-D concentration reconstruction -> unnecessary target;
+- source-discriminative hidden transport factors -> task-sufficient state;
+- generic high-dimensional latent -> compact source-localization-sufficient latent;
+- informative agent probing -> UAV measurements selected to expose unresolved transport factors.
+
+This is the key answer to the objection that "going 3-D" simply restores an unaffordable high-dimensional state.
+
+Reference:
+Feng et al., "Learning Task-Sufficient World Models by Synergizing Agentic Exploration and Structured Modeling", ICML 2026, PMLR 306.
+
+### 3.4 Structured-memory parent: Flow Equivariant World Models, ICML 2026
 
 FloWM structures latent memory so it evolves consistently under self-motion and external dynamics rather than relearning those transformations from observations.
 
@@ -74,7 +89,7 @@ Reference:
 Lillemark et al., ICML 2026, PMLR 306.
 Code: https://github.com/hlillemark/flowm
 
-### 3.4 Physical sparse-volume parent: Lagrangian Gaussian fluid representations, SIGGRAPH 2026
+### 3.5 Physical sparse-volume parent: Lagrangian Gaussian fluid representations, SIGGRAPH 2026
 
 LagrangianSplats and GauSmoke show that a physically structured 3-D fluid does not require a dense voxel tensor.
 
@@ -97,13 +112,15 @@ These are parent representations, not odor-localization novelty claims.
 
 Working name:
 
-P3T-WM — Persistent 3-D Transport World Model for Probabilistic Gas Source Localization
+TS-P3T-WM — Task-Sufficient Persistent 3-D Transport World Model for Probabilistic Gas Source Localization
 
 Maintain an internal state:
 
 Z_t = {G_t, V_t, O}
 
 where G_t is a sparse set of 3-D Gaussian gas primitives, V_t is a 3-D transport/wind belief, and O is geometry/occupancy.
+
+The method is not required to reconstruct the complete 3-D plume. A compact latent U_t = C(Z_t) should retain only transport factors needed to distinguish source hypotheses. The scientific requirement is source-localization sufficiency, not pixel/voxel reconstruction fidelity.
 
 Dynamics:
 
@@ -123,26 +140,26 @@ The paper story is therefore not "PMFS was 2-D, so we make it 3-D."
 
 It is:
 
-PMFS compressed a partially observed 3-D transport process into a 2-D hit state for online tractability. Modern persistent world-state and sparse Lagrangian Gaussian representations make it possible to retain the hidden 3-D transport state while still exposing a lightweight probabilistic source map.
+PMFS compressed a partially observed 3-D transport process into a 2-D hit state for online tractability. Modern persistent world-state, task-sufficient compression, flow-equivariant memory and sparse Lagrangian Gaussian representations make it possible to retain the source-relevant hidden 3-D transport state without paying the cost of a dense 3-D plume, while still exposing a lightweight probabilistic source map.
 
 ## 5. One-main-two-auxiliary structure
 
 Main innovation:
-Persistent 3-D transport world state.
-Parent theory: PERSIST + FloWM, ICML 2026.
-Role: restore state sufficiency and transport memory under sparse moving observations.
+Task-sufficient persistent 3-D transport world model.
+Parent theory: PERSIST plus Task-Sufficient World Models, ICML 2026.
+Role: retain a persistent hidden 3-D state, but compress it to the minimal transport information sufficient for source discrimination. This directly addresses both the missing-3D-information problem and PMFS's original real-time motivation.
 
 Auxiliary innovation A:
-Physics-structured Lagrangian Gaussian gas state.
-Parent theory: LagrangianSplats + GauSmoke, SIGGRAPH 2026; gas parameters grounded by GADEN/Gaden-RT.
-Role: keep continuous 3-D transport without a dense voxel state.
+Flow-equivariant transport memory.
+Parent theory: Flow Equivariant World Models, ICML 2026.
+Role: make the hidden state evolve consistently with UAV self-motion and wind-driven external flow, preserving unobserved plume state rather than rebuilding it from each local measurement.
 
 Auxiliary innovation B:
-Counterexample-guided source hypothesis elimination.
-Parent theory: ExVerus, ICML 2026.
-Role: only if R1P5 proves broad and stable false-source suppression, convert physically validated contradictions into hypothesis elimination rather than another additive weighting term.
+Physics-structured Lagrangian Gaussian gas state.
+Parent theory: LagrangianSplats and GauSmoke, SIGGRAPH 2026; gas physics grounded by GADEN/Gaden-RT.
+Role: represent continuous 3-D gas support sparsely and physically, avoiding a dense voxel plume while retaining vertical/path information.
 
-If R1P5 fails, auxiliary B is dropped. It cannot rescue the world-model line.
+Counterexample-guided elimination remains a conditional R1P5 mechanism branch, not one of the three core thesis modules. If R1P5 passes, it may later become a source-hypothesis pruning mechanism; if it fails, the main world-model thesis is unaffected.
 
 ## 6. Novelty boundary
 
