@@ -1,0 +1,806 @@
+{
+  "all_selected_extracted_bytes_match": true,
+  "all_selected_manifest_hashes_match": true,
+  "archive_bytes": 140607059,
+  "archive_path": "/mnt/hgfs/workspace/TNQC_V5_R2_HOUSE123_SEED01_OFFLINE_HOLD_20260921_FINAL.tar.gz",
+  "archive_sha256": "81c72910b2fc912e5e0a9340d3f6b1ba20024da510ef58eb95da2ff1d8055708",
+  "archive_sidecar_match": true,
+  "cases": {
+    "House01_seed0_off_off": {
+      "O40_requested_bounds": [
+        235.8,
+        275.8
+      ],
+      "Oupdate_duration": 53.20000000000002,
+      "Oupdate_requested_bounds": [
+        222.6,
+        275.8
+      ],
+      "algorithm_sha256": "db64039fca97195cad7077ae0485ddd91ebdde898124bb77938650bdc2d2df7b",
+      "event_like_members": [],
+      "exact_event_inputs_recovered": false,
+      "first_three_average_displays": [
+        {
+          "gas_display": "0.0083",
+          "wall_epoch": "1789981299.955946818",
+          "wind_direction_display": "-1.1",
+          "wind_speed_display": "0.027"
+        },
+        {
+          "gas_display": "0.054",
+          "wall_epoch": "1789981301.956021769",
+          "wind_direction_display": "0.074",
+          "wind_speed_display": "0.05"
+        },
+        {
+          "gas_display": "0.077",
+          "wall_epoch": "1789981303.955902945",
+          "wind_direction_display": "-1.8",
+          "wind_speed_display": "0.063"
+        }
+      ],
+      "gsl_log": "native/House01_seed0_off_off/ros_log/gsl_actionserver_node_23919_1789981288994.log",
+      "logged_average_records": 136,
+      "logged_average_records_before_terminal_update": 128,
+      "parameters": {
+        "confidenceMeasurementWeight": "0.5",
+        "confidenceSigmaSpatial": "0.5",
+        "continuous_measurement_samples_file": null,
+        "kernelSigma": "0.5",
+        "kernelStretchConstant": "1.5",
+        "measurement_block_samples": "10",
+        "measurement_deduplicate_sim_timestamps": "true",
+        "measurement_settle_samples": "0",
+        "measurement_trace_file": null,
+        "pfdi_mode": "'off'",
+        "tadm_enabled": "false"
+      },
+      "previous_update_time": 222.6,
+      "reason": "No completed-block event export; log averages use two significant digits; trace lacks callback/block ownership and full-precision transformed wind aggregates.",
+      "run_id": "TNQC_R2_FRESH_House01_S0_20260921",
+      "runtime_pfdi_mode": "off",
+      "source_updates": [
+        {
+          "id": 1,
+          "map_rows": 1102,
+          "map_sha256": "fe8fbe05da92b75e29613ac0dd2167a0121593cb4a41c3d35938e147aa6303f2",
+          "sim_time": 65.6,
+          "wall_start_epoch": 1789981364.3625762
+        },
+        {
+          "id": 2,
+          "map_rows": 1102,
+          "map_sha256": "6cafcdde070aafcf0372b592ebe58e4f4156e47134a3ed51d4b6211ca8280eb1",
+          "sim_time": 118.8,
+          "wall_start_epoch": 1789981418.0437808
+        },
+        {
+          "id": 3,
+          "map_rows": 1102,
+          "map_sha256": "7abbf5b7e9f4b10db10d5145951713a0ba86b9e7bb4f9e74338eef4307dfa9b5",
+          "sim_time": 172.0,
+          "wall_start_epoch": 1789981471.3814752
+        },
+        {
+          "id": 4,
+          "map_rows": 1102,
+          "map_sha256": "eb497f4ccff2ecc52b77d8787299cc4334f6ff0746fc7c0ef884af4f1ea32cf3",
+          "sim_time": 222.6,
+          "wall_start_epoch": 1789981522.4285276
+        },
+        {
+          "id": 5,
+          "map_rows": 1102,
+          "map_sha256": "764339c5f5ab81a13ee21c3098d9b5dda394f32f52cbef5320b0480e6a84212b",
+          "sim_time": 275.8,
+          "wall_start_epoch": 1789981575.8381069
+        }
+      ],
+      "terminal_map_fields": [
+        "cell_index",
+        "grid_i",
+        "grid_j",
+        "x",
+        "y",
+        "occupancy",
+        "probability",
+        "logOdds",
+        "confidence",
+        "omega",
+        "distanceFromRobot",
+        "originalPropagationDirection_x",
+        "originalPropagationDirection_y"
+      ],
+      "terminal_time": 275.8,
+      "traces": {
+        "sensor_trace.csv": {
+          "columns": [
+            "t_sim_s",
+            "step",
+            "iteration",
+            "x",
+            "y",
+            "z",
+            "true_gas_ppm",
+            "measured_gas_ppm",
+            "sensor_mode",
+            "seed"
+          ],
+          "first_row": {
+            "iteration": "1926",
+            "measured_gas_ppm": "0.000000",
+            "seed": "0",
+            "sensor_mode": "asymmetric",
+            "step": "1",
+            "t_sim_s": "0.200000",
+            "true_gas_ppm": "0.061265",
+            "x": "-3.1700",
+            "y": "-1.7500",
+            "z": "0.3000"
+          },
+          "last_time": "300.000000",
+          "rows": 1500
+        },
+        "sim_pose_trace.csv": {
+          "columns": [
+            "t_sim_s",
+            "step",
+            "x",
+            "y",
+            "z",
+            "yaw",
+            "is_moving",
+            "seed"
+          ],
+          "first_row": {
+            "is_moving": "0",
+            "seed": "0",
+            "step": "1",
+            "t_sim_s": "0.200000",
+            "x": "-3.1700",
+            "y": "-1.7500",
+            "yaw": "0.0000",
+            "z": "0.3000"
+          },
+          "last_time": "300.000000",
+          "rows": 1500
+        },
+        "wind_trace.csv": {
+          "columns": [
+            "t_sim_s",
+            "step",
+            "iteration",
+            "x",
+            "y",
+            "z",
+            "wind_u",
+            "wind_v",
+            "wind_w",
+            "wind_speed",
+            "wind_direction_rad",
+            "seed"
+          ],
+          "first_row": {
+            "iteration": "1926",
+            "seed": "0",
+            "step": "1",
+            "t_sim_s": "0.200000",
+            "wind_direction_rad": "-2.210761",
+            "wind_speed": "0.041849",
+            "wind_u": "-0.024991",
+            "wind_v": "-0.033568",
+            "wind_w": "-0.000470",
+            "x": "-3.1700",
+            "y": "-1.7500",
+            "z": "0.3000"
+          },
+          "last_time": "300.000000",
+          "rows": 1500
+        }
+      }
+    },
+    "House01_seed1_off_off": {
+      "O40_requested_bounds": [
+        239.60000000000002,
+        279.6
+      ],
+      "Oupdate_duration": 50.60000000000002,
+      "Oupdate_requested_bounds": [
+        229.0,
+        279.6
+      ],
+      "algorithm_sha256": "db64039fca97195cad7077ae0485ddd91ebdde898124bb77938650bdc2d2df7b",
+      "event_like_members": [],
+      "exact_event_inputs_recovered": false,
+      "first_three_average_displays": [
+        {
+          "gas_display": "0.0061",
+          "wall_epoch": "1789981633.065173256",
+          "wind_direction_display": "-0.072",
+          "wind_speed_display": "0.022"
+        },
+        {
+          "gas_display": "0.056",
+          "wall_epoch": "1789981635.045987776",
+          "wind_direction_display": "0.47",
+          "wind_speed_display": "0.068"
+        },
+        {
+          "gas_display": "0.068",
+          "wall_epoch": "1789981637.045989370",
+          "wind_direction_display": "-0.8",
+          "wind_speed_display": "0.045"
+        }
+      ],
+      "gsl_log": "native/House01_seed1_off_off/ros_log/gsl_actionserver_node_24627_1789981623964.log",
+      "logged_average_records": 136,
+      "logged_average_records_before_terminal_update": 128,
+      "parameters": {
+        "confidenceMeasurementWeight": "0.5",
+        "confidenceSigmaSpatial": "0.5",
+        "continuous_measurement_samples_file": null,
+        "kernelSigma": "0.5",
+        "kernelStretchConstant": "1.5",
+        "measurement_block_samples": "10",
+        "measurement_deduplicate_sim_timestamps": "true",
+        "measurement_settle_samples": "0",
+        "measurement_trace_file": null,
+        "pfdi_mode": "'off'",
+        "tadm_enabled": "false"
+      },
+      "previous_update_time": 229.0,
+      "reason": "No completed-block event export; log averages use two significant digits; trace lacks callback/block ownership and full-precision transformed wind aggregates.",
+      "run_id": "TNQC_R2_FRESH_House01_S1_20260921",
+      "runtime_pfdi_mode": "off",
+      "source_updates": [
+        {
+          "id": 1,
+          "map_rows": 1102,
+          "map_sha256": "9c2e6fc1907736285b4ef831b6f8eee8f36a0008d1368c746745bd560f97dbb7",
+          "sim_time": 65.4,
+          "wall_start_epoch": 1789981697.4974623
+        },
+        {
+          "id": 2,
+          "map_rows": 1102,
+          "map_sha256": "22c15ece3175e051fda3272669429e294732aa46d541ad16278f579a74ca1cfe",
+          "sim_time": 118.0,
+          "wall_start_epoch": 1789981750.0969963
+        },
+        {
+          "id": 3,
+          "map_rows": 1102,
+          "map_sha256": "6eb0eca8292594891fb139cfd3e33535ace2c55a4194acfcddf592aae3edc2d1",
+          "sim_time": 176.2,
+          "wall_start_epoch": 1789981808.6694894
+        },
+        {
+          "id": 4,
+          "map_rows": 1102,
+          "map_sha256": "f9c168aca18121389cf18861be369b63aa6adefccb3781fab15d94803e2e7c13",
+          "sim_time": 229.0,
+          "wall_start_epoch": 1789981861.4683166
+        },
+        {
+          "id": 5,
+          "map_rows": 1102,
+          "map_sha256": "c6f520b38f3e789fd38291ace84bb4f75c5a06724945ada28244575fa1c08a51",
+          "sim_time": 279.6,
+          "wall_start_epoch": 1789981912.4932692
+        }
+      ],
+      "terminal_map_fields": [
+        "cell_index",
+        "grid_i",
+        "grid_j",
+        "x",
+        "y",
+        "occupancy",
+        "probability",
+        "logOdds",
+        "confidence",
+        "omega",
+        "distanceFromRobot",
+        "originalPropagationDirection_x",
+        "originalPropagationDirection_y"
+      ],
+      "terminal_time": 279.6,
+      "traces": {
+        "sensor_trace.csv": {
+          "columns": [
+            "t_sim_s",
+            "step",
+            "iteration",
+            "x",
+            "y",
+            "z",
+            "true_gas_ppm",
+            "measured_gas_ppm",
+            "sensor_mode",
+            "seed"
+          ],
+          "first_row": {
+            "iteration": "1853",
+            "measured_gas_ppm": "0.000000",
+            "seed": "1",
+            "sensor_mode": "asymmetric",
+            "step": "1",
+            "t_sim_s": "0.200000",
+            "true_gas_ppm": "0.069598",
+            "x": "-3.1700",
+            "y": "-1.7500",
+            "z": "0.3000"
+          },
+          "last_time": "300.000000",
+          "rows": 1500
+        },
+        "sim_pose_trace.csv": {
+          "columns": [
+            "t_sim_s",
+            "step",
+            "x",
+            "y",
+            "z",
+            "yaw",
+            "is_moving",
+            "seed"
+          ],
+          "first_row": {
+            "is_moving": "0",
+            "seed": "1",
+            "step": "1",
+            "t_sim_s": "0.200000",
+            "x": "-3.1700",
+            "y": "-1.7500",
+            "yaw": "0.0000",
+            "z": "0.3000"
+          },
+          "last_time": "300.000000",
+          "rows": 1500
+        },
+        "wind_trace.csv": {
+          "columns": [
+            "t_sim_s",
+            "step",
+            "iteration",
+            "x",
+            "y",
+            "z",
+            "wind_u",
+            "wind_v",
+            "wind_w",
+            "wind_speed",
+            "wind_direction_rad",
+            "seed"
+          ],
+          "first_row": {
+            "iteration": "1853",
+            "seed": "1",
+            "step": "1",
+            "t_sim_s": "0.200000",
+            "wind_direction_rad": "-0.876954",
+            "wind_speed": "0.039892",
+            "wind_u": "0.025511",
+            "wind_v": "-0.030669",
+            "wind_w": "0.022588",
+            "x": "-3.1700",
+            "y": "-1.7500",
+            "z": "0.3000"
+          },
+          "last_time": "300.000000",
+          "rows": 1500
+        }
+      }
+    },
+    "House02_seed0_off_off": {
+      "O40_requested_bounds": [
+        234.2,
+        274.2
+      ],
+      "Oupdate_duration": 50.599999999999994,
+      "Oupdate_requested_bounds": [
+        223.6,
+        274.2
+      ],
+      "algorithm_sha256": "db64039fca97195cad7077ae0485ddd91ebdde898124bb77938650bdc2d2df7b",
+      "event_like_members": [],
+      "exact_event_inputs_recovered": false,
+      "first_three_average_displays": [
+        {
+          "gas_display": "0.11",
+          "wall_epoch": "1789981966.150866753",
+          "wind_direction_display": "-3.1",
+          "wind_speed_display": "0.012"
+        },
+        {
+          "gas_display": "0.62",
+          "wall_epoch": "1789981968.130380532",
+          "wind_direction_display": "-3",
+          "wind_speed_display": "0.022"
+        },
+        {
+          "gas_display": "0.83",
+          "wall_epoch": "1789981970.168507661",
+          "wind_direction_display": "-3",
+          "wind_speed_display": "0.022"
+        }
+      ],
+      "gsl_log": "native/House02_seed0_off_off/ros_log/gsl_actionserver_node_25295_1789981955000.log",
+      "logged_average_records": 138,
+      "logged_average_records_before_terminal_update": 128,
+      "parameters": {
+        "confidenceMeasurementWeight": "0.5",
+        "confidenceSigmaSpatial": "0.5",
+        "continuous_measurement_samples_file": null,
+        "kernelSigma": "0.5",
+        "kernelStretchConstant": "1.5",
+        "measurement_block_samples": "10",
+        "measurement_deduplicate_sim_timestamps": "true",
+        "measurement_settle_samples": "0",
+        "measurement_trace_file": null,
+        "pfdi_mode": "'off'",
+        "tadm_enabled": "false"
+      },
+      "previous_update_time": 223.6,
+      "reason": "No completed-block event export; log averages use two significant digits; trace lacks callback/block ownership and full-precision transformed wind aggregates.",
+      "run_id": "TNQC_R2_FRESH_House02_S0_20260921",
+      "runtime_pfdi_mode": "off",
+      "source_updates": [
+        {
+          "id": 1,
+          "map_rows": 1053,
+          "map_sha256": "7e9f2ac1657b7cae80128e61b8bc317683148e036a0ecf0c1dce5f79b990120a",
+          "sim_time": 65.6,
+          "wall_start_epoch": 1789982030.629971
+        },
+        {
+          "id": 2,
+          "map_rows": 1053,
+          "map_sha256": "69e57b8952821c04d7301f34eacecf70b0eb97b97088fd3484721d422b8c9b25",
+          "sim_time": 119.2,
+          "wall_start_epoch": 1789982084.6657097
+        },
+        {
+          "id": 3,
+          "map_rows": 1053,
+          "map_sha256": "be2a42f5784ae0887c4fdeaac75c14454bbcabd7fe3b25ba590603dbaf0bfc0f",
+          "sim_time": 173.2,
+          "wall_start_epoch": 1789982138.7678773
+        },
+        {
+          "id": 4,
+          "map_rows": 1053,
+          "map_sha256": "4eab2493a05732d931f05000161da710a767f0884770132535f5f2c18b75b99e",
+          "sim_time": 223.6,
+          "wall_start_epoch": 1789982189.424736
+        },
+        {
+          "id": 5,
+          "map_rows": 1053,
+          "map_sha256": "52d785f45b6e180f8c729d510d1ef49b5d0acf6bc8de85cadaafb5346d28adaf",
+          "sim_time": 274.2,
+          "wall_start_epoch": 1789982240.451841
+        }
+      ],
+      "terminal_map_fields": [
+        "cell_index",
+        "grid_i",
+        "grid_j",
+        "x",
+        "y",
+        "occupancy",
+        "probability",
+        "logOdds",
+        "confidence",
+        "omega",
+        "distanceFromRobot",
+        "originalPropagationDirection_x",
+        "originalPropagationDirection_y"
+      ],
+      "terminal_time": 274.2,
+      "traces": {
+        "sensor_trace.csv": {
+          "columns": [
+            "t_sim_s",
+            "step",
+            "iteration",
+            "x",
+            "y",
+            "z",
+            "true_gas_ppm",
+            "measured_gas_ppm",
+            "sensor_mode",
+            "seed"
+          ],
+          "first_row": {
+            "iteration": "1926",
+            "measured_gas_ppm": "0.000000",
+            "seed": "0",
+            "sensor_mode": "asymmetric",
+            "step": "1",
+            "t_sim_s": "0.200000",
+            "true_gas_ppm": "0.799537",
+            "x": "-0.5000",
+            "y": "-2.5000",
+            "z": "0.3000"
+          },
+          "last_time": "300.000000",
+          "rows": 1500
+        },
+        "sim_pose_trace.csv": {
+          "columns": [
+            "t_sim_s",
+            "step",
+            "x",
+            "y",
+            "z",
+            "yaw",
+            "is_moving",
+            "seed"
+          ],
+          "first_row": {
+            "is_moving": "0",
+            "seed": "0",
+            "step": "1",
+            "t_sim_s": "0.200000",
+            "x": "-0.5000",
+            "y": "-2.5000",
+            "yaw": "0.0000",
+            "z": "0.3000"
+          },
+          "last_time": "300.000000",
+          "rows": 1500
+        },
+        "wind_trace.csv": {
+          "columns": [
+            "t_sim_s",
+            "step",
+            "iteration",
+            "x",
+            "y",
+            "z",
+            "wind_u",
+            "wind_v",
+            "wind_w",
+            "wind_speed",
+            "wind_direction_rad",
+            "seed"
+          ],
+          "first_row": {
+            "iteration": "1926",
+            "seed": "0",
+            "step": "1",
+            "t_sim_s": "0.200000",
+            "wind_direction_rad": "2.810779",
+            "wind_speed": "0.013511",
+            "wind_u": "-0.012778",
+            "wind_v": "0.004388",
+            "wind_w": "0.000316",
+            "x": "-0.5000",
+            "y": "-2.5000",
+            "z": "0.3000"
+          },
+          "last_time": "300.000000",
+          "rows": 1500
+        }
+      }
+    },
+    "House02_seed1_off_off": {
+      "O40_requested_bounds": [
+        235.60000000000002,
+        275.6
+      ],
+      "Oupdate_duration": 52.00000000000003,
+      "Oupdate_requested_bounds": [
+        223.6,
+        275.6
+      ],
+      "algorithm_sha256": "db64039fca97195cad7077ae0485ddd91ebdde898124bb77938650bdc2d2df7b",
+      "event_like_members": [],
+      "exact_event_inputs_recovered": false,
+      "first_three_average_displays": [
+        {
+          "gas_display": "0.11",
+          "wall_epoch": "1789982298.301772084",
+          "wind_direction_display": "-2.7",
+          "wind_speed_display": "0.013"
+        },
+        {
+          "gas_display": "0.68",
+          "wall_epoch": "1789982300.280979436",
+          "wind_direction_display": "-3",
+          "wind_speed_display": "0.022"
+        },
+        {
+          "gas_display": "0.84",
+          "wall_epoch": "1789982302.280904034",
+          "wind_direction_display": "-3",
+          "wind_speed_display": "0.022"
+        }
+      ],
+      "gsl_log": "native/House02_seed1_off_off/ros_log/gsl_actionserver_node_25981_1789982289036.log",
+      "logged_average_records": 139,
+      "logged_average_records_before_terminal_update": 128,
+      "parameters": {
+        "confidenceMeasurementWeight": "0.5",
+        "confidenceSigmaSpatial": "0.5",
+        "continuous_measurement_samples_file": null,
+        "kernelSigma": "0.5",
+        "kernelStretchConstant": "1.5",
+        "measurement_block_samples": "10",
+        "measurement_deduplicate_sim_timestamps": "true",
+        "measurement_settle_samples": "0",
+        "measurement_trace_file": null,
+        "pfdi_mode": "'off'",
+        "tadm_enabled": "false"
+      },
+      "previous_update_time": 223.6,
+      "reason": "No completed-block event export; log averages use two significant digits; trace lacks callback/block ownership and full-precision transformed wind aggregates.",
+      "run_id": "TNQC_R2_FRESH_House02_S1_20260921",
+      "runtime_pfdi_mode": "off",
+      "source_updates": [
+        {
+          "id": 1,
+          "map_rows": 1053,
+          "map_sha256": "b86061bdd5036777f9279f30169f580319390690fe799aa1dd9096567146a321",
+          "sim_time": 65.8,
+          "wall_start_epoch": 1789982363.323089
+        },
+        {
+          "id": 2,
+          "map_rows": 1053,
+          "map_sha256": "cc788ee722d34974faabfa51ca16b5b57ca53d5ae6b3fdb7ca30ee5f54725a41",
+          "sim_time": 118.8,
+          "wall_start_epoch": 1789982416.324336
+        },
+        {
+          "id": 3,
+          "map_rows": 1053,
+          "map_sha256": "a956bd2b00e873c29979455cf159cc356bf964ade94ebf7c71ec86c295474da8",
+          "sim_time": 171.4,
+          "wall_start_epoch": 1789982469.376038
+        },
+        {
+          "id": 4,
+          "map_rows": 1053,
+          "map_sha256": "8f41939ef6ca07e6f828c6e69ed7f386799f1b678fd818f55aa7d32f4f567802",
+          "sim_time": 223.6,
+          "wall_start_epoch": 1789982521.5779521
+        },
+        {
+          "id": 5,
+          "map_rows": 1053,
+          "map_sha256": "c0ea08ce3477f2a28f8ce932efeaf3a006fca42e4e26591b9386630f3efbd90e",
+          "sim_time": 275.6,
+          "wall_start_epoch": 1789982573.5762367
+        }
+      ],
+      "terminal_map_fields": [
+        "cell_index",
+        "grid_i",
+        "grid_j",
+        "x",
+        "y",
+        "occupancy",
+        "probability",
+        "logOdds",
+        "confidence",
+        "omega",
+        "distanceFromRobot",
+        "originalPropagationDirection_x",
+        "originalPropagationDirection_y"
+      ],
+      "terminal_time": 275.6,
+      "traces": {
+        "sensor_trace.csv": {
+          "columns": [
+            "t_sim_s",
+            "step",
+            "iteration",
+            "x",
+            "y",
+            "z",
+            "true_gas_ppm",
+            "measured_gas_ppm",
+            "sensor_mode",
+            "seed"
+          ],
+          "first_row": {
+            "iteration": "1853",
+            "measured_gas_ppm": "0.000000",
+            "seed": "1",
+            "sensor_mode": "asymmetric",
+            "step": "1",
+            "t_sim_s": "0.200000",
+            "true_gas_ppm": "0.866176",
+            "x": "-0.5000",
+            "y": "-2.5000",
+            "z": "0.3000"
+          },
+          "last_time": "300.000000",
+          "rows": 1500
+        },
+        "sim_pose_trace.csv": {
+          "columns": [
+            "t_sim_s",
+            "step",
+            "x",
+            "y",
+            "z",
+            "yaw",
+            "is_moving",
+            "seed"
+          ],
+          "first_row": {
+            "is_moving": "0",
+            "seed": "1",
+            "step": "1",
+            "t_sim_s": "0.200000",
+            "x": "-0.5000",
+            "y": "-2.5000",
+            "yaw": "0.0000",
+            "z": "0.3000"
+          },
+          "last_time": "300.000000",
+          "rows": 1500
+        },
+        "wind_trace.csv": {
+          "columns": [
+            "t_sim_s",
+            "step",
+            "iteration",
+            "x",
+            "y",
+            "z",
+            "wind_u",
+            "wind_v",
+            "wind_w",
+            "wind_speed",
+            "wind_direction_rad",
+            "seed"
+          ],
+          "first_row": {
+            "iteration": "1853",
+            "seed": "1",
+            "step": "1",
+            "t_sim_s": "0.200000",
+            "wind_direction_rad": "-2.975158",
+            "wind_speed": "0.023044",
+            "wind_u": "-0.022726",
+            "wind_v": "-0.003818",
+            "wind_w": "-0.015855",
+            "x": "-0.5000",
+            "y": "-2.5000",
+            "z": "0.3000"
+          },
+          "last_time": "300.000000",
+          "rows": 1500
+        }
+      }
+    }
+  },
+  "execution": {
+    "candidate_scoring": 0,
+    "closed_loop": 0,
+    "forward": 0,
+    "gaden": 0,
+    "h03_content": 0,
+    "training": 0
+  },
+  "frozen_source_sha256": {
+    "ros2_package/src/gsl_server/algorithms/Common/Algorithm.cpp": "67f4759fd38fa6759c3e595eaa603de306475f11441d6acb32b2cce2c19e9de8",
+    "ros2_package/src/gsl_server/algorithms/Common/States/StopAndMeasureState.cpp": "356658a871c9adaec17d68150e0592beb92dab3e041408ca407039768f9560e6",
+    "ros2_package/src/gsl_server/algorithms/Common/States/StopAndMeasureState.hpp": "bc1f19bdb7585bdb4ccd96d509a6f408a678bdb1b1c435cc6e371a8dd39a4a5c",
+    "ros2_package/src/gsl_server/algorithms/PMFS/PMFS.cpp": "6b022d2d0e59be696c85e2672ddf43240dcf47320d150252c926e26dc1cc171d",
+    "ros2_package/src/gsl_server/algorithms/PMFS/PMFSLib.cpp": "2e55858ca3f71cc1c6c00f9642ae3c7c3498fcbb2154ae1d88a07cc44b3213b8"
+  },
+  "manifest_sha256": "d3030a5b5862edef5cc806314038f0bd453a93050f8aeb619f16db28060a0f1d",
+  "scope": [
+    "House01_seed0_off_off",
+    "House01_seed1_off_off",
+    "House02_seed0_off_off",
+    "House02_seed1_off_off"
+  ],
+  "sidecar_sha256": "81c72910b2fc912e5e0a9340d3f6b1ba20024da510ef58eb95da2ff1d8055708",
+  "verified_artifact_count": 61
+}
