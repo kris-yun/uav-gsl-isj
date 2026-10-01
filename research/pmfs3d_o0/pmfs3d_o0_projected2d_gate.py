@@ -73,6 +73,9 @@ def generate_one(binary:Path, extractor:Path, occ:Path, wind_dir:Path, out:Path,
         raise RuntimeError(f"GADEN failed: {out}")
     if len(list(real.glob("iteration_*"))) != 566:
         raise RuntimeError(f"iteration count drift: {out}")
+    # The frozen extractor reads occupancy from its environment directory.
+    # This is the same asset link used by export_c05_spatial_slices_remote.sh.
+    (real/"OccupancyGrid3D.csv").symlink_to(occ)
     extract=[
       str(extractor),str(real),str(real),str(cube),str(out/"spatial_metadata.json"),
       repr(origin[0]),repr(origin[1]),repr(cell),"1","0.20",
