@@ -9,7 +9,7 @@ ROOT=Path(__file__).resolve().parents[2]
 MAN=ROOT/'evidence/cdsi_t01b/pass1/EXACT_64_RUN_MANIFEST.tsv'
 INP=ROOT/'evidence/ocb_r2/mechanism_census_r0/inputs'
 SEEDS=(2026100101,2026100102,2026100103)
-CFG=dict(epochs=500,lr=2e-3,wd=1e-4,temp=.15,src=.1,con=.5,align=.5,met=.5,adv=.2,ind=.05,rec=.1,rank=.5,margin=.2)
+CFG=dict(epochs=500,lr=2e-3,wd=1e-4,temp=.15,src=1.0,con=.5,align=.5,met=.5,adv=.2,ind=.05,rec=.1,rank=.5,margin=.2)
 
 def seed(s):
  random.seed(s); np.random.seed(s); torch.manual_seed(s); torch.set_num_threads(1); torch.use_deterministic_algorithms(True)
@@ -85,7 +85,7 @@ def cov(x):
 def losses(s,m,sl,ml,al,rec,x,y,e,variant):
  src=F.cross_entropy(sl,y); zn=F.normalize(s,dim=1); P=torch.stack([F.normalize(zn[y==i].mean(0),dim=0) for i in (0,1)]); sim=zn@P.T
  rank=F.relu(CFG['margin']-sim[torch.arange(len(y)),y]+sim[torch.arange(len(y)),1-y]).mean()
- if variant=='vanilla': return src+CFG['rank']*rank
+ if variant=='vanilla': return CFG['src']*src+CFG['rank']*rank
  n=len(y); S=zn@zn.T/CFG['temp']; eye=torch.eye(n,dtype=torch.bool); den=torch.logsumexp(S.masked_fill(eye,-1e9),1); pos=(y[:,None]==y[None,:])&(e[:,None]!=e[None,:])&~eye
  con=torch.stack([-(S[i,pos[i]]-den[i]).mean() for i in range(n)]).mean()
  A=[]
@@ -95,7 +95,7 @@ def losses(s,m,sl,ml,al,rec,x,y,e,variant):
    for j in range(i+1,len(es)):
     a=s[(y==sy)&(e==es[i])]; b=s[(y==sy)&(e==es[j])]; A.append((a.mean(0)-b.mean(0)).pow(2).mean()+.1*(cov(a)-cov(b)).pow(2).mean())
  align=torch.stack(A).mean(); met=F.cross_entropy(ml,e); adv=F.cross_entropy(al,e); ind=((s-s.mean(0)).T@(m-m.mean(0))/max(n-1,1)).pow(2).mean(); rc=F.binary_cross_entropy_with_logits(rec,x)
- return src+CFG['con']*con+CFG['align']*align+CFG['met']*met+CFG['adv']*adv+CFG['ind']*ind+CFG['rec']*rc+CFG['rank']*rank
+ return CFG['src']*src+CFG['con']*con+CFG['align']*align+CFG['met']*met+CFG['adv']*adv+CFG['ind']*ind+CFG['rec']*rc+CFG['rank']*rank
 
 def train(x,y,e,variant,sd,epochs):
  seed(sd); X=torch.from_numpy(x); Y=torch.from_numpy(y); E=torch.from_numpy(e); net=Net(len(set(e))); opt=torch.optim.Adam(net.parameters(),lr=CFG['lr'],weight_decay=CFG['wd'])
@@ -111,21 +111,21 @@ def arrays(data,h,hold):
  envs=sorted({r['context'] for r in tr}); em={s:i for i,s in enumerate(envs)}
  return np.stack([r['x'] for r in tr]),np.array([src[r['source_id']] for r in tr]),np.array([em[r['context']] for r in tr]),[r['context'] for r in tr],np.stack([r['x'] for r in te]),np.array([src[r['source_id']] for r in te])
 def fold(data,h,hold,meta,epochs):
- x,y,e,en,xt,yt=arrays(data,h,hold); raw=pm(x.reshape(len(x),-1),y,xt.reshape(len(xt),-1),yt); rw=windrat(x.reshape(len(x),-1),y,en,xt.reshape(len(xt),-1),yt,meta[hold]['gas'],meta); rows=[]
+ x,y,e,en,xt,yt=arrays(data,h,hold); raw=pm(x.reshape(len(x),-1),y,xt.reshape(len(xt),-1),yt); rw=windrat(x.reshape(len(x),-1),y,en,xt.reshape(len(xt),-1),yt,meta[hold]['gas'],meta); static=pm(x.mean(1),y,xt.mean(1),yt); sw=windrat(x.mean(1),y,en,xt.mean(1),yt,meta[hold]['gas'],meta); rows=[]
  for sd in SEEDS:
   for v in ('vanilla','invariant'):
    net,z,m,_=train(x,y,e,v,sd,epochs); zt,mt,rc=enc(net,xt); p=pm(z,y,zt,yt)
    rows.append(dict(house=h,heldout_context=hold,seed=sd,variant=v,accuracy=p[0],margin=p[1],ratio=p[2],wind_ratio=windrat(z,y,en,zt,yt,meta[hold]['gas'],meta),zs_env=envloo(z,e),zm_env=envloo(m,e),recon=rc))
  med=lambda v,k: float(np.median([r[k] for r in rows if r['variant']==v]))
- f=dict(house=h,heldout_context=hold,heldout_wind=meta[hold]['wind'],heldout_gas=meta[hold]['gas'],raw_accuracy=raw[0],raw_margin=raw[1],raw_ratio=raw[2],raw_wind_ratio=rw,vanilla_accuracy=med('vanilla','accuracy'),vanilla_margin=med('vanilla','margin'),vanilla_ratio=med('vanilla','ratio'),vanilla_wind_ratio=med('vanilla','wind_ratio'),vanilla_zs_env=med('vanilla','zs_env'),invariant_accuracy=med('invariant','accuracy'),invariant_margin=med('invariant','margin'),invariant_ratio=med('invariant','ratio'),invariant_wind_ratio=med('invariant','wind_ratio'),invariant_zs_env=med('invariant','zs_env'),invariant_zm_env=med('invariant','zm_env'),invariant_recon=med('invariant','recon'))
- f.update(ratio_gain_v=f['vanilla_ratio']-f['invariant_ratio'],ratio_gain_raw=f['raw_ratio']-f['invariant_ratio'],wind_gain_v=f['vanilla_wind_ratio']-f['invariant_wind_ratio'],wind_gain_raw=f['raw_wind_ratio']-f['invariant_wind_ratio'],leak_gain=f['vanilla_zs_env']-f['invariant_zs_env'])
+ f=dict(house=h,heldout_context=hold,heldout_wind=meta[hold]['wind'],heldout_gas=meta[hold]['gas'],raw_accuracy=raw[0],raw_margin=raw[1],raw_ratio=raw[2],raw_wind_ratio=rw,static_accuracy=static[0],static_margin=static[1],static_ratio=static[2],static_wind_ratio=sw,vanilla_accuracy=med('vanilla','accuracy'),vanilla_margin=med('vanilla','margin'),vanilla_ratio=med('vanilla','ratio'),vanilla_wind_ratio=med('vanilla','wind_ratio'),vanilla_zs_env=med('vanilla','zs_env'),invariant_accuracy=med('invariant','accuracy'),invariant_margin=med('invariant','margin'),invariant_ratio=med('invariant','ratio'),invariant_wind_ratio=med('invariant','wind_ratio'),invariant_zs_env=med('invariant','zs_env'),invariant_zm_env=med('invariant','zm_env'),invariant_recon=med('invariant','recon'))
+ f.update(ratio_gain_v=f['vanilla_ratio']-f['invariant_ratio'],ratio_gain_raw=f['raw_ratio']-f['invariant_ratio'],ratio_gain_static=f['static_ratio']-f['invariant_ratio'],wind_gain_v=f['vanilla_wind_ratio']-f['invariant_wind_ratio'],wind_gain_raw=f['raw_wind_ratio']-f['invariant_wind_ratio'],wind_gain_static=f['static_wind_ratio']-f['invariant_wind_ratio'],leak_gain=f['vanilla_zs_env']-f['invariant_zs_env'])
  return rows,f
 
 def gates(F):
- a=np.array([x['invariant_accuracy'] for x in F]); m=np.array([x['invariant_margin'] for x in F]); r=np.array([x['invariant_ratio'] for x in F]); w=np.array([x['invariant_wind_ratio'] for x in F]); rv=np.array([x['ratio_gain_v'] for x in F]); rr=np.array([x['ratio_gain_raw'] for x in F]); wv=np.array([x['wind_gain_v'] for x in F]); wr=np.array([x['wind_gain_raw'] for x in F]); le=np.array([x['leak_gain'] for x in F]); zm=np.array([x['invariant_zm_env'] for x in F]); ref=max(np.median([x['raw_accuracy'] for x in F]),np.median([x['vanilla_accuracy'] for x in F]))
+ a=np.array([x['invariant_accuracy'] for x in F]); m=np.array([x['invariant_margin'] for x in F]); r=np.array([x['invariant_ratio'] for x in F]); w=np.array([x['invariant_wind_ratio'] for x in F]); rv=np.array([x['ratio_gain_v'] for x in F]); rr=np.array([x['ratio_gain_raw'] for x in F]); rs=np.array([x['ratio_gain_static'] for x in F]); wv=np.array([x['wind_gain_v'] for x in F]); wr=np.array([x['wind_gain_raw'] for x in F]); ws=np.array([x['wind_gain_static'] for x in F]); le=np.array([x['leak_gain'] for x in F]); zm=np.array([x['invariant_zm_env'] for x in F]); ref=max(np.median([x['raw_accuracy'] for x in F]),np.median([x['static_accuracy'] for x in F]),np.median([x['vanilla_accuracy'] for x in F]))
  g1=dict(median_accuracy=float(np.median(a)),folds_acc_ge_075=int((a>=.75).sum()),median_margin=float(np.median(m)),folds_margin_pos=int((m>0).sum())); g1['pass']=g1['median_accuracy']>=.75 and g1['folds_acc_ge_075']>=6 and g1['median_margin']>0 and g1['folds_margin_pos']>=7
  g2=dict(median_ratio=float(np.median(r)),folds_ratio_lt1=int((r<1).sum()),median_wind_ratio=float(np.median(w)),folds_wind_ratio_lt1=int((w<1).sum())); g2['pass']=g2['median_ratio']<.75 and g2['folds_ratio_lt1']>=6 and g2['median_wind_ratio']<1 and g2['folds_wind_ratio_lt1']>=6
- g3=dict(best_reference_accuracy=float(ref),median_accuracy=float(np.median(a)),median_ratio_gain_v=float(np.median(rv)),median_ratio_gain_raw=float(np.median(rr)),folds_ratio_gain_v=int((rv>0).sum()),folds_ratio_gain_raw=int((rr>0).sum()),median_wind_gain_v=float(np.median(wv)),median_wind_gain_raw=float(np.median(wr))); g3['pass']=g3['median_accuracy']>=ref-.125 and g3['median_ratio_gain_v']>0 and g3['median_ratio_gain_raw']>0 and g3['folds_ratio_gain_v']>=6 and g3['folds_ratio_gain_raw']>=6 and g3['median_wind_gain_v']>0 and g3['median_wind_gain_raw']>0
+ g3=dict(best_reference_accuracy=float(ref),median_accuracy=float(np.median(a)),median_ratio_gain_v=float(np.median(rv)),median_ratio_gain_raw=float(np.median(rr)),median_ratio_gain_static=float(np.median(rs)),folds_ratio_gain_v=int((rv>0).sum()),folds_ratio_gain_raw=int((rr>0).sum()),folds_ratio_gain_static=int((rs>0).sum()),median_wind_gain_v=float(np.median(wv)),median_wind_gain_raw=float(np.median(wr)),median_wind_gain_static=float(np.median(ws))); g3['pass']=g3['median_accuracy']>=ref-.125 and g3['median_ratio_gain_v']>0 and g3['median_ratio_gain_raw']>0 and g3['median_ratio_gain_static']>0 and g3['folds_ratio_gain_v']>=6 and g3['folds_ratio_gain_raw']>=6 and g3['folds_ratio_gain_static']>=6 and g3['median_wind_gain_v']>0 and g3['median_wind_gain_raw']>0 and g3['median_wind_gain_static']>0
  g4=dict(median_zm_env=float(np.median(zm)),median_leak_gain=float(np.median(le)),folds_nonworse_leak=int((le>=-1e-12).sum())); g4['pass']=g4['median_zm_env']>=2/3-1e-12 and g4['median_leak_gain']>=-1e-12 and g4['folds_nonworse_leak']>=5
  return dict(G1=g1,G2=g2,G3=g3,G4=g4)
 
@@ -138,7 +138,7 @@ def main(A):
  O=A.output.resolve(); O.mkdir(parents=True,exist_ok=True)
  try: data,hashes,meta=load()
  except Exception as ex: js(O/'MDBIL_D0_RESULT.json',dict(decision='MDBIL_D0_INVALID_INPUT_STOP',error=str(ex))); return 2
- tsv(O/'INPUT_SHA256.tsv',hashes); js(O/'DATA_CONTRACT.json',dict(decision='PASS',runs=64,contexts=meta,claim='configured xyz only; not pure XY',new_gaden=0,pmfs=0,closed_loop=0)); js(O/'MODEL_CONFIG.json',dict(cfg=CFG,seeds=SEEDS,split='leave-one-context-out per House',epochs=A.epochs,arms=['RAW','VANILLA','MDBIL']))
+ tsv(O/'INPUT_SHA256.tsv',hashes); js(O/'DATA_CONTRACT.json',dict(decision='PASS',runs=64,contexts=meta,claim='configured xyz only; not pure XY',new_gaden=0,pmfs=0,closed_loop=0)); js(O/'MODEL_CONFIG.json',dict(cfg=CFG,seeds=SEEDS,split='leave-one-context-out per House',epochs=A.epochs,arms=['RAW','STATIC','VANILLA','MDBIL']))
  R=[]; F=[]
  for h in ('House01','House02'):
   for c in sorted(k for k,v in meta.items() if v['house']==h): rows,f=fold(data,h,c,meta,A.epochs); R+=rows; F.append(f); print(json.dumps(f,sort_keys=True),flush=True)
