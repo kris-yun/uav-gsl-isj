@@ -1,0 +1,61 @@
+{
+  "method": "oracle one-sided contradiction screen",
+  "formula": "safe_score = min(oracle2d_score, oracle3d_score)",
+  "confirmatory": false,
+  "cases": [
+    {
+      "case": "House01_seed0_off_off",
+      "oracle2d_rank": 75.0,
+      "safe_rank": 68.0,
+      "rank_improvement": 7.0,
+      "oracle2d_margin": -139.22163657256922,
+      "safe_margin": -112.96869350184605,
+      "margin_improvement": 26.252943070723177,
+      "repaired_crossings": 13,
+      "harmful_crossings": 0
+    },
+    {
+      "case": "House01_seed1_off_off",
+      "oracle2d_rank": 102.0,
+      "safe_rank": 97.5,
+      "rank_improvement": 4.5,
+      "oracle2d_margin": -129.57102215818577,
+      "safe_margin": -123.04173921180688,
+      "margin_improvement": 6.529282946378885,
+      "repaired_crossings": 7,
+      "harmful_crossings": 0
+    },
+    {
+      "case": "House02_seed0_off_off",
+      "oracle2d_rank": 104.0,
+      "safe_rank": 101.0,
+      "rank_improvement": 3.0,
+      "oracle2d_margin": -217.21210551723934,
+      "safe_margin": -175.63807923405642,
+      "margin_improvement": 41.57402628318292,
+      "repaired_crossings": 4,
+      "harmful_crossings": 0
+    },
+    {
+      "case": "House02_seed1_off_off",
+      "oracle2d_rank": 107.5,
+      "safe_rank": 105.0,
+      "rank_improvement": 2.5,
+      "oracle2d_margin": -219.03739864826358,
+      "safe_margin": -185.4787069181741,
+      "margin_improvement": 33.558691730089464,
+      "repaired_crossings": 2,
+      "harmful_crossings": 0
+    }
+  ],
+  "summary": {
+    "rank_improved_cases": 4,
+    "margin_improved_cases": 4,
+    "harmful_crossings_total": 0,
+    "median_oracle2d_rank": 103.0,
+    "median_safe_rank": 99.25,
+    "median_rank_improvement": 3.75,
+    "median_margin_improvement": 29.90581740040632,
+    "interpretation": "Positive post-hoc mechanism signal only. One-sided use of transport retained broad false-source suppression while removing the harmful positive promotions seen in raw Oracle-3D. Oracle-3D is unavailable at deployment and this screen is post-unblinding."
+  }
+}
