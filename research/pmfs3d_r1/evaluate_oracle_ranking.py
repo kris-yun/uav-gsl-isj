@@ -15,7 +15,8 @@ p.add_argument('--out',type=Path,required=True)
 a=p.parse_args()
 amendment=json.loads(a.amendment.read_text())
 assert amendment['three_arm_control_authorized'] is True
-assert amendment['rank_gate'] in ('strict_improvement','noninferiority')
+assert amendment['rank_gate'] == 'noninferiority'
+assert amendment['maximum_rank_worsening_cases'] == 1
 assert amendment['scientific_execution_authorized'] is True
 audit=json.loads(a.audit.read_text())
 def rows(path):
@@ -61,18 +62,23 @@ for case in audit['cases']:
                 idx=int(r['cell_index']);w.writerow([idx,r['grid_i'],r['grid_j'],r['x'],r['y'],cell_owners[idx],format(posterior[idx],'.17g')])
     record['delta_margin_3d_vs_oracle2d']=record['arms']['oracle3d']['source_margin']-record['arms']['oracle2d']['source_margin']
     record['delta_margin_3d_vs_native']=record['arms']['oracle3d']['source_margin']-record['arms']['native']['source_margin']
+    record['delta_entropy_2d_minus_3d']=record['arms']['oracle2d']['source_map_entropy_nats']-record['arms']['oracle3d']['source_map_entropy_nats']
     cases.append(record)
 delta=[c['delta_margin_3d_vs_oracle2d'] for c in cases]
 med2=statistics.median(c['arms']['oracle2d']['truth_leaf_midrank'] for c in cases)
 med3=statistics.median(c['arms']['oracle3d']['truth_leaf_midrank'] for c in cases)
 margin_pass=sum(v>0 for v in delta)>=3 and statistics.median(delta)>0
-rank_pass=med3<med2 if amendment['rank_gate']=='strict_improvement' else med3<=med2
-decision='PMFS3D_R1_ORACLE_RANKING_PASS' if margin_pass and rank_pass else ('PMFS3D_R1_MARGIN_ONLY_PROMISING' if margin_pass else 'PMFS3D_R1_NO_RANKING_GAIN')
+rank_worsening=sum(c['arms']['oracle3d']['truth_leaf_midrank']>c['arms']['oracle2d']['truth_leaf_midrank'] for c in cases)
+rank_pass=med3<=med2 and rank_worsening<=1
+decision='PMFS3D_R1_ORACLE_RANKING_PASS' if margin_pass and rank_pass else ('PMFS3D_R1_HOLD_RANK_NONINFERIORITY' if margin_pass else 'PMFS3D_R1_NO_GO')
 result=dict(decision=decision,primary_comparison='oracle3d minus oracle2d',rank_gate=amendment['rank_gate'],
+            verdict='PASS' if margin_pass and rank_pass else ('HOLD' if margin_pass else 'NO_GO'),
+            rank_worsening_cases=rank_worsening,rank_median_noninferiority_pass=med3<=med2,rank_anti_regression_pass=rank_worsening<=1,
             positive_margin_cases=sum(v>0 for v in delta),median_delta_margin=statistics.median(delta),
             median_rank_oracle2d=med2,median_rank_oracle3d=med3,margin_gate_pass=margin_pass,rank_gate_pass=rank_pass,
             amendment_sha256=hashlib.sha256(a.amendment.read_bytes()).hexdigest(),cases=cases,
             interpretation='four historical offline cases, known source height, state0 CFD, leaf hypotheses; not held-out main innovation confirmation')
+result['descriptive_arm_summary']={arm:dict(mean_rank=statistics.mean(c['arms'][arm]['truth_leaf_midrank'] for c in cases),median_rank=statistics.median(c['arms'][arm]['truth_leaf_midrank'] for c in cases),recall_at1=sum(c['arms'][arm]['unique_top1'] for c in cases)/4,recall_at5=sum(c['arms'][arm]['recall_at5'] for c in cases)/4,mean_entropy_nats=statistics.mean(c['arms'][arm]['source_map_entropy_nats'] for c in cases)) for arm in ('native','oracle2d','oracle3d')}
 a.out.mkdir(parents=True,exist_ok=True)
 (a.out/'R1_RESULT.json').write_text(json.dumps(result,indent=2,sort_keys=True,allow_nan=False)+'\n')
 print(json.dumps({key:result[key] for key in ('decision','positive_margin_cases','median_delta_margin','median_rank_oracle2d','median_rank_oracle3d')}))
