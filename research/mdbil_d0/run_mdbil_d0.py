@@ -98,7 +98,8 @@ def losses(s,m,sl,ml,al,rec,x,y,e,variant):
  return CFG['src']*src+CFG['con']*con+CFG['align']*align+CFG['met']*met+CFG['adv']*adv+CFG['ind']*ind+CFG['rec']*rc+CFG['rank']*rank
 
 def train(x,y,e,variant,sd,epochs):
- seed(sd); X=torch.from_numpy(x); Y=torch.from_numpy(y); E=torch.from_numpy(e); net=Net(len(set(e))); opt=torch.optim.Adam(net.parameters(),lr=CFG['lr'],weight_decay=CFG['wd'])
+ # CrossEntropy requires int64 indices; NumPy's default integer is int32 on Windows.
+ seed(sd); X=torch.from_numpy(x); Y=torch.from_numpy(y).long(); E=torch.from_numpy(e).long(); net=Net(len(set(e))); opt=torch.optim.Adam(net.parameters(),lr=CFG['lr'],weight_decay=CFG['wd'])
  for _ in range(epochs):
   opt.zero_grad(); o=net(X); L=losses(*o,X,Y,E,variant); L.backward(); opt.step()
  with torch.no_grad(): s,m,_,_,_,r=net(X)
