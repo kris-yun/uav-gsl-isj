@@ -5,7 +5,8 @@ frozen extractor then exited 3 with ENV_READ_FAILED because the runner did not
 place OccupancyGrid3D.csv in the environment directory supplied to the extractor.
 The historical export_c05_spatial_slices_remote.sh explicitly supplies this link.
 
-The repair adds only that link to the exact original occupancy file. The first
+The hgfs output filesystem does not support symlinks (errno 95). The repair
+therefore adds a byte-identical occupancy copy, verified by SHA256. The first
 successful simulation is retained and extracted without another GADEN execution.
 No source, seed, physics, wind projection, snapshot record ID, extraction grid,
 scorer or decision threshold changes. The failed extraction log is retained.
