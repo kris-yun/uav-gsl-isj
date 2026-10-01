@@ -52,30 +52,42 @@ where:
 
 If one physically supported covariance schedule cannot be recovered from existing configuration/provenance, D0 is INVALID/STOP. Do not tune sigma.
 
-For PMFS cell prism V_i, compute the filament probability mass inside that prism:
+Important semantic correction:
 
-q_(i,k,t) = Integral over V_i of Normal(x; mu_(k,t), Sigma_(k,t)) dx.
+A GADEN Gaussian filament is a continuous gas-concentration distribution, not a random point whose cell-membership probability should be combined with an invented union rule. D0 must therefore use the native physical concentration semantics.
 
-Combine filament support without introducing a release-rate calibration:
+For each frozen PMFS query location x_i and timestep t, compute only the on-demand concentration contributed by the Gaussian filaments:
 
-h_(i,t) = 1 - Product_k [1 - q_(i,k,t)]
+C_i,t = Sum_k C_k(x_i ; mu_(k,t), Sigma_(k,t), filament_mass)
 
-and simulated hit probability:
+using the historical GADEN/Gaden-RT concentration equation and the provenance-recovered filament mass and diffusion schedule.
 
-Hhat_i = mean_t h_(i,t).
+Convert concentration to a hit using exactly the same fixed gas-detection threshold that was used to define the measured PMFS hit/miss observations:
 
-Use the same frozen PMFS likelihood to score candidates. Do not introduce a learned scorer.
+hit_i,t = 1 if C_i,t >= C_detection, else 0.
+
+The simulated hit probability is the temporal hit frequency:
+
+Hhat_i = mean_t hit_i,t.
+
+No dense 3-D concentration volume is required: concentration is queried only at the frozen PMFS observation/grid locations, following the on-demand Gaden-RT principle.
+
+Filament mass, diffusion parameters and C_detection must all come from frozen historical configuration or sensor provenance. None may be selected by looking at source rank or truth location. If a unique compatible set cannot be recovered, D0 is INVALID/STOP rather than calibrated after the fact.
+
+For mechanism diagnostics only, also export continuous concentration support and the number of confident observation cells with nonzero Gaussian concentration. These diagnostics cannot replace the frozen hit-probability score.
+
+Use the same frozen PMFS likelihood to score the resulting hit-probability maps. Do not introduce a learned scorer.
 
 ## Software controls before truth scoring
 
 All must pass:
 
-1. Tiny-covariance limit approaches the R1 hard point-hit support.
-2. Gaussian cell masses stay in [0,1].
-3. Occupied geometry cannot receive legal observation mass.
-4. Candidate/source draws, center trajectories and CFD queries match R1.
-5. Measured map and likelihood code are unchanged.
-6. Every covariance parameter is provenance-derived before truth ranks are read.
+1. Tiny-covariance synthetic unit test recovers the expected point-support behavior under a controlled single-filament case; this is a software test, not a claim of exact equivalence to R1's discrete collision rule.
+2. On-demand Gaussian concentration matches an independent implementation of the historical GADEN/Gaden-RT concentration equation.
+3. Filament mass, diffusion schedule and gas-detection threshold are provenance-recovered before truth evaluation.
+4. Occupied geometry and outside-volume handling follow the frozen R1 geometry contract; no source-specific repair is allowed.
+5. Candidate/source draws, center trajectories and CFD queries match R1.
+6. Measured map and PMFS likelihood code are unchanged.
 7. Deterministic repeat is byte-identical or numerically identical under a frozen tolerance.
 
 ## Primary gate
