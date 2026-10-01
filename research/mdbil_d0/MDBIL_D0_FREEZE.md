@@ -29,6 +29,7 @@ Within each House, hold out one of four complete contexts and train on the other
 ## Arms and frozen objectives
 
 RAW: flattened 300D cosine prototype baseline.  
+STATIC: 30D time-mean cosine prototype baseline, included because CDSI-T0.1B previously found static source information.  
 VANILLA: same small TCN trained for source discrimination + prototype ranking.  
 MDBIL: same TCN with two 8D latent blocks.
 
@@ -42,7 +43,7 @@ G1 passes only if median MDBIL held-out accuracy >=0.75, at least 6/8 folds >=0.
 
 G2 passes only if median general invariance ratio <0.75, at least 6/8 folds have ratio <1, median same-gas cross-wind ratio <1, and at least 6/8 folds have same-gas cross-wind ratio <1.
 
-G3 passes only if MDBIL median accuracy is within 0.125 of the better RAW/VANILLA median accuracy; median general ratio gain is positive versus both; at least 6/8 folds improve general ratio versus both; and median same-gas cross-wind ratio gain is positive versus both.
+G3 passes only if MDBIL median accuracy is within 0.125 of the best RAW/STATIC/VANILLA median accuracy; median general ratio gain is positive versus all three baselines; at least 6/8 folds improve general ratio versus RAW, STATIC, and VANILLA; and median same-gas cross-wind ratio gain is positive versus all three.
 
 G4 passes only if median z_m leave-one-out context accuracy >=2/3, median z_s context-leakage reduction versus VANILLA is nonnegative, and at least 5/8 folds have non-worse z_s context leakage.
 
