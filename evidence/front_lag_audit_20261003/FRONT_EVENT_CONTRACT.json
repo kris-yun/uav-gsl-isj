@@ -1,0 +1,74 @@
+{
+  "status": "FROZEN_BEFORE_NEW_NUMERICAL_SCORING; prior summaries already known, not blind preregistration",
+  "base_commit": "1209c9c6a46c25076b54f7735c82516b214ccf66",
+  "dates": [
+    "20210522",
+    "20210524"
+  ],
+  "selection_basis": "User fixed May22 and May24 before analysis; ESSD Table2 and RSC2023 section3.2 identify campaign lake-breeze conditions. No event replacement.",
+  "evaluation_window_UTC": "13:00<=time<23:00 both dates; all eligible samples, no maximum-effect window selection",
+  "context_window_UTC": "13:00<=time<17:00; observed background variability proxy, NOT stationary instrument noise",
+  "source_distance_m": [
+    50,
+    100,
+    200,
+    300,
+    500,
+    750,
+    1000
+  ],
+  "wind_speed_screen_m_s": {
+    "primary": 0.5,
+    "sensitivity": [
+      0.1,
+      1.0
+    ]
+  },
+  "lidar_primary_heights_m": [
+    76,
+    93
+  ],
+  "lidar_secondary_heights_m": [
+    110,
+    127,
+    144
+  ],
+  "exclude_primary": [
+    42,
+    59
+  ],
+  "lidar_qc": "finite speed0..100 and direction0..360; no author SNR/QC threshold invented",
+  "direction_convention": "Meteorological FROM; lidar u=-speed*sin(direction),v=-speed*cos(direction); RAAVEN author eastward/northward vectors used, not published direction",
+  "direction_windows_s": [
+    60,
+    120,
+    300,
+    600
+  ],
+  "window_matching": "Nearest previous observed sample to t-window within max(.15*window,.55*native_dt); require actual dt>=window/2 and actual interval/window in[.75,1.25]. Lidar 1/2min never resolved; nearest native 5min accepted with actual317..319s reported.",
+  "tau_met": "reference_angle / (observed circular endpoint change / actual interval); angle30deg primary,60deg sensitivity; no min timescale selection. Speed timescale=current_speed/abs(speed rate). Endpoint definition misses intervening reversals.",
+  "integration": "tau=L/current_speed; fixed tau for instantaneous and retarded. Exact piecewise-linear integral of observed ENU components; past-hold sensitivity. No future point beyond endpoint t.",
+  "resolution": "history >=2 native/bin intervals and >=3 timestamps covering interval; no gap>1.5*cadence; no extrapolation. Sub-resolution estimates retained explicitly as interpolation-dependent, never evidence for gate.",
+  "RAAVEN": "Flight_Flag1,wind_flag0; past-bin median vectors in10/30/60s bins with >=50% nominal samples, time=last accepted raw sample in bin (no future samples); primary backtrace30s,60s sensitivity. Full within-bin coordinate/height extrema retained for conservative mobile-history screen, height range<=10/20m and horizontal bbox diameter<=50/100m. None certify spatial homogeneity. Median bin winds are temporally smoothed, not instantaneous10Hz wind.",
+  "RAAVEN_AGL": "Same earlier two-anchor checks; stable post-anchor is sensitivity only; no site-altitude imputation. Primary UAV-height applicability requires two-anchor accepted endpoint and history AGL10..100m.",
+  "onset_proxy": "First east-sector90..180deg run lasting>=15min after17UTC with preceding west-sector>180deg sample in30min; same rule both dates. It is a wind marker, not independently validated thermal front onset.",
+  "measurement_floor": "Observed pre17 native-step angular/vector variability separated from instrument uncertainty (not supplied by reviewed author files). Heading5/10/20deg and speed.1/.5m/s are ASSUMED sensitivity bounds, not measured precision. Sampling sensitivity PWL versus causal past-hold.",
+  "stable_screen": "Exploratory screen only: at least3 consecutive resolved lidar samples with >=30m endpoint difference and above past-hold interpolation difference plus conservative assumed10deg/.5m/s endpoint bound. Not a calibrated uncertainty or lake-front specificity test.",
+  "decision": "PASS needs two independent events plus calibrated uncertainty and resolvable temporal/spatial contract; missing required contract -> HOLD with explicit reason, not physical STOP. No new threshold changes to old experiments.",
+  "approximation": "Spatially uniform conditional proxy; NOT a guaranteed lower bound and NOT recovered source coordinates.",
+  "preserved": [
+    "R1",
+    "R1A",
+    "R1B",
+    "R3",
+    "TIBL-R0 .01 gate and skipped source stage"
+  ],
+  "prohibited": [
+    "plume",
+    "CFD",
+    "GADEN",
+    "PMFS",
+    "training",
+    "new inverse model"
+  ]
+}

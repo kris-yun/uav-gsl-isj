@@ -1,0 +1,19 @@
+{
+  "initial_freeze": "Dates/ranges/height exclusions/window rules and engineering sensitivity screen fixed before initial numerical run. Earlier Wisco summaries already seen; not a blind preregistration.",
+  "implementation_fixes": [
+    "NumPy1.26 lacks np.trapezoid: use scipy.integrate.trapezoid before any integration output.",
+    "Onset persistence checks now enforce gap<=1.5cadence.",
+    "After preliminary QC, RAAVEN bin timestamp changed from median time to last accepted sample, so no bin contains data from future relative to its timestamp; keep within-bin full coordinate/height extrema for conservative history checks. All new outputs rerun."
+  ],
+  "unchanged": [
+    "event dates",
+    "distance grid",
+    "lidar calculations",
+    "old gates",
+    "new assumed-bound screen",
+    "no simulation authorization"
+  ],
+  "final_freeze_file": "PRE_ANALYSIS_FREEZE.json identifies final corrected implementation, not a pre-first-look preregistration",
+  "remaining_speed_sensitivity_scope": "SPEED_SCREEN_SENSITIVITY.csv: .1/.5/1 raw lidar coverage, .5/1 endpoint filtering of primary integrations; .1 integrations not performed.",
+  "post_QC_descriptive_only": "DIRECTION_SPEED_DECOMPOSITION.csv separates fixed-current-speed direction proxy from speed-weighting residual. Not a new gate or test."
+}
