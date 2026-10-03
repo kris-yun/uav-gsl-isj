@@ -1,0 +1,31 @@
+{
+  "label": "NUMERICAL_SMOKE_ONLY_UNCALIBRATED_CLOSURES",
+  "domain_m": [
+    300,
+    120
+  ],
+  "dx_dz_m": [
+    2,
+    2
+  ],
+  "dt_s": 0.1,
+  "duration_s": 180,
+  "u_m_s": 2,
+  "w_m_s": 0,
+  "Kx_m2_s": 0.5,
+  "Q_arbitrary_mass_per_s": 1,
+  "nominal_source_x_z_m": [
+    20,
+    1
+  ],
+  "boundary": "zero inflow; advective outflow; zero diffusive flux on all boundaries",
+  "fixtures": [
+    "homogeneous_Kz_0.5",
+    "imposed_h_10_plus_0.1x_Kz_0.05_to_2.0"
+  ],
+  "limits": [
+    "x-z plane cannot recover source y or crosswind variance",
+    "imposed h and Kz do not solve thermal dynamics",
+    "no literature-calibrated parameter bounds; no scientific gate"
+  ]
+}
