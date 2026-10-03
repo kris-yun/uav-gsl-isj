@@ -1,0 +1,109 @@
+{
+  "decision": "R0_TIBL_STOP_NOT_LOCALIZATION_RELEVANT",
+  "reason": "FROZEN_GEOMETRY_GATE_FAILED_SOURCE_MAPPING_NOT_EXECUTED",
+  "numerical_gate_pass": true,
+  "geometry_gate_pass": false,
+  "geometry_threshold_origin": "operational engineering choice frozen before scoring, not a literature threshold or user-specified number",
+  "partial_geometry_changes_above_numerical_error": true,
+  "all_geometry_abs_threshold_pass": false,
+  "source_mapping_status": "NOT_EXECUTED_GEOMETRY_GATE",
+  "matched_detection_status": "NOT_EXECUTED_GEOMETRY_GATE",
+  "continuous_localization_status": "NOT_EXECUTED_GEOMETRY_GATE",
+  "independent_height_laws_tested": 1,
+  "local_K_shapes_tested": 2,
+  "scientific_scope": "prescribed local gradient-diffusion family; not all physical TIBL mechanisms",
+  "three_dimensional_execution": "NOT_EXECUTED",
+  "OpenFOAM_installed": false,
+  "GADEN_generated": false,
+  "invalid_initial_run": "quarantined; downstream metrics excluded; same config replayed after safe JSD correction",
+  "geometry_comparisons": [
+    {
+      "closure": "USER_SIMPLIFIED_K",
+      "flux": 0.06,
+      "control": "Z_MEAN",
+      "minimum_JSD": 0.004749852897540991,
+      "mean_JSD": 0.011414915731892168,
+      "maximum_JSD": 0.022266498816922997,
+      "gate_minimum": 0.01,
+      "numerical_max_JSD": 1.9176893967307713e-05,
+      "all_source_path_geometry_pass": false
+    },
+    {
+      "closure": "USER_SIMPLIFIED_K",
+      "flux": 0.06,
+      "control": "K_MEAN",
+      "minimum_JSD": 0.029199366392953965,
+      "mean_JSD": 0.04474203922530832,
+      "maximum_JSD": 0.06350437666137256,
+      "gate_minimum": 0.01,
+      "numerical_max_JSD": 1.9176893967307713e-05,
+      "all_source_path_geometry_pass": true
+    },
+    {
+      "closure": "USER_SIMPLIFIED_K",
+      "flux": 0.04,
+      "control": "Z_MEAN",
+      "minimum_JSD": 0.004367420674163215,
+      "mean_JSD": 0.010248393310121524,
+      "maximum_JSD": 0.020014893878882226,
+      "gate_minimum": 0.01,
+      "numerical_max_JSD": 1.9176893967307713e-05,
+      "all_source_path_geometry_pass": false
+    },
+    {
+      "closure": "USER_SIMPLIFIED_K",
+      "flux": 0.04,
+      "control": "K_MEAN",
+      "minimum_JSD": 0.030547492910842237,
+      "mean_JSD": 0.04617197894363667,
+      "maximum_JSD": 0.06455409820726694,
+      "gate_minimum": 0.01,
+      "numerical_max_JSD": 1.9176893967307713e-05,
+      "all_source_path_geometry_pass": true
+    },
+    {
+      "closure": "HOLTSLAG_SIEBESMA_FREE_CONVECTION_ED",
+      "flux": 0.06,
+      "control": "Z_MEAN",
+      "minimum_JSD": 0.005822745399278179,
+      "mean_JSD": 0.01467770253435789,
+      "maximum_JSD": 0.027756864539730405,
+      "gate_minimum": 0.01,
+      "numerical_max_JSD": 1.9176893967307713e-05,
+      "all_source_path_geometry_pass": false
+    },
+    {
+      "closure": "HOLTSLAG_SIEBESMA_FREE_CONVECTION_ED",
+      "flux": 0.06,
+      "control": "K_MEAN",
+      "minimum_JSD": 0.023389663215193108,
+      "mean_JSD": 0.03567841829364096,
+      "maximum_JSD": 0.052462648073098125,
+      "gate_minimum": 0.01,
+      "numerical_max_JSD": 1.9176893967307713e-05,
+      "all_source_path_geometry_pass": true
+    },
+    {
+      "closure": "HOLTSLAG_SIEBESMA_FREE_CONVECTION_ED",
+      "flux": 0.04,
+      "control": "Z_MEAN",
+      "minimum_JSD": 0.005089661941807875,
+      "mean_JSD": 0.012720364035527782,
+      "maximum_JSD": 0.02415710176335991,
+      "gate_minimum": 0.01,
+      "numerical_max_JSD": 1.9176893967307713e-05,
+      "all_source_path_geometry_pass": false
+    },
+    {
+      "closure": "HOLTSLAG_SIEBESMA_FREE_CONVECTION_ED",
+      "flux": 0.04,
+      "control": "K_MEAN",
+      "minimum_JSD": 0.024696934305218722,
+      "mean_JSD": 0.03792088198801721,
+      "maximum_JSD": 0.05508095280975696,
+      "gate_minimum": 0.01,
+      "numerical_max_JSD": 1.9176893967307713e-05,
+      "all_source_path_geometry_pass": true
+    }
+  ]
+}

@@ -1,0 +1,417 @@
+这轮之后，**TIBL 方向还不能写成已成立科学问题，但我认为已经可以从“参数合同未闭合”推进到一个非常受限的正式 falsification R0 了**。原因是这次能把关键参数从“人为指定”改成“文献约束 + 独立闭合形式”，而且能针对 R1A 的慢风混杂设计匹配对照。
+
+最重要的变化是：**不要再直接给 \(K_z\) 填 0.05、2.0 这种数。**
+
+### 现在可以冻结的物理合同
+
+| 量 | 建议正式合同 | 依据 |
+|---|---|---|
+| TIBL 高度 | 主高度律：\(h_T=0.1x,\ x\le2\,km\) | EPA shoreline dispersion model；因此 400/700/1000 m 对应 40/70/100 m [EPA FTP](https://gaftp.epa.gov/Air/aqmg/SCRAM/models/preferred/ocd/ocdugsup.pdf?utm_source=chatgpt.com) |
+| 真实湖岸高度 sanity check | 40–100 m AGL | WiscoDISCO 湖风条件下实际观测到 over-land IBL 约 40–100 m [皇家化学学会出版物](https://pubs.rsc.org/en/content/articlehtml/2023/ea/d2ea00101b?utm_source=chatgpt.com) |
+| 独立外部约束 | 即使 5 km 岸距，近地 shoreline tracer 实验中的 convective IBL 仍可低于约 150 m | Wilmington 3 m 高 SF₆ 受控释放现场实验 [科学直接](https://www.sciencedirect.com/science/article/abs/pii/S1352231005010010?utm_source=chatgpt.com) |
+| 热力强迫 | primary 用陆面运动学热通量约 \(0.06\;K\,m\,s^{-1}\)；0.04 作敏感性 | Allouche 2025 的 LSB LES；海→陆背景风时陆面最大热差附近约 0.06 [AGU Journals](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2023JD040708) |
+| \(K_z\) | **不直接指定数值**，由 \(h,w_*\) 和标准 K-profile 导出 | CBL 参数化通常写成 \(K\propto w_*z(1-z/h)^2\)；不同成熟闭合可作为独立敏感性模型 [NOAA机构库](https://repository.library.noaa.gov/view/noaa/65732/noaa_65732_DS1.pdf?utm_source=chatgpt.com) |
+| 第二高度闭合 | 仅作 robustness，不作 truth：MK1992/HS2024 一类 TIBLH 模型 | 2025 Atmospheric Environment 明确指出传统 TIBLH 模型在非中性海风下可能偏差，并给出热力+动力修正式 [科学直接](https://www.sciencedirect.com/science/article/abs/pii/S1352231025004741?utm_source=chatgpt.com) |
+
+这里有个很有用的数值 sanity check。
+
+用 Allouche 的运动学热通量约 \(0.04\!-\!0.06\;K\,m\,s^{-1}\) 和 \(h=40\!-\!100\) m，标准 convective velocity scaling 给出的 \(w_*\) 大约在 **0.38–0.59 m/s**。再代入常用 K-profile：
+
+\[
+K_z=\kappa w_*z(1-z/h)^2,
+\]
+
+其峰值自然落在大约 **0.9–3.5 m²/s**。
+
+这个范围不是我手调出来的，而是**热通量→边界层尺度→扩散闭合**推出来的。作为更宽的闭合敏感性，LES 文献给出的最优 \(K_z\) 最大值尺度可达到约 \(0.25w_*h\)，所以可以另外做一个强混合 stress test，但绝不能拿那个强闭合单独产生的正结果过门。[CaltechAUTHORS](https://authors.library.caltech.edu/records/1smaf-jbs82?utm_source=chatgpt.com)
+
+---
+
+## 真正应该测试的东西也要改
+
+这次科学假设不要写成：
+
+> TIBL 会导致定位失败。
+
+而应严格写成：
+
+> **在相同平均平流条件和匹配总体混合强度下，岸线方向上逐渐发展的热力混合结构 \(K_z(x,z)\) 是否产生了不能被等效均匀扩散解释的源—受体映射变化？**
+
+这个区别很重要。
+
+因为只要让 \(K_z\) 变大，plume 当然会变。
+
+**我们需要证明的是 spatial development 本身有作用。**
+
+所以正式实验的核心对照应该是：
+
+**TIBL-X**
+
+\[
+K_z(x,z)
+\]
+
+由 \(h_T(x)\) 和 K-profile 构造，随岸距发展。
+
+对比：
+
+**Z-MEAN**
+
+\[
+\bar K_z(z)=\frac1L\int K_z(x,z)\,dx
+\]
+
+即保留完全相同的平均垂向混合结构，但是**去掉岸线方向的发展**。
+
+再加：
+
+**K-MEAN**
+
+整个域采用与 TIBL case **总积分扩散预算相同**的均匀扩散系数。
+
+这样如果 TIBL-X 和 Z-MEAN/K-MEAN 没区别：
+
+> STOP。
+
+说明对定位而言，真正重要的只是“总体扩散有多强”，不是湖岸内部边界层的空间发展。
+
+这会直接避免再发生 R1A 那种：
+
+> 看起来像湖岸效应 → 最后发现普通慢风也能解释。
+
+---
+
+## 还有一个我现在认为必须改的地方：正式域不能继续用 300 m
+
+你的 smoke solver 当前是：
+
+\[
+300\times120\;m.
+\]
+
+但按照 EPA 的：
+
+\[
+h_T=0.1x,
+\]
+
+300 m 岸距只有：
+
+\[
+h_T\approx30m.
+\]
+
+它根本到不了 WiscoDISCO 实际观测到的 40–100 m 范围。[EPA FTP](https://gaftp.epa.gov/Air/aqmg/SCRAM/models/preferred/ocd/ocdugsup.pdf?utm_source=chatgpt.com)
+
+所以我建议正式二维机制域改成大约：
+
+\[
+x=0\sim1000m,
+\qquad
+z=0\sim150m.
+\]
+
+这样：
+
+\[
+x=400m\rightarrow h=40m
+\]
+
+\[
+x=700m\rightarrow h=70m
+\]
+
+\[
+x=1000m\rightarrow h=100m.
+\]
+
+这就第一次把**真实观测的湖岸层高**和**模型里的岸距发展**连起来了。
+
+---
+
+# 源定位 gate 也必须比以前严格
+
+这次绝对不能再只看 hit rate 或九源 Top-1。
+
+二维 R0 只能承认自己研究：
+
+\[
+x_s
+\]
+
+而不是完整：
+
+\[
+(x_s,y_s).
+\]
+
+但完全可以先问一个足够关键的问题：
+
+> **如果真实传播是 TIBL-X，而反演器错误地假定 homogeneous mixing，它会不会系统性把 \(x_s\) 反错？**
+
+这里 \(Q\) 必须作为未知 nuisance parameter。
+
+即针对每一个候选：
+
+\[
+x_s
+\]
+
+都把：
+
+\[
+Q,\ C_{\rm bg}
+\]
+
+profile/marginalize 掉。
+
+否则又会出现：
+
+> “一个源浓度比较大，所以更容易识别。”
+
+同时再做**matched detection**：
+
+TIBL 与 control 使用相同数量的有效 gas detections / 相似 SNR 子样本，然后比较源位置 likelihood。
+
+这样只有在：
+
+> **气体检测机会相同、源强不提供作弊信息以后**
+
+仍然存在 source-coordinate distortion，才是真正值得研究的定位机制。
+
+---
+
+## 我现在会把 PASS 条件压成三个必须同时成立的门
+
+第一，TIBL-X 相对于 Z-MEAN/K-MEAN 的 plume/source-map 差异必须明显大于网格、时间步和边界条件造成的数值误差，并且至少在**两种独立 \(h(x)\)/\(K_z\) 闭合**下方向一致。
+
+第二，在**匹配 hit rate/SNR、profile 掉未知 \(Q\) 与 background** 后，TIBL-X 仍然系统性改变 \(x_s\) 反演误差、likelihood 曲率或者位置不确定区间。
+
+第三，用错误 homogeneous model 反演 TIBL truth 时出现明显 bias，而使用正确 TIBL-aware forward model 后 bias 有恢复；不能只证明“羽流形状看起来不同”。
+
+只要其中任何一条失败：
+
+> **`R0_TIBL_STOP_NOT_LOCALIZATION_RELEVANT`**
+
+不进 3D，不装 OpenFOAM，不生成 GADEN。
+
+如果三条都通过：
+
+> **`R0_TIBL_POSITIVE_SOURCE_MAPPING_SIGNAL`**
+
+这时才值得做真正的 3D：
+
+\[
+(x_s,y_s)+U_s.
+\]
+
+---
+
+我建议你让 Codex 下一步就执行这个版本，而不是再做一次泛化的 TIBL plume test：
+
+保持旧 R1/R1A/R1B/R3 结论不变。新实验只验证待定假设，不宣称 TIBL 已导致气源定位失败。
+
+目标：
+
+在平均平流条件、源参数、观测预算及总体混合强度受控时，检验“岸线方向发展的热力内部边界层混合结构”是否产生不能由等效均匀/仅垂向扩散解释的 source–receptor mapping 差异。
+
+一、物理合同
+
+二维域改为：
+x = 0–1000 m
+z = 0–150 m
+
+不得继续用 300 m 域作为主要科学实验。
+
+Primary TIBL height：
+EPA shoreline empirical model
+h_T(x)=0.1x, x<=2000 m.
+
+因此重点诊断岸距：
+400 m -> 40 m
+700 m -> 70 m
+1000 m -> 100 m
+
+该范围需与 WiscoDISCO 实测 over-land IBL 40–100 m 做 sanity check，但不得声称 Wisco 直接验证上述 h(x) 公式。
+
+热力尺度：
+primary land kinematic heat flux = 0.06 K m/s
+sensitivity = 0.04 K m/s
+
+来源必须记录 Allouche et al. 2025。
+
+不得直接手填任意 Kz 范围。
+
+Primary vertical mixing closure 使用文献 K-profile：
+
+Kz(x,z) = kappa * w_star(x) * z * (1-z/h_T(x))^2
+0 < z < h_T(x)
+
+kappa=0.4。
+
+w_star 必须由 surface kinematic heat flux、参考温度及 h_T 推导。
+
+记录得到的 Kz range；预计 primary envelope 约为 order 1–few m2/s，但实际值必须由冻结公式自动计算，不允许手工修改。
+
+增加至少一种独立文献 closure 作为 sensitivity。若结论只在一种 closure 下成立，STOP/HOLD，不得过门。
+
+二、匹配对照
+
+必须同时计算：
+
+TIBL_X：
+完整 x-dependent h_T(x), Kz(x,z)。
+
+Z_MEAN：
+Kz_bar(z) = x方向平均后的垂向 profile。
+它保留总体垂向混合特征，但移除 shoreline development。
+
+K_MEAN：
+空间均匀 Kz，使全域积分 mixing budget 与 TIBL_X 匹配。
+
+所有 case 完全固定：
+u(x,z)
+w
+Kx
+source coordinates
+source release
+boundary conditions
+simulation duration
+sampling path
+sensor noise
+time sampling
+
+主要试验先保持相同 u。
+不得用“慢风”作为 TIBL 效应。
+
+可额外加入高风速 negative/sensitivity case，因为文献显示高风速会削弱 thermal effect，但不得把它用于调 primary 参数。
+
+三、数值验证
+
+正式评分前完成：
+
+dx/dz convergence
+dt convergence
+mass conservation
+non-negativity
+top/bottom/outflow boundary sensitivity
+
+科学效应必须明显大于数值收敛误差。
+
+四、plume geometry gate
+
+比较：
+
+centroid_z(x)
+vertical variance
+peak-height trajectory
+normalized vertical concentration profile
+TIBL_X versus Z_MEAN/K_MEAN distribution distance
+
+这里只作为中间物理 gate。
+
+“改变 Kz 导致 plume 改变”本身不得算 PASS。
+
+只有 shoreline-development case 相对 matched mixing controls 仍出现稳定剩余差异才进入 source mapping gate。
+
+五、source mapping gate
+
+二维实验明确只研究 x_s，不声称恢复 y_s。
+
+使用多个连续 source-x truth，不使用九离散候选分类作为最终判据。
+
+反演变量至少包含：
+x_s
+Q nuisance
+background nuisance
+
+对每个 source candidate/profile likelihood：
+优化或边缘化 Q 和 background。
+
+报告：
+x-source localization error
+bias
+likelihood curvature
+credible/profile interval width
+truth coverage
+source-pair distribution/separability
+
+六、检测机会去混杂
+
+必须另外执行 matched-detection analysis。
+
+TIBL_X 和 controls 按相同 gas-hit 数量、相近 SNR 或相同 observation count 重采样后重新评分。
+
+若 source advantage 在 matched detection 后消失：
+STOP_DETECTION_CONFOUND
+
+不得把 concentration amplitude 或 hit fraction 差异当作 source information。
+
+七、model-mismatch 核心实验
+
+生成：
+truth = TIBL_X
+
+分别使用：
+homogeneous / Z_MEAN inverse model
+以及
+TIBL-aware inverse model
+
+反演同一批 observations。
+
+关键问题：
+
+错误 homogeneous transport model 是否产生系统 x_s bias？
+TIBL-aware model 是否在未知 Q/background 下恢复 source estimate？
+
+若只改变 plume morphology，但 source-coordinate inference 无稳定影响：
+R0_TIBL_STOP_NOT_LOCALIZATION_RELEVANT
+
+八、鲁棒性
+
+至少在：
+2种 h/K closure
+多个 source x
+多个 observation paths
+多个 noise seeds
+
+方向一致。
+
+禁止看结果后选择最有利岸距、Kz 或源位置。
+
+九、Decision
+
+只允许：
+
+R0_TIBL_STOP_NOT_LOCALIZATION_RELEVANT
+R0_TIBL_HOLD_CLOSURE_SENSITIVE
+R0_TIBL_POSITIVE_SOURCE_MAPPING_SIGNAL
+
+只有最后一种才允许进入三维 CFD / scalar transport，研究完整：
+(x_s,y_s) + localization uncertainty。
+
+二维 PASS 不得直接写成“湖岸 TIBL 导致完整气源定位失效”。
+
+十、输出
+
+保存：
+FROZEN_PARAMETER_SOURCES.md
+R0_TIBL_CONFIG.json
+NUMERICAL_CONVERGENCE.csv
+PLUME_GEOMETRY.csv
+MATCHED_MIXING_CONTROLS.csv
+MATCHED_DETECTION.csv
+SOURCE_PROFILE_LIKELIHOOD.csv
+MODEL_MISMATCH_LOCALIZATION.csv
+R0_TIBL_DECISION.json
+REPORT_R0_TIBL_zh.md
+
+所有文献公式、输入值、推导值、代码版本和 SHA256 必须可追踪。
+
+所以我的判断比上一轮更明确：
+
+**现在可以跑，但只能跑这个严格的 R0。**
+
+不是为了“证明 TIBL”，而是给它一次公平的证伪机会。
+
+如果连在**相同 advection + 相同总体 mixing budget + 相同 detection opportunity + 未知 Q**的条件下，TIBL 的岸向发展都不能稳定影响源位置反演，那么我会建议把 **TIBL 主创新路线彻底停止**。如果还能留下明显 source bias，这才终于有资格进入 3D 湖岸场景科学问题。
