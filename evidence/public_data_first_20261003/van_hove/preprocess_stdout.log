@@ -1,0 +1,50 @@
+Executing 01_get_drone_data.py
+C:\work\SVALBARD_BOREHOLE_REAL_DATA_20261003\raw\active\drone_data\remote_control/1738407715012/DJIFlightRecord_2025-02-01_[12-01-54]-aircraft.csv
+C:\work\SVALBARD_BOREHOLE_REAL_DATA_20261003\raw\active\drone_data\remote_control/1738409204178/DJIFlightRecord_2025-02-01_[12-26-44]-aircraft.csv
+C:\work\SVALBARD_BOREHOLE_REAL_DATA_20261003\raw\active\drone_data\remote_control/1738409370604/DJIFlightRecord_2025-02-01_[12-29-30]-aircraft.csv
+C:\work\SVALBARD_BOREHOLE_REAL_DATA_20261003\raw\active\drone_data\remote_control/1738410966627/DJIFlightRecord_2025-02-01_[12-56-06]-aircraft.csv
+Executing 02_add_methane_data.py
+                           AERIS.Tgas  ...  AERIS.Alt. [m]
+datetime                               ...                
+2025-02-01 10:05:41+00:00        37.0  ...            42.5
+2025-02-01 10:05:42+00:00        37.0  ...            42.5
+2025-02-01 10:05:42+00:00        37.0  ...            42.5
+2025-02-01 10:05:44+00:00        37.0  ...            42.5
+2025-02-01 10:05:45+00:00        37.0  ...            42.5
+
+[5 rows x 7 columns]
+                           OSD.flyTime [s]  ...  WEATHER.windDirection
+datetime                                    ...                       
+2025-02-01 11:02:00+00:00             5.50  ...                     NW
+2025-02-01 11:02:01+00:00             6.55  ...                     NW
+2025-02-01 11:02:02+00:00             7.55  ...                     NW
+2025-02-01 11:02:03+00:00             8.50  ...                     NW
+2025-02-01 11:02:04+00:00             9.50  ...                      W
+
+[5 rows x 15 columns]
+Executing 03_add_sonic_data.py
+                         SONIC.WindSpeed  ...  SONIC.Pressure
+datetime                                  ...                
+2025-02-01 12:20:20.000             1.40  ...         1020.30
+2025-02-01 12:20:20.050             1.31  ...         1020.30
+2025-02-01 12:20:20.101             1.27  ...         1020.28
+2025-02-01 12:20:20.152             1.20  ...         1020.33
+2025-02-01 12:20:20.203             1.33  ...         1020.32
+
+[5 rows x 11 columns]
+                     SONIC.WindSpeed  ...  SONIC.Pressure
+datetime                              ...                
+2025-02-01 12:20:20           1.3570  ...       1020.2940
+2025-02-01 12:20:21           1.3580  ...       1020.2990
+2025-02-01 12:20:22           1.3855  ...       1020.2955
+2025-02-01 12:20:23           1.4720  ...       1020.3040
+2025-02-01 12:20:24           1.4995  ...       1020.3005
+
+[5 rows x 11 columns]
+Executing 04_correct_wind.py
+Executing 05_coordinate_system.py
+Executing 06_filter_flightdata.py
+Executing 07_convert_conc.py
+mean temperature = 0.7927905542464206 deg C
+mean pressure = 1020.1351594290344 hPa
+Executing 08_get_background_ppm.py

@@ -1,0 +1,44 @@
+{
+  "domain": "GPS envelope in mean-wind axes; source 10..400 m upwind of minimum observation x; y within observed envelope",
+  "nx": 31,
+  "ny": 31,
+  "tau_y": [
+    0.03,
+    0.05,
+    0.08,
+    0.12,
+    0.18,
+    0.25,
+    0.35
+  ],
+  "tau_z": [
+    0.015,
+    0.025,
+    0.04,
+    0.065,
+    0.1,
+    0.16,
+    0.25
+  ],
+  "source_height_m": 0,
+  "arms": [
+    "flight_mean",
+    "uav_current_local",
+    "height_dependent"
+  ],
+  "primary_background_ppm": {
+    "CP": 2.031797,
+    "OP": 2.064857
+  },
+  "paper_background_sensitivity_ppm": {
+    "CP": 2.0318,
+    "OP": 2.0291
+  },
+  "CP_north_offset_deg": 19,
+  "spatial_thinning": "CP every 2 rows (2 Hz); OP means by published integer TimeStamp; not cross-platform synchronization",
+  "objective": "Gaussian concentration least squares; nonnegative Q profiled; same Q and dispersion for paired curtains",
+  "uncertainty": "profile RSS <= 1.05 * minimum RSS support extent; diagnostic, NOT posterior credible interval",
+  "ground_arm": "UNAVAILABLE_NO_PUBLISHED_GROUND_TIME_SERIES",
+  "no_truth_in_fitting": true,
+  "sensitivity": "broader dispersion support; primary outputs preserved; no result used to choose best wind arm"
+}

@@ -1,0 +1,46 @@
+{
+  "decision": "REAL_LAGOON_HOLD_METADATA_CONTRACT",
+  "date": "2026-10-03",
+  "track": "A",
+  "contracts": [
+    {
+      "contract": "flight_to_flight_frec_mapping",
+      "status": "NOT_ESTABLISHED",
+      "evidence": "Merged axes are unlabeled; standalone Aeris has 6 flight rows, flightrecords 27 flight rows, Trisonica 13 flight_tris rows. No official ID mapping or selection/splitting recipe found."
+    },
+    {
+      "contract": "wind_units_and_coordinate_frame",
+      "status": "NOT_ESTABLISHED",
+      "evidence": "U/V/W standalone and ucorr/vcorr/wcorr merged have no physical units/frame attributes; corrected filename is not a sign convention or ENU/NED definition."
+    },
+    {
+      "contract": "motion_and_orientation_correction",
+      "status": "PUBLISHER_CORRECTED_FILENAME_ONLY",
+      "evidence": "Standalone wind product is named corrected_split_flights; no rotation matrix, yaw alignment, sensor mounting angles, velocity subtraction, or QC procedure is attached."
+    },
+    {
+      "contract": "gas_wind_gps_sync",
+      "status": "PUBLISHER_SYNCHRONIZED_CLAIM_NOT_REPRODUCIBLE",
+      "evidence": "Zenodo calls merged product synchronised; public code webpage and main/master raw README return 404. Shared tfs grid does not prove clock/lag correction recipe."
+    },
+    {
+      "contract": "timezone",
+      "status": "NOT_ESTABLISHED",
+      "evidence": "NetCDF datetimes have calendar and nanoseconds-since encoding; no timezone or UTC declaration. Flightrecord variables explicitly contain [local] labels."
+    },
+    {
+      "contract": "sensor_response_lag",
+      "status": "NOT_ESTABLISHED",
+      "evidence": "No public lag value, method, sensor delay or response kernel found in checked publisher files/author abstracts."
+    }
+  ],
+  "stage_c_d": "NOT_RUN_GATE_CLOSED",
+  "imagery": "NOT_DOWNLOADED_GATE_CLOSED",
+  "original_raw_unchanged": true,
+  "new_sensor_input_bytes": 201131206,
+  "qualification": {
+    "localization_error": "NOT_VALID: independent workbook points are flux/evasion evidence, not a unique leakage-source ground truth",
+    "plume_transport": "POTENTIAL_AFTER_CONTRACT_UNLOCK; spatial trajectory/measurement inventory is descriptive only",
+    "source_zone_consistency": "POTENTIAL_EXTERNAL_VALIDATION_AFTER_UNLOCK; workbook is finite spatial evidence, not contemporaneous exact source truth"
+  }
+}
