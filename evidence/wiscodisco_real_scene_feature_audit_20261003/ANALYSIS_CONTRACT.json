@@ -1,0 +1,14 @@
+{
+  "protocol_commit": "3cb1e989e901f6391fa4163571b8beb17b96f3ad",
+  "design": "exploratory all available files/dates; not a preregistered hypothesis PASS test",
+  "no_new_GADEN": true,
+  "source_height_comparison": "published AGL for M210/lidar; RAAVEN derived launch-site AGL only under explicit ground reference QA; no assumed site elevation",
+  "RAAVEN_ground_reference": "30s intervals5..35s before first flight flag and after last flight flag; each>=150samples,IQR<=2m,ground median difference<=5m gives two-anchor primary; stable post-anchor alone is sensitivity; median of accepted anchors; half-difference plus2m reported as reference uncertainty indicator, not calibrated error",
+  "RAAVEN_wind": "Flight_Flag1,wind_flag0,finite u/v,wind speed>=.5m/s primary; sensitivity .1 and1m/s; source QC flags retain authority",
+  "time_height_contract": "RAAVEN nonoverlapping300s UTC windows; height bins10+/-5,30+/-5,50+/-10,60+/-10,100+/-10m; at least50 good10Hz samples per wind bin; bins overlap50/60 intentionally, never treated as independent profiles; means sequential/mobile,not simultaneous columns",
+  "lidar": "all6 profile files only,authors date+decimal UTC hour; no stare date/height correction; nearest actual gate within10m of target; no interpolation; primary directional comparison76vs93m,lowest42/59 flagged as unvalidated low-gate diagnostics irrespective of speed screening; no invented SNR threshold",
+  "M210": "all24 published90s tables; iMetFlag0 primary;1/2 sensitivity;finite physical T/RH/pressure;5<=h<=125m; strongest inversion in10..100m across pairs separated>=10m; report elapsed time and altitude SD,not lake-breeze-top; O3 separate POMFlag0",
+  "layer_height_rule": "lake_breeze_layer_top remains null unless independent air-mass boundary identification exists; max positive adjacent T jump midpoint is ONLY thermal-transition proxy; do not equate inversion proxy with lake-breeze or TIBL top",
+  "real_gate": "four necessary protocol conditions:task-scale/large-UAV-scale/independent replication/observable-state; plus lake-specificity and specific-source-failure evidence. Missing evidence gives NOT_ESTABLISHED; observed proxy does not automatically authorize a simulator run",
+  "preserve": "R1/R1A/R1B frozen;STOP current parametric-front line;no Word edit"
+}
