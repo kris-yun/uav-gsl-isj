@@ -1,0 +1,14 @@
+context,config_index,house,primary,gas_type,n_sources,n_realizations_per_source,n_receptors,source_grid_compatible_bank,bank_source_coordinates,wind3d_available,full2d_slice_available,coverage_status,full_grid_forward_fraction,metadata_path,candidate_scope
+House01_cfg00,0.0,House01,True,13,2.0,4.0,301.0,False,"[[-0.6, 1.95, 0.4], [-0.4, -2.9, -0.3]]",True,True,2_SOURCE_ONLY; NO_CONTINUOUS_GRID_BANK,,,
+House01_cfg01,1.0,House01,False,13,2.0,4.0,301.0,False,"[[-0.6, 1.95, 0.4], [-0.4, -2.9, -0.3]]",True,True,2_SOURCE_ONLY; NO_CONTINUOUS_GRID_BANK,,,
+House01_cfg02,2.0,House01,True,10,2.0,4.0,301.0,False,"[[-0.4, -2.9, -0.3], [-0.6, 1.95, 0.4]]",True,True,2_SOURCE_ONLY; NO_CONTINUOUS_GRID_BANK,,,
+House01_cfg03,3.0,House01,False,10,2.0,4.0,301.0,False,"[[-0.4, -2.9, -0.3], [-0.6, 1.95, 0.4]]",True,True,2_SOURCE_ONLY; NO_CONTINUOUS_GRID_BANK,,,
+House02_cfg04,4.0,House02,True,10,2.0,4.0,301.0,False,"[[0.0, -1.0, 0.2], [1.0, -2.3, -0.1]]",True,True,2_SOURCE_ONLY; NO_CONTINUOUS_GRID_BANK,,,
+House02_cfg05,5.0,House02,False,10,2.0,4.0,301.0,False,"[[0.0, -1.0, 0.2], [1.0, -2.3, -0.1]]",True,True,2_SOURCE_ONLY; NO_CONTINUOUS_GRID_BANK,,,
+House02_cfg06,6.0,House02,True,13,2.0,4.0,301.0,False,"[[1.0, -2.3, -0.1], [0.0, -1.0, 0.2]]",True,True,2_SOURCE_ONLY; NO_CONTINUOUS_GRID_BANK,,,
+House02_cfg07,7.0,House02,False,13,2.0,4.0,301.0,False,"[[1.0, -2.3, -0.1], [0.0, -1.0, 0.2]]",True,True,2_SOURCE_ONLY; NO_CONTINUOUS_GRID_BANK,,,
+OCB_R2_S2,,,,,,,,,,,,NO_SAME_CONDITION_SOURCE_PAIR,,evidence/ocb_r2/d0/D0A_CONFIG_CONTRACTS.tsv,"8 H01/H02 source-wind configurations, 4 seeds each, exactly 1 source per identical non-source stratum"
+H01_wind_alignment_native_forward,,,,,,,,,,,,REJECT_GENERATOR_AND_READOUT_MISMATCH,,evidence/wind_alignment_d0/scores/forward_bank_manifest.json,87 historical PMFS quadtree candidates
+marked_encounter_PMFS,,,,,,,,,,,,REJECT_GENERATOR_OCCUPANCY_READOUT_MISMATCH,,evidence/marked_encounter_pmfs_d0/forward/FORWARD_MANIFEST.json,"3 older OPEN environments, 18 source units, 1584 PMFS forwards"
+historical_HCMC_context_bank,,,,,,,,,,,,REJECT_GENERATOR_ACQUISITION_READOUT_MISMATCH,,evidence/hcmc_v1/independent_raw_native_20260922_verified/H02_R2026092212/context_bank/source_update_0001/candidate_manifest.csv,Native PMFS candidates at historical source update
+legacy_BiGreen_Gate1A,,,,,,,,,,,,REJECT_GENERATOR_TIMEBASE_REFERENCE_BUDGET_MISMATCH,,evidence/ocb_r2/d0/D0A_LEGACY_GATE1A_CONTRACT.json,"House02 630 arbitrary source candidates, prediction seeds 2026092401 and 2026092402"

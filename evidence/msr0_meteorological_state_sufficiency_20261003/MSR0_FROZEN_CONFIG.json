@@ -1,0 +1,54 @@
+{
+  "experiment": "MSR0_METEOROLOGICAL_STATE_SUFFICIENCY",
+  "base_commit": "f5c52a8c0cc28e9169838e7802d3a8f77600655f",
+  "primary_cases": {
+    "H01/s0": 0,
+    "H01/s1": 2,
+    "H02/s0": 4,
+    "H02/s1": 6
+  },
+  "audit_all_existing_configs": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "no_new_gaden_before_alias_gate": true,
+  "no_neural_network": true,
+  "no_old_gate_edits": true,
+  "path": "Reuse frozen source-blind T0 route separately for each House, identical301 receptor points/times100..700s step2s in every context and source. Not an actual UAV route.",
+  "geometry_contract": "Never compare different houses as meteorology-only interventions. Match sourceXYZ, gas type, release/growth/noise/thermodynamics/generator/timeline across wind contexts.",
+  "Phi0": "Native full-free-floor UV wind slice (stronger spatial resolution than coarse PMFS; same information class, not algorithm reproduction) plus UV at fixed receptor locations; PMFS code actually supports spatial2D wind map, never replace it by a flight mean.",
+  "Phi1": "Phi0 plus receptor W only",
+  "Phi2": "Phi1 plus central differences across fixed z offsets[-.2,+.2]m: vector derivative, shortest directional difference, speed difference. Missing/obstructed cells are masked identically across contexts, not imputed zeros.",
+  "Phi3": "Phi2 plus gradients alongx/y offsets[-.2,+.2]m and central local-neighbor directional concentration and speed SD. Spatial variability, NOT TKE/turbulence.",
+  "Phi_ORACLE": "Phi3 plus fixed3x3x3 patch offsets[-.4,0,.4]m around each receptor, mask fixed by geometry. Oracle not deployable algorithm.",
+  "feature_blindness": "wind_query executable accepts only occupancy,wind files,source-blind receptor probes. Never source coordinates,gas headers or truth for feature/weight construction.",
+  "wind_state_semantics": "Use11 saved wind states and recorded wind-index sequence for mapping observation times. CFD-state physical temporal meaning unproven: no turbulence/TKE/frequency inference from index.",
+  "distance": "Symmetric relative RMS per block = RMS(a-b)/sqrt((RMS(a)^2+RMS(b)^2)/2),zero-scale identical block ->0. Phi distance =equal-block RMS; nested representations not rawdimension dominated.",
+  "Phi0_primary_distance": "Full2D-slice block plus receptorUV block, equal weight, weighted states by fixed route wind-index counts.",
+  "2D_close_threshold": 0.1,
+  "2D_close_sensitivity": [
+    0.05,
+    0.2
+  ],
+  "closeness_basis": "Engineering relative meteorology proximity frozen before gas scoring, not an absolute gas/noise gate. Also report unconstrained nearest neighbors, never force a nearest pair to be close.",
+  "gas_distance": "RMS difference of log1p(ppm) on identical301 time/space sample trace. Additional normalized shape distance descriptive only. No per-trace rescaling in primary.",
+  "within_floor": "All6 pairs of4 whole independent realizations per context/source. Context-pair/source floor=q95 pooling12 within distances from both contexts; report median/q90/q95 separately. Shared pair endpoints not independent sample inflation.",
+  "alias_gate": "Legal matched pair, Phi0<=.10, median of16 between-seed gas distances > pooled within q95, AND ensemble-mean trace difference>same q95. Report ratio and each source separately; no absolute JSD gate.",
+  "representation_metrics": "Same legal context pairs for allPhi; Spearman on context-level mean across sources descriptive due only4 legal interventions; nearest-neighbor gas mismatch/noise ratio and false neighbors. Context retrieval uses matched nonself eligible contexts; one-candidate cases marked unidentifiable, not100% accuracy.",
+  "localization_only_after_alias": "Use matched existing bank, whole-realization leave-one-context-out and leave-one-house-out only if transferable geometry support is proved; do not silently treat2-source classification as continuous-grid localization.",
+  "retrieval_rule_if_gate_passes": "Equal-prior mixture over compatible training contexts, exp(-distance^2/median_positive_train_distance^2), scale computed on training contexts only; profile nonnegative amplitude likelihood with training-within stochastic scale, fixed prior over candidates. No truth-based weights.",
+  "localization_engineering_gate": {
+    "median_meter_error_gain_min": 0.15,
+    "case_direction_min": "3/4",
+    "each_source": "no systematic decline",
+    "paired_context_bootstrap": "must not show clear opposite direction; very small context count disclosed",
+    "Phi2_or_Phi3_vs_oracle": "at least80% of oracle positive median error gain"
+  },
+  "gate_dependencies": "Only alias PASS permits minimal missing source bank; only useful lowdim representation+coordinate benefit permits Wisco bridge. If no alias, STOP scoped to current data/route. Missing scientific identification marked NOT_ESTABLISHED, never proof of universal2D sufficiency."
+}

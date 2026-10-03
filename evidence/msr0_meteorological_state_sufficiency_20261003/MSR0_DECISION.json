@@ -1,0 +1,41 @@
+{
+  "decision": "MSR0_STOP_2D_MET_SUFFICIENT",
+  "interpretation": "No task-related2D aliasing established in current qualified S2/S2X route and meteorology range; does NOT prove general2D information sufficiency.",
+  "alias_gate": "NO_POSITIVE_SIGNAL",
+  "legal_context_pairs": 4,
+  "matched_source_pairs": 8,
+  "alias_collision_count": 0,
+  "primary_cases_preserved": [
+    "H01/s0",
+    "H01/s1",
+    "H02/s0",
+    "H02/s1"
+  ],
+  "primary_within_house_pair_issue": "Different gas types: exclude as causal meteorology interventions",
+  "additional_legal_pairs": [
+    [
+      "House01_cfg00",
+      "House01_cfg01"
+    ],
+    [
+      "House01_cfg02",
+      "House01_cfg03"
+    ],
+    [
+      "House02_cfg04",
+      "House02_cfg05"
+    ],
+    [
+      "House02_cfg06",
+      "House02_cfg07"
+    ]
+  ],
+  "source_localization_stage_executed": false,
+  "minimal_bank_generated": false,
+  "Wisco_bridge_executed": false,
+  "downstream_status": "SKIPPED_DEPENDENCY_GATE_NOT_PASSED",
+  "old_decisions_modified": false,
+  "neural_network_trained": false,
+  "scientific_identification_limit": "Only fast/slow pairs match gas and source within a house; one compatible alternative/context. Cannot assess broad cross-wind-context generalization, and no arbitrary-source forward bank is available.",
+  "config_sha256": "f67ce7404742f39f8ffb4b15b6d1872e88e65d00be7c0bae84b20a2d170b35af"
+}

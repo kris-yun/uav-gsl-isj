@@ -1,0 +1,3 @@
+import pathlib,subprocess,shlex
+b=pathlib.Path('/home/zyc/ocb_r2_seeded_gaden'); f=(b/'build/gaden_common/third_party/gaden_core/CMakeFiles/gaden.dir/flags.make').read_text().splitlines(); inc=next(x.split(' = ',1)[1] for x in f if x.startswith('CXX_INCLUDES')); lib=b/'install/gaden_common/lib'; bsc=b/'build/gaden_common/third_party/gaden_core/third_party/libbsc'
+subprocess.run(['g++','-std=c++20','-O3','-DGADEN_ROS=1']+shlex.split(inc)+['/dev/shm/msr0_met_state_sufficiency_20261003/wind_query.cpp','-L'+str(lib),'-Wl,-rpath,'+str(lib),'-Wl,-rpath,'+str(bsc),'-Wl,-rpath-link,'+str(bsc),'-lgaden','-o','/dev/shm/msr0_met_state_sufficiency_20261003/wind_query'],check=True)

@@ -1,0 +1,81 @@
+audited ocb_r2_cfg00_r01
+audited ocb_r2_cfg00_r02
+audited ocb_r2_cfg00_r03
+audited ocb_r2_cfg00_r04
+audited ocb_r2_cfg01_r01
+audited ocb_r2_cfg01_r02
+audited ocb_r2_cfg01_r03
+audited ocb_r2_cfg01_r04
+audited ocb_r2_cfg02_r01
+audited ocb_r2_cfg02_r02
+audited ocb_r2_cfg02_r03
+audited ocb_r2_cfg02_r04
+audited ocb_r2_cfg03_r01
+audited ocb_r2_cfg03_r02
+audited ocb_r2_cfg03_r03
+audited ocb_r2_cfg03_r04
+audited ocb_r2_cfg04_r01
+audited ocb_r2_cfg04_r02
+audited ocb_r2_cfg04_r03
+audited ocb_r2_cfg04_r04
+audited ocb_r2_cfg05_r01
+audited ocb_r2_cfg05_r02
+audited ocb_r2_cfg05_r03
+audited ocb_r2_cfg05_r04
+audited ocb_r2_cfg06_r01
+audited ocb_r2_cfg06_r02
+audited ocb_r2_cfg06_r03
+audited ocb_r2_cfg06_r04
+audited ocb_r2_cfg07_r01
+audited ocb_r2_cfg07_r02
+audited ocb_r2_cfg07_r03
+audited ocb_r2_cfg07_r04
+audited ocb_r2_s2x_x00_r01
+audited ocb_r2_s2x_x00_r02
+audited ocb_r2_s2x_x00_r03
+audited ocb_r2_s2x_x00_r04
+audited ocb_r2_s2x_x01_r01
+audited ocb_r2_s2x_x01_r02
+audited ocb_r2_s2x_x01_r03
+audited ocb_r2_s2x_x01_r04
+audited ocb_r2_s2x_x02_r01
+audited ocb_r2_s2x_x02_r02
+audited ocb_r2_s2x_x02_r03
+audited ocb_r2_s2x_x02_r04
+audited ocb_r2_s2x_x03_r01
+audited ocb_r2_s2x_x03_r02
+audited ocb_r2_s2x_x03_r03
+audited ocb_r2_s2x_x03_r04
+audited ocb_r2_s2x_x04_r01
+audited ocb_r2_s2x_x04_r02
+audited ocb_r2_s2x_x04_r03
+audited ocb_r2_s2x_x04_r04
+audited ocb_r2_s2x_x05_r01
+audited ocb_r2_s2x_x05_r02
+audited ocb_r2_s2x_x05_r03
+audited ocb_r2_s2x_x05_r04
+audited ocb_r2_s2x_x06_r01
+audited ocb_r2_s2x_x06_r02
+audited ocb_r2_s2x_x06_r03
+audited ocb_r2_s2x_x06_r04
+audited ocb_r2_s2x_x07_r01
+audited ocb_r2_s2x_x07_r02
+audited ocb_r2_s2x_x07_r03
+audited ocb_r2_s2x_x07_r04
+wind probed House01_cfg00
+wind probed House01_cfg01
+wind probed House01_cfg02
+wind probed House01_cfg03
+Traceback (most recent call last):
+  File "C:\work\LAKESHORE_OBSERVABILITY_EXEC_20261003\experiments\msr0_meteorological_state_sufficiency\prepare.py", line 103, in <module>
+    scp(LOCAL/(house+'_points.csv'),HOST+':'+REM+'/'+house+'_points.csv');scp(HOST+':/mnt/hgfs/workspace/GADEN_files/scenarios/'+house+'/OccupancyGrid3D.csv',str(OUT/(house+'_OccupancyGrid3D.csv')))
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\LAKESHORE_OBSERVABILITY_EXEC_20261003\experiments\msr0_meteorological_state_sufficiency\prepare.py", line 16, in scp
+    def scp(p,target):run(['scp','-q',str(p),target])
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\LAKESHORE_OBSERVABILITY_EXEC_20261003\experiments\msr0_meteorological_state_sufficiency\prepare.py", line 14, in run
+    def run(a):return subprocess.run(a,check=True,capture_output=True,text=True).stdout
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Anaconda\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['scp', '-q', 'C:\\work\\MSR0_METEOROLOGICAL_STATE_SUFFICIENCY_20261003\\House02_points.csv', 'zyc@192.168.111.128:/home/zyc/msr0_met_state_sufficiency_20261003/House02_points.csv']' returned non-zero exit status 1.
