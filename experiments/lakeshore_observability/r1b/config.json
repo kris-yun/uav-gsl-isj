@@ -1,0 +1,114 @@
+{
+  "protocol_commit": "f4d322a82ea21c1097108d71cb2cdc37e4233c76",
+  "scenes": [
+    "XF90_F1",
+    "XF90_F2",
+    "XF120_F1",
+    "XF120_F2",
+    "XF150_F1",
+    "XF150_F2"
+  ],
+  "environments": [
+    "F_XF90_F1",
+    "C_XF90_F1",
+    "S_XF90_F1",
+    "F_XF90_F2",
+    "C_XF90_F2",
+    "S_XF90_F2",
+    "F_XF120_F1",
+    "C_XF120_F1",
+    "S_XF120_F1",
+    "F_XF120_F2",
+    "C_XF120_F2",
+    "S_XF120_F2",
+    "F_XF150_F1",
+    "C_XF150_F1",
+    "S_XF150_F1",
+    "F_XF150_F2",
+    "C_XF150_F2",
+    "S_XF150_F2"
+  ],
+  "sources": [
+    [
+      20,
+      -20
+    ],
+    [
+      20,
+      0
+    ],
+    [
+      20,
+      20
+    ],
+    [
+      50,
+      -20
+    ],
+    [
+      50,
+      0
+    ],
+    [
+      50,
+      20
+    ],
+    [
+      80,
+      -20
+    ],
+    [
+      80,
+      0
+    ],
+    [
+      80,
+      20
+    ]
+  ],
+  "seeds": [
+    32001,
+    32002,
+    32003,
+    32004,
+    32005,
+    32006,
+    32007,
+    32008
+  ],
+  "release_levels": [
+    5,
+    10,
+    20
+  ],
+  "threshold_ppm": 0.001,
+  "threshold_factors": [
+    0.5,
+    1,
+    2
+  ],
+  "prefixes_s": [
+    30,
+    60,
+    120,
+    300
+  ],
+  "primary_endpoint": {
+    "height_m": 10,
+    "prefix_s": 300,
+    "threshold_factor": 1
+  },
+  "secondary_height_m": 30,
+  "unchanged_native_parameters": "methane;120s warmup;300s fixed XY ladder;1Hz;native adapter also records60/100m for byte-identical runtime, excluded from analysis",
+  "workers": 4,
+  "wind_construction": "original divergence-free streamfunction, same H100/dz15/dx35/background0.4; frozen original F1/F2 amplitude, translate front only; no gas-based tuning",
+  "uniform_match": "native cell u mean over fixed300s XY trajectory at z10; v=w=0",
+  "profile_match": "native cell u mean over same XY trajectory at EACH z; x/y-invariant, v=w=0",
+  "estimator": "Equal-prior release-pooled source/time hit probability with one Beta(1,1) prior: (1+sum of21 hits)/23, seven training seeds times three equally weighted releases; paired test seed excluded from ALL releases/candidates. Same temporal Brier; aligns protocol exploratory estimator.",
+  "ties": "absolute1e-12 Brier tolerance; equal probability across minimizers; fractional Top1, rank, expected Euclidean error and signed bias; retain individual prediction probabilities",
+  "front_lock_rule": "For each strength and baseline separately, calculate most-affected source-x by largest error fraction averaged over y/release/seeds; tied maxima use mean x. Across90/120/150 require all three scenes have errors, nondecreasing modal region and >=30m endpoint movement. Error-weighted centroid supplied as sensitivity only. Fixed source grid stays unchanged. This conservative discrete-grid operational definition is frozen before new gas, not an extra meteorological claim.",
+  "seed_direction_rule": ">=6/8 seeds with positive oracle-minus-baseline Top1 AND nonzero mean signed x bias in pooled-error majority direction; zero-x errors count against70% direction rule",
+  "scene_gate": "same baseline arm must satisfy oracleTop1>=.9; penalty>=.2; mean error>=5m OR error_fraction>=.2; signed majority among all errors>=.7; seed count>=6; strength/arm family front-lock rule; negative uniform truth/self-template Top1>=.9 for all6",
+  "decision_rule": "PASS >=4/6 scenes fulfill all gates and all negative controls; HOLD >=4/6 fulfill gates except front-lock and negatives pass but <4 fulfill all; otherwise FAIL. No selecting a passing prefix or threshold.",
+  "stop": "no R1.1/R2/PMFS/training/active-sensing/CFD; original decisions unchanged; gas robustness conditional on R1B PASS"
+}
