@@ -1,0 +1,92 @@
+{
+  "windows_utc_hours": {
+    "PRE": [
+      17.0,
+      18.0
+    ],
+    "TRANSITION": [
+      18.5,
+      19.0
+    ],
+    "POST21": [
+      20.75,
+      21.25
+    ],
+    "POST22": [
+      21.75,
+      22.25
+    ]
+  },
+  "profile_counts": {
+    "PRE": 12,
+    "TRANSITION": 6,
+    "POST21": 6,
+    "POST22": 6
+  },
+  "wind_comparison_height_contract": "75-100 versus 100-200 m AGL; 0-75 m reported but not primary directional evidence",
+  "wind_summary": {
+    "PRE": {
+      "direction_shear_deg": 13.84912150162242,
+      "speed_shear_s_inv": 0.01751225490196076
+    },
+    "TRANSITION": {
+      "direction_shear_deg": 18.844589070791628,
+      "speed_shear_s_inv": 0.01066544117647058
+    },
+    "POST21": {
+      "direction_shear_deg": 6.008655832735016,
+      "speed_shear_s_inv": 0.005002450980392151
+    },
+    "POST22": {
+      "direction_shear_deg": 11.842928687440462,
+      "speed_shear_s_inv": -0.007678921568627458
+    }
+  },
+  "temperature_profiles": [
+    {
+      "window": "PRE",
+      "file": "WiscoDisco21_M210_20210522_F3.txt",
+      "n": 10,
+      "min_height_m": 2.13756391672122,
+      "max_height_m": 120.464177742572,
+      "temperature_gradient_C_per_100m": -1.3959733355312869,
+      "upper_minus_lower_C": -2.114684457266499,
+      "inversion_C": 0.04782608695650126,
+      "time_start": "17:27:12",
+      "time_end": "17:40:41"
+    },
+    {
+      "window": "TRANSITION",
+      "file": "WiscoDisco21_M210_20210522_F4.txt",
+      "n": 8,
+      "min_height_m": 35.6719562435453,
+      "max_height_m": 122.917668102794,
+      "temperature_gradient_C_per_100m": -0.05833510986071852,
+      "upper_minus_lower_C": 0.364333333333299,
+      "inversion_C": 1.2710180736674026,
+      "time_start": "18:30:55",
+      "time_end": "18:41:25"
+    },
+    {
+      "window": "POST21",
+      "file": "WiscoDisco21_M210_20210522_F6.txt",
+      "n": 11,
+      "min_height_m": 2.97864938008882,
+      "max_height_m": 119.567776936658,
+      "temperature_gradient_C_per_100m": 1.644974602389671,
+      "upper_minus_lower_C": 1.3895405742822007,
+      "inversion_C": 1.8393183520600012,
+      "time_start": "20:58:34",
+      "time_end": "21:13:34"
+    }
+  ],
+  "decision": "R0_GO",
+  "limitations": [
+    "No usable M210 POST22 profile",
+    "Only one M210 profile within each covered window; local inversion replication uses two independent flights, not multiple flights within each window",
+    "Lidar 42/59 m has very weak/near-zero retrieved speed; SNR threshold not specified by source, not retrospectively tuned",
+    "RAAVEN absolute MSL not fused with AGL",
+    "Stare excluded for unresolved date/height contracts"
+  ],
+  "decision_basis": "R0_GO: independent TRANSITION and POST21 profiles have local inversions 1.271 and 1.839 C versus PRE 0.048 C. This meets the README repeatable vertical-structure criterion; the README does not require positive whole-profile regression slopes. Initial overly strict whole-profile-slope implementation was corrected to the supplied qualitative gate, before any C data or GSL outcome was generated. Wind shear is mixed rather than uniformly enhanced; no windows were changed."
+}

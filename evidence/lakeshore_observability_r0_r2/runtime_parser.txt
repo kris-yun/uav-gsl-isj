@@ -1,0 +1,168 @@
+    }
+
+    WindSequence Preprocessing::ParseOpenFoamVectorCloud(const std::vector<std::filesystem::path>& files,
+                                                         const Environment& env,
+                                                         LoopConfig loopConfig)
+    {
+        std::vector<std::vector<Vector3>> windIterations;
+        windIterations.reserve(files.size());
+        for (const auto& filename : files)
+        {
+            // let's parse the file
+            std::ifstream infile(filename.c_str());
+
+            // Depending on the verion of Paraview used to export the file, lines might be (Point, vector) OR (vector, Point)
+            // so we need to check the header before we know where to put what
+            std::string line;
+            struct ParsedLine
+            {
+                Vector3 point;
+                Vector3 windVector;
+            };
+            ParsedLine parsedLine;
+            float* firstPartOfLine;
+            float* secondPartOfLine;
+            {
+                std::getline(infile, line);
+                size_t pos = line.find(",");
+                std::string firstElement = line.substr(0, pos);
+
+                if (firstElement.find("Points") != std::string::npos)
+                {
+                    firstPartOfLine = &parsedLine.point.x;
+                    secondPartOfLine = &parsedLine.windVector.x;
+                }
+                else
+                {
+                    firstPartOfLine = &parsedLine.windVector.x;
+                    secondPartOfLine = &parsedLine.point.x;
+                }
+            }
+
+            std::vector<Vector3> wind(env.numCells(), Vector3(0, 0, 0));
+
+            while (std::getline(infile, line))
+            {
+                if (line.length() != 0)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        size_t pos = line.find(",");
+                        firstPartOfLine[i] = atof(line.substr(0, pos).c_str());
+                        line.erase(0, pos + 1);
+                    }
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        size_t pos = line.find(",");
+                        secondPartOfLine[i] = atof(line.substr(0, pos).c_str());
+                        line.erase(0, pos + 1);
+                    }
+
+                    // assign each of the points we have information about to the nearest cell
+                    Vector3i idx = env.coordsToIndices(parsedLine.point);
+                    
+                    if(!env.IsInBounds(parsedLine.point))
+                    {
+                        GADEN_ERROR("Point {} is out of bounds", parsedLine.point);
+                        continue;
+                    }
+
+                    size_t index3D = env.indexFrom3D(idx);
+                    wind.at(index3D) = parsedLine.windVector;
+                }
+            }
+
+            windIterations.push_back(wind);
+            infile.close();
+        }
+
+        WindSequence sequence;
+        sequence.Initialize(windIterations, env.numCells(), loopConfig);
+        return sequence;
+    }
+
+    std::shared_ptr<EnvironmentConfiguration> Preprocessing::Preprocess(EnvironmentConfigMetadata const& metadata)
+    {
+"""
+    Launch file to run the GADEN-preprocessing node.
+    This is mandatory before running GADEN simulator.
+    From the CAD models in the selected scenario, it generates a 3D and 2D occupancy gridmap
+    that will be employed by GADEN and nav2 to simulate dispersion and navigation. Moreover parses
+    the 3D cloud of wind-vectors obtained from CFD, to a grid-based format.
+"""
+import os
+
+from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription, OpaqueFunction
+from launch.launch_description_sources import FrontendLaunchDescriptionSource
+from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable, SetLaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterFile
+from ament_index_python.packages import get_package_share_directory
+
+
+
+#===========================
+def launch_arguments():
+    return [
+        DeclareLaunchArgument(
+            "scenario",
+            default_value=["10x6_central_obstacle"],
+            description="scenario to preprocess",
+        ),
+        DeclareLaunchArgument(
+            "configuration",
+            default_value=["config1"],
+            description="name of the configuration yaml file",
+        ), 
+    ]
+#==========================
+
+
+def launch_setup(context, *args, **kwargs):
+    scenario = LaunchConfiguration("scenario").perform(context)
+    pkg_dir = LaunchConfiguration("pkg_dir").perform(context)
+
+    params_yaml_file = os.path.join(
+        pkg_dir, "ros_params", "gaden_params.yaml"
+    )
+    
+
+    ## NODES
+    preprocessing = Node(
+            package="gaden_preprocessing",
+            executable="preprocessing",
+            name="gaden_preprocessing",
+            output="screen",
+            prefix="",
+            parameters=[
+                ParameterFile(params_yaml_file, allow_substs=True),
+            ],
+        )
+    returnList = [preprocessing]
+
+
+    return returnList
+
+
+def generate_launch_description():
+
+    launch_description = [
+        # Set env var to print messages to stdout immediately
+        SetEnvironmentVariable("RCUTILS_LOGGING_BUFFERED_STREAM", "1"),
+        SetEnvironmentVariable("RCUTILS_COLORIZED_OUTPUT", "1"),
+
+        SetLaunchConfiguration(
+            name="pkg_dir",
+            value=[get_package_share_directory("test_env")],
+        ),
+        SetLaunchConfiguration(name="simulation", value="none"),
+        SetLaunchConfiguration(name="playback", value="none"),
+    ]
+    
+    launch_description.extend(launch_arguments())
+    launch_description.append(OpaqueFunction(function=launch_setup))
+    
+    return  LaunchDescription(launch_description)

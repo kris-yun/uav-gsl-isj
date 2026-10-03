@@ -1,0 +1,22 @@
+date: 2026-10-02
+event_date: 2021-05-22
+event_source: https://essd.copernicus.org/articles/14/2129/2022/
+windows_utc_hours:
+  PRE: [17.0, 18.0]
+  TRANSITION: [18.5, 19.0]
+  POST21: [20.75, 21.25]
+  POST22: [21.75, 22.25]
+height_bin_m: 25
+wind_comparison_agl_m: [[75, 100], [100, 200]]
+lidar_height_units: km
+lidar_height_conversion_to_m: 1000
+lidar_missing_policy: mask nonfinite, negative speed, speed >= 100, direction outside [0,360]
+lidar_snr_threshold: null
+m210_required_iMetFlag: 0
+raaven_absolute_height_fusion: disabled_pending_MSL_AGL_contract
+stare_use: excluded_pending_date_height_contract
+r0_go_implementation:
+  status: literal local-structure interpretation of qualitative README gate
+  criterion: local inversion stronger than PRE in two independent paper-anchored profiles
+  caveat: wind shear effects are mixed; GO supports structure, not GSL or a quantitatively fitted meteorological model
+on_hold: do not create wind generator, run N0, generate gas, or execute R1/R2

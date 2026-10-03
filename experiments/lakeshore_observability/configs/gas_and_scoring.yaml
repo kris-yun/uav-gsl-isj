@@ -1,0 +1,26 @@
+gas_type: methane
+source_height_m: 1
+release_levels_filaments_per_second: [5, 10, 20]
+filament_initial_sigma_cm: 100
+filament_growth_gamma_cm2_per_s: 10000
+filament_noise_std_native_parameter: 0.02
+filament_centre_initial_ppm: 20
+temperature_K: 298
+pressure_atm: 1
+integration_dt_s: 0.1
+warmup_s: 120
+observation_duration_s: 300
+observation_frequency_Hz: 1
+flight_speed_m_s: 2
+flight_heights_m: [10,30,60,100]
+hit_threshold_ppm: 0.001
+threshold_sensitivity_factors: [0.5, 1, 2]
+seed_values: [30001,30002,30003,30004,30005,30006,30007,30008]
+omp_threads: 1
+M4_probability_prior: Beta(1,1)
+M4_tie_policy: average true-source rank; fractional top1/top3 credit across exact-score ties
+M1_eligible: gas hit at frozen concentration threshold
+M3_front_radius_m: 15
+M3_secondary_rule: peak <=15m from front for at least two source x groups, fraction > N0 and front distance < source distance
+primary_gate: README unchanged; >=25pp top1 spread, >=2 median rank difference, >=2 source-x groups, >=6/8 seed consistent, N0 <10pp or <half front spread, >=2/3 release levels
+secondary_gate: README unchanged; M1 >=20pp capture drop OR M2 N0 low >=0.5, front low <=0.2, front high >=0.5 across >=2 sources OR predeclared M3 clustering
