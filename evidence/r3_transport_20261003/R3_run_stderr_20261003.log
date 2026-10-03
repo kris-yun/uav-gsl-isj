@@ -1,0 +1,33 @@
+Traceback (most recent call last):
+  File "C:\work\LAKESHORE_OBSERVABILITY_EXEC_20261003\experiments\r3_transport\run.py", line 267, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "C:\work\LAKESHORE_OBSERVABILITY_EXEC_20261003\experiments\r3_transport\run.py", line 250, in main
+    result=gates();dump('SOURCE_BLIND_DECISION_BEFORE_TRUTH.json',result)
+           ^^^^^^^
+  File "C:\work\LAKESHORE_OBSERVABILITY_EXEC_20261003\experiments\r3_transport\run.py", line 221, in gates
+    dump('R3_DECISION.json',result);return result
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\LAKESHORE_OBSERVABILITY_EXEC_20261003\experiments\r3_transport\run.py", line 47, in dump
+    def dump(name,obj): (OUT/name).write_text(json.dumps(obj,ensure_ascii=False,indent=2),encoding='utf8')
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Anaconda\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "D:\Anaconda\Lib\json\encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "D:\Anaconda\Lib\json\encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "D:\Anaconda\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "D:\Anaconda\Lib\json\encoder.py", line 326, in _iterencode_list
+    yield from chunks
+  File "D:\Anaconda\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "D:\Anaconda\Lib\json\encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "D:\Anaconda\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bool_ is not JSON serializable

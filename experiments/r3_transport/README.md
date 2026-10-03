@@ -1,0 +1,3 @@
+# R3 real-data transport audit
+
+Run `python experiments/r3_transport/run.py`, then `python experiments/r3_transport/finalize.py` from the repository. Existing qualified processed observations and isolated pyproj are inputs. No new simulation/training occurs. Read R3_FROZEN_CONFIG.json and REPORT_R3_zh.md for frozen rules, conditioning and source-blind evaluation order. Parent delivery is 5c1da8d8; protocol anchor is 17b31989. Old evidence is retained unchanged. The discrete bootstrap pair counts are not independent experiment counts. Raw original inputs remain in separate C:\work directories; the prior full evidence ZIP checksum is recorded for provenance.
