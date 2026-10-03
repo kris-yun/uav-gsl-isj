@@ -1,0 +1,14 @@
+H01/s0 1 raw 61003 0.852
+H01/s0 1 statistics 61003 0.815
+H01/s0 1 generic 61003 0.611
+Traceback (most recent call last):
+  File "C:\work\LAKESHORE_OBSERVABILITY_EXEC_20261003\experiments\task_sufficiency_t0\train.py", line 93, in <module>
+    predictions=[];main()
+                   ^^^^^^
+  File "C:\work\LAKESHORE_OBSERVABILITY_EXEC_20261003\experiments\task_sufficiency_t0\train.py", line 45, in main
+    elif arm=='source_only':loss=nn.functional.cross_entropy(st,yt)+.01*(zt**2).mean()
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\50176\AppData\Roaming\Python\Python312\site-packages\torch\nn\functional.py", line 3059, in cross_entropy
+    return torch._C._nn.cross_entropy_loss(input, target, weight, _Reduction.get_enum(reduction), ignore_index, label_smoothing)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: expected scalar type Long but found Int

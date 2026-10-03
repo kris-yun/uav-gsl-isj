@@ -1,0 +1,50 @@
+{
+  "cases": {
+    "H01/s0": 0,
+    "H01/s1": 2,
+    "H02/s0": 4,
+    "H02/s1": 6
+  },
+  "alias_note": "s0/s1 are fixed fast wind/gas contexts, NOT source labels; each case contains both S1 and S2",
+  "time_s": [
+    100,
+    700,
+    2
+  ],
+  "flight_z_request_m": 0.2,
+  "route": "largest connected free-cell slice; source-blind 1m lattice waypoints joined by 4-connected shortest paths; 0.2 m/s, repeat",
+  "history_s": 40,
+  "stride_s": 10,
+  "horizons_s": [
+    10,
+    30
+  ],
+  "hit_ppm": 0.001,
+  "split": "4-fold leave-one-replicate-per-source out; train3 independent realizations/source; no test-driven tuning",
+  "models": [
+    "raw",
+    "statistics",
+    "generic",
+    "source_only",
+    "joint"
+  ],
+  "latent_dim": 8,
+  "training_seed": 61003,
+  "epochs": 160,
+  "loss_joint": "CE(source)+BCE(future hits)+0.1 MSE(log1p concentration)+0.01 latent L2+0.1 matched-time same-source/context variance across training realizations",
+  "gate": "rank noninferior >=3/4; median rank improvement>0 OR median AUC gain>=.05 vs raw; mean 10/30 Brier and NLL improve vs source_only; conditional realization probe decreases vs generic and joint source probe >=.75",
+  "nuisance_probe": "conditional on source, classify the THREE training-realization IDs; early history end<=300s vs late>=440s; temporally disjoint spans; chance1/3; this is seen-ID temporal extrapolation diagnostic, not unseen-ID classification",
+  "no_new_simulation": true,
+  "model_initialization_seeds": [
+    61003,
+    61004,
+    61005
+  ],
+  "history_sampling": "20 observations at2s cadence, 38s endpoint span within nominal40s history budget",
+  "source_readout": "same L2 logistic regression C=1 on train-standardized arm representation; rank/AUC from equal-weight mean probabilities per heldout complete realization; neural init seeds averaged",
+  "prediction_readout": "identical linear logistic/ridge heads using representation and known future XYZ; no future wind/gas input",
+  "gate_interpretation": "source-rank versus raw; AUC median case gain; mean Brier AND hit NLL at pooled10/30 improve over source-only; mean nuisance accuracy strictly lower than generic; source-probe mean>=.75; all operationalizations before model fitting",
+  "bottleneck": "8 continuous latent coordinates; L2 penalty is a regularizer, not a certified information bound",
+  "route_limitation": "one connected component, one low indoor height, two-source feasibility only; not a true UAV flight or full 3D shape reconstruction",
+  "comparison_statistics": "54 windows per realization are correlated; effective sample size8 realizations/case, not432 windows"
+}
