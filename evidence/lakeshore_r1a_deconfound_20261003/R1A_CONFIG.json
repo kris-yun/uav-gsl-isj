@@ -1,0 +1,102 @@
+{
+  "protocol_commit": "c351b287faa74171fded9af122cf4992b9facbb2",
+  "environments": [
+    "C20",
+    "C06",
+    "C08",
+    "S06",
+    "S08",
+    "H1",
+    "H2",
+    "F1",
+    "F2"
+  ],
+  "source_positions": [
+    [
+      20,
+      -20,
+      1
+    ],
+    [
+      20,
+      0,
+      1
+    ],
+    [
+      20,
+      20,
+      1
+    ],
+    [
+      50,
+      -20,
+      1
+    ],
+    [
+      50,
+      0,
+      1
+    ],
+    [
+      50,
+      20,
+      1
+    ],
+    [
+      80,
+      -20,
+      1
+    ],
+    [
+      80,
+      0,
+      1
+    ],
+    [
+      80,
+      20,
+      1
+    ]
+  ],
+  "plume_seeds": [
+    31001,
+    31002,
+    31003,
+    31004,
+    31005,
+    31006,
+    31007,
+    31008
+  ],
+  "primary_release_filaments_s": 10,
+  "secondary_releases_conditional": [
+    5,
+    20
+  ],
+  "heights_m": [
+    10,
+    30,
+    60,
+    100
+  ],
+  "threshold_ppm": 0.001,
+  "threshold_factors": [
+    0.5,
+    1,
+    2
+  ],
+  "gas_and_path": "unchanged existing frozen adapter;120s warmup,300s query,1Hz,2m/s",
+  "S06_S08_definition": "x/y-invariant mean of corresponding F horizontal u over frozen300s XY path at each native z cell; not retuned from gas outcomes",
+  "H1_H2_definition": "exact corresponding original horizontal u/v, w=0; numerical diagnostic violating continuity; not physical weather",
+  "decision_policy": {
+    "slow_sufficient": "slow C/S creates source-informative30m with >=.25 fractional Top1 improvement over C20, median positive margin, >=6/8 seeds positive margins",
+    "horizontal_sufficient": "H meets same information criterion",
+    "vertical_increment_supported": "F exceeds all associated C/S/H by >=25pp Top1 AND paired-seed bootstrap95% lower bound of mean margin difference>0 AND >=6/8 seed differences positive",
+    "bootstrap_units": "8 paired seed clusters; source-y/x retained within clusters;20000 resamples fixed RNG20261003",
+    "otherwise": "mixed/saturated/nonidentifiable; do not claim necessary vertical uplift",
+    "secondary_release_interpretable": "original full F30m source-information signal replicates on new seeds and C/S/H comparison yields stable sufficiency or stable incremental attribution; otherwise stop primary without release5/20",
+    "no_R1_1_or_R2": "both remain paused regardless of R1A outcome in this task"
+  },
+  "original_R1_decision": "R1_HOLD_WEAK_OR_UNSTABLE",
+  "independent_native_process_workers": 4
+}
