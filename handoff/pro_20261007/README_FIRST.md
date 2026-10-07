@@ -40,3 +40,13 @@ Do not ask the user to re-upload these before first searching the Library.
 5. Compete 3–5 candidate first-paper scientific questions.
 6. Pick exactly one PRIMARY_GO and one BACKUP; STOP the rest.
 7. Only then redesign FSR benchmark and revise the opening report.
+
+
+## Interim analysis completed before Pro upgrade
+Read these next:
+- `INTERIM_PRIMARY_INNOVATION_ANALYSIS_20261007.md`
+- `LITERATURE_GAP_MATRIX_20261007.md`
+- `W0_TASK_SENSITIVE_WIND_TO_GSL_GATE.md`
+- `PUBLIC_DATASET_AUDIT_SEED_20261007.md`
+
+Important: these are **provisional analyses**, not final PRIMARY_GO decisions. The wind→GSL route remains phenomenon-gated and may still be STOPped.
