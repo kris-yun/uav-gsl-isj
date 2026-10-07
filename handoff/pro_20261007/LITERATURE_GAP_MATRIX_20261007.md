@@ -52,3 +52,15 @@ Use:
 6. GenDA, ICML 2026 — modern geometry-aware sparse wind data assimilation.
 7. Allouche et al., JGR 2025 — unsteady shoreline thermal/synoptic flow interaction.
 8. Yang et al., ACP 2026 — lake-driven pollutant transport regimes.
+
+
+## Important additional prior art — multi-model odor-source localization
+
+Piro, Heinonen, Cencini, and Biferale, **“Many wrong models approach to localise an odour source in turbulence with static sensors,” Journal of Turbulence, 2025**, DOI: 10.1080/14685248.2025.2492711.
+
+The method explicitly avoids relying on one imperfect transport model by ranking/blending multiple approximate models inside Bayesian source localization.
+
+Consequence for our project:
+- generic multi-model / mixture-of-plume-model inference is **not novel enough**;
+- it should be treated as a strong conceptual baseline;
+- any first-paper novelty must come from the UAV/lakeshore-specific transport-information problem: sparse meteorology, complex 3D geometry, task-sensitive wind uncertainty, and source-posterior utility.
