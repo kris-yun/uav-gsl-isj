@@ -1,0 +1,1 @@
+Active decision: STAGE0_V2_DECISION.json. V1 is superseded because its net-wind side selector missed other boundary support. Read REPORT_zh.md. New simulations = 0. Do not use ROUTE_PREFLIGHT_DECISION.json to override the boundary HOLD.

@@ -1,0 +1,12 @@
+{
+  "freeze_order": "Before native virtual-route concentrations are sampled or any perturbation is generated.",
+  "route": "31-point serpentine over six evenly spaced x positions and six evenly spaced y positions in [0.10,0.90] of the original domain; first 31 points in row order, reversing x at odd rows. At each point choose the closest cached native free voxel at the cached altitude nearest z=0.30 m. Mapping uses only original geometry coordinates, never source labels or concentration.",
+  "times_s": "100,120,...,700; one observation at each point/time.",
+  "sensor": "Native GADEN concentration in ppm, sampled from the original 0.2 m field cache. This is an idealized sparse observation schedule, not a collision-free flight or closed-loop controller.",
+  "hit_threshold_ppm": 0.1,
+  "baseline_1": "Two-candidate forward-simulation Bernoulli hit likelihood. For each held-out realization use the other three oracle runs for each source, with Jeffreys Beta(0.5,0.5) smoothing; uniform source prior. This is a small candidate-probability baseline, not an implementation-parity claim for native PMFS.",
+  "baseline_2": "Two-candidate source-term likelihood for log1p native ppm, diagonal Gaussian. Means/variances use the other three oracle runs per candidate; fixed minimum standard deviation 0.25 in log1p units; uniform prior. Conditional independence is an explicit approximation.",
+  "preflight": "Before expensive perturbations require at least 3/4 correct oracle classifications at EACH selected source for BOTH baselines and at least one detectable point in at least 3/4 realizations at EACH source. Exact posterior ties count as ambiguous/incorrect, not favorable source-index wins.",
+  "preflight_fail": "Report W0C_OBSERVATION_PREFLIGHT_HOLD with zero perturbation simulations. No source-informed trajectory tuning or extra trajectories; this is not a negative matched-error causal verdict.",
+  "ensemble": "If the primary preflight passes, include a transparent equal-prior likelihood mixture over the preregistered transport hypotheses. Do not label it an exact reproduction of Piro et al. without full formula/code verification."
+}

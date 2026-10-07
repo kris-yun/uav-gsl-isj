@@ -1,0 +1,23 @@
+{
+  "schema": "W0C_STAGE0_BOUNDARY_V1",
+  "parent_commit": "b3d16c8ed39e439dc14ce3aadc451af786276afc",
+  "contract_commit": "12d530768e66619c24c1b7ae458819890b3ab5b2",
+  "freeze_order": "Written before reading or computing per-run boundary-support scores; no perturbations generated and no new simulations run.",
+  "baseline_interval_s": [100, 700],
+  "baseline_gas": 13,
+  "allowed_houses": ["House01", "House02"],
+  "allowed_sources": "Only the two previously frozen R0C sources in each House; no relocation.",
+  "allowed_winds": "Only the two previously frozen wind contexts in each House.",
+  "realizations": "All four existing realizations for each source/wind/gas cell.",
+  "boundary_band_bins": 3,
+  "dominant_outflow_rule": "Select the signed horizontal axis with the largest absolute component of the time-and-realization mean plume-weighted baseline wind. Use the same side for all four realizations in a cell. A zero mean vector makes the case ineligible.",
+  "edge_mass_mean_max": 0.05,
+  "edge_mass_q95_max": 0.10,
+  "centroid_distance_to_dominant_edge_min_bins": 3.0,
+  "acceptance": "All four realizations must pass mean and q95 edge-mass thresholds and minimum centroid clearance. Require finite nonnegative footprint, positive total footprint mass, and a valid equal-height source lineage. Downwind source clearance must itself exceed three footprint bins.",
+  "selection": "Prefer the first eligible source/wind in each House in wind-label/source-index lexical order. If one House has no eligible source, use the first two eligible cases in the other House. Choose at most two cases; no outcome-based optimization.",
+  "rationale": "At most five percent mean edge-supported footprint mass and ten percent upper-tail edge mass, with a full boundary-band centroid margin, conservatively screen the finite-domain confound. These are eligibility controls, not estimated physical lost-mass measurements.",
+  "no_eligible_case": "Report W0C_STAGE0_NO_CLEAN_BASE_HOLD. Run zero perturbation simulations. Do not loosen thresholds, relocate sources, add seeds/Houses, or claim W0C_GLOBAL_ERROR_SUFFICIENT_STOP.",
+  "one_eligible_case": "Permit only a bounded one-case experiment with a maximum PARTIAL_HOLD conclusion; it cannot close the replication requirement.",
+  "scientific_stop_preservation": "R0C1, R0D and P0 verdicts remain in force; this is a separately authorized causal gate."
+}
