@@ -50,3 +50,18 @@ Read these next:
 - `PUBLIC_DATASET_AUDIT_SEED_20261007.md`
 
 Important: these are **provisional analyses**, not final PRIMARY_GO decisions. The wind→GSL route remains phenomenon-gated and may still be STOPped.
+
+
+## W0C Stage-0 update — 2026-10-07
+Latest verdict: `W0C_STAGE0_NO_CLEAN_BASE_HOLD`.
+The matched-error causal hypothesis was **not tested** because no existing House baseline cell passed the frozen 4/4 all-side transport-support gate.
+
+Read:
+- `W0C_STAGE0_HOLD_REVIEW_20261007.md`
+- `M0_CLEAN_SUPPORT_MECHANISM_DRAFT.md`
+
+Private evidence is in ChatGPT Library:
+- `/UAV_GSL_PRO_HANDOFF_20261007/W0C_STAGE0_NO_CLEAN_BASE_HOLD_20261007.zip`
+- `/UAV_GSL_PRO_HANDOFF_20261007/W0C_STAGE0_REPORT_zh.md`
+
+Do not relax the old House gate. The recommended next step is a clean-support mechanism benchmark, followed by FSR lakeshore confirmation only if the mechanism survives.
