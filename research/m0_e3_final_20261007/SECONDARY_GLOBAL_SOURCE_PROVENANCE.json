@@ -1,0 +1,15 @@
+{
+  "purpose": "R0-prespecified secondary whole-domain 120x80 native column diagnostic, 51 frames, full Free z column; never primary scoring",
+  "source_E1_native_helper_sha256": "0bf5bdd7e9ea43f618b1c32536b307e6819f168caf3b21c2d9776547a553747d",
+  "secondary_source_sha256": "f266f946c36dec0b745c570423dfd91ef1cc6a8cad14f47a63753e2f3c9ac668",
+  "grid_only_substitutions": {
+    "const int NX=40,NY=32,NZ=48": "const int NX=120,NY=80,NZ=48",
+    "return x+40*y+40*32*z": "return x+120*y+120*80*z",
+    "Vector3i{56+2*ix,48+2*iy,2*iz}": "Vector3i{2*ix,2*iy,2*iz}",
+    "std::max(0,(low.y-48+1)/2);iy<=std::min(31,(high.y-48)/2)": "std::max(0,(low.y+1)/2);iy<=std::min(79,high.y/2)",
+    "std::max(0,(low.x-56+1)/2);ix<=std::min(39,(high.x-56)/2)": "std::max(0,(low.x+1)/2);ix<=std::min(119,high.x/2)"
+  },
+  "native_calculation_LOS_cutoff_order_preserved": true,
+  "simulation_runs_added": 0,
+  "primary_pre_run_code_unchanged": true
+}
