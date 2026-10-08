@@ -1,0 +1,15 @@
+{
+  "issue": "E2 audit implementation incorrectly combined exact cross-arm clock equality with equality to unformatted float32 clock reconstructed as float64. Native TSV clock is decimal text rounded at 9 significant digits.",
+  "initial_verdict": "M0_E2_PREREQUISITE_HOLD",
+  "raw_cross_arm_clocks_identical_to_U0": true,
+  "clock_contract_unchanged": true,
+  "repair": "Compare actual cross-arm records exactly; decode stored clock to its native float32 representation before comparing reconstructed native clock. No tolerance is added.",
+  "original_presealed_analyzer_sha256": "212c71618842ff6dd24e77122a96364f59f61fd1d593409e7ce104304225a363",
+  "corrected_analyzer_sha256": "9c3ebd62673403805952e5d5b4c3fd42fe4f345486f6b946515f94efb60ce1e5",
+  "changed_expression_before": "clock_same=clock==ref_clock==expected;",
+  "changed_expression_after": "clock_same=clock==ref_clock and all(c[0]==e[0] and np.float32(c[1])==np.float32(e[1]) and c[2:]==e[2:] for c,e in zip(clock,expected));",
+  "scientific_design_or_gate_changes": 0,
+  "new_simulator_runs_after_correction": 0,
+  "initial_outputs_preserved": "initial_audit/",
+  "independent_pre_run_verifier_unchanged": true
+}
