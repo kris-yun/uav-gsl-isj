@@ -82,3 +82,6 @@ Current authorization recommendation:
 Private frozen package is in ChatGPT Library:
 - `/UAV_GSL_PRO_HANDOFF_20261007/M0_CLEAN_SUPPORT_DESIGN_R0_FROZEN_20261007.zip`
 - `/UAV_GSL_PRO_HANDOFF_20261007/M0_SCIENTIFIC_CONTRACT.md`
+
+## Supervisor's 2026-10-07 annotated opening-report update
+Read `SUPERVISOR_ANNOTATED_OPENING_REPORT_REVISION_PLAN_20261007.md` before revising any Word document. The annotated 31-page original contains explicit yellow feedback about the lakeshore scene diagram, literature depth, plume path/shape/concentration and forecast outputs, dynamic multi-UAV tracking, and three content-specific route figures. The private annotated Word must not be committed into this public repo.
