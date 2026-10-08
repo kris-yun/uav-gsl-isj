@@ -21,3 +21,5 @@ Any route below may be reconsidered only if a concrete fatal flaw in the previou
 
 Important meta-rule:
 Do not turn a negative result into a new method by merely adding model capacity (Transformer/GNN/PINN/etc.) after frozen gates fail.
+
+- **M0 final 2026-10-08**: `M0_STOP` after 40/40 qualified runs, 2 matched-wind-error structural contrasts × 2 sources × 4 master seeds. The plume and sensor forward response changed, but maximum posterior ΔBrier was 8.85e-8 vs 0.10 threshold, both frozen source inference families correct 8/8 per wind; zero 3/4 same-seed intersections. No M0 rescue. Source model posteriors were almost saturated in this easy two-source box; cannot generalize null to all lakeshore flows. Details: `M0_FINAL_STOP_AND_FSR_PIVOT_20261008.md`.
