@@ -65,3 +65,20 @@ Private evidence is in ChatGPT Library:
 - `/UAV_GSL_PRO_HANDOFF_20261007/W0C_STAGE0_REPORT_zh.md`
 
 Do not relax the old House gate. The recommended next step is a clean-support mechanism benchmark, followed by FSR lakeshore confirmation only if the mechanism survives.
+
+
+## M0 R0 design review — 2026-10-07
+The frozen M0 design has been reviewed and is accepted for **staged execution only**.
+
+Read:
+- `M0_R0_DESIGN_REVIEW_20261007.md`
+
+Current authorization recommendation:
+1. E0 runtime qualification, 0 scientific runs;
+2. E1 only the 8 U0 baseline runs;
+3. stop and review before any wrong-wind intervention runs;
+4. if E1 passes, use four already-budgeted intervention rows as a CRN sentinel before launching the remaining 28.
+
+Private frozen package is in ChatGPT Library:
+- `/UAV_GSL_PRO_HANDOFF_20261007/M0_CLEAN_SUPPORT_DESIGN_R0_FROZEN_20261007.zip`
+- `/UAV_GSL_PRO_HANDOFF_20261007/M0_SCIENTIFIC_CONTRACT.md`
