@@ -1,0 +1,79 @@
+{
+  "design_revision": "M0_R0_V1",
+  "execution_authorized": false,
+  "scientific_runs_completed": 0,
+  "simulation_domain_m": {
+    "min": [
+      -16.0,
+      -20.0,
+      -8.0
+    ],
+    "max": [
+      44.0,
+      20.0,
+      16.0
+    ]
+  },
+  "analysis_roi_m": {
+    "min": [
+      -2.0,
+      -8.0,
+      1.0
+    ],
+    "max": [
+      18.0,
+      8.0,
+      9.0
+    ]
+  },
+  "grid_cell_m": 0.25,
+  "grid_dimensions_xyz": [
+    240,
+    160,
+    96
+  ],
+  "total_cells": 3686400,
+  "geometry": "Obstacle-free interior; one-voxel shell on all six faces is native Outlet=2; interior Free=0. No floor/shoreline/building geometry.",
+  "effective_outlet_inner_planes_m": {
+    "min": [
+      -15.75,
+      -19.75,
+      -7.75
+    ],
+    "max": [
+      43.75,
+      19.75,
+      15.75
+    ]
+  },
+  "guard_to_effective_outlet_m": {
+    "xmin": 13.75,
+    "xmax": 25.75,
+    "ymin": 11.75,
+    "ymax": 11.75,
+    "zmin": 8.75,
+    "zmax": 6.75
+  },
+  "true_boundary_band_m": 1.0,
+  "boundary_rule": "All six simulation faces; never an ROI edge and never a mean-wind-selected side.",
+  "qualification": {
+    "required_baseline_runs": 8,
+    "all_4_per_source_must_pass": true,
+    "window_s": [
+      20,
+      120
+    ],
+    "band_mean_mass_fraction_max": 0.05,
+    "band_mass_fraction_q95_max": 0.1,
+    "every_record_min_filament_3sigma_margin_to_outlet_m": 1.0,
+    "removed_filaments_allowed": 0,
+    "source_min_clearance_to_outlet_m": 10.0,
+    "centroid_min_clearance_to_effective_outlet_m": 1.0
+  },
+  "mass_proxy_definition": "For each native isotropic Gaussian, use products of normal CDF differences to integrate the box inside the effective outlet planes and its 1 m inset. Sum using equal conserved filament moles. Band fraction=(M_effective_box-M_inset_box)/M_effective_box. Also report (M_full_Gaussians-M_effective_box)/M_full_Gaussians. The untruncated Gaussian integral is a conservative analytic support diagnostic, not a measurement of deleted mass. The stronger 3sigma support-margin and zero-deletion gates are both mandatory.",
+  "assessment_frames": "All native saved records over 0..140 s for no-deletion and 3sigma margin; the 51 aligned 20..120 s frames for mean/q95 band fractions. Instrument count/exception events at every tick or demonstrate the native fixed-release/outlet-control-flow invariant.",
+  "roi_policy": "Native route observations and source candidates remain inside ROI. ROI column footprint integrates the full simulated vertical column; record whole-domain footprint as secondary. Leaving ROI is a sensing consequence, not physical-domain truncation.",
+  "failure": "M0_BASE_SUPPORT_HOLD, not scientific STOP. No automatic enlargement, source relocation, window shortening or favorable-realization selection. A new build revision needs review and a new freeze before additional runs.",
+  "static_guard_claim": "Geometric guard distances are established; stochastic plume containment has not been simulated or guaranteed. Native periodic Gaussian-table noise makes an IID diffusion-envelope proof inappropriate.",
+  "intervention_support_rule": "All 32 intervention runs must pass the SAME all-six-face support, no-deletion and centroid rules as the eight baselines. A failed intervention support gate invalidates causal scoring and produces HOLD, not a scientific STOP."
+}

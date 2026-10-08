@@ -1,0 +1,110 @@
+{
+  "design_revision": "M0_R0_V1",
+  "execution_authorized": false,
+  "scientific_runs_completed": 0,
+  "arms": [
+    "U0",
+    "A_on",
+    "A_off",
+    "B_shear",
+    "B_speed"
+  ],
+  "only_two_pairs": {
+    "A": [
+      "A_on",
+      "A_off"
+    ],
+    "B": [
+      "B_shear",
+      "B_speed"
+    ]
+  },
+  "bump": "b(q)=exp(1-1/(1-q^2)) for |q|<1, else 0; C-infinity at support boundaries",
+  "pair_A": {
+    "purpose": "Directional/circulation perturbation in the task corridor vs a translated off-corridor region.",
+    "potential": "psi=K*b((x-6)/6)*b((y-cy)/2)*b((z-5)/3)",
+    "centres_m": {
+      "A_on": [
+        6.0,
+        0.0,
+        5.0
+      ],
+      "A_off": [
+        6.0,
+        5.5,
+        5.0
+      ]
+    },
+    "halfwidths_m": [
+      6.0,
+      2.0,
+      3.0
+    ],
+    "continuous_delta": "curl(psi*e_z)=(dpsi/dy,-dpsi/dx,0)",
+    "native_delta": "Use the SAME centred difference operators D_y and D_x on psi at h=0.25 m; du=D_y psi, dv=-D_x psi. Include the one-cell derivative halo. Translation is exactly 22 y cells. No mask multiplication of a velocity field that would introduce artificial divergence.",
+    "streamfunction_gain_m2_s": 0.041229615813247675,
+    "peak_vector_error_target_m_s": 0.04,
+    "perturbed_voxel_count_each": 21216,
+    "perturbed_volume_m3_each": 331.5,
+    "privilege_boundary": "Masks use only ROI/analytic flow orientation and fixed geometric offsets. They are interventions supplied by the experimenter, never a source-informed algorithm input. Both candidates receive the SAME mask. No true plume used to locate either mask.",
+    "baseline_relevance_gate": "Before perturbations, each source requires mean oracle Gaussian mass overlap with nominal on-box >=0.30 and nominal off-box <=0.01, q95 off <=0.05, for all four realizations. Also report derivative-halo overlap. If intended on/off contrast is not realized, PAIR_A_RELEVANCE_HOLD; never reposition the mask."
+  },
+  "pair_B": {
+    "purpose": "Locally destroy task-height along-wind vertical shear vs an ordinary positive horizontal speed bias with the SAME smooth vertical support.",
+    "B_shear_delta_u": "-0.04*tanh((z-5)/1.5)*b((z-5)/3)",
+    "B_speed_delta_u": "K_B*b((z-5)/3)",
+    "delta_v": 0.0,
+    "delta_w": 0.0,
+    "x_y_extent": "Entire native domain at z in (2,8); same perturbed support volume for both B arms.",
+    "K_B_m_s": 0.02112513099990392,
+    "normalization": "Before all plume outcomes, solve the float32 squared-error-energy equality on the declared z cell centres by 80 bisection steps over [0,0.1]; choose the endpoint with smaller error. No source/plume/RNG outcome enters this arithmetic.",
+    "shear_destroy_max_ratio_at_z5": 0.05,
+    "B_speed_shear_preservation_ratio_range": [
+      0.95,
+      1.05
+    ],
+    "smoothness": "Both are C-infinity analytical z profiles. B_speed is a smooth common speed bias with zero derivative at task height, so it preserves local shear; B_shear cancels the local derivative. Neither changes w.",
+    "scope": "Local shear destruction in a 6 m slab, not removal of all shear over the vertical guard."
+  },
+  "RMSE": {
+    "definition": "sqrt(mean(||U_arm_f32-U0_f32||_2^2)) over fixed cell-centre audit voxels, after native float32 representation.",
+    "primary_audit_volumes": [
+      "All Free cells inside the simulation outlet shell",
+      "All cell centres inside the fixed 3D analysis ROI"
+    ],
+    "both_volumes_must_match": true,
+    "absolute_pair_mismatch_max_m_s": 1e-07,
+    "relative_pair_mismatch_max": 0.0001,
+    "relative_denominator": "max(E_arm1,E_arm2), with neither equal to zero",
+    "no_full_domain_vs_roi_substitution": true,
+    "pairs_need_not_have_the_same_error_as_each_other": true
+  },
+  "physical_checks": {
+    "all_finite": true,
+    "native_min_u_m_s": 0.02,
+    "max_vector_error_m_s": 0.0500001,
+    "max_speed_m_s": 0.2,
+    "max_discrete_divergence_s_inv": 1e-06,
+    "rms_discrete_divergence_s_inv": 1e-07,
+    "net_analytic_boundary_flux": 0.0,
+    "obstacle_penetration": "No internal obstacles; six true outlet faces are explicitly open. Field defined analytically throughout the whole box, including guard; no zero padding."
+  },
+  "metrics_to_report": [
+    "vector RMSE in both volumes",
+    "cosine",
+    "speed MAE",
+    "direction error",
+    "divergence change",
+    "support volume",
+    "task-height shear"
+  ],
+  "expected_modern_wind_sha256": {
+    "U0": "a4d9e40e432b9883db75ee0f46319f6a198e0ee7aca34b8da337cbab7834d1dc",
+    "A_on": "a85b27480e3afe1bed492dab302d13c19cddadae79054d7f5221f2594266e5a9",
+    "A_off": "efbc306f925bece4340d3bc3ed04fdc8c9bb8b475740e5c91b53f2fb81641a23",
+    "B_shear": "4d9e803e829c24e14309df09d4b51b6834734b6fdca6fc3e30a1094da6d71f64",
+    "B_speed": "f963e306dce94f661b5bc45349f2f536fe935a0e561be1d5def1a642fc21ce48"
+  },
+  "freeze_no_additional_families": true,
+  "field_assets_generated_this_turn": 0
+}

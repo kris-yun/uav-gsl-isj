@@ -1,0 +1,147 @@
+{
+  "design_revision": "M0_R0_V1",
+  "execution_authorized": false,
+  "scientific_runs_completed": 0,
+  "candidate_sources": [
+    {
+      "source_id": "S0",
+      "xyz_m": [
+        0.0,
+        -1.0,
+        5.0
+      ]
+    },
+    {
+      "source_id": "S1",
+      "xyz_m": [
+        0.0,
+        1.0,
+        5.0
+      ]
+    }
+  ],
+  "candidate_distance_m": 2.0,
+  "selection": "Two symmetric interior candidate points on a fixed upstream plane, selected by box geometry before any plume. Both remain inside the analysis ROI. No source movement permitted.",
+  "same_height_m": 5.0,
+  "minimum_clearance_to_effective_outlet_m": 10.75,
+  "candidate_prior": [
+    0.5,
+    0.5
+  ],
+  "true_source_id": "Available only to simulator configuration and evaluator. Never to route/mask generation or likelihood/ensemble weighting.",
+  "gas": {
+    "native_type_id": 12,
+    "native_name": "carbonMonoxide",
+    "specific_gravity_from_frozen_native_table": 0.967,
+    "interpretation": "Native near-air-density preset, not a measured gas release."
+  },
+  "release": {
+    "source_type": "point",
+    "num_filaments_sec": 10,
+    "filament_initial_std_cm": 10.0,
+    "filament_growth_gamma_cm2_s": 15.0,
+    "filament_noise_std_legacy_parameter": 0.01,
+    "ppm_filament_center_initial": 10.0,
+    "pressure_atm": 1.0,
+    "temperature_K": 298.0,
+    "variable_rate": false,
+    "filament_stop_steps": 0
+  },
+  "clock": {
+    "sim_time_s": 140.0,
+    "time_step_s": 0.1,
+    "results_time_step_s": 0.5,
+    "results_min_time_s": 0.0,
+    "score_times_s": [
+      20,
+      22,
+      24,
+      26,
+      28,
+      30,
+      32,
+      34,
+      36,
+      38,
+      40,
+      42,
+      44,
+      46,
+      48,
+      50,
+      52,
+      54,
+      56,
+      58,
+      60,
+      62,
+      64,
+      66,
+      68,
+      70,
+      72,
+      74,
+      76,
+      78,
+      80,
+      82,
+      84,
+      86,
+      88,
+      90,
+      92,
+      94,
+      96,
+      98,
+      100,
+      102,
+      104,
+      106,
+      108,
+      110,
+      112,
+      114,
+      116,
+      118,
+      120
+    ],
+    "native_save_rule": "currentTime > lastSaveTime + saveDeltaTime, with the native floating-point clock; do not invent an exact record count.",
+    "sample_alignment": "Latest native record with internal time <= requested time; lag <=0.61 s; matching record/time/wind-index sequences across all arms at each source/seed."
+  },
+  "rng": {
+    "master_seeds": [
+      2026100701,
+      2026100702,
+      2026100703,
+      2026100704
+    ],
+    "same_four_seeds_across_two_sources_and_all_five_winds": true,
+    "fresh_process_per_run": true,
+    "OMP_NUM_THREADS": 1,
+    "OMP_DYNAMIC": "FALSE",
+    "OMP_PROC_BIND": "TRUE",
+    "seed_env": "GADEN_RNG_SEED",
+    "native_generator": "seeded std::mt19937 with documented salts and a 1000-value cyclic Gaussian table; this is not IID turbulence.",
+    "alignment_certificate": "Same seed alone is insufficient. Hash matched native source/RNG code, use deterministic point emission (no retry), certify identical release counts/timeline/filament order/sigma arrays, zero outlet deletions and zero exceptions. In the inspected code each live filament then consumes exactly three Gaussian draws per tick, so stream assignment remains matched. Any control-flow/call-count ambiguity causes RNG_HOLD, not a causal verdict."
+  },
+  "prohibited_changes": [
+    "new gas",
+    "new seeds",
+    "source displacement",
+    "extra candidate grid",
+    "buoyancy/noise formula changes after outcomes"
+  ],
+  "runtime": {
+    "intended_generator_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688",
+    "intended_libgaden_sha256": "d7fe2a08b3df6ddd3c39518f9e5ef75bd394c32509e0402b410db445cb008ee3",
+    "MathUtils.hpp_sha256": "0a30c798bd4c413adc30748e70cb643f32a65c570d08b41ac0df2c5aabb2cfff",
+    "PointSource.hpp_sha256": "47015b78915a56585aec23c8f62e5595f8d80e174c68f4daa539f1473394a0d9"
+  },
+  "runtime_parameters": {
+    "save_results": true,
+    "preCalculateConcentrations": false,
+    "localAirflowDisturbances": "exact zero vector in every cell",
+    "GPU_acceleration": "not used",
+    "runtime_output_directory": "Previously nonexistent, resolved allowlisted leaf under /home/zyc/ros2_ws/m0_clean_support_r0_20261007; never reuse a directory because native constructor removes its save directory."
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "design_revision": "M0_R0_V1",
+  "execution_authorized": false,
+  "observations": "Fixed oracle-U0 route samples for the held-out source/seed at all five inference arms; never swap observations together with model wind.",
+  "candidate_prior": [0.5, 0.5],
+  "folds": {
+    "kind": "leave-one-master-seed-out",
+    "held_out": "Exclude the query seed from both candidate sources and all wind template libraries",
+    "training_count_per_source_wind": 3,
+    "independent_seed_blocks": 4,
+    "source_labels_query_visible_to": "evaluator only"
+  },
+  "HIT_FORWARD": {
+    "hit_ppm": 0.1,
+    "comparison": ">=",
+    "bernoulli_probability": "(sum_train_hits + 0.5)/(3+1)",
+    "log_likelihood": "sum_i h_i*log(p_i)+(1-h_i)*log1p(-p_i)",
+    "point_independence": "fixed modelling approximation",
+    "claim_limit": "PMFS-compatible two-candidate forward surrogate; no native PMFS parity or closed-loop claim"
+  },
+  "LOG_GAUSSIAN": {
+    "transform": "log1p(concentration_ppm / 1 ppm)",
+    "train_mean": "3-seed arithmetic mean at each route point",
+    "train_variance_ddof": 1,
+    "effective_variance": "max(train_variance, 0.25^2)",
+    "variance_floor": 0.0625,
+    "log_likelihood": "-0.5*sum_i [log(2*pi*var_i)+(z_query_i-mean_i)^2/var_i]",
+    "point_independence": "fixed modelling approximation",
+    "flux": "known fixed release; no fit or per-source amplitude profiling"
+  },
+  "WRONG_MODEL_BMA": {
+    "models": ["A_on", "A_off", "B_shear", "B_speed"],
+    "U0_excluded": true,
+    "joint_source_model_prior": 0.125,
+    "source_posterior": "softmax_s(logsumexp_m(loglik(s,m)-log(8)))",
+    "model_posterior": "softmax_m(logsumexp_s(loglik(s,m)-log(8)))",
+    "report": "model evidence rank, model posterior weights and blended source posterior for both likelihood families",
+    "truth_model_weighting_allowed": false,
+    "claims": "Generic model-averaging prior-art comparator, not a novel contribution or an exact Piro implementation",
+    "extra_runs": 0
+  },
+  "source_metrics": {
+    "scaled_binary_brier": "0.5*sum_s(p_s-onehot_s)^2 = (1-p_true)^2",
+    "primary_damage": "Brier_model - Brier_oracle; negative means rescue, retain all signs",
+    "NLL": "-log(max(p_true,1e-15)); retain raw posterior and log evidence",
+    "posterior_TV": "0.5*sum_s(abs(p_model_s-p_oracle_s))",
+    "posterior_mean_error_m": "norm(sum_s p_s*source_xyz_s - true_xyz)",
+    "tie_epsilon": 1e-12,
+    "tie_policy": "rank=1.5, top1=false, worst-case MAP error=2 m; no favourable source-index tie break",
+    "top2": "constant 1 for two candidates; no evidence value",
+    "calibration_claim": false
+  },
+  "forward_metrics": {
+    "footprint_grid": "Native cell-centre indices stride=2 at 0.25 m; ROI x/y 40*32; integrate all Free simulation z samples with 0.5 m quadrature",
+    "column_units": "ppm*m; approximate native column concentration, not a physical boundary-mass measurement",
+    "frame_count": 51,
+    "D_F": "L2(F_model-F_U0)/(0.5*(L2(F_model)+L2(F_U0))); flatten all frames; both-zero=0",
+    "D_Y": "sqrt(mean((log1p(route_model_ppm)-log1p(route_U0_ppm))^2))",
+    "scatter": "Native 3sigma sphere cutoff, LOS and CalculateConcentrationSingleFilament in identical filament order; integrate columns without saving full 3D time bank",
+    "parity_per_frame": "25 fixed equal-index points plus up to 25 nonzero points selected at equal ranks of sorted nonzero indices",
+    "parity_abs_bound": "1e-5*(1+abs(native_direct_query))",
+    "parity_failure": "M0_SAMPLING_PARITY_HOLD"
+  }
+}

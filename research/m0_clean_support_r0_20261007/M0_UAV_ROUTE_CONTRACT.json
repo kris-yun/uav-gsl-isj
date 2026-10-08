@@ -1,0 +1,373 @@
+{
+  "design_revision": "M0_R0_V1",
+  "execution_authorized": false,
+  "scientific_runs_completed": 0,
+  "input_allowlist": [
+    "analysis ROI extents",
+    "fixed horizontal insets 4 m in x and 5 m in y",
+    "row spacing 1 m",
+    "ROI middle altitude",
+    "times 20..120 s",
+    "fixed speed and acceleration limits and dwell"
+  ],
+  "forbidden_inputs": [
+    "true source identity",
+    "candidate source coordinates",
+    "oracle plume",
+    "wind vectors",
+    "posterior",
+    "previous experiment scores"
+  ],
+  "algorithm": "ROI-only lawnmower from x=ROI_xmin+4 to ROI_xmax-4, rows y=ROI_ymin+5..ROI_ymax-5 at 1 m spacing; alternate x direction. Altitude=ROI z midpoint. Traverse each straight segment with zero endpoint speed and triangular/trapezoidal speed profile, limit v=1.2 m/s and a=1 m/s^2. Dwell 0.4 s at each internal waypoint. Uniformly stretch moving segments to fill the 100 s window.",
+  "waypoints_xyz_m": [
+    [
+      2.0,
+      -3.0,
+      5.0
+    ],
+    [
+      14.0,
+      -3.0,
+      5.0
+    ],
+    [
+      14.0,
+      -2.0,
+      5.0
+    ],
+    [
+      2.0,
+      -2.0,
+      5.0
+    ],
+    [
+      2.0,
+      -1.0,
+      5.0
+    ],
+    [
+      14.0,
+      -1.0,
+      5.0
+    ],
+    [
+      14.0,
+      0.0,
+      5.0
+    ],
+    [
+      2.0,
+      0.0,
+      5.0
+    ],
+    [
+      2.0,
+      1.0,
+      5.0
+    ],
+    [
+      14.0,
+      1.0,
+      5.0
+    ],
+    [
+      14.0,
+      2.0,
+      5.0
+    ],
+    [
+      2.0,
+      2.0,
+      5.0
+    ],
+    [
+      2.0,
+      3.0,
+      5.0
+    ],
+    [
+      14.0,
+      3.0,
+      5.0
+    ]
+  ],
+  "segment_schedule": [
+    {
+      "segment": 0,
+      "start_s": 20.0,
+      "end_s": 31.79469026548672,
+      "from_xyz_m": [
+        2.0,
+        -3.0,
+        5.0
+      ],
+      "to_xyz_m": [
+        14.0,
+        -3.0,
+        5.0
+      ],
+      "length_m": 12.0,
+      "ramp_s": 1.2637168141592918,
+      "peak_speed_m_s": 1.139495798319328,
+      "acceleration_m_s2": 0.9017018572134738,
+      "dwell_after_s": 0.4
+    },
+    {
+      "segment": 1,
+      "start_s": 32.19469026548673,
+      "end_s": 34.30088495575222,
+      "from_xyz_m": [
+        14.0,
+        -3.0,
+        5.0
+      ],
+      "to_xyz_m": [
+        14.0,
+        -2.0,
+        5.0
+      ],
+      "length_m": 1.0,
+      "ramp_s": 1.0530973451327432,
+      "peak_speed_m_s": 0.9495798319327733,
+      "acceleration_m_s2": 0.9017018572134738,
+      "dwell_after_s": 0.4
+    },
+    {
+      "segment": 2,
+      "start_s": 34.700884955752215,
+      "end_s": 46.49557522123894,
+      "from_xyz_m": [
+        14.0,
+        -2.0,
+        5.0
+      ],
+      "to_xyz_m": [
+        2.0,
+        -2.0,
+        5.0
+      ],
+      "length_m": 12.0,
+      "ramp_s": 1.2637168141592918,
+      "peak_speed_m_s": 1.139495798319328,
+      "acceleration_m_s2": 0.9017018572134738,
+      "dwell_after_s": 0.4
+    },
+    {
+      "segment": 3,
+      "start_s": 46.89557522123894,
+      "end_s": 49.00176991150443,
+      "from_xyz_m": [
+        2.0,
+        -2.0,
+        5.0
+      ],
+      "to_xyz_m": [
+        2.0,
+        -1.0,
+        5.0
+      ],
+      "length_m": 1.0,
+      "ramp_s": 1.0530973451327432,
+      "peak_speed_m_s": 0.9495798319327733,
+      "acceleration_m_s2": 0.9017018572134738,
+      "dwell_after_s": 0.4
+    },
+    {
+      "segment": 4,
+      "start_s": 49.40176991150443,
+      "end_s": 61.19646017699115,
+      "from_xyz_m": [
+        2.0,
+        -1.0,
+        5.0
+      ],
+      "to_xyz_m": [
+        14.0,
+        -1.0,
+        5.0
+      ],
+      "length_m": 12.0,
+      "ramp_s": 1.2637168141592918,
+      "peak_speed_m_s": 1.139495798319328,
+      "acceleration_m_s2": 0.9017018572134738,
+      "dwell_after_s": 0.4
+    },
+    {
+      "segment": 5,
+      "start_s": 61.59646017699116,
+      "end_s": 63.70265486725665,
+      "from_xyz_m": [
+        14.0,
+        -1.0,
+        5.0
+      ],
+      "to_xyz_m": [
+        14.0,
+        0.0,
+        5.0
+      ],
+      "length_m": 1.0,
+      "ramp_s": 1.0530973451327432,
+      "peak_speed_m_s": 0.9495798319327733,
+      "acceleration_m_s2": 0.9017018572134738,
+      "dwell_after_s": 0.4
+    },
+    {
+      "segment": 6,
+      "start_s": 64.10265486725665,
+      "end_s": 75.89734513274337,
+      "from_xyz_m": [
+        14.0,
+        0.0,
+        5.0
+      ],
+      "to_xyz_m": [
+        2.0,
+        0.0,
+        5.0
+      ],
+      "length_m": 12.0,
+      "ramp_s": 1.2637168141592918,
+      "peak_speed_m_s": 1.139495798319328,
+      "acceleration_m_s2": 0.9017018572134738,
+      "dwell_after_s": 0.4
+    },
+    {
+      "segment": 7,
+      "start_s": 76.29734513274337,
+      "end_s": 78.40353982300886,
+      "from_xyz_m": [
+        2.0,
+        0.0,
+        5.0
+      ],
+      "to_xyz_m": [
+        2.0,
+        1.0,
+        5.0
+      ],
+      "length_m": 1.0,
+      "ramp_s": 1.0530973451327432,
+      "peak_speed_m_s": 0.9495798319327733,
+      "acceleration_m_s2": 0.9017018572134738,
+      "dwell_after_s": 0.4
+    },
+    {
+      "segment": 8,
+      "start_s": 78.80353982300886,
+      "end_s": 90.59823008849558,
+      "from_xyz_m": [
+        2.0,
+        1.0,
+        5.0
+      ],
+      "to_xyz_m": [
+        14.0,
+        1.0,
+        5.0
+      ],
+      "length_m": 12.0,
+      "ramp_s": 1.2637168141592918,
+      "peak_speed_m_s": 1.139495798319328,
+      "acceleration_m_s2": 0.9017018572134738,
+      "dwell_after_s": 0.4
+    },
+    {
+      "segment": 9,
+      "start_s": 90.99823008849559,
+      "end_s": 93.10442477876107,
+      "from_xyz_m": [
+        14.0,
+        1.0,
+        5.0
+      ],
+      "to_xyz_m": [
+        14.0,
+        2.0,
+        5.0
+      ],
+      "length_m": 1.0,
+      "ramp_s": 1.0530973451327432,
+      "peak_speed_m_s": 0.9495798319327733,
+      "acceleration_m_s2": 0.9017018572134738,
+      "dwell_after_s": 0.4
+    },
+    {
+      "segment": 10,
+      "start_s": 93.50442477876108,
+      "end_s": 105.2991150442478,
+      "from_xyz_m": [
+        14.0,
+        2.0,
+        5.0
+      ],
+      "to_xyz_m": [
+        2.0,
+        2.0,
+        5.0
+      ],
+      "length_m": 12.0,
+      "ramp_s": 1.2637168141592918,
+      "peak_speed_m_s": 1.139495798319328,
+      "acceleration_m_s2": 0.9017018572134738,
+      "dwell_after_s": 0.4
+    },
+    {
+      "segment": 11,
+      "start_s": 105.6991150442478,
+      "end_s": 107.80530973451329,
+      "from_xyz_m": [
+        2.0,
+        2.0,
+        5.0
+      ],
+      "to_xyz_m": [
+        2.0,
+        3.0,
+        5.0
+      ],
+      "length_m": 1.0,
+      "ramp_s": 1.0530973451327432,
+      "peak_speed_m_s": 0.9495798319327733,
+      "acceleration_m_s2": 0.9017018572134738,
+      "dwell_after_s": 0.4
+    },
+    {
+      "segment": 12,
+      "start_s": 108.20530973451329,
+      "end_s": 120.00000000000001,
+      "from_xyz_m": [
+        2.0,
+        3.0,
+        5.0
+      ],
+      "to_xyz_m": [
+        14.0,
+        3.0,
+        5.0
+      ],
+      "length_m": 12.0,
+      "ramp_s": 1.2637168141592918,
+      "peak_speed_m_s": 1.139495798319328,
+      "acceleration_m_s2": 0.9017018572134738,
+      "dwell_after_s": 0.0
+    }
+  ],
+  "sample_points_csv": "M0_UAV_ROUTE_POINTS.csv",
+  "sample_points_sha256": "1ecb1c3576ab1b7aa773a571e7d90befbfcd8ef6b8de19611a04e6db15c8643d",
+  "sample_count": 51,
+  "path_length_m": 90.0,
+  "mean_progress_speed_m_s": 0.9,
+  "max_speed_m_s": 1.139495798319328,
+  "speed_limit_m_s": 1.2,
+  "max_acceleration_m_s2": 0.9017018572134738,
+  "acceleration_limit_m_s2": 1.0,
+  "dwell_per_internal_waypoint_s": 0.4,
+  "altitude_m": 5.0,
+  "reachable_geometry": "Every whole line segment and 0.25 m vehicle clearance are inside obstacle-free ROI. Speed is continuous and zero at each direction change; bounded acceleration holds on each segment.",
+  "kinematic_limit": "Static geometric and kinematic feasibility, not a validated airframe/controller. Acceleration switches and jerk/yaw dynamics are not modelled. No vertical maneuver or source-conditioned adaptation.",
+  "observation": "Native SampleConcentration in ppm at continuous coordinates, not column mass or nearest footprint pixels.",
+  "hit_threshold_ppm": 0.1,
+  "observation_preflight": "For each source at least 3/4 oracle realizations have >=2 detectable samples and both likelihood families classify at least 3/4 with p_true>=0.60. Fail -> M0_OBSERVATION_HOLD, no route retuning or extra trajectory.",
+  "route_version_fixed_before_baseline": true
+}

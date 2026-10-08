@@ -1,0 +1,23 @@
+{
+  "schema": "W0C_STAGE0_BOUNDARY_V2",
+  "parent_commit": "b3d16c8ed39e439dc14ce3aadc451af786276afc",
+  "contract_commit": "12d530768e66619c24c1b7ae458819890b3ab5b2",
+  "freeze_order": "Before V2 eligibility computation; zero perturbations and zero new simulations. Original V1 screen is retained unchanged.",
+  "correction": "V1 used the signed time-averaged plume wind as the sole outflow-side selector. In H02-WD its magnitude is near zero, and the selected ymax edge has negligible mass even while xmin/ymin retain substantial mass. This is a demonstrated screening-design defect, not a failed intervention or threshold relaxation.",
+  "baseline_interval_s": [100,700],
+  "baseline_gases": [10,13],
+  "allowed_houses": ["House01","House02"],
+  "allowed_sources": "Only the frozen R0C source0/source1 in each House, z=0.30 m.",
+  "allowed_winds": "Only the existing WA/WB or WC/WD contexts; no new wind context.",
+  "realizations": "All four existing realizations per House/wind/gas/source cell.",
+  "boundary_band_bins": 3,
+  "boundary_mask": "Union of the outer three rows/columns on ALL FOUR horizontal domain sides, counting corners once. This replaces the unstable net-wind side selector and includes diffusive edge support when the mean wind cancels.",
+  "edge_mass_mean_max": 0.05,
+  "edge_mass_q95_max": 0.10,
+  "centroid_clearance_min_bins": 3.0,
+  "source_clearance_min_bins": 3.0,
+  "acceptance": "Each of the four realizations must satisfy the unchanged mean/q95 mass thresholds. The centroid at all 31 aligned times and the source must be at least three bins from EVERY horizontal side. Original geometry/source/state hashes must pass.",
+  "selection": "Prefer first eligible case per House in gas/wind/source lexical order; if only one House qualifies, first two distinct source cases there. At most two base cases. Gas is fixed per paired intervention. Source-inference candidate sets use both previously frozen source positions.",
+  "no_eligible_case": "W0C_STAGE0_NO_CLEAN_BASE_HOLD. No perturbation or GADEN runs, no threshold relaxation, source relocation, new seed, or new House. This is prerequisite failure, not evidence for W0C_GLOBAL_ERROR_SUFFICIENT_STOP.",
+  "claim_limit": "Edge-supported column mass is a proxy for truncation risk, not an estimate of physical mass lost through outflow. The native 0.2 m field caches and 32x32 footprints limit resolution."
+}
