@@ -85,3 +85,9 @@ Private frozen package is in ChatGPT Library:
 
 ## Supervisor's 2026-10-07 annotated opening-report update
 Read `SUPERVISOR_ANNOTATED_OPENING_REPORT_REVISION_PLAN_20261007.md` before revising any Word document. The annotated 31-page original contains explicit yellow feedback about the lakeshore scene diagram, literature depth, plume path/shape/concentration and forecast outputs, dynamic multi-UAV tracking, and three content-specific route figures. The private annotated Word must not be committed into this public repo.
+
+## M0 E0/E1 verification, 2026-10-07
+E0 and eight U0 baseline simulations are **QUALIFIED**. The full evidence bundle was independently replayed in a separate environment: 39 frozen R0 files, 2,551 native files, 8 U0 baseline runs, 0 wrong-wind runs. Matched-error causal conclusion is still **NOT_TESTED**.
+Review and exactly-four-run E2 sentinel plan: `M0_E0_E1_REVIEW_AND_E2_SENTINEL_AUTHORIZATION_PLAN_20261007.md`.
+Private archive: `/UAV_GSL_PRO_HANDOFF_20261007/M0_E0_E1_BASELINE_QUALIFIED_FULL_EVIDENCE_20261007.zip`.
+No remaining 28 wrong-wind rows are authorized by this review document.
