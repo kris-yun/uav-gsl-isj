@@ -1,5 +1,8 @@
 # PRO HANDOFF — READ THIS FIRST
 
+## LATEST SCIENTIFIC VERDICT — M0_STOP (2026-10-08)
+The full preregistered M0 40/40 scientific experiment **FAILED** the source-posterior damage gate despite forward plume changes. The task-sensitive matched-wind-error hypothesis is **STOP**, and MUST NOT be advertised as a selected or validated first-paper innovation. There will be **no more M0 runs**. FSR real-terrain lakeshore benchmark construction proceeds independently; consult `M0_FINAL_STOP_AND_FSR_PIVOT_20261008.md`. Older pages describing W0/M0 as candidates are historical documents only.
+
 This branch is a sanitized research handoff for the next Pro session.
 
 ## Core scope
