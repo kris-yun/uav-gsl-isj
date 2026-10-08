@@ -94,3 +94,7 @@ No remaining 28 wrong-wind rows are authorized by this review document.
 
 ## Next-stage priority decision (FSR mainline / M0 bounded, 2026-10-07)
 See `FSR_MAINLINE_AND_M0_BOUND_EXECUTION_20261007.md`. It directly incorporates FSR R9.3 local S2 PASS/S4 determinant HOLD and the 250k-vs-1.5M cell budget conflict. First approve a real-geography local shoreline pilot with physics and resource qualification; M0 only four E2 CRN sentinel runs, stopping afterwards. No automatic CFD, GADEN or the 28 other wrong-wind runs.
+
+## M0 E2 review / E3 final 28-run plan
+Independent replay of uploaded E2 evidence passed: `M0_E2_CRN_SENTINEL_QUALIFIED` (4 wrong-wind sentinel runs, 12/40 overall). The original clock-serialization false HOLD and the one-expression erratum are retained. Scientific M0 posterior-damage verdict remains `NOT_TESTED`.
+Read `M0_E2_REVIEW_E3_28_RUN_CONDITIONAL_PLAN_20261007.md` for the exact final 28 run IDs, prerequisites, frozen 3/4-replication gates and conditional STOP. Private archive: `/UAV_GSL_PRO_HANDOFF_20261007/M0_E2_CRN_SENTINEL_QUALIFIED_FULL_EVIDENCE_20261007.zip`. Do not treat this memo as actual E3 simulator authorization.
