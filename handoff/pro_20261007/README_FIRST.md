@@ -91,3 +91,6 @@ E0 and eight U0 baseline simulations are **QUALIFIED**. The full evidence bundle
 Review and exactly-four-run E2 sentinel plan: `M0_E0_E1_REVIEW_AND_E2_SENTINEL_AUTHORIZATION_PLAN_20261007.md`.
 Private archive: `/UAV_GSL_PRO_HANDOFF_20261007/M0_E0_E1_BASELINE_QUALIFIED_FULL_EVIDENCE_20261007.zip`.
 No remaining 28 wrong-wind rows are authorized by this review document.
+
+## Next-stage priority decision (FSR mainline / M0 bounded, 2026-10-07)
+See `FSR_MAINLINE_AND_M0_BOUND_EXECUTION_20261007.md`. It directly incorporates FSR R9.3 local S2 PASS/S4 determinant HOLD and the 250k-vs-1.5M cell budget conflict. First approve a real-geography local shoreline pilot with physics and resource qualification; M0 only four E2 CRN sentinel runs, stopping afterwards. No automatic CFD, GADEN or the 28 other wrong-wind runs.
