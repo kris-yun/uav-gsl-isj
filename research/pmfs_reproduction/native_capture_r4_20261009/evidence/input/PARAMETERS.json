@@ -1,0 +1,70 @@
+{
+  "run_id": "P1B_NATIVE_CAPTURE_R4",
+  "input_class": "SYNTHETIC_OR_REPLAY_FIXTURE",
+  "source_truth_provided": false,
+  "source_fixture": "existing occupancy geometry and static forward-wind numeric field; all sensor messages are newly injected synthetic measurements",
+  "blocks": [
+    [
+      0.12,
+      0.16,
+      0.2
+    ],
+    [
+      0.02,
+      0.04,
+      0.06
+    ],
+    [
+      0.13,
+      0.14,
+      0.15
+    ]
+  ],
+  "samples_per_block": 3,
+  "robot_x": -4.100000381469727,
+  "robot_y": -0.5299997329711914,
+  "sensor_z": 0.3,
+  "sensor_yaw": 0.5759586531581288,
+  "measured_wind_u": 0.0671209990978241,
+  "measured_wind_v": 0.004919200204312801,
+  "thresholdGas": 0.1,
+  "stop_and_measure_time": 0.1,
+  "forward_wind_source": "input/wind.csv; static field, not GMRF-estimated field",
+  "hit": {
+    "localEstimationWindowSize": 2,
+    "maxUpdatesPerStop": 5,
+    "prior": 0.3,
+    "kernelSigma": 1.5,
+    "kernelStretchConstant": 1.5,
+    "confidenceMeasurementWeight": 1.0,
+    "confidenceSigmaSpatial": 1.0
+  },
+  "simulation": {
+    "maxRegionSize": 5,
+    "sourceDiscriminationPower": 0.3,
+    "refineFraction": 0.1,
+    "deltaTime": 0.1,
+    "noiseSTDev": 0.5,
+    "iterationsToRecord": 200,
+    "minWarmupIterations": 200,
+    "maxWarmupIterations": 500,
+    "blurSigmaX": 1.5,
+    "blurSigmaY": 1.5
+  },
+  "threads": 1,
+  "ROS_DOMAIN_ID": 75,
+  "RNG": "upstream minstd_rand0 default state; no newly selected seed",
+  "tolerances": {
+    "measurement_abs": 1e-12,
+    "wind_abs": 0,
+    "forward_f32_abs": 2e-07,
+    "forward_f32_rel": 1e-06,
+    "score_long_double_rel": 5e-13,
+    "posterior_f64_abs": 1e-12,
+    "angle_rad": 0.0001,
+    "position_m": 0.01,
+    "message_age_s": 2
+  },
+  "native_successful_updates_max": 1,
+  "offline_full_uninstrumented_control_updates": 1
+}

@@ -1,0 +1,77 @@
+{
+  "schema": {
+    "run_id": "P1B_NATIVE_CAPTURE_R4",
+    "input_class": "SYNTHETIC_OR_REPLAY_FIXTURE",
+    "pid": 8796,
+    "grid_cells": 1102,
+    "free_cells": 626,
+    "coarse_leaves": 84,
+    "total_coarse_nodes": 84,
+    "threads": 1,
+    "use_sim_time": false,
+    "raw_message_fields": [
+      "stamp",
+      "frame",
+      "receipt",
+      "cdr",
+      "block",
+      "sample_TF",
+      "consumer_TF"
+    ],
+    "native_update_hooks": [
+      "leaf_samples",
+      "rng_engine",
+      "gaussian_cache",
+      "unblurred_hit_map",
+      "blurred_hit_map",
+      "raw_score",
+      "local_refinement_tree",
+      "normalization",
+      "final_posterior"
+    ]
+  },
+  "source_class": "real native PID/ELF",
+  "ELF_SHA256": {
+    "native_capture": "87bf85762219682e24551843f4ed92791da5584d03c5131326308ac61d12ce1c",
+    "offline_forward": "b437107ac58ac036faca764b2fd6a4791f18fadafad419828b6dc302536cea56",
+    "offline_control": "43a11375f067d57e85c586cd7f272e794a5ee920153a7def73b6cecd052bf827"
+  },
+  "input_SHA256": {
+    "wind.csv": "ed96f465ed5dbe385e9c5320824249840545c506791d686ceb32c271b879648b",
+    "PARAMETERS.json": "0f6cd95cb41cc3bcc9528d9553d1573eb7c5e7fae89dbcc633ff3f956f471c12",
+    "occupancy.csv": "60b05ce9af9d75116e3047b7abcf101c1f2477a19861693b896ee6a3b7c0167c"
+  },
+  "candidate_schema_fields": [
+    "serial",
+    "candidate_id",
+    "origin_i",
+    "origin_j",
+    "size_i",
+    "size_j",
+    "rng_before",
+    "rng_after",
+    "gaussian_ready_before",
+    "gaussian_index_before",
+    "gaussian_index_after",
+    "point_count",
+    "score",
+    "logscore",
+    "map_file",
+    "points_file"
+  ],
+  "all_sinks_open": true,
+  "tolerances": {
+    "measurement_abs": 1e-12,
+    "wind_abs": 0,
+    "forward_f32_abs": 2e-07,
+    "forward_f32_rel": 1e-06,
+    "score_long_double_rel": 5e-13,
+    "posterior_f64_abs": 1e-12,
+    "angle_rad": 0.0001,
+    "position_m": 0.01,
+    "message_age_s": 2
+  },
+  "raw_policy": "exactly three gas and three wind messages per StopAndMeasure block; no temporal resampling",
+  "source_truth_used": false,
+  "preflight_ns": 1791554712602077938
+}

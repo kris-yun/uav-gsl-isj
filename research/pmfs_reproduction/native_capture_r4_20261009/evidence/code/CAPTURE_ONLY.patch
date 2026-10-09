@@ -1,0 +1,47 @@
+--- Simulations_clean.cpp
++++ Simulations_capture.cpp
+@@ -187,6 +187,7 @@
+         GSL_INFO("Number of levels in the simulation: {0}", numberOfLevelsSimulated);
+         GSL_INFO("Total number of simulations: {0}", numberOfSimulations);
+ 
++        R4Audit::before_normalize(localCopyLeaves, sourceProbInternal, sourceProb.occupancy);
+         Utils::NormalizeDistributionLong(
+             sourceProbInternal,
+             sourceProb.occupancy);
+@@ -207,10 +208,12 @@
+         result.valid = true;
+         result.hitMap.resize(measuredHitProb.data.size(), 0.0);
+ 
++        R4Audit::begin(node);
+         SimulationSource source(node, measuredHitProb.metadata);
+         simulateSourceInPosition(source, result.hitMap, true, settings.iterationsToRecord, settings.deltaTime,
+                                  settings.noiseSTDev);
+ 
++        R4Audit::before_blur(node, result.hitMap);
+         if (settings.blurSigmaX > 0 || settings.blurSigmaY > 0)
+         {
+             cv::Mat asImage(result.hitMap);
+@@ -221,6 +224,7 @@
+         result.sourceProb = sourceProbFromMaps(measuredHitProb, result.hitMap);
+ 
+         scores[index].score = result.sourceProb;
++        R4Audit::end(node, result.hitMap, result.sourceProb, gaussian.r4_index());
+ 
+         // assign this probability to all cells that fall inside this region
+         for (int cellI = node->origin.x; cellI < (node->origin.x + node->size.x); cellI++)
+@@ -271,6 +275,7 @@
+ 
+     void Simulations::moveFilament(Filament& filament, Vector2Int& indices, float deltaTime, float noiseSTDev) const
+     {
++        R4Audit::gaussian(gaussian.r4_table(), gaussian.r4_index());
+         Vector2 velocity = wind.dataAt(indices.x, indices.y) + Vector2(gaussian.nextValue(0, noiseSTDev), gaussian.nextValue(0, noiseSTDev));
+ 
+         Vector2 newPos = filament.position + deltaTime * velocity;
+@@ -390,6 +395,7 @@
+ 
+         Vector2 randP(Utils::uniformRandomF(start.x, end.x), Utils::uniformRandomF(start.y, end.y));
+         GSL_ASSERT(randP.x >= start.x && randP.x < end.x && randP.y >= start.y && randP.y < end.y);
++        R4Audit::point(randP);
+         return randP;
+     }
+ 

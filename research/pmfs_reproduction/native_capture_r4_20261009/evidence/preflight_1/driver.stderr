@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/zyc/pmfs_native_capture_r4_20261009/code/run_driver.py", line 66, in <module>
+    wait(lambda:(TASK/'native/READY_SCHEMA.json').exists(),30,'capture schema not ready')
+  File "/home/zyc/pmfs_native_capture_r4_20261009/code/run_driver.py", line 55, in wait
+    if native and native[0].poll() is not None:raise RuntimeError('native exited before completion: '+reason)
+RuntimeError: native exited before completion: capture schema not ready

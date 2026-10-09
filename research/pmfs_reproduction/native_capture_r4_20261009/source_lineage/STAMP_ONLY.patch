@@ -1,0 +1,11 @@
+--- Algorithm.cpp
++++ Algorithm_stamped.cpp
+@@ -108,7 +108,7 @@
+         PoseStamped anemometer_downWind_pose, map_downWind_pose;
+         try
+         {
+-            anemometer_downWind_pose.header.frame_id = msg->header.frame_id;
++            anemometer_downWind_pose.header = msg->header;
+             anemometer_downWind_pose.pose.position.x = 0.0;
+             anemometer_downWind_pose.pose.position.y = 0.0;
+             anemometer_downWind_pose.pose.position.z = 0.0;

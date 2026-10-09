@@ -1,0 +1,111 @@
+{
+  "verdict": "CORE_UPDATE_PARITY_PASS",
+  "input_class": "SYNTHETIC_OR_REPLAY_FIXTURE",
+  "checks": [
+    {
+      "layer": "native_execution_and_pre_run_contract",
+      "verdict": "PASS",
+      "native_updates": 1,
+      "pid": 8796,
+      "input_class": "SYNTHETIC_OR_REPLAY_FIXTURE",
+      "truth_used": false
+    },
+    {
+      "layer": "actual_native_candidate_forest",
+      "verdict": "PASS",
+      "coarse_leaves": 84,
+      "free_cells": 626,
+      "complete_nonoverlapping_coverage": true,
+      "replay_uses_captured_order": true
+    },
+    {
+      "layer": "raw_ROS_clock_TF_and_wind_interfaces",
+      "verdict": "PASS",
+      "gas_members": 9,
+      "wind_members": 9,
+      "gmrf_members": 9,
+      "max_message_age_s": 0.102536705,
+      "max_GMRF_cell_center_quantization_m": 0.09433977189607874,
+      "static_pose": true
+    },
+    {
+      "layer": "raw_to_StopAndMeasure_blocks",
+      "verdict": "PASS",
+      "blocks": 3,
+      "hit_sequence": [
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "layer": "measured_hit_probability_grids",
+      "verdict": "PASS",
+      "max_abs": 0
+    },
+    {
+      "layer": "forward_wind_grid",
+      "verdict": "PASS",
+      "bit_exact": true,
+      "source": "static numerical fixture; independent of measured GMRF output"
+    },
+    {
+      "layer": "conditional_forward_core_replay",
+      "verdict": "PASS",
+      "candidate_simulations": 116,
+      "actual_source_points": 307360,
+      "max_hit_map_abs": 0,
+      "max_score_relative": 0,
+      "uses_native_points_and_noise": true
+    },
+    {
+      "layer": "independent_score_and_raw_grid_replay",
+      "verdict": "PASS",
+      "max_decimal_score_relative": 5.717810427265679e-19,
+      "region_overwrites_equal": true
+    },
+    {
+      "layer": "final_posterior_and_ranking",
+      "verdict": "PASS",
+      "max_independent_abs": 0.0,
+      "max_clean_control_abs": 0.0,
+      "all_626_free_cell_ranks_equal": true,
+      "probability_sum": 1.0
+    },
+    {
+      "layer": "passive_instrumentation_same_candidate_clean_control",
+      "verdict": "PASS",
+      "max_variance_abs": 0.0,
+      "max_coarse_map_abs": 0,
+      "uses_actual_native_forest": true
+    },
+    {
+      "layer": "captured_final_refinement_tree",
+      "verdict": "PASS",
+      "nodes": 116,
+      "final_leaves": 104,
+      "complete_nonoverlapping_coverage": true
+    }
+  ],
+  "native_updates": 1,
+  "coarse_leaves": 84,
+  "candidate_simulations": 116,
+  "final_leaves": 104,
+  "MAP": {
+    "cell_index": 768,
+    "i": 14,
+    "j": 26,
+    "x": -3.2000000178813934,
+    "y": 0.07000020146369934,
+    "probability": 0.002919703442033045,
+    "ground_truth_not_supplied": true
+  },
+  "full_pipeline": "HOLD",
+  "physical_model_mismatch": "UNRESOLVED",
+  "historical_adapter": "NOT_QUALIFIED_BY_THIS_FIXTURE",
+  "boundaries": [
+    "conditional parity for captured candidate tree, samples and RNG, one thread only",
+    "controlled synthetic ROS input; not C1/B1 or real gas localization",
+    "native quadtree greedy hash-pointer fusion is not asserted deterministic across processes"
+  ]
+}

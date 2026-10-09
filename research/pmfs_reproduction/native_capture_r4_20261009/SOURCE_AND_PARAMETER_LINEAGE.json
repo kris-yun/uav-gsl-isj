@@ -1,0 +1,68 @@
+{
+  "contract_commit": "75490fa8d9a57ebd724c7766f106493939cd9612",
+  "contract_branch": "research/pmfs-official-parity-and-proposal-20261009",
+  "PMFS_upstream_commit": "4e141e162551e674f2f30ddb8859136c72139aac",
+  "official_files_verified": [
+    {
+      "upstream_path": "gsl_server/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp",
+      "commit": "4e141e162551e674f2f30ddb8859136c72139aac",
+      "package_path": "evidence/original/Simulations.cpp",
+      "upstream_SHA256": "5d6d305937ff4ba8f69b9307649b9a5ee7be3806c59a8e7ad6b4eeca34bba721",
+      "packaged_SHA256": "5d6d305937ff4ba8f69b9307649b9a5ee7be3806c59a8e7ad6b4eeca34bba721",
+      "byte_equal": true,
+      "LF_normalized_equal": true,
+      "normalization": "Only CRLF/LF permitted; compiled/captured bytes preserved"
+    },
+    {
+      "upstream_path": "gsl_server/src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "commit": "4e141e162551e674f2f30ddb8859136c72139aac",
+      "package_path": "evidence/original/PMFSLib.cpp",
+      "upstream_SHA256": "cf960378f1126e7b2002535b223b03344ad3ae8d12b0761c8017b3c5cdd6147b",
+      "packaged_SHA256": "064af4f492a248b7ac41d9874dbe1f9447921b2957071602b065bac366faa292",
+      "byte_equal": false,
+      "LF_normalized_equal": true,
+      "normalization": "Only CRLF/LF permitted; compiled/captured bytes preserved"
+    },
+    {
+      "upstream_path": "gsl_server/src/gsl_server/algorithms/Common/Utils/Math.cpp",
+      "commit": "4e141e162551e674f2f30ddb8859136c72139aac",
+      "package_path": "evidence/original/Math.cpp",
+      "upstream_SHA256": "bc0fb7bac999b191569d732224794838ba7f91cf20da88ff9bdee40d85bc61d8",
+      "packaged_SHA256": "bc0fb7bac999b191569d732224794838ba7f91cf20da88ff9bdee40d85bc61d8",
+      "byte_equal": true,
+      "LF_normalized_equal": true,
+      "normalization": "Only CRLF/LF permitted; compiled/captured bytes preserved"
+    },
+    {
+      "upstream_path": "gsl_server/src/gsl_server/algorithms/Common/Utils/Math.hpp",
+      "commit": "4e141e162551e674f2f30ddb8859136c72139aac",
+      "package_path": "evidence/original/Math.hpp",
+      "upstream_SHA256": "eeac007eb2d08e0d8775fc94a7dbb8de8b2fd3ca1bbd276302bf834d72bde84b",
+      "packaged_SHA256": "eeac007eb2d08e0d8775fc94a7dbb8de8b2fd3ca1bbd276302bf834d72bde84b",
+      "byte_equal": true,
+      "LF_normalized_equal": true,
+      "normalization": "Only CRLF/LF permitted; compiled/captured bytes preserved"
+    },
+    {
+      "upstream_path": "gsl_server/src/gsl_server/algorithms/Common/Utils/NQAQuadtree.cpp",
+      "commit": "4e141e162551e674f2f30ddb8859136c72139aac",
+      "package_path": "evidence/code/NQAQuadtree.cpp",
+      "upstream_SHA256": "17af36adf9268140b81be1d039e450c0e2c1e3c00909a884c3bec6b5f07015bb",
+      "packaged_SHA256": "17af36adf9268140b81be1d039e450c0e2c1e3c00909a884c3bec6b5f07015bb",
+      "byte_equal": true,
+      "LF_normalized_equal": true,
+      "normalization": "Only CRLF/LF permitted; compiled/captured bytes preserved"
+    }
+  ],
+  "core_body": "Simulations_clean contains exact original Simulations.cpp body plus unused read/restore accessors; capture adds only passive sinks; conditional forward overrides points with actual captured points",
+  "interface": "N1: isolated stamp-only Algorithm.cpp; separate TO/FROM topics",
+  "entry": "Capture subclass of Algorithm, real original StopAndMeasure callbacks, direct original PMFSLib hit update and original Simulations source update; not full PMFS.cpp action/navigation lifecycle",
+  "source_inputs": "existing occupancy + static numerical 2D forward wind; new synthetic GasSensor/Anemometer messages",
+  "candidate_contract": "native original fusedLeaves creates new tree; offline receives that exact tree/order before comparing updates",
+  "effective_parameters": "All computation settings are literal assignments in packaged Fixture.hpp and Capture constructor, matched to input/PARAMETERS.json; ROS entry command supplies use_sim_time=false. Runtime maps, tree, samples, RNG and Gaussian table are actual captured values. No separate ros2 param dump is claimed.",
+  "external_common_library": "Reuses existing GSL_common archive. Guest WaitForGas contains additional diagnostics but that state is inactive; full upstream ABI/environment reconstruction is not claimed.",
+  "historical_adapter": "R2 EventKeyed RNG adapter and old H02/R1 adapter are not automatically qualified by this R4 strict replay.",
+  "passive_control": "Uninstrumented original core body, same actual captured candidate forest, same RNG pre-state, same reconstructed measurements and static wind; outputs identical",
+  "seed": "upstream default minstd_rand0 state; no selected new seed",
+  "scope": "single-thread conditional update parity; not arbitrary thread/RNG or candidate-generator reproducibility"
+}
