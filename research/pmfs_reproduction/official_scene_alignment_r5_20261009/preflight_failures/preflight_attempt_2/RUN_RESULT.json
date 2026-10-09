@@ -1,0 +1,34 @@
+{
+  "input_class": "EXISTING_NON_C1_NATIVE_CLOSED_LOOP_ENGINEERING_VALIDATION",
+  "C1_physics_qualification": "HOLD_WIND_SEQUENCE_MISMATCH",
+  "native_goal_count": 0,
+  "fixture_messages_injected": 0,
+  "generated_gas_data": 0,
+  "processes": [
+    {
+      "name": "launch",
+      "pid": 12923,
+      "returncode": 0
+    },
+    {
+      "name": "gmrf",
+      "pid": 12924,
+      "returncode": 0
+    }
+  ],
+  "result": "RUNTIME_ERROR",
+  "error": "'int' object is not callable",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/zyc/pmfs_official_alignment_r5_20261009/runtime_driver.py\", line 79, in <module>\n    pre=dict(lifecycle=states,sensor_xyz=[pos.x,pos.y,pos.z],gas_types=list(g.gas_type),gas_ppm=list(g.positions[0].concentration),wind_uvw=[list(w.u),list(w.v),list(w.w)],ROS_DOMAIN_ID=76,sim_clock_ns=node.get_clock().now().nanoseconds(),input_class=status['input_class'],C1_physics_qualification=status['C1_physics_qualification'])\nTypeError: 'int' object is not callable\n",
+  "counts": {
+    "/tf_static": 4,
+    "/PioneerP3DX/Anemometer/WindSensor_reading": 94,
+    "/r5/wind_to": 94,
+    "/PioneerP3DX/PID/Sensor_reading": 47,
+    "/PioneerP3DX/map": 1,
+    "/PioneerP3DX/ground_truth": 30,
+    "/tf": 30,
+    "/clock": 30
+  },
+  "nonzero_cmd_vel_messages": 0,
+  "pose_samples": 30
+}

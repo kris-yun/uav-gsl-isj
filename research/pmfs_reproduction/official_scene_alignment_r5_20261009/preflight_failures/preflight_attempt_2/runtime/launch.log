@@ -1,0 +1,164 @@
+[INFO] [launch]: All log files can be found below /home/zyc/.ros/log/2026-10-09-23-25-32-620183-zyc-virtual-machine-12923
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [player-1]: process started with pid [12937]
+[INFO] [simulated_anemometer-2]: process started with pid [12939]
+[INFO] [static_transform_publisher-3]: process started with pid [12941]
+[INFO] [simulated_gas_sensor-4]: process started with pid [12943]
+[INFO] [static_transform_publisher-5]: process started with pid [12945]
+[INFO] [map_server-6]: process started with pid [12947]
+[INFO] [bt_navigator-7]: process started with pid [12952]
+[INFO] [planner_server-8]: process started with pid [12956]
+[INFO] [controller_server-9]: process started with pid [12969]
+[INFO] [behavior_server-10]: process started with pid [12987]
+[INFO] [lifecycle_manager-11]: process started with pid [12992]
+[INFO] [robot_state_publisher-12]: process started with pid [12998]
+[INFO] [basic_sim-13]: process started with pid [13005]
+[INFO] [gsl_actionserver_node-14]: process started with pid [13015]
+[static_transform_publisher-3] [33m[WARN] [1791559532.910339643] []: Old-style arguments are deprecated; see --help for new-style arguments[0m
+[static_transform_publisher-5] [33m[WARN] [1791559532.916156140] []: Old-style arguments are deprecated; see --help for new-style arguments[0m
+[static_transform_publisher-3] [0m[INFO] [1791559532.949500759] [PioneerP3DX.anemometer_tf_pub]: Spinning until stopped - publishing transform
+[static_transform_publisher-3] translation: ('0.000000', '0.000000', '0.500000')
+[static_transform_publisher-3] rotation: ('1.000000', '0.000000', '0.000000', '0.000000')
+[static_transform_publisher-3] from 'PioneerP3DX_base_link' to 'PioneerP3DX_anemometer_frame'[0m
+[simulated_gas_sensor-4] [0m[INFO] [1791559532.949425550] [PioneerP3DX.PID]: The data provided in the roslaunch file is:[0m
+[simulated_gas_sensor-4] [0m[INFO] [1791559532.949636462] [PioneerP3DX.PID]: Sensor model: 30[0m
+[simulated_gas_sensor-4] [0m[INFO] [1791559532.949647055] [PioneerP3DX.PID]: Fixed frame: map[0m
+[simulated_gas_sensor-4] [0m[INFO] [1791559532.949656302] [PioneerP3DX.PID]: Sensor frame: PioneerP3DX_pid_frame[0m
+[simulated_gas_sensor-4] [0m[INFO] [1791559532.949663410] [PioneerP3DX.PID]: Running at 10.000000Hz[0m
+[player-1] [33m[WARN] [1791559532.954675410] [GadenPlayer]: 
+[player-1] --- Deprecation notice ---
+[player-1] You are using ROS parameters to specify the Gaden configuration. This is now considered deprecated (though, for now, still valid).
+[player-1] You should update your configuration to use a gaden project (see test_env for examples).
+[player-1] You can easily configure a gaden project with 'ros2 run gaden_common gaden_gui
+[player-1] ----[0m
+[player-1] [0m[INFO] [1791559532.954761045] [GadenPlayer]: num_simulators: 1[0m
+[player-1] [0m[INFO] [1791559532.954796196] [GadenPlayer]: simulation_data_0: /home/zyc/hcmc_v1_independent_data_20260922/H02_R2026092211/FilamentSimulation_gasType_10_sourcePosition_0.00_-1.00_0.20[0m
+[simulated_anemometer-2] [0m[INFO] [1791559532.954938803] [PioneerP3DX.Anemometer]: wind noise: 0.300000[0m
+[player-1] [0m[INFO] [1791559532.992415349] [GadenPlayer]: Looking for wind files in:
+[player-1] 	-'/home/zyc/wind'
+[player-1] 	-'/home/zyc/hcmc_v1_independent_data_20260922/H02_R2026092211/FilamentSimulation_gasType_10_sourcePosition_0.00_-1.00_0.20/wind'[0m
+[player-1] [0m[INFO] [1791559532.992464859] [GadenPlayer]: Found wind files at '/home/zyc/hcmc_v1_independent_data_20260922/H02_R2026092211/FilamentSimulation_gasType_10_sourcePosition_0.00_-1.00_0.20/wind'[0m
+[static_transform_publisher-5] [0m[INFO] [1791559532.992618207] [PioneerP3DX.pid_tf_pub]: Spinning until stopped - publishing transform
+[static_transform_publisher-5] translation: ('0.000000', '0.000000', '0.500000')
+[static_transform_publisher-5] rotation: ('1.000000', '0.000000', '0.000000', '0.000000')
+[static_transform_publisher-5] from 'PioneerP3DX_base_link' to 'PioneerP3DX_pid_frame'[0m
+[basic_sim-13] [0m[INFO] [1791559533.081138681] [basic_sim]: Loading map from '/home/zyc/pmfs_official_alignment_r5_20261009/ws/install/pmfs_env/share/pmfs_env/scenarios/C/basicSim/../_occupancy.pgm'[0m
+[basic_sim-13] [0m[INFO] [1791559533.081277780] [basic_sim]: Resolution: 0.01[0m
+[basic_sim-13] [0m[INFO] [1791559533.081628412] [basic_sim]: Origin: (-5.39, -7.45, 0.00)[0m
+[simulated_gas_sensor-4] [31m[ERROR] [1791559533.126355960] [PioneerP3DX.PID]: "map" passed to lookupTransform argument target_frame does not exist. [0m
+[simulated_anemometer-2] [31m[ERROR] [1791559533.126355159] [PioneerP3DX.Anemometer]: "map" passed to lookupTransform argument target_frame does not exist. [0m
+[player-1] [0m[INFO] [1791559533.126609471] [GadenPlayer]: player_freq 2.00 Hz[0m
+[basic_sim-13] [0m[INFO] [1791559533.175110159] [basic_sim]: YAML:
+[basic_sim-13]  name: PioneerP3DX
+[basic_sim-13] position: [-3.4, -3.5, -0.1]
+[basic_sim-13] angle: 1
+[basic_sim-13] sensors:
+[basic_sim-13]   - type: laser
+[basic_sim-13]     name: laser_scan
+[basic_sim-13]     minAngleRad: -0.7
+[basic_sim-13]     maxAngleRad: 3.8
+[basic_sim-13]     angleResolutionRad: 0.1
+[basic_sim-13]     minDistance: 0.1
+[basic_sim-13]     maxDistance: 4.0[0m
+[basic_sim-13] [0m[INFO] [1791559533.195805907] [basic_sim]: Created robot PioneerP3DX[0m
+[basic_sim-13] [0m[INFO] [1791559533.197723161] [basic_sim]: MainLoop - Ellapsed: 0.000165s[0m
+[basic_sim-13] [0m[INFO] [1791559533.296570997] [basic_sim]: MainLoop - Ellapsed: 0.000055s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791559533.364669690] [GSL]: Starting GSL server[0m
+[basic_sim-13] [0m[INFO] [1791559533.397145205] [basic_sim]: MainLoop - Ellapsed: 0.000058s[0m
+[basic_sim-13] [0m[INFO] [1791559533.497259526] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791559533.597713369] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791559533.698066306] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791559533.797412534] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791559533.899045658] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791559533.996743790] [basic_sim]: MainLoop - Ellapsed: 0.000042s[0m
+[basic_sim-13] [0m[INFO] [1791559534.097004504] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791559534.196649466] [basic_sim]: MainLoop - Ellapsed: 0.000060s[0m
+[basic_sim-13] [0m[INFO] [1791559534.296395080] [basic_sim]: MainLoop - Ellapsed: 0.000038s[0m
+[basic_sim-13] [0m[INFO] [1791559534.396494563] [basic_sim]: MainLoop - Ellapsed: 0.000050s[0m
+[basic_sim-13] [0m[INFO] [1791559534.496924792] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791559534.596765756] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791559534.696755062] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791559534.796732378] [basic_sim]: MainLoop - Ellapsed: 0.000058s[0m
+[basic_sim-13] [0m[INFO] [1791559534.896737616] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791559534.996830127] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791559535.096818308] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791559535.197225365] [basic_sim]: MainLoop - Ellapsed: 0.000100s[0m
+[basic_sim-13] [0m[INFO] [1791559535.296839085] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791559535.397116750] [basic_sim]: MainLoop - Ellapsed: 0.000093s[0m
+[basic_sim-13] [0m[INFO] [1791559535.497111370] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791559535.596730727] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791559535.697183779] [basic_sim]: MainLoop - Ellapsed: 0.000099s[0m
+[basic_sim-13] [0m[INFO] [1791559535.797381883] [basic_sim]: MainLoop - Ellapsed: 0.000113s[0m
+[basic_sim-13] [0m[INFO] [1791559535.896810977] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791559535.997956775] [basic_sim]: MainLoop - Ellapsed: 0.000176s[0m
+[basic_sim-13] [0m[INFO] [1791559536.096931347] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791559536.197154947] [basic_sim]: MainLoop - Ellapsed: 0.000098s[0m
+[basic_sim-13] [0m[INFO] [1791559536.297044861] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791559536.398166485] [basic_sim]: MainLoop - Ellapsed: 0.000094s[0m
+[basic_sim-13] [0m[INFO] [1791559536.496953163] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791559536.596899307] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791559536.697565824] [basic_sim]: MainLoop - Ellapsed: 0.000132s[0m
+[basic_sim-13] [0m[INFO] [1791559536.797977834] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791559536.898441865] [basic_sim]: MainLoop - Ellapsed: 0.000123s[0m
+[basic_sim-13] [0m[INFO] [1791559536.998339529] [basic_sim]: MainLoop - Ellapsed: 0.000184s[0m
+[basic_sim-13] [0m[INFO] [1791559537.097370672] [basic_sim]: MainLoop - Ellapsed: 0.000090s[0m
+[basic_sim-13] [0m[INFO] [1791559537.197613835] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791559537.298304962] [basic_sim]: MainLoop - Ellapsed: 0.000127s[0m
+[basic_sim-13] [0m[INFO] [1791559537.397304554] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791559537.497682632] [basic_sim]: MainLoop - Ellapsed: 0.000121s[0m
+[basic_sim-13] [0m[INFO] [1791559537.597974462] [basic_sim]: MainLoop - Ellapsed: 0.000168s[0m
+[basic_sim-13] [0m[INFO] [1791559537.697091815] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791559537.797063156] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791559537.897352913] [basic_sim]: MainLoop - Ellapsed: 0.000100s[0m
+[basic_sim-13] [0m[INFO] [1791559537.997255612] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791559538.097052685] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791559538.197050857] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791559538.297230019] [basic_sim]: MainLoop - Ellapsed: 0.000092s[0m
+[basic_sim-13] [0m[INFO] [1791559538.398259189] [basic_sim]: MainLoop - Ellapsed: 0.000199s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791559538.405662360] [GSL]: GSL action server is ready for action![0m
+[basic_sim-13] [0m[INFO] [1791559538.497133777] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791559538.596938225] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791559538.697091002] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791559538.797029900] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[player-1] [0m[INFO] [1791559538.856823596] [rclcpp]: signal_handler(signum=2)[0m
+[static_transform_publisher-3] [0m[INFO] [1791559538.856889054] [rclcpp]: signal_handler(signum=2)[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791559538.856971895] [rclcpp]: signal_handler(signum=2)[0m
+[simulated_gas_sensor-4] [0m[INFO] [1791559538.857087318] [rclcpp]: signal_handler(signum=2)[0m
+[basic_sim-13] [0m[INFO] [1791559538.857184797] [rclcpp]: signal_handler(signum=2)[0m
+[static_transform_publisher-5] [0m[INFO] [1791559538.858103419] [rclcpp]: signal_handler(signum=2)[0m
+[INFO] [gsl_actionserver_node-14]: sending signal 'SIGINT' to process[gsl_actionserver_node-14]
+[INFO] [basic_sim-13]: sending signal 'SIGINT' to process[basic_sim-13]
+[INFO] [robot_state_publisher-12]: sending signal 'SIGINT' to process[robot_state_publisher-12]
+[INFO] [lifecycle_manager-11]: sending signal 'SIGINT' to process[lifecycle_manager-11]
+[INFO] [behavior_server-10]: sending signal 'SIGINT' to process[behavior_server-10]
+[INFO] [controller_server-9]: sending signal 'SIGINT' to process[controller_server-9]
+[INFO] [planner_server-8]: sending signal 'SIGINT' to process[planner_server-8]
+[INFO] [bt_navigator-7]: sending signal 'SIGINT' to process[bt_navigator-7]
+[INFO] [map_server-6]: sending signal 'SIGINT' to process[map_server-6]
+[INFO] [static_transform_publisher-5]: sending signal 'SIGINT' to process[static_transform_publisher-5]
+[INFO] [simulated_gas_sensor-4]: sending signal 'SIGINT' to process[simulated_gas_sensor-4]
+[INFO] [static_transform_publisher-3]: sending signal 'SIGINT' to process[static_transform_publisher-3]
+[INFO] [simulated_anemometer-2]: sending signal 'SIGINT' to process[simulated_anemometer-2]
+[ERROR] [static_transform_publisher-5]: process has died [pid 12945, exit code -2, cmd '/opt/ros/humble/lib/tf2_ros/static_transform_publisher 0 0 0.5 1.0 0.0 0 0 PioneerP3DX_base_link PioneerP3DX_pid_frame --ros-args -r __node:=pid_tf_pub -r __ns:=/PioneerP3DX --params-file /tmp/launch_params__lq9_oo1'].
+[INFO] [player-1]: sending signal 'SIGINT' to process[player-1]
+[simulated_anemometer-2] [0m[INFO] [1791559538.859415259] [rclcpp]: signal_handler(signum=2)[0m
+[ERROR] [static_transform_publisher-3]: process has died [pid 12941, exit code -2, cmd '/opt/ros/humble/lib/tf2_ros/static_transform_publisher 0 0 0.5 1.0 0.0 0 0 PioneerP3DX_base_link PioneerP3DX_anemometer_frame --ros-args -r __node:=anemometer_tf_pub -r __ns:=/PioneerP3DX --params-file /tmp/launch_params_a248gxly'].
+[gsl_actionserver_node-14] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
+[gsl_actionserver_node-14]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
+[basic_sim-13] [0m[INFO] [1791559538.870155833] [rclcpp]: signal_handler(signum=2)[0m
+[simulated_gas_sensor-4] [0m[INFO] [1791559538.884698174] [rclcpp]: signal_handler(signum=2)[0m
+[simulated_anemometer-2] [0m[INFO] [1791559538.888002427] [rclcpp]: signal_handler(signum=2)[0m
+[player-1] [0m[INFO] [1791559538.890077784] [rclcpp]: signal_handler(signum=2)[0m
+[ERROR] [gsl_actionserver_node-14]: process has died [pid 13015, exit code -6, cmd '/home/zyc/pmfs_official_alignment_r5_20261009/ws/install/gsl_server/lib/gsl_server/gsl_actionserver_node --ros-args -r __node:=GSL -r __ns:=/PioneerP3DX --params-file /tmp/launch_params_fe7i2ok3 --params-file /tmp/launch_params_te8b015z --params-file /tmp/launch_params_w1kfgfsh --params-file /tmp/launch_params_mh9m_h3r --params-file /tmp/launch_params_5g9t_snk --params-file /tmp/launch_params_j4qxf4o_ --params-file /tmp/launch_params_oylxba3_ --params-file /tmp/launch_params_sbbqomi8 --params-file /tmp/launch_params_h3caiy3i --params-file /tmp/launch_params_xh876je6 --params-file /tmp/launch_params_u1pz4il8 --params-file /tmp/launch_params_wxaie6za --params-file /tmp/launch_params_pjv_eq5p --params-file /tmp/launch_params_b5j25nkl --params-file /tmp/launch_params_1pyebvo_ --params-file /tmp/launch_params_s2hh6uki --params-file /tmp/launch_params_uha4cp2v --params-file /tmp/launch_params_lpv_et__ --params-file /tmp/launch_params_5obq30co --params-file /tmp/launch_params_ax_uqgkw --params-file /tmp/launch_params_h5p0mf4a --params-file /tmp/launch_params_9ukrqc1_ --params-file /tmp/launch_params_ojwtbp5t --params-file /tmp/launch_params_eepmi0ud --params-file /tmp/launch_params_b3c3u7y1 --params-file /tmp/launch_params_nu0tqat9 --params-file /tmp/launch_params_lg2vivaz --params-file /tmp/launch_params_ovyz23fw --params-file /tmp/launch_params_siql8nn0 --params-file /tmp/launch_params_ch3l8vfz --params-file /tmp/launch_params_rip6mud4 --params-file /tmp/launch_params__wsl1eyn --params-file /tmp/launch_params_2dj0q0s5 --params-file /tmp/launch_params_1hk6mfat --params-file /tmp/launch_params_cugec_v0 --params-file /tmp/launch_params_y1j7t94z --params-file /tmp/launch_params_im88h5wu --params-file /tmp/launch_params_kj4nyy_x --params-file /tmp/launch_params_ez44t1wo --params-file /tmp/launch_params_wb25tm9u --params-file /tmp/launch_params_icfmow7e --params-file /tmp/launch_params_0rjkh0x8 --params-file /tmp/launch_params_564su7u6'].
+[INFO] [player-1]: process has finished cleanly [pid 12937]
+[INFO] [simulated_anemometer-2]: process has finished cleanly [pid 12939]
+[INFO] [robot_state_publisher-12]: process has finished cleanly [pid 12998]
+[INFO] [simulated_gas_sensor-4]: process has finished cleanly [pid 12943]
+[INFO] [basic_sim-13]: process has finished cleanly [pid 13005]
+[INFO] [map_server-6]: process has finished cleanly [pid 12947]
+[INFO] [behavior_server-10]: process has finished cleanly [pid 12987]
+[INFO] [controller_server-9]: process has finished cleanly [pid 12969]
+[INFO] [lifecycle_manager-11]: process has finished cleanly [pid 12992]
+[INFO] [bt_navigator-7]: process has finished cleanly [pid 12952]
+[INFO] [planner_server-8]: process has finished cleanly [pid 12956]

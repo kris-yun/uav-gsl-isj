@@ -1,0 +1,27 @@
+{
+  "input_class": "EXISTING_NON_C1_NATIVE_CLOSED_LOOP_ENGINEERING_VALIDATION",
+  "C1_physics_qualification": "HOLD_WIND_SEQUENCE_MISMATCH",
+  "native_goal_count": 0,
+  "fixture_messages_injected": 0,
+  "generated_gas_data": 0,
+  "processes": [
+    {
+      "name": "launch",
+      "pid": 12521,
+      "returncode": 0
+    },
+    {
+      "name": "gmrf",
+      "pid": 12522,
+      "returncode": 0
+    }
+  ],
+  "result": "RUNTIME_ERROR",
+  "error": "'int' object is not callable",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/zyc/pmfs_official_alignment_r5_20261009/runtime_driver.py\", line 67, in <module>\n    rclpy.spin_once(node,timeout_sec=.1)\n  File \"/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py\", line 208, in spin_once\n    executor.spin_once(timeout_sec=timeout_sec)\n  File \"/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py\", line 751, in spin_once\n    self._spin_once_impl(timeout_sec)\n  File \"/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py\", line 748, in _spin_once_impl\n    raise handler.exception()\n  File \"/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/task.py\", line 254, in __call__\n    self._handler.send(None)\n  File \"/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py\", line 447, in handler\n    await call_coroutine(entity, arg)\n  File \"/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py\", line 372, in _execute_subscription\n    await await_or_execute(sub.callback, msg)\n  File \"/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py\", line 107, in await_or_execute\n    return callback(*args)\n  File \"/home/zyc/pmfs_official_alignment_r5_20261009/runtime_driver.py\", line 51, in <lambda>\n    subs=[node.create_subscription(Anemometer,'/PioneerP3DX/Anemometer/WindSensor_reading',wind,100),node.create_subscription(GasSensor,'/PioneerP3DX/PID/Sensor_reading',lambda m:record('/PioneerP3DX/PID/Sensor_reading',m),100),node.create_subscription(PoseWithCovarianceStamped,'/PioneerP3DX/ground_truth',pose,100),node.create_subscription(Twist,'/PioneerP3DX/cmd_vel',cmd,100),node.create_subscription(TFMessage,'/tf',lambda m:record('/tf',m),100),node.create_subscription(Clock,'/clock',lambda m:record('/clock',m),QoSProfile(depth=100,reliability=ReliabilityPolicy.BEST_EFFORT)),node.create_subscription(TFMessage,'/tf_static',lambda m:record('/tf_static',m),QoSProfile(depth=100,durability=DurabilityPolicy.TRANSIENT_LOCAL)),node.create_subscription(OccupancyGrid,'/PioneerP3DX/map',lambda m:record('/PioneerP3DX/map',m),QoSProfile(depth=1,durability=DurabilityPolicy.TRANSIENT_LOCAL))]\n  File \"/home/zyc/pmfs_official_alignment_r5_20261009/runtime_driver.py\", line 39, in record\n    if keep:wire.write(json.dumps(dict(topic=topic,receipt_ns=node.get_clock().now().nanoseconds(),cdr_hex=serialize_message(msg).hex()))+'\\n');wire.flush()\nTypeError: 'int' object is not callable\n",
+  "counts": {
+    "/tf_static": 1
+  },
+  "nonzero_cmd_vel_messages": 0,
+  "pose_samples": 0
+}

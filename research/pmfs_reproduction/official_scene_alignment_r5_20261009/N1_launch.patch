@@ -1,0 +1,74 @@
+--- official/main_simbot_launch.py
++++ N1_headless_launch.py
+@@ -49,15 +49,15 @@
+                 # prefix="xterm -hold -e",
+                 parameters=[
+                     # Common
+-                    {'use_sim_time': False},
++                    {'use_sim_time': True},
+                     {"maxSearchTime": 300.0},
+-                    {"robot_location_topic": "ground_truth"},
++                    {"robot_location_topic": "ground_truth"}, {"anemometer_topic": "/r5/wind_to"},
+                     {"stop_and_measure_time": 0.4},
+                     {"th_gas_present": parse_substitution("$(var th_gas_present)")},
+                     {"th_wind_present": parse_substitution("$(var th_wind_present)")},
+                     {"ground_truth_x": parse_substitution("$(var source_x)")},
+                     {"ground_truth_y": parse_substitution("$(var source_y)")},
+-                    {"resultsFile": parse_substitution("Results/$(var simulation)/$(var method).csv")},
++                    {"resultsFile": "/home/zyc/pmfs_official_alignment_r5_20261009/runtime/native_results.csv"}, {"navigationPathFile": "/home/zyc/pmfs_official_alignment_r5_20261009/runtime/navigation_path.csv"},
+ 
+                     {"scale": 25},
+                     {"markers_height": 0.2},
+@@ -75,7 +75,7 @@
+                     {"allowMovementRepetition": parse_substitution("$(var use_infotaxis)")},
+ 
+                     # PMFS
+-                    {"headless": False},
++                    {"headless": True},
+                     {"distanceWeight": 0.15},
+                     # Hit probabilities
+                     {"maxUpdatesPerStop": 5},
+@@ -103,7 +103,7 @@
+ 
+ 
+                 ],
+-                on_exit=Shutdown()
++                
+             ),
+         ])
+     ]
+@@ -115,7 +115,7 @@
+         parameters=[
+             {"sensor_topic": parse_substitution("$(var robot_name)/Anemometer/WindSensor_reading")},
+             {"map_topic": parse_substitution("$(var robot_name)/map")},
+-            {"cell_size": 0.25},
++            {"use_sim_time": True}, {"cell_size": 0.25},
+             {"exec_freq": 10.0},
+         ]
+     )
+@@ -125,7 +125,7 @@
+         executable="basic_sim",
+         parameters=[
+             {"deltaTime": 0.1},
+-            {"speed": 5.0},
++            {"speed": 1.0},
+             {"worldFile": parse_substitution("$(find-pkg-share pmfs_env)/scenarios/$(var scenario)/basicSim/$(var simulation).yaml")}
+         ],
+     )
+@@ -235,12 +235,12 @@
+     actions.extend(anemometer)
+     actions.extend(PID)
+     actions.append(nav2)
+-    actions.append(gmrf_wind)
++    # Pinned GMRF callback with passive trace started by runtime driver.
+     actions.append(basic_sim)
+     actions.extend(gsl_node)
+-    actions.extend(gsl_call)
+-    actions.append(rvizHit)
+-    actions.append(rvizSource)
++    # Goal sent once by audited action client after preflight.
++    # Headless: omit RViz visualization.
++
+ 
+     return actions
+ 

@@ -1,0 +1,20 @@
+Starting >>> basic_sim
+Finished <<< basic_sim [40.9s]
+Starting >>> gaden_player
+--- stderr: gaden_player
+/usr/bin/ld: warning: libbsc.so, needed by /home/zyc/hcmc_gaden_seed_build_20260922/install/gaden_common/lib/libgaden.so, not found (try using -rpath or -rpath-link)
+/usr/bin/ld: /home/zyc/hcmc_gaden_seed_build_20260922/install/gaden_common/lib/libgaden.so: undefined reference to `bsc_block_info'
+/usr/bin/ld: /home/zyc/hcmc_gaden_seed_build_20260922/install/gaden_common/lib/libgaden.so: undefined reference to `bsc_decompress'
+/usr/bin/ld: /home/zyc/hcmc_gaden_seed_build_20260922/install/gaden_common/lib/libgaden.so: undefined reference to `bsc_init'
+/usr/bin/ld: /home/zyc/hcmc_gaden_seed_build_20260922/install/gaden_common/lib/libgaden.so: undefined reference to `bsc_compress'
+collect2: error: ld returned 1 exit status
+gmake[2]: *** [CMakeFiles/player.dir/build.make:193: player] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/player.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2
+---
+Failed   <<< gaden_player [14.5s, exited with code 2]
+
+Summary: 1 package finished [56.0s]
+  1 package failed: gaden_player
+  1 package had stderr output: gaden_player
+  4 packages not processed

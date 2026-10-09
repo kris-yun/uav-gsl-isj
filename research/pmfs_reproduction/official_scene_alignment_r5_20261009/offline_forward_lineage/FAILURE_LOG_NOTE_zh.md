@@ -1,0 +1,1 @@
+离线入口实际经历动态库路径失败（127）和 visibilityMap 未初始化失败（-11）。`FORWARD_VISIBILITY_FAILURE.json` / `forward_visibility_failure.log` 归档时保存的是其后一次重复的动态库失败（127），名称不代表其中 exit_code 为 -11。原始 SSH 捕获见本文件同目录 `R5_FORWARD_LIBRARY_ENV_REPAIR.stdout`；不得用该错误命名的 JSON 证明 -11。最终通过结果见 `FORWARD_RESULT.json` 和 `forward_replay.log`。以上均非新增原生 DoGSL 目标。

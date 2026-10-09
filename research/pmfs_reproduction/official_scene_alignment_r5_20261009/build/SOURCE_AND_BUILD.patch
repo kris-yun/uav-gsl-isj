@@ -1,0 +1,86 @@
+--- ws/src/gsl_server/CMakeLists.txt.upstream
++++ ws/src/gsl_server/CMakeLists.txt.r5
+@@ -6,7 +6,7 @@
+     set(CMAKE_BUILD_TYPE "Release")
+ endif()
+ 
+-set(CMAKE_CXX_FLAGS "-g -glldb -Wpedantic -fno-omit-frame-pointer ${CMAKE_CXX_FLAGS}")
++set(CMAKE_CXX_FLAGS "-g0 -Wpedantic -fno-omit-frame-pointer ${CMAKE_CXX_FLAGS}")
+ set(CMAKE_CXX_FLAGS_RELEASE "-O3 ${CMAKE_CXX_FLAGS}")
+ set(CMAKE_CXX_FLAGS_DEBUG "-O0 ${CMAKE_CXX_FLAGS}")
+ set(CMAKE_CXX_STANDARD 20)
+@@ -22,14 +22,14 @@
+  
+ # if ON, the code is compiled with support for directly querying gaden simulations to obtain the wind ground truth. 
+ # If you dont have gaden in this workspace, you need to set this to OFF or it wont compile
+-set(USE_GADEN OFF)
++set(USE_GADEN ON)
+ 
+ # if ON uses the nav_assistant package rather than directly communicating with nav_2. 
+ # It adds some extra features, but currently it has a relatively high performance cost due to async inter-process communication  
+ set(USE_NAV_ASSISTANT OFF) 
+ 
+ # Compile graphical interface with DearImGUI. Currently only affects the PMFS and SemanticPMFS algorithms. Not required to function, it is mostly for debugging purposes
+-set(USE_GUI ON)
++set(USE_GUI OFF)
+ 
+ 
+ # Tracy is a profiler. ON enables some instrumentation macros (and adds a dependency to tracy). To do sampling-based profiling you also need to run the node as sudo
+@@ -93,12 +93,12 @@
+ 
+ # You can disable the compilation of any of these algorithms by commenting them out here (useful if you don't want to install their dependencies)
+ ###############################################################################################################################################
+-include(src/gsl_server/algorithms/PlumeTracking/CMakeLists.txt)
+-include(src/gsl_server/algorithms/Spiral/CMakeLists.txt)
+-include(src/gsl_server/algorithms/ParticleFilter/CMakeLists.txt)
+-include(src/gsl_server/algorithms/GrGSL/CMakeLists.txt)
++#include(src/gsl_server/algorithms/PlumeTracking/CMakeLists.txt)
++#include(src/gsl_server/algorithms/Spiral/CMakeLists.txt)
++#include(src/gsl_server/algorithms/ParticleFilter/CMakeLists.txt)
++#include(src/gsl_server/algorithms/GrGSL/CMakeLists.txt)
+ include(src/gsl_server/algorithms/PMFS/CMakeLists.txt)
+-include(src/gsl_server/algorithms/Semantics/CMakeLists.txt) # There is further modularity inside of this file!
++#include(src/gsl_server/algorithms/Semantics/CMakeLists.txt) # There is further modularity inside of this file!
+ 
+ 
+ 
+
+--- ws/src/gsl_server/src/gsl_server/algorithms/Common/Algorithm.cpp.upstream
++++ ws/src/gsl_server/src/gsl_server/algorithms/Common/Algorithm.cpp.r5
+@@ -108,7 +108,7 @@
+         PoseStamped anemometer_downWind_pose, map_downWind_pose;
+         try
+         {
+-            anemometer_downWind_pose.header.frame_id = msg->header.frame_id;
++            anemometer_downWind_pose.header = msg->header;
+             anemometer_downWind_pose.pose.position.x = 0.0;
+             anemometer_downWind_pose.pose.position.y = 0.0;
+             anemometer_downWind_pose.pose.position.z = 0.0;
+
+--- ws/src/simulated_anemometer/src/fake_anemometer.cpp.upstream
++++ ws/src/simulated_anemometer/src/fake_anemometer.cpp.r5
+@@ -156,7 +156,11 @@
+                         }
+                         geometry_msgs::msg::Vector3Stamped downwind_sensor;
+ 
+-                        tf2::doTransform(downwind_map, downwind_sensor, anemometer_transform_map);
++                        tf2::Transform sensorToMap;
++                        tf2::fromMsg(anemometer_transform_map.transform, sensorToMap);
++                        auto mapToSensor = anemometer_transform_map;
++                        mapToSensor.transform = tf2::toMsg(sensorToMap.inverse());
++                        tf2::doTransform(downwind_map, downwind_sensor, mapToSensor);
+                         wind_direction = std::atan2(-downwind_sensor.vector.y, -downwind_sensor.vector.x); // change signs to make it upwind
+                     }
+                     catch (tf2::TransformException& ex)
+
+--- ws/src/basic_sim/CMakeLists.txt.upstream
++++ ws/src/basic_sim/CMakeLists.txt.r5
+@@ -2,7 +2,7 @@
+ project(basic_sim)
+ 
+ set(CMAKE_BUILD_TYPE "Release") 
+-set(CMAKE_CXX_FLAGS_Release "-g -O3 ${CMAKE_CXX_FLAGS}")
++set(CMAKE_CXX_FLAGS_Release "-g0 -O3 ${CMAKE_CXX_FLAGS}")
+ set(CMAKE_CXX_FLAGS_Debug "-g -O0 ${CMAKE_CXX_FLAGS}")
+ 
+ set(CMAKE_CXX_STANDARD 20)

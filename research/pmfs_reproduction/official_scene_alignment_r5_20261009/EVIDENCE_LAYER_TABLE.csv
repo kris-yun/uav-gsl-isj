@@ -1,0 +1,10 @@
+﻿layer,verdict,evidence
+native_closed_loop_execution,PASS,"{""native_goals"": 1, ""search_budget_s"": 300, ""action_status"": 4, ""localization_success"": false, ""wall_seconds"": 301.0399560928345, ""nonzero_cmd_vel_messages"": 3749}"
+physical_robot_motion,PASS,"{""path_samples"": 3106, ""travel_m"": 47.48993094327595, ""closest_robot_to_source_m"": 1.0808577517338773}"
+actual_consumers_wind_frame_and_runtime_clock,PASS,"{""matched_nonzero_wind_messages"": 2598, ""zero_speed_angle_comparisons_skipped"": 290, ""heading_max_abs_rad"": 2.770814896635443e-06, ""upstream_pi_approximation_rad"": 2.6535897932333796e-06, ""heading_residual_max_abs_rad"": 1.1722510384615248e-07, ""position_max_abs_m"": 2.3854800414573825e-07, ""consumed_message_age_max_s"": 0.101516532, ""wind_sensor_height_m"": 0.4}"
+physical_time_of_underlying_gas_record,HOLD,"{""reason"": ""Frame numbering does not establish the generation time axis; native wall/simulation clocks are aligned but underlying data are not qualified C1.""}"
+captured_candidate_samples_and_score_recomputation,PASS,"{""candidates"": 108, ""captured_source_points"": 306680, ""min_single_cell_factor"": 0.7405066329026057, ""independent_score_max_relative_error"": 1.6051579877899437e-18}"
+captured_refinement_and_posterior,PASS,"{""grid_cells"": 1551, ""free_cells"": 518, ""posterior_sum"": 1.0, ""posterior_max_abs_error"": 0.0}"
+native_to_offline_candidate_forward_replay,PASS,"{""candidates"": 108, ""map_max_abs"": 0.0, ""score_max_relative_error"": 0.0, ""uses_captured_points"": true, ""raw_measurement_map_reconstruction"": false}"
+official_C1_physical_reproduction,HOLD,"{""reason"": ""Existing record winds cycle beyond wind index 10; official C1 generation disallows cycling. Existing and official map masks also differ; 3D geometry/projection lineage requires qualification.""}"
+native_process_teardown,HOLD,"{""post_result_abnormal_child_exit"": true, ""reason"": ""SIGINT overlaps upstream post-result shutdown; root cause and clean teardown are not validated""}"

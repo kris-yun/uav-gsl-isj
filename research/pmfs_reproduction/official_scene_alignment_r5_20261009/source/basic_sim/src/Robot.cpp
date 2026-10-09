@@ -1,0 +1,214 @@
+#include "basic_sim/Utils.hpp"
+#include <basic_sim/BasicSim.hpp>
+#include <basic_sim/Logging.hpp>
+#include <basic_sim/Robot.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+
+Robot::Robot(const RobotDescription& description)
+    : m_name(description.name),
+      m_currentTransformMapFrame(description.startingPose),
+      m_startingTransform(description.startingPose),
+      m_radius(description.radius),
+      publishOdom(description.publishOdom),
+      publishMapToOdomTF(description.publishMapToOdomTF),
+      m_sim(description.sim)
+{
+    m_node = std::make_shared<rclcpp::Node>(description.name);
+
+    std::string cmd_vel_topic = "/" + m_name + "/cmd_vel";
+    m_cmd_velSub = m_node->create_subscription<geo::Twist>(cmd_vel_topic, 1, std::bind(&Robot::cmd_velCallback, this, std::placeholders::_1));
+
+    m_robotBaseBroadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(m_node);
+    m_posePub = m_node->create_publisher<geo::PoseWithCovarianceStamped>("/" + m_name + "/ground_truth", rclcpp::QoS(5));
+    m_resetPoseSub = m_node->create_subscription<geo::PoseWithCovarianceStamped>("/" + m_name + "/initialpose", rclcpp::QoS(1),
+                                                                                 std::bind(&Robot::resetPoseCallback, this, std::placeholders::_1));
+
+    if (publishOdom)
+    {
+        m_odomPub = m_node->create_publisher<nav_msgs::msg::Odometry>("/" + m_name + "/odom", rclcpp::QoS(1));
+        m_mapToOdom = m_currentTransformMapFrame.inverse();
+    }
+
+    // publish static map_odom TF (published only once)
+    if (publishMapToOdomTF)
+    {
+        m_mapOdomBroadcaster = std::make_shared<tf2_ros::StaticTransformBroadcaster>(m_node);
+        geo::TransformStamped mapToOdom;
+        mapToOdom.header.frame_id = "map";
+        mapToOdom.child_frame_id = m_name + "_odom";
+        mapToOdom.transform = tf2::toMsg(m_currentTransformMapFrame);
+        m_mapOdomBroadcaster->sendTransform(mapToOdom);
+    }
+
+    // create the sensors specified in the YAML
+    m_laserScanners.reserve(description.lasers.size());
+    for (const auto& laserDesc : description.lasers)
+    {
+        LaserSensor& sensor = m_laserScanners.emplace_back(laserDesc, &m_sim->map);
+        sensor.publisher = m_node->create_publisher<sensor_msgs::msg::LaserScan>(m_name + "/" + laserDesc.name, rclcpp::QoS(1));
+        sensor.frame_id = getRobotFrameId(); // TODO maybe add the option to attach the scanner to a different TF frame.
+    }
+
+    m_currentVelocityMsg.simTimeStamp = m_sim->getCurrentTime();
+    BS_INFO("Created robot %s", m_name.c_str());
+}
+
+void Robot::OnUpdate(float deltaTime)
+{
+    rclcpp::spin_some(m_node);
+    UpdatePose(deltaTime);
+    UpdateSensors(deltaTime);
+}
+
+void Robot::UpdatePose(float deltaTime)
+{
+    if (m_sim->getCurrentTime().seconds() - m_currentVelocityMsg.simTimeStamp.seconds() > 0.5)
+        m_currentVelocityMsg.Reset();
+
+    // calculate and apply the movement
+    float angularSpeed = m_currentVelocityMsg.twist.angular.z;
+    float deltaAngle = angularSpeed * deltaTime;
+
+    // get the translation
+    tf2::Vector3 translation;
+    {
+        tf2::Vector3 linearMovementVelocity;
+        tf2::fromMsg(m_currentVelocityMsg.twist.linear, linearMovementVelocity);
+
+        if (std::abs(deltaAngle) > 0)
+        {
+            float curvatureRadius = linearMovementVelocity.x() / angularSpeed;
+            translation = tf2::Vector3(curvatureRadius * std::sin(deltaAngle), curvatureRadius * (1 - std::cos(deltaAngle)), 0);
+        }
+        else
+            translation = linearMovementVelocity * deltaTime;
+    }
+
+    tf2::Quaternion rotation({0, 0, 1}, deltaAngle);
+    tf2::Transform movement(rotation, translation);
+
+    tf2::Transform nextTransform;
+    nextTransform.mult(m_currentTransformMapFrame, movement);
+
+    // apply the movement if possible
+    if (canBeAt(nextTransform.getOrigin()))
+        m_currentTransformMapFrame = nextTransform;
+    else
+    {
+        movement.getOrigin().setZero();
+        movement.getBasis().setIdentity();
+    }
+
+    PublishPoseAndOdom(movement, deltaTime);
+}
+
+void Robot::UpdateSensors(float deltaTime)
+{
+    for (LaserSensor& sensor : m_laserScanners)
+    {
+        tf2::Vector3 forward = tf2::quatRotate(m_currentTransformMapFrame.getRotation(), {1, 0, 0});
+        auto msg = sensor.scanner.Scan(m_currentTransformMapFrame.getOrigin(), forward);
+
+        msg.header.frame_id = sensor.frame_id;
+        msg.header.stamp = m_sim->getCurrentTime();
+        msg.scan_time = deltaTime;
+        sensor.publisher->publish(msg);
+    }
+}
+
+void Robot::PublishPoseAndOdom(tf2::Transform movement, float deltaTime)
+{
+    // publish PoseWithCovarianceStamped msg to /(robot)/ground_truth
+    geo::PoseWithCovarianceStamped poseMsg;
+    poseMsg.header.frame_id = "map";
+    poseMsg.header.stamp = m_sim->getCurrentTime();
+    poseMsg.pose.pose.position.x = m_currentTransformMapFrame.getOrigin().x();
+    poseMsg.pose.pose.position.y = m_currentTransformMapFrame.getOrigin().y();
+    poseMsg.pose.pose.position.z = m_currentTransformMapFrame.getOrigin().z();
+    poseMsg.pose.pose.orientation = tf2::toMsg(m_currentTransformMapFrame.getRotation());
+    m_posePub->publish(poseMsg);
+
+    if (publishOdom)
+    {
+        tf2::Transform poseInOdomFrame;
+        poseInOdomFrame.mult(m_mapToOdom, m_currentTransformMapFrame);
+
+        // send odom->base TF
+        geo::TransformStamped odomToBase;
+        odomToBase.header.frame_id = m_name + "_odom";
+        odomToBase.header.stamp = m_sim->getCurrentTime();
+        odomToBase.child_frame_id = getRobotFrameId();
+        odomToBase.transform = tf2::toMsg(poseInOdomFrame);
+        m_robotBaseBroadcaster->sendTransform(odomToBase);
+
+        // publish Odometry msg
+        //--------------------
+        nav_msgs::msg::Odometry odomMsg;
+        odomMsg.header.frame_id = m_name + "_odom";
+        odomMsg.header.stamp = m_sim->getCurrentTime();
+        odomMsg.pose.pose = Utils::transformToPose(odomToBase.transform);
+        // the velocity is in the robot base frame, not in odom
+        odomMsg.child_frame_id = getRobotFrameId();
+        odomMsg.twist.twist.linear = tf2::toMsg(movement.getOrigin() / deltaTime);
+        odomMsg.twist.twist.angular.z = movement.getRotation().getAngle() / deltaTime;
+        m_odomPub->publish(odomMsg);
+    }
+}
+
+std::string Robot::getRobotFrameId()
+{
+    return m_name + "_base_link";
+}
+
+void Robot::resetPoseCallback(geo::PoseWithCovarianceStamped::SharedPtr msg)
+{
+// because rviz's initialpose tool always sets z to 0, and that's quite annoying. At some point there should probably be a custom rviz tool for
+// this
+#define IGNORE_MSG_Z 1
+#if IGNORE_MSG_Z
+    tf2::Vector3 position = {msg->pose.pose.position.x, msg->pose.pose.position.y, m_currentTransformMapFrame.getOrigin().z()};
+#else
+    tf2::Vector3 position = {msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z};
+#endif
+    CellState cellState = m_sim->map.stateAt(position);
+    if (cellState == CellState::Free)
+    {
+        m_currentTransformMapFrame.setOrigin(position);
+        tf2::Quaternion rot;
+        tf2::fromMsg(msg->pose.pose.orientation, rot);
+        m_currentTransformMapFrame.setRotation(rot);
+    }
+    else
+        BS_ERROR("Trying to set robot %s to position (%.2f, %.2f, %.2f), but it is not free!", m_name.c_str(), position.x(), position.y(),
+                 position.z());
+}
+
+void Robot::ResetToStartingPose()
+{
+    BS_INFO("Reset robot %s to starting position.", m_name.c_str());
+    m_currentTransformMapFrame = m_startingTransform;
+    m_currentVelocityMsg.Reset();
+}
+
+void Robot::cmd_velCallback(geo::Twist::SharedPtr msg)
+{
+    m_currentVelocityMsg.twist = *msg;
+    m_currentVelocityMsg.simTimeStamp = m_sim->getCurrentTime();
+}
+
+void Robot::VelocityMsg::Reset()
+{
+    twist.linear.x = 0;
+    twist.linear.y = 0;
+    twist.linear.z = 0;
+
+    twist.angular.x = 0;
+    twist.angular.y = 0;
+    twist.angular.z = 0;
+}
+
+bool Robot::canBeAt(const tf2::Vector3& position) const
+{
+    float distance = m_sim->map.distanceAt(position);
+    return distance > m_radius;
+}

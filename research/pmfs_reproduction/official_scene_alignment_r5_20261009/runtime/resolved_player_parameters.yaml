@@ -1,0 +1,30 @@
+/gaden_player:
+  ros__parameters:
+    allow_looping: false
+    gas_display_color_0:
+    - 0.0
+    - 1.0
+    - 0.0
+    initial_iteration: 500
+    loop_from_iteration: 800
+    loop_to_iteration: 900
+    num_simulators: 1
+    occupancyFile: /home/zyc/pmfs_official_alignment_r5_20261009/assets/OccupancyGrid3D.csv
+    player_freq: 2.0
+    projectPath: ''
+    qos_overrides:
+      /clock:
+        subscription:
+          depth: 1
+          durability: volatile
+          history: keep_last
+          reliability: best_effort
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    simulation_data_0: /home/zyc/hcmc_v1_independent_data_20260922/H02_R2026092211/FilamentSimulation_gasType_10_sourcePosition_0.00_-1.00_0.20
+    use_sim_time: true
+
