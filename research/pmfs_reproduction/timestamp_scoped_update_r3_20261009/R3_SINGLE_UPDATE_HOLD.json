@@ -1,0 +1,35 @@
+{
+  "verdict": "SCOPED_P1b_HOLD",
+  "execution": "NOT_RUN_INPUT_QUALIFICATION_HOLD",
+  "native_source_updates_this_round": 0,
+  "gate_A_stationary": "PASS",
+  "gate_B_historical_input": "HOLD",
+  "scope": "Only frozen R1 20-event/87-leaf run and its known original directory checked; P0 not repeated",
+  "first_blocker": "20 delivered events cannot be bound to their original sensor message stamps/block membership and sample-to-consumer TF; steady_ns is a callback log time, not a physical sensor timestamp.",
+  "additional_missing_state": [
+    "original native per-candidate hit maps including refined children",
+    "leaf sample points and RNG engine/Gaussian cache/thread state",
+    "native raw candidate scores, refined tree and normalized final posterior"
+  ],
+  "known_existing_assets": {
+    "delivered_events": 20,
+    "map_cells": 1102,
+    "free_cells": 626,
+    "source_update_wind_cells": 626,
+    "coarse_geometry_leaves": 87,
+    "offline_C_maps_hash_verified": 87
+  },
+  "known_trace_domains": {
+    "measurement_events": "steady_ns",
+    "pose_sensor_wind_trace": "t_sim_s, step, iteration",
+    "wind_query": "steady_ns; no player frame/time key",
+    "join_key_between_domains": "NOT_SAVED"
+  },
+  "raw_ROS_membership_and_TF_capture_in_known_run": false,
+  "native_results_directory_members": [],
+  "saved_87_maps_origin": "R1_arm_C: native_pmfs_r1_forward_replay.cpp one-leaf score replay; no complete online update capture",
+  "scores_replayed_again_this_round": false,
+  "R3_SINGLE_UPDATE_PARITY_CSV_created": false,
+  "minimum_needed": "One legally timed native source-update snapshot binding raw sensor membership, TF and queried forward wind to sampled candidate maps/RNG/raw scores/refinement/final posterior",
+  "next_step_authorized_by_this_run": false
+}

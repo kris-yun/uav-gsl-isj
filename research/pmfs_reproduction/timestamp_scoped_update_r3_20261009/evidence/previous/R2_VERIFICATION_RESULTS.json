@@ -1,0 +1,38 @@
+{
+  "P0": "PASS_FROZEN_NOT_REAUDITED",
+  "P1a": "HOLD",
+  "P1b": "HOLD_NOT_RUN_GATED_BY_P1a",
+  "fresh_N1": {
+    "cases": 10,
+    "nonzero_cases": 8,
+    "zero_cases": 2,
+    "verdict": "PASS_FOR_FRESH_STATIONARY_TF_FIXTURES",
+    "max_PMFS_angle_error_rad": 1.6292067961387604e-07,
+    "max_GMRF_angle_error_rad": 2.697301184184653e-06,
+    "max_GMRF_position_error_m": 0.0,
+    "all_grid_indices_correct": true,
+    "max_receipt_age_s": 0.29411321
+  },
+  "delayed_TF": {
+    "verdict": "FAIL_FOR_TIMESTAMP_CONSISTENCY",
+    "consumer_angle_difference_rad": 1.5707989366733002,
+    "message_to_PMFS_TF_delta_s": 0.2054145,
+    "PMFS_transformed_wind_pose_xy": [
+      -1.75,
+      2.25
+    ],
+    "GMRF_observation_xy": [
+      1.25,
+      1.25
+    ]
+  },
+  "estimated_wind_field": "HOLD: queried real map values, no converged-field accuracy PASS",
+  "scope": "Real ROS/DDS + TF, unmodified upstream common wind callback + StopAndMeasure; GMRF node with passive trace; controlled fixed-input fixture, not complete original N0 launch or navigation",
+  "P2": "NOT_RUN",
+  "P3": "UNRESOLVED_NOT_RUN",
+  "new_gas_generation": false,
+  "new_CFD": false,
+  "new_network_training": false,
+  "existing_VM_started_by_this_task": false,
+  "existing_VM_shutdown_by_this_task": false
+}

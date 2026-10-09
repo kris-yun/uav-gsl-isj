@@ -1,0 +1,43 @@
+{
+  "contract_commit": "7871f6cd11e77f1755e2434a9c677c247ab2ca7f",
+  "PMFS_upstream": "4e141e162551e674f2f30ddb8859136c72139aac",
+  "GMRF_upstream": "2ec7a5db7bf5f2597e9d62ba662d3efcfc788d71",
+  "N0": {
+    "name": "UPSTREAM_UNMODIFIED_COMMON_CALLBACK_FIXTURE",
+    "algorithm_sha256": "c22d05a445b60dc39e7da98b4b86b9186e898c3644b86638d0b6f2977d9cc2d7"
+  },
+  "N1": {
+    "name": "STAMP_CORRECTED_ENG_VARIANT",
+    "algorithm_sha256": "3f9c93f6b8b2803bbd5f43d9cec8d355dd7e8456dbcde6001683a0135da32bbd",
+    "change": "header.frame_id assignment -> full header assignment"
+  },
+  "ELF": {
+    "pmfs_original": "973ffd38953e1eb0d6f7449fd3380b55092fe0b496564f3867348c91973c928e",
+    "pmfs_stamped": "0722267a80b0a13db550f757c6d9caf2e952b1d0da0eccdeae6f550e7d2d64d1"
+  },
+  "scope": "Common Algorithm::windCallback + StopAndMeasure fixture; not gsl_actionserver or navigation",
+  "shared_library_binding": {
+    "core_map_sha256": "3b17f3be83ce790a734b9ee09b6d9666ec9cb5ffd90d26ae3f7e9beb55da222a",
+    "core_map_matches_pinned_git": true,
+    "gmrf_shared_library_sha256": "5ce009302ba16f516801504266f875f8e4f1771bfbcf402c66a9d18d8e08d5fd",
+    "core_library_source_to_ELF_claim": "existing compiled shared library reused; SHA frozen; no full clean-build binary parity asserted"
+  },
+  "clock": "fixture, N0, N1, GMRF use_sim_time=false; actual flags and receipt ages captured",
+  "topics": {
+    "PMFS": "/r3/pmfs_to [TO]",
+    "GMRF": "/r3/gmrf_from [FROM]",
+    "map": "/r3/map",
+    "TF": "/tf",
+    "ROS_DOMAIN_ID": 74
+  },
+  "source_update_parameters": "No parameters applied to a new source update; archived R1 runtime_manifest.json retained verbatim",
+  "frozen_R1_parameter_difference_from_C1": "Archived iterationsToRecord=200/maxWarmupIterations=500/initialExplorationMoves=2; C1 static 300/800/5; no C1 reproduction claimed",
+  "no_changes": {
+    "upstream_original": true,
+    "frozen_evidence": true,
+    "P0_PASS": true,
+    "previous_STOP_HOLD": true,
+    "frozen_proposal": true
+  },
+  "new_gas_CFD_DNS_Docker_training": false
+}
