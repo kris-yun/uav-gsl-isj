@@ -1,0 +1,46 @@
+--- upstream/filament_simulator.cpp
++++ isolated_R6/filament_simulator.cpp
+@@ -1,3 +1,6 @@
++#include <fstream>
++#include <iomanip>
++#include <stdexcept>
+ #define GADEN_LOGGER_ID "FilamentSimulator"
+ /*---------------------------------------------------------------------------------------
+ * MAIN Node for the simulation of gas dispersal using a Filament-based approach.
+@@ -86,8 +89,8 @@
+             .source = std::make_shared<gaden::PointSource>(),
+             .deltaTime = getParameter("time_step", 0.1f),
+             .windIterationDeltaTime = getParameter("wind_time_step", 1.0f),
+-            .temperature = getParameter("wind_time_step", 298.0f),
+-            .pressure = getParameter("wind_time_step", 1.0f),
++            .temperature = getParameter("temperature", 298.0f),
++            .pressure = getParameter("pressure", 1.0f),
+             .filamentPPMcenter_initial = getParameter("ppm_filament_center", 20.0f),
+             .filamentInitialSigma = getParameter("filament_initial_std", 1.5f),
+             .filamentGrowthGamma = getParameter("filament_growth_gamma", 10.0f),
+@@ -109,6 +112,25 @@
+             getParameter("source_position_z", 0.0),
+         };
+ 
++
++        std::string contractAudit = getParameter<std::string>("r6_contract_audit_path", "");
++        if (!contractAudit.empty())
++        {
++            std::ofstream f(contractAudit);
++            if (!f) throw std::runtime_error("Cannot write R6 contract audit");
++            f << std::setprecision(12) << "{\"simulation_started\":false,\"sim_time\":" << maxSimTime
++              << ",\"time_step\":" << params.deltaTime << ",\"wind_time_step\":" << params.windIterationDeltaTime
++              << ",\"temperature\":" << params.temperature << ",\"pressure\":" << params.pressure
++              << ",\"num_filaments_sec\":" << params.numFilaments_sec << ",\"ppm_filament_center\":" << params.filamentPPMcenter_initial
++              << ",\"filament_initial_std\":" << params.filamentInitialSigma << ",\"filament_growth_gamma\":" << params.filamentGrowthGamma
++              << ",\"filament_noise_std\":" << params.filamentNoise_std << ",\"source_xyz\":[" << params.source->sourcePosition.x
++              << "," << params.source->sourcePosition.y << "," << params.source->sourcePosition.z << "]"
++              << ",\"gas_type\":" << static_cast<int>(params.source->gasType)
++              << ",\"allow_looping\":" << (params.windLoop->loop ? "true" : "false")
++              << ",\"results_time_step\":" << params.saveDeltaTime << "}";
++            return;
++        }
++
+         gaden::paths::TryCreateDirectory(params.saveDataDirectory);
+ 
+         std::vector<std::filesystem::path> windFiles;

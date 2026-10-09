@@ -1,0 +1,110 @@
+[
+  {
+    "file": "inputs/official_source/Grid2D.hpp",
+    "line": 120,
+    "code": "static void reduceOccupancyMap(const std::vector<int8_t>& map, size_t mapWidth, std::vector<Occupancy>& occupancy,",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/Common/Grid2D.hpp#L120"
+  },
+  {
+    "file": "inputs/official_source/Grid2D.hpp",
+    "line": 19,
+    "code": "Vector2Int coordinatesToIndices(float x, float y) const",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/Common/Grid2D.hpp#L19"
+  },
+  {
+    "file": "inputs/official_source/Grid2D.hpp",
+    "line": 24,
+    "code": "Vector2Int coordinatesToIndices(const Vector2& v) const",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/Common/Grid2D.hpp#L24"
+  },
+  {
+    "file": "inputs/official_source/Grid2D.hpp",
+    "line": 26,
+    "code": "return coordinatesToIndices(v.x, v.y);",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/Common/Grid2D.hpp#L26"
+  },
+  {
+    "file": "inputs/official_source/Grid2D.hpp",
+    "line": 29,
+    "code": "Vector2Int coordinatesToIndices(const geometry_msgs::msg::Pose& pose) const",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/Common/Grid2D.hpp#L29"
+  },
+  {
+    "file": "inputs/official_source/Grid2D.hpp",
+    "line": 31,
+    "code": "return coordinatesToIndices(pose.position.x, pose.position.y);",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/Common/Grid2D.hpp#L31"
+  },
+  {
+    "file": "inputs/official_source/Grid2D.hpp",
+    "line": 149,
+    "code": "Vector2Int originInd = metadata.coordinatesToIndices(origin);",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/Common/Grid2D.hpp#L149"
+  },
+  {
+    "file": "inputs/official_source/Grid2D.hpp",
+    "line": 150,
+    "code": "Vector2Int endInd = metadata.coordinatesToIndices(end);",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/Common/Grid2D.hpp#L150"
+  },
+  {
+    "file": "inputs/official_source/Algorithm.cpp",
+    "line": 52,
+    "code": "startTime = node->now();",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/Common/Algorithm.cpp#L52"
+  },
+  {
+    "file": "inputs/official_source/PMFS.cpp",
+    "line": 168,
+    "code": "bool timeToSimulate = settings.simulation.stepsBetweenSourceUpdates >= 0 &&",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/PMFS/PMFS.cpp#L168"
+  },
+  {
+    "file": "inputs/official_source/PMFS.cpp",
+    "line": 180,
+    "code": "iterationsCounter++;",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/PMFS/PMFS.cpp#L180"
+  },
+  {
+    "file": "inputs/official_source/PMFS_utils.cpp",
+    "line": 27,
+    "code": "if (time_spent.seconds() > resultLogging.maxSearchTime)",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/PMFS/PMFS_utils.cpp#L27"
+  },
+  {
+    "file": "inputs/official_source/PMFS_utils.cpp",
+    "line": 60,
+    "code": "Vector2 sourceLocationAll = Utils::ExpectedValue(Grid2D<double>(sourceProbability, occupancy, gridMetadata), 1);",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/PMFS/PMFS_utils.cpp#L60"
+  },
+  {
+    "file": "inputs/official_source/PMFS_utils.cpp",
+    "line": 61,
+    "code": "Vector2 sourceLocation = Utils::ExpectedValue(Grid2D<double>(sourceProbability, occupancy, gridMetadata), 0.05);",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/PMFS/PMFS_utils.cpp#L61"
+  },
+  {
+    "file": "inputs/official_source/PMFSLib.cpp",
+    "line": 211,
+    "code": "grid.metadata.numFreeCells = PruneUnreachableCells(grid.occupancy, grid.metadata, startingPosition);",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/PMFS/PMFSLib.cpp#L211"
+  },
+  {
+    "file": "inputs/official_source/PMFSLib.cpp",
+    "line": 257,
+    "code": "size_t PMFSLib::PruneUnreachableCells(std::vector<Occupancy>& occupancy, Grid2DMetadata metadata, Vector2 startPosition)",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/PMFS/PMFSLib.cpp#L257"
+  },
+  {
+    "file": "inputs/official_source/Simulations.cpp",
+    "line": 191,
+    "code": "sourceProb.occupancy);",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp#L191"
+  },
+  {
+    "file": "inputs/official_source/Simulations.cpp",
+    "line": 237,
+    "code": "if (measuredHitProb.occupancy[i] != Occupancy::Free)",
+    "url": "https://github.com/MAPIRlab/GasSourceLocalization/blob/4e141e162551e674f2f30ddb8859136c72139aac/gsl_server/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp#L237"
+  }
+]
