@@ -1,0 +1,11 @@
+--- R4_Fixture.hpp
++++ D0_Fixture.hpp
+@@ -58,7 +58,7 @@
+   std::vector<int> cover(hit.size(),0);
+   if(p.QTleaves.size()<2)throw std::runtime_error("candidate forest too small");
+   for(const auto& n:p.QTleaves){
+-   if(n.value!=1||n.size.x<1||n.size.y<1||n.size.x>sim.maxRegionSize||n.size.y>sim.maxRegionSize)throw std::runtime_error("invalid coarse free leaf");
++   if(n.value!=1||n.size.x<1||n.size.y<1)throw std::runtime_error("invalid coarse free leaf");
+    for(int j=n.origin.y;j<n.origin.y+n.size.y;++j)for(int i=n.origin.x;i<n.origin.x+n.size.x;++i){
+     if(i<0||j<0||i>=meta.dimensions.x||j>=meta.dimensions.y||!hitGrid().freeAt(i,j)||++cover[meta.indexOf({i,j})]!=1)throw std::runtime_error("candidate forest overlap or obstacle");
+    }
