@@ -1,0 +1,32 @@
+/gaden_player:
+  ros__parameters:
+    allow_looping: false
+    gas_display_color_0:
+    - 0.0
+    - 1.0
+    - 0.0
+    initial_iteration: 500
+    loop_from_iteration: 800
+    loop_to_iteration: 900
+    num_simulators: 1
+    occupancyFile: /home/zyc/pmfs_clean_c1_preparation_r6_20261009/derived_C1/OccupancyGrid3D.csv
+    player_freq: 2.0
+    projectPath: ''
+    qos_overrides:
+      /clock:
+        subscription:
+          depth: 1
+          durability: volatile
+          history: keep_last
+          reliability: best_effort
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    r7_clock_trace_path: /home/zyc/pmfs_physical_clock_localization_r7_20261009/runtime/physical_clock_trace.csv
+    r7_frame_time_csv: /home/zyc/pmfs_clean_c1_preparation_r6_20261009/PHYSICAL_FRAME_TIME.csv
+    simulation_data_0: /home/zyc/pmfs_clean_c1_preparation_r6_20261009/one_realization_C1
+    use_sim_time: true
+
