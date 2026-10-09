@@ -1,0 +1,13 @@
+layer,verdict,evidence_scope
+wind_ROS_messages,PASS_N1_FRESH,14 real ROS fixtures; published vs actual callbacks
+wind_direction_and_storage,PASS_N1_FRESH,original callback plus actual StopAndMeasure averaging
+GMRF_observation_position_and_grid,PASS_N1_FRESH,actual core getObservations + index/cell center
+clock_domain,PASS_N1_FRESH_ONLY,mixed clock negative is inadmissible despite successful TF
+message_stamp_TF_consistency,FAIL_DELAYED_FIXTURE,PMFS latest TF vs GMRF message stamp; direction difference90deg
+GMRF_estimated_field_accuracy,HOLD,actual queried values; convergence/accuracy unqualified
+raw_gas_message_to_event,HOLD_NOT_RUN,20 old delivered events preserved; raw membership not newly qualified
+measurement_probability_map,PASS_PREVIOUS_ONLY,prior captured map reconstruction zero diff; not rerun
+source_simulation_wind,HOLD_NOT_RUN,P1b gate not passed
+candidate_samples_RNG_and_hit_maps,HOLD_NOT_RUN,no single native update initiated
+source_raw_score,PASS_PREVIOUS_FIXED_MAP_ONLY,old max error9.16e-16 retained; no new online score
+refined_tree_final_posterior_MAP_rank,HOLD_NOT_RUN,no new native source posterior
