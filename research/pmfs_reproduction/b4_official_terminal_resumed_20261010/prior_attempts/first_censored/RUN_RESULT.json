@@ -1,0 +1,45 @@
+{
+  "input_class": "ONE_B4_OFFICIAL_PARAMETERS_N1_ENGINEERING_ALIGNMENT",
+  "B4_physics_qualification": "PASS_SOURCE_GEOMETRY_WIND_TIME_SIDECAR_N1",
+  "native_goal_count": 1,
+  "fixture_messages_injected": 0,
+  "generated_gas_data": 0,
+  "processes": [
+    {
+      "name": "launch",
+      "pid": 31722,
+      "returncode": 0
+    },
+    {
+      "name": "gmrf",
+      "pid": 31723,
+      "returncode": 0
+    },
+    {
+      "name": "parameter_dump",
+      "pid": 31989,
+      "returncode": 0
+    }
+  ],
+  "preflight": "PASS",
+  "counts": {
+    "/tf_static": 4,
+    "/PioneerP3DX/Anemometer/WindSensor_reading": 1289,
+    "/b4/wind_to": 1289,
+    "/PioneerP3DX/PID/Sensor_reading": 645,
+    "/PioneerP3DX/map": 1,
+    "/PioneerP3DX/ground_truth": 3251,
+    "/tf": 3250,
+    "/clock": 3250,
+    "/PioneerP3DX/cmd_vel": 461
+  },
+  "nonzero_cmd_vel_messages": 378,
+  "pose_samples": 3251,
+  "goal_invocation_ROS_ns": 54955504425,
+  "goal_accepted": true,
+  "resource_stop_reason": "SIMULATION_SEARCH_BUDGET_300S",
+  "budget_stop_ROS_ns": 354955702695,
+  "result": "RUNTIME_ERROR",
+  "error": "External 300 simulated-second search guard reached; no extended localization permitted",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/zyc/pmfs_b4_native_validation_20261009/runtime_driver.py\", line 131, in <module>\n    raise RuntimeError('External 300 simulated-second search guard reached; no extended localization permitted')\nRuntimeError: External 300 simulated-second search guard reached; no extended localization permitted\n"
+}

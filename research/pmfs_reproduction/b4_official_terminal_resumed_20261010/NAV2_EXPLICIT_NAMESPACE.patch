@@ -1,0 +1,10 @@
+--- frozen_official/nav2_launch.py
++++ isolated_startup/nav2_explicit_namespace_launch.py
+@@ -88,6 +88,7 @@
+ 			package="nav2_lifecycle_manager",
+ 			executable="lifecycle_manager",
+ 			name="lifecycle_manager_navigation",
++			namespace="/"+namespace.strip("/"),
+ 			arguments=['--ros-args', '--log-level', LaunchConfiguration('log_level')],
+ 			parameters=[
+ 				{"use_sim_time": use_sim_time},

@@ -1,0 +1,30 @@
+{
+  "verdict": "PASS_ACTUAL_ROS_SERVICE_STARTUP_GATE",
+  "backends_initially_unavailable": true,
+  "proxy_not_exposed_before_both_ready": true,
+  "early_consumer_no_dropped_request": true,
+  "first_gas_and_wind_roundtrip_pass": true,
+  "responses_byte_exact": true,
+  "fixture_only": true,
+  "GSL_processes_started": 0,
+  "GSL_goals_sent": 0,
+  "gas_generation": 0,
+  "gate_sha256": "959ed1c19f059de745b6c8b7b5f7dbcd8de6d1e407fbd56464c2df4e0f55ed37",
+  "messages": [
+    {
+      "kind": "gas",
+      "response_CDR_matches_backend": true,
+      "response_cdr_hex": "00010000000000000100000006000000736d6f6b6500"
+    },
+    {
+      "kind": "wind",
+      "response_CDR_matches_backend": true,
+      "response_cdr_hex": "000100000100000000000000000000000000f43f01000000696e6450000000000000e0bf010000006f6e73650000000000000000"
+    }
+  ],
+  "counts": {
+    "gas": 1,
+    "wind": 1
+  },
+  "pre_ready_poll_count": 35
+}

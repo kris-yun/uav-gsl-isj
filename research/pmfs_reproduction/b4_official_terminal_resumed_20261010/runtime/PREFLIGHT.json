@@ -1,0 +1,102 @@
+{
+  "lifecycle": {
+    "map_server": "active",
+    "planner_server": "active",
+    "controller_server": "active",
+    "bt_navigator": "active",
+    "behavior_server": "active"
+  },
+  "sensor_xyz": [
+    -0.9,
+    0.15,
+    -0.19999999999999996
+  ],
+  "gas_types": [
+    "smoke"
+  ],
+  "gas_ppm": [
+    0.7897678017616272
+  ],
+  "wind_uvw": [
+    [
+      -0.027858000248670578
+    ],
+    [
+      0.48388999700546265
+    ],
+    [
+      0.34002000093460083
+    ]
+  ],
+  "ROS_DOMAIN_ID": 83,
+  "sim_clock_ns": 60404529720,
+  "input_class": "ONE_B4_OFFICIAL_PARAMETERS_N1_ENGINEERING_ALIGNMENT",
+  "B4_physics_qualification": "PASS_SOURCE_GEOMETRY_WIND_TIME_SIDECAR_N1",
+  "raw_backends_ready_before_proxy_exposure": true,
+  "proxy_exposed_ROS_ns": 0,
+  "parameter_dumps": [
+    {
+      "target": "/gaden_player",
+      "transport": "DIRECT_NAMED_ROS_PARAMETER_SERVICES",
+      "CLI_daemon_used": false,
+      "returncode": 0,
+      "parameter_count": 21,
+      "wall_seconds": 0.1410418729999492,
+      "executor_spin_calls": 324,
+      "ROS_before_ns": 57804703875,
+      "ROS_after_ns": 58504566385
+    },
+    {
+      "target": "/PioneerP3DX/PID",
+      "transport": "DIRECT_NAMED_ROS_PARAMETER_SERVICES",
+      "CLI_daemon_used": false,
+      "returncode": 0,
+      "parameter_count": 15,
+      "wall_seconds": 0.12407471799997438,
+      "executor_spin_calls": 261,
+      "ROS_before_ns": 58504566385,
+      "ROS_after_ns": 59205085135
+    },
+    {
+      "target": "/PioneerP3DX/Anemometer",
+      "transport": "DIRECT_NAMED_ROS_PARAMETER_SERVICES",
+      "CLI_daemon_used": false,
+      "returncode": 0,
+      "parameter_count": 15,
+      "wall_seconds": 0.1043235279998953,
+      "executor_spin_calls": 250,
+      "ROS_before_ns": 59205085135,
+      "ROS_after_ns": 59705021815
+    },
+    {
+      "target": "/basic_sim",
+      "transport": "DIRECT_NAMED_ROS_PARAMETER_SERVICES",
+      "CLI_daemon_used": false,
+      "returncode": 0,
+      "parameter_count": 8,
+      "wall_seconds": 0.14174759999991693,
+      "executor_spin_calls": 267,
+      "ROS_before_ns": 59705021815,
+      "ROS_after_ns": 60404529720
+    }
+  ],
+  "freshness_checked_after_parameter_dumps": true,
+  "clock_receipt_wall_age_s": 0.009728786000096079,
+  "message_age_sim_seconds": {
+    "PID": 0.199867535,
+    "anemometer": 0.199867535
+  },
+  "PID_units": "ppm",
+  "PID_model": 30,
+  "PID_response": "sum ppm; correction_factors=false from pinned code/default; resolved dump saved",
+  "probe_source_neighborhood_ppm": [
+    20.68526840209961
+  ],
+  "probe_is_input_to_algorithm": false,
+  "gas_frame_binding": "physical_clock_trace.csv",
+  "sensor_frames": [
+    "PioneerP3DX_pid_frame",
+    "PioneerP3DX_anemometer_frame"
+  ],
+  "native_goal_count": 0
+}

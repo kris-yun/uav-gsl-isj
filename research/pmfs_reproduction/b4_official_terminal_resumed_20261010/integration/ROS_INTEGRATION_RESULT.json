@@ -1,0 +1,120 @@
+{
+  "verdict": "PASS_ACTUAL_ROS_INTEGRATION_NO_GSL_GOAL",
+  "cases": [
+    {
+      "name": "four_direct_ROS_parameter_reads_keep_executor_live",
+      "verdict": "PASS",
+      "dumps": [
+        {
+          "target": "/guard_fixture_parameters",
+          "transport": "DIRECT_NAMED_ROS_PARAMETER_SERVICES",
+          "CLI_daemon_used": false,
+          "returncode": 0,
+          "parameter_count": 2,
+          "wall_seconds": 0.10902436800006399,
+          "executor_spin_calls": 19,
+          "ROS_before_ns": 107105070169,
+          "ROS_after_ns": 107702365000
+        },
+        {
+          "target": "/guard_fixture_parameters",
+          "transport": "DIRECT_NAMED_ROS_PARAMETER_SERVICES",
+          "CLI_daemon_used": false,
+          "returncode": 0,
+          "parameter_count": 2,
+          "wall_seconds": 0.11979705999999624,
+          "executor_spin_calls": 19,
+          "ROS_before_ns": 107702365000,
+          "ROS_after_ns": 108301713160
+        },
+        {
+          "target": "/guard_fixture_parameters",
+          "transport": "DIRECT_NAMED_ROS_PARAMETER_SERVICES",
+          "CLI_daemon_used": false,
+          "returncode": 0,
+          "parameter_count": 2,
+          "wall_seconds": 0.11978743400004532,
+          "executor_spin_calls": 20,
+          "ROS_before_ns": 108301713160,
+          "ROS_after_ns": 108901820625
+        },
+        {
+          "target": "/guard_fixture_parameters",
+          "transport": "DIRECT_NAMED_ROS_PARAMETER_SERVICES",
+          "CLI_daemon_used": false,
+          "returncode": 0,
+          "parameter_count": 2,
+          "wall_seconds": 0.1200689870000815,
+          "executor_spin_calls": 21,
+          "ROS_before_ns": 108901820625,
+          "ROS_after_ns": 109501854025
+        }
+      ]
+    },
+    {
+      "name": "actual_client_backlog_is_not_publisher_jump",
+      "verdict": "PASS",
+      "client_catchup_s": 16.499839105,
+      "publisher_adjacent_max_s": 0.105253065,
+      "decision": {
+        "action": "WAIT",
+        "reason": "WAIT_NATIVE_ACTION"
+      },
+      "warnings": [
+        "CLIENT_CLOCK_FORWARD_STEP_OR_BACKLOG"
+      ],
+      "queued_messages_drained": 166
+    },
+    {
+      "name": "live_clock_steps_logged_without_confusing_client_sampling_with_source_evidence",
+      "verdict": "PASS",
+      "events": [
+        {
+          "phase": "FORWARD",
+          "decision": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          },
+          "warnings": [
+            "CLIENT_CLOCK_FORWARD_STEP_OR_BACKLOG"
+          ]
+        },
+        {
+          "phase": "BACKWARD",
+          "decision": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          },
+          "warnings": [
+            "CLIENT_CLOCK_BACKWARD_STEP"
+          ]
+        },
+        {
+          "phase": "NORMAL",
+          "decision": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          },
+          "warnings": [
+            "CLIENT_CLOCK_FORWARD_STEP_OR_BACKLOG"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "actual_ROS_clock_halt_is_bounded",
+      "verdict": "PASS",
+      "last_decision": {
+        "action": "STOP",
+        "reason": "ROS_CLOCK_STALLED"
+      },
+      "wall_elapsed_s": 15.039596594000045
+    }
+  ],
+  "GSL_processes_started": 0,
+  "GSL_goals_sent": 0,
+  "gas_generation": 0,
+  "ROS_DOMAIN_ID": 81,
+  "policy_sha256": "4617173893eeacd68a57b7f8b5022ae5e58841420e4ecf27cb2d600f9e6753bb",
+  "IO_helper_sha256": "b5cab82c867f41640456a1f640469fefa249ef1d9c3207cfc2e0b9049b90b636"
+}

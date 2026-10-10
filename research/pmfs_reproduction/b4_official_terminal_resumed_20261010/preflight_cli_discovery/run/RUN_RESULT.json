@@ -1,0 +1,37 @@
+{
+  "input_class": "ONE_B4_OFFICIAL_PARAMETERS_N1_ENGINEERING_ALIGNMENT",
+  "B4_physics_qualification": "PASS_SOURCE_GEOMETRY_WIND_TIME_SIDECAR_N1",
+  "native_goal_count": 0,
+  "fixture_messages_injected": 0,
+  "generated_gas_data": 0,
+  "processes": [
+    {
+      "name": "launch",
+      "pid": 3626,
+      "returncode": 0
+    },
+    {
+      "name": "gmrf",
+      "pid": 3627,
+      "returncode": 0
+    }
+  ],
+  "preflight_stage": "WAIT_NATIVE_SENSORS_MAP_ACTION",
+  "counts": {
+    "/tf_static": 4,
+    "/PioneerP3DX/Anemometer/WindSensor_reading": 235,
+    "/b4/wind_to": 235,
+    "/PioneerP3DX/PID/Sensor_reading": 118,
+    "/PioneerP3DX/map": 1,
+    "/PioneerP3DX/ground_truth": 474,
+    "/tf": 474,
+    "/clock": 474
+  },
+  "nonzero_cmd_vel_messages": 0,
+  "pose_samples": 474,
+  "raw_backends_ready_before_proxy_exposure": true,
+  "proxy_exposed_ROS_ns": 0,
+  "result": "RUNTIME_ERROR",
+  "error": "Parameter dump failed /gaden_player Node not found\n",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/zyc/pmfs_b4_official_terminal_resumed_20261010/runtime_driver.py\", line 125, in <module>\n    parameter_dumps.append(dump_parameters(node,'/'+n,R/('preflight_'+n.replace('/','_')+'_parameters.yaml')))\n  File \"/home/zyc/pmfs_b4_official_terminal_resumed_20261010/guard_ros_io.py\", line 12, in dump_parameters\n    if proc.returncode!=0:raise RuntimeError('Parameter dump failed '+target+' '+output_path.read_text()[-600:])\nRuntimeError: Parameter dump failed /gaden_player Node not found\n\n"
+}

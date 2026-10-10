@@ -1,0 +1,36 @@
+{
+  "input_class": "ONE_B4_OFFICIAL_PARAMETERS_N1_ENGINEERING_ALIGNMENT",
+  "B4_physics_qualification": "PASS_SOURCE_GEOMETRY_WIND_TIME_SIDECAR_N1",
+  "native_goal_count": 0,
+  "fixture_messages_injected": 0,
+  "generated_gas_data": 0,
+  "processes": [
+    {
+      "name": "launch",
+      "pid": 4356,
+      "returncode": -15
+    },
+    {
+      "name": "gmrf",
+      "pid": 4357,
+      "returncode": 0
+    }
+  ],
+  "preflight_stage": "WAIT_NATIVE_SENSORS_MAP_ACTION",
+  "counts": {
+    "/tf_static": 4,
+    "/PioneerP3DX/Anemometer/WindSensor_reading": 1350,
+    "/b4/wind_to": 1350,
+    "/PioneerP3DX/PID/Sensor_reading": 675,
+    "/PioneerP3DX/ground_truth": 3371,
+    "/tf": 3371,
+    "/clock": 3371
+  },
+  "nonzero_cmd_vel_messages": 0,
+  "pose_samples": 3371,
+  "raw_backends_ready_before_proxy_exposure": true,
+  "proxy_exposed_ROS_ns": 0,
+  "result": "RUNTIME_ERROR",
+  "error": "preflight missing sensor/map/action output",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/zyc/pmfs_b4_official_terminal_ready_20261010/runtime_driver.py\", line 98, in <module>\n    else:raise RuntimeError('preflight missing sensor/map/action output')\nRuntimeError: preflight missing sensor/map/action output\n"
+}

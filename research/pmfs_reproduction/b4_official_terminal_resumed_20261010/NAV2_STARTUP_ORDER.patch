@@ -1,0 +1,20 @@
+--- frozen_official/nav2_launch.py
++++ isolated_startup/nav2_ordered_launch.py
+@@ -3,6 +3,7 @@
+ from launch import LaunchDescription
+ from launch.actions import (
+ 	DeclareLaunchArgument,
++	TimerAction,
+ 	IncludeLaunchDescription,
+ 	SetEnvironmentVariable,
+ 	OpaqueFunction,
+@@ -123,7 +124,8 @@
+ 	]
+ 	
+ 	actions = [PushRosNamespace(namespace)]
+-	actions.extend(navigation_nodes)
++	actions.extend(navigation_nodes[:-1])
++	actions.append(TimerAction(period=6.0, actions=[navigation_nodes[-1]]))
+ 	actions.extend(visualization_nodes)
+ 	return [GroupAction(actions=actions)]
+ 

@@ -1,0 +1,134 @@
+{
+  "input_class": "ONE_B4_OFFICIAL_PARAMETERS_N1_ENGINEERING_ALIGNMENT",
+  "B4_physics_qualification": "PASS_SOURCE_GEOMETRY_WIND_TIME_SIDECAR_N1",
+  "native_goal_count": 0,
+  "fixture_messages_injected": 0,
+  "generated_gas_data": 0,
+  "processes": [
+    {
+      "name": "launch",
+      "pid": 4976,
+      "returncode": -15
+    },
+    {
+      "name": "gmrf",
+      "pid": 4977,
+      "returncode": 0
+    }
+  ],
+  "preflight_stage": "WAIT_NATIVE_SENSORS_MAP_ACTION",
+  "action_server_ready": true,
+  "native_lifecycle_services_ready": {
+    "map_server": true,
+    "planner_server": true,
+    "controller_server": true,
+    "bt_navigator": true,
+    "behavior_server": true
+  },
+  "node_graph": [
+    [
+      "lifecycle_manager_navigation",
+      "/"
+    ],
+    [
+      "b4_capture_and_wind_adapter",
+      "/"
+    ],
+    [
+      "GMRF_wind",
+      "/"
+    ],
+    [
+      "transform_listener_impl_5e14484c3fe0",
+      "/"
+    ],
+    [
+      "gaden_player",
+      "/"
+    ],
+    [
+      "Anemometer",
+      "/PioneerP3DX"
+    ],
+    [
+      "transform_listener_impl_5b5366d4bba0",
+      "/PioneerP3DX"
+    ],
+    [
+      "anemometer_tf_pub",
+      "/PioneerP3DX"
+    ],
+    [
+      "PID",
+      "/PioneerP3DX"
+    ],
+    [
+      "transform_listener_impl_5a735393e310",
+      "/PioneerP3DX"
+    ],
+    [
+      "pid_tf_pub",
+      "/PioneerP3DX"
+    ],
+    [
+      "map_server",
+      "/PioneerP3DX"
+    ],
+    [
+      "bt_navigator",
+      "/PioneerP3DX"
+    ],
+    [
+      "planner_server",
+      "/PioneerP3DX"
+    ],
+    [
+      "global_costmap",
+      "/PioneerP3DX/global_costmap"
+    ],
+    [
+      "controller_server",
+      "/PioneerP3DX"
+    ],
+    [
+      "local_costmap",
+      "/PioneerP3DX/local_costmap"
+    ],
+    [
+      "behavior_server",
+      "/PioneerP3DX"
+    ],
+    [
+      "robot_state_publisher",
+      "/PioneerP3DX"
+    ],
+    [
+      "basic_sim",
+      "/"
+    ],
+    [
+      "PioneerP3DX",
+      "/"
+    ],
+    [
+      "GSL",
+      "/PioneerP3DX"
+    ]
+  ],
+  "counts": {
+    "/tf_static": 4,
+    "/PioneerP3DX/ground_truth": 3378,
+    "/tf": 3378,
+    "/clock": 3378,
+    "/PioneerP3DX/Anemometer/WindSensor_reading": 1352,
+    "/b4/wind_to": 1352,
+    "/PioneerP3DX/PID/Sensor_reading": 665
+  },
+  "nonzero_cmd_vel_messages": 0,
+  "pose_samples": 3378,
+  "raw_backends_ready_before_proxy_exposure": true,
+  "proxy_exposed_ROS_ns": 0,
+  "result": "RUNTIME_ERROR",
+  "error": "preflight missing sensor/map/action output",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/zyc/pmfs_b4_official_terminal_final_20261010/runtime_driver.py\", line 98, in <module>\n    else:raise RuntimeError('preflight missing sensor/map/action output')\nRuntimeError: preflight missing sensor/map/action output\n"
+}
