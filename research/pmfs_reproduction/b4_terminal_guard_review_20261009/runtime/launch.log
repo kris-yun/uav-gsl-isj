@@ -1,0 +1,1334 @@
+[INFO] [launch]: All log files can be found below /home/zyc/.ros/log/2026-10-10-11-05-58-545939-zyc-virtual-machine-32530
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [player-1]: process started with pid [32544]
+[INFO] [simulated_anemometer-2]: process started with pid [32546]
+[INFO] [static_transform_publisher-3]: process started with pid [32548]
+[INFO] [simulated_gas_sensor-4]: process started with pid [32550]
+[INFO] [static_transform_publisher-5]: process started with pid [32552]
+[INFO] [map_server-6]: process started with pid [32554]
+[INFO] [bt_navigator-7]: process started with pid [32556]
+[INFO] [planner_server-8]: process started with pid [32558]
+[INFO] [controller_server-9]: process started with pid [32560]
+[INFO] [behavior_server-10]: process started with pid [32562]
+[INFO] [lifecycle_manager-11]: process started with pid [32564]
+[INFO] [robot_state_publisher-12]: process started with pid [32566]
+[INFO] [basic_sim-13]: process started with pid [32581]
+[INFO] [gsl_actionserver_node-14]: process started with pid [32591]
+[static_transform_publisher-3] [33m[WARN] [1791601558.853554448] []: Old-style arguments are deprecated; see --help for new-style arguments[0m
+[static_transform_publisher-5] [33m[WARN] [1791601558.835234403] []: Old-style arguments are deprecated; see --help for new-style arguments[0m
+[static_transform_publisher-5] [0m[INFO] [1791601558.867432086] [PioneerP3DX.pid_tf_pub]: Spinning until stopped - publishing transform
+[static_transform_publisher-5] translation: ('0.000000', '0.000000', '0.500000')
+[static_transform_publisher-5] rotation: ('1.000000', '0.000000', '0.000000', '0.000000')
+[static_transform_publisher-5] from 'PioneerP3DX_base_link' to 'PioneerP3DX_pid_frame'[0m
+[simulated_gas_sensor-4] [0m[INFO] [1791601558.879874717] [PioneerP3DX.PID]: The data provided in the roslaunch file is:[0m
+[simulated_gas_sensor-4] [0m[INFO] [1791601558.879968700] [PioneerP3DX.PID]: Sensor model: 30[0m
+[simulated_gas_sensor-4] [0m[INFO] [1791601558.879978060] [PioneerP3DX.PID]: Fixed frame: map[0m
+[simulated_gas_sensor-4] [0m[INFO] [1791601558.879984631] [PioneerP3DX.PID]: Sensor frame: PioneerP3DX_pid_frame[0m
+[simulated_gas_sensor-4] [0m[INFO] [1791601558.879991553] [PioneerP3DX.PID]: Running at 10.000000Hz[0m
+[simulated_anemometer-2] [0m[INFO] [1791601558.884339445] [PioneerP3DX.Anemometer]: wind noise: 0.300000[0m
+[simulated_gas_sensor-4] [31m[ERROR] [1791601558.908041899] [PioneerP3DX.PID]: "map" passed to lookupTransform argument target_frame does not exist. [0m
+[simulated_anemometer-2] [31m[ERROR] [1791601558.910749454] [PioneerP3DX.Anemometer]: "map" passed to lookupTransform argument target_frame does not exist. [0m
+[static_transform_publisher-3] [0m[INFO] [1791601558.946394160] [PioneerP3DX.anemometer_tf_pub]: Spinning until stopped - publishing transform
+[static_transform_publisher-3] translation: ('0.000000', '0.000000', '0.500000')
+[static_transform_publisher-3] rotation: ('1.000000', '0.000000', '0.000000', '0.000000')
+[static_transform_publisher-3] from 'PioneerP3DX_base_link' to 'PioneerP3DX_anemometer_frame'[0m
+[player-1] [33m[WARN] [1791601558.959664568] [GadenPlayer]: 
+[player-1] --- Deprecation notice ---
+[player-1] You are using ROS parameters to specify the Gaden configuration. This is now considered deprecated (though, for now, still valid).
+[player-1] You should update your configuration to use a gaden project (see test_env for examples).
+[player-1] You can easily configure a gaden project with 'ros2 run gaden_common gaden_gui
+[player-1] ----[0m
+[player-1] [0m[INFO] [1791601558.959817528] [GadenPlayer]: num_simulators: 1[0m
+[player-1] [0m[INFO] [1791601558.960331352] [GadenPlayer]: simulation_data_0: /home/zyc/pmfs_b4_official_terminal_completion_20261009/one_realization_B4[0m
+[player-1] [0m[INFO] [1791601558.998317115] [GadenPlayer]: Looking for wind files in:
+[player-1] 	-'/home/wind'
+[player-1] 	-'/home/zyc/pmfs_b4_official_terminal_completion_20261009/one_realization_B4/wind'[0m
+[player-1] [0m[INFO] [1791601558.998372443] [GadenPlayer]: Found wind files at '/home/zyc/pmfs_b4_official_terminal_completion_20261009/one_realization_B4/wind'[0m
+[player-1] [0m[INFO] [1791601558.998617040] [GadenPlayer]: R7 indexed wind 0 = wind_iteration_0[0m
+[player-1] [0m[INFO] [1791601558.998625988] [GadenPlayer]: R7 indexed wind 1 = wind_iteration_1[0m
+[player-1] [0m[INFO] [1791601558.998950708] [GadenPlayer]: R7 indexed wind 2 = wind_iteration_2[0m
+[player-1] [0m[INFO] [1791601558.998959217] [GadenPlayer]: R7 indexed wind 3 = wind_iteration_3[0m
+[player-1] [0m[INFO] [1791601558.998963583] [GadenPlayer]: R7 indexed wind 4 = wind_iteration_4[0m
+[player-1] [0m[INFO] [1791601558.998978021] [GadenPlayer]: R7 indexed wind 5 = wind_iteration_5[0m
+[player-1] [0m[INFO] [1791601558.998982148] [GadenPlayer]: R7 indexed wind 6 = wind_iteration_6[0m
+[player-1] [0m[INFO] [1791601558.998986140] [GadenPlayer]: R7 indexed wind 7 = wind_iteration_7[0m
+[player-1] [0m[INFO] [1791601558.998990108] [GadenPlayer]: R7 indexed wind 8 = wind_iteration_8[0m
+[player-1] [0m[INFO] [1791601558.998994065] [GadenPlayer]: R7 indexed wind 9 = wind_iteration_9[0m
+[player-1] [0m[INFO] [1791601558.998998142] [GadenPlayer]: R7 indexed wind 10 = wind_iteration_10[0m
+[basic_sim-13] [0m[INFO] [1791601559.059128007] [basic_sim]: Loading map from '/home/zyc/pmfs_b4_official_terminal_completion_20261009/overlay/share/pmfs_env/scenarios/B/basicSim/../_occupancy.pgm'[0m
+[basic_sim-13] [0m[INFO] [1791601559.059296157] [basic_sim]: Resolution: 0.01[0m
+[basic_sim-13] [0m[INFO] [1791601559.059341878] [basic_sim]: Origin: (-7.55, -7.88, 0.00)[0m
+[basic_sim-13] [0m[INFO] [1791601559.092907159] [basic_sim]: YAML:
+[basic_sim-13]  name: PioneerP3DX
+[basic_sim-13] position: [-0.9, 0.15, -0.7]
+[basic_sim-13] angle: 1
+[basic_sim-13] sensors:
+[basic_sim-13]   - type: laser
+[basic_sim-13]     name: laser_scan
+[basic_sim-13]     minAngleRad: -0.7
+[basic_sim-13]     maxAngleRad: 3.8
+[basic_sim-13]     angleResolutionRad: 0.1
+[basic_sim-13]     minDistance: 0.1
+[basic_sim-13]     maxDistance: 4.0[0m
+[basic_sim-13] [0m[INFO] [1791601559.119664470] [basic_sim]: Created robot PioneerP3DX[0m
+[basic_sim-13] [0m[INFO] [1791601559.120601279] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601559.140849064] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601559.160748138] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601559.180770762] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601559.200714024] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601559.220628891] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601559.240663593] [basic_sim]: MainLoop - Ellapsed: 0.000058s[0m
+[player-1] [0m[INFO] [1791601559.244789846] [GadenPlayer]: player_freq 2.00 Hz[0m
+[basic_sim-13] [0m[INFO] [1791601559.260391027] [basic_sim]: MainLoop - Ellapsed: 0.000045s[0m
+[basic_sim-13] [0m[INFO] [1791601559.280939119] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601559.300651053] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601559.320718612] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601559.334297657] [GSL]: Starting GSL server[0m
+[basic_sim-13] [0m[INFO] [1791601559.340656105] [basic_sim]: MainLoop - Ellapsed: 0.000060s[0m
+[basic_sim-13] [0m[INFO] [1791601559.360940612] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601559.380544904] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601559.400199313] [basic_sim]: MainLoop - Ellapsed: 0.000028s[0m
+[basic_sim-13] [0m[INFO] [1791601559.420270465] [basic_sim]: MainLoop - Ellapsed: 0.000039s[0m
+[basic_sim-13] [0m[INFO] [1791601559.440323192] [basic_sim]: MainLoop - Ellapsed: 0.000044s[0m
+[basic_sim-13] [0m[INFO] [1791601559.460540942] [basic_sim]: MainLoop - Ellapsed: 0.000050s[0m
+[basic_sim-13] [0m[INFO] [1791601559.480294210] [basic_sim]: MainLoop - Ellapsed: 0.000037s[0m
+[basic_sim-13] [0m[INFO] [1791601559.500393658] [basic_sim]: MainLoop - Ellapsed: 0.000049s[0m
+[basic_sim-13] [0m[INFO] [1791601559.520669499] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601559.540806894] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601559.560816434] [basic_sim]: MainLoop - Ellapsed: 0.000088s[0m
+[basic_sim-13] [0m[INFO] [1791601559.580563531] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601559.600718393] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601559.620348504] [basic_sim]: MainLoop - Ellapsed: 0.000042s[0m
+[basic_sim-13] [0m[INFO] [1791601559.640301063] [basic_sim]: MainLoop - Ellapsed: 0.000040s[0m
+[basic_sim-13] [0m[INFO] [1791601559.660892721] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601559.681009808] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601559.700813427] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601559.720951843] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601559.740780635] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601559.761069479] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601559.781011821] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601559.801115957] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601559.821245841] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601559.840899201] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601559.861262677] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601559.881162638] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601559.901062139] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601559.921188505] [basic_sim]: MainLoop - Ellapsed: 0.000111s[0m
+[basic_sim-13] [0m[INFO] [1791601559.940960851] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601559.961395584] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601559.980724021] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601560.001198332] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601560.020727454] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601560.040708908] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601560.060917612] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601560.080857348] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601560.100795206] [basic_sim]: MainLoop - Ellapsed: 0.000054s[0m
+[basic_sim-13] [0m[INFO] [1791601560.120849091] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601560.140926451] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601560.160818931] [basic_sim]: MainLoop - Ellapsed: 0.000083s[0m
+[basic_sim-13] [0m[INFO] [1791601560.180763021] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601560.200914844] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601560.220788018] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601560.240833824] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601560.260903725] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601560.280875603] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601560.300908238] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601560.320851028] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601560.340883116] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601560.360877021] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601560.380974898] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601560.401150958] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601560.420755535] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601560.440845215] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601560.460841171] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601560.480997163] [basic_sim]: MainLoop - Ellapsed: 0.000086s[0m
+[basic_sim-13] [0m[INFO] [1791601560.501263506] [basic_sim]: MainLoop - Ellapsed: 0.000105s[0m
+[basic_sim-13] [0m[INFO] [1791601560.520893269] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601560.540842725] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601560.560940481] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601560.580848972] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601560.601205125] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601560.621030710] [basic_sim]: MainLoop - Ellapsed: 0.000089s[0m
+[basic_sim-13] [0m[INFO] [1791601560.641120233] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601560.661078871] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601560.680882397] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601560.700803921] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601560.720878563] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601560.741100040] [basic_sim]: MainLoop - Ellapsed: 0.000096s[0m
+[basic_sim-13] [0m[INFO] [1791601560.760888744] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601560.780944941] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601560.801036160] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601560.820934158] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601560.841631663] [basic_sim]: MainLoop - Ellapsed: 0.000135s[0m
+[basic_sim-13] [0m[INFO] [1791601560.861119851] [basic_sim]: MainLoop - Ellapsed: 0.000088s[0m
+[basic_sim-13] [0m[INFO] [1791601560.881153501] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601560.900647501] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601560.920753849] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601560.940871225] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601560.961072605] [basic_sim]: MainLoop - Ellapsed: 0.000090s[0m
+[basic_sim-13] [0m[INFO] [1791601560.980881569] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601561.000777844] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601561.020799427] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601561.040975822] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601561.060850475] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601561.081027810] [basic_sim]: MainLoop - Ellapsed: 0.000092s[0m
+[basic_sim-13] [0m[INFO] [1791601561.100879150] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601561.120747622] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601561.140746187] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601561.160775748] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601561.180958656] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601561.200785972] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601561.220772696] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601561.240699658] [basic_sim]: MainLoop - Ellapsed: 0.000060s[0m
+[basic_sim-13] [0m[INFO] [1791601561.260591212] [basic_sim]: MainLoop - Ellapsed: 0.000060s[0m
+[basic_sim-13] [0m[INFO] [1791601561.280729693] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601561.300956198] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601561.320880597] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601561.341085626] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601561.360978726] [basic_sim]: MainLoop - Ellapsed: 0.000056s[0m
+[basic_sim-13] [0m[INFO] [1791601561.380658628] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601561.400934893] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601561.420938504] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601561.441082504] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601561.461101041] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601561.480808337] [basic_sim]: MainLoop - Ellapsed: 0.000054s[0m
+[basic_sim-13] [0m[INFO] [1791601561.501047998] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601561.520834926] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601561.541285591] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601561.561056907] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601561.580862920] [basic_sim]: MainLoop - Ellapsed: 0.000054s[0m
+[basic_sim-13] [0m[INFO] [1791601561.601161547] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601561.620783847] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601561.641104701] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601561.660987234] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601561.680827752] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601561.700868858] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601561.720847281] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601561.741468232] [basic_sim]: MainLoop - Ellapsed: 0.000116s[0m
+[basic_sim-13] [0m[INFO] [1791601561.760803451] [basic_sim]: MainLoop - Ellapsed: 0.000057s[0m
+[basic_sim-13] [0m[INFO] [1791601561.781081391] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601561.801009217] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601561.821091363] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601561.841057579] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601561.861248087] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601561.880836047] [basic_sim]: MainLoop - Ellapsed: 0.000060s[0m
+[basic_sim-13] [0m[INFO] [1791601561.900730585] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601561.920795249] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601561.940747936] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601561.960832973] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601561.980897260] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601562.000925457] [basic_sim]: MainLoop - Ellapsed: 0.000088s[0m
+[basic_sim-13] [0m[INFO] [1791601562.020761830] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601562.041155140] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601562.060652477] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601562.080768162] [basic_sim]: MainLoop - Ellapsed: 0.000060s[0m
+[basic_sim-13] [0m[INFO] [1791601562.101017634] [basic_sim]: MainLoop - Ellapsed: 0.000090s[0m
+[basic_sim-13] [0m[INFO] [1791601562.120912988] [basic_sim]: MainLoop - Ellapsed: 0.000088s[0m
+[basic_sim-13] [0m[INFO] [1791601562.140859682] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601562.161074106] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601562.180839539] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601562.200904239] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601562.220822454] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601562.241140909] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601562.260928852] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601562.281301056] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601562.301281037] [basic_sim]: MainLoop - Ellapsed: 0.000102s[0m
+[basic_sim-13] [0m[INFO] [1791601562.320994850] [basic_sim]: MainLoop - Ellapsed: 0.000083s[0m
+[basic_sim-13] [0m[INFO] [1791601562.341759635] [basic_sim]: MainLoop - Ellapsed: 0.000125s[0m
+[basic_sim-13] [0m[INFO] [1791601562.361771277] [basic_sim]: MainLoop - Ellapsed: 0.000136s[0m
+[basic_sim-13] [0m[INFO] [1791601562.381488751] [basic_sim]: MainLoop - Ellapsed: 0.000132s[0m
+[basic_sim-13] [0m[INFO] [1791601562.400802668] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601562.420702317] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601562.441440050] [basic_sim]: MainLoop - Ellapsed: 0.000104s[0m
+[basic_sim-13] [0m[INFO] [1791601562.462185938] [basic_sim]: MainLoop - Ellapsed: 0.000176s[0m
+[basic_sim-13] [0m[INFO] [1791601562.480903698] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601562.500893608] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601562.520887033] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601562.540961344] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601562.561933326] [basic_sim]: MainLoop - Ellapsed: 0.000139s[0m
+[basic_sim-13] [0m[INFO] [1791601562.581234157] [basic_sim]: MainLoop - Ellapsed: 0.000083s[0m
+[basic_sim-13] [0m[INFO] [1791601562.600858543] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601562.620858000] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601562.641149629] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601562.660912533] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601562.680864631] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601562.700802750] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601562.720913532] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601562.740874513] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601562.761339213] [basic_sim]: MainLoop - Ellapsed: 0.000102s[0m
+[basic_sim-13] [0m[INFO] [1791601562.780914933] [basic_sim]: MainLoop - Ellapsed: 0.000057s[0m
+[basic_sim-13] [0m[INFO] [1791601562.800748155] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601562.820812867] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601562.841058479] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601562.862227857] [basic_sim]: MainLoop - Ellapsed: 0.000166s[0m
+[basic_sim-13] [0m[INFO] [1791601562.880885880] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601562.901306207] [basic_sim]: MainLoop - Ellapsed: 0.000115s[0m
+[basic_sim-13] [0m[INFO] [1791601562.920707652] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601562.941360122] [basic_sim]: MainLoop - Ellapsed: 0.000104s[0m
+[basic_sim-13] [0m[INFO] [1791601562.960990258] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601562.981008281] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601563.001113829] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601563.020994114] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601563.041015211] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601563.060958833] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601563.080836947] [basic_sim]: MainLoop - Ellapsed: 0.000060s[0m
+[basic_sim-13] [0m[INFO] [1791601563.100856393] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601563.120977875] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601563.141526600] [basic_sim]: MainLoop - Ellapsed: 0.000123s[0m
+[basic_sim-13] [0m[INFO] [1791601563.162252979] [basic_sim]: MainLoop - Ellapsed: 0.000167s[0m
+[basic_sim-13] [0m[INFO] [1791601563.181468886] [basic_sim]: MainLoop - Ellapsed: 0.000106s[0m
+[basic_sim-13] [0m[INFO] [1791601563.200854570] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601563.220950872] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601563.240955437] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601563.261006352] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601563.281076617] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601563.300721659] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601563.320840198] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601563.340889636] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601563.360911932] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601563.380946795] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601563.400938678] [basic_sim]: MainLoop - Ellapsed: 0.000091s[0m
+[basic_sim-13] [0m[INFO] [1791601563.420855902] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601563.441502107] [basic_sim]: MainLoop - Ellapsed: 0.000131s[0m
+[basic_sim-13] [0m[INFO] [1791601563.462063670] [basic_sim]: MainLoop - Ellapsed: 0.000167s[0m
+[basic_sim-13] [0m[INFO] [1791601563.481100398] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601563.500773042] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601563.520934151] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601563.541190472] [basic_sim]: MainLoop - Ellapsed: 0.000097s[0m
+[basic_sim-13] [0m[INFO] [1791601563.561473735] [basic_sim]: MainLoop - Ellapsed: 0.000116s[0m
+[basic_sim-13] [0m[INFO] [1791601563.581733672] [basic_sim]: MainLoop - Ellapsed: 0.000130s[0m
+[basic_sim-13] [0m[INFO] [1791601563.601040357] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601563.620993020] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601563.641021688] [basic_sim]: MainLoop - Ellapsed: 0.000083s[0m
+[basic_sim-13] [0m[INFO] [1791601563.661453302] [basic_sim]: MainLoop - Ellapsed: 0.000116s[0m
+[basic_sim-13] [0m[INFO] [1791601563.681512073] [basic_sim]: MainLoop - Ellapsed: 0.000104s[0m
+[basic_sim-13] [0m[INFO] [1791601563.701447965] [basic_sim]: MainLoop - Ellapsed: 0.000134s[0m
+[basic_sim-13] [0m[INFO] [1791601563.720893311] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601563.740818629] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601563.761039846] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601563.781030574] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601563.801036358] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601563.820934979] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601563.840941666] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601563.860985681] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601563.880833218] [basic_sim]: MainLoop - Ellapsed: 0.000057s[0m
+[basic_sim-13] [0m[INFO] [1791601563.900970052] [basic_sim]: MainLoop - Ellapsed: 0.000090s[0m
+[basic_sim-13] [0m[INFO] [1791601563.921161870] [basic_sim]: MainLoop - Ellapsed: 0.000097s[0m
+[basic_sim-13] [0m[INFO] [1791601563.941112003] [basic_sim]: MainLoop - Ellapsed: 0.000099s[0m
+[basic_sim-13] [0m[INFO] [1791601563.961003699] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601563.981072009] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601564.000976294] [basic_sim]: MainLoop - Ellapsed: 0.000089s[0m
+[basic_sim-13] [0m[INFO] [1791601564.021073398] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601564.041147648] [basic_sim]: MainLoop - Ellapsed: 0.000095s[0m
+[basic_sim-13] [0m[INFO] [1791601564.061248859] [basic_sim]: MainLoop - Ellapsed: 0.000098s[0m
+[basic_sim-13] [0m[INFO] [1791601564.080801779] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601564.100932661] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601564.121600844] [basic_sim]: MainLoop - Ellapsed: 0.000115s[0m
+[basic_sim-13] [0m[INFO] [1791601564.141084962] [basic_sim]: MainLoop - Ellapsed: 0.000099s[0m
+[basic_sim-13] [0m[INFO] [1791601564.161267711] [basic_sim]: MainLoop - Ellapsed: 0.000095s[0m
+[basic_sim-13] [0m[INFO] [1791601564.180873330] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601564.200816095] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601564.220884655] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601564.240784391] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601564.260819513] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601564.280979405] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601564.300963639] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601564.320800502] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601564.340731509] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601564.361817508] [basic_sim]: MainLoop - Ellapsed: 0.000167s[0m
+[basic_sim-13] [0m[INFO] [1791601564.381861489] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601564.387805706] [GSL]: GSL action server is ready for action![0m
+[basic_sim-13] [0m[INFO] [1791601564.400853250] [basic_sim]: MainLoop - Ellapsed: 0.000088s[0m
+[basic_sim-13] [0m[INFO] [1791601564.421048575] [basic_sim]: MainLoop - Ellapsed: 0.000098s[0m
+[basic_sim-13] [0m[INFO] [1791601564.440748095] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601564.460845752] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601564.480931369] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601564.501230161] [basic_sim]: MainLoop - Ellapsed: 0.000100s[0m
+[basic_sim-13] [0m[INFO] [1791601564.521050558] [basic_sim]: MainLoop - Ellapsed: 0.000099s[0m
+[basic_sim-13] [0m[INFO] [1791601564.541910936] [basic_sim]: MainLoop - Ellapsed: 0.000150s[0m
+[basic_sim-13] [0m[INFO] [1791601564.561339309] [basic_sim]: MainLoop - Ellapsed: 0.000114s[0m
+[basic_sim-13] [0m[INFO] [1791601564.580944234] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601564.600826648] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601564.621392012] [basic_sim]: MainLoop - Ellapsed: 0.000115s[0m
+[basic_sim-13] [0m[INFO] [1791601564.641226097] [basic_sim]: MainLoop - Ellapsed: 0.000103s[0m
+[basic_sim-13] [0m[INFO] [1791601564.661154491] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601564.680872997] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601564.701052616] [basic_sim]: MainLoop - Ellapsed: 0.000088s[0m
+[basic_sim-13] [0m[INFO] [1791601564.720862716] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601564.740971341] [basic_sim]: MainLoop - Ellapsed: 0.000085s[0m
+[basic_sim-13] [0m[INFO] [1791601564.761277020] [basic_sim]: MainLoop - Ellapsed: 0.000108s[0m
+[basic_sim-13] [0m[INFO] [1791601564.781008148] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601564.801177890] [basic_sim]: MainLoop - Ellapsed: 0.000091s[0m
+[basic_sim-13] [0m[INFO] [1791601564.821003622] [basic_sim]: MainLoop - Ellapsed: 0.000094s[0m
+[basic_sim-13] [0m[INFO] [1791601564.842080305] [basic_sim]: MainLoop - Ellapsed: 0.000196s[0m
+[basic_sim-13] [0m[INFO] [1791601564.861494012] [basic_sim]: MainLoop - Ellapsed: 0.000133s[0m
+[basic_sim-13] [0m[INFO] [1791601564.880609163] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601564.900882837] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601564.920761246] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601564.941477716] [basic_sim]: MainLoop - Ellapsed: 0.000135s[0m
+[basic_sim-13] [0m[INFO] [1791601564.961766431] [basic_sim]: MainLoop - Ellapsed: 0.000152s[0m
+[basic_sim-13] [0m[INFO] [1791601564.981205084] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601565.001133109] [basic_sim]: MainLoop - Ellapsed: 0.000096s[0m
+[basic_sim-13] [0m[INFO] [1791601565.020893457] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601565.041009364] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601565.061198255] [basic_sim]: MainLoop - Ellapsed: 0.000105s[0m
+[basic_sim-13] [0m[INFO] [1791601565.080815546] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601565.100937667] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601565.121237394] [basic_sim]: MainLoop - Ellapsed: 0.000103s[0m
+[basic_sim-13] [0m[INFO] [1791601565.140973077] [basic_sim]: MainLoop - Ellapsed: 0.000094s[0m
+[basic_sim-13] [0m[INFO] [1791601565.161785258] [basic_sim]: MainLoop - Ellapsed: 0.000134s[0m
+[basic_sim-13] [0m[INFO] [1791601565.180755030] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601565.201498051] [basic_sim]: MainLoop - Ellapsed: 0.000121s[0m
+[basic_sim-13] [0m[INFO] [1791601565.220769499] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601565.240895588] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601565.261124830] [basic_sim]: MainLoop - Ellapsed: 0.000091s[0m
+[basic_sim-13] [0m[INFO] [1791601565.281107576] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601565.300985482] [basic_sim]: MainLoop - Ellapsed: 0.000094s[0m
+[basic_sim-13] [0m[INFO] [1791601565.321093026] [basic_sim]: MainLoop - Ellapsed: 0.000106s[0m
+[basic_sim-13] [0m[INFO] [1791601565.342043905] [basic_sim]: MainLoop - Ellapsed: 0.000145s[0m
+[basic_sim-13] [0m[INFO] [1791601565.361348593] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601565.381447395] [basic_sim]: MainLoop - Ellapsed: 0.000146s[0m
+[basic_sim-13] [0m[INFO] [1791601565.400784991] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601565.420630930] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601565.440949413] [basic_sim]: MainLoop - Ellapsed: 0.000085s[0m
+[basic_sim-13] [0m[INFO] [1791601565.461210422] [basic_sim]: MainLoop - Ellapsed: 0.000109s[0m
+[basic_sim-13] [0m[INFO] [1791601565.480798874] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601565.500878374] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601565.520631654] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601565.541195105] [basic_sim]: MainLoop - Ellapsed: 0.000100s[0m
+[basic_sim-13] [0m[INFO] [1791601565.561059991] [basic_sim]: MainLoop - Ellapsed: 0.000097s[0m
+[basic_sim-13] [0m[INFO] [1791601565.580953157] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601565.600927808] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601565.620924857] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601565.641344951] [basic_sim]: MainLoop - Ellapsed: 0.000112s[0m
+[basic_sim-13] [0m[INFO] [1791601565.661124168] [basic_sim]: MainLoop - Ellapsed: 0.000092s[0m
+[basic_sim-13] [0m[INFO] [1791601565.680849653] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601565.700899565] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601565.720844803] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601565.741722686] [basic_sim]: MainLoop - Ellapsed: 0.000123s[0m
+[basic_sim-13] [0m[INFO] [1791601565.761140490] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601565.780764367] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601565.801230736] [basic_sim]: MainLoop - Ellapsed: 0.000095s[0m
+[basic_sim-13] [0m[INFO] [1791601565.820742778] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601565.841488782] [basic_sim]: MainLoop - Ellapsed: 0.000126s[0m
+[basic_sim-13] [0m[INFO] [1791601565.861174394] [basic_sim]: MainLoop - Ellapsed: 0.000094s[0m
+[basic_sim-13] [0m[INFO] [1791601565.880784755] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601565.901154591] [basic_sim]: MainLoop - Ellapsed: 0.000104s[0m
+[basic_sim-13] [0m[INFO] [1791601565.920770778] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601565.940813971] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601565.961056847] [basic_sim]: MainLoop - Ellapsed: 0.000092s[0m
+[basic_sim-13] [0m[INFO] [1791601565.980905530] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601566.001451971] [basic_sim]: MainLoop - Ellapsed: 0.000098s[0m
+[basic_sim-13] [0m[INFO] [1791601566.020872287] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601566.041257165] [basic_sim]: MainLoop - Ellapsed: 0.000111s[0m
+[basic_sim-13] [0m[INFO] [1791601566.062869857] [basic_sim]: MainLoop - Ellapsed: 0.000203s[0m
+[basic_sim-13] [0m[INFO] [1791601566.081265223] [basic_sim]: MainLoop - Ellapsed: 0.000106s[0m
+[basic_sim-13] [0m[INFO] [1791601566.100875563] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601566.120756313] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601566.142339642] [basic_sim]: MainLoop - Ellapsed: 0.000190s[0m
+[basic_sim-13] [0m[INFO] [1791601566.161302365] [basic_sim]: MainLoop - Ellapsed: 0.000111s[0m
+[basic_sim-13] [0m[INFO] [1791601566.181026470] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601566.200784953] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601566.221171020] [basic_sim]: MainLoop - Ellapsed: 0.000105s[0m
+[basic_sim-13] [0m[INFO] [1791601566.241117877] [basic_sim]: MainLoop - Ellapsed: 0.000090s[0m
+[basic_sim-13] [0m[INFO] [1791601566.261432427] [basic_sim]: MainLoop - Ellapsed: 0.000123s[0m
+[basic_sim-13] [0m[INFO] [1791601566.280817513] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601566.300785811] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601566.321140189] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601566.341210105] [basic_sim]: MainLoop - Ellapsed: 0.000110s[0m
+[basic_sim-13] [0m[INFO] [1791601566.360816442] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601566.380711304] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601566.401222360] [basic_sim]: MainLoop - Ellapsed: 0.000107s[0m
+[basic_sim-13] [0m[INFO] [1791601566.420868255] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601566.441180605] [basic_sim]: MainLoop - Ellapsed: 0.000106s[0m
+[basic_sim-13] [0m[INFO] [1791601566.461288037] [basic_sim]: MainLoop - Ellapsed: 0.000107s[0m
+[basic_sim-13] [0m[INFO] [1791601566.480840121] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601566.500961322] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601566.520817387] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601566.541247369] [basic_sim]: MainLoop - Ellapsed: 0.000111s[0m
+[basic_sim-13] [0m[INFO] [1791601566.562816671] [basic_sim]: MainLoop - Ellapsed: 0.000256s[0m
+[basic_sim-13] [0m[INFO] [1791601566.581223619] [basic_sim]: MainLoop - Ellapsed: 0.000106s[0m
+[basic_sim-13] [0m[INFO] [1791601566.601818667] [basic_sim]: MainLoop - Ellapsed: 0.000138s[0m
+[basic_sim-13] [0m[INFO] [1791601566.621221795] [basic_sim]: MainLoop - Ellapsed: 0.000115s[0m
+[basic_sim-13] [0m[INFO] [1791601566.641016568] [basic_sim]: MainLoop - Ellapsed: 0.000092s[0m
+[basic_sim-13] [0m[INFO] [1791601566.661185282] [basic_sim]: MainLoop - Ellapsed: 0.000115s[0m
+[basic_sim-13] [0m[INFO] [1791601566.680915200] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601566.701499574] [basic_sim]: MainLoop - Ellapsed: 0.000129s[0m
+[basic_sim-13] [0m[INFO] [1791601566.721078033] [basic_sim]: MainLoop - Ellapsed: 0.000099s[0m
+[basic_sim-13] [0m[INFO] [1791601566.741164905] [basic_sim]: MainLoop - Ellapsed: 0.000104s[0m
+[basic_sim-13] [0m[INFO] [1791601566.761439389] [basic_sim]: MainLoop - Ellapsed: 0.000128s[0m
+[basic_sim-13] [0m[INFO] [1791601566.781003236] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601566.801233510] [basic_sim]: MainLoop - Ellapsed: 0.000110s[0m
+[basic_sim-13] [0m[INFO] [1791601566.820971792] [basic_sim]: MainLoop - Ellapsed: 0.000096s[0m
+[basic_sim-13] [0m[INFO] [1791601566.841044444] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601566.861493596] [basic_sim]: MainLoop - Ellapsed: 0.000140s[0m
+[basic_sim-13] [0m[INFO] [1791601566.880789196] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601566.900795618] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601566.920814709] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601566.941207959] [basic_sim]: MainLoop - Ellapsed: 0.000106s[0m
+[basic_sim-13] [0m[INFO] [1791601566.961405711] [basic_sim]: MainLoop - Ellapsed: 0.000132s[0m
+[basic_sim-13] [0m[INFO] [1791601566.981426910] [basic_sim]: MainLoop - Ellapsed: 0.000120s[0m
+[basic_sim-13] [0m[INFO] [1791601567.001069366] [basic_sim]: MainLoop - Ellapsed: 0.000086s[0m
+[basic_sim-13] [0m[INFO] [1791601567.021127164] [basic_sim]: MainLoop - Ellapsed: 0.000113s[0m
+[basic_sim-13] [0m[INFO] [1791601567.040851992] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601567.061235272] [basic_sim]: MainLoop - Ellapsed: 0.000112s[0m
+[basic_sim-13] [0m[INFO] [1791601567.080760357] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601567.101292800] [basic_sim]: MainLoop - Ellapsed: 0.000115s[0m
+[basic_sim-13] [0m[INFO] [1791601567.120737615] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601567.140843957] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601567.161076844] [basic_sim]: MainLoop - Ellapsed: 0.000096s[0m
+[basic_sim-13] [0m[INFO] [1791601567.180808796] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601567.200776221] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601567.220714679] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601567.240937704] [basic_sim]: MainLoop - Ellapsed: 0.000086s[0m
+[basic_sim-13] [0m[INFO] [1791601567.260652862] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601567.280738289] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601567.301198660] [basic_sim]: MainLoop - Ellapsed: 0.000107s[0m
+[basic_sim-13] [0m[INFO] [1791601567.320685532] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601567.340960973] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601567.360726605] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601567.380961135] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601567.401059833] [basic_sim]: MainLoop - Ellapsed: 0.000094s[0m
+[basic_sim-13] [0m[INFO] [1791601567.420818919] [basic_sim]: MainLoop - Ellapsed: 0.000050s[0m
+[basic_sim-13] [0m[INFO] [1791601567.440906326] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601567.460792595] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601567.480718216] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601567.500793116] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601567.520983228] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601567.540809200] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601567.560695799] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601567.580811400] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601567.600700323] [basic_sim]: MainLoop - Ellapsed: 0.000060s[0m
+[basic_sim-13] [0m[INFO] [1791601567.621005694] [basic_sim]: MainLoop - Ellapsed: 0.000101s[0m
+[basic_sim-13] [0m[INFO] [1791601567.640754798] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601567.660850629] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601567.680713569] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601567.700844732] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601567.720636573] [basic_sim]: MainLoop - Ellapsed: 0.000058s[0m
+[basic_sim-13] [0m[INFO] [1791601567.740777921] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601567.760693361] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601567.780796242] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601567.800875157] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601567.820731347] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601567.840886837] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601567.860918340] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601567.880805463] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601567.900778169] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601567.920760583] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601567.940904268] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601567.960615762] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601567.981075267] [basic_sim]: MainLoop - Ellapsed: 0.000088s[0m
+[basic_sim-13] [0m[INFO] [1791601568.000813077] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601568.020708350] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601568.040860718] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601568.060675080] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601568.080929601] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601568.101182357] [basic_sim]: MainLoop - Ellapsed: 0.000101s[0m
+[basic_sim-13] [0m[INFO] [1791601568.120956113] [basic_sim]: MainLoop - Ellapsed: 0.000092s[0m
+[basic_sim-13] [0m[INFO] [1791601568.141236095] [basic_sim]: MainLoop - Ellapsed: 0.000100s[0m
+[basic_sim-13] [0m[INFO] [1791601568.160604873] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601568.180944280] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601568.200849952] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601568.220664610] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601568.240925399] [basic_sim]: MainLoop - Ellapsed: 0.000086s[0m
+[basic_sim-13] [0m[INFO] [1791601568.260634770] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601568.281033771] [basic_sim]: MainLoop - Ellapsed: 0.000089s[0m
+[basic_sim-13] [0m[INFO] [1791601568.300717031] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601568.320678745] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601568.341319960] [basic_sim]: MainLoop - Ellapsed: 0.000119s[0m
+[basic_sim-13] [0m[INFO] [1791601568.360662359] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601568.380902080] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601568.400656461] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601568.420972322] [basic_sim]: MainLoop - Ellapsed: 0.000097s[0m
+[basic_sim-13] [0m[INFO] [1791601568.441119038] [basic_sim]: MainLoop - Ellapsed: 0.000109s[0m
+[basic_sim-13] [0m[INFO] [1791601568.460738130] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601568.481140676] [basic_sim]: MainLoop - Ellapsed: 0.000104s[0m
+[basic_sim-13] [0m[INFO] [1791601568.500883445] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601568.520662204] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601568.540723793] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601568.560685389] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601568.580748390] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601568.600674981] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601568.620835888] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601568.640877477] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601568.661015505] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601568.680905167] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601568.700671524] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601568.721115248] [basic_sim]: MainLoop - Ellapsed: 0.000108s[0m
+[basic_sim-13] [0m[INFO] [1791601568.740795058] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601568.761125286] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601568.780792175] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601568.801051959] [basic_sim]: MainLoop - Ellapsed: 0.000098s[0m
+[basic_sim-13] [0m[INFO] [1791601568.820735297] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601568.840989731] [basic_sim]: MainLoop - Ellapsed: 0.000092s[0m
+[basic_sim-13] [0m[INFO] [1791601568.861181413] [basic_sim]: MainLoop - Ellapsed: 0.000108s[0m
+[basic_sim-13] [0m[INFO] [1791601568.880827325] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601568.901095140] [basic_sim]: MainLoop - Ellapsed: 0.000101s[0m
+[basic_sim-13] [0m[INFO] [1791601568.920742052] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601568.941232111] [basic_sim]: MainLoop - Ellapsed: 0.000114s[0m
+[basic_sim-13] [0m[INFO] [1791601568.961415720] [basic_sim]: MainLoop - Ellapsed: 0.000131s[0m
+[basic_sim-13] [0m[INFO] [1791601568.981205647] [basic_sim]: MainLoop - Ellapsed: 0.000098s[0m
+[basic_sim-13] [0m[INFO] [1791601569.001251303] [basic_sim]: MainLoop - Ellapsed: 0.000115s[0m
+[basic_sim-13] [0m[INFO] [1791601569.020851594] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601569.041357172] [basic_sim]: MainLoop - Ellapsed: 0.000115s[0m
+[basic_sim-13] [0m[INFO] [1791601569.060802817] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601569.080891579] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601569.100745835] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601569.120743392] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601569.140951869] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601569.160830516] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601569.180926817] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601569.200688683] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601569.220828583] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601569.240789183] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601569.260721897] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601569.280881078] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601569.300833091] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601569.320716421] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601569.340809125] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601569.360780042] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601569.380805665] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601569.400884817] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601569.420688557] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601569.440777430] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601569.460774489] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601569.480857353] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601569.500875601] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601569.520870750] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601569.540782801] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601569.560905182] [basic_sim]: MainLoop - Ellapsed: 0.000085s[0m
+[basic_sim-13] [0m[INFO] [1791601569.580877756] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601569.600801178] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601569.621005020] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601569.640758454] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601569.660783560] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601569.680784349] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601569.700858184] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601569.720950742] [basic_sim]: MainLoop - Ellapsed: 0.000093s[0m
+[basic_sim-13] [0m[INFO] [1791601569.740726400] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601569.760847751] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601569.780752810] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601569.800899878] [basic_sim]: MainLoop - Ellapsed: 0.000083s[0m
+[basic_sim-13] [0m[INFO] [1791601569.820874057] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601569.841189039] [basic_sim]: MainLoop - Ellapsed: 0.000106s[0m
+[basic_sim-13] [0m[INFO] [1791601569.861102627] [basic_sim]: MainLoop - Ellapsed: 0.000104s[0m
+[basic_sim-13] [0m[INFO] [1791601569.880865164] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601569.900786495] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601569.920824107] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601569.940824733] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601569.960892065] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601569.980767291] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601570.000874037] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601570.020985391] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601570.040960064] [basic_sim]: MainLoop - Ellapsed: 0.000092s[0m
+[basic_sim-13] [0m[INFO] [1791601570.060901449] [basic_sim]: MainLoop - Ellapsed: 0.000085s[0m
+[basic_sim-13] [0m[INFO] [1791601570.080780984] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601570.100766261] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601570.121027364] [basic_sim]: MainLoop - Ellapsed: 0.000091s[0m
+[basic_sim-13] [0m[INFO] [1791601570.140758049] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601570.161143129] [basic_sim]: MainLoop - Ellapsed: 0.000108s[0m
+[basic_sim-13] [0m[INFO] [1791601570.180772166] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601570.201273557] [basic_sim]: MainLoop - Ellapsed: 0.000114s[0m
+[basic_sim-13] [0m[INFO] [1791601570.221024096] [basic_sim]: MainLoop - Ellapsed: 0.000093s[0m
+[basic_sim-13] [0m[INFO] [1791601570.241333892] [basic_sim]: MainLoop - Ellapsed: 0.000124s[0m
+[basic_sim-13] [0m[INFO] [1791601570.261209740] [basic_sim]: MainLoop - Ellapsed: 0.000104s[0m
+[basic_sim-13] [0m[INFO] [1791601570.280967077] [basic_sim]: MainLoop - Ellapsed: 0.000093s[0m
+[basic_sim-13] [0m[INFO] [1791601570.300637869] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601570.320779371] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601570.340706917] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601570.360790523] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601570.380717744] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601570.400776423] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601570.420927309] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601570.440616845] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601570.460672753] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601570.480647436] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601570.500714666] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601570.520708098] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601570.540703979] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601570.560806292] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601570.580683225] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601570.600693102] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601570.620881878] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601570.640866520] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601570.660741463] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601570.680675725] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601570.700812907] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601570.720856812] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601570.740601135] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601570.760804349] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601570.780679454] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601570.800699494] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601570.820977104] [basic_sim]: MainLoop - Ellapsed: 0.000094s[0m
+[basic_sim-13] [0m[INFO] [1791601570.840596512] [basic_sim]: MainLoop - Ellapsed: 0.000056s[0m
+[basic_sim-13] [0m[INFO] [1791601570.860712184] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601570.880649469] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601570.900725241] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601570.920931289] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601570.942359952] [basic_sim]: MainLoop - Ellapsed: 0.000217s[0m
+[basic_sim-13] [0m[INFO] [1791601570.965091036] [basic_sim]: MainLoop - Ellapsed: 0.000396s[0m
+[basic_sim-13] [0m[INFO] [1791601570.980365905] [basic_sim]: MainLoop - Ellapsed: 0.000041s[0m
+[basic_sim-13] [0m[INFO] [1791601571.001343127] [basic_sim]: MainLoop - Ellapsed: 0.000116s[0m
+[basic_sim-13] [0m[INFO] [1791601571.020980811] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601571.041316029] [basic_sim]: MainLoop - Ellapsed: 0.000131s[0m
+[basic_sim-13] [0m[INFO] [1791601571.061453868] [basic_sim]: MainLoop - Ellapsed: 0.000124s[0m
+[basic_sim-13] [0m[INFO] [1791601571.080646661] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601571.100768225] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601571.120984484] [basic_sim]: MainLoop - Ellapsed: 0.000095s[0m
+[basic_sim-13] [0m[INFO] [1791601571.141208276] [basic_sim]: MainLoop - Ellapsed: 0.000116s[0m
+[basic_sim-13] [0m[INFO] [1791601571.161181263] [basic_sim]: MainLoop - Ellapsed: 0.000107s[0m
+[basic_sim-13] [0m[INFO] [1791601571.181303271] [basic_sim]: MainLoop - Ellapsed: 0.000117s[0m
+[basic_sim-13] [0m[INFO] [1791601571.200901061] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601571.220904182] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601571.240535558] [basic_sim]: MainLoop - Ellapsed: 0.000056s[0m
+[basic_sim-13] [0m[INFO] [1791601571.260704926] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601571.280735234] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601571.303744325] [basic_sim]: MainLoop - Ellapsed: 0.000180s[0m
+[simulated_anemometer-2] [33m[WARN] [1791601571.312066797] [PioneerP3DX.Anemometer]: [fake_anemometer] Cannot read Wind Vector from simulated data.[0m
+[basic_sim-13] [0m[INFO] [1791601571.320827591] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601571.340817621] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601571.360795325] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601571.380767065] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601571.400775919] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601571.420781553] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601571.440926678] [basic_sim]: MainLoop - Ellapsed: 0.000090s[0m
+[basic_sim-13] [0m[INFO] [1791601571.460711536] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601571.480857414] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601571.500989405] [basic_sim]: MainLoop - Ellapsed: 0.000093s[0m
+[basic_sim-13] [0m[INFO] [1791601571.521368382] [basic_sim]: MainLoop - Ellapsed: 0.000123s[0m
+[basic_sim-13] [0m[INFO] [1791601571.541750776] [basic_sim]: MainLoop - Ellapsed: 0.000163s[0m
+[basic_sim-13] [0m[INFO] [1791601571.561766443] [basic_sim]: MainLoop - Ellapsed: 0.000156s[0m
+[basic_sim-13] [0m[INFO] [1791601571.581010640] [basic_sim]: MainLoop - Ellapsed: 0.000095s[0m
+[basic_sim-13] [0m[INFO] [1791601571.600740088] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601571.621001816] [basic_sim]: MainLoop - Ellapsed: 0.000092s[0m
+[basic_sim-13] [0m[INFO] [1791601571.641168800] [basic_sim]: MainLoop - Ellapsed: 0.000099s[0m
+[basic_sim-13] [0m[INFO] [1791601571.661186216] [basic_sim]: MainLoop - Ellapsed: 0.000109s[0m
+[basic_sim-13] [0m[INFO] [1791601571.680906910] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601571.701207486] [basic_sim]: MainLoop - Ellapsed: 0.000105s[0m
+[basic_sim-13] [0m[INFO] [1791601571.721742488] [basic_sim]: MainLoop - Ellapsed: 0.000168s[0m
+[basic_sim-13] [0m[INFO] [1791601571.741208968] [basic_sim]: MainLoop - Ellapsed: 0.000097s[0m
+[basic_sim-13] [0m[INFO] [1791601571.761519721] [basic_sim]: MainLoop - Ellapsed: 0.000126s[0m
+[basic_sim-13] [0m[INFO] [1791601571.780747540] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601571.800792120] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601571.820729222] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601571.840784372] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601571.860617630] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601571.880751051] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601571.900658976] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601571.920627118] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601571.940658747] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601571.960890239] [basic_sim]: MainLoop - Ellapsed: 0.000083s[0m
+[basic_sim-13] [0m[INFO] [1791601571.980973472] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601572.000718148] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601572.020810085] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601572.040687295] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601572.060846578] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601572.080817340] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601572.100770222] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601572.120696659] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601572.140950620] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601572.160839882] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601572.180682120] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601572.200769815] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601572.220823163] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601572.240917218] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601572.260682715] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601572.280845925] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601572.300796664] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[simulated_anemometer-2] [33m[WARN] [1791601572.312913491] [PioneerP3DX.Anemometer]: [fake_anemometer] Cannot read Wind Vector from simulated data.[0m
+[basic_sim-13] [0m[INFO] [1791601572.320807485] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601572.340936210] [basic_sim]: MainLoop - Ellapsed: 0.000090s[0m
+[basic_sim-13] [0m[INFO] [1791601572.360787860] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601572.380760165] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601572.400696274] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601572.420660838] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601572.440677766] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601572.460747888] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601572.480743478] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601572.500783518] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601572.520662081] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601572.540766716] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601572.560915832] [basic_sim]: MainLoop - Ellapsed: 0.000091s[0m
+[basic_sim-13] [0m[INFO] [1791601572.580980664] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601572.600747092] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601572.621102401] [basic_sim]: MainLoop - Ellapsed: 0.000103s[0m
+[basic_sim-13] [0m[INFO] [1791601572.641139072] [basic_sim]: MainLoop - Ellapsed: 0.000104s[0m
+[basic_sim-13] [0m[INFO] [1791601572.661186927] [basic_sim]: MainLoop - Ellapsed: 0.000114s[0m
+[basic_sim-13] [0m[INFO] [1791601572.681133473] [basic_sim]: MainLoop - Ellapsed: 0.000099s[0m
+[basic_sim-13] [0m[INFO] [1791601572.701045456] [basic_sim]: MainLoop - Ellapsed: 0.000095s[0m
+[basic_sim-13] [0m[INFO] [1791601572.721335805] [basic_sim]: MainLoop - Ellapsed: 0.000110s[0m
+[basic_sim-13] [0m[INFO] [1791601572.741100932] [basic_sim]: MainLoop - Ellapsed: 0.000094s[0m
+[basic_sim-13] [0m[INFO] [1791601572.760686097] [basic_sim]: MainLoop - Ellapsed: 0.000058s[0m
+[basic_sim-13] [0m[INFO] [1791601572.780860998] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601572.800911898] [basic_sim]: MainLoop - Ellapsed: 0.000090s[0m
+[basic_sim-13] [0m[INFO] [1791601572.820853414] [basic_sim]: MainLoop - Ellapsed: 0.000085s[0m
+[basic_sim-13] [0m[INFO] [1791601572.840895879] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601572.860575036] [basic_sim]: MainLoop - Ellapsed: 0.000058s[0m
+[basic_sim-13] [0m[INFO] [1791601572.880720270] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601572.900691588] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601572.920724538] [basic_sim]: MainLoop - Ellapsed: 0.000058s[0m
+[basic_sim-13] [0m[INFO] [1791601572.940777660] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601572.960977826] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601572.980840873] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601573.000966174] [basic_sim]: MainLoop - Ellapsed: 0.000095s[0m
+[basic_sim-13] [0m[INFO] [1791601573.020664612] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601573.040734998] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601573.062945383] [basic_sim]: MainLoop - Ellapsed: 0.000285s[0m
+[basic_sim-13] [0m[INFO] [1791601573.081044849] [basic_sim]: MainLoop - Ellapsed: 0.000099s[0m
+[basic_sim-13] [0m[INFO] [1791601573.101181058] [basic_sim]: MainLoop - Ellapsed: 0.000098s[0m
+[basic_sim-13] [0m[INFO] [1791601573.121703469] [basic_sim]: MainLoop - Ellapsed: 0.000170s[0m
+[basic_sim-13] [0m[INFO] [1791601573.141384446] [basic_sim]: MainLoop - Ellapsed: 0.000126s[0m
+[basic_sim-13] [0m[INFO] [1791601573.160662083] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601573.180640653] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601573.201252211] [basic_sim]: MainLoop - Ellapsed: 0.000121s[0m
+[basic_sim-13] [0m[INFO] [1791601573.221115230] [basic_sim]: MainLoop - Ellapsed: 0.000102s[0m
+[basic_sim-13] [0m[INFO] [1791601573.241424075] [basic_sim]: MainLoop - Ellapsed: 0.000127s[0m
+[basic_sim-13] [0m[INFO] [1791601573.261511321] [basic_sim]: MainLoop - Ellapsed: 0.000132s[0m
+[basic_sim-13] [0m[INFO] [1791601573.280879462] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601573.301407173] [basic_sim]: MainLoop - Ellapsed: 0.000136s[0m
+[simulated_anemometer-2] [33m[WARN] [1791601573.313486167] [PioneerP3DX.Anemometer]: [fake_anemometer] Cannot read Wind Vector from simulated data.[0m
+[basic_sim-13] [0m[INFO] [1791601573.321717362] [basic_sim]: MainLoop - Ellapsed: 0.000132s[0m
+[basic_sim-13] [0m[INFO] [1791601573.341443577] [basic_sim]: MainLoop - Ellapsed: 0.000132s[0m
+[basic_sim-13] [0m[INFO] [1791601573.361481137] [basic_sim]: MainLoop - Ellapsed: 0.000134s[0m
+[basic_sim-13] [0m[INFO] [1791601573.381227399] [basic_sim]: MainLoop - Ellapsed: 0.000114s[0m
+[basic_sim-13] [0m[INFO] [1791601573.401016598] [basic_sim]: MainLoop - Ellapsed: 0.000091s[0m
+[basic_sim-13] [0m[INFO] [1791601573.421827564] [basic_sim]: MainLoop - Ellapsed: 0.000140s[0m
+[basic_sim-13] [0m[INFO] [1791601573.441204350] [basic_sim]: MainLoop - Ellapsed: 0.000108s[0m
+[basic_sim-13] [0m[INFO] [1791601573.461323703] [basic_sim]: MainLoop - Ellapsed: 0.000110s[0m
+[basic_sim-13] [0m[INFO] [1791601573.481070635] [basic_sim]: MainLoop - Ellapsed: 0.000091s[0m
+[basic_sim-13] [0m[INFO] [1791601573.501450525] [basic_sim]: MainLoop - Ellapsed: 0.000136s[0m
+[basic_sim-13] [0m[INFO] [1791601573.520797946] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601573.541082777] [basic_sim]: MainLoop - Ellapsed: 0.000098s[0m
+[basic_sim-13] [0m[INFO] [1791601573.560668159] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601573.581135423] [basic_sim]: MainLoop - Ellapsed: 0.000102s[0m
+[basic_sim-13] [0m[INFO] [1791601573.600724424] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601573.620761670] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601573.640773875] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601573.660655341] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601573.680963957] [basic_sim]: MainLoop - Ellapsed: 0.000090s[0m
+[basic_sim-13] [0m[INFO] [1791601573.701516909] [basic_sim]: MainLoop - Ellapsed: 0.000138s[0m
+[basic_sim-13] [0m[INFO] [1791601573.721190274] [basic_sim]: MainLoop - Ellapsed: 0.000106s[0m
+[basic_sim-13] [0m[INFO] [1791601573.741363643] [basic_sim]: MainLoop - Ellapsed: 0.000124s[0m
+[basic_sim-13] [0m[INFO] [1791601573.761048854] [basic_sim]: MainLoop - Ellapsed: 0.000099s[0m
+[basic_sim-13] [0m[INFO] [1791601573.780841382] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601573.800792431] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601573.820820323] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601573.840986837] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601573.860695036] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601573.880727169] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601573.900607016] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601573.920738159] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601573.940738637] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601573.960788694] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601573.980778121] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601574.000882688] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601574.020879069] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601574.040724614] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601574.060867519] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601574.080650411] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601574.100670583] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601574.120748077] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601574.140920619] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601574.160681035] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601574.180904155] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601574.200705482] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601574.220776912] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601574.240912424] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601574.261136922] [basic_sim]: MainLoop - Ellapsed: 0.000103s[0m
+[basic_sim-13] [0m[INFO] [1791601574.280688904] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601574.300725748] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[simulated_anemometer-2] [33m[WARN] [1791601574.314156376] [PioneerP3DX.Anemometer]: [fake_anemometer] Cannot read Wind Vector from simulated data.[0m
+[basic_sim-13] [0m[INFO] [1791601574.320698215] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601574.340704536] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601574.360757695] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601574.380633966] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601574.401228805] [basic_sim]: MainLoop - Ellapsed: 0.000113s[0m
+[basic_sim-13] [0m[INFO] [1791601574.420598146] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601574.441333963] [basic_sim]: MainLoop - Ellapsed: 0.000122s[0m
+[basic_sim-13] [0m[INFO] [1791601574.461372954] [basic_sim]: MainLoop - Ellapsed: 0.000129s[0m
+[basic_sim-13] [0m[INFO] [1791601574.480642450] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601574.501140872] [basic_sim]: MainLoop - Ellapsed: 0.000109s[0m
+[basic_sim-13] [0m[INFO] [1791601574.520829101] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601574.540801371] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601574.560760070] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601574.580721032] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601574.605671893] [basic_sim]: MainLoop - Ellapsed: 0.000549s[0m
+[basic_sim-13] [0m[INFO] [1791601574.620727599] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601574.640722305] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601574.661202726] [basic_sim]: MainLoop - Ellapsed: 0.000094s[0m
+[basic_sim-13] [0m[INFO] [1791601574.680836271] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601574.700574078] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601574.720752712] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601574.740759979] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601574.760809004] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601574.780670644] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601574.801673832] [basic_sim]: MainLoop - Ellapsed: 0.000150s[0m
+[basic_sim-13] [0m[INFO] [1791601574.821358882] [basic_sim]: MainLoop - Ellapsed: 0.000126s[0m
+[basic_sim-13] [0m[INFO] [1791601574.841650891] [basic_sim]: MainLoop - Ellapsed: 0.000149s[0m
+[basic_sim-13] [0m[INFO] [1791601574.861161403] [basic_sim]: MainLoop - Ellapsed: 0.000109s[0m
+[basic_sim-13] [0m[INFO] [1791601574.880715415] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601574.900933598] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601574.920884721] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601574.940843263] [basic_sim]: MainLoop - Ellapsed: 0.000085s[0m
+[basic_sim-13] [0m[INFO] [1791601574.960573586] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601574.980768599] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601575.000635351] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601575.020790242] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601575.040788251] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601575.060630842] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601575.080729150] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601575.100957838] [basic_sim]: MainLoop - Ellapsed: 0.000086s[0m
+[basic_sim-13] [0m[INFO] [1791601575.120637080] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601575.140917689] [basic_sim]: MainLoop - Ellapsed: 0.000093s[0m
+[basic_sim-13] [0m[INFO] [1791601575.160891534] [basic_sim]: MainLoop - Ellapsed: 0.000085s[0m
+[basic_sim-13] [0m[INFO] [1791601575.180714535] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601575.200802001] [basic_sim]: MainLoop - Ellapsed: 0.000086s[0m
+[basic_sim-13] [0m[INFO] [1791601575.220637348] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601575.240631801] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601575.260868406] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601575.280705497] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601575.300772816] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[simulated_anemometer-2] [33m[WARN] [1791601575.314580202] [PioneerP3DX.Anemometer]: [fake_anemometer] Cannot read Wind Vector from simulated data.[0m
+[basic_sim-13] [0m[INFO] [1791601575.320601993] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601575.340825702] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601575.360840212] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601575.380818250] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601575.401586038] [basic_sim]: MainLoop - Ellapsed: 0.000136s[0m
+[basic_sim-13] [0m[INFO] [1791601575.421698745] [basic_sim]: MainLoop - Ellapsed: 0.000131s[0m
+[basic_sim-13] [0m[INFO] [1791601575.441387968] [basic_sim]: MainLoop - Ellapsed: 0.000121s[0m
+[basic_sim-13] [0m[INFO] [1791601575.461518999] [basic_sim]: MainLoop - Ellapsed: 0.000139s[0m
+[basic_sim-13] [0m[INFO] [1791601575.481187772] [basic_sim]: MainLoop - Ellapsed: 0.000109s[0m
+[basic_sim-13] [0m[INFO] [1791601575.500865399] [basic_sim]: MainLoop - Ellapsed: 0.000083s[0m
+[basic_sim-13] [0m[INFO] [1791601575.521326416] [basic_sim]: MainLoop - Ellapsed: 0.000124s[0m
+[basic_sim-13] [0m[INFO] [1791601575.541425269] [basic_sim]: MainLoop - Ellapsed: 0.000135s[0m
+[basic_sim-13] [0m[INFO] [1791601575.561476450] [basic_sim]: MainLoop - Ellapsed: 0.000132s[0m
+[basic_sim-13] [0m[INFO] [1791601575.581805952] [basic_sim]: MainLoop - Ellapsed: 0.000133s[0m
+[basic_sim-13] [0m[INFO] [1791601575.601547183] [basic_sim]: MainLoop - Ellapsed: 0.000144s[0m
+[basic_sim-13] [0m[INFO] [1791601575.622373618] [basic_sim]: MainLoop - Ellapsed: 0.000177s[0m
+[basic_sim-13] [0m[INFO] [1791601575.641734330] [basic_sim]: MainLoop - Ellapsed: 0.000146s[0m
+[basic_sim-13] [0m[INFO] [1791601575.661545054] [basic_sim]: MainLoop - Ellapsed: 0.000130s[0m
+[basic_sim-13] [0m[INFO] [1791601575.681551390] [basic_sim]: MainLoop - Ellapsed: 0.000148s[0m
+[basic_sim-13] [0m[INFO] [1791601575.701199660] [basic_sim]: MainLoop - Ellapsed: 0.000112s[0m
+[basic_sim-13] [0m[INFO] [1791601575.721120648] [basic_sim]: MainLoop - Ellapsed: 0.000104s[0m
+[basic_sim-13] [0m[INFO] [1791601575.741322906] [basic_sim]: MainLoop - Ellapsed: 0.000122s[0m
+[basic_sim-13] [0m[INFO] [1791601575.761418656] [basic_sim]: MainLoop - Ellapsed: 0.000135s[0m
+[basic_sim-13] [0m[INFO] [1791601575.781301168] [basic_sim]: MainLoop - Ellapsed: 0.000125s[0m
+[basic_sim-13] [0m[INFO] [1791601575.800892120] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601575.821490676] [basic_sim]: MainLoop - Ellapsed: 0.000140s[0m
+[basic_sim-13] [0m[INFO] [1791601575.840635151] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601575.860627800] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601575.880640211] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601575.900815242] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601575.920655185] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601575.940882609] [basic_sim]: MainLoop - Ellapsed: 0.000093s[0m
+[basic_sim-13] [0m[INFO] [1791601575.960975987] [basic_sim]: MainLoop - Ellapsed: 0.000099s[0m
+[basic_sim-13] [0m[INFO] [1791601575.980659941] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601576.000715028] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601576.020852813] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601576.040811568] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601576.060629874] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601576.080689460] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601576.100695533] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601576.120770323] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601576.140644613] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601576.160633793] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601576.180840495] [basic_sim]: MainLoop - Ellapsed: 0.000085s[0m
+[basic_sim-13] [0m[INFO] [1791601576.200671589] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601576.221083342] [basic_sim]: MainLoop - Ellapsed: 0.000103s[0m
+[basic_sim-13] [0m[INFO] [1791601576.241682295] [basic_sim]: MainLoop - Ellapsed: 0.000161s[0m
+[basic_sim-13] [0m[INFO] [1791601576.261412569] [basic_sim]: MainLoop - Ellapsed: 0.000132s[0m
+[basic_sim-13] [0m[INFO] [1791601576.280888852] [basic_sim]: MainLoop - Ellapsed: 0.000090s[0m
+[basic_sim-13] [0m[INFO] [1791601576.300756802] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[simulated_anemometer-2] [33m[WARN] [1791601576.315046741] [PioneerP3DX.Anemometer]: [fake_anemometer] Cannot read Wind Vector from simulated data.[0m
+[basic_sim-13] [0m[INFO] [1791601576.321347914] [basic_sim]: MainLoop - Ellapsed: 0.000116s[0m
+[basic_sim-13] [0m[INFO] [1791601576.341147103] [basic_sim]: MainLoop - Ellapsed: 0.000105s[0m
+[basic_sim-13] [0m[INFO] [1791601576.360553210] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601576.380751214] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601576.400717428] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601576.421290952] [basic_sim]: MainLoop - Ellapsed: 0.000130s[0m
+[basic_sim-13] [0m[INFO] [1791601576.441486394] [basic_sim]: MainLoop - Ellapsed: 0.000134s[0m
+[basic_sim-13] [0m[INFO] [1791601576.461665838] [basic_sim]: MainLoop - Ellapsed: 0.000133s[0m
+[basic_sim-13] [0m[INFO] [1791601576.480866839] [basic_sim]: MainLoop - Ellapsed: 0.000089s[0m
+[basic_sim-13] [0m[INFO] [1791601576.500698017] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601576.521057423] [basic_sim]: MainLoop - Ellapsed: 0.000111s[0m
+[basic_sim-13] [0m[INFO] [1791601576.541467537] [basic_sim]: MainLoop - Ellapsed: 0.000122s[0m
+[basic_sim-13] [0m[INFO] [1791601576.561851827] [basic_sim]: MainLoop - Ellapsed: 0.000158s[0m
+[basic_sim-13] [0m[INFO] [1791601576.580719270] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601576.600935346] [basic_sim]: MainLoop - Ellapsed: 0.000086s[0m
+[basic_sim-13] [0m[INFO] [1791601576.621297061] [basic_sim]: MainLoop - Ellapsed: 0.000105s[0m
+[basic_sim-13] [0m[INFO] [1791601576.642064254] [basic_sim]: MainLoop - Ellapsed: 0.000186s[0m
+[basic_sim-13] [0m[INFO] [1791601576.662986739] [basic_sim]: MainLoop - Ellapsed: 0.000266s[0m
+[basic_sim-13] [0m[INFO] [1791601576.681660349] [basic_sim]: MainLoop - Ellapsed: 0.000144s[0m
+[basic_sim-13] [0m[INFO] [1791601576.701291919] [basic_sim]: MainLoop - Ellapsed: 0.000116s[0m
+[basic_sim-13] [0m[INFO] [1791601576.721367331] [basic_sim]: MainLoop - Ellapsed: 0.000110s[0m
+[basic_sim-13] [0m[INFO] [1791601576.741500916] [basic_sim]: MainLoop - Ellapsed: 0.000137s[0m
+[basic_sim-13] [0m[INFO] [1791601576.761767245] [basic_sim]: MainLoop - Ellapsed: 0.000163s[0m
+[basic_sim-13] [0m[INFO] [1791601576.781170941] [basic_sim]: MainLoop - Ellapsed: 0.000113s[0m
+[basic_sim-13] [0m[INFO] [1791601576.801152912] [basic_sim]: MainLoop - Ellapsed: 0.000089s[0m
+[basic_sim-13] [0m[INFO] [1791601576.821068532] [basic_sim]: MainLoop - Ellapsed: 0.000096s[0m
+[basic_sim-13] [0m[INFO] [1791601576.841381754] [basic_sim]: MainLoop - Ellapsed: 0.000132s[0m
+[basic_sim-13] [0m[INFO] [1791601576.861611920] [basic_sim]: MainLoop - Ellapsed: 0.000151s[0m
+[basic_sim-13] [0m[INFO] [1791601576.880626677] [basic_sim]: MainLoop - Ellapsed: 0.000060s[0m
+[basic_sim-13] [0m[INFO] [1791601576.900960674] [basic_sim]: MainLoop - Ellapsed: 0.000089s[0m
+[basic_sim-13] [0m[INFO] [1791601576.920847308] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601576.941279594] [basic_sim]: MainLoop - Ellapsed: 0.000118s[0m
+[basic_sim-13] [0m[INFO] [1791601576.962158986] [basic_sim]: MainLoop - Ellapsed: 0.000202s[0m
+[basic_sim-13] [0m[INFO] [1791601576.980796339] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601577.000783874] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601577.021316819] [basic_sim]: MainLoop - Ellapsed: 0.000122s[0m
+[basic_sim-13] [0m[INFO] [1791601577.040610063] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601577.060809219] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601577.080762418] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601577.100925315] [basic_sim]: MainLoop - Ellapsed: 0.000088s[0m
+[basic_sim-13] [0m[INFO] [1791601577.121396408] [basic_sim]: MainLoop - Ellapsed: 0.000121s[0m
+[basic_sim-13] [0m[INFO] [1791601577.141476033] [basic_sim]: MainLoop - Ellapsed: 0.000119s[0m
+[basic_sim-13] [0m[INFO] [1791601577.161280273] [basic_sim]: MainLoop - Ellapsed: 0.000113s[0m
+[basic_sim-13] [0m[INFO] [1791601577.180780171] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601577.200732107] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601577.220981861] [basic_sim]: MainLoop - Ellapsed: 0.000088s[0m
+[basic_sim-13] [0m[INFO] [1791601577.241534554] [basic_sim]: MainLoop - Ellapsed: 0.000139s[0m
+[basic_sim-13] [0m[INFO] [1791601577.260829288] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601577.281227667] [basic_sim]: MainLoop - Ellapsed: 0.000123s[0m
+[basic_sim-13] [0m[INFO] [1791601577.300644879] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[simulated_anemometer-2] [33m[WARN] [1791601577.315862518] [PioneerP3DX.Anemometer]: [fake_anemometer] Cannot read Wind Vector from simulated data.[0m
+[basic_sim-13] [0m[INFO] [1791601577.320739674] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601577.341451755] [basic_sim]: MainLoop - Ellapsed: 0.000121s[0m
+[basic_sim-13] [0m[INFO] [1791601577.361631550] [basic_sim]: MainLoop - Ellapsed: 0.000158s[0m
+[basic_sim-13] [0m[INFO] [1791601577.381083674] [basic_sim]: MainLoop - Ellapsed: 0.000096s[0m
+[basic_sim-13] [0m[INFO] [1791601577.400724480] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601577.420869672] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601577.441062823] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601577.460665074] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601577.480890815] [basic_sim]: MainLoop - Ellapsed: 0.000089s[0m
+[basic_sim-13] [0m[INFO] [1791601577.502541024] [basic_sim]: MainLoop - Ellapsed: 0.000211s[0m
+[basic_sim-13] [0m[INFO] [1791601577.521393199] [basic_sim]: MainLoop - Ellapsed: 0.000134s[0m
+[basic_sim-13] [0m[INFO] [1791601577.541098165] [basic_sim]: MainLoop - Ellapsed: 0.000108s[0m
+[basic_sim-13] [0m[INFO] [1791601577.560695020] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601577.580674993] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601577.603380902] [basic_sim]: MainLoop - Ellapsed: 0.000314s[0m
+[basic_sim-13] [0m[INFO] [1791601577.620830075] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601577.641225721] [basic_sim]: MainLoop - Ellapsed: 0.000123s[0m
+[basic_sim-13] [0m[INFO] [1791601577.661575455] [basic_sim]: MainLoop - Ellapsed: 0.000145s[0m
+[basic_sim-13] [0m[INFO] [1791601577.681378500] [basic_sim]: MainLoop - Ellapsed: 0.000132s[0m
+[basic_sim-13] [0m[INFO] [1791601577.700906093] [basic_sim]: MainLoop - Ellapsed: 0.000090s[0m
+[basic_sim-13] [0m[INFO] [1791601577.721568412] [basic_sim]: MainLoop - Ellapsed: 0.000127s[0m
+[basic_sim-13] [0m[INFO] [1791601577.741179968] [basic_sim]: MainLoop - Ellapsed: 0.000104s[0m
+[basic_sim-13] [0m[INFO] [1791601577.761087207] [basic_sim]: MainLoop - Ellapsed: 0.000104s[0m
+[basic_sim-13] [0m[INFO] [1791601577.780673546] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601577.800889455] [basic_sim]: MainLoop - Ellapsed: 0.000093s[0m
+[basic_sim-13] [0m[INFO] [1791601577.821038445] [basic_sim]: MainLoop - Ellapsed: 0.000095s[0m
+[basic_sim-13] [0m[INFO] [1791601577.841208994] [basic_sim]: MainLoop - Ellapsed: 0.000114s[0m
+[basic_sim-13] [0m[INFO] [1791601577.861423723] [basic_sim]: MainLoop - Ellapsed: 0.000123s[0m
+[basic_sim-13] [0m[INFO] [1791601577.880879439] [basic_sim]: MainLoop - Ellapsed: 0.000083s[0m
+[basic_sim-13] [0m[INFO] [1791601577.901155743] [basic_sim]: MainLoop - Ellapsed: 0.000104s[0m
+[basic_sim-13] [0m[INFO] [1791601577.921060423] [basic_sim]: MainLoop - Ellapsed: 0.000102s[0m
+[basic_sim-13] [0m[INFO] [1791601577.940920159] [basic_sim]: MainLoop - Ellapsed: 0.000092s[0m
+[basic_sim-13] [0m[INFO] [1791601577.960754753] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601577.980597114] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601578.000870291] [basic_sim]: MainLoop - Ellapsed: 0.000090s[0m
+[basic_sim-13] [0m[INFO] [1791601578.021238091] [basic_sim]: MainLoop - Ellapsed: 0.000120s[0m
+[basic_sim-13] [0m[INFO] [1791601578.040532386] [basic_sim]: MainLoop - Ellapsed: 0.000053s[0m
+[basic_sim-13] [0m[INFO] [1791601578.060856912] [basic_sim]: MainLoop - Ellapsed: 0.000083s[0m
+[basic_sim-13] [0m[INFO] [1791601578.080815319] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601578.100738850] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601578.120664231] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601578.141385465] [basic_sim]: MainLoop - Ellapsed: 0.000120s[0m
+[basic_sim-13] [0m[INFO] [1791601578.161334603] [basic_sim]: MainLoop - Ellapsed: 0.000137s[0m
+[basic_sim-13] [0m[INFO] [1791601578.180744037] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601578.200652011] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601578.220742277] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601578.240755279] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601578.260814594] [basic_sim]: MainLoop - Ellapsed: 0.000085s[0m
+[basic_sim-13] [0m[INFO] [1791601578.280679851] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601578.300757931] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601578.321347566] [basic_sim]: MainLoop - Ellapsed: 0.000120s[0m
+[basic_sim-13] [0m[INFO] [1791601578.341163828] [basic_sim]: MainLoop - Ellapsed: 0.000103s[0m
+[basic_sim-13] [0m[INFO] [1791601578.360935544] [basic_sim]: MainLoop - Ellapsed: 0.000096s[0m
+[basic_sim-13] [0m[INFO] [1791601578.380619758] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601578.388882650] [GSL]: [33mRequest received: PMFS[0m[0m
+[basic_sim-13] [0m[INFO] [1791601578.400396358] [basic_sim]: MainLoop - Ellapsed: 0.000055s[0m
+[basic_sim-13] [0m[INFO] [1791601578.420791020] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601578.440891677] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601578.461397474] [basic_sim]: MainLoop - Ellapsed: 0.000135s[0m
+[basic_sim-13] [0m[INFO] [1791601578.480815300] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601578.500929968] [basic_sim]: MainLoop - Ellapsed: 0.000089s[0m
+[basic_sim-13] [0m[INFO] [1791601578.521724101] [basic_sim]: MainLoop - Ellapsed: 0.000156s[0m
+[basic_sim-13] [0m[INFO] [1791601578.541320068] [basic_sim]: MainLoop - Ellapsed: 0.000122s[0m
+[basic_sim-13] [0m[INFO] [1791601578.561794158] [basic_sim]: MainLoop - Ellapsed: 0.000175s[0m
+[basic_sim-13] [0m[INFO] [1791601578.581111938] [basic_sim]: MainLoop - Ellapsed: 0.000095s[0m
+[basic_sim-13] [0m[INFO] [1791601578.600952537] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601578.622116938] [basic_sim]: MainLoop - Ellapsed: 0.000173s[0m
+[basic_sim-13] [0m[INFO] [1791601578.640889613] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601578.660787967] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601578.680943619] [basic_sim]: MainLoop - Ellapsed: 0.000088s[0m
+[basic_sim-13] [0m[INFO] [1791601578.701063763] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601578.721825477] [basic_sim]: MainLoop - Ellapsed: 0.000154s[0m
+[basic_sim-13] [0m[INFO] [1791601578.741264378] [basic_sim]: MainLoop - Ellapsed: 0.000103s[0m
+[basic_sim-13] [0m[INFO] [1791601578.761052540] [basic_sim]: MainLoop - Ellapsed: 0.000098s[0m
+[basic_sim-13] [0m[INFO] [1791601578.780668179] [basic_sim]: MainLoop - Ellapsed: 0.000060s[0m
+[basic_sim-13] [0m[INFO] [1791601578.801229357] [basic_sim]: MainLoop - Ellapsed: 0.000100s[0m
+[basic_sim-13] [0m[INFO] [1791601578.821329775] [basic_sim]: MainLoop - Ellapsed: 0.000121s[0m
+[basic_sim-13] [0m[INFO] [1791601578.840904663] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601578.861071097] [basic_sim]: MainLoop - Ellapsed: 0.000111s[0m
+[basic_sim-13] [0m[INFO] [1791601578.880740213] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601578.900715948] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601578.921003471] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601578.941002134] [basic_sim]: MainLoop - Ellapsed: 0.000094s[0m
+[basic_sim-13] [0m[INFO] [1791601578.961018562] [basic_sim]: MainLoop - Ellapsed: 0.000099s[0m
+[basic_sim-13] [0m[INFO] [1791601578.980621736] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601579.001211228] [basic_sim]: MainLoop - Ellapsed: 0.000100s[0m
+[basic_sim-13] [0m[INFO] [1791601579.021955416] [basic_sim]: MainLoop - Ellapsed: 0.000182s[0m
+[basic_sim-13] [0m[INFO] [1791601579.040798930] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601579.060748076] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601579.080872319] [basic_sim]: MainLoop - Ellapsed: 0.000083s[0m
+[basic_sim-13] [0m[INFO] [1791601579.100608554] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601579.120638497] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601579.141050085] [basic_sim]: MainLoop - Ellapsed: 0.000101s[0m
+[basic_sim-13] [0m[INFO] [1791601579.161515212] [basic_sim]: MainLoop - Ellapsed: 0.000129s[0m
+[basic_sim-13] [0m[INFO] [1791601579.181187186] [basic_sim]: MainLoop - Ellapsed: 0.000107s[0m
+[basic_sim-13] [0m[INFO] [1791601579.200748574] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601579.221175354] [basic_sim]: MainLoop - Ellapsed: 0.000105s[0m
+[basic_sim-13] [0m[INFO] [1791601579.240776478] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601579.260806698] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601579.281137539] [basic_sim]: MainLoop - Ellapsed: 0.000111s[0m
+[basic_sim-13] [0m[INFO] [1791601579.300824932] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601579.320602789] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601579.341003723] [basic_sim]: MainLoop - Ellapsed: 0.000093s[0m
+[basic_sim-13] [0m[INFO] [1791601579.361229822] [basic_sim]: MainLoop - Ellapsed: 0.000118s[0m
+[basic_sim-13] [0m[INFO] [1791601579.381224107] [basic_sim]: MainLoop - Ellapsed: 0.000107s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.398510391] [GSL]: Waiting to hear from localization topic: /PioneerP3DX/ground_truth[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.400423496] [GSL]: Gas sensor topic: '/PioneerP3DX/PID/Sensor_reading'[0m
+[basic_sim-13] [0m[INFO] [1791601579.400425306] [basic_sim]: MainLoop - Ellapsed: 0.000052s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.402536059] [GSL]: Wind sensor topic: '/b4/wind_to'[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.402703186] [GSL]: [34mINITIALIZATON COMPLETED[0m[0m
+[basic_sim-13] [0m[INFO] [1791601579.420650939] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.420754349] [GSL - Trace]: [32mEntering WaitForMap[0m[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.420772528] [GSL - Trace]: [32mNeed occupancy map and costmap[0m[0m
+[basic_sim-13] [0m[INFO] [1791601579.440423228] [basic_sim]: MainLoop - Ellapsed: 0.000051s[0m
+[basic_sim-13] [0m[INFO] [1791601579.460751358] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.474141617] [GSL - Trace]: [32mGot occupancy map[0m[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.474786440] [GSL]: 
+[gsl_actionserver_node-14] --------------GSL---------------
+[gsl_actionserver_node-14] Occupancy Map dimensions:
+[gsl_actionserver_node-14] x_min:-7.5 x_max:1.1   -   y_min:-7.9 y_max:3.5
+[gsl_actionserver_node-14] --------------------------------[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.479568428] [GSL - Trace]: [32mCreated grid[0m[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.480172154] [GSL - Trace]: [32mPruned unreachable cells[0m[0m
+[basic_sim-13] [0m[INFO] [1791601579.480436430] [basic_sim]: MainLoop - Ellapsed: 0.000050s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.484144687] [GSL - Trace]: [32mCreated visibility map[0m[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.485492824] [GSL]: Number of cells after fusing quadtree: 95[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.487507421] [GSL]: anemometer z is -0.2[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.495978888] [GSL - Trace]: [32mEntering StopAndMeasure[0m[0m
+[basic_sim-13] [0m[INFO] [1791601579.500619813] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601579.520592360] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601579.540638966] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601579.560605787] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.573400576] [GSL]: 1 gas measurements, 1 wind measurements over 0.40 seconds[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.573494024] [GSL]: avg_gas=0.32;  avg_windSpeed=0.46;  avg_wind_dir=1.2[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.575863210] [GSL]: [33mGAS HIT[0m[0m
+[basic_sim-13] [0m[INFO] [1791601579.580653609] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.585879642] [GSL - Trace]: [32mEntering StopAndMeasure[0m[0m
+[basic_sim-13] [0m[INFO] [1791601579.600783494] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601579.620928145] [basic_sim]: MainLoop - Ellapsed: 0.000085s[0m
+[basic_sim-13] [0m[INFO] [1791601579.640608734] [basic_sim]: MainLoop - Ellapsed: 0.000058s[0m
+[basic_sim-13] [0m[INFO] [1791601579.660712369] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601579.680732595] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601579.700875762] [basic_sim]: MainLoop - Ellapsed: 0.000089s[0m
+[basic_sim-13] [0m[INFO] [1791601579.720805595] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.723375641] [GSL]: 2 gas measurements, 3 wind measurements over 0.70 seconds[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.723409358] [GSL]: avg_gas=0.7;  avg_windSpeed=0.47;  avg_wind_dir=1.6[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.723983630] [GSL]: [33mGAS HIT[0m[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.735983947] [GSL - Trace]: [32mEntering StopAndMeasure[0m[0m
+[basic_sim-13] [0m[INFO] [1791601579.740788221] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601579.760923828] [basic_sim]: MainLoop - Ellapsed: 0.000088s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.775105571] [GSL - Trace]: [32mGot cost map[0m[0m
+[basic_sim-13] [0m[INFO] [1791601579.781981251] [basic_sim]: MainLoop - Ellapsed: 0.000108s[0m
+[basic_sim-13] [0m[INFO] [1791601579.803140956] [basic_sim]: MainLoop - Ellapsed: 0.000256s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.823284233] [GSL]: 1 gas measurements, 2 wind measurements over 0.40 seconds[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.823321807] [GSL]: avg_gas=4;  avg_windSpeed=0.46;  avg_wind_dir=1.9[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.823889861] [GSL]: [33mGAS HIT[0m[0m
+[basic_sim-13] [0m[INFO] [1791601579.824068674] [basic_sim]: MainLoop - Ellapsed: 0.000361s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.838296591] [GSL - Trace]: [32mEntering StopAndMeasure[0m[0m
+[basic_sim-13] [0m[INFO] [1791601579.841320235] [basic_sim]: MainLoop - Ellapsed: 0.000124s[0m
+[basic_sim-13] [0m[INFO] [1791601579.861574162] [basic_sim]: MainLoop - Ellapsed: 0.000103s[0m
+[basic_sim-13] [0m[INFO] [1791601579.880655758] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601579.900600022] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601579.920745047] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.923414137] [GSL]: 1 gas measurements, 2 wind measurements over 0.50 seconds[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.923446839] [GSL]: avg_gas=5.3;  avg_windSpeed=0.47;  avg_wind_dir=1.4[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.924015939] [GSL]: [33mGAS HIT[0m[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601579.936076791] [GSL - Trace]: [32mEntering StopAndMeasure[0m[0m
+[basic_sim-13] [0m[INFO] [1791601579.940668130] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601579.960828743] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601579.980668516] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601580.000948093] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601580.020808400] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601580.023385599] [GSL]: 1 gas measurements, 2 wind measurements over 0.50 seconds[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601580.023443213] [GSL]: avg_gas=0.9;  avg_windSpeed=0.5;  avg_wind_dir=1.7[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601580.024139078] [GSL]: [33mGAS HIT[0m[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601580.036962633] [GSL]: Max mutual info: 6.103[0m
+[gsl_actionserver_node-14] [33m[WARN] [1791601580.037425659] [rcl.logging_rosout]: Publisher already registered for provided node name. If this is due to multiple nodes with the same name then all logs for that logger name will go out over the existing publisher. As soon as any node with that name is destructed it will unregister the publisher, preventing any further logs for that name from being published on the rosout topic.[0m
+[basic_sim-13] [0m[INFO] [1791601580.040967441] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601580.047701887] [GSL]: MutualInformation - Ellapsed: 0.011s[0m
+[basic_sim-13] [0m[INFO] [1791601580.060522738] [basic_sim]: MainLoop - Ellapsed: 0.000054s[0m
+[basic_sim-13] [0m[INFO] [1791601580.080778462] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601580.100701825] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601580.114799476] [GSL]: Sending goal (-1.68, 2.24)[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601580.115925795] [GSL]: Variance: 13.78[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601580.116021003] [GSL - Trace]: [32mEntering Moving[0m[0m
+[basic_sim-13] [0m[INFO] [1791601580.120763064] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601580.140795916] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601580.160873210] [basic_sim]: MainLoop - Ellapsed: 0.000085s[0m
+[basic_sim-13] [0m[INFO] [1791601580.181242238] [basic_sim]: MainLoop - Ellapsed: 0.000117s[0m
+[basic_sim-13] [0m[INFO] [1791601580.201062157] [basic_sim]: MainLoop - Ellapsed: 0.000097s[0m
+[basic_sim-13] [0m[INFO] [1791601580.220796687] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601580.240484954] [basic_sim]: MainLoop - Ellapsed: 0.000053s[0m
+[basic_sim-13] [0m[INFO] [1791601580.260785272] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601580.280885362] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601580.300567542] [basic_sim]: MainLoop - Ellapsed: 0.000056s[0m
+[basic_sim-13] [0m[INFO] [1791601580.321071626] [basic_sim]: MainLoop - Ellapsed: 0.000098s[0m
+[basic_sim-13] [0m[INFO] [1791601580.340686744] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601580.361100159] [basic_sim]: MainLoop - Ellapsed: 0.000104s[0m
+[basic_sim-13] [0m[INFO] [1791601580.381021116] [basic_sim]: MainLoop - Ellapsed: 0.000090s[0m
+[basic_sim-13] [0m[INFO] [1791601580.400445548] [basic_sim]: MainLoop - Ellapsed: 0.000048s[0m
+[basic_sim-13] [0m[INFO] [1791601580.420872265] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601580.440434506] [basic_sim]: MainLoop - Ellapsed: 0.000044s[0m
+[gsl_actionserver_node-14] [31m[ERROR] [1791601580.454473974] [GSL]: [31mException while running GSL: feedback publisher is invalid, at ./src/rcl_action/action_server.c:919[0m[0m
+[basic_sim-13] [0m[INFO] [1791601580.460787314] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601580.480678294] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601580.500499223] [basic_sim]: MainLoop - Ellapsed: 0.000046s[0m
+[basic_sim-13] [0m[INFO] [1791601580.520856200] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601580.540707445] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601580.561344573] [basic_sim]: MainLoop - Ellapsed: 0.000128s[0m
+[basic_sim-13] [0m[INFO] [1791601580.581259026] [basic_sim]: MainLoop - Ellapsed: 0.000109s[0m
+[basic_sim-13] [0m[INFO] [1791601580.600764412] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601580.620854913] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601580.641081027] [basic_sim]: MainLoop - Ellapsed: 0.000104s[0m
+[basic_sim-13] [0m[INFO] [1791601580.661391889] [basic_sim]: MainLoop - Ellapsed: 0.000129s[0m
+[basic_sim-13] [0m[INFO] [1791601580.681247027] [basic_sim]: MainLoop - Ellapsed: 0.000109s[0m
+[basic_sim-13] [0m[INFO] [1791601580.700634735] [basic_sim]: MainLoop - Ellapsed: 0.000061s[0m
+[basic_sim-13] [0m[INFO] [1791601580.720858421] [basic_sim]: MainLoop - Ellapsed: 0.000080s[0m
+[basic_sim-13] [0m[INFO] [1791601580.740990485] [basic_sim]: MainLoop - Ellapsed: 0.000096s[0m
+[basic_sim-13] [0m[INFO] [1791601580.761361295] [basic_sim]: MainLoop - Ellapsed: 0.000133s[0m
+[basic_sim-13] [0m[INFO] [1791601580.781531976] [basic_sim]: MainLoop - Ellapsed: 0.000143s[0m
+[basic_sim-13] [0m[INFO] [1791601580.800436829] [basic_sim]: MainLoop - Ellapsed: 0.000044s[0m
+[basic_sim-13] [0m[INFO] [1791601580.820588950] [basic_sim]: MainLoop - Ellapsed: 0.000064s[0m
+[basic_sim-13] [0m[INFO] [1791601580.840537247] [basic_sim]: MainLoop - Ellapsed: 0.000056s[0m
+[basic_sim-13] [0m[INFO] [1791601580.860523123] [basic_sim]: MainLoop - Ellapsed: 0.000060s[0m
+[basic_sim-13] [0m[INFO] [1791601580.880711106] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601580.900731157] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601580.920786812] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601580.940582694] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601580.960984205] [basic_sim]: MainLoop - Ellapsed: 0.000092s[0m
+[basic_sim-13] [0m[INFO] [1791601580.981165434] [basic_sim]: MainLoop - Ellapsed: 0.000098s[0m
+[basic_sim-13] [0m[INFO] [1791601581.000501219] [basic_sim]: MainLoop - Ellapsed: 0.000051s[0m
+[basic_sim-13] [0m[INFO] [1791601581.020726990] [basic_sim]: MainLoop - Ellapsed: 0.000072s[0m
+[basic_sim-13] [0m[INFO] [1791601581.040547179] [basic_sim]: MainLoop - Ellapsed: 0.000058s[0m
+[basic_sim-13] [0m[INFO] [1791601581.060943209] [basic_sim]: MainLoop - Ellapsed: 0.000090s[0m
+[basic_sim-13] [0m[INFO] [1791601581.080825565] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601581.100682092] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601581.120617074] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601581.140619085] [basic_sim]: MainLoop - Ellapsed: 0.000062s[0m
+[basic_sim-13] [0m[INFO] [1791601581.160892671] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601581.180755250] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601581.200649653] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601581.220875144] [basic_sim]: MainLoop - Ellapsed: 0.000088s[0m
+[basic_sim-13] [0m[INFO] [1791601581.240611961] [basic_sim]: MainLoop - Ellapsed: 0.000059s[0m
+[basic_sim-13] [0m[INFO] [1791601581.260674089] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601581.280790559] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601581.300632159] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[basic_sim-13] [0m[INFO] [1791601581.320863791] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601581.340610907] [basic_sim]: MainLoop - Ellapsed: 0.000066s[0m
+[basic_sim-13] [0m[INFO] [1791601581.361995249] [basic_sim]: MainLoop - Ellapsed: 0.000169s[0m
+[basic_sim-13] [0m[INFO] [1791601581.380978378] [basic_sim]: MainLoop - Ellapsed: 0.000094s[0m
+[basic_sim-13] [0m[INFO] [1791601581.400847899] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601581.420828735] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601581.440855086] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[gsl_actionserver_node-14] [0m[INFO] [1791601581.454615325] [GSL]: [34mDONE, CLOSING[0m[0m
+[gsl_actionserver_node-14] terminate called after throwing an instance of 'std::runtime_error'
+[gsl_actionserver_node-14]   what():  Asked to publish result for goal that does not exist
+[basic_sim-13] [0m[INFO] [1791601581.461522473] [basic_sim]: MainLoop - Ellapsed: 0.000136s[0m
+[basic_sim-13] [0m[INFO] [1791601581.481089746] [basic_sim]: MainLoop - Ellapsed: 0.000105s[0m
+[basic_sim-13] [0m[INFO] [1791601581.500926389] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601581.520742869] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601581.540781759] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601581.560795723] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601581.580766810] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601581.600713091] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601581.620663178] [basic_sim]: MainLoop - Ellapsed: 0.000063s[0m
+[ERROR] [gsl_actionserver_node-14]: process has died [pid 32591, exit code -6, cmd '/home/zyc/pmfs_official_alignment_r5_20261009/ws/install/gsl_server/lib/gsl_server/gsl_actionserver_node --ros-args -r __node:=GSL -r __ns:=/PioneerP3DX --params-file /tmp/launch_params_5c_w8zg8 --params-file /tmp/launch_params_7r76vva7 --params-file /tmp/launch_params_msdoz5l9 --params-file /tmp/launch_params_sna517tw --params-file /tmp/launch_params_9dg0qxxx --params-file /tmp/launch_params_tuwpbg33 --params-file /tmp/launch_params_9r67ctfq --params-file /tmp/launch_params_sk6hcfhs --params-file /tmp/launch_params_erls8wbf --params-file /tmp/launch_params_bhckzl58 --params-file /tmp/launch_params_wumgoi8v --params-file /tmp/launch_params_sni51zv_ --params-file /tmp/launch_params_snrndi3u --params-file /tmp/launch_params_wndsvrp0 --params-file /tmp/launch_params_5y12orej --params-file /tmp/launch_params_9jwhwomh --params-file /tmp/launch_params_8aimvyak --params-file /tmp/launch_params_urbqg_pc --params-file /tmp/launch_params_hno9i7f1 --params-file /tmp/launch_params_pjxau2y7 --params-file /tmp/launch_params_0mix_yvk --params-file /tmp/launch_params_miedizgt --params-file /tmp/launch_params_u1g24x7k --params-file /tmp/launch_params_6laylpfo --params-file /tmp/launch_params_wrolkara --params-file /tmp/launch_params_i81t2jhc --params-file /tmp/launch_params_ljuclt4v --params-file /tmp/launch_params_2pnalmlw --params-file /tmp/launch_params_yiu_j8v1 --params-file /tmp/launch_params_z0s2pvno --params-file /tmp/launch_params_rzvabon4 --params-file /tmp/launch_params_5mv475ji --params-file /tmp/launch_params_t0j0s8lm --params-file /tmp/launch_params_jys79ehk --params-file /tmp/launch_params_t13u1jhb --params-file /tmp/launch_params_0ds21qqf --params-file /tmp/launch_params__dduewis --params-file /tmp/launch_params_d175avr5 --params-file /tmp/launch_params_4oyppsy9 --params-file /tmp/launch_params_8hitdfg_ --params-file /tmp/launch_params_3lf5x6pf --params-file /tmp/launch_params_8octmm3c --params-file /tmp/launch_params__sqjyotc'].
+[basic_sim-13] [0m[INFO] [1791601581.640957402] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601581.660832584] [basic_sim]: MainLoop - Ellapsed: 0.000076s[0m
+[basic_sim-13] [0m[INFO] [1791601581.680707860] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601581.700803432] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601581.720686322] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601581.740710804] [basic_sim]: MainLoop - Ellapsed: 0.000071s[0m
+[basic_sim-13] [0m[INFO] [1791601581.761232807] [basic_sim]: MainLoop - Ellapsed: 0.000107s[0m
+[basic_sim-13] [0m[INFO] [1791601581.780896406] [basic_sim]: MainLoop - Ellapsed: 0.000085s[0m
+[basic_sim-13] [0m[INFO] [1791601581.800870024] [basic_sim]: MainLoop - Ellapsed: 0.000082s[0m
+[basic_sim-13] [0m[INFO] [1791601581.820950833] [basic_sim]: MainLoop - Ellapsed: 0.000093s[0m
+[basic_sim-13] [0m[INFO] [1791601581.840904456] [basic_sim]: MainLoop - Ellapsed: 0.000084s[0m
+[basic_sim-13] [0m[INFO] [1791601581.861342859] [basic_sim]: MainLoop - Ellapsed: 0.000124s[0m
+[basic_sim-13] [0m[INFO] [1791601581.881019976] [basic_sim]: MainLoop - Ellapsed: 0.000085s[0m
+[basic_sim-13] [0m[INFO] [1791601581.900948802] [basic_sim]: MainLoop - Ellapsed: 0.000081s[0m
+[basic_sim-13] [0m[INFO] [1791601581.920615077] [basic_sim]: MainLoop - Ellapsed: 0.000058s[0m
+[basic_sim-13] [0m[INFO] [1791601581.940656346] [basic_sim]: MainLoop - Ellapsed: 0.000073s[0m
+[basic_sim-13] [0m[INFO] [1791601581.961258248] [basic_sim]: MainLoop - Ellapsed: 0.000114s[0m
+[basic_sim-13] [0m[INFO] [1791601581.980964090] [basic_sim]: MainLoop - Ellapsed: 0.000091s[0m
+[basic_sim-13] [0m[INFO] [1791601582.000996089] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601582.020731975] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601582.040714523] [basic_sim]: MainLoop - Ellapsed: 0.000074s[0m
+[basic_sim-13] [0m[INFO] [1791601582.060652216] [basic_sim]: MainLoop - Ellapsed: 0.000070s[0m
+[basic_sim-13] [0m[INFO] [1791601582.080783990] [basic_sim]: MainLoop - Ellapsed: 0.000069s[0m
+[basic_sim-13] [0m[INFO] [1791601582.100829336] [basic_sim]: MainLoop - Ellapsed: 0.000085s[0m
+[basic_sim-13] [0m[INFO] [1791601582.120667507] [basic_sim]: MainLoop - Ellapsed: 0.000067s[0m
+[basic_sim-13] [0m[INFO] [1791601582.140820040] [basic_sim]: MainLoop - Ellapsed: 0.000079s[0m
+[basic_sim-13] [0m[INFO] [1791601582.160782730] [basic_sim]: MainLoop - Ellapsed: 0.000078s[0m
+[basic_sim-13] [0m[INFO] [1791601582.180714435] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601582.201217538] [basic_sim]: MainLoop - Ellapsed: 0.000117s[0m
+[basic_sim-13] [0m[INFO] [1791601582.220907379] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601582.240655342] [basic_sim]: MainLoop - Ellapsed: 0.000065s[0m
+[basic_sim-13] [0m[INFO] [1791601582.261372298] [basic_sim]: MainLoop - Ellapsed: 0.000131s[0m
+[basic_sim-13] [0m[INFO] [1791601582.280805631] [basic_sim]: MainLoop - Ellapsed: 0.000068s[0m
+[basic_sim-13] [0m[INFO] [1791601582.300786325] [basic_sim]: MainLoop - Ellapsed: 0.000075s[0m
+[basic_sim-13] [0m[INFO] [1791601582.320789454] [basic_sim]: MainLoop - Ellapsed: 0.000077s[0m
+[basic_sim-13] [0m[INFO] [1791601582.340884745] [basic_sim]: MainLoop - Ellapsed: 0.000087s[0m
+[basic_sim-13] [0m[INFO] [1791601582.361947374] [basic_sim]: MainLoop - Ellapsed: 0.000146s[0m
+[basic_sim-13] [0m[INFO] [1791601582.381332407] [basic_sim]: MainLoop - Ellapsed: 0.000116s[0m
+[basic_sim-13] [0m[INFO] [1791601582.401087249] [basic_sim]: MainLoop - Ellapsed: 0.000103s[0m
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[static_transform_publisher-5] [0m[INFO] [1791601582.402896072] [rclcpp]: signal_handler(signum=2)[0m
+[INFO] [basic_sim-13]: sending signal 'SIGINT' to process[basic_sim-13]
+[INFO] [robot_state_publisher-12]: sending signal 'SIGINT' to process[robot_state_publisher-12]
+[INFO] [lifecycle_manager-11]: sending signal 'SIGINT' to process[lifecycle_manager-11]
+[INFO] [behavior_server-10]: sending signal 'SIGINT' to process[behavior_server-10]
+[INFO] [controller_server-9]: sending signal 'SIGINT' to process[controller_server-9]
+[INFO] [planner_server-8]: sending signal 'SIGINT' to process[planner_server-8]
+[INFO] [bt_navigator-7]: sending signal 'SIGINT' to process[bt_navigator-7]
+[INFO] [map_server-6]: sending signal 'SIGINT' to process[map_server-6]
+[INFO] [static_transform_publisher-5]: sending signal 'SIGINT' to process[static_transform_publisher-5]
+[INFO] [simulated_gas_sensor-4]: sending signal 'SIGINT' to process[simulated_gas_sensor-4]
+[INFO] [static_transform_publisher-3]: sending signal 'SIGINT' to process[static_transform_publisher-3]
+[INFO] [simulated_anemometer-2]: sending signal 'SIGINT' to process[simulated_anemometer-2]
+[INFO] [player-1]: sending signal 'SIGINT' to process[player-1]
+[ERROR] [static_transform_publisher-5]: process has died [pid 32552, exit code -2, cmd '/opt/ros/humble/lib/tf2_ros/static_transform_publisher 0 0 0.5 1.0 0.0 0 0 PioneerP3DX_base_link PioneerP3DX_pid_frame --ros-args -r __node:=pid_tf_pub -r __ns:=/PioneerP3DX --params-file /tmp/launch_params_gu75mxk5'].
+[simulated_gas_sensor-4] [0m[INFO] [1791601582.402966554] [rclcpp]: signal_handler(signum=2)[0m
+[simulated_anemometer-2] [0m[INFO] [1791601582.403036364] [rclcpp]: signal_handler(signum=2)[0m
+[static_transform_publisher-3] [0m[INFO] [1791601582.403165007] [rclcpp]: signal_handler(signum=2)[0m
+[player-1] [0m[INFO] [1791601582.403544299] [rclcpp]: signal_handler(signum=2)[0m
+[basic_sim-13] [0m[INFO] [1791601582.414913078] [rclcpp]: signal_handler(signum=2)[0m
+[simulated_gas_sensor-4] [0m[INFO] [1791601582.439588066] [rclcpp]: signal_handler(signum=2)[0m
+[simulated_anemometer-2] [0m[INFO] [1791601582.443526683] [rclcpp]: signal_handler(signum=2)[0m
+[player-1] [0m[INFO] [1791601582.445038324] [rclcpp]: signal_handler(signum=2)[0m
+[ERROR] [static_transform_publisher-3]: process has died [pid 32548, exit code -2, cmd '/opt/ros/humble/lib/tf2_ros/static_transform_publisher 0 0 0.5 1.0 0.0 0 0 PioneerP3DX_base_link PioneerP3DX_anemometer_frame --ros-args -r __node:=anemometer_tf_pub -r __ns:=/PioneerP3DX --params-file /tmp/launch_params_55v1vu9n'].
+[INFO] [robot_state_publisher-12]: process has finished cleanly [pid 32566]
+[INFO] [simulated_gas_sensor-4]: process has finished cleanly [pid 32550]
+[INFO] [player-1]: process has finished cleanly [pid 32544]
+[INFO] [simulated_anemometer-2]: process has finished cleanly [pid 32546]
+[INFO] [basic_sim-13]: process has finished cleanly [pid 32581]
+[INFO] [map_server-6]: process has finished cleanly [pid 32554]
+[INFO] [behavior_server-10]: process has finished cleanly [pid 32562]
+[INFO] [lifecycle_manager-11]: process has finished cleanly [pid 32564]
+[INFO] [bt_navigator-7]: process has finished cleanly [pid 32556]
+[INFO] [controller_server-9]: process has finished cleanly [pid 32560]
+[INFO] [planner_server-8]: process has finished cleanly [pid 32558]

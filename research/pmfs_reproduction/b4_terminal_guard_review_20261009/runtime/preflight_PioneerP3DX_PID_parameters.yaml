@@ -1,0 +1,23 @@
+/PioneerP3DX/PID:
+  ros__parameters:
+    fixed_frame: map
+    qos_overrides:
+      /clock:
+        subscription:
+          depth: 1
+          durability: volatile
+          history: keep_last
+          reliability: best_effort
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    rate: 10.0
+    sensor_frame: PioneerP3DX_pid_frame
+    sensor_model: 30
+    topic: /PioneerP3DX/PID/Sensor_reading
+    use_PID_correction_factors: false
+    use_sim_time: true
+

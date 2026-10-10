@@ -1,0 +1,98 @@
+--- frozen_B4/runtime_driver.py
++++ B4_terminal/runtime_driver.py
+@@ -1,5 +1,6 @@
+ from pathlib import Path
+-import os,json,time,subprocess,signal,math,copy,traceback
++import os,json,time,subprocess,signal,math,copy,traceback,re
++from runtime_guard_policy import RuntimeGuard
+ import rclpy
+ from rclpy.node import Node
+ from rclpy.callback_groups import ReentrantCallbackGroup
+@@ -16,9 +17,9 @@
+ from gsl_actions.action import DoGSL
+ from tf2_ros import Buffer,TransformListener
+ 
+-T=Path('/home/zyc/pmfs_b4_native_validation_20261009');R=T/'runtime';R.mkdir(exist_ok=True)
++T=Path('/home/zyc/pmfs_b4_official_terminal_completion_20261009');R=T/'runtime';R.mkdir(exist_ok=True)
+ assert not (T/'RUN_STARTED.json').exists()
+-os.environ.update(ROS_DOMAIN_ID='77',OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',PMFS_R5_CAPTURE=str(R/'updates'),PMFS_R5_CONSUMERS=str(R/'consumer_messages.csv'),PMFS_R5_EVENTS=str(R/'measurement_events.csv'),PMFS_R5_PLAYER=str(R/'player_frames.csv'))
++os.environ.update(ROS_DOMAIN_ID='78',OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',PMFS_R5_CAPTURE=str(R/'updates'),PMFS_R5_CONSUMERS=str(R/'consumer_messages.csv'),PMFS_R5_EVENTS=str(R/'measurement_events.csv'),PMFS_R5_PLAYER=str(R/'player_frames.csv'))
+ processes=[]
+ def start(name,cmd,extra=None):
+  env=os.environ.copy();env.update(extra or {});f=(R/(name+'.log')).open('w');p=subprocess.Popen(cmd,stdout=f,stderr=f,env=env,start_new_session=True);processes.append((name,p,f));return p
+@@ -76,7 +77,7 @@
+  if not f.done():raise RuntimeError('service timeout '+client.srv_name)
+  return f.result()
+ def save_status():
+- status.update(counts=counts,nonzero_cmd_vel_messages=int(cmd_nonzero),pose_samples=len(pose_path),processes=[dict(name=n,pid=p.pid,returncode=p.poll()) for n,p,_ in processes]);(T/'RUNTIME_STATUS.json').write_text(json.dumps(status,indent=2))
++ status.update(counts=counts,nonzero_cmd_vel_messages=int(cmd_nonzero),pose_samples=len(pose_path),processes=[dict(name=n,pid=p.pid,returncode=p.poll()) for n,p,_ in processes]);(T/'RUNTIME_STATUS.tmp').write_text(json.dumps(status,indent=2));(T/'RUNTIME_STATUS.tmp').replace(T/'RUNTIME_STATUS.json')
+ try:
+  launch=start('launch',['ros2','launch',str(T/'N1_B4_launch.py'),'scenario:=B','simulation:=B4','method:=PMFS'])
+  gmrf=start('gmrf',['/home/zyc/pmfs_wind_one_update_r2_20261009/gmrf_wind_observed','--ros-args','-p','use_sim_time:=true','-p','sensor_topic:=/PioneerP3DX/Anemometer/WindSensor_reading','-p','map_topic:=/PioneerP3DX/map','-p','cell_size:=0.25','-p','exec_freq:=10.0'],{'GMRF_R2_TRACE':str(R/'GMRF_consumed.csv')})
+@@ -94,7 +95,7 @@
+  assert all(math.isfinite(v) for v in [*w.u,*w.v,*w.w]),'nonfinite wind'
+  assert len(g.positions)==1 and all(math.isfinite(v) and v>=0 for v in g.positions[0].concentration),'nonfinite gas'
+  assert abs(pos.z+.2)<1e-5,'sensor elevation mismatch'
+- pre=dict(lifecycle=states,sensor_xyz=[pos.x,pos.y,pos.z],gas_types=list(g.gas_type),gas_ppm=list(g.positions[0].concentration),wind_uvw=[list(w.u),list(w.v),list(w.w)],ROS_DOMAIN_ID=77,sim_clock_ns=node.get_clock().now().nanoseconds,input_class=status['input_class'],B4_physics_qualification=status['B4_physics_qualification'])
++ pre=dict(lifecycle=states,sensor_xyz=[pos.x,pos.y,pos.z],gas_types=list(g.gas_type),gas_ppm=list(g.positions[0].concentration),wind_uvw=[list(w.u),list(w.v),list(w.w)],ROS_DOMAIN_ID=78,sim_clock_ns=node.get_clock().now().nanoseconds,input_class=status['input_class'],B4_physics_qualification=status['B4_physics_qualification'])
+  # Before the single goal, verify native raw message types, frames, stamps and stationary TF.
+  pid=latest['/PioneerP3DX/PID/Sensor_reading'];an=latest['/PioneerP3DX/Anemometer/WindSensor_reading']
+  assert pid.raw_units==pid.UNITS_PPM and pid.technology==pid.TECH_PID and math.isfinite(pid.raw) and pid.raw>=0
+@@ -116,29 +117,44 @@
+  pre.update(message_age_sim_seconds=ages,PID_units='ppm',PID_model=30,PID_response='sum ppm; correction_factors=false from pinned code/default; resolved dump saved',probe_source_neighborhood_ppm=list(pconc.positions[0].concentration),probe_is_input_to_algorithm=False,gas_frame_binding='physical_clock_trace.csv',sensor_frames=[pid.header.frame_id,an.header.frame_id],native_goal_count=0)
+  (R/'PREFLIGHT.json').write_text(json.dumps(pre,indent=2));status['preflight']='PASS';save_status()
+  # Preflight does not trigger a candidate update. One and only one real GSL goal.
+- (T/'RUN_STARTED.json').write_text(json.dumps(dict(wall_time=time.time(),ROS_ns=node.get_clock().now().nanoseconds,native_goal_count=1,input_class=status['input_class'],maxSearchTime=300.,max_goal_wall_s=345)))
+- status['goal_invocation_ROS_ns']=node.get_clock().now().nanoseconds;status['native_goal_count']=1;goal=DoGSL.Goal();goal.gsl_method='PMFS';sent=action.send_goal_async(goal)
++ (T/'RUN_STARTED.json').write_text(json.dumps(dict(wall_time=time.time(),guard_start_monotonic=time.monotonic(),ROS_ns=node.get_clock().now().nanoseconds,native_goal_count=1,input_class=status['input_class'],maxSearchTime=300.,max_goal_wall_s=345)))
++ status['goal_invocation_ROS_ns']=node.get_clock().now().nanoseconds;goal_guard_started_wall=time.monotonic();status['guard_started_monotonic']=goal_guard_started_wall;status['native_goal_count']=1;goal=DoGSL.Goal();goal.gsl_method='PMFS';sent=action.send_goal_async(goal)
+  end=time.time()+10
+  while not sent.done() and time.time()<end:rclpy.spin_once(node,timeout_sec=.1)
+  if not sent.done() or not sent.result().accepted:raise RuntimeError('GSL goal not accepted')
+  handle=sent.result();result=handle.get_result_async();starttime=time.time();status['goal_accepted']=True
++ guard=RuntimeGuard(goal_guard_started_wall,status['goal_invocation_ROS_ns']);guardlog=(R/'guard_events.jsonl').open('w');fault=None;last_fault_check=0
+  dump_started=False;last_status=0
+- while not result.done() and time.time()-starttime<345:
++ while not result.done():
+   rclpy.spin_once(node,timeout_sec=.05)
+-  if not result.done() and (node.get_clock().now().nanoseconds-status['goal_invocation_ROS_ns'])/1e9>=300:
+-   status['resource_stop_reason']='SIMULATION_SEARCH_BUDGET_300S';status['budget_stop_ROS_ns']=node.get_clock().now().nanoseconds
+-   handle.cancel_goal_async()
+-   raise RuntimeError('External 300 simulated-second search guard reached; no extended localization permitted')
++  now=time.monotonic()
++  if now-last_fault_check>=.5:
++   last_fault_check=now
++   for n,p,_ in processes:
++    if n in ('launch','gmrf') and p.poll() is not None:fault={'name':n,'returncode':p.poll()}
++   text=(R/'launch.log').read_text(errors='replace')
++   match=re.search(r'\[([^]]+)\]: process has died \[pid (\d+), exit code (-?\d+)',text)
++   if match:fault={'name':match.group(1),'pid':int(match.group(2)),'returncode':int(match.group(3))}
++  decision=guard.observe(now,node.get_clock().now().nanoseconds,result_done=result.done(),process_fault=fault)
++  guardlog.write(json.dumps(dict(monotonic_wall=now,wall_elapsed=now-goal_guard_started_wall,ROS_ns=node.get_clock().now().nanoseconds,result_done=result.done(),process_fault=fault,decision=decision))+'\n');guardlog.flush()
++  if decision['action']=='RESULT':break
++  if decision['action']=='STOP':
++   # Same-thread final future check prevents cancelling a result already received.
++   if result.done():break
++   status.update(resource_stop_reason=decision['reason'],guard_stop_ROS_ns=node.get_clock().now().nanoseconds,cancellation_requested=True)
++   cancel=handle.cancel_goal_async();drain_until=time.monotonic()+2
++   while not result.done() and time.monotonic()<drain_until:rclpy.spin_once(node,timeout_sec=.05)
++   if result.done():
++    raw=result.result();status['action_result_after_guard_cancel']={'action_status':int(raw.status),'success':bool(raw.result.success)}
++   status['cancel_response_received']=cancel.done()
++   raise RuntimeError('Independent external safety guard: '+decision['reason'])
+   if time.time()-last_status>5:save_status();last_status=time.time()
+   if not dump_started and time.time()-starttime>1:
+    start('parameter_dump',['bash','-lc','ros2 param dump /PioneerP3DX/GSL > '+str(R/'resolved_GSL_parameters.yaml')+'; ros2 param dump /gaden_player > '+str(R/'resolved_player_parameters.yaml')]);dump_started=True
+-  if launch.poll() is not None and not result.done():
+-   for _ in range(20):rclpy.spin_once(node,timeout_sec=.1)
+-   if not result.done():raise RuntimeError('launch exited during native goal')
+- if not result.done():
+-  status['result']='OUTER_TIMEOUT';handle.cancel_goal_async()
++ guardlog.close()
++ if not result.done():raise RuntimeError('Guard loop ended without a native future')
+  else:
+-  q=result.result();status.update(result='NATIVE_ACTION_RETURNED',action_status=int(q.status),localization_success=bool(q.result.success),wall_seconds=time.time()-starttime)
++  q=result.result();status.update(result='NATIVE_ACTION_RETURNED',action_status=int(q.status),localization_success=bool(q.result.success),wall_seconds=time.time()-starttime,goal_wall_elapsed_monotonic=time.monotonic()-goal_guard_started_wall,official_result_received_ROS_ns=node.get_clock().now().nanoseconds,external_cancel_requested=False)
+ except Exception as e:
+  status.update(result='RUNTIME_ERROR',error=str(e),traceback=traceback.format_exc())
+ finally:

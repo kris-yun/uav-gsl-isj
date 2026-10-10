@@ -1,0 +1,15 @@
+--- executed/runtime_driver.py
++++ offline_proposal/runtime_driver.py
+@@ -113,7 +113,11 @@
+  assert sum(pconc.positions[0].concentration)>0,'No valid generated gas response at release neighborhood'
+  for n in ['gaden_player','PioneerP3DX/PID','PioneerP3DX/Anemometer','basic_sim']:
+   with (R/('preflight_'+n.replace('/','_')+'_parameters.yaml')).open('w') as f:
+-   subprocess.run(['ros2','param','dump','/'+n],stdout=f,stderr=f,timeout=8)
++   proc=subprocess.Popen(['ros2','param','dump','/'+n],stdout=f,stderr=f)
++   deadline=time.monotonic()+8
++   while proc.poll() is None and time.monotonic()<deadline:rclpy.spin_once(node,timeout_sec=.05)
++   if proc.poll() is None:proc.terminate();proc.wait(timeout=2);raise RuntimeError('preflight parameter dump timeout '+n)
++   if proc.returncode!=0:raise RuntimeError('preflight parameter dump failed '+n)
+  pre.update(message_age_sim_seconds=ages,PID_units='ppm',PID_model=30,PID_response='sum ppm; correction_factors=false from pinned code/default; resolved dump saved',probe_source_neighborhood_ppm=list(pconc.positions[0].concentration),probe_is_input_to_algorithm=False,gas_frame_binding='physical_clock_trace.csv',sensor_frames=[pid.header.frame_id,an.header.frame_id],native_goal_count=0)
+  (R/'PREFLIGHT.json').write_text(json.dumps(pre,indent=2));status['preflight']='PASS';save_status()
+  # Preflight does not trigger a candidate update. One and only one real GSL goal.

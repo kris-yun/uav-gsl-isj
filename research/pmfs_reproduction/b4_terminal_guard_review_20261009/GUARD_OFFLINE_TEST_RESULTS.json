@@ -1,0 +1,516 @@
+{
+  "verdict": "PASS",
+  "tests": 12,
+  "GSL_executions": 0,
+  "ROS_imports": 0,
+  "official_maxSearchTime_unchanged": 300,
+  "external_goal_based_ROS_budget_removed": true,
+  "wall_limit_s": 345,
+  "clock_stall_limit_s": 15,
+  "result_drain_grace_s": 2,
+  "policy_sha256": "9d3d3e65647fbde004fb6270566cf95ebc98cc5a1f0d2e026cd9c1ef3dd3faeb",
+  "cases": [
+    {
+      "test": "delayed_initialization_no_goal_based_300s_cutoff",
+      "verdict": "PASS",
+      "events": [
+        {
+          "wall_s": 10,
+          "ROS_s": 50,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          },
+          "expected": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          }
+        },
+        {
+          "wall_s": 40,
+          "ROS_s": 200,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          },
+          "expected": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          }
+        },
+        {
+          "wall_s": 80,
+          "ROS_s": 400,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          },
+          "expected": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          }
+        }
+      ]
+    },
+    {
+      "test": "native_early_success",
+      "verdict": "PASS",
+      "events": [
+        {
+          "wall_s": 10,
+          "ROS_s": 50,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          },
+          "expected": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          }
+        },
+        {
+          "wall_s": 11,
+          "ROS_s": 55,
+          "result_done": true,
+          "process_fault": null,
+          "actual": {
+            "action": "RESULT",
+            "reason": "NATIVE_ACTION_RESULT"
+          },
+          "expected": {
+            "action": "RESULT",
+            "reason": "NATIVE_ACTION_RESULT"
+          }
+        }
+      ]
+    },
+    {
+      "test": "native_search_timeout_returns_failure",
+      "verdict": "PASS",
+      "events": [
+        {
+          "wall_s": 60,
+          "ROS_s": 300,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          },
+          "expected": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          }
+        },
+        {
+          "wall_s": 66,
+          "ROS_s": 330,
+          "result_done": true,
+          "process_fault": null,
+          "actual": {
+            "action": "RESULT",
+            "reason": "NATIVE_ACTION_RESULT"
+          },
+          "expected": {
+            "action": "RESULT",
+            "reason": "NATIVE_ACTION_RESULT"
+          }
+        }
+      ]
+    },
+    {
+      "test": "result_wins_near_wall_cancel",
+      "verdict": "PASS",
+      "events": [
+        {
+          "wall_s": 343,
+          "ROS_s": 1715,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "DRAIN",
+            "reason": "NATIVE_GOAL_WALL_LIMIT_345S"
+          },
+          "expected": {
+            "action": "DRAIN",
+            "reason": "NATIVE_GOAL_WALL_LIMIT_345S"
+          }
+        },
+        {
+          "wall_s": 344.99,
+          "ROS_s": 1724.95,
+          "result_done": true,
+          "process_fault": null,
+          "actual": {
+            "action": "RESULT",
+            "reason": "NATIVE_ACTION_RESULT"
+          },
+          "expected": {
+            "action": "RESULT",
+            "reason": "NATIVE_ACTION_RESULT"
+          }
+        }
+      ]
+    },
+    {
+      "test": "result_wins_at_same_tick_as_deadline_and_exit",
+      "verdict": "PASS",
+      "events": [
+        {
+          "wall_s": 345,
+          "ROS_s": 1725,
+          "result_done": true,
+          "process_fault": {
+            "returncode": -11
+          },
+          "actual": {
+            "action": "RESULT",
+            "reason": "NATIVE_ACTION_RESULT"
+          },
+          "expected": {
+            "action": "RESULT",
+            "reason": "NATIVE_ACTION_RESULT"
+          }
+        }
+      ]
+    },
+    {
+      "test": "clock_stops",
+      "verdict": "PASS",
+      "events": [
+        {
+          "wall_s": 1,
+          "ROS_s": 5,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          },
+          "expected": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          }
+        },
+        {
+          "wall_s": 14,
+          "ROS_s": 5,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "DRAIN",
+            "reason": "ROS_CLOCK_STALLED"
+          },
+          "expected": {
+            "action": "DRAIN",
+            "reason": "ROS_CLOCK_STALLED"
+          }
+        },
+        {
+          "wall_s": 16,
+          "ROS_s": 5,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "STOP",
+            "reason": "ROS_CLOCK_STALLED"
+          },
+          "expected": {
+            "action": "STOP",
+            "reason": "ROS_CLOCK_STALLED"
+          }
+        }
+      ]
+    },
+    {
+      "test": "clock_resumes_during_result_drain",
+      "verdict": "PASS",
+      "events": [
+        {
+          "wall_s": 1,
+          "ROS_s": 5,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          },
+          "expected": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          }
+        },
+        {
+          "wall_s": 14,
+          "ROS_s": 5,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "DRAIN",
+            "reason": "ROS_CLOCK_STALLED"
+          },
+          "expected": {
+            "action": "DRAIN",
+            "reason": "ROS_CLOCK_STALLED"
+          }
+        },
+        {
+          "wall_s": 15,
+          "ROS_s": 10,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          },
+          "expected": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          }
+        }
+      ]
+    },
+    {
+      "test": "clock_backward_jump",
+      "verdict": "PASS",
+      "events": [
+        {
+          "wall_s": 1,
+          "ROS_s": 5,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          },
+          "expected": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          }
+        },
+        {
+          "wall_s": 2,
+          "ROS_s": 1,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "DRAIN",
+            "reason": "ROS_CLOCK_BACKWARD_JUMP"
+          },
+          "expected": {
+            "action": "DRAIN",
+            "reason": "ROS_CLOCK_BACKWARD_JUMP"
+          }
+        },
+        {
+          "wall_s": 4,
+          "ROS_s": 11,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "STOP",
+            "reason": "ROS_CLOCK_BACKWARD_JUMP"
+          },
+          "expected": {
+            "action": "STOP",
+            "reason": "ROS_CLOCK_BACKWARD_JUMP"
+          }
+        }
+      ]
+    },
+    {
+      "test": "clock_forward_jump",
+      "verdict": "PASS",
+      "events": [
+        {
+          "wall_s": 1,
+          "ROS_s": 5,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          },
+          "expected": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          }
+        },
+        {
+          "wall_s": 1.1,
+          "ROS_s": 400,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "DRAIN",
+            "reason": "ROS_CLOCK_FORWARD_JUMP"
+          },
+          "expected": {
+            "action": "DRAIN",
+            "reason": "ROS_CLOCK_FORWARD_JUMP"
+          }
+        },
+        {
+          "wall_s": 3.1,
+          "ROS_s": 410,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "STOP",
+            "reason": "ROS_CLOCK_FORWARD_JUMP"
+          },
+          "expected": {
+            "action": "STOP",
+            "reason": "ROS_CLOCK_FORWARD_JUMP"
+          }
+        }
+      ]
+    },
+    {
+      "test": "GSL_abnormal_exit_without_result",
+      "verdict": "PASS",
+      "events": [
+        {
+          "wall_s": 1,
+          "ROS_s": 5,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          },
+          "expected": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          }
+        },
+        {
+          "wall_s": 2,
+          "ROS_s": 10,
+          "result_done": false,
+          "process_fault": {
+            "returncode": -11
+          },
+          "actual": {
+            "action": "DRAIN",
+            "reason": "GSL_OR_REQUIRED_PROCESS_EXIT"
+          },
+          "expected": {
+            "action": "DRAIN",
+            "reason": "GSL_OR_REQUIRED_PROCESS_EXIT"
+          }
+        },
+        {
+          "wall_s": 4,
+          "ROS_s": 20,
+          "result_done": false,
+          "process_fault": {
+            "returncode": -11
+          },
+          "actual": {
+            "action": "STOP",
+            "reason": "GSL_OR_REQUIRED_PROCESS_EXIT"
+          },
+          "expected": {
+            "action": "STOP",
+            "reason": "GSL_OR_REQUIRED_PROCESS_EXIT"
+          }
+        }
+      ]
+    },
+    {
+      "test": "result_arrives_after_process_exit_before_cancel",
+      "verdict": "PASS",
+      "events": [
+        {
+          "wall_s": 1,
+          "ROS_s": 5,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          },
+          "expected": {
+            "action": "WAIT",
+            "reason": "WAIT_NATIVE_ACTION"
+          }
+        },
+        {
+          "wall_s": 2,
+          "ROS_s": 10,
+          "result_done": false,
+          "process_fault": {
+            "returncode": -11
+          },
+          "actual": {
+            "action": "DRAIN",
+            "reason": "GSL_OR_REQUIRED_PROCESS_EXIT"
+          },
+          "expected": {
+            "action": "DRAIN",
+            "reason": "GSL_OR_REQUIRED_PROCESS_EXIT"
+          }
+        },
+        {
+          "wall_s": 3,
+          "ROS_s": 15,
+          "result_done": true,
+          "process_fault": {
+            "returncode": -11
+          },
+          "actual": {
+            "action": "RESULT",
+            "reason": "NATIVE_ACTION_RESULT"
+          },
+          "expected": {
+            "action": "RESULT",
+            "reason": "NATIVE_ACTION_RESULT"
+          }
+        }
+      ]
+    },
+    {
+      "test": "hard_wall_limit_independent_of_ROS_search",
+      "verdict": "PASS",
+      "events": [
+        {
+          "wall_s": 343,
+          "ROS_s": 1715,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "DRAIN",
+            "reason": "NATIVE_GOAL_WALL_LIMIT_345S"
+          },
+          "expected": {
+            "action": "DRAIN",
+            "reason": "NATIVE_GOAL_WALL_LIMIT_345S"
+          }
+        },
+        {
+          "wall_s": 345,
+          "ROS_s": 1725,
+          "result_done": false,
+          "process_fault": null,
+          "actual": {
+            "action": "STOP",
+            "reason": "NATIVE_GOAL_WALL_LIMIT_345S"
+          },
+          "expected": {
+            "action": "STOP",
+            "reason": "NATIVE_GOAL_WALL_LIMIT_345S"
+          }
+        }
+      ]
+    }
+  ]
+}
