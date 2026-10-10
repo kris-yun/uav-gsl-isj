@@ -1,0 +1,58 @@
+{
+  "timestamps_domain": "rclcpp wall log stamps; do not subtract ROS simulation stamps from wall timestamps",
+  "driver_order_evidence": "runtime_driver.py lines 137,141: capture action result before save_status/stop_all; stop_all lines25-32 sends SIGINT",
+  "posterior_update_1_complete_ROS_s": 284.601193145,
+  "observed_stage": "POST_RESULT_SIGINT_SHUTDOWN",
+  "root_cause": "HOLD_NO_STACK_OR_CORE",
+  "events": [
+    {
+      "event": "success_result_saved",
+      "launch_log_line": 3149,
+      "wall_log_stamp_s": "1791595447.183603770",
+      "verbatim_log_line": "[gsl_actionserver_node-14] \u001b[0m[INFO] [1791595447.183603770] [GSL]: \u001b[34mRESULT IS: Success=1, Search_t=182.90, Error=2.21\u001b[0m\u001b[0m"
+    },
+    {
+      "event": "launch_SIGINT",
+      "launch_log_line": 3152,
+      "wall_log_stamp_s": null,
+      "verbatim_log_line": "[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)"
+    },
+    {
+      "event": "GSL_SIGINT",
+      "launch_log_line": 3153,
+      "wall_log_stamp_s": "1791595447.188123284",
+      "verbatim_log_line": "[gsl_actionserver_node-14] \u001b[0m[INFO] [1791595447.188123284] [rclcpp]: signal_handler(signum=2)\u001b[0m"
+    },
+    {
+      "event": "GSL_DONE_CLOSING",
+      "launch_log_line": 3192,
+      "wall_log_stamp_s": "1791595448.249281867",
+      "verbatim_log_line": "[gsl_actionserver_node-14] \u001b[0m[INFO] [1791595448.249281867] [GSL]: \u001b[34mDONE, CLOSING\u001b[0m\u001b[0m"
+    },
+    {
+      "event": "first_subscription_destruction_error",
+      "launch_log_line": 3194,
+      "wall_log_stamp_s": "1791595448.379345797",
+      "verbatim_log_line": "[gsl_actionserver_node-14] \u001b[31m[ERROR] [1791595448.379345797] [PioneerP3DX.GSL.rclcpp]: Error in destruction of rcl subscription handle: Failed to delete datareader, at ./src/subscription.cpp:52, at ./src/rcl/subscription.c:184\u001b[0m"
+    },
+    {
+      "event": "second_subscription_destruction_error",
+      "launch_log_line": 3196,
+      "wall_log_stamp_s": "1791595448.381577132",
+      "verbatim_log_line": "[gsl_actionserver_node-14] \u001b[31m[ERROR] [1791595448.381577132] [PioneerP3DX.GSL.rclcpp]: Error in destruction of rcl subscription handle: Failed to delete datareader, at ./src/subscription.cpp:52, at ./src/rcl/subscription.c:184\u001b[0m"
+    },
+    {
+      "event": "service_datareader_delete_error",
+      "launch_log_line": 3198,
+      "wall_log_stamp_s": null,
+      "verbatim_log_line": "[gsl_actionserver_node-14] Fail in delete datareader, at ./src/rmw_service.cpp:104 during '__function__'"
+    },
+    {
+      "event": "GSL_process_exit_minus11",
+      "launch_log_line": 3199,
+      "wall_log_stamp_s": null,
+      "verbatim_log_line": "[ERROR] [gsl_actionserver_node-14]: process has died [pid 30258, exit code -11, cmd '/home/zyc/pmfs_official_alignment_r5_20261009/ws/install/gsl_server/lib/gsl_server/gsl_actionserver_node --ros-args -r __node:=GSL -r __ns:=/PioneerP3DX --params-file /tmp/launch_params_ban100tz --params-file /tmp/launch_params_ipp32eok --params-file /tmp/launch_params_yvtdk0_v --params-file /tmp/launch_params_v14v8ufp --params-file /tmp/launch_params_fc3nxg6d --params-file /tmp/launch_params_xldpd98b --params-file /tmp/launch_params_jiyq9d46 --params-file /tmp/launch_params_eprsowyv --params-file /tmp/launch_params_md7uv_pp --params-file /tmp/launch_params_kj4_3vyg --params-file /tmp/launch_params_mqg2rma2 --params-file /tmp/launch_params_epkn47d1 --params-file /tmp/launch_params_05l2x3tt --params-file /tmp/launch_params_7gskbkwh --params-file /tmp/launch_params_ayry8ldb --params-file /tmp/launch_params__2a2n51h --params-file /tmp/launch_params_7sewngnt --params-file /tmp/launch_params_9krviyhf --params-file /tmp/launch_params_1wnq4qdz --params-file /tmp/launch_params_66ako22q --params-file /tmp/launch_params_vxnzlmqp --params-file /tmp/launch_params_i09812s1 --params-file /tmp/launch_params_4378xpld --params-file /tmp/launch_params_i1jvfpi0 --params-file /tmp/launch_params_nds3j385 --params-file /tmp/launch_params_c35z1u69 --params-file /tmp/launch_params_oyrk8a2k --params-file /tmp/launch_params_o_hb3dku --params-file /tmp/launch_params_c1sct32s --params-file /tmp/launch_params_q1alpi4f --params-file /tmp/launch_params_dgzctok1 --params-file /tmp/launch_params_4apw5adh --params-file /tmp/launch_params_33f2q279 --params-file /tmp/launch_params_9b2f2qc1 --params-file /tmp/launch_params_ijfx19lz --params-file /tmp/launch_params_md3g_sb9 --params-file /tmp/launch_params_mwnq06m6 --params-file /tmp/launch_params_sjblxdy_ --params-file /tmp/launch_params_htri5py8 --params-file /tmp/launch_params_9tkvkh9w --params-file /tmp/launch_params_t00_gbz1 --params-file /tmp/launch_params_pmfmb46d --params-file /tmp/launch_params_wwlg0z1x']."
+    }
+  ],
+  "first_subscription_error_minus_success_log_wall_s": 1.195742130279541
+}

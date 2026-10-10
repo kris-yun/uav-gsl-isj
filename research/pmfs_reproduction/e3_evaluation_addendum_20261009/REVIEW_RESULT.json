@@ -1,0 +1,31 @@
+{
+  "interpretation": "E3 is one traceable N1 baseline sample that converged under official code rules; not an official-rule localization failure. The extra pre-registered 1m target failed and remains frozen.",
+  "decisions": {
+    "physical_input_contract": "PASS_TRACEABLE_CONTROLLED_SIMULATION",
+    "native_core_execution_and_saved_recomputation": "PASS",
+    "official_config_convergence_success": "PASS",
+    "pre_registered_extra_1m_accuracy_target": "FAIL_RETAINED",
+    "paper_multirun_statistical_reproduction": "HOLD_ONE_RUN",
+    "post_result_shutdown_stage": "PASS_EVIDENCE_LOCATES_FAILURE_AFTER_RESULT",
+    "shutdown_defect_root_cause_and_fix": "HOLD_NO_STACK_NO_NEW_SHUTDOWN_TEST",
+    "physical_failure_mechanism": "HOLD",
+    "B4_static_preparation": "GO",
+    "B4_execution": "HOLD_PENDING_EXPLICIT_APPROVAL"
+  },
+  "official_error_record_m": 2.2083,
+  "official_error_recomputed_m": 2.208295514268876,
+  "configured_variance_threshold_m2": 1.5,
+  "paper_described_threshold_m2": 1.0,
+  "final_variance_m2": 0.7619721286567439,
+  "MAP_error_m": 2.4065016102217758,
+  "full_posterior_mean_error_m": 2.1730612318643883,
+  "native_success": true,
+  "new_ROS_runs": 0,
+  "new_gas_realizations": 0,
+  "new_PMFS_updates": 0,
+  "new_B4_runs": 0,
+  "result_integrity": "PASS_ORIGINAL_1183_MANIFEST_FILES_AND_DEFAULT_VERIFIER",
+  "shutdown_cause_precision": "Observed post-result shutdown errors in rcl/rmw datareader deletion; segmentation-fault root cause unproven.",
+  "future_runtime": "No observed persistent E3 process or artifact-corruption blocker; recurrence not tested or ruled out.",
+  "paper_threshold_counterfactual_stop_time_claimed": false
+}
