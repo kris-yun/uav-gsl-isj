@@ -1,0 +1,171 @@
+{
+  "input_class": "ONE_B4_OFFICIAL_PARAMETERS_N1_ENGINEERING_ALIGNMENT",
+  "B4_physics_qualification": "PASS_SOURCE_GEOMETRY_WIND_TIME_SIDECAR_N1",
+  "native_goal_count": 1,
+  "fixture_messages_injected": 0,
+  "generated_gas_data": 0,
+  "processes": [
+    {
+      "name": "launch",
+      "pid": 5546,
+      "returncode": 0
+    },
+    {
+      "name": "gmrf",
+      "pid": 5547,
+      "returncode": 0
+    },
+    {
+      "name": "parameter_dump",
+      "pid": 5767,
+      "returncode": 0
+    }
+  ],
+  "preflight_stage": "WAIT_NATIVE_SENSORS_MAP_ACTION",
+  "action_server_ready": true,
+  "native_lifecycle_services_ready": {
+    "map_server": true,
+    "planner_server": true,
+    "controller_server": true,
+    "bt_navigator": true,
+    "behavior_server": true
+  },
+  "node_graph": [
+    [
+      "GSL",
+      "/PioneerP3DX"
+    ],
+    [
+      "b4_capture_and_wind_adapter",
+      "/"
+    ],
+    [
+      "GMRF_wind",
+      "/"
+    ],
+    [
+      "transform_listener_impl_63e86d74f6d0",
+      "/"
+    ],
+    [
+      "gaden_player",
+      "/"
+    ],
+    [
+      "Anemometer",
+      "/PioneerP3DX"
+    ],
+    [
+      "transform_listener_impl_5b989d639790",
+      "/PioneerP3DX"
+    ],
+    [
+      "anemometer_tf_pub",
+      "/PioneerP3DX"
+    ],
+    [
+      "PID",
+      "/PioneerP3DX"
+    ],
+    [
+      "transform_listener_impl_5df1749f4690",
+      "/PioneerP3DX"
+    ],
+    [
+      "pid_tf_pub",
+      "/PioneerP3DX"
+    ],
+    [
+      "map_server",
+      "/PioneerP3DX"
+    ],
+    [
+      "bt_navigator",
+      "/PioneerP3DX"
+    ],
+    [
+      "bt_navigator_navigate_to_pose_rclcpp_node",
+      "/PioneerP3DX"
+    ],
+    [
+      "bt_navigator_navigate_through_poses_rclcpp_node",
+      "/PioneerP3DX"
+    ],
+    [
+      "planner_server",
+      "/PioneerP3DX"
+    ],
+    [
+      "global_costmap",
+      "/PioneerP3DX/global_costmap"
+    ],
+    [
+      "transform_listener_impl_59bc161da2e0",
+      "/PioneerP3DX"
+    ],
+    [
+      "controller_server",
+      "/PioneerP3DX"
+    ],
+    [
+      "local_costmap",
+      "/PioneerP3DX/local_costmap"
+    ],
+    [
+      "transform_listener_impl_62d125352930",
+      "/PioneerP3DX"
+    ],
+    [
+      "behavior_server",
+      "/PioneerP3DX"
+    ],
+    [
+      "transform_listener_impl_641c81299740",
+      "/PioneerP3DX"
+    ],
+    [
+      "lifecycle_manager_navigation",
+      "/PioneerP3DX"
+    ],
+    [
+      "robot_state_publisher",
+      "/PioneerP3DX"
+    ],
+    [
+      "basic_sim",
+      "/"
+    ],
+    [
+      "PioneerP3DX",
+      "/"
+    ]
+  ],
+  "counts": {
+    "/tf_static": 4,
+    "/PioneerP3DX/Anemometer/WindSensor_reading": 1145,
+    "/b4/wind_to": 1145,
+    "/PioneerP3DX/ground_truth": 2810,
+    "/tf": 2810,
+    "/clock": 2810,
+    "/PioneerP3DX/PID/Sensor_reading": 562,
+    "/PioneerP3DX/map": 1,
+    "/PioneerP3DX/cmd_vel": 485
+  },
+  "nonzero_cmd_vel_messages": 385,
+  "pose_samples": 2810,
+  "raw_backends_ready_before_proxy_exposure": true,
+  "proxy_exposed_ROS_ns": 0,
+  "preflight": "PASS",
+  "goal_invocation_ROS_ns": 60404529720,
+  "guard_started_monotonic": 1363.319171219,
+  "goal_accepted": true,
+  "native_initialization_observed_ROS_ns": 65904652855,
+  "native_initialization_observed_monotonic": 1364.41913009,
+  "result": "NATIVE_ACTION_RETURNED",
+  "action_status": 4,
+  "localization_success": true,
+  "wall_seconds": 46.33611083030701,
+  "goal_wall_elapsed_monotonic": 45.78326641700005,
+  "official_result_received_ROS_ns": 292474814440,
+  "external_cancel_requested": false
+}
