@@ -1,0 +1,644 @@
+[
+  {
+    "id": "GADEN_10x6_central_obstacle",
+    "family": "GADEN_TEST_ENV",
+    "scenario": "10x6_central_obstacle",
+    "configuration": "config1",
+    "simulation_id": "sim1",
+    "config_path": "test_env/scenarios/10x6_central_obstacle/environment_configurations/config1/config.yaml",
+    "sim_path": "test_env/scenarios/10x6_central_obstacle/environment_configurations/config1/simulations/sim1/sim.yaml",
+    "scene_path": "test_env/scenarios/10x6_central_obstacle/environment_configurations/config1/scenes/scene1.yaml",
+    "config": {
+      "models": [
+        "../../cad_models/10x6_central_obstacle.stl",
+        "../../cad_models/10x6_walls.stl"
+      ],
+      "outlets_models": [
+        "!color [0.89, 0.27, 0.27, 1.00]",
+        "../../cad_models/10x6_door_left.stl",
+        "../../cad_models/10x6_door_right.stl"
+      ],
+      "unprocessed_wind_files": "../../wind_simulations/1ms/wind_at_cell_centers",
+      "empty_point": [
+        1.35,
+        2.05,
+        0
+      ],
+      "cell_size": 0.1,
+      "uniformWind": false
+    },
+    "simulation": {
+      "source": {
+        "sourceType": "point",
+        "position": [
+          1.45,
+          3,
+          0.5
+        ],
+        "gasType": 0
+      },
+      "deltaTime": 0.1,
+      "windIterationDeltaTime": 1,
+      "temperature": 298,
+      "pressure": 1,
+      "filamentPPMcenter": 20,
+      "filamentInitialSigma": 10,
+      "filamentGrowthGamma": 10,
+      "filamentNoise_std": 0.02,
+      "numFilaments_sec": 10,
+      "expectedNumIterations": 600,
+      "saveResults": true,
+      "saveDeltaTime": 0.5,
+      "preCalculateConcentrations": false,
+      "windLooping": {
+        "loop": false,
+        "from": 0,
+        "to": 0
+      }
+    },
+    "scene": {
+      "playback_initial_iteration": 0,
+      "playback_loop": {
+        "loop": false,
+        "from": 0,
+        "to": 0
+      },
+      "simulations": [
+        {
+          "sim": "sim1",
+          "gas_color": [
+            0.4,
+            0.4,
+            0.4
+          ]
+        }
+      ]
+    },
+    "wind_prefix": "C:\\Users\\50176\\Documents\\Codex\\2026-10-09\\gb-gaden-turb-smoke-r0c-r0d\\work\\pmfs_r5\\GADEN\\test_env\\scenarios\\10x6_central_obstacle\\wind_simulations\\1ms\\wind_at_cell_centers",
+    "source_xyz": [
+      1.45,
+      3,
+      0.5
+    ],
+    "source_type": "point",
+    "source_line_end": null,
+    "processed_3d_exists": false,
+    "official_PMFS_map_binding": false,
+    "gas_frames_in_pinned_test_env": 0,
+    "raw_ROS_events_attached": false
+  },
+  {
+    "id": "GADEN_10x6_empty_room",
+    "family": "GADEN_TEST_ENV",
+    "scenario": "10x6_empty_room",
+    "configuration": "config1",
+    "simulation_id": "sim1",
+    "config_path": "test_env/scenarios/10x6_empty_room/environment_configurations/config1/config.yaml",
+    "sim_path": "test_env/scenarios/10x6_empty_room/environment_configurations/config1/simulations/sim1/sim.yaml",
+    "scene_path": "test_env/scenarios/10x6_empty_room/environment_configurations/config1/scenes/scene1.yaml",
+    "config": {
+      "models": [
+        "../../cad_models/10x6_walls.stl"
+      ],
+      "outlets_models": [
+        "!color [0.86, 0.19, 0.19, 1.00]",
+        "../../cad_models/10x6_door_left.stl",
+        "../../cad_models/10x6_door_right.stl"
+      ],
+      "unprocessed_wind_files": "../../wind_simulations/dynamic/wind_at_cell_centers",
+      "empty_point": [
+        0.5,
+        0.95,
+        0
+      ],
+      "cell_size": 0.1,
+      "uniformWind": false
+    },
+    "simulation": {
+      "source": {
+        "sourceType": "line",
+        "lineEnd": [
+          1,
+          0.8,
+          0.7
+        ],
+        "position": [
+          1,
+          4.95,
+          0.7
+        ],
+        "gasType": 0
+      },
+      "deltaTime": 0.1,
+      "windIterationDeltaTime": 1,
+      "temperature": 298,
+      "pressure": 1,
+      "filamentPPMcenter": 20,
+      "filamentInitialSigma": 10,
+      "filamentGrowthGamma": 10,
+      "filamentNoise_std": 0.02,
+      "numFilaments_sec": 10,
+      "expectedNumIterations": 600,
+      "saveResults": true,
+      "saveDeltaTime": 0.5,
+      "preCalculateConcentrations": false,
+      "windLooping": {
+        "loop": false,
+        "from": 0,
+        "to": 0
+      }
+    },
+    "scene": {
+      "playback_initial_iteration": 0,
+      "playback_loop": {
+        "loop": false,
+        "from": 0,
+        "to": 100
+      },
+      "simulations": [
+        {
+          "sim": "sim1",
+          "gas_color": [
+            0.4,
+            0.4,
+            0.4
+          ]
+        }
+      ]
+    },
+    "wind_prefix": "C:\\Users\\50176\\Documents\\Codex\\2026-10-09\\gb-gaden-turb-smoke-r0c-r0d\\work\\pmfs_r5\\GADEN\\test_env\\scenarios\\10x6_empty_room\\wind_simulations\\dynamic\\wind_at_cell_centers",
+    "source_xyz": [
+      1,
+      4.95,
+      0.7
+    ],
+    "source_type": "line",
+    "source_line_end": [
+      1,
+      0.8,
+      0.7
+    ],
+    "processed_3d_exists": false,
+    "official_PMFS_map_binding": false,
+    "gas_frames_in_pinned_test_env": 0,
+    "raw_ROS_events_attached": false
+  },
+  {
+    "id": "GADEN_10x6_maze",
+    "family": "GADEN_TEST_ENV",
+    "scenario": "10x6_maze",
+    "configuration": "config1",
+    "simulation_id": "sim1",
+    "config_path": "test_env/scenarios/10x6_maze/environment_configurations/config1/config.yaml",
+    "sim_path": "test_env/scenarios/10x6_maze/environment_configurations/config1/simulations/sim1/sim.yaml",
+    "scene_path": "test_env/scenarios/10x6_maze/environment_configurations/config1/scenes/scene1.yaml",
+    "config": {
+      "models": [
+        "../../cad_models/10x6_maze_obj_1.stl",
+        "../../cad_models/10x6_maze_obj_2.stl",
+        "../../cad_models/10x6_walls.stl"
+      ],
+      "outlets_models": [
+        "!color [0.88, 0.19, 0.19, 1.00]",
+        "../../cad_models/10x6_door_left.stl",
+        "../../cad_models/10x6_door_right.stl"
+      ],
+      "unprocessed_wind_files": "../../wind_simulations/05ms/wind_at_cell_centers",
+      "empty_point": [
+        0.45,
+        1.2,
+        0
+      ],
+      "cell_size": 0.1,
+      "uniformWind": false
+    },
+    "simulation": {
+      "source": {
+        "sourceType": "point",
+        "position": [
+          0.5,
+          2.9,
+          0.7
+        ],
+        "gasType": 0
+      },
+      "deltaTime": 0.1,
+      "windIterationDeltaTime": 1,
+      "temperature": 298,
+      "pressure": 1,
+      "filamentPPMcenter": 20,
+      "filamentInitialSigma": 10,
+      "filamentGrowthGamma": 10,
+      "filamentNoise_std": 0.02,
+      "numFilaments_sec": 10,
+      "expectedNumIterations": 600,
+      "saveResults": true,
+      "saveDeltaTime": 0.5,
+      "windLooping": {
+        "loop": false,
+        "from": 0,
+        "to": 0
+      }
+    },
+    "scene": {
+      "playback_initial_iteration": 0,
+      "playback_loop": {
+        "loop": false,
+        "from": 0,
+        "to": 0
+      },
+      "simulations": [
+        {
+          "sim": "sim1",
+          "gas_color": [
+            0.4,
+            0.4,
+            0.4
+          ]
+        }
+      ]
+    },
+    "wind_prefix": "C:\\Users\\50176\\Documents\\Codex\\2026-10-09\\gb-gaden-turb-smoke-r0c-r0d\\work\\pmfs_r5\\GADEN\\test_env\\scenarios\\10x6_maze\\wind_simulations\\05ms\\wind_at_cell_centers",
+    "source_xyz": [
+      0.5,
+      2.9,
+      0.7
+    ],
+    "source_type": "point",
+    "source_line_end": null,
+    "processed_3d_exists": false,
+    "official_PMFS_map_binding": false,
+    "gas_frames_in_pinned_test_env": 0,
+    "raw_ROS_events_attached": false
+  },
+  {
+    "id": "GADEN_10x6_snake",
+    "family": "GADEN_TEST_ENV",
+    "scenario": "10x6_snake",
+    "configuration": "config1",
+    "simulation_id": "sim1",
+    "config_path": "test_env/scenarios/10x6_snake/environment_configurations/config1/config.yaml",
+    "sim_path": "test_env/scenarios/10x6_snake/environment_configurations/config1/simulations/sim1/sim.yaml",
+    "scene_path": "test_env/scenarios/10x6_snake/environment_configurations/config1/scenes/scene1.yaml",
+    "config": {
+      "models": [
+        "../../cad_models/10x6_walls.stl"
+      ],
+      "outlets_models": [
+        "!color [0.91, 0.23, 0.23, 1.00]",
+        "../../cad_models/10x6_door_left.stl",
+        "../../cad_models/10x6_door_right.stl"
+      ],
+      "unprocessed_wind_files": "../../wind_simulations/1ms/wind_at_cell_centers",
+      "empty_point": [
+        0.5,
+        3.4,
+        0
+      ],
+      "cell_size": 0.1,
+      "uniformWind": false
+    },
+    "simulation": {
+      "source": {
+        "sourceType": "point",
+        "position": [
+          0.55,
+          3,
+          0.5
+        ],
+        "gasType": 0
+      },
+      "deltaTime": 0.1,
+      "windIterationDeltaTime": 1,
+      "temperature": 298,
+      "pressure": 1,
+      "filamentPPMcenter": 20,
+      "filamentInitialSigma": 10,
+      "filamentGrowthGamma": 10,
+      "filamentNoise_std": 0.02,
+      "numFilaments_sec": 10,
+      "expectedNumIterations": 600,
+      "saveResults": true,
+      "saveDeltaTime": 0.5,
+      "preCalculateConcentrations": true,
+      "windLooping": {
+        "loop": false,
+        "from": 0,
+        "to": 0
+      }
+    },
+    "scene": {
+      "playback_initial_iteration": 0,
+      "playback_loop": {
+        "loop": false,
+        "from": 0,
+        "to": 0
+      },
+      "simulations": [
+        {
+          "sim": "sim1",
+          "gas_color": [
+            0.4,
+            0.4,
+            0.4
+          ]
+        }
+      ]
+    },
+    "wind_prefix": "C:\\Users\\50176\\Documents\\Codex\\2026-10-09\\gb-gaden-turb-smoke-r0c-r0d\\work\\pmfs_r5\\GADEN\\test_env\\scenarios\\10x6_snake\\wind_simulations\\1ms\\wind_at_cell_centers",
+    "source_xyz": [
+      0.55,
+      3,
+      0.5
+    ],
+    "source_type": "point",
+    "source_line_end": null,
+    "processed_3d_exists": false,
+    "official_PMFS_map_binding": false,
+    "gas_frames_in_pinned_test_env": 0,
+    "raw_ROS_events_attached": false
+  },
+  {
+    "id": "GADEN_Exp_C",
+    "family": "GADEN_TEST_ENV",
+    "scenario": "Exp_C",
+    "configuration": "config1",
+    "simulation_id": "sim1",
+    "config_path": "test_env/scenarios/Exp_C/environment_configurations/config1/config.yaml",
+    "sim_path": "test_env/scenarios/Exp_C/environment_configurations/config1/simulations/sim1/sim.yaml",
+    "scene_path": "test_env/scenarios/Exp_C/environment_configurations/config1/scenes/scene1.yaml",
+    "config": {
+      "models": [
+        "../../cad_models/ROOMS-walls.stl"
+      ],
+      "outlets_models": [
+        "!color [0.25, 0.25, 0.25, 1.00]",
+        "../../cad_models/ROOMS-outlet-1.stl",
+        "../../cad_models/ROOMS-outlet-2.stl",
+        "../../cad_models/ROOMS-outlet-3.stl",
+        "../../cad_models/ROOMS-outlet-4.stl",
+        "../../cad_models/ROOMS-outlet-5.stl",
+        "../../cad_models/ROOMS-outlet-6.stl"
+      ],
+      "unprocessed_wind_files": "../../wind_simulations/1,2,3-5,6",
+      "empty_point": [
+        4.4,
+        1.55,
+        0.5
+      ],
+      "cell_size": 0.1,
+      "uniformWind": false
+    },
+    "simulation": {
+      "source": {
+        "sourceType": "cylinder",
+        "radius": 0.4,
+        "height": 1.45,
+        "position": [
+          0.95,
+          8.4,
+          1.7
+        ],
+        "gasType": 0
+      },
+      "deltaTime": 0.1,
+      "windIterationDeltaTime": 1,
+      "temperature": 298,
+      "pressure": 1,
+      "filamentPPMcenter": 20,
+      "filamentInitialSigma": 10,
+      "filamentGrowthGamma": 10,
+      "filamentNoise_std": 0.02,
+      "numFilaments_sec": 10,
+      "expectedNumIterations": 600,
+      "saveResults": true,
+      "saveDeltaTime": 0.5,
+      "preCalculateConcentrations": false,
+      "windLooping": {
+        "loop": false,
+        "from": 0,
+        "to": 0
+      }
+    },
+    "scene": {
+      "playback_initial_iteration": 100,
+      "playback_loop": {
+        "loop": false,
+        "from": 0,
+        "to": 0
+      },
+      "simulations": [
+        {
+          "sim": "sim1",
+          "gas_color": [
+            0.0,
+            0.3,
+            1.0
+          ]
+        },
+        {
+          "sim": "sim2",
+          "gas_color": [
+            0.0,
+            0.7,
+            0.0
+          ]
+        },
+        {
+          "sim": "sim3",
+          "gas_color": [
+            1.0,
+            0.3,
+            0.0
+          ]
+        }
+      ]
+    },
+    "wind_prefix": "C:\\Users\\50176\\Documents\\Codex\\2026-10-09\\gb-gaden-turb-smoke-r0c-r0d\\work\\pmfs_r5\\GADEN\\test_env\\scenarios\\Exp_C\\wind_simulations\\1,2,3-5,6",
+    "source_xyz": [
+      0.95,
+      8.4,
+      1.7
+    ],
+    "source_type": "cylinder",
+    "source_line_end": null,
+    "processed_3d_exists": false,
+    "official_PMFS_map_binding": false,
+    "gas_frames_in_pinned_test_env": 0,
+    "raw_ROS_events_attached": false
+  },
+  {
+    "id": "GADEN_MAPIRlab",
+    "family": "GADEN_TEST_ENV",
+    "scenario": "MAPIRlab",
+    "configuration": "config1",
+    "simulation_id": "sim1",
+    "config_path": "test_env/scenarios/MAPIRlab/environment_configurations/config1/config.yaml",
+    "sim_path": "test_env/scenarios/MAPIRlab/environment_configurations/config1/simulations/sim1/sim.yaml",
+    "scene_path": "test_env/scenarios/MAPIRlab/environment_configurations/config1/scenes/scene1.yaml",
+    "config": {
+      "models": [
+        "../../cad_models/MAPIRlab_tables.stl",
+        "../../cad_models/MAPIRlab_walls.stl",
+        "../../cad_models/MAPIRlab_wardrobes.stl"
+      ],
+      "outlets_models": [
+        "!color [0.87, 0.27, 0.27, 1.00]",
+        "../../cad_models/MAPIRlab_doors.stl",
+        "../../cad_models/MAPIRlab_windows.stl"
+      ],
+      "unprocessed_wind_files": "../../wind_simulations/W1/wind_at_cell_centers",
+      "empty_point": [
+        4.35,
+        0,
+        0
+      ],
+      "cell_size": 0.1,
+      "uniformWind": false
+    },
+    "simulation": {
+      "source": {
+        "sourceType": "point",
+        "position": [
+          2.65,
+          -2.95,
+          1.0
+        ],
+        "gasType": 0
+      },
+      "deltaTime": 0.1,
+      "windIterationDeltaTime": 1,
+      "temperature": 298,
+      "pressure": 1,
+      "filamentPPMcenter": 20,
+      "filamentInitialSigma": 10,
+      "filamentGrowthGamma": 10,
+      "filamentNoise_std": 0.03,
+      "numFilaments_sec": 10,
+      "expectedNumIterations": 600,
+      "saveResults": true,
+      "saveDeltaTime": 0.5,
+      "preCalculateConcentrations": false,
+      "windLooping": {
+        "loop": false,
+        "from": 0,
+        "to": 0
+      }
+    },
+    "scene": {
+      "playback_initial_iteration": 0,
+      "playback_loop": {
+        "loop": false,
+        "from": 0,
+        "to": 0
+      },
+      "simulations": [
+        {
+          "sim": "sim1",
+          "gas_color": [
+            0.4,
+            0.4,
+            0.4
+          ]
+        }
+      ]
+    },
+    "wind_prefix": "C:\\Users\\50176\\Documents\\Codex\\2026-10-09\\gb-gaden-turb-smoke-r0c-r0d\\work\\pmfs_r5\\GADEN\\test_env\\scenarios\\MAPIRlab\\wind_simulations\\W1\\wind_at_cell_centers",
+    "source_xyz": [
+      2.65,
+      -2.95,
+      1.0
+    ],
+    "source_type": "point",
+    "source_line_end": null,
+    "processed_3d_exists": false,
+    "official_PMFS_map_binding": false,
+    "gas_frames_in_pinned_test_env": 0,
+    "raw_ROS_events_attached": false
+  },
+  {
+    "id": "GADEN_outdoors",
+    "family": "GADEN_TEST_ENV",
+    "scenario": "outdoors",
+    "configuration": "config1",
+    "simulation_id": "sim1",
+    "config_path": "test_env/scenarios/outdoors/environment_configurations/config1/config.yaml",
+    "sim_path": "test_env/scenarios/outdoors/environment_configurations/config1/simulations/sim1/sim.yaml",
+    "scene_path": "test_env/scenarios/outdoors/environment_configurations/config1/scenes/scene1.yaml",
+    "config": {
+      "models": [
+        ""
+      ],
+      "outlets_models": [
+        "../../cad_models/limits.stl"
+      ],
+      "unprocessed_wind_files": "../../wind_simulations/wind",
+      "empty_point": [
+        0,
+        0,
+        0
+      ],
+      "cell_size": 0.1,
+      "uniformWind": true
+    },
+    "simulation": {
+      "source": {
+        "sourceType": "point",
+        "position": [
+          -12.55,
+          0,
+          1.35
+        ],
+        "gasType": 0
+      },
+      "deltaTime": 0.1,
+      "windIterationDeltaTime": 1,
+      "temperature": 298,
+      "pressure": 1,
+      "filamentPPMcenter": 20,
+      "filamentInitialSigma": 10,
+      "filamentGrowthGamma": 10,
+      "filamentNoise_std": 0.02,
+      "numFilaments_sec": 10,
+      "expectedNumIterations": 600,
+      "saveResults": true,
+      "saveDeltaTime": 0.5,
+      "preCalculateConcentrations": true,
+      "windLooping": {
+        "loop": true,
+        "from": 0,
+        "to": 5
+      }
+    },
+    "scene": {
+      "playback_initial_iteration": 0,
+      "playback_loop": {
+        "loop": false,
+        "from": 0,
+        "to": 0
+      },
+      "simulations": [
+        {
+          "sim": "sim1",
+          "gas_color": [
+            0.4,
+            0.4,
+            0.4
+          ]
+        }
+      ]
+    },
+    "wind_prefix": "C:\\Users\\50176\\Documents\\Codex\\2026-10-09\\gb-gaden-turb-smoke-r0c-r0d\\work\\pmfs_r5\\GADEN\\test_env\\scenarios\\outdoors\\wind_simulations\\wind",
+    "source_xyz": [
+      -12.55,
+      0,
+      1.35
+    ],
+    "source_type": "point",
+    "source_line_end": null,
+    "processed_3d_exists": false,
+    "official_PMFS_map_binding": false,
+    "gas_frames_in_pinned_test_env": 0,
+    "raw_ROS_events_attached": false
+  }
+]

@@ -1,0 +1,422 @@
+{
+  "selection_before_new_outcomes": true,
+  "ids": [
+    "PMFS_E3",
+    "PMFS_B4"
+  ],
+  "basis": "Native 2D support, fixed/non-looping control and different 3D environment; no observed localization outcome used",
+  "baseline": "PMFS_E3",
+  "complex_candidate": "PMFS_B4",
+  "native_tests_executed": 0,
+  "new_gas_generations": 0,
+  "new_seeds": 0,
+  "new_CFD": 0,
+  "source_coordinates_unchanged": true,
+  "official_maps_unchanged": true,
+  "baseline_algorithm": "N1_ENGINEERING_ALIGNED_UPSTREAM_CORE_WITH_OFFICIAL_PER_CASE_PARAMETERS",
+  "historical_author_N0_reproduction": "NOT_CLAIMED",
+  "timed_mechanism": "HOLD_NO_QUALIFIED_LATE_PLAYBACK_TIME_VARYING_CASE",
+  "selected_cases": [
+    {
+      "id": "PMFS_E3",
+      "family": "PMFS",
+      "scenario": "E",
+      "simulation_id": "E3",
+      "source_xyz": [
+        -4.0,
+        -1.9,
+        0.7
+      ],
+      "simulation_config": "Environment_config/PMFS/scenarios/E/simulations/E3.yaml",
+      "gaden_params": "Environment_config/PMFS/scenarios/E/params/gaden_params.yaml",
+      "preproc_params": "Environment_config/PMFS/scenarios/E/params/preproc_params.yaml",
+      "map_config": "Environment_config/PMFS/scenarios/E/_occupancy.yaml",
+      "map_sha256": "8cfaf865c9acfbfbd2ca50966e77d14fef0e8b3ff0cfd68ab4d43322d273258b",
+      "simulation": {
+        "source_x": -4.0,
+        "source_y": -1.9,
+        "source_z": 0.7,
+        "wind_sim_path": "W1/wind_at_cell_centers",
+        "sim_time": 1000.0,
+        "time_step": 0.1,
+        "num_filaments_sec": 10,
+        "variable_rate": false,
+        "filament_stop_steps": 0,
+        "ppm_filament_center": 10.0,
+        "filament_initial_std": 10.0,
+        "filament_growth_gamma": 15.0,
+        "filament_noise_std": 0.015,
+        "gas_type": 10,
+        "temperature": 298.0,
+        "models": [
+          "$(var pkg_dir)/scenarios/$(var scenario)/cad_models/MAPIRlab_tables.stl",
+          "$(var pkg_dir)/scenarios/$(var scenario)/cad_models/MAPIRlab_walls.stl",
+          "$(var pkg_dir)/scenarios/$(var scenario)/cad_models/MAPIRlab_wardrobes.stl"
+        ],
+        "outlets_models": [
+          "$(var pkg_dir)/scenarios/$(var scenario)/cad_models/MAPIRlab_windows.stl",
+          "$(var pkg_dir)/scenarios/$(var scenario)/cad_models/MAPIRlab_doors.stl"
+        ],
+        "allow_looping": false,
+        "loop_from_iteration": 800,
+        "loop_to_iteration": 900
+      },
+      "preproc": {
+        "gaden_preprocessing": {
+          "ros__parameters": {
+            "cell_size": 0.1,
+            "models": "$(var models)",
+            "outlets_models": "$(var outlets_models)",
+            "empty_point_x": -2.0,
+            "empty_point_y": 2.0,
+            "empty_point_z": 0.3,
+            "floor_height": 0.0,
+            "uniformWind": false,
+            "wind_files": "$(var pkg_dir)/scenarios/$(var scenario)/wind_simulations/$(var wind_sim_path)",
+            "output_path": "$(var pkg_dir)/scenarios/$(var scenario)"
+          }
+        }
+      },
+      "gaden": {
+        "gaden_environment": {
+          "ros__parameters": {
+            "verbose": true,
+            "wait_preprocessing": false,
+            "fixed_frame": "map",
+            "CAD_models": [
+              "!color [0.52, 0.56, 0.56]",
+              "$(var pkg_dir)/scenarios/$(var scenario)/cad_models/E.dae"
+            ],
+            "occupancy3D_data": "$(var pkg_dir)/scenarios/$(var scenario)/OccupancyGrid3D.csv",
+            "number_of_sources": 1,
+            "source_0_position_x": "$(var source_x)",
+            "source_0_position_y": "$(var source_y)",
+            "source_0_position_z": "$(var source_z)",
+            "source_0_scale": 0.2,
+            "source_0_color": [
+              0.0,
+              1.0,
+              0.0
+            ]
+          }
+        },
+        "gaden_filament_simulator": {
+          "ros__parameters": {
+            "verbose": false,
+            "wait_preprocessing": false,
+            "sim_time": "$(var sim_time)",
+            "time_step": "$(var time_step)",
+            "num_filaments_sec": "$(var num_filaments_sec)",
+            "variable_rate": "$(var variable_rate)",
+            "filament_stop_steps": "$(var filament_stop_steps)",
+            "ppm_filament_center": "$(var ppm_filament_center)",
+            "filament_initial_std": "$(var filament_initial_std)",
+            "filament_growth_gamma": "$(var filament_growth_gamma)",
+            "filament_noise_std": "$(var filament_noise_std)",
+            "gas_type": "$(var gas_type)",
+            "temperature": "$(var temperature)",
+            "pressure": 1.0,
+            "concentration_unit_choice": 1,
+            "occupancy3D_data": "$(var pkg_dir)/scenarios/$(var scenario)/OccupancyGrid3D.csv",
+            "fixed_frame": "map",
+            "wind_data": "$(var pkg_dir)/scenarios/$(var scenario)/wind_simulations/$(var wind_sim_path)",
+            "wind_time_step": 1.0,
+            "allow_looping": false,
+            "loop_from_step": 0,
+            "loop_to_step": 10,
+            "source_position_x": "$(var source_x)",
+            "source_position_y": "$(var source_y)",
+            "source_position_z": "$(var source_z)",
+            "save_results": 1,
+            "results_time_step": 0.5,
+            "results_min_time": 0.0,
+            "results_location": "$(var pkg_dir)/scenarios/$(var scenario)/gas_simulations/$(var simulation)"
+          }
+        },
+        "gaden_player": {
+          "ros__parameters": {
+            "verbose": false,
+            "player_freq": 2.0,
+            "initial_iteration": 200,
+            "num_simulators": 1,
+            "simulation_data_0": "$(var pkg_dir)/scenarios/$(var scenario)/gas_simulations/$(var simulation)",
+            "occupancyFile": "$(var pkg_dir)/scenarios/$(var scenario)/OccupancyGrid3D.csv",
+            "allow_looping": "$(var allow_looping)",
+            "loop_from_iteration": "$(var loop_from_iteration)",
+            "loop_to_iteration": "$(var loop_to_iteration)"
+          }
+        }
+      },
+      "basic": {
+        "map": "../_occupancy.yaml",
+        "robots": [
+          {
+            "name": "PioneerP3DX",
+            "position": [
+              -3.0,
+              4.5,
+              0.0
+            ],
+            "angle": 1,
+            "sensors": [
+              {
+                "type": "laser",
+                "name": "laser_scan",
+                "minAngleRad": -0.7,
+                "maxAngleRad": 3.8,
+                "angleResolutionRad": 0.1,
+                "minDistance": 0.1,
+                "maxDistance": 4.0
+              }
+            ]
+          }
+        ]
+      },
+      "source_support": {
+        "map_dimensions": [
+          1100,
+          1200
+        ],
+        "resolution_m": 0.01,
+        "origin": [
+          -5.5,
+          -6,
+          0
+        ],
+        "scale": 25,
+        "candidate_cell_size_m": 0.24999999441206455,
+        "coarse_dimensions": [
+          44,
+          48
+        ],
+        "source_indices": [
+          6,
+          16
+        ],
+        "start_indices": [
+          10,
+          42
+        ],
+        "source_fine_occupancy": 0,
+        "source_coarse_free": true,
+        "source_supported": true,
+        "start_supported": true,
+        "num_free_before_prune": 1132,
+        "num_free_after_prune": 1132,
+        "nearest_legal_center_distance_m": 0.12747543414151594,
+        "method": "Static reproduction of upstream trinary reduction and 8-neighbour reachable component; not an online map capture"
+      },
+      "wind_prefix": "Environment_config/PMFS/scenarios/E/wind_simulations/W1/wind_at_cell_centers"
+    },
+    {
+      "id": "PMFS_B4",
+      "family": "PMFS",
+      "scenario": "B",
+      "simulation_id": "B4",
+      "source_xyz": [
+        -3.2,
+        -3.3,
+        -0.5
+      ],
+      "simulation_config": "Environment_config/PMFS/scenarios/B/simulations/B4.yaml",
+      "gaden_params": "Environment_config/PMFS/scenarios/B/params/gaden_params.yaml",
+      "preproc_params": "Environment_config/PMFS/scenarios/B/params/preproc_params.yaml",
+      "map_config": "Environment_config/PMFS/scenarios/B/_occupancy.yaml",
+      "map_sha256": "7509dc41b1eb4609960acea815fd757ebed723612f99eda7096923dfabfa8e33",
+      "simulation": {
+        "source_x": -3.2,
+        "source_y": -3.3,
+        "source_z": -0.5,
+        "wind_sim_path": "2,4-1_fast/2,4-1_fast",
+        "sim_time": 1000.0,
+        "time_step": 0.1,
+        "num_filaments_sec": 7,
+        "variable_rate": false,
+        "filament_stop_steps": 0,
+        "ppm_filament_center": 10.0,
+        "filament_initial_std": 10.0,
+        "filament_growth_gamma": 15.0,
+        "filament_noise_std": 0.02,
+        "gas_type": 13,
+        "temperature": 298.0,
+        "models": [
+          "$(var pkg_dir)/scenarios/$(var scenario)/cad_models/House01-main.stl",
+          "$(var pkg_dir)/scenarios/$(var scenario)/cad_models/House01Outlet005.stl",
+          "$(var pkg_dir)/scenarios/$(var scenario)/cad_models/House01Outlet006.stl",
+          "$(var pkg_dir)/scenarios/$(var scenario)/cad_models/House01Outlet007.stl"
+        ],
+        "outlets_models": [
+          "$(var pkg_dir)/scenarios/$(var scenario)/cad_models/House01Outlet001.stl",
+          "$(var pkg_dir)/scenarios/$(var scenario)/cad_models/House01Outlet002.stl",
+          "$(var pkg_dir)/scenarios/$(var scenario)/cad_models/House01Outlet003.stl",
+          "$(var pkg_dir)/scenarios/$(var scenario)/cad_models/House01Outlet004.stl"
+        ],
+        "allow_looping": false,
+        "loop_from_iteration": 800,
+        "loop_to_iteration": 900,
+        "filament_movement_stdev": 0.2,
+        "sourceDiscriminationPower": 0.4,
+        "markers_height": -0.6
+      },
+      "preproc": {
+        "gaden_preprocessing": {
+          "ros__parameters": {
+            "cell_size": 0.1,
+            "models": "$(var models)",
+            "outlets_models": "$(var outlets_models)",
+            "empty_point_x": 0.0,
+            "empty_point_y": 0.0,
+            "empty_point_z": 1.0,
+            "floor_height": -0.7,
+            "uniformWind": false,
+            "wind_files": "$(var pkg_dir)/scenarios/$(var scenario)/wind_simulations/$(var wind_sim_path)",
+            "output_path": "$(var pkg_dir)/scenarios/$(var scenario)"
+          }
+        }
+      },
+      "gaden": {
+        "gaden_environment": {
+          "ros__parameters": {
+            "verbose": true,
+            "wait_preprocessing": false,
+            "fixed_frame": "map",
+            "CAD_models": [
+              "!color [0.52, 0.56, 0.56]",
+              "$(var pkg_dir)/scenarios/$(var scenario)/cad_models/B.dae"
+            ],
+            "occupancy3D_data": "$(var pkg_dir)/scenarios/$(var scenario)/OccupancyGrid3D.csv",
+            "number_of_sources": 1,
+            "source_0_position_x": "$(var source_x)",
+            "source_0_position_y": "$(var source_y)",
+            "source_0_position_z": "$(var source_z)",
+            "source_0_scale": 0.2,
+            "source_0_color": [
+              0.0,
+              1.0,
+              0.0
+            ]
+          }
+        },
+        "gaden_filament_simulator": {
+          "ros__parameters": {
+            "verbose": false,
+            "wait_preprocessing": false,
+            "sim_time": "$(var sim_time)",
+            "time_step": "$(var time_step)",
+            "num_filaments_sec": "$(var num_filaments_sec)",
+            "variable_rate": "$(var variable_rate)",
+            "filament_stop_steps": "$(var filament_stop_steps)",
+            "ppm_filament_center": "$(var ppm_filament_center)",
+            "filament_initial_std": "$(var filament_initial_std)",
+            "filament_growth_gamma": "$(var filament_growth_gamma)",
+            "filament_noise_std": "$(var filament_noise_std)",
+            "gas_type": "$(var gas_type)",
+            "temperature": "$(var temperature)",
+            "pressure": 1.0,
+            "concentration_unit_choice": 1,
+            "occupancy3D_data": "$(var pkg_dir)/scenarios/$(var scenario)/OccupancyGrid3D.csv",
+            "fixed_frame": "map",
+            "wind_data": "$(var pkg_dir)/scenarios/$(var scenario)/wind_simulations/$(var wind_sim_path)",
+            "wind_time_step": 1.0,
+            "allow_looping": false,
+            "loop_from_step": 0,
+            "loop_to_step": 10,
+            "source_position_x": "$(var source_x)",
+            "source_position_y": "$(var source_y)",
+            "source_position_z": "$(var source_z)",
+            "save_results": 1,
+            "results_time_step": 0.5,
+            "results_min_time": 0.0,
+            "results_location": "$(var pkg_dir)/scenarios/$(var scenario)/gas_simulations/$(var simulation)"
+          }
+        },
+        "gaden_player": {
+          "ros__parameters": {
+            "verbose": false,
+            "player_freq": 2.0,
+            "initial_iteration": 500,
+            "num_simulators": 1,
+            "simulation_data_0": "$(var pkg_dir)/scenarios/$(var scenario)/gas_simulations/$(var simulation)",
+            "occupancyFile": "$(var pkg_dir)/scenarios/$(var scenario)/OccupancyGrid3D.csv",
+            "allow_looping": "$(var allow_looping)",
+            "loop_from_iteration": "$(var loop_from_iteration)",
+            "loop_to_iteration": "$(var loop_to_iteration)"
+          }
+        }
+      },
+      "basic": {
+        "map": "../_occupancy.yaml",
+        "robots": [
+          {
+            "name": "PioneerP3DX",
+            "position": [
+              -0.9,
+              0.15,
+              -0.7
+            ],
+            "angle": 1,
+            "sensors": [
+              {
+                "type": "laser",
+                "name": "laser_scan",
+                "minAngleRad": -0.7,
+                "maxAngleRad": 3.8,
+                "angleResolutionRad": 0.1,
+                "minDistance": 0.1,
+                "maxDistance": 4.0
+              }
+            ]
+          }
+        ]
+      },
+      "source_support": {
+        "map_dimensions": [
+          870,
+          1140
+        ],
+        "resolution_m": 0.01,
+        "origin": [
+          -7.55,
+          -7.88,
+          0
+        ],
+        "scale": 25,
+        "candidate_cell_size_m": 0.24999999441206455,
+        "coarse_dimensions": [
+          34,
+          45
+        ],
+        "source_indices": [
+          17,
+          18
+        ],
+        "start_indices": [
+          26,
+          32
+        ],
+        "source_fine_occupancy": 0,
+        "source_coarse_free": true,
+        "source_supported": true,
+        "start_supported": true,
+        "num_free_before_prune": 461,
+        "num_free_after_prune": 447,
+        "nearest_legal_center_distance_m": 0.05147801284688662,
+        "method": "Static reproduction of upstream trinary reduction and 8-neighbour reachable component; not an online map capture"
+      },
+      "wind_prefix": "Environment_config/PMFS/scenarios/B/wind_simulations/2,4-1_fast/2,4-1_fast"
+    }
+  ],
+  "launch_default_bindings": {
+    "robot_name": "PioneerP3DX",
+    "th_gas_present": "0.1",
+    "th_wind_present": "0.02",
+    "filament_movement_stdev": "0.5",
+    "sourceDiscriminationPower": "0.3",
+    "iterationsToRecord": "200",
+    "minWarmupIterations": "0",
+    "maxWarmupIterations": "500",
+    "initialExplorationMoves": "2",
+    "filamentDeltaTime": "0.1"
+  },
+  "execution_authorization": "STATIC_AUDIT_AND_PLAN_ONLY_STOP_FOR_INDEPENDENT_REVIEW"
+}
