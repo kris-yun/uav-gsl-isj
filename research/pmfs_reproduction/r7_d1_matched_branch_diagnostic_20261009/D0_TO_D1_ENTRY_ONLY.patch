@@ -1,0 +1,20 @@
+--- D0_shadow_update.cpp
++++ D1_shadow_update.cpp
+@@ -27,7 +27,7 @@
+         std::ofstream blocks(out / "measurement_reconstruction.csv");
+         blocks << std::setprecision(17) << "event_index,stamp_ns,iteration_counter,hit,grid_i,grid_j\n";
+         double maxLogOdds = 0, maxOmega = 0, maxConfidence = 0;
+-        for (size_t e = 0; e < events.size(); ++e) {
++        for (size_t e = 0; e < 35; ++e) {
+             const auto& row = events[e];
+             auto ij = f.meta.coordinatesToIndices(float(d(row,"robot_x")),float(d(row,"robot_y")));
+             bool hit = d(row,"concentration") > .1;
+@@ -89,7 +89,7 @@
+         auto mean = Utils::ExpectedValue(post,1);
+         double var = Utils::Variance(post);
+         std::ofstream complete(out / "COMPLETE.json");
+-        complete << std::setprecision(17) << "{\"classification\":\"COUNTERFACTUAL_DIAGNOSTIC_NOT_NATIVE_RUN\",\"shadow_source_updates\":1,\"native_goals\":0,\"new_gas_generations\":0,\"observations\":40,\"appended_observations\":5,\"native_variance_formula\":" << var
++        complete << std::setprecision(17) << "{\"classification\":\"COUNTERFACTUAL_DIAGNOSTIC_NOT_NATIVE_RUN\",\"shadow_source_updates\":1,\"native_goals\":0,\"new_gas_generations\":0,\"observations\":35,\"appended_observations\":0,\"native_variance_formula\":" << var
+                  << ",\"native_mean_x\":" << mean.x << ",\"native_mean_y\":" << mean.y
+                  << ",\"rng_after_shadow\":\"" << Utils::r4_rng_state() << "\",\"gaussian_index_after_shadow\":" << r4_gaussian_index() << '}';
+         complete.close();
