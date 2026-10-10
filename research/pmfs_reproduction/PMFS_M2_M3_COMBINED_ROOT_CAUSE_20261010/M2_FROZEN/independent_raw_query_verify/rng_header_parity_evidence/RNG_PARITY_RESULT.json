@@ -1,0 +1,56 @@
+{
+  "verdict": "PASS_HEADER_ONLY_DEFAULT_RNG_DRAW_PARITY",
+  "wall_seconds": 2.069604538999556,
+  "bytes_equal": true,
+  "seed_override": false,
+  "trace_enabled": false,
+  "Gaussian_draw_calls": 1100,
+  "uniform_draw_calls": 101,
+  "precalculated_cache_values_checked": 64,
+  "records": [
+    {
+      "header_variant": "pristine",
+      "compile_command": [
+        "c++",
+        "-O2",
+        "-std=c++20",
+        "/home/zyc/pmfs_m2_rng_header_parity_20261010_build2/rng_header_parity.cpp",
+        "-o",
+        "/home/zyc/pmfs_m2_rng_header_parity_20261010_build2/pristine/draw_parity",
+        "-I/home/zyc/pmfs_m2_rng_header_parity_20261010_build2/pristine",
+        "-I/home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/src/gaden_common/third_party/gaden_core/include",
+        "-I/home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/src/gaden_common/third_party/gaden_core/third_party/DDA/include",
+        "-I/home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/src/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm",
+        "-lfmt"
+      ],
+      "exitcode": 0,
+      "draw_sha256": "5cd6499f98515210e8af65060d9176027cdfc9c72ab4e6fa0c5d1ecb61f91b16"
+    },
+    {
+      "header_variant": "isolated",
+      "compile_command": [
+        "c++",
+        "-O2",
+        "-std=c++20",
+        "/home/zyc/pmfs_m2_rng_header_parity_20261010_build2/rng_header_parity.cpp",
+        "-o",
+        "/home/zyc/pmfs_m2_rng_header_parity_20261010_build2/isolated/draw_parity",
+        "-I/home/zyc/pmfs_m2_rng_header_parity_20261010_build2/isolated",
+        "-I/home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/src/gaden_common/third_party/gaden_core/include",
+        "-I/home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/src/gaden_common/third_party/gaden_core/third_party/DDA/include",
+        "-I/home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/src/gaden_common/third_party/gaden_core/third_party/DDA/third_party/glm",
+        "-lfmt"
+      ],
+      "exitcode": 0,
+      "draw_sha256": "5cd6499f98515210e8af65060d9176027cdfc9c72ab4e6fa0c5d1ecb61f91b16"
+    }
+  ],
+  "sqrt_exp_return_sizes": [
+    "TYPE_SQRT_FLOAT=8",
+    "TYPE_EXP_FLOAT=8",
+    "PI_CUBED=31.006277084350586"
+  ],
+  "new_GADEN_realizations": 0,
+  "new_ROS_nodes": 0,
+  "new_forward_calls": 0
+}

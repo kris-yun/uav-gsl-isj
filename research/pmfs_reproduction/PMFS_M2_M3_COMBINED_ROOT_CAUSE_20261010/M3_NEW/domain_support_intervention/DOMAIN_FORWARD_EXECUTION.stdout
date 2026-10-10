@@ -1,0 +1,100 @@
+{
+  "status": "PASS_2_OLD_MASK_PARITY_4_TRANSPORT_DOMAIN_FORWARDS",
+  "entered_calls": 6,
+  "completed_calls": 6,
+  "scientific_calls": 4,
+  "anchors": [
+    {
+      "job": "anchor_T_C7",
+      "verdict": "PASS_OLD_NAV_MASK_COMPLETE_WIND_BYTE_PARITY",
+      "checks": [
+        {
+          "file": "maps/quadtree_17_18_1_1_unblurred.f32",
+          "SHA256": "86b716b2e83c4d6be8e3fbf86c8965a9886f25ac7d6e9c2681a4dab086b52ff9",
+          "byte_equal": true
+        },
+        {
+          "file": "maps/quadtree_17_18_1_1.f32",
+          "SHA256": "776cf381dff1da45c5f5eed3641671e1d9b7f05035228ad0dbc742e35587f024",
+          "byte_equal": true
+        },
+        {
+          "file": "points/quadtree_17_18_1_1.f32",
+          "SHA256": "760b4ae1ef2fdff05913d0eac3b50880e8f03b8401d68eb05a554c00f75a3a7e",
+          "byte_equal": true
+        }
+      ]
+    },
+    {
+      "job": "anchor_W_K2",
+      "verdict": "PASS_OLD_NAV_MASK_COMPLETE_WIND_BYTE_PARITY",
+      "checks": [
+        {
+          "file": "maps/quadtree_23_37_1_1.f32",
+          "SHA256": "c9a41c0e8ade4523fd37a23c928158489d45d01fe159a5cfd40353cda7be2f13",
+          "byte_equal": true
+        },
+        {
+          "file": "maps/quadtree_23_37_1_1_unblurred.f32",
+          "SHA256": "affdc91e4ab77a81320ea67a50bc289ea7417022733108dee66d3974a08cff9b",
+          "byte_equal": true
+        },
+        {
+          "file": "points/quadtree_23_37_1_1.f32",
+          "SHA256": "2786d9e7e0d9799da543bf91ad2e0370bdd9d261ca13d3ba148b65dd7c77b143",
+          "byte_equal": true
+        }
+      ]
+    }
+  ],
+  "records": [
+    {
+      "job": "anchor_T_C7",
+      "wall_seconds": 0.30980419399929815,
+      "RSS_bytes": 137105408,
+      "exit_code": 0,
+      "resource_stop": null
+    },
+    {
+      "job": "anchor_W_K2",
+      "wall_seconds": 0.29764015299952007,
+      "RSS_bytes": 139694080,
+      "exit_code": 0,
+      "resource_stop": null
+    },
+    {
+      "job": "union_T_C7",
+      "wall_seconds": 0.3527015450017643,
+      "RSS_bytes": 137711616,
+      "exit_code": 0,
+      "resource_stop": null
+    },
+    {
+      "job": "union_T_K2",
+      "wall_seconds": 0.36336058599772514,
+      "RSS_bytes": 137396224,
+      "exit_code": 0,
+      "resource_stop": null
+    },
+    {
+      "job": "union_W_C7",
+      "wall_seconds": 0.35641708500043023,
+      "RSS_bytes": 145317888,
+      "exit_code": 0,
+      "resource_stop": null
+    },
+    {
+      "job": "union_W_K2",
+      "wall_seconds": 0.35083087800012436,
+      "RSS_bytes": 137412608,
+      "exit_code": 0,
+      "resource_stop": null
+    }
+  ],
+  "wall_seconds": 2.0307544409988623,
+  "RSS_bytes": 145317888,
+  "new_GADEN": 0,
+  "new_CFD": 0,
+  "new_ROS_init": 0,
+  "new_navigation": 0
+}
