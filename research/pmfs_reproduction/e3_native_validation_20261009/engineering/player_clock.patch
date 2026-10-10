@@ -1,0 +1,115 @@
+--- official/simulation_player.cpp
++++ N1_physical_time/simulation_player.cpp
+@@ -1,3 +1,8 @@
++#include <fstream>
++#include <iomanip>
++#include <sstream>
++#include <algorithm>
++#include <stdexcept>
+ /*--------------------------------------------------------------------------------
+  * Pkg for playing the simulation results of the "filament_simulator" pkg.
+  * It allows to run on real time, and provide services to simulated sensors (gas, wind)
+@@ -48,6 +53,7 @@
+ 
+ bool Player::GetGasValue_srv(gaden_msgs::srv::GasPosition::Request::SharedPtr req, gaden_msgs::srv::GasPosition::Response::SharedPtr res)
+ {
++    advancePhysicalClock("gas_service");
+     std::vector<gaden::GasType> gasTypes = Scene->GetGasTypes();
+     std::vector<std::string> gasNames;
+ 
+@@ -64,6 +70,7 @@
+ 
+ bool Player::GetWindValue_srv(gaden_msgs::srv::WindPosition::Request::SharedPtr req, gaden_msgs::srv::WindPosition::Response::SharedPtr res)
+ {
++    advancePhysicalClock("wind_service");
+     // Since the wind fields are identical among different instances, return just the information from instance[0]
+     for (int i = 0; i < req->x.size(); i++)
+     {
+@@ -110,12 +117,38 @@
+     GADEN_INFO("player_freq {:.2f} Hz", player_freq);
+     gaden::Utils::Time::Countdown countdown(1.f / player_freq);
+ 
++
++    std::string tracePath = declare_parameter<std::string>("r7_frame_time_csv", "");
++    if (!tracePath.empty())
++    {
++        if (playbackMetadata.params.size() != 1 || playbackMetadata.loop.loop)
++            throw std::runtime_error("R7 physical clock requires one non-looping simulation");
++        std::ifstream timeline(tracePath);
++        if (!timeline) throw std::runtime_error("Missing physical time trace");
++        std::string line; std::getline(timeline,line);
++        while (std::getline(timeline,line))
++        {
++            std::stringstream row(line); std::string index,time;
++            std::getline(row,index,','); std::getline(row,time,',');
++            if (std::stoul(index) != r7Times.size()) throw std::runtime_error("Non-contiguous physical time trace");
++            const double value=std::stod(time);
++            if (!r7Times.empty() && value <= r7Times.back()) throw std::runtime_error("Non-monotonic time trace");
++            r7Times.push_back(value);
++        }
++        r7Frame = playbackMetadata.params.at(0).startIteration;
++        if (r7Frame >= r7Times.size()) throw std::runtime_error("Invalid physical start frame");
++        r7BasePhysical=r7Times.at(r7Frame);
++        r7Trace.open(declare_parameter<std::string>("r7_clock_trace_path", ""));
++        if (!r7Trace) throw std::runtime_error("Missing R7 clock trace output");
++        r7Trace << "receipt_ros_ns,anchor_ros_ns,target_internal_s,frame,frame_internal_s,next_frame_internal_s,wind_index,reason\n" << std::setprecision(17);
++    }
++
+     // load the first timestep immediately
+     Scene->AdvanceTimestep();
+ 
+     while (rclcpp::ok())
+     {
+-        if (countdown.isDone())
++        if (r7Times.empty() && countdown.isDone())
+         {
+             // Read Gas and Wind data from log_files
+             Scene->AdvanceTimestep();
+@@ -130,6 +163,7 @@
+         // Attend service request at max rate!
+         // This allows sensors to have higher sampling rates than the simulation update
+         rclcpp::spin_some(shared_this);
++        advancePhysicalClock("loop");
+         r.sleep();
+     }
+ }
+@@ -226,6 +260,12 @@
+         GADEN_TERMINATE;
+     }
+ 
++    std::sort(windFiles.begin(),windFiles.end(),[](const auto& a,const auto& b){
++        auto index=[](const auto& p){auto stem=p.filename().string(); return std::stoul(stem.substr(stem.find_last_of('_')+1));};
++        return index(a)<index(b);
++    });
++    for (size_t i=0;i<windFiles.size();++i)
++        GADEN_INFO("R7 indexed wind {} = {}",i,windFiles[i].filename().string());
+     environmentConfig->windSequence.Initialize(windFiles, environmentConfig->environment.numCells(), {});
+     Scene.emplace(playbackMetadata, environmentConfig);
+ }
+@@ -336,3 +376,26 @@
+     }
+     return count;
+ }
++
++void Player::advancePhysicalClock(const char* reason)
++{
++    if (r7Times.empty()) return;
++    const int64_t stamp=now().nanoseconds();
++    if (stamp <= 0) return;
++    if (r7AnchorROS < 0) r7AnchorROS=stamp;
++    if (stamp < r7AnchorROS) throw std::runtime_error("ROS clock moved backwards");
++    const double target=r7BasePhysical + double(stamp-r7AnchorROS)/1e9;
++    bool changed=false;
++    while (r7Frame+1 < r7Times.size() && r7Times.at(r7Frame+1) <= target)
++    {
++        Scene->AdvanceTimestep(); ++r7Frame; changed=true;
++    }
++    if (target > r7Times.back()) throw std::runtime_error("Physical replay exhausted qualified recording");
++    if (changed || std::string(reason)!="loop")
++    {
++        r7Trace << stamp << "," << r7AnchorROS << "," << target << "," << r7Frame << ","
++                << r7Times.at(r7Frame) << "," << r7Times.at(std::min(r7Frame+1,r7Times.size()-1)) << ","
++                << environmentConfig->windSequence.GetCurrentIndex() << "," << reason << "\n";
++        r7Trace.flush();
++    }
++}

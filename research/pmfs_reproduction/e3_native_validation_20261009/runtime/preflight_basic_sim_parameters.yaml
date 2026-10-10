@@ -1,0 +1,14 @@
+/basic_sim:
+  ros__parameters:
+    deltaTime: 0.1
+    qos_overrides:
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    speed: 5.0
+    use_sim_time: false
+    worldFile: /home/zyc/pmfs_e3_native_validation_20261009/overlay/share/pmfs_env/scenarios/E/basicSim/E3.yaml
+
