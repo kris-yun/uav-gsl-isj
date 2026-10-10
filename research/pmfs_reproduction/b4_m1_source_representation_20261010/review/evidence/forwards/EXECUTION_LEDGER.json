@@ -1,0 +1,105 @@
+{
+  "prior_initialization_launches": 1,
+  "prior_actual_forward_calls": 0,
+  "status": "PASS_SIX_APPROVED_FORWARDS_CAPTURED_NO_POSTERIOR_UPDATE",
+  "attempted_calls": 6,
+  "completed_calls": 6,
+  "maximum_calls": 6,
+  "combined_forward_wall_seconds": 1.456970821996947,
+  "peak_RSS_bytes": 140578816,
+  "records": [
+    {
+      "job": "anchor_T_coarse",
+      "wall_seconds": 0.23534861599910073,
+      "peak_RSS_bytes": 135520256,
+      "exit_code": 0,
+      "resource_stop": null
+    },
+    {
+      "job": "anchor_W_fine",
+      "wall_seconds": 0.2356343100000231,
+      "peak_RSS_bytes": 135471104,
+      "exit_code": 0,
+      "resource_stop": null
+    },
+    {
+      "job": "T_true_fine",
+      "wall_seconds": 0.23641067599965027,
+      "peak_RSS_bytes": 135483392,
+      "exit_code": 0,
+      "resource_stop": null
+    },
+    {
+      "job": "T_wrong_fine",
+      "wall_seconds": 0.2352685810001276,
+      "peak_RSS_bytes": 135266304,
+      "exit_code": 0,
+      "resource_stop": null
+    },
+    {
+      "job": "W_true_coarse",
+      "wall_seconds": 0.25706251899828203,
+      "peak_RSS_bytes": 140578816,
+      "exit_code": 0,
+      "resource_stop": null
+    },
+    {
+      "job": "W_true_fine",
+      "wall_seconds": 0.2572461199997633,
+      "peak_RSS_bytes": 135442432,
+      "exit_code": 0,
+      "resource_stop": null
+    }
+  ],
+  "anchor_checks": [
+    {
+      "job": "anchor_T_coarse",
+      "verdict": "PASS_EXACT_NATIVE_MAP_POINTS_RNG_PHASE",
+      "file_checks": {
+        "blurred": {
+          "byte_equal": true,
+          "bytes": 6120,
+          "sha256": "0938977a04e469ddb09a9aa1eef0e750231826448c9e3b29efc39c4710212102"
+        },
+        "unblurred": {
+          "byte_equal": true,
+          "bytes": 6120,
+          "sha256": "ea3cf5310d90dcdfb8313703d5e1f05aa7c37818778ff9b2334aafcff528c3fd"
+        },
+        "points": {
+          "byte_equal": true,
+          "bytes": 16000,
+          "sha256": "187264dd437aabb9dd6bb6db358084dfa8e1eeac32c228296a0099c37b582812"
+        }
+      },
+      "score": 5.188127534755705e-10,
+      "native_score": 5.188127534755705e-10
+    },
+    {
+      "job": "anchor_W_fine",
+      "verdict": "PASS_EXACT_NATIVE_MAP_POINTS_RNG_PHASE",
+      "file_checks": {
+        "blurred": {
+          "byte_equal": true,
+          "bytes": 6120,
+          "sha256": "81bdfeb85825e77a74811aa816c4d67f4fd2f67920a05dfbb6992828d1e50850"
+        },
+        "unblurred": {
+          "byte_equal": true,
+          "bytes": 6120,
+          "sha256": "27a6aa6ece82e23892252cce33a85fbf3ef56830ad590f9a9a17fa9649af6625"
+        },
+        "points": {
+          "byte_equal": true,
+          "bytes": 16000,
+          "sha256": "76f7f584f5f31c9461ab96d68be6ca208bd23d6c7872a42a3329355f0a5d216c"
+        }
+      },
+      "score": 7.71713150589828e-06,
+      "native_score": 7.71713150589828e-06
+    }
+  ],
+  "ROS_nodes": 0,
+  "native_updates": 0,
+  "new_3D_realizations": 0
+}

@@ -1,0 +1,28 @@
+{
+  "verdict": "PASS_ISOLATED_SUBNORMAL_INPUT_PARSER_REPAIR_ZERO_FORWARD_CALLS",
+  "input_subnormal_examples": [
+    "3.1908919011361254e-312",
+    "4.4673415696965513e-319"
+  ],
+  "probe_stdout": "3.1908919011361254e-312,0x0.000965f48f382p-1022\n4.4673415696965513e-319,0x0.0000000016134p-1022\n",
+  "original_failure": "std::stod range_error while loading input omega; before simulation construction and output creation",
+  "input_data_modified": false,
+  "native_kernel_modified": false,
+  "RNG_or_parameters_modified": false,
+  "original_entry_sha256": "2c1227abaa04b47ae5765c20d179374ebd42804685999bc867ba11ef161eabc1",
+  "new_entry_sha256": "89145994097b27032421efdc21758b61cf89a386f07149a7f9ff173a0b952b7e",
+  "original_executable_sha256": "5b748c817cb0d9d788fac2779367894cb73b71d0493382724204689363415ae7",
+  "executable_sha256": "3aef72fb371c0eab96392cece963b7987cb9b2d616c337ad87fcff8fe0f410f6",
+  "build_wall_seconds": 11.33143858800031,
+  "cumulative_build_wall_seconds": 35.604692947999865,
+  "maximum_RSS_bytes": 837459968,
+  "exit_codes": [
+    0,
+    0,
+    0
+  ],
+  "failed_initialization_launches": 1,
+  "actual_forward_calls_before_repair": 0,
+  "budget_forward_calls_remain": 6,
+  "Python_double_bit_value_crosscheck": "PASS_EXACT"
+}

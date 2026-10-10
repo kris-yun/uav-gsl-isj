@@ -1,0 +1,117 @@
+{
+  "verdict": "M1_A_NATIVE_ANCHORS_PASS_FAIR_1X1_WRONG_PREFERENCE_PERSISTS",
+  "budgeted_forward_calls": 6,
+  "actual_forward_calls": 6,
+  "posterior_updates": 0,
+  "navigation_goals": 0,
+  "new_3D_realizations": 0,
+  "independent_physical_samples_added": 0,
+  "source_exact_coordinate_oracle_calls": 0,
+  "scalar_verification_maximum_relative_difference": 5.039976022481401e-19,
+  "bundles": [
+    {
+      "bundle": "T",
+      "true_coarse_score": 5.188127534755705e-10,
+      "true_fine_score": 4.1823388160637604e-10,
+      "wrong_fine_score": 7.338764937738911e-06,
+      "true_fine_over_coarse": 0.806136469862377,
+      "wrong_fine_over_true_coarse": 14145.305581977127,
+      "wrong_fine_over_true_fine": 17547.035906205812,
+      "unified_source_area_m2": 0.0625,
+      "scope": "Same initial RNG/phase, not event-keyed common noise or independent physical sample"
+    },
+    {
+      "bundle": "W",
+      "true_coarse_score": 5.08587175688121e-10,
+      "true_fine_score": 3.8240137314194034e-10,
+      "wrong_fine_score": 7.71713150589828e-06,
+      "true_fine_over_coarse": 0.7518895312776012,
+      "wrong_fine_over_true_coarse": 15173.665154763217,
+      "wrong_fine_over_true_fine": 20180.710760768696,
+      "unified_source_area_m2": 0.0625,
+      "scope": "Same initial RNG/phase, not event-keyed common noise or independent physical sample"
+    }
+  ],
+  "source_representation_decision": "5x1 versus 1x1 area mismatch does not explain the wrong-source preference in this snapshot and these two recorded states",
+  "physical_cause": "HOLD: distinguish evidence dependence, observability, stochastic prediction and 2D/3D transport using a separately approved reference",
+  "paired_masks": [
+    {
+      "bundle": "T",
+      "mask": "ALL_447",
+      "cells": 447,
+      "wrong_fine_over_true_fine": 17547.0359062058,
+      "scope": "Posthoc conditional score mask only; no posterior or localization outcome"
+    },
+    {
+      "bundle": "T",
+      "mask": "EXCLUDE_PRESET_Y_BAND",
+      "cells": 382,
+      "wrong_fine_over_true_fine": 1.9854194757944192,
+      "scope": "Posthoc conditional score mask only; no posterior or localization outcome"
+    },
+    {
+      "bundle": "T",
+      "mask": "DIRECT_10",
+      "cells": 10,
+      "wrong_fine_over_true_fine": 8.153511593797814,
+      "scope": "Posthoc conditional score mask only; no posterior or localization outcome"
+    },
+    {
+      "bundle": "T",
+      "mask": "OTHER_437",
+      "cells": 437,
+      "wrong_fine_over_true_fine": 2152.0832716486757,
+      "scope": "Posthoc conditional score mask only; no posterior or localization outcome"
+    },
+    {
+      "bundle": "W",
+      "mask": "ALL_447",
+      "cells": 447,
+      "wrong_fine_over_true_fine": 20180.710760768685,
+      "scope": "Posthoc conditional score mask only; no posterior or localization outcome"
+    },
+    {
+      "bundle": "W",
+      "mask": "EXCLUDE_PRESET_Y_BAND",
+      "cells": 382,
+      "wrong_fine_over_true_fine": 2.12177137238276,
+      "scope": "Posthoc conditional score mask only; no posterior or localization outcome"
+    },
+    {
+      "bundle": "W",
+      "mask": "DIRECT_10",
+      "cells": 10,
+      "wrong_fine_over_true_fine": 8.383310056666076,
+      "scope": "Posthoc conditional score mask only; no posterior or localization outcome"
+    },
+    {
+      "bundle": "W",
+      "mask": "OTHER_437",
+      "cells": 437,
+      "wrong_fine_over_true_fine": 2407.248524074544,
+      "scope": "Posthoc conditional score mask only; no posterior or localization outcome"
+    }
+  ],
+  "pair_checks": [
+    {
+      "comparison": "T_TRUE_FINE_VS_COARSE",
+      "net_log_score_difference": -0.21550223336097193,
+      "second_over_first_score_ratio": 0.8061364698623771
+    },
+    {
+      "comparison": "W_TRUE_FINE_VS_COARSE",
+      "net_log_score_difference": -0.28516586571995084,
+      "second_over_first_score_ratio": 0.7518895312776012
+    },
+    {
+      "comparison": "T_WRONG_FINE_VS_TRUE_FINE",
+      "net_log_score_difference": 9.772640320396487,
+      "second_over_first_score_ratio": 17547.0359062058
+    },
+    {
+      "comparison": "W_WRONG_FINE_VS_TRUE_FINE",
+      "net_log_score_difference": 9.912482514336347,
+      "second_over_first_score_ratio": 20180.710760768685
+    }
+  ]
+}
