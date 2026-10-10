@@ -1,0 +1,23 @@
+/PioneerP3DX/Anemometer:
+  ros__parameters:
+    fixed_frame: map
+    frequency: 20.0
+    noise_std: 0.3
+    qos_overrides:
+      /clock:
+        subscription:
+          depth: 1
+          durability: volatile
+          history: keep_last
+          reliability: best_effort
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    sensor_frame: PioneerP3DX_anemometer_frame
+    topic: /PioneerP3DX/Anemometer/WindSensor_reading
+    use_map_ref_system: false
+    use_sim_time: true
+

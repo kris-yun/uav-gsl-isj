@@ -1,0 +1,59 @@
+/PioneerP3DX/GSL:
+  ros__parameters:
+    anemometer_frame: PioneerP3DX_anemometer_frame
+    anemometer_topic: /b4/wind_to
+    blurSigmaX: 1.5
+    blurSigmaY: 1.5
+    confidenceMeasurementWeight: 1.0
+    confidenceSigmaSpatial: 1.0
+    convergence_thr: 1.5
+    costmap_topic: global_costmap/costmap
+    deltaTime: 0.1
+    distanceThreshold: 0.5
+    distanceWeight: 0.15
+    enose_topic: PID/Sensor_reading
+    explorationProbability: 0.05
+    ground_truth_x: -3.2
+    ground_truth_y: -3.3
+    hitPriorProbability: 0.3
+    initialExplorationMoves: 2
+    iterationsToRecord: 200
+    kernelSigma: 1.5
+    kernelStretchConstant: 1.5
+    localEstimationWindowSize: 2
+    map_topic: map
+    markers_height: 0.2
+    maxRegionSize: 5
+    maxSearchTime: 300.0
+    maxUpdatesPerStop: 5
+    maxWaitForGasTime: 10.0
+    maxWarmupIterations: 500
+    minWarmupIterations: 200
+    navigationPathFile: /home/zyc/pmfs_b4_native_validation_20261009/runtime/navigation_path.csv
+    noiseSTDev: 0.2
+    openMoveSetExpasion: 5
+    qos_overrides:
+      /clock:
+        subscription:
+          depth: 1
+          durability: volatile
+          history: keep_last
+          reliability: best_effort
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    refineFraction: 0.1
+    resultsFile: /home/zyc/pmfs_b4_native_validation_20261009/runtime/native_results.csv
+    robot_location_topic: ground_truth
+    scale: 25
+    sourceDiscriminationPower: 0.4
+    stepsSourceUpdate: 3
+    stop_and_measure_time: 0.4
+    th_gas_present: 0.1
+    th_wind_present: 0.02
+    useWindGroundTruth: true
+    use_sim_time: true
+
