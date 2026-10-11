@@ -1,0 +1,618 @@
+{
+  "status": "GEOMETRY_ONLY_FUTURE_B_PROPOSAL_NOT_APPROVED_NOT_EXECUTED",
+  "parent_commit": "210b94e5de0ab7e906136fd0765c3639f10103b2",
+  "parent_manifest_SHA256": "b310b6c7d13112660ccd1bdd0cd4fbbb8f708ceb53e02bec4f03126d12575534",
+  "input_SHA256": {
+    "PARENT_M2M3_FROZEN/M2_FROZEN/event_map_anchor/vm_evidence/snapshot/occupancy.csv": "99ad97da56e7020e210506762cb6de63faf54ae350cc13d6991b544e08a3f3ae",
+    "PARENT_M2M3_FROZEN/M2_FROZEN/frozen_B4_inputs/derived_B4/OccupancyGrid3D.csv": "00914f3d7114d45d764ff24be9e832da70d6e2e69528918f2c3c1143fea40295",
+    "PARENT_M2M3_FROZEN/M3_NEW/M1_REFERENCE/snapshot/metadata.json": "8fdd0f115aefdc4694aaa0767af89c0e651834ecad2f5048c39eae06ffee8459",
+    "RK0_NEW/source/verify_raw_receiver_queries.py": "78c62afc280ff2975d02421989ea39eb7cfc484f455cef75355cdd76a44df507",
+    "PARENT_M2M3_FROZEN/M2_FROZEN/native_reference_evidence/realizations/C7_0/PARAMETERS.yaml": "cfd5180dfbf95794ad27f5b196b5db9992f198f252c4b2854c98baf55c33b419",
+    "PARENT_M2M3_FROZEN/M2_FROZEN/native_reference_evidence/realizations/K2_0/PARAMETERS.yaml": "ff2a039422b5373014ba6e9fa5a39020cf9cb12efefad551cb4b70be94e6f423",
+    "PARENT_M2M3_FROZEN/M2_FROZEN/frozen_B4_inputs/derived_B4/wind/wind_iteration_10": "18b07a284fd3432c77759499b96d2bb5153e945efe0b6644ce0537911697722a"
+  },
+  "consumed_input_types": [
+    "3D occupancy",
+    "native pruned 2D occupancy",
+    "native grid metadata",
+    "gas scalar configuration",
+    "native geometry parser",
+    "wind asset hash only"
+  ],
+  "gas_snapshots_or_concentrations_read_for_selection": false,
+  "phi_or_new_prediction_calls": 0,
+  "CFD_GADEN_ROS_VM_execution": 0,
+  "native_2D_support": {
+    "width": 34,
+    "height": 45,
+    "cell_size_m": 0.25,
+    "origin_m": [
+      -7.55,
+      -7.88
+    ],
+    "free_cells": 447,
+    "connected_components": 3
+  },
+  "occupancy3D": {
+    "dimensions": [
+      87,
+      114,
+      33
+    ],
+    "minimum_m": [
+      -7.550000190734863,
+      -7.879499912261963,
+      -1.0184999704360962
+    ],
+    "maximum_m": [
+      1.149999976158142,
+      3.4704999923706055,
+      2.2314999103546143
+    ],
+    "cell_size_m": 0.10000000149011612
+  },
+  "exclusion": {
+    "old_source_xyz_m": [
+      [
+        -3.2,
+        -3.3,
+        -0.5
+      ],
+      [
+        -1.675,
+        1.495,
+        -0.5
+      ]
+    ],
+    "old_source_support_cells": [
+      [
+        17,
+        18
+      ],
+      [
+        23,
+        37
+      ]
+    ],
+    "rule": "exclude whole old coarse support cells, not merely exact floating-point old coordinates"
+  },
+  "legality_rule": {
+    "source_z_m": -0.5,
+    "source_centre_must_be_3D_free": true,
+    "full_3sigma_ball_clearance_is_not_a_native_point_release_requirement": true,
+    "receiver_z_m": -0.2,
+    "receiver_clearance_lower_bound_m": 0.2,
+    "receiver_minimum_distance_to_each_candidate_XY_m": 1.0,
+    "sphere_clearance": "EDT nearest nonfree voxel-centre distance minus voxel half-diagonal and point-to-own-voxel-centre offset; outside padded blocked"
+  },
+  "source_selection": {
+    "tag": "RK2-B-SOURCE-GEOMETRY-V1|210b94e5de0ab7e906136fd0765c3639f10103b2",
+    "full_SHA256": "3d512e951f0e73e1c9e7f53bf6cd4bb3fc94a583cbfabaa87967fc60cba26073",
+    "initial_hash_mod_index": 44,
+    "eligible_count": 445,
+    "sort": "grid_i, then grid_j ascending",
+    "subsequent_rule": "maximum minimum squared XY distance; tie grid_i,grid_j ascending"
+  },
+  "receiver_selection": {
+    "tag": "RK2-B-RECEIVER-GEOMETRY-V1|210b94e5de0ab7e906136fd0765c3639f10103b2",
+    "full_SHA256": "c11d3d18c8ff28ce05ebf59cf4988af7ba7c77449b587b2113fd68f73d12418b",
+    "initial_hash_mod_index": 23,
+    "eligible_count": 154,
+    "sort": "grid_i, then grid_j ascending",
+    "subsequent_rule": "maximum minimum squared XY distance; tie grid_i,grid_j ascending"
+  },
+  "sources": [
+    {
+      "grid_i": 5,
+      "grid_j": 15,
+      "cell_index": 515,
+      "component": 1,
+      "xyz_m": [
+        -6.175,
+        -4.005,
+        -0.5
+      ],
+      "occupancy3D_indices": [
+        13,
+        38,
+        5
+      ],
+      "clearance_lower_bound_m": 0.16630724454732226,
+      "future_candidate_id": "candidate_B_000"
+    },
+    {
+      "grid_i": 29,
+      "grid_j": 41,
+      "cell_index": 1423,
+      "component": 1,
+      "xyz_m": [
+        -0.17499999999999982,
+        2.495,
+        -0.5
+      ],
+      "occupancy3D_indices": [
+        73,
+        103,
+        5
+      ],
+      "clearance_lower_bound_m": 0.16630723956271065,
+      "future_candidate_id": "candidate_B_001"
+    },
+    {
+      "grid_i": 2,
+      "grid_j": 43,
+      "cell_index": 1464,
+      "component": 1,
+      "xyz_m": [
+        -6.925,
+        2.995,
+        -0.5
+      ],
+      "occupancy3D_indices": [
+        6,
+        108,
+        5
+      ],
+      "clearance_lower_bound_m": 0.1663072829939367,
+      "future_candidate_id": "candidate_B_002"
+    }
+  ],
+  "receivers": [
+    {
+      "grid_i": 6,
+      "grid_j": 41,
+      "cell_index": 1400,
+      "component": 1,
+      "xyz_m": [
+        -5.925,
+        2.495,
+        -0.2
+      ],
+      "occupancy3D_indices": [
+        16,
+        103,
+        8
+      ],
+      "clearance_lower_bound_m": 0.3663072692029592,
+      "stop_id": 0,
+      "physical_query_times_s": [
+        320.0,
+        320.5,
+        321.0,
+        321.5,
+        322.0
+      ],
+      "distances_to_all_candidate_sources_m": [
+        6.504805915628844,
+        5.75,
+        1.118033988749895
+      ]
+    },
+    {
+      "grid_i": 27,
+      "grid_j": 6,
+      "cell_index": 231,
+      "component": 1,
+      "xyz_m": [
+        -0.6749999999999998,
+        -6.255,
+        -0.2
+      ],
+      "occupancy3D_indices": [
+        68,
+        16,
+        8
+      ],
+      "clearance_lower_bound_m": 0.22633412581494355,
+      "stop_id": 1,
+      "physical_query_times_s": [
+        340.0,
+        340.5,
+        341.0,
+        341.5,
+        342.0
+      ],
+      "distances_to_all_candidate_sources_m": [
+        5.942432162002357,
+        8.764274071479052,
+        11.163556780883054
+      ]
+    },
+    {
+      "grid_i": 32,
+      "grid_j": 32,
+      "cell_index": 1120,
+      "component": 1,
+      "xyz_m": [
+        0.5750000000000002,
+        0.2450000000000001,
+        -0.2
+      ],
+      "occupancy3D_indices": [
+        81,
+        81,
+        8
+      ],
+      "clearance_lower_bound_m": 0.2900431503083616,
+      "stop_id": 2,
+      "physical_query_times_s": [
+        360.0,
+        360.5,
+        361.0,
+        361.5,
+        362.0
+      ],
+      "distances_to_all_candidate_sources_m": [
+        7.976528066771908,
+        2.3717082451262845,
+        7.988272654335229
+      ]
+    },
+    {
+      "grid_i": 9,
+      "grid_j": 17,
+      "cell_index": 587,
+      "component": 1,
+      "xyz_m": [
+        -5.175,
+        -3.505,
+        -0.2
+      ],
+      "occupancy3D_indices": [
+        23,
+        43,
+        8
+      ],
+      "clearance_lower_bound_m": 0.36630725433092726,
+      "stop_id": 3,
+      "physical_query_times_s": [
+        380.0,
+        380.5,
+        381.0,
+        381.5,
+        382.0
+      ],
+      "distances_to_all_candidate_sources_m": [
+        1.118033988749895,
+        7.810249675906654,
+        6.73145600891813
+      ]
+    },
+    {
+      "grid_i": 17,
+      "grid_j": 30,
+      "cell_index": 1037,
+      "component": 1,
+      "xyz_m": [
+        -3.175,
+        -0.2549999999999999,
+        -0.2
+      ],
+      "occupancy3D_indices": [
+        43,
+        76,
+        8
+      ],
+      "clearance_lower_bound_m": 0.3756809169616595,
+      "stop_id": 4,
+      "physical_query_times_s": [
+        400.0,
+        400.5,
+        401.0,
+        401.5,
+        402.0
+      ],
+      "distances_to_all_candidate_sources_m": [
+        4.802343178074636,
+        4.0697051490249265,
+        4.962358310319802
+      ]
+    },
+    {
+      "grid_i": 9,
+      "grid_j": 2,
+      "cell_index": 77,
+      "component": 1,
+      "xyz_m": [
+        -5.175,
+        -7.255,
+        -0.2
+      ],
+      "occupancy3D_indices": [
+        23,
+        6,
+        8
+      ],
+      "clearance_lower_bound_m": 0.2657790655101922,
+      "stop_id": 5,
+      "physical_query_times_s": [
+        420.0,
+        420.5,
+        421.0,
+        421.5,
+        422.0
+      ],
+      "distances_to_all_candidate_sources_m": [
+        3.400367627183861,
+        10.957303500405564,
+        10.398317171542711
+      ]
+    },
+    {
+      "grid_i": 24,
+      "grid_j": 19,
+      "cell_index": 670,
+      "component": 1,
+      "xyz_m": [
+        -1.4249999999999998,
+        -3.005,
+        -0.2
+      ],
+      "occupancy3D_indices": [
+        61,
+        48,
+        8
+      ],
+      "clearance_lower_bound_m": 0.26630731604920793,
+      "stop_id": 6,
+      "physical_query_times_s": [
+        440.0,
+        440.5,
+        441.0,
+        441.5,
+        442.0
+      ],
+      "distances_to_all_candidate_sources_m": [
+        4.8541219597369,
+        5.640257086339239,
+        8.139410298049853
+      ]
+    },
+    {
+      "grid_i": 23,
+      "grid_j": 41,
+      "cell_index": 1417,
+      "component": 1,
+      "xyz_m": [
+        -1.6749999999999998,
+        2.495,
+        -0.2
+      ],
+      "occupancy3D_indices": [
+        58,
+        103,
+        8
+      ],
+      "clearance_lower_bound_m": 0.22686232742805262,
+      "stop_id": 7,
+      "physical_query_times_s": [
+        460.0,
+        460.5,
+        461.0,
+        461.5,
+        462.0
+      ],
+      "distances_to_all_candidate_sources_m": [
+        7.905694150420948,
+        1.5,
+        5.273755777432247
+      ]
+    },
+    {
+      "grid_i": 6,
+      "grid_j": 29,
+      "cell_index": 992,
+      "component": 1,
+      "xyz_m": [
+        -5.925,
+        -0.5049999999999999,
+        -0.2
+      ],
+      "occupancy3D_indices": [
+        16,
+        73,
+        8
+      ],
+      "clearance_lower_bound_m": 0.27861774517885024,
+      "stop_id": 8,
+      "physical_query_times_s": [
+        480.0,
+        480.5,
+        481.0,
+        481.5,
+        482.0
+      ],
+      "distances_to_all_candidate_sources_m": [
+        3.5089172119045497,
+        6.485560885536423,
+        3.640054944640259
+      ]
+    },
+    {
+      "grid_i": 17,
+      "grid_j": 10,
+      "cell_index": 357,
+      "component": 1,
+      "xyz_m": [
+        -3.175,
+        -5.255,
+        -0.2
+      ],
+      "occupancy3D_indices": [
+        43,
+        26,
+        8
+      ],
+      "clearance_lower_bound_m": 0.36577894151564,
+      "stop_id": 9,
+      "physical_query_times_s": [
+        500.0,
+        500.5,
+        501.0,
+        501.5,
+        502.0
+      ],
+      "distances_to_all_candidate_sources_m": [
+        3.25,
+        8.31038506929733,
+        9.06228448019593
+      ]
+    }
+  ],
+  "fixed_observation_window": {
+    "start_physical_s": 320.0,
+    "maximum_elapsed_physical_s": 300.0,
+    "last_planned_query_physical_s": 502.0,
+    "queries": 50,
+    "virtual_point_receivers_only": true,
+    "ROS_query_nodes_or_navigation_goals": 0
+  },
+  "unchanged_gas_config": {
+    "sim_time": "1000.0",
+    "time_step": "0.1",
+    "num_filaments_sec": "7",
+    "variable_rate": "false",
+    "filament_stop_steps": "0",
+    "ppm_filament_center": "10.0",
+    "filament_initial_std": "10.0",
+    "filament_growth_gamma": "15.0",
+    "filament_noise_std": "0.02",
+    "gas_type": "13",
+    "temperature": "298.0",
+    "pressure": "1.0",
+    "concentration_unit_choice": "1",
+    "wind_time_step": "1.0",
+    "allow_looping": "false",
+    "results_time_step": "0.5",
+    "results_min_time": "0.0"
+  },
+  "wind_rule": "same fixed wind_iteration_10 asset; physical query traces must prove index10, not infer from filename",
+  "proposed_rng_initial_states": [
+    {
+      "candidate_id": "candidate_B_000",
+      "role": "reference",
+      "replicate": 0,
+      "proposed_uint32_seed": 3814077802,
+      "tag": "RK2-B-RNG-V1|210b94e5de0ab7e906136fd0765c3639f10103b2|candidate_B_000|reference|0"
+    },
+    {
+      "candidate_id": "candidate_B_000",
+      "role": "reference",
+      "replicate": 1,
+      "proposed_uint32_seed": 3836822567,
+      "tag": "RK2-B-RNG-V1|210b94e5de0ab7e906136fd0765c3639f10103b2|candidate_B_000|reference|1"
+    },
+    {
+      "candidate_id": "candidate_B_000",
+      "role": "heldout",
+      "replicate": 0,
+      "proposed_uint32_seed": 335003085,
+      "tag": "RK2-B-RNG-V1|210b94e5de0ab7e906136fd0765c3639f10103b2|candidate_B_000|heldout|0"
+    },
+    {
+      "candidate_id": "candidate_B_000",
+      "role": "heldout",
+      "replicate": 1,
+      "proposed_uint32_seed": 4159508750,
+      "tag": "RK2-B-RNG-V1|210b94e5de0ab7e906136fd0765c3639f10103b2|candidate_B_000|heldout|1"
+    },
+    {
+      "candidate_id": "candidate_B_001",
+      "role": "reference",
+      "replicate": 0,
+      "proposed_uint32_seed": 1105245821,
+      "tag": "RK2-B-RNG-V1|210b94e5de0ab7e906136fd0765c3639f10103b2|candidate_B_001|reference|0"
+    },
+    {
+      "candidate_id": "candidate_B_001",
+      "role": "reference",
+      "replicate": 1,
+      "proposed_uint32_seed": 4140499360,
+      "tag": "RK2-B-RNG-V1|210b94e5de0ab7e906136fd0765c3639f10103b2|candidate_B_001|reference|1"
+    },
+    {
+      "candidate_id": "candidate_B_001",
+      "role": "heldout",
+      "replicate": 0,
+      "proposed_uint32_seed": 1293320881,
+      "tag": "RK2-B-RNG-V1|210b94e5de0ab7e906136fd0765c3639f10103b2|candidate_B_001|heldout|0"
+    },
+    {
+      "candidate_id": "candidate_B_001",
+      "role": "heldout",
+      "replicate": 1,
+      "proposed_uint32_seed": 3962062617,
+      "tag": "RK2-B-RNG-V1|210b94e5de0ab7e906136fd0765c3639f10103b2|candidate_B_001|heldout|1"
+    },
+    {
+      "candidate_id": "candidate_B_002",
+      "role": "reference",
+      "replicate": 0,
+      "proposed_uint32_seed": 2617703681,
+      "tag": "RK2-B-RNG-V1|210b94e5de0ab7e906136fd0765c3639f10103b2|candidate_B_002|reference|0"
+    },
+    {
+      "candidate_id": "candidate_B_002",
+      "role": "reference",
+      "replicate": 1,
+      "proposed_uint32_seed": 1751562308,
+      "tag": "RK2-B-RNG-V1|210b94e5de0ab7e906136fd0765c3639f10103b2|candidate_B_002|reference|1"
+    },
+    {
+      "candidate_id": "candidate_B_002",
+      "role": "heldout",
+      "replicate": 0,
+      "proposed_uint32_seed": 2240343956,
+      "tag": "RK2-B-RNG-V1|210b94e5de0ab7e906136fd0765c3639f10103b2|candidate_B_002|heldout|0"
+    },
+    {
+      "candidate_id": "candidate_B_002",
+      "role": "heldout",
+      "replicate": 1,
+      "proposed_uint32_seed": 4137887886,
+      "tag": "RK2-B-RNG-V1|210b94e5de0ab7e906136fd0765c3639f10103b2|candidate_B_002|heldout|1"
+    }
+  ],
+  "reference_realizations": 6,
+  "heldout_realizations": 6,
+  "total_proposed_realizations": 12,
+  "model_adaptation": "same frozen U_query/S_query/L construction rules on six new references, equal realization weights; 30 scheduled rows per receiver, not the old-code literal20",
+  "future_main_endpoint": {
+    "source_NLL_mean_over_six_whole_heldout": "at least10percent improvement vs each ordinary baseline",
+    "Top1_errors": "no increase; ties are abstain errors",
+    "per_realization_NLL_worsening_limit_nat": 0.2,
+    "endpoint_status": "PROPOSED_FOR_FUTURE_APPROVAL_NOT_AN_A_RULE",
+    "resource_parity": "same actual total storage and local readout budget"
+  },
+  "budget_proposal": {
+    "GADEN_realizations": 12,
+    "new_CFD": 0,
+    "new_navigation": 0,
+    "generation_single_thread": true,
+    "reuse_existing_qualified_binary_no_compilation": true,
+    "total_gas_generation_wall_ceiling_s": 900,
+    "per_generator_RSS_ceiling_bytes": 1073741824,
+    "new_disk_reservation_bytes": 3221225472,
+    "method_construction_and_predictions_wall_ceiling_s": 600,
+    "reference_native_response_arithmetic": "6 reference realizations x 50 frames x 10 frozen poses",
+    "reference_native_anchor_first": "first reference count toward12; validate only time/hash/finite/native operator, not task performance"
+  },
+  "missing_before_execution": [
+    "fresh user approval for this B contract and all12 realizations",
+    "A method-value gate must independently permit requesting B; this proposal does not override A STOP",
+    "existing generator binary/hash/runtime inventory and exact semantic RNG seed binding",
+    "final release-boundary/outlet and wind coverage validation at three selected sources",
+    "exact physical saved-time trace clock mapping; selected frame by saved physical time, not frame-name/0.5 arithmetic",
+    "receiver response cache and scalar observations; none generated now",
+    "new task information separation and loss/endpoint/model-capacity freeze before first new output",
+    "separate model-shape assertion update from20 to30 training rows/pose before new output; no loss/ridge/tree-rule change"
+  ],
+  "limits": [
+    "one new three-source classification task, not full447-free-cell localization",
+    "same geometry and static wind; not independent geometry or lake generalization",
+    "geometry safety margin is a conservative virtual receiver point-domain filter, not validated UAV dynamics or navigable flight trajectory",
+    "fixed virtual sensor queries across10 poses; no ROS query nodes, Nav2 path, transit concentration or robot closed loop",
+    "no source/receiver reselection on low signal, poor separability, or unfavorable method outcome",
+    "technical failure stops without replacement favorable seed; futureB not automatically started"
+  ]
+}

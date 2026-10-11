@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "C:\Users\50176\Documents\Codex\2026-10-09\gb-gaden-turb-smoke-r0c-r0d\outputs\PMFS_RK2_FINITE_RESPONSE_PROTOTYPE_20261010\source\run_rk2.py", line 208, in <module>
+    try:main(args.parent,args.out)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\50176\Documents\Codex\2026-10-09\gb-gaden-turb-smoke-r0c-r0d\outputs\PMFS_RK2_FINITE_RESPONSE_PROTOTYPE_20261010\source\run_rk2.py", line 70, in main
+    U=models.build_model(data,dict(kind='U'),contract);progress('U_QUERY_FITTED',train_MSE=U['train_MSE'],capacity=U['capacity'])
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\50176\Documents\Codex\2026-10-09\gb-gaden-turb-smoke-r0c-r0d\outputs\PMFS_RK2_FINITE_RESPONSE_PROTOTYPE_20261010\source\rk2_models.py", line 108, in build_model
+    h,mse,logs=common_fit(X,prior,data['targets'],data['poses'],contract)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\50176\Documents\Codex\2026-10-09\gb-gaden-turb-smoke-r0c-r0d\outputs\PMFS_RK2_FINITE_RESPONSE_PROTOTYPE_20261010\source\rk2_models.py", line 79, in common_fit
+    raise RuntimeError('Query-fit KKT failed: '+json.dumps(logs[-1]))
+RuntimeError: Query-fit KKT failed: {"pose_id": 1, "query_rows": 20, "coefficients": 789, "objective": 0.01932720236337652, "train_MSE": 0.001182947314337297, "KKT_projected_gradient_max": 3.3757625302226182e-06, "KKT_threshold": 3.028940178748873e-06, "KKT_pass": false, "scipy_success": true, "scipy_message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH", "iterations": 389, "evaluations": 392, "wall_s": 0.03622770000947639}

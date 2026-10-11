@@ -1,0 +1,118 @@
+{
+  "status": "PASS_INDEPENDENT_SAVED_PREDICTION_RECOMPUTATION",
+  "handoff_hash_count": 12,
+  "prediction_SHA256": "5f57b8080bd3ac4546b839a39b28159e7e012b1d16a184ff2d9b35b0d6e52e92",
+  "banks": 4,
+  "main_test_exposures": 200,
+  "mean_identity": "MSE = per-bank bias squared + centered mean squared error",
+  "equal_bank_metrics": {
+    "U": {
+      "MSE_ppm2": 0.8911261627052158,
+      "squared_bias_ppm2": 0.06410082778672657,
+      "centered_error_ppm2": 0.8270253349184892
+    },
+    "S": {
+      "MSE_ppm2": 0.7852615993611965,
+      "squared_bias_ppm2": 0.037783003558005415,
+      "centered_error_ppm2": 0.7474785958031911
+    },
+    "C_ORACLE": {
+      "MSE_ppm2": 0.49860663889494533,
+      "squared_bias_ppm2": 0.005924976230119906,
+      "centered_error_ppm2": 0.4926816626648254
+    }
+  },
+  "S_to_C_difference": {
+    "MSE_ppm2": 0.2866549604662512,
+    "squared_bias_ppm2": 0.03185802732788551,
+    "centered_error_ppm2": 0.2547969331383657
+  },
+  "RMSE_S_ppm": 0.8861498740964739,
+  "RMSE_C_ORACLE_ppm": 0.7061208387343807,
+  "RMSE_reduction_fraction": 0.20315867622917894,
+  "block_directions": [
+    {
+      "fold": "T0_E1",
+      "bank": "C7_1",
+      "exposures": 50,
+      "C_lower_squared_error_blocks": 23,
+      "C_higher_squared_error_blocks": 27,
+      "median_S_minus_C_squared_error": -6.105110605328332e-05,
+      "tail_alone_positive_blocks": 9,
+      "not_independent_trials": true
+    },
+    {
+      "fold": "T0_E1",
+      "bank": "K2_1",
+      "exposures": 50,
+      "C_lower_squared_error_blocks": 26,
+      "C_higher_squared_error_blocks": 24,
+      "median_S_minus_C_squared_error": 6.325342674346285e-05,
+      "tail_alone_positive_blocks": 2,
+      "not_independent_trials": true
+    },
+    {
+      "fold": "T1_E0",
+      "bank": "C7_0",
+      "exposures": 50,
+      "C_lower_squared_error_blocks": 19,
+      "C_higher_squared_error_blocks": 31,
+      "median_S_minus_C_squared_error": -0.005211250976582851,
+      "tail_alone_positive_blocks": 7,
+      "not_independent_trials": true
+    },
+    {
+      "fold": "T1_E0",
+      "bank": "K2_0",
+      "exposures": 50,
+      "C_lower_squared_error_blocks": 31,
+      "C_higher_squared_error_blocks": 19,
+      "median_S_minus_C_squared_error": 0.0025048956039325325,
+      "tail_alone_positive_blocks": 0,
+      "not_independent_trials": true
+    }
+  ],
+  "tail_error_identity_max_abs_ppm": 3.5128150388530344e-16,
+  "read_only_PRO_script_review": {
+    "no_import_or_execution": true,
+    "declared_boundary_correct": true,
+    "actual_reads": "196 immutable NPZ caches, 8 frozen kernels, saved predictions and source mapping",
+    "actual_writes": "fresh external output directory only",
+    "new_phi_queries": 0,
+    "new_physics": 0,
+    "prototype_construction": 0,
+    "caveat": "Reconstructs existing estimators; this is numerical replay, not prototype fitting search."
+  },
+  "query_loss_math": {
+    "correct": true,
+    "scalar_h_query_formula": "sum(w_t N_t Y_t) / sum(w_t N_t^2)",
+    "pooled_h_formula": "sum(w_t Y_t) / sum(w_t N_t)",
+    "nonnegative_scalar_case": "For nonnegative N,Y, unconstrained scalar optimum is nonnegative.",
+    "multivariate_case": "Nonnegative regularized least squares requires candidate-count design matrix including cross-cell covariation; it is not independent per-cell particle averaging.",
+    "toy_counterexample": {
+      "N": [
+        1.0,
+        10.0
+      ],
+      "Y": [
+        10.0,
+        10.0
+      ],
+      "h_pool": 1.8181818181818181,
+      "h_query": 1.0891089108910892,
+      "pool_loss": 133.88429752066114,
+      "query_loss": 80.19801980198021
+    },
+    "scope": "Toy algebra verification only; no new model or physics."
+  },
+  "inference_prohibitions": [
+    "test hidden particle table",
+    "test Q classes or counts",
+    "test phi or exact tail",
+    "test generating-source identity or filename routing",
+    "test response signatures used to construct L",
+    "test observations used to select lambda/cutpoints/temperature"
+  ],
+  "legitimate_forecast_inputs": "Every candidate may read its own reference realization state; exact fallback may use only that candidate state and must be cost-accounted.",
+  "no_new_model_or_phi": true
+}

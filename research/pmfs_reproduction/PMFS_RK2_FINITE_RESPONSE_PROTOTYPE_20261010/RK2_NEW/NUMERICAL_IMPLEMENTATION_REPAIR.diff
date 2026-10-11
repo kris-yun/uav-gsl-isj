@@ -1,0 +1,45 @@
+--- frozen_first/rk2_models.py
++++ repair1/rk2_models.py
+@@ -67,6 +67,34 @@
+         fit=minimize(f,beta0,method='L-BFGS-B',jac=True,bounds=[(0.,None)]*len(beta0),
+             options=dict(maxiter=contract['solver_maxiter'],gtol=contract['solver_gtol'],ftol=contract['solver_ftol'],maxls=40))
+         beta=np.asarray(fit.x,dtype=float);objective,grad=f(beta)
++        # SciPy's relative-objective termination need not satisfy the frozen
++        # KKT check. Polish the identical convex problem in its n=20 dual;
++        # no loss, lambda, routing, capacity, training or task rule is changed.
++        dual=Z@beta-b;polish_steps=0
++        def primal_from_dual(v):return np.maximum(0.,beta0-Z.T@v/(n*lam))
++        def dual_value(v):
++            x=primal_from_dual(v)
++            return float(.5*(v@v)+b@v+(n*lam/2)*(x@x))
++        for polish_steps in range(33):
++            candidate=primal_from_dual(dual);_,candidate_gradient=f(candidate)
++            check=np.where(candidate>1e-10,np.abs(candidate_gradient),np.maximum(0.,-candidate_gradient))
++            bound=contract['KKT_relative_tolerance']*(1+float(np.max(np.abs(Z.T@b/n),initial=0.))+lam*float(np.max(np.abs(beta0),initial=0.)))
++            if np.max(check,initial=0.)<=bound:
++                beta=candidate;break
++            if polish_steps==32:
++                beta=candidate;break
++            dg=dual+b-Z@candidate
++            active=candidate>0
++            H=np.eye(n)+(Z[:,active]@Z[:,active].T)/(n*lam)
++            direction=-np.linalg.solve(H,dg)
++            old_value=dual_value(dual);descent=float(dg@direction);step=1.
++            for backtrack in range(64):
++                trial=dual+step*direction
++                if dual_value(trial)<=old_value+1e-4*step*descent+1e-14*max(1.,abs(old_value)):
++                    dual=trial;break
++                step*=.5
++            else:raise RuntimeError('Convex dual numerical line search failed')
++        objective,grad=f(beta)
+         projected=np.where(beta>1e-10,np.abs(grad),np.maximum(0.,-grad))
+         absolute=float(np.max(projected,initial=0.))
+         threshold=contract['KKT_relative_tolerance']*(1+float(np.max(np.abs(Z.T@b/n),initial=0.))+lam*float(np.max(np.abs(beta0),initial=0.)))
+@@ -75,6 +103,7 @@
+         logs.append(dict(pose_id=pose,query_rows=n,coefficients=len(beta),objective=objective,train_MSE=mse,
+             KKT_projected_gradient_max=absolute,KKT_threshold=threshold,KKT_pass=absolute<=threshold,
+             scipy_success=bool(fit.success),scipy_message=str(fit.message),iterations=int(fit.nit),evaluations=int(fit.nfev),wall_s=time.perf_counter()-started))
++        logs[-1].update(identical_objective_dual_polish_steps=polish_steps,dual_polish_cap=32)
+         if absolute>threshold:
+             raise RuntimeError('Query-fit KKT failed: '+json.dumps(logs[-1]))
+         h[:,pose]=beta/scale
