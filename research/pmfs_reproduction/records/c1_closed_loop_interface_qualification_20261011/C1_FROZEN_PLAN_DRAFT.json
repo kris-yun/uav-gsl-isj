@@ -1,0 +1,113 @@
+{
+  "plan_id": "C1_CLOSED_LOOP_INTERFACE_QUALIFICATION",
+  "name_disambiguation": "C1 is this qualification-stage label, NOT the authors official C1 scene. Candidate engineering reuse scene is B4.",
+  "status": "DRAFT_NOT_EXECUTABLE_UNTIL_INTERFACE_AND_COMMON_PHYSICS_PASS",
+  "UTC": "2026-10-11T17:29:09.087464+00:00",
+  "purpose": "Compare original PMFS core and ordinary correct dynamic inference in the same native Nav2 system. Not a novel-model victory test. RPSPM remains stopped.",
+  "authorization": "Upstream reports human conditional simulated closed-loop continuation. This draft does not claim absence of user authorization, and does not itself consume new goals; counts/interface/common input still need actual acceptance. No real flight/new CFD/GPU/paid resources.",
+  "budget": {
+    "original_compute_s": 14400,
+    "R4_used_s": 1073.422000000006,
+    "remaining_compute_s": 13326.577999999994,
+    "physical_batches_already_used": 1,
+    "new_physical_generation_planned": 0,
+    "replay_interpretation": "If conditionally admitted, only reuse frozen B4 plant; native goals are explicitly counted as continuation computation, not silently a second generated physics batch. A new realization is outside this draft.",
+    "max_native_goals": 2,
+    "goal_wall_ceiling_s": 345,
+    "two_goal_wall_bound_s": 690,
+    "one_interface_build_s": 3600,
+    "interface_and_sensor_qualification_compute_s": 1800,
+    "preflight_and_finalize_s": 900,
+    "planned_total_compute_bound_s": 6990,
+    "planning_estimate_not_measured": true,
+    "scientific_process_RSS_limit_bytes": 1073741824,
+    "new_campaign_disk_limit_bytes": 8589934592,
+    "root_free_min_bytes": 4294967296,
+    "live_VM_root_headroom_bytes": 216530944,
+    "runtime_storage": "verified host share, fresh task-owned subdirectory; keep source/build authoritative in existing isolated workspace, no old asset deletion/relocation. Mapping and write/read/hash ping must pass before creation.",
+    "initial_root_write_cap_bytes": 67108864,
+    "new_build_root_disk_need_bytes": "unknown until dependency/profile; no build GO with only206MiB headroom"
+  },
+  "engineering_pair": {
+    "physical_tasks": 1,
+    "arms": 2,
+    "scenario": "frozen official B4 controlled plant",
+    "source_xyz": [
+      -3.2,
+      -3.3,
+      -0.5
+    ],
+    "source_support": "same native occupancy-derived 447 free cells; do not replace by R4 25 points or R2 32 coarse regions",
+    "initial_robot_pose_xyz": [
+      -0.9,
+      0.15,
+      -0.7
+    ],
+    "initial_yaw_rad": 1.0,
+    "plant": "same one_realization_B4, same actual frame-time table, playback starts frame500; no looping",
+    "wind_in_observation_period": "last CFD index10, static; NOT time-varying mechanism confirmation",
+    "wind_permission_primary": "both causal local anemometer and same GMRF estimate; useWindGroundTruth false for both; derived common-input parameter mode, original-core PMFS, not unchanged author N0",
+    "historical_GT_mode": "frozen N1 B4 useWindGroundTruth true stays archived; if used as diagnostic all arms get same truth field and are marked ORACLE_ONLY",
+    "sensor": "same native PID sensor_model30 with correction factors false, rate10; same calibrated unit/response for all. Do not reuse R4 mg/m3 sd=.02 or wind sd=.02. Anemometer historical noise_std=.3, frequency20 requires actual noise law audit.",
+    "budget_sim_s": 300,
+    "search_start": "official Initialize startTime, not goal invocation",
+    "success": "official posterior variance<1.5; separate location endpoint",
+    "maxUpdatesPerStop": 5,
+    "stepsSourceUpdate": 3,
+    "initialExplorationMoves": 2,
+    "th_gas_present_native": 0.1,
+    "sourceDiscriminationPower_native": 0.4,
+    "filament_movement_stdev_native": 0.2,
+    "motion": "same MovingStatePMFS goal ranking/checkGoal/Nav2 controller and costmap; each arm may adapt its own trajectory, same budgets. No replay of truth-dependent path.",
+    "common_decision_main": "minimum posterior Euclidean-risk feasible source action from identical support, computed evaluator only; native Top5 remains auxiliary official metric",
+    "common_stop": "same variance or300s timeout; Action/result-based outer guard with separate wall ceiling",
+    "RNG": "state/source/plant/sensor/navigation streams isolated; keyed event/pose/time sensor noise scheme must freeze before any new goal, no seed selected after performance",
+    "statistical_unit": "one previously inspected B4 plant and two arms; engineering pair only, NOT independent novel-method validation"
+  },
+  "required_interfaces": [
+    {
+      "id": "I1",
+      "input": "raw concentration/wind messages + original stamps + receiver TF + candidate support + calibrated plant dynamics",
+      "computation": "ordinary B1 stateful source-conditioned physics with nuisance integration under the B4 geometry/outlets/source height and actual sensor response",
+      "output": "normalized sourceProbability for all native supported cells; prequential likelihood; state checkpoint",
+      "current": "R4 has only periodic2D FV, mg/m3 and25 point support. No accepted B4 physical B1 implementation."
+    },
+    {
+      "id": "I2",
+      "input": "B1 candidate-conditional hit/response predictions for reachable receptor cells under same wind and history",
+      "computation": "candidate posterior weighted variation of predicted hit frequency; same meaning as original resultsFirstLevel aggregation",
+      "output": "varianceOfHitProb and compatible hitProbability/confidence needed by original exploration/search planner",
+      "current": "No ROS/C++ adapter. A sourceProbability topic alone does not drive the existing planner."
+    },
+    {
+      "id": "I3",
+      "input": "shared nav state, pose, clock, source/response maps",
+      "computation": "same MovingStatePMFS scoring, goal validation and NavigateToPose action; unmodified native terminal logic",
+      "output": "actual route, raw CDR, measurement stops, initialization timestamp and Action result",
+      "current": "native system exists and historical B4 result is complete. No current ROS process; independent live acceptance needed before goal."
+    }
+  ],
+  "acceptance_tests": [
+    "sourceProbability same shape/order/mask/coordinates, finite>=0, sum1, no source label in inference",
+    "varianceOfHitProb derived from predictions, finite>=0, not posterior-location variance substituted",
+    "native sourceProbability injection actually read by stop/record and relevant predicted variability actually read by chooseGoalAndMove",
+    "same causal wind permissions including compile/runtime flags; no /wind_value truth fallback in primary local mode",
+    "unit/source/height/outlet/mass/time/response contracts; no artificial periodic wrapping in native House",
+    "delayed TF stamp/clocks and playback frame binding, only scoped interface regression not repeat old broad audit",
+    "preflight RSS/root/shared-disk/time/guard limits and process ownership"
+  ],
+  "known_implementation_risk": "Frozen MovingStatePMFS calculates a distance-weighted evaluation variable then inserts interest into ranking. Preserve baseline behavior; do not silently fix it in one arm or claim scientific innovation. Runtime impact not established by this static check.",
+  "independent_validation": "Not allocated in this draft. Only B4 single already seen realization is available for pair reuse. New unseen sources/concrete wind histories require qualified plant records and a separately frozen count within authorized future batch; cannot call B4 reuse an independent gain.",
+  "source_SHA256": {
+    "outputs\\PMFS_B4_OFFICIAL_TERMINAL_RESUMED_20261010\\official_B4\\scenarios\\B\\basicSim\\B4.yaml": "aee84006d6b1c3bcd6ade0c0787fe9305fd01c033bcd749409f73ad742b8904a",
+    "outputs\\PMFS_B4_OFFICIAL_TERMINAL_RESUMED_20261010\\official_B4\\scenarios\\B\\simulations\\B4.yaml": "056c934178f204941c4824616c256192f54707eaca936103ab447d0cff76f1c8",
+    "outputs\\PMFS_B4_OFFICIAL_TERMINAL_RESUMED_20261010\\runtime\\resolved_GSL_parameters.yaml": "339fd65c54be9783d8710592c3325fb801065a0efff4b4d98ae914e2de139a70",
+    "outputs\\PMFS_B4_OFFICIAL_TERMINAL_RESUMED_20261010\\runtime\\resolved_player_parameters.yaml": "ccfba661b060085f6442b59761a3b7c08a131ca35ff21a1c446ac40ef5f3852e",
+    "outputs\\PMFS_B4_OFFICIAL_TERMINAL_RESUMED_20261010\\runtime\\preflight_PioneerP3DX_PID_parameters.yaml": "35b72f8df67bde767e49a88e9d9d9c5310f4ea117bfe117c7f5ff29454c7fc4b",
+    "outputs\\PMFS_B4_OFFICIAL_TERMINAL_RESUMED_20261010\\runtime\\preflight_PioneerP3DX_Anemometer_parameters.yaml": "2cfcc49d5b87ccf923ee688f7ae6000321f67031b669cf34d983d50f25eed8ad",
+    "outputs\\PMFS_B4_OFFICIAL_TERMINAL_RESUMED_20261010\\source\\gsl\\PMFS\\internal\\Simulations.cpp": "1557d5d73288621813274627a19a57763945b099976e855cfb9c68ec2d09e8e4"
+  },
+  "goals_executed_this_qualification": 0,
+  "new_physics_runs": 0,
+  "decision": "NO_GO_NOW_INPUT_AND_INTERFACE; timing arithmetic fits but not an executable qualified comparison"
+}

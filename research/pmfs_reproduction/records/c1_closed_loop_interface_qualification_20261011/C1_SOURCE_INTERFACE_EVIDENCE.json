@@ -1,0 +1,65 @@
+{
+  "PMFS.cpp": {
+    "path": "C:\\Users\\50176\\Documents\\Codex\\2026-10-09\\gb-gaden-turb-smoke-r0c-r0d\\work\\pmfs_r3_r5_checkout\\research\\pmfs_reproduction\\b4_official_terminal_resumed_20261010\\source\\gsl\\PMFS\\PMFS.cpp",
+    "sha256": "f04b160aa5b25b98e014fbfa6d115532b64ae69f9161727441d84d4874f5ce97",
+    "selected_lines": {
+      "17": "                      Grid2D<double>(sourceProbability, occupancy, gridMetadata),",
+      "75": "        sourceProbability.resize(gridMetadata.dimensions.x * gridMetadata.dimensions.y);",
+      "95": "        for (double& p : sourceProbability)",
+      "127": "        PMFSViz::ShowSourceProb(Grid2D<double>(sourceProbability, occupancy, gridMetadata), settings.visualization, pubs);",
+      "130": "    void PMFS::processGasAndWindMeasurements(double concentration, double windSpeed, double windDirection)",
+      "170": "            bool timeToSimulate = settings.simulation.stepsBetweenSourceUpdates >= 0 &&",
+      "173": "            if (timeToSimulate)",
+      "182": "                    for(size_t i=0;i<hitProbability.size();++i)f<<i<<\",\"<<i%gridMetadata.dimensions.x<<\",\"<<i/gridMetadata.dimensions.x<<\",\"<<int(occupancy[i])<<\",\"<<hitProbability[i].logOdds<<\",\"<<hitProbability[i].omega<<\",\"<<hitProbability[i].confidence<<\",\"<<estimatedWindVectors[i].x<<\",\"<<estimatedWindVectors[i].y<<\",\"<<sourceProbability[i]<<\"\\n\";",
+      "185": "                simulations.updateSourceProbability(settings.simulation.refineFraction);",
+      "186": "                if(captureRoot){R4Audit::finish(sourceProbability);std::ofstream f(R4Audit::output/\"COMPLETE.txt\");f<<node->now().nanoseconds()<<\"\\n\";}",
+      "200": "        PMFSViz::ShowSourceProb(Grid2D<double>(sourceProbability, occupancy, gridMetadata), settings.visualization, pubs);"
+    }
+  },
+  "MovingStatePMFS.cpp": {
+    "path": "C:\\Users\\50176\\Documents\\Codex\\2026-10-09\\gb-gaden-turb-smoke-r0c-r0d\\work\\pmfs_r3_r5_checkout\\research\\pmfs_reproduction\\b4_official_terminal_resumed_20261010\\source\\gsl\\PMFS\\MovingStatePMFS.cpp",
+    "sha256": "08b09106189dfdf4fc3d9f924c099461f77f1b6ad2255205744fcb76c8dfe1f5",
+    "selected_lines": {
+      "27": "    void MovingStatePMFS::chooseGoalAndMove()",
+      "66": "        NavigateToPose::Goal goal;",
+      "103": "            NavigateToPose::Goal tempGoal = indexToGoal(eval.indices.x, eval.indices.y);",
+      "121": "    // The main idea is to evaluate how much information about the source a specific cell gives by considering the case in which you know its hit frequency perfectly (confidence of 1)",
+      "123": "    // The thing is, you can set the confidence to 1, but with what hit frequency?",
+      "124": "    // Well, we can calculate a probability distribution for the hit frequency from the *current* confidence, and use that to then calculate the expected value of the entropy reduction",
+      "147": "        // get the probability of each hit frequency in each cell, according to the current p(h_i) and the confidence value",
+      "193": "                        localCopy.confidence = 1;",
+      "275": "            sum += (1 - pmfs->hitProbability[pmfs->gridMetadata.indexOf(p)].confidence) * std::exp(-distance);",
+      "291": "            double varianceTerm = pmfs->simulations.varianceOfHitProb[gridMetadata.indexOf(i, j)] * (1 - pmfs->hitProbability[gridMetadata.indexOf(i, j)].confidence);",
+      "300": "    NavigateToPose::Goal MovingStatePMFS::indexToGoal(int i, int j)",
+      "302": "        NavigateToPose::Goal goal;",
+      "323": "        NavigateToPose::Goal goal = indexToGoal(i, j);",
+      "364": "                maxVar = std::max(maxVar, pmfs->simulations.varianceOfHitProb[gridMetadata.indexOf({a, b})] * (1 - grid.dataAt(a, b).confidence));",
+      "367": "                minVar = std::min(minVar, pmfs->simulations.varianceOfHitProb[gridMetadata.indexOf({a, b})] * (1 - grid.dataAt(a, b).confidence));",
+      "398": "                    Utils::valueToColor(pmfs->simulations.varianceOfHitProb[gridMetadata.indexOf({a, b})] * (1 - grid.dataAt(a, b).confidence),"
+    }
+  },
+  "PMFS_utils.cpp": {
+    "path": "C:\\Users\\50176\\Documents\\Codex\\2026-10-09\\gb-gaden-turb-smoke-r0c-r0d\\work\\pmfs_r3_r5_checkout\\research\\pmfs_reproduction\\b4_official_terminal_resumed_20261010\\source\\gsl\\PMFS\\PMFS_utils.cpp",
+    "sha256": "dba50ad53c1451ed552446a97c7e372a917168cc0c78f5f8475729e098518ba4",
+    "selected_lines": {
+      "26": "        rclcpp::Duration time_spent = node->now() - startTime;",
+      "27": "        if (time_spent.seconds() > resultLogging.maxSearchTime)",
+      "29": "            saveResultsToFile(GSLResult::Failure);",
+      "42": "        double variance = Utils::Variance(Grid2D<double>(sourceProbability, occupancy, gridMetadata));",
+      "43": "        GSL_INFO(\"Variance: {:.2f}\", variance);",
+      "47": "            saveResultsToFile(GSLResult::Success);",
+      "54": "    void PMFS::saveResultsToFile(GSLResult result)",
+      "57": "        rclcpp::Duration time_spent = node->now() - startTime;",
+      "60": "        Vector2 sourceLocationAll = Utils::ExpectedValue(Grid2D<double>(sourceProbability, occupancy, gridMetadata), 1);",
+      "61": "        Vector2 sourceLocation = Utils::ExpectedValue(Grid2D<double>(sourceProbability, occupancy, gridMetadata), 0.05);",
+      "78": "                 << Utils::Variance(Grid2D<double>(sourceProbability, occupancy, gridMetadata)) << \"\\n\";"
+    }
+  },
+  "N1_B4_launch.py": {
+    "path": "C:\\Users\\50176\\Documents\\Codex\\2026-10-09\\gb-gaden-turb-smoke-r0c-r0d\\outputs\\PMFS_B4_OFFICIAL_TERMINAL_RESUMED_20261010\\N1_B4_launch.py",
+    "sha256": "1ee066343957500fee4a11bd67609cdc20a0dbb941e60bd83e1f09c7c33af2db",
+    "wind_permission": "{'useWindGroundTruth': True}",
+    "author_budget_sim_s": 300,
+    "success_variance_threshold": 1.5
+  }
+}
