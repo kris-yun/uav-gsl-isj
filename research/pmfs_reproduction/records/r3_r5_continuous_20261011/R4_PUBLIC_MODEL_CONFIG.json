@@ -1,0 +1,649 @@
+{
+  "scope": "2D periodic controlled numerical transport, matched common solver; no 3D/lakeshore/real sensor claim",
+  "physical": {
+    "shape": [
+      24,
+      24
+    ],
+    "dx_m": 0.5,
+    "dy_m": 0.5,
+    "slab_height_m": 1.0,
+    "dt_s": 0.2,
+    "steps": 500,
+    "duration_s": 100.0,
+    "D_m2_s": 0.05,
+    "rate_mg_s": 1.0,
+    "boundary": "periodic; mass grows by injected mass, NO finite steady solution",
+    "concentration_unit": "mg/m3 in fixed 1m slab, not ppm",
+    "source_height": "fixed slab; no vertical model",
+    "initial_concentration": 0.0
+  },
+  "wind": {
+    "spatial": "uniform by explicit assumption; local instrument informative of global wind only in this mathematical domain",
+    "speed_m_s": 0.6,
+    "turn_amplitude_rad": 0.8,
+    "period_s": {
+      "constant": null,
+      "slow": 70.0,
+      "fast": 14.0
+    },
+    "T_adv_s": 20.0,
+    "T_w_over_T_adv": {
+      "constant": "infinite",
+      "slow": 3.5,
+      "fast": 0.7
+    },
+    "truth_OU_stationary_sd_m_s": 0.015,
+    "truth_OU_correlation_s": 3.0,
+    "component_bounds_m_s": [
+      -1.0,
+      1.0
+    ],
+    "sensor_period_steps": 5,
+    "sensor_sd_m_s": 0.02,
+    "warmup_samples": 10,
+    "filter_random_walk_sd_m_s_sqrt_s": 0.12
+  },
+  "release": {
+    "OU_stationary_log_sd": 0.08,
+    "OU_correlation_s": 10.0,
+    "lognormal_mean_corrected": true,
+    "independent_stream_from_sensors": true
+  },
+  "sensor": {
+    "likelihood": "left-censored additive Gaussian: y=max(0,c+noise); y=0 uses Gaussian CDF probability",
+    "sd_mg_m3": 0.02,
+    "binary_threshold_mg_m3": 0.05,
+    "binary_role": "deterministic diagnostic only, not multiplied as independent likelihood",
+    "field_readout": "cell average, same declared grid for all models"
+  },
+  "inference": {
+    "particles_per_source": 24,
+    "source_prior": "uniform 1/25",
+    "source_support": [
+      {
+        "id": 0,
+        "row": 4,
+        "col": 4,
+        "x_m": 2.25,
+        "y_m": 2.25
+      },
+      {
+        "id": 1,
+        "row": 4,
+        "col": 8,
+        "x_m": 4.25,
+        "y_m": 2.25
+      },
+      {
+        "id": 2,
+        "row": 4,
+        "col": 12,
+        "x_m": 6.25,
+        "y_m": 2.25
+      },
+      {
+        "id": 3,
+        "row": 4,
+        "col": 16,
+        "x_m": 8.25,
+        "y_m": 2.25
+      },
+      {
+        "id": 4,
+        "row": 4,
+        "col": 20,
+        "x_m": 10.25,
+        "y_m": 2.25
+      },
+      {
+        "id": 5,
+        "row": 8,
+        "col": 4,
+        "x_m": 2.25,
+        "y_m": 4.25
+      },
+      {
+        "id": 6,
+        "row": 8,
+        "col": 8,
+        "x_m": 4.25,
+        "y_m": 4.25
+      },
+      {
+        "id": 7,
+        "row": 8,
+        "col": 12,
+        "x_m": 6.25,
+        "y_m": 4.25
+      },
+      {
+        "id": 8,
+        "row": 8,
+        "col": 16,
+        "x_m": 8.25,
+        "y_m": 4.25
+      },
+      {
+        "id": 9,
+        "row": 8,
+        "col": 20,
+        "x_m": 10.25,
+        "y_m": 4.25
+      },
+      {
+        "id": 10,
+        "row": 12,
+        "col": 4,
+        "x_m": 2.25,
+        "y_m": 6.25
+      },
+      {
+        "id": 11,
+        "row": 12,
+        "col": 8,
+        "x_m": 4.25,
+        "y_m": 6.25
+      },
+      {
+        "id": 12,
+        "row": 12,
+        "col": 12,
+        "x_m": 6.25,
+        "y_m": 6.25
+      },
+      {
+        "id": 13,
+        "row": 12,
+        "col": 16,
+        "x_m": 8.25,
+        "y_m": 6.25
+      },
+      {
+        "id": 14,
+        "row": 12,
+        "col": 20,
+        "x_m": 10.25,
+        "y_m": 6.25
+      },
+      {
+        "id": 15,
+        "row": 16,
+        "col": 4,
+        "x_m": 2.25,
+        "y_m": 8.25
+      },
+      {
+        "id": 16,
+        "row": 16,
+        "col": 8,
+        "x_m": 4.25,
+        "y_m": 8.25
+      },
+      {
+        "id": 17,
+        "row": 16,
+        "col": 12,
+        "x_m": 6.25,
+        "y_m": 8.25
+      },
+      {
+        "id": 18,
+        "row": 16,
+        "col": 16,
+        "x_m": 8.25,
+        "y_m": 8.25
+      },
+      {
+        "id": 19,
+        "row": 16,
+        "col": 20,
+        "x_m": 10.25,
+        "y_m": 8.25
+      },
+      {
+        "id": 20,
+        "row": 20,
+        "col": 4,
+        "x_m": 2.25,
+        "y_m": 10.25
+      },
+      {
+        "id": 21,
+        "row": 20,
+        "col": 8,
+        "x_m": 4.25,
+        "y_m": 10.25
+      },
+      {
+        "id": 22,
+        "row": 20,
+        "col": 12,
+        "x_m": 6.25,
+        "y_m": 10.25
+      },
+      {
+        "id": 23,
+        "row": 20,
+        "col": 16,
+        "x_m": 8.25,
+        "y_m": 10.25
+      },
+      {
+        "id": 24,
+        "row": 20,
+        "col": 20,
+        "x_m": 10.25,
+        "y_m": 10.25
+      }
+    ],
+    "prefixes": [
+      20,
+      35,
+      50
+    ],
+    "methods": [
+      "B0_FIXED",
+      "B1_TRANSIENT",
+      "B2_JOINT_PF",
+      "WIND_ORACLE"
+    ],
+    "gas_particle_process": "same stationary OU release law as truth; seed distinct",
+    "resampling": "systematic when conditional ESS < K/2; no rejuvenation or fitted thresholds",
+    "B0": "initial warmup wind estimate held fixed, continuing gas state; fixed-wind approximation NOT steady solution or native PMFS",
+    "B1": "ordinary continuous FV state with causal local-wind Kalman mean and source-conditional release PF",
+    "B2": "ordinary joint wind/release/plume source-conditional PF, analytic adapted Gaussian wind observation proposal",
+    "WIND_ORACLE": "true wind at each step only for diagnostic upper bound; still release uncertainty",
+    "all_methods_continuous_sensor": true,
+    "no_true_source_in_runner": true,
+    "no_future_inputs": true,
+    "end_to_end_profile_budget_s_per_task": 120.0
+  },
+  "decision": {
+    "main": "feasible candidate medoid minimizing posterior expected Euclidean distance in planar world coordinates",
+    "MAP": "auxiliary 0-1 decision",
+    "mean": "auxiliary squared-distance decision",
+    "Top5": "auxiliary weighted highest ceil(25*.05)=2 candidates, NOT official PMFS metric",
+    "coverage": "90% highest posterior density set on the 25 atomic source points",
+    "CRPS": "prequential continuous predictive mixture Gaussian CRPS for latent raw signal; observed censorship noted; primary predictive proper score uses censored likelihood"
+  },
+  "gates": {
+    "candidate_pitch_m": 2.0,
+    "ordinary_mean_distance_max_m": 2.0,
+    "ordinary_coverage90_min": 0.8,
+    "ordinary_prequential_raw_CRPS_max_mg_m3": 0.05,
+    "static_gap_mean_B0_minus_B1_min_m": 0.5,
+    "static_gap_min_dynamic_source_regime_groups": 2,
+    "constant_negative_control_mean_distance_delta_max_m": 0.5,
+    "minimum_effect_for_memory_m": 0.5,
+    "memory_admission": "Need ordinary methods cross-group gap specifically attributable to unresolved historical state or deployed cost >120s/task, excluding finite particle/likelihood/process mismatch, support and observations. Failure of arbitrary accuracy target alone does not admit.",
+    "grouping": "whole source x concrete wind history x independently generated release/wind/sensor realization; events never independent experimental units",
+    "development_selection": "no parameter fitting, fixed implementations. Select B1 or B2 for ordinary-sufficiency declaration by development mean Euclidean endpoint; apply unchanged to heldout once. Report both."
+  },
+  "route": [
+    {
+      "event": 1,
+      "step": 10,
+      "time_s": 2,
+      "row": 1,
+      "col": 1
+    },
+    {
+      "event": 2,
+      "step": 20,
+      "time_s": 4,
+      "row": 1,
+      "col": 6
+    },
+    {
+      "event": 3,
+      "step": 30,
+      "time_s": 6,
+      "row": 1,
+      "col": 11
+    },
+    {
+      "event": 4,
+      "step": 40,
+      "time_s": 8,
+      "row": 1,
+      "col": 17
+    },
+    {
+      "event": 5,
+      "step": 50,
+      "time_s": 10,
+      "row": 1,
+      "col": 22
+    },
+    {
+      "event": 6,
+      "step": 60,
+      "time_s": 12,
+      "row": 6,
+      "col": 22
+    },
+    {
+      "event": 7,
+      "step": 70,
+      "time_s": 14,
+      "row": 6,
+      "col": 17
+    },
+    {
+      "event": 8,
+      "step": 80,
+      "time_s": 16,
+      "row": 6,
+      "col": 11
+    },
+    {
+      "event": 9,
+      "step": 90,
+      "time_s": 18,
+      "row": 6,
+      "col": 6
+    },
+    {
+      "event": 10,
+      "step": 100,
+      "time_s": 20,
+      "row": 6,
+      "col": 1
+    },
+    {
+      "event": 11,
+      "step": 110,
+      "time_s": 22,
+      "row": 11,
+      "col": 1
+    },
+    {
+      "event": 12,
+      "step": 120,
+      "time_s": 24,
+      "row": 11,
+      "col": 6
+    },
+    {
+      "event": 13,
+      "step": 130,
+      "time_s": 26,
+      "row": 11,
+      "col": 11
+    },
+    {
+      "event": 14,
+      "step": 140,
+      "time_s": 28,
+      "row": 11,
+      "col": 17
+    },
+    {
+      "event": 15,
+      "step": 150,
+      "time_s": 30,
+      "row": 11,
+      "col": 22
+    },
+    {
+      "event": 16,
+      "step": 160,
+      "time_s": 32,
+      "row": 17,
+      "col": 22
+    },
+    {
+      "event": 17,
+      "step": 170,
+      "time_s": 34,
+      "row": 17,
+      "col": 17
+    },
+    {
+      "event": 18,
+      "step": 180,
+      "time_s": 36,
+      "row": 17,
+      "col": 11
+    },
+    {
+      "event": 19,
+      "step": 190,
+      "time_s": 38,
+      "row": 17,
+      "col": 6
+    },
+    {
+      "event": 20,
+      "step": 200,
+      "time_s": 40,
+      "row": 17,
+      "col": 1
+    },
+    {
+      "event": 21,
+      "step": 210,
+      "time_s": 42,
+      "row": 22,
+      "col": 1
+    },
+    {
+      "event": 22,
+      "step": 220,
+      "time_s": 44,
+      "row": 22,
+      "col": 6
+    },
+    {
+      "event": 23,
+      "step": 230,
+      "time_s": 46,
+      "row": 22,
+      "col": 11
+    },
+    {
+      "event": 24,
+      "step": 240,
+      "time_s": 48,
+      "row": 22,
+      "col": 17
+    },
+    {
+      "event": 25,
+      "step": 250,
+      "time_s": 50,
+      "row": 22,
+      "col": 22
+    },
+    {
+      "event": 26,
+      "step": 260,
+      "time_s": 52,
+      "row": 1,
+      "col": 1
+    },
+    {
+      "event": 27,
+      "step": 270,
+      "time_s": 54,
+      "row": 1,
+      "col": 6
+    },
+    {
+      "event": 28,
+      "step": 280,
+      "time_s": 56,
+      "row": 1,
+      "col": 11
+    },
+    {
+      "event": 29,
+      "step": 290,
+      "time_s": 58,
+      "row": 1,
+      "col": 17
+    },
+    {
+      "event": 30,
+      "step": 300,
+      "time_s": 60,
+      "row": 1,
+      "col": 22
+    },
+    {
+      "event": 31,
+      "step": 310,
+      "time_s": 62,
+      "row": 6,
+      "col": 22
+    },
+    {
+      "event": 32,
+      "step": 320,
+      "time_s": 64,
+      "row": 6,
+      "col": 17
+    },
+    {
+      "event": 33,
+      "step": 330,
+      "time_s": 66,
+      "row": 6,
+      "col": 11
+    },
+    {
+      "event": 34,
+      "step": 340,
+      "time_s": 68,
+      "row": 6,
+      "col": 6
+    },
+    {
+      "event": 35,
+      "step": 350,
+      "time_s": 70,
+      "row": 6,
+      "col": 1
+    },
+    {
+      "event": 36,
+      "step": 360,
+      "time_s": 72,
+      "row": 11,
+      "col": 1
+    },
+    {
+      "event": 37,
+      "step": 370,
+      "time_s": 74,
+      "row": 11,
+      "col": 6
+    },
+    {
+      "event": 38,
+      "step": 380,
+      "time_s": 76,
+      "row": 11,
+      "col": 11
+    },
+    {
+      "event": 39,
+      "step": 390,
+      "time_s": 78,
+      "row": 11,
+      "col": 17
+    },
+    {
+      "event": 40,
+      "step": 400,
+      "time_s": 80,
+      "row": 11,
+      "col": 22
+    },
+    {
+      "event": 41,
+      "step": 410,
+      "time_s": 82,
+      "row": 17,
+      "col": 22
+    },
+    {
+      "event": 42,
+      "step": 420,
+      "time_s": 84,
+      "row": 17,
+      "col": 17
+    },
+    {
+      "event": 43,
+      "step": 430,
+      "time_s": 86,
+      "row": 17,
+      "col": 11
+    },
+    {
+      "event": 44,
+      "step": 440,
+      "time_s": 88,
+      "row": 17,
+      "col": 6
+    },
+    {
+      "event": 45,
+      "step": 450,
+      "time_s": 90,
+      "row": 17,
+      "col": 1
+    },
+    {
+      "event": 46,
+      "step": 460,
+      "time_s": 92,
+      "row": 22,
+      "col": 1
+    },
+    {
+      "event": 47,
+      "step": 470,
+      "time_s": 94,
+      "row": 22,
+      "col": 6
+    },
+    {
+      "event": 48,
+      "step": 480,
+      "time_s": 96,
+      "row": 22,
+      "col": 11
+    },
+    {
+      "event": 49,
+      "step": 490,
+      "time_s": 98,
+      "row": 22,
+      "col": 17
+    },
+    {
+      "event": 50,
+      "step": 500,
+      "time_s": 100,
+      "row": 22,
+      "col": 22
+    }
+  ],
+  "limits": {
+    "batch_wall_s": 14400,
+    "RSS_bytes": 1073741824,
+    "new_data_bytes": 8589934592,
+    "free_disk_min_bytes": 4294967296,
+    "threads": 1
+  },
+  "guardrail": "No retuning after gas observations or heldout scores. No ROS/Nav2, no CFD/GADEN, no new GPU or learned model absent R5 admission.",
+  "revision": {
+    "version": 1,
+    "reason": "before-data RNG namespace isolation technical correction; physical parameters/routes/gates unchanged",
+    "parent_sha256": "85a1eee3a8cb7bac7bec979295218bc38ec2aa4af1a4be9ff192818b29ec87bd",
+    "UTC": "2026-10-11T16:53:48.041027+00:00"
+  }
+}

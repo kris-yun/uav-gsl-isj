@@ -1,0 +1,29 @@
+{
+  "status": "PASS_CONTROLLED_2D_MATH",
+  "not_qualified_for": [
+    "3D gas physics",
+    "lakeshore geometry",
+    "real sensor",
+    "native PMFS navigation",
+    "independent physical teacher"
+  ],
+  "scope": "same discrete FV truth/likelihood solver; deliberate model-method gate, not external validation",
+  "mass_max_residual_mg": 3.268496584496461e-13,
+  "source_support": "25 identical legal atomic points; all six truth positions included",
+  "clock": "dt=.2s, sensor after 10 steps, wind available at start of each fifth step; no interpolated future wind",
+  "causality_test": "PASS B1/B2 exact prefix equality under future changes",
+  "sensor": "mg/m3 Gaussian censored at 0; CDF for zero; no ppm claim; binary deterministic only",
+  "independence": "36 whole tasks with 252 unique distinct RNG stream seeds; 18 dev/18 heldout; same 6 fixed source positions grouped; deterministic regime core plus independent OU wind/release/sensor realizations",
+  "matched_release_process": true,
+  "wind_model_difference": "true sinusoid+OU; ordinary random-walk filter approximation. Finite PF(K24) and process approximation not certified converged. Any residual alone cannot admit R5.",
+  "wind_boundary_particle_clips_total": 220,
+  "resource_receipt": {
+    "status": "BATCH_COMPLETED_NO_RETRY",
+    "last_stage": "evaluate_heldout",
+    "wall_s": 1073.422000000006,
+    "peak_RSS_bytes": 66768896,
+    "VM_processes_started": 0,
+    "new_physics_batch_count": 1,
+    "reruns": 0
+  }
+}
