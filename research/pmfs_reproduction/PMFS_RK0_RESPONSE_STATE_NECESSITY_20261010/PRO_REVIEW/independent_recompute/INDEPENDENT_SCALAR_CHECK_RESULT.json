@@ -1,0 +1,144 @@
+{
+  "verdict": "PASS_INDEPENDENT_INTEGER_EVENT_COUNTS_AND_SCALAR_LOG_RECOMPUTATION",
+  "new_forwards": 0,
+  "new_gas": 0,
+  "new_ROS": 0,
+  "maximum_pair_margin_absolute_difference": 0.0,
+  "margins": [
+    {
+      "readout": "PID_THRESHOLD",
+      "stage": "UNBLURRED",
+      "C7_log_score": -2.0249662860563356,
+      "K2_log_score": -6.03317306790709,
+      "true_minus_wrong_log": 4.008206781850754,
+      "selected": "C7"
+    },
+    {
+      "readout": "PID_THRESHOLD",
+      "stage": "SAME_NAV_BLUR",
+      "C7_log_score": -2.0329931096970233,
+      "K2_log_score": -5.336347948381844,
+      "true_minus_wrong_log": 3.303354838684821,
+      "selected": "C7"
+    },
+    {
+      "readout": "PROJECTED_CENTER",
+      "stage": "UNBLURRED",
+      "C7_log_score": -6.212674936180744,
+      "K2_log_score": -5.953812870358682,
+      "true_minus_wrong_log": -0.25886206582206217,
+      "selected": "K2"
+    },
+    {
+      "readout": "PROJECTED_CENTER",
+      "stage": "SAME_NAV_BLUR",
+      "C7_log_score": -6.313298996291317,
+      "K2_log_score": -5.804390220641398,
+      "true_minus_wrong_log": -0.5089087756499184,
+      "selected": "K2"
+    }
+  ],
+  "factorial": [
+    {
+      "candidate": "C7",
+      "numerator": "NAV_MASKED",
+      "denominator": "NAV_MASK",
+      "log_score": -6.313298996291317,
+      "nav_cells_clipped_above_one": 0,
+      "max_nav_preclip": 0.9658582806587219
+    },
+    {
+      "candidate": "K2",
+      "numerator": "NAV_MASKED",
+      "denominator": "NAV_MASK",
+      "log_score": -5.804390220641398,
+      "nav_cells_clipped_above_one": 0,
+      "max_nav_preclip": 0.9999845623970032
+    },
+    {
+      "candidate": "C7",
+      "numerator": "NAV_MASKED",
+      "denominator": "ALL_FRAME",
+      "log_score": -10.217671498026537,
+      "nav_cells_clipped_above_one": 0,
+      "max_nav_preclip": 0.801039457321167
+    },
+    {
+      "candidate": "K2",
+      "numerator": "NAV_MASKED",
+      "denominator": "ALL_FRAME",
+      "log_score": -9.580710156285287,
+      "nav_cells_clipped_above_one": 0,
+      "max_nav_preclip": 0.9034217596054077
+    },
+    {
+      "candidate": "C7",
+      "numerator": "ALL_XY",
+      "denominator": "NAV_MASK",
+      "log_score": -3.319770330895536,
+      "nav_cells_clipped_above_one": 111,
+      "max_nav_preclip": 3.601630449295044
+    },
+    {
+      "candidate": "K2",
+      "numerator": "ALL_XY",
+      "denominator": "NAV_MASK",
+      "log_score": -3.4425031602006952,
+      "nav_cells_clipped_above_one": 119,
+      "max_nav_preclip": 4.4595160484313965
+    },
+    {
+      "candidate": "C7",
+      "numerator": "ALL_XY",
+      "denominator": "ALL_FRAME",
+      "log_score": -7.28046145151165,
+      "nav_cells_clipped_above_one": 0,
+      "max_nav_preclip": 0.8739550709724426
+    },
+    {
+      "candidate": "K2",
+      "numerator": "ALL_XY",
+      "denominator": "ALL_FRAME",
+      "log_score": -6.526011987181745,
+      "nav_cells_clipped_above_one": 0,
+      "max_nav_preclip": 0.9919621348381042
+    }
+  ],
+  "event_integrity": [
+    {
+      "bank": "C7_0",
+      "primary_grid_events": 22350,
+      "distinct_cells": 447,
+      "exact_float32_threshold_values": 0,
+      "threshold_double_vs_float32_disagreements": 0
+    },
+    {
+      "bank": "C7_1",
+      "primary_grid_events": 22350,
+      "distinct_cells": 447,
+      "exact_float32_threshold_values": 0,
+      "threshold_double_vs_float32_disagreements": 0
+    },
+    {
+      "bank": "K2_0",
+      "primary_grid_events": 22350,
+      "distinct_cells": 447,
+      "exact_float32_threshold_values": 0,
+      "threshold_double_vs_float32_disagreements": 0
+    },
+    {
+      "bank": "K2_1",
+      "primary_grid_events": 22350,
+      "distinct_cells": 447,
+      "exact_float32_threshold_values": 0,
+      "threshold_double_vs_float32_disagreements": 0
+    }
+  ],
+  "cv2_version": "4.11.0",
+  "numpy_version": "1.26.4",
+  "limits": [
+    "Same saved reference banks and fixed scorer only; no heldout re-selection or new source posterior.",
+    "Full-field grid probes are oracle diagnostic inputs, not extra deployable sensor data.",
+    "Post-inspection mask ablations are exploratory; their scores are not calibrated physical likelihoods."
+  ]
+}

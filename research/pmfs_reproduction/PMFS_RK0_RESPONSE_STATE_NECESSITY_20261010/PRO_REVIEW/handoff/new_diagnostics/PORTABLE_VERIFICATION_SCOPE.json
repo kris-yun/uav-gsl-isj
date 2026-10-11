@@ -1,0 +1,254 @@
+{
+  "status": "PASS_MAIN_NUMERICS_WITH_EXPLICIT_DERIVED_LABEL_TYPE_DIFFERENCE",
+  "json_original_tolerances_pass": true,
+  "tables": [
+    {
+      "file": "CELL_CONDITIONAL_HEIGHT_AND_WIND.csv",
+      "rows": 7942,
+      "byte_identical": false,
+      "different_cell_strings": 2,
+      "different_numeric_values": 2,
+      "max_abs_difference": 6.938893903907228e-18,
+      "max_rel_difference": 2.1391846501452578e-16,
+      "examples": [
+        {
+          "row": 6129,
+          "column": "height_horizontal_wind_error_mean",
+          "stored": "0.0324370965518851",
+          "recomputed": "0.032437096551885106",
+          "abs_difference": 6.938893903907228e-18
+        },
+        {
+          "row": 7317,
+          "column": "height_horizontal_wind_error_mean",
+          "stored": "0.04338710225054952",
+          "recomputed": "0.043387102250549515",
+          "abs_difference": 6.938893903907228e-18
+        }
+      ],
+      "tolerance_exception_count": 0,
+      "tolerance_exception_columns": [],
+      "tolerance_exception_examples": [],
+      "status": "PASS_CELLWISE_ORIGINAL_NUMERIC_TOLERANCE"
+    },
+    {
+      "file": "FILAMENT_HEIGHT_HISTOGRAM.csv",
+      "rows": 1452,
+      "byte_identical": false,
+      "different_cell_strings": 2684,
+      "different_numeric_values": 2684,
+      "max_abs_difference": 2.1606683731079102e-07,
+      "max_rel_difference": 8.054694598199615e-07,
+      "examples": [
+        {
+          "row": 0,
+          "column": "z_max",
+          "stored": "-0.9184999689459801",
+          "recomputed": "-0.9184999465942383",
+          "abs_difference": 2.2351741790771484e-08
+        },
+        {
+          "row": 1,
+          "column": "z_min",
+          "stored": "-0.9184999689459801",
+          "recomputed": "-0.9184999465942383",
+          "abs_difference": 2.2351741790771484e-08
+        },
+        {
+          "row": 1,
+          "column": "z_max",
+          "stored": "-0.818499967455864",
+          "recomputed": "-0.8184999823570251",
+          "abs_difference": 1.4901161193847656e-08
+        },
+        {
+          "row": 2,
+          "column": "z_min",
+          "stored": "-0.818499967455864",
+          "recomputed": "-0.8184999823570251",
+          "abs_difference": 1.4901161193847656e-08
+        },
+        {
+          "row": 2,
+          "column": "z_max",
+          "stored": "-0.7184999659657478",
+          "recomputed": "-0.7184999585151672",
+          "abs_difference": 7.450580596923828e-09
+        }
+      ],
+      "tolerance_exception_count": 2684,
+      "tolerance_exception_columns": [
+        "z_max",
+        "z_min"
+      ],
+      "tolerance_exception_examples": [
+        {
+          "row": 0,
+          "column": "z_max",
+          "stored": "-0.9184999689459801",
+          "recomputed": "-0.9184999465942383"
+        },
+        {
+          "row": 1,
+          "column": "z_min",
+          "stored": "-0.9184999689459801",
+          "recomputed": "-0.9184999465942383"
+        },
+        {
+          "row": 1,
+          "column": "z_max",
+          "stored": "-0.818499967455864",
+          "recomputed": "-0.8184999823570251"
+        },
+        {
+          "row": 2,
+          "column": "z_min",
+          "stored": "-0.818499967455864",
+          "recomputed": "-0.8184999823570251"
+        },
+        {
+          "row": 2,
+          "column": "z_max",
+          "stored": "-0.7184999659657478",
+          "recomputed": "-0.7184999585151672"
+        },
+        {
+          "row": 3,
+          "column": "z_min",
+          "stored": "-0.7184999659657478",
+          "recomputed": "-0.7184999585151672"
+        }
+      ],
+      "status": "REQUIRES_TYPE_PROMOTION_CHECK"
+    },
+    {
+      "file": "SAME_FINE_CFD_XY_SOURCE_CONDITIONAL_HEIGHT.csv",
+      "rows": 303,
+      "byte_identical": false,
+      "different_cell_strings": 23,
+      "different_numeric_values": 23,
+      "max_abs_difference": 1.3877787807814457e-17,
+      "max_rel_difference": 2.1911440314848786e-16,
+      "examples": [
+        {
+          "row": 5,
+          "column": "source_conditioned_mean_horizontal_wind_difference_m_s",
+          "stored": "0.007089649656565435",
+          "recomputed": "0.007089649656565436",
+          "abs_difference": 8.673617379884035e-19
+        },
+        {
+          "row": 14,
+          "column": "source_conditioned_mean_horizontal_wind_difference_m_s",
+          "stored": "0.040375730323340256",
+          "recomputed": "0.04037573032334025",
+          "abs_difference": 6.938893903907228e-18
+        },
+        {
+          "row": 15,
+          "column": "source_conditioned_mean_horizontal_wind_difference_m_s",
+          "stored": "0.08948674545234048",
+          "recomputed": "0.08948674545234049",
+          "abs_difference": 1.3877787807814457e-17
+        },
+        {
+          "row": 23,
+          "column": "source_conditioned_mean_horizontal_wind_difference_m_s",
+          "stored": "0.0035719395335525564",
+          "recomputed": "0.003571939533552557",
+          "abs_difference": 4.336808689942018e-19
+        },
+        {
+          "row": 58,
+          "column": "source_conditioned_mean_horizontal_wind_difference_m_s",
+          "stored": "0.005939849334989184",
+          "recomputed": "0.0059398493349891845",
+          "abs_difference": 8.673617379884035e-19
+        }
+      ],
+      "tolerance_exception_count": 0,
+      "tolerance_exception_columns": [],
+      "tolerance_exception_examples": [],
+      "status": "PASS_CELLWISE_ORIGINAL_NUMERIC_TOLERANCE"
+    },
+    {
+      "file": "SAME_XY_SOURCE_CONDITIONAL_HEIGHT_DISTRIBUTION.csv",
+      "rows": 659,
+      "byte_identical": false,
+      "different_cell_strings": 17,
+      "different_numeric_values": 17,
+      "max_abs_difference": 2.7755575615628914e-17,
+      "max_rel_difference": 3.762140895094872e-16,
+      "examples": [
+        {
+          "row": 11,
+          "column": "height_distribution_JS_bits",
+          "stored": "0.06479509513262197",
+          "recomputed": "0.06479509513262198",
+          "abs_difference": 1.3877787807814457e-17
+        },
+        {
+          "row": 34,
+          "column": "height_distribution_JS_bits",
+          "stored": "0.10658274314548194",
+          "recomputed": "0.10658274314548193",
+          "abs_difference": 1.3877787807814457e-17
+        },
+        {
+          "row": 170,
+          "column": "height_distribution_JS_bits",
+          "stored": "0.06339117369649776",
+          "recomputed": "0.06339117369649774",
+          "abs_difference": 1.3877787807814457e-17
+        },
+        {
+          "row": 187,
+          "column": "height_distribution_JS_bits",
+          "stored": "0.12274635064008857",
+          "recomputed": "0.12274635064008858",
+          "abs_difference": 1.3877787807814457e-17
+        },
+        {
+          "row": 203,
+          "column": "height_distribution_JS_bits",
+          "stored": "0.021124639156459075",
+          "recomputed": "0.02112463915645908",
+          "abs_difference": 3.469446951953614e-18
+        }
+      ],
+      "tolerance_exception_count": 0,
+      "tolerance_exception_columns": [],
+      "tolerance_exception_examples": [],
+      "status": "PASS_CELLWISE_ORIGINAL_NUMERIC_TOLERANCE"
+    },
+    {
+      "file": "THREED_SNAPSHOT_PROJECTION_COUNTS.csv",
+      "rows": 392,
+      "byte_identical": true,
+      "different_cell_strings": 0,
+      "different_numeric_values": 0,
+      "max_abs_difference": 0.0,
+      "max_rel_difference": 0.0,
+      "examples": [],
+      "tolerance_exception_count": 0,
+      "tolerance_exception_columns": [],
+      "tolerance_exception_examples": [],
+      "status": "PASS_CELLWISE_ORIGINAL_NUMERIC_TOLERANCE"
+    }
+  ],
+  "unchanged_frozen_hashes": 1510,
+  "original_validator_status": "FAIL_ON_OPENCV_VERSION_LITERAL; AFTER_METADATA_BYPASS_FAIL_ON_DERIVED_TABLE_BYTE_COMPARISON",
+  "opencv_stored": "4.11.0",
+  "opencv_local": "4.13.0",
+  "new_transport_integrations": 0,
+  "new_native_forward_runs": 0,
+  "histogram_type_diagnosis": {
+    "rows": 1452,
+    "stored_formula": "float(origin_z) + k*float(cell_size)",
+    "local_formula": "float32(origin_z) + float32(k)*float32(cell_size)",
+    "both_predicted_formulas_match_all_labels_exactly": true,
+    "counts_fractions_and_voxel_ids_all_exact": true,
+    "max_label_difference_m": 2.1606683731079102e-07,
+    "no_frozen_value_or_tolerance_changed": true
+  }
+}

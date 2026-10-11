@@ -1,0 +1,11 @@
+path,line,evidence
+PARENT_M2M3_FROZEN/M2_FROZEN/frozen_B4_inputs/source/gsl/PMFS/PMFSLib.cpp,211,PruneUnreachableCells形成导航连通的二维occupancy，传入simulations.initializeMap
+PARENT_M2M3_FROZEN/M2_FROZEN/frozen_B4_inputs/source/gsl/PMFS/internal/Simulations.cpp,355,同一时刻同一XY格至多hitMap++一次；粒子数量、Z及sigma未进入该记录定义
+PARENT_M2M3_FROZEN/M2_FROZEN/frozen_B4_inputs/source/gsl/PMFS/internal/Simulations.cpp,402,moveAlongPath调用measuredHitProb.freeAt及visibilityMap限制气团运动
+PARENT_M2M3_FROZEN/M2_FROZEN/frozen_B4_inputs/source/gsl/PMFS/internal/Simulations.cpp,512,GaussianBlur后除blurredFreeSpaceMask并clamp到0–1
+PARENT_M2M3_FROZEN/M2_FROZEN/frozen_B4_inputs/source/gsl/PMFS/internal/Simulations.cpp,240,源评分跨自由格乘积；probabilitySingleFrequency=1−D|p−q|并confidence插值
+PARENT_M2M3_FROZEN/M2_FROZEN/frozen_B4_inputs/source/sensor/fake_gas_sensor.cpp,179,model30 PID分支；simulate_pid在323行，校正因子关闭时sum原气体ppm
+RK0_NEW/source/verify_raw_receiver_queries.py,106,3sigma截止、3DLOS、sigma依赖高斯峰值、粒子ppm加和与原顺序float32
+RK0_NEW/source/run_rk0.py,23,reference-only共享核与固定四物理类；全粒子分母，源身份不作为kernel/class输入
+RK0_NEW/source/run_rk0.py,60,完整数量投影与未覆盖kernel显式UNSUPPORTED；未匹配状态不置零
+RK0_NEW/source/run_rk0.py,115,每realization总浓度阈值后合并参考事件；不是均值场阈值

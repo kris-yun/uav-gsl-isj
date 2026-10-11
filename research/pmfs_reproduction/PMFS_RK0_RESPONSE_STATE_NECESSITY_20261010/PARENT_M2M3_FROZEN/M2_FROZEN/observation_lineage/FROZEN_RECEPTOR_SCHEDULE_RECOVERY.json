@@ -1,0 +1,52 @@
+{
+  "verdict": "49_BLOCKS_EXACT_CHAIN_PASS_ONE_BOUNDARY_MEMBERSHIP_HOLD",
+  "accepted_blocks": 50,
+  "unique_membership_blocks": 49,
+  "ambiguous_blocks": [
+    {
+      "block_id": 40,
+      "reason": "equal PID at receipt before boundary and exactly at update boundary; state-before-add not captured",
+      "consumer_indices": [
+        1025,
+        1028
+      ]
+    }
+  ],
+  "total_branch_rows": 51,
+  "accepted_gas_count_all_blocks": 1,
+  "all_float_block_aggregates_exact": true,
+  "PID": {
+    "model": 30,
+    "correction_factors": false,
+    "raw_units": 3,
+    "response": "float sum of gas concentrations; no MOX dynamics"
+  },
+  "window_durations": {
+    "0.5": 39,
+    "0.51": 1,
+    "0.7": 2,
+    "0.6": 3,
+    "0.4": 5
+  },
+  "query_sensor_z_range": [
+    -0.20000000298023224,
+    -0.20000000298023224
+  ],
+  "physical_target_range": [
+    322.91661547399997,
+    534.0860661090001
+  ],
+  "physical_frame_range": [
+    611,
+    1026
+  ],
+  "boundary_protocol": "Use both predeclared membership alternatives for block40; do not count it twice. Primary source ranking only qualified if alternatives agree; otherwise HOLD.",
+  "input_sha256": {
+    "runtime\\consumer_messages.csv": "d14d92100494fc79df3e4f474896622b9338867c702f6af9bb3898555c65565f",
+    "runtime\\measurement_events.csv": "087905ddb54a43cff7738e68853ae8975c82b337f067315ea301d818a6c5ea31",
+    "runtime\\raw_ros_cdr.jsonl.gz": "a95bfd4fddffe02a7ca6e8857d1446526728a0ad52e0aa9c6d26655d90e18854",
+    "runtime\\service_queries.jsonl.gz": "68b092e75980e7711588b6558f295749789b6cf37941a6aafe89b896ab88a81e",
+    "runtime\\physical_clock_trace.csv": "b4ce87ca0aae82017e35ecab8702f14b1a774fe5e004b918cc123ca7b916853a",
+    "runtime\\launch.log": "4d81839765b00f1afb2cadebc2c9f9c086ee543d23b203b7ea7c0c9a669107dc"
+  }
+}

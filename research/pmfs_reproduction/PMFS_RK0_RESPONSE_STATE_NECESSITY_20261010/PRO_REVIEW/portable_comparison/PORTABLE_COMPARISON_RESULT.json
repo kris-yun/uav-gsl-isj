@@ -1,0 +1,109 @@
+{
+  "verdict": "PASS_MAIN_VALUES_INTEGER_BIN_MEMBERSHIPS_AND_EXPLICIT_LABEL_TYPE_FAMILIES",
+  "old_verifiers_modified": false,
+  "old_validator_claim": "Frozen validators remain byte-identical. This new checker does not relabel an original version/byte-comparison failure as original-validator PASS.",
+  "immutable_combined_SHA_members": 1510,
+  "environment": {
+    "local_opencv": "4.11.0",
+    "PRO_opencv": "4.13.0",
+    "opencv_version_literal_equal": false,
+    "local_numpy": "1.26.4",
+    "PRO_numpy": "2.3.5"
+  },
+  "main_numeric_tolerance": {
+    "relative": 2e-12,
+    "absolute": 3e-13
+  },
+  "derived_histogram_rule": "Exact group/scope/z_voxel/state_records; exact physical count/fraction rule. Labels must match explicit float64 or float32 formulas at original numeric tolerance.",
+  "recomputed_tables": [
+    {
+      "file": "CELL_CONDITIONAL_HEIGHT_AND_WIND.csv",
+      "rows": 7942,
+      "exact_integer_comparisons": 39710,
+      "main_numeric_comparisons": 111188,
+      "derived_label_comparisons": 0,
+      "maximum_absolute_difference": 0.0
+    },
+    {
+      "file": "FILAMENT_HEIGHT_HISTOGRAM.csv",
+      "rows": 1452,
+      "exact_integer_comparisons": 2904,
+      "main_numeric_comparisons": 1452,
+      "derived_label_comparisons": 2904,
+      "maximum_absolute_difference": 0.0
+    },
+    {
+      "file": "SAME_FINE_CFD_XY_SOURCE_CONDITIONAL_HEIGHT.csv",
+      "rows": 303,
+      "exact_integer_comparisons": 1515,
+      "main_numeric_comparisons": 3030,
+      "derived_label_comparisons": 0,
+      "maximum_absolute_difference": 0.0
+    },
+    {
+      "file": "SAME_XY_SOURCE_CONDITIONAL_HEIGHT_DISTRIBUTION.csv",
+      "rows": 659,
+      "exact_integer_comparisons": 3295,
+      "main_numeric_comparisons": 3954,
+      "derived_label_comparisons": 0,
+      "maximum_absolute_difference": 0.0
+    },
+    {
+      "file": "THREED_SNAPSHOT_PROJECTION_COUNTS.csv",
+      "rows": 392,
+      "exact_integer_comparisons": 2744,
+      "main_numeric_comparisons": 392,
+      "derived_label_comparisons": 0,
+      "maximum_absolute_difference": 0.0
+    }
+  ],
+  "numpy2_label_emulation": {
+    "status": "PASS_EXPLICIT_FLOAT32_ARITHMETIC_FAMILY_NOT_NEW_RAW_STATE_RECOMPUTATION",
+    "different_labels": 2684,
+    "maximum_label_difference_m": 2.1606683731079102e-07,
+    "integer_membership_and_counts_unchanged": true,
+    "comparison": {
+      "file": "FILAMENT_HEIGHT_HISTOGRAM.csv",
+      "rows": 1452,
+      "exact_integer_comparisons": 2904,
+      "main_numeric_comparisons": 1452,
+      "derived_label_comparisons": 2904,
+      "maximum_absolute_difference": 2.1606683731079102e-07
+    }
+  },
+  "native_blur_anchor_field_tolerance": 2e-07,
+  "native_blur_anchors": [
+    {
+      "job": "T_true_fine",
+      "native_map_SHA256": "dd39be96761c8381103ab695e141824864fb687d93d621cfd3ef08a5e52e63bf",
+      "maximum_absolute_field_difference": 0.0,
+      "actual_absolute_log_score_difference": 0.0,
+      "derived_Lipschitz_log_score_bound": 0.0
+    },
+    {
+      "job": "T_wrong_fine",
+      "native_map_SHA256": "7ae64c863ea180e607ab0e15a88576c0012fe0f7b35a7e9e4d95c98324251726",
+      "maximum_absolute_field_difference": 5.960464477539063e-08,
+      "actual_absolute_log_score_difference": 0.0,
+      "derived_Lipschitz_log_score_bound": 2.06795153138257e-26
+    },
+    {
+      "job": "W_true_fine",
+      "native_map_SHA256": "b66ceb42b37f931b4092b18c74d95f619448e681b0da91929e49d6bfd7aeabdf",
+      "maximum_absolute_field_difference": 0.0,
+      "actual_absolute_log_score_difference": 0.0,
+      "derived_Lipschitz_log_score_bound": 0.0
+    },
+    {
+      "job": "anchor_W_fine",
+      "native_map_SHA256": "81bdfeb85825e77a74811aa816c4d67f4fd2f67920a05dfbb6992828d1e50850",
+      "maximum_absolute_field_difference": 8.940696716308594e-08,
+      "actual_absolute_log_score_difference": 0.0,
+      "derived_Lipschitz_log_score_bound": 2.06795153138257e-26
+    }
+  ],
+  "score_tolerance_proposal": "For an admitted per-cell map difference e_i, |delta logscore| <= sum_i (D*c_i/(1-D*c_i))*e_i, D=.4. Report actual maps/bound; source-margin sign is robust only beyond the sum of the two source bounds. Do not enlarge every table tolerance or hide version mismatch.",
+  "new_forwards": 0,
+  "new_gas": 0,
+  "new_ROS": 0
+}

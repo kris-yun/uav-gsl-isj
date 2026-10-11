@@ -1,0 +1,152 @@
+{
+  "qualification": "READ_ONLY_CONTRACT_EXTRACTION_NOT_MODEL_CAUSE_PROOF",
+  "new_forwards": 0,
+  "new_gas": 0,
+  "new_ROS": 0,
+  "release": {
+    "PMFS_centres_per_record_step": 5,
+    "PMFS_centres_per_record_second": 50,
+    "PMFS_centres_per_warmup_second": 25,
+    "GADEN_centres_per_second": 7,
+    "source_rate_ratio_record": 7.142857142857143,
+    "source_rate_ratio_warmup": 3.5714285714285716
+  },
+  "noise": {
+    "PMFS_sigma_velocity_m_s": 0.2,
+    "PMFS_record_dt_s": 0.1,
+    "PMFS_record_position_sigma_m": 0.02,
+    "PMFS_warmup_position_sigma_m": 0.04,
+    "GADEN_yaml_sigma": 0.02,
+    "GADEN_constructor_multiplier": 10,
+    "GADEN_effective_sigma_velocity_m_s": 0.2,
+    "GADEN_dt_s": 0.1,
+    "GADEN_position_sigma_m": 0.02,
+    "statement": "Horizontal recording noise scales match. GADEN adds independent z-axis draw; warmup PMFS displacement scale differs through doubled dt."
+  },
+  "buoyancy": {
+    "gas_type": 13,
+    "name": "smoke",
+    "specific_gravity": 0.89,
+    "initial_center_ppm": 10,
+    "initial_terminal_velocity_m_s": 0.037982163742690055,
+    "dependence": "ConcentrationAtCenter decays with sigma^-3, so buoyancy velocity changes with packet age; no fixed .03798m/s for old filaments."
+  },
+  "footprint": {
+    "initial_sigma_cm": 10,
+    "growth_gamma_cm2_s": 15,
+    "observed_used_snapshot_sigma_cm_min": 10.074999809265137,
+    "observed_used_snapshot_sigma_cm_max": 90.06465911865234,
+    "observed_used_snapshot_sigma_cm_median": 40.608497619628906,
+    "observed_3sigma_radius_m_min": 0.3022499942779541,
+    "observed_3sigma_radius_m_max": 2.7019397735595705,
+    "pooled_sigma_count": 457736,
+    "pooled_sigma_count_is_not_independent_sample_size": true,
+    "PMFS_per_center_sigma_or_moles": "ABSENT",
+    "PMFS_post_field_blur_sigma_cells": 1.5,
+    "PMFS_post_field_blur_sigma_m": 0.375
+  },
+  "chronology": {
+    "GADEN_first_saved_index10": {
+      "frame": 19,
+      "physical_time_s": 10.7000045776
+    },
+    "actual_query_physical_target_min_s": 322.91661547399997,
+    "actual_query_physical_target_max_s": 534.0860661090001,
+    "all_observation_period_wind_index": 10,
+    "PMFS_fresh_candidate_initial_plume": "empty, independent warmup",
+    "GADEN_initial_plume": "empty at physical time0; queried after >322s of release history"
+  },
+  "M1_saved_actual_forward_budgets": [
+    {
+      "job": "anchor_T_coarse",
+      "released_centres": 2000,
+      "inferred_warmup_steps": 200,
+      "warmup_dt_s": 0.2,
+      "warmup_model_duration_s": 40.0,
+      "record_steps": 200,
+      "record_dt_s": 0.1,
+      "record_duration_s": 20,
+      "warmup_release_rate_per_model_second": 25,
+      "record_release_rate_per_model_second": 50
+    },
+    {
+      "job": "anchor_W_fine",
+      "released_centres": 2000,
+      "inferred_warmup_steps": 200,
+      "warmup_dt_s": 0.2,
+      "warmup_model_duration_s": 40.0,
+      "record_steps": 200,
+      "record_dt_s": 0.1,
+      "record_duration_s": 20,
+      "warmup_release_rate_per_model_second": 25,
+      "record_release_rate_per_model_second": 50
+    },
+    {
+      "job": "T_true_fine",
+      "released_centres": 2000,
+      "inferred_warmup_steps": 200,
+      "warmup_dt_s": 0.2,
+      "warmup_model_duration_s": 40.0,
+      "record_steps": 200,
+      "record_dt_s": 0.1,
+      "record_duration_s": 20,
+      "warmup_release_rate_per_model_second": 25,
+      "record_release_rate_per_model_second": 50
+    },
+    {
+      "job": "T_wrong_fine",
+      "released_centres": 2000,
+      "inferred_warmup_steps": 200,
+      "warmup_dt_s": 0.2,
+      "warmup_model_duration_s": 40.0,
+      "record_steps": 200,
+      "record_dt_s": 0.1,
+      "record_duration_s": 20,
+      "warmup_release_rate_per_model_second": 25,
+      "record_release_rate_per_model_second": 50
+    },
+    {
+      "job": "W_true_coarse",
+      "released_centres": 2000,
+      "inferred_warmup_steps": 200,
+      "warmup_dt_s": 0.2,
+      "warmup_model_duration_s": 40.0,
+      "record_steps": 200,
+      "record_dt_s": 0.1,
+      "record_duration_s": 20,
+      "warmup_release_rate_per_model_second": 25,
+      "record_release_rate_per_model_second": 50
+    },
+    {
+      "job": "W_true_fine",
+      "released_centres": 2000,
+      "inferred_warmup_steps": 200,
+      "warmup_dt_s": 0.2,
+      "warmup_model_duration_s": 40.0,
+      "record_steps": 200,
+      "record_dt_s": 0.1,
+      "record_duration_s": 20,
+      "warmup_release_rate_per_model_second": 25,
+      "record_release_rate_per_model_second": 50
+    }
+  ],
+  "wind": {
+    "raw_wind_SHA256": "18b07a284fd3432c77759499b96d2bb5153e945efe0b6644ce0537911697722a",
+    "raw_file_vs_saved_grid_xyz_max_abs": 0.0,
+    "source_height_common_slice_all_447_cells_3D_free": true,
+    "source_height_slice_proposal_SHA256": "6c7e944a5174f1d5c4ee159e43f5af78923e4ddbf8efd27824e78e78c7f59568",
+    "rule": "Same z=-.5 table for both candidates; this is a new diagnostic control proposal, not a correction to frozen official N1 inputs."
+  },
+  "source_hashes": {
+    "EnvironmentConfiguration.cpp": "d91f952a46abcc56f2521e3856254486c7a3edcd06b8bd08058f3efaabb84290",
+    "EnvironmentConfiguration.hpp": "e1bb4a2bf5eb94be8ff3f1c0f7f26debfdd16b13193ca8227f8f2c56819b040c",
+    "Filament.hpp": "51e47b302ab4e9c09fb67748fcabd1a06cb0d2df40de273f609116eedd4d888e",
+    "GasTypes.hpp": "78796997860074bfd913ac9a05bdd1db9eb43480eeec5a7a8ea772788acf4f7e",
+    "PointSource.hpp": "47015b78915a56585aec23c8f62e5595f8d80e174c68f4daa539f1473394a0d9",
+    "RunningSimulation.cpp": "00d0763dc7f369bb716cb8ddf151b3f1112b9b832f137e3cea2d1ee852aabb9a",
+    "RunningSimulation.hpp": "1f57a0ccfd02fa6cc3a18714cd96b795c49e4e81e41f4d4b136fc05f35040abe",
+    "Simulation.cpp": "4bbc8f171426c84177bdf9b16e7bd8cb14f9c505de58168d63734c1604ae6fca",
+    "Vectors.hpp": "5a683586b24a199bd4c291deb273ce102111e83a89d2e2b91da38091edbcc99d",
+    "WindSequence.cpp": "03de34e2d31746cf203c8beaa4206800d0037425f4003d2ea960f629c91923db"
+  }
+}

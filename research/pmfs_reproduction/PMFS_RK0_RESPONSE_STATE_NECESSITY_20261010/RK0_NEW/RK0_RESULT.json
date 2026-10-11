@@ -1,0 +1,40 @@
+{
+  "execution_status": "PASS_WITH_UNSUPPORTED_PREDICTIONS_REPORTED",
+  "research_decision": "S_ADDITIONAL_DIAGNOSTIC_VALUE_WITH_KERNEL_COVERAGE_LIMIT",
+  "source_task_correct_counts": {
+    "U": {
+      "log": 4,
+      "Brier": 4
+    },
+    "S": {
+      "log": 4,
+      "Brier": 4
+    },
+    "F": {
+      "log": 4,
+      "Brier": 4
+    },
+    "R": {
+      "log": 4,
+      "Brier": 4
+    }
+  },
+  "S_source_both_score_gains": 4,
+  "S_joint_common_support_response_and_task_gains": 2,
+  "S_direction_nonadverse": true,
+  "same_cap_R_control_triggered": true,
+  "full_heldout_U_S_receiver_coverage": false,
+  "total_wall_s": 60.0266546999992,
+  "new_gas": 0,
+  "new_CFD": 0,
+  "new_navigation": 0,
+  "new_training": 0,
+  "interpretation": [
+    "Response/state compression only, not new transport or deployed source localization.",
+    "S is fixed physical binning, not CSCG or learned clones.",
+    "Four previously inspected heldouts are exploratory; two proper scores are not independent experiments.",
+    "Unseen h entries are missing, never zero-filled; intervals bound their contribution only, not covered-class model error.",
+    "Candidate event probability averages per-realization threshold events; does not threshold average concentration across realizations.",
+    "Conditional mean class kernels still omit within-class response fluctuations. Population count randomness is preserved only across these finite oracle realizations."
+  ]
+}
