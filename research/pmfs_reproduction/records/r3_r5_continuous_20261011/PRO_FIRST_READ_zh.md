@@ -45,7 +45,7 @@ B1保存浓度历史并用因果local-wind滤波；B2联合风/释放/浓度不�
 
 ## 四、文献边界与主创新判决
 
-已核验官方论文与源码：PMFS TRO2024；ADApprox IROS2025已知稳态风/稳态PDE；AMT2026已有动态浓度和源反演（固定滞后平滑含未来观测，不能当零延迟基线）；FloWM ICML2026是动态视觉空间记忆。RA-L2019 Active Localization of Gas Leaks using Fluid Simulation已经直接处理时变但空间均匀风及主动源定位。具体链接/原文与SHA在SOURCE_LITERATURE及literature目录。
+已核验官方论文与源码：PMFS TRO2024；ADApprox IROS2025已知稳态风/稳态PDE；AMT2026已有动态浓度和源反演（固定滞后平滑含未来观测，不能当零延迟基线）；FloWM ICML2026是动态视觉空间记忆。RA-L2019 Active Localization of Gas Leaks using Fluid Simulation已经直接处理时变但空间均匀风及主动源定位。官方原文链接、源码与来源SHA在SOURCE_LITERATURE及literature目录。
 
 因此，本轮不推荐把“加入风历史、保存羽流、物理约束滤波”写成原创，也不推荐立即训练RPSPM。这不否定复杂湖岸存在更难的状态推断问题；它否定的是：仅凭现有静态R2与这组动态数学任务，已经证明复杂学习记忆有必要。可以撰写已有机制与基线工作，但尚不能开始宣称新算法有效的SCI主论文。
 
