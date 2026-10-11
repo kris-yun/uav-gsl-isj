@@ -1,0 +1,60 @@
+{
+  "status": "PASS_INDEPENDENT_SCALAR_RECOMPUTATION",
+  "new_physics": 0,
+  "new_training": 0,
+  "new_navigation": 0,
+  "receptor_Brier": {
+    "O0": 0.12333333333333335,
+    "O1": 0.034999999999999996,
+    "absolute_drop": 0.08833333333333335,
+    "relative_drop": 0.7162162162162162,
+    "all_six_better": true
+  },
+  "source_results": [
+    {
+      "method": "O0",
+      "unique_correct": 6,
+      "tasks": 6,
+      "mean_margin": 2.9331379917229907,
+      "mean_source_nll_descriptive": 0.11964901644838725,
+      "scope": "five point source score normalization; not calibrated posterior"
+    },
+    {
+      "method": "O1",
+      "unique_correct": 6,
+      "tasks": 6,
+      "mean_margin": 4.830303325629859,
+      "mean_source_nll_descriptive": 0.09020107206127818,
+      "scope": "five point source score normalization; not calibrated posterior"
+    },
+    {
+      "method": "N_POINT",
+      "unique_correct": 4,
+      "tasks": 6,
+      "mean_margin": 0.44931953070612024,
+      "mean_source_nll_descriptive": 0.8123454068614101,
+      "scope": "five point source score normalization; not calibrated posterior"
+    }
+  ],
+  "b4_finite_bank_equivalence": {
+    "candidates": [
+      "C7",
+      "B000"
+    ],
+    "reference_count": 2,
+    "blocks": 50,
+    "identical_receiver_hit_arrays": true,
+    "all_reference_hits_one": true,
+    "A1_max_abs": 0.0,
+    "O1_dense_native_log_difference": 0.2335666586646128,
+    "A1_native_log_difference": 0.0,
+    "inference": "Empirical event-law tie under this reference bank, not proof of population nonidentifiability."
+  },
+  "limitations": [
+    "No inferential p-values; six shared-context stochastic realizations.",
+    "O0/O1 receptor Brier measures event forecasts, not source posterior calibration.",
+    "D/V interventions were not independently repeated in the fresh six.",
+    "O1 treatment on complete native source space was not run.",
+    "N0 fixed-history core replay is not a new ROS/flight trial."
+  ]
+}
