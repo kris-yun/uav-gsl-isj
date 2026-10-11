@@ -1,0 +1,41 @@
+{
+  "reason": "Point/wall interventions leave strong wrong preference; same 3D centre-readout preserves signal. Test fixed-height planar drift representation with input-only interventions.",
+  "exploratory_after_M2_and_M3a": true,
+  "hypotheses": [
+    "H_source_slice: using wind at sensor height rather than known release height contributes to wrong source preference.",
+    "H_column_closure: a fixed single-height horizontal drift misses vertically heterogeneous airflow; predeclared free-column mean can diagnose this without selecting a lucky plane."
+  ],
+  "source_form": "Exact same two points, oracle diagnostic",
+  "wall": "native rollback, no slide",
+  "changed_component": "Only u/v in native frozen input CSV; source locations, obstacle mask, event map, Gaussian cache/phase, noise, dt, warmup/record duration, blur, D, and score are unchanged.",
+  "candidate_independent_wind_fields": [
+    "SOURCE_PLANE z=-0.5 m, the fixed release height shared by both candidates",
+    "COLUMN_FREE_UNIFORM_MEAN over all pre-existing free CFD voxel heights at each same native XY receptor cell centre"
+  ],
+  "source_plane_not_chosen_from_results": true,
+  "column_mean_not_source_conditioned": true,
+  "native_baseline": "Reuse four M3 exactpoint/native-wall sensor-plane forwards; no baseline rerun.",
+  "source_points": {
+    "C7": [
+      -3.2,
+      -3.3
+    ],
+    "K2": [
+      -1.675,
+      1.495
+    ]
+  },
+  "RNG_bundles": [
+    "T",
+    "W"
+  ],
+  "maximum_new_forward_calls": 8,
+  "forward_combined_wall_s": 60,
+  "forward_RSS_bytes": 536870912,
+  "new_GADEN_realizations": 0,
+  "new_CFD": 0,
+  "new_ROS_nodes": 0,
+  "new_navigation": 0,
+  "no_extra_seed_or_threshold": true,
+  "limitation": "These are explicit planar oracle drift contrasts, not repaired official results or a self-consistent 3D model. Column averaging changes a closure assumption; improvements alone do not prove a unique mechanism or deployment utility."
+}

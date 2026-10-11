@@ -1,0 +1,56 @@
+import sys
+sys.dont_write_bytecode=True
+from pathlib import Path
+import json,shutil,csv
+W=Path(__file__).resolve().parent;r=W.parents[2]/'outputs/PMFS_M3_PHYSICAL_ROOT_DISCRIMINATION_20261010/domain_support_intervention';s=json.loads((r/'DOMAIN_EXPERIMENT_RESULT.json').read_text());led=json.loads((r/'DOMAIN_EXECUTION_LEDGER.json').read_text());build=json.loads((r/'DOMAIN_BUILD_RESULT.json').read_text());mv=list(csv.DictReader((r/'DOMAIN_MOVEMENT_SUMMARY.csv').open(encoding='utf-8')))
+table=['| 气体移动域 | T 错/真评分比 | W 错/真评分比 | 真/错选择 |','|---|---:|---:|---|']
+for domain in ['NATIVE_NAV_DOMAIN','COLUMN_FREE_UNION_DOMAIN']:
+ z=[x for x in s['comparisons'] if x['domain']==domain];table.append(f'| {domain} | {z[0]["wrong_over_true_score"]:.3f} | {z[1]["wrong_over_true_score"]:.3f} | 两状态仍选错误 K2 |')
+table2=['| bundle/候选 | warmup/record步数 | 记录段移动数 | 记录段终点位于导航障碍 | 比例 | 全段穿越导航障碍的移动段 |','|---|---|---:|---:|---:|---:|']
+for row in mv:
+ if row['phase']=='record':table2.append(f'| {row["bundle"]}/{row["candidate"]} | 200/200 | {int(row["moves"]):,} | {int(row["end_nav_obstacle_instances"]):,} | {float(row["end_nav_obstacle_fraction"])*100:.2f}% | {int(row["global_native_PathFree_nav_obstacle_segment_moves"]):,} |')
+report=f'''# M3：气体输运域与导航自由域分离的 oracle 诊断
+
+## 完成判决
+
+**气体被限制在二维导航自由域是本例错误评分的重要组成因素，但不是单独充分解释。** 相同柱均风、点源、原生遇墙回退、测量地图与评分函数下，放宽气体移动支撑使真源评分约恢复49–51倍，错误/真实评分比从约2.2–2.6万降至约335–467；两个固定随机状态仍选错误源。因此，这项干预具有明确数值效应，却没有解决整个源判别错误。
+
+**这里的气体域由既存3D自由体素在XY上的柱并集得到，结果1530/1530格全部可走，等价于在本二维frame内没有任何平面障碍。它是强烈放宽的输运支撑上界，可能把不同高度的互不连通空间虚假连通，不是合法3D预测、部署算法或真实定位改善。** 不应仅凭评分恢复就宣称已证明真实3D因果机制。
+
+{chr(10).join(table)}
+
+## 唯一改变与两个必要锚点
+
+- 候选生成和NQA仍使用原447个导航自由格；已知两源均为该支持内的exactpoint oracle候选。
+- `moveAlongPath` 中起点、visibility快路径终点、遍历路径三处自由判断改用独立gas mask。
+- 独立gas visibility仍用上游 `GridUtils::PathFree`、range5和原实现构建，不重建/替换导航候选树。
+- 所有粒子的移动、随机数调用、边界出界删除都照常执行。录制段统计非nav格粒子实例，最终在原生频率归一化末尾将非nav格命中值清零，然后调用原blur。原447格归一化、freeSpaceMask与D=.4评分均不变。
+- full柱均风在原447格的float32 u/v与已完成COLUMN_FREE_UNIFORM_MEAN严格一致；只补充原导航障碍格上的u/v。原mask分支不会在这些新增格内驻留，新增值不会改变其有效转移。
+
+两个新编译disabled-domain锚点分别对应T真源/W错误源，全部blurred和unblurred图、2000个点、初末engine/high Gaussian phase与原column baseline逐字节一致。锚点通过后才运行4个domain分支。4个旧baseline只读复用，没有重生成。
+
+## 首个程序分叉与实际输运支持
+
+首个受控程序分叉在自由空间判断：同一位置若原2D nav mask为障碍、3D柱并集仍有free voxel，旧kernel拒绝该位置，新kernel允许气体继续移动。输入风在原可达域、初态、source点、noise和score未变。记录采用cell/phase聚合而非粒子全轨迹，因此不声称恢复了“第几个粒子第几秒第一次分叉”的逐步时间序列。
+
+{chr(10).join(table2)}
+
+上述穿越数用实际移动前后直线段的原nav `PathFree`只读审计（本轮wallSlide严格false），只统计前后都仍在frame内的段。真源T/W另有530/536个出界移动段，错误源56/57个，未作该ray审计而单独保留。驻留是粒子移动/录制实例，不是独立观测或独立气体实现。
+
+新/旧8个条件的实际warmup均为200步、record均为200步、释放点均2000。**本轮没有warmup结束变化的混杂。** 设置仍保持原生200–500稳定出界规则，并非新加固定warmup。粒子存活与出界变化后高斯表消费相位不同，不能宣称逐粒子噪声后续完全配对。
+
+真源T raw非零nav格121→214，raw平均hit .18039→.29573；W122→201、.18063→.30733。真源评分T1.194e-9→6.032e-8、W1.153e-9→5.661e-8；错误源T2.595e-5→2.818e-5、W2.946e-5→1.895e-5。错误对数评分优势下降3.840/4.335（约原差的38.45%/42.72%）；**这不是38–43%的物理原因占比**，只是本次干预下复合评分差的变化。
+
+## 资格与限制
+
+原始3D自由列来自冻结occupancy和CFD10，每个新允许列都有真实free voxel；但它没有保留高度状态和3D连通性。柱平均风也不是粒子条件的精确边缘化。源点由已知真源/错误峰选定，T/W是已存原生计算状态，不是两个独立物理实验。地图网格及空间传播证据也不独立。本轮评分比不能当成校准物理似然比，未产生新的后验、Action结果、导航或统计定位性能。
+
+## 资源、停止与交付
+
+2锚点+4新诊断共6次全部正常返回，前向合计{led['wall_seconds']:.6f}秒、峰RSS {led['RSS_bytes']:,}字节，低于60秒/512MiB。编译{build['wall_seconds']:.3f}秒、峰RSS {build['RSS_bytes']:,}字节，低于180秒/1.5GiB。可执行SHA256 `{build['executable_SHA256']}`。最终只读检查本任务candidate进程数量为0。新增气体/CFD/ROS初始化/导航均0，完成后不追加域、参数、高度或种子。
+
+`DOMAIN_FORWARD_SCORES.csv`、`DOMAIN_PAIRED_COMPARISONS.csv`、`DOMAIN_PER_CELL_CONTRIBUTIONS.csv`、`DOMAIN_MOVEMENT_SUMMARY.csv`给出完整冻结配对、空间差分和驻留计数；`forward_calls/`保存6次图、点、RNG相位、评分和全部聚合；`snapshot/`为实际加载输入。`DOMAIN_EXECUTION_CONTRACT.json`在运行前绑定父合同、输入、gas mask、源码和二进制SHA。`verify_domain.py`默认只读复算所有评分并核验原nav读出、预算和源状态。
+
+与已有点源/壁面/高度否证合并，本轮可将研究疑点进一步缩小：气体与导航的空间支持不能直接等同，但仅放宽支撑仍不足以修复二维预测的错误判别；剩余评分语义、观测过程与传播近似应由其独立对照分析解释。不会把未翻转结果包装为算法成功。
+'''
+p=r/'DOMAIN_SUPPORT_CAUSAL_REVIEW_zh.md';assert not p.exists();p.write_text(report,encoding='utf-8');shutil.copy2(W/'write_domain_report.py',r/'write_domain_report.py');shutil.copy2(W/'analyse_domain.py',r/'analyse_domain.py');shutil.copy2(W/'domain_final_readonly.py',r/'domain_final_readonly.py');print(p)

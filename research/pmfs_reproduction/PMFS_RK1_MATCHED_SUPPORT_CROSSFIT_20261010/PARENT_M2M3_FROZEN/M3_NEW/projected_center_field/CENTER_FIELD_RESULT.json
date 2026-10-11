@@ -1,0 +1,67 @@
+{
+  "verdict": "COMMON_CENTRE_FIELD_NATIVE_STYLE_COMPARISON_COMPLETED",
+  "new_forward_calls": 0,
+  "new_GADEN_realizations": 0,
+  "primary_variant": "MASKED/NATIVE_STYLE_BLURRED",
+  "pairs": [
+    {
+      "variant": "MASKED",
+      "stage": "UNBLURRED",
+      "C7_minus_K2_log_similarity": -0.25886206582206217,
+      "selected": "K2"
+    },
+    {
+      "variant": "MASKED",
+      "stage": "NATIVE_STYLE_BLURRED",
+      "C7_minus_K2_log_similarity": -0.5089087756499167,
+      "selected": "K2"
+    },
+    {
+      "variant": "ALL_XY",
+      "stage": "UNBLURRED",
+      "C7_minus_K2_log_similarity": -0.25886206582206217,
+      "selected": "K2"
+    },
+    {
+      "variant": "ALL_XY",
+      "stage": "NATIVE_STYLE_BLURRED",
+      "C7_minus_K2_log_similarity": 0.12273282930515839,
+      "selected": "C7"
+    }
+  ],
+  "blur_anchors": [
+    {
+      "job": "T_true_fine",
+      "blur_map_max_abs_difference": 0.0,
+      "score_log_difference": 0.0,
+      "native_source_sha256": "dd39be96761c8381103ab695e141824864fb687d93d621cfd3ef08a5e52e63bf",
+      "python_cv2_version": "4.11.0"
+    },
+    {
+      "job": "T_wrong_fine",
+      "blur_map_max_abs_difference": 5.960464477539063e-08,
+      "score_log_difference": 0.0,
+      "native_source_sha256": "7ae64c863ea180e607ab0e15a88576c0012fe0f7b35a7e9e4d95c98324251726",
+      "python_cv2_version": "4.11.0"
+    },
+    {
+      "job": "W_true_fine",
+      "blur_map_max_abs_difference": 0.0,
+      "score_log_difference": 0.0,
+      "native_source_sha256": "b66ceb42b37f931b4092b18c74d95f619448e681b0da91929e49d6bfd7aeabdf",
+      "python_cv2_version": "4.11.0"
+    },
+    {
+      "job": "anchor_W_fine",
+      "blur_map_max_abs_difference": 8.940696716308594e-08,
+      "score_log_difference": 0.0,
+      "native_source_sha256": "81bdfeb85825e77a74811aa816c4d67f4fd2f67920a05dfbb6992828d1e50850",
+      "python_cv2_version": "4.11.0"
+    }
+  ],
+  "comparability_limits": [
+    "Source points and grid/centre definition agree; physical generator, injection rate, record times and trajectories differ.",
+    "This tests the score under common observable definition; no physical likelihood or official localization improvement is claimed.",
+    "Python cv2 backend is anchored against native maps at tolerance2e-7; scalar source preference margins are reported."
+  ]
+}

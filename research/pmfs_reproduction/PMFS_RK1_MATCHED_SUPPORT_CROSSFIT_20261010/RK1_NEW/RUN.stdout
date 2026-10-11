@@ -1,0 +1,59 @@
+{"fold": "T0_E1", "status": "FITTED_AND_ALL_HYPOTHESES_PREDICTED", "common_keys": 2098, "tables": 4, "prediction_rows": 204}
+{"fold": "T1_E0", "status": "FITTED_AND_ALL_HYPOTHESES_PREDICTED", "common_keys": 2151, "tables": 4, "prediction_rows": 204}
+{
+  "execution_status": "PASS_COMPLETED_FROZEN_MATCHED_SUPPORT_CROSSFIT",
+  "test_banks": 4,
+  "test_exposures": 200,
+  "independent_new_realizations": 0,
+  "new_phi_calls": 0,
+  "new_simulation": 0,
+  "new_network_training": 0,
+  "kernel_tables_fitted": 8,
+  "arms": [
+    "U",
+    "S",
+    "C_C7",
+    "C_K2"
+  ],
+  "S_MSE_gains": 3,
+  "C_oracle_over_S_MSE_gains": 4,
+  "C_oracle_over_U_MSE_gains": 4,
+  "equal_bank_mean_test_MSE": {
+    "U": 0.8911261627052158,
+    "S": 0.7852615993611965,
+    "C_C7": 2.153590295426,
+    "C_K2": 1.0703884268094805,
+    "C_ORACLE": 0.49860663889494533
+  },
+  "per_source_directions": {
+    "C7": {
+      "S_over_U": [
+        true,
+        true
+      ],
+      "C_over_S": [
+        true,
+        true
+      ]
+    },
+    "K2": {
+      "S_over_U": [
+        false,
+        true
+      ],
+      "C_over_S": [
+        true,
+        true
+      ]
+    }
+  },
+  "all_four_S_improve": false,
+  "all_four_C_over_S_improve": true,
+  "science_scope": [
+    "Old inspected bank, same geometry/static wind/trajectory; no new prospective task.",
+    "All arms share exact native oracle tail. Gains constrain Q only; tail is not a deployed prediction.",
+    "C_ORACLE selects generating condition after prediction freeze, has more conditioning/parameters and is nonnested with S.",
+    "No source posterior, source classification success, CSCG or new transport model is evaluated."
+  ],
+  "producer_wall_s": 6.7291389999882085
+}

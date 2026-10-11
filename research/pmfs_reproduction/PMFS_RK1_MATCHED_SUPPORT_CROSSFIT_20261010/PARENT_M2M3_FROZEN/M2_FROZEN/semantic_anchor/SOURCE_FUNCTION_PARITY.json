@@ -1,0 +1,67 @@
+{
+  "source_function_parity": [
+    {
+      "function": "PMFSLib::EstimateHitProbabilities",
+      "source_body_SHA256": "d013a24b07b7f96654a314d3fd7bb3f8eff31b5df54417720df591eef24ac03c",
+      "body_identical": true
+    },
+    {
+      "function": "PMFSLib::PropagateProbabilities",
+      "source_body_SHA256": "664606184bba483f51e8b2eda73b4353f8a9b5fd40c4e11fb034ba3fc85761e6",
+      "body_identical": true
+    },
+    {
+      "function": "PMFSLib::applyFalloffLogOdds",
+      "source_body_SHA256": "d2ffb1bf18025029dc2e2c8c7e5dc594b71034e77d4a98f921414413d515f8b8",
+      "body_identical": true
+    },
+    {
+      "function": "Simulations::sourceProbFromMaps",
+      "source_body_SHA256": "dcb47ba91c37cb10a55469e8eeb65fad51162462fc9da4d373e8ad04e0b3a7f3",
+      "body_identical": true
+    },
+    {
+      "function": "Simulations::probabilityFromSingleCell",
+      "source_body_SHA256": "8f0e92577c68968027b4be4df3303dec36d0e3cbcc02a91517142e3eb315b929",
+      "body_identical": true
+    },
+    {
+      "function": "Simulations::probabilitySingleFrequency",
+      "source_body_SHA256": "d96a924dbf00ac592d207857c51fc2fe04122de99e3f541a89dd889d629afe1a",
+      "body_identical": true
+    },
+    {
+      "function": "double lerp(",
+      "source_body_SHA256": "a42097fda2d84e50ea5edfcf85deafea5f82fde0175a4486cea951c75894c9e9",
+      "body_identical": true
+    },
+    {
+      "function": "double clamp(",
+      "source_body_SHA256": "d8fa4de5baf7d88d9bbd684abfe52d3a96d9d916243fb74a5e7ee4c7aa5613d1",
+      "body_identical": true
+    },
+    {
+      "function": "double evaluate1DGaussian(",
+      "source_body_SHA256": "10fc545186dd4ed704501738bd1b494dd06f211817abd2372f915a1b34e0703b",
+      "body_identical": true
+    },
+    {
+      "function": "double evaluate2DGaussian(",
+      "source_body_SHA256": "51e7ea7d219c4d827d416f0df20be34fc7a51275106a02d6aeb19cda48214c8a",
+      "body_identical": true
+    },
+    {
+      "function": "double logOddsToProbability(",
+      "source_body_SHA256": "816b251372db437393004f2ed3bbe074ce3bc16686bd02c116bcf0acee95b0e2",
+      "body_identical": true
+    }
+  ],
+  "frozen_PMFS_lib_SHA256": "064af4f492a248b7ac41d9874dbe1f9447921b2957071602b065bac366faa292",
+  "recovery_PMFS_lib_SHA256": "ef752d8ade9e99eea82deb4ba70762b09fa88316b47befaca7d7a6f02319c7f3",
+  "whole_files_identical": false,
+  "whole_file_difference": "Recovery checkout adds includes and fail-closed logging/checks only in EstimateWind; selected measurement/propagation functions are byte-identical after source decoding.",
+  "linked_native_Simulations_source_starts_with_frozen_M0_Simulations_bytes": true,
+  "linked_Simulations_source_SHA256": "b1f06d5878659442d081f76e46afd1132180750fe76fa0354130a15e98c6f664",
+  "native_Simulations_object_SHA256": "446147515a52e63b4cf9ffc48251ca1adadc08438b46da03d0b18dc39aab647b",
+  "scope": "Functions actually called in this test are unchanged; no claim of entire live ROS checkout equality."
+}

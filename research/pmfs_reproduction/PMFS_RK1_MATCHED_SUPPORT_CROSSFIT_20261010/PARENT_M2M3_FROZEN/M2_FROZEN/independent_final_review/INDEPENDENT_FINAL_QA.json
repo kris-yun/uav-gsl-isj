@@ -1,0 +1,196 @@
+{
+  "verdict": "PASS_INDEPENDENT_ARITHMETIC_AND_SCOPE_QA_WITH_REPORTED_LIMITATIONS",
+  "actual_actions": "local read-only raw evidence and independent scalar arithmetic; no simulator, ROS, forwards or navigation",
+  "source_blind_scores": {
+    "O0": {
+      "log": "C7",
+      "Brier": "C7"
+    },
+    "H101": {
+      "log": "C7",
+      "Brier": "C7"
+    },
+    "H102": {
+      "log": "K2",
+      "Brier": "K2"
+    },
+    "H103": {
+      "log": "C7",
+      "Brier": "C7"
+    },
+    "H104": {
+      "log": "K2",
+      "Brier": "K2"
+    }
+  },
+  "heldout_log_correct": 4,
+  "heldout_Brier_correct": 4,
+  "heldout_n": 4,
+  "reference_per_candidate": 2,
+  "mapstats": {
+    "C7": {
+      "unmatched_log_similarity": -2.024966286056335,
+      "unmatched_similarity": 0.13199829329583848,
+      "aligned_MSE": 0.0,
+      "raw_frequency_MSE": 0.17904638531332875
+    },
+    "K2": {
+      "unmatched_log_similarity": -6.033173067907089,
+      "unmatched_similarity": 0.0023978732797667293,
+      "aligned_MSE": 0.05148992472834634,
+      "raw_frequency_MSE": 0.20253589977148456
+    }
+  },
+  "unmatched_selected": "C7",
+  "aligned_selected": "C7",
+  "E1": "NOT_ESTABLISHED_NO_SELECTION_FLIP_ON_SAME_3D_BANK",
+  "E2": "HOLD_NO_COMPARABLE_2D_PID_OPERATOR",
+  "new_localization_gain": "NOT_TESTED",
+  "independent_physical_model_validation": "NOT_DONE_SAME_GADEN",
+  "map_anchor_max_abs": {
+    "logOdds": 0.0,
+    "omega": 0.0,
+    "confidence": 0.0
+  },
+  "query_rows_by_bank": {
+    "C7_0": 22848,
+    "C7_1": 22848,
+    "C7_2": 22848,
+    "C7_3": 22848,
+    "K2_0": 22848,
+    "K2_1": 22848,
+    "K2_2": 22848,
+    "K2_3": 22848
+  },
+  "branch_equivalence": "PASS_BOTH_RECEPTOR_AND_FULL_GRID_ALL_BANKS",
+  "floor_frame_physical_time_lineages": {
+    "C7_0": true,
+    "C7_1": true,
+    "C7_2": true,
+    "C7_3": true,
+    "K2_0": true,
+    "K2_1": true,
+    "K2_2": true,
+    "K2_3": true
+  },
+  "derived_csv_checks": {
+    "SOURCE_DISCRIMINATION_PER_REALIZATION.csv": {
+      "rows": 5,
+      "maximum_abs_numeric_difference": 0.0
+    },
+    "REALIZATION_EVENT_COUNTS.csv": {
+      "rows": 8,
+      "maximum_abs_numeric_difference": 0.0
+    },
+    "ALIGNED_MAP_HELDOUT_COMPARISON.csv": {
+      "rows": 5,
+      "maximum_abs_numeric_difference": 0.0
+    },
+    "SAME_3D_BANK_UNMATCHED_ALIGNED_COMPARISON.csv": {
+      "rows": 2,
+      "maximum_abs_numeric_difference": 0.0
+    },
+    "SAME_3D_BANK_PER_CELL_COMPARISON.csv": {
+      "rows": 894,
+      "maximum_abs_numeric_difference": 0.0
+    },
+    "RAW_CONCENTRATION_INFORMATION_ENHANCED.csv": {
+      "rows": 400,
+      "maximum_abs_numeric_difference": 0.0
+    }
+  },
+  "limitations": [
+    "4 heldouts on one selected B4 task do not establish significance or new unselected-task transfer",
+    "source IDs hidden from scorer but coordinates remain visible in public preparation contract; computational input isolation, not analyst double-blind",
+    "REALIZATION_EVENT_COUNTS independent_stops is a terminology issue: 10 distinct correlated stops, not 10 independent experiments",
+    "aligned C7 MSE exactly zero follows identical all-positive event vectors under deterministic frozen map operator, not perfect concentration prediction",
+    "unmatched control uses concentration>0.1ppm temporal frequency as predeclared, not native 2D filament occupancy or independent-cell likelihood",
+    "heldout map association H101/H102 to rep2 and H103/H104 rep3 is hardcoded in analysis; verified against raw source-blind task vectors here"
+  ],
+  "observation_lineage_delivery_coverage": [
+    {
+      "file": "FROZEN_RECEPTOR_SCHEDULE_ALL_MEMBERSHIP_BRANCHES.csv",
+      "copied_to_observation_lineage": true,
+      "identical_if_copied": true,
+      "root_level_copy": false,
+      "root_level_identical": null
+    },
+    {
+      "file": "FROZEN_RECEPTOR_SCHEDULE_PROVISIONAL_EARLIER_BOUNDARY.csv",
+      "copied_to_observation_lineage": true,
+      "identical_if_copied": true,
+      "root_level_copy": false,
+      "root_level_identical": null
+    },
+    {
+      "file": "FROZEN_RECEPTOR_SCHEDULE_RECOVERY.json",
+      "copied_to_observation_lineage": true,
+      "identical_if_copied": true,
+      "root_level_copy": false,
+      "root_level_identical": null
+    },
+    {
+      "file": "MAP_REPLAY_EVENT_COVARIATES.csv",
+      "copied_to_observation_lineage": true,
+      "identical_if_copied": true,
+      "root_level_copy": false,
+      "root_level_identical": null
+    },
+    {
+      "file": "prepare_scoring_definition.py",
+      "copied_to_observation_lineage": true,
+      "identical_if_copied": true,
+      "root_level_copy": false,
+      "root_level_identical": null
+    },
+    {
+      "file": "recover_frozen_schedule.py",
+      "copied_to_observation_lineage": true,
+      "identical_if_copied": false,
+      "root_level_copy": false,
+      "root_level_identical": null
+    },
+    {
+      "file": "score_source_blind.py",
+      "copied_to_observation_lineage": false,
+      "identical_if_copied": null,
+      "root_level_copy": true,
+      "root_level_identical": true
+    },
+    {
+      "file": "SCORING_ALIGNMENT_DEFINITION.json",
+      "copied_to_observation_lineage": false,
+      "identical_if_copied": null,
+      "root_level_copy": false,
+      "root_level_identical": null
+    },
+    {
+      "file": "SCORING_AND_ALIGNMENT_CONTRACT_zh.md",
+      "copied_to_observation_lineage": false,
+      "identical_if_copied": null,
+      "root_level_copy": false,
+      "root_level_identical": null
+    },
+    {
+      "file": "SCORING_CONTRACT_SHA256.json",
+      "copied_to_observation_lineage": false,
+      "identical_if_copied": null,
+      "root_level_copy": false,
+      "root_level_identical": null
+    },
+    {
+      "file": "SOURCE_BLIND_SCORE_CODE_UNIT_CHECK.json",
+      "copied_to_observation_lineage": false,
+      "identical_if_copied": null,
+      "root_level_copy": false,
+      "root_level_identical": null
+    }
+  ],
+  "evidence_sha256": {
+    "frozen_contract.json": "cc624ed79721b136eb77e45766765d861345cc3f8a1e545bc6339f43d5d44bbc",
+    "analyse_discrimination.py": "13adcd88354ffc599aa4a9388d3f35d06b16bfab1bcfc10807553b340fba9452",
+    "SOURCE_BLIND_SCORES_BRANCH_0.json": "a625937b27292c70dc32173d75fcb3c30a70845e50a80a3ac8268fcb74d42a25",
+    "SOURCE_BLIND_SCORES_BRANCH_1.json": "a625937b27292c70dc32173d75fcb3c30a70845e50a80a3ac8268fcb74d42a25",
+    "DISCRIMINATION_RESULT.json": "9825a3be1ff27fd192d67779b9f99847b764f2c12d514cdb61539060492138d9"
+  }
+}

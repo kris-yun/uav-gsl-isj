@@ -1,0 +1,102 @@
+{
+  "status": "PASS_RK1_MASTER_VERIFIER_SOFTWARE_QA",
+  "check_count": 16,
+  "checks": [
+    {
+      "check": "complete_new_manifest_frozen_1848_and_long_path",
+      "outcome": "PASS",
+      "main_members": 1852,
+      "long_path_characters": 412
+    },
+    {
+      "check": "new_deep_function_dispatch_and_post_hash",
+      "outcome": "PASS_SYNTHETIC_SOFTWARE_ONLY"
+    },
+    {
+      "check": "undeclared_file",
+      "outcome": "PASS_EXPECTED_REJECTION",
+      "error_type": "AssertionError",
+      "error": "Main manifest coverage mismatch; undeclared=['RK1_NEW/undeclared.txt']; missing=[]"
+    },
+    {
+      "check": "legacy_tamper_even_if_new_manifest_rehashed",
+      "outcome": "PASS_EXPECTED_REJECTION",
+      "error_type": "AssertionError",
+      "error": "SHA256 mismatch: RK0_ROOT_MANIFEST_FROZEN.json -> FIRST_READ_FOR_PRO_zh.md"
+    },
+    {
+      "check": "renamed_old_manifest_byte_change",
+      "outcome": "PASS_EXPECTED_REJECTION",
+      "error_type": "AssertionError",
+      "error": "Frozen RK0 root manifest bytes changed or missing"
+    },
+    {
+      "check": "manifest_path_traversal",
+      "outcome": "PASS_EXPECTED_REJECTION",
+      "error_type": "ValueError",
+      "error": "Non-canonical/traversing manifest path: ../outside.txt"
+    },
+    {
+      "check": "duplicate_JSON_manifest_keys",
+      "outcome": "PASS_EXPECTED_REJECTION",
+      "error_type": "ValueError",
+      "error": "Duplicate JSON key: same"
+    },
+    {
+      "check": "case_alias_manifest_paths",
+      "outcome": "PASS_EXPECTED_REJECTION",
+      "error_type": "ValueError",
+      "error": "Case-alias/duplicate normalized manifest path: rk1_new/VERIFY_RK1.PY"
+    },
+    {
+      "check": "output_inside_normal",
+      "outcome": "PASS_EXPECTED_REJECTION",
+      "error_type": "ValueError",
+      "error": "--out must be outside bundle"
+    },
+    {
+      "check": "output_inside_dotdot",
+      "outcome": "PASS_EXPECTED_REJECTION",
+      "error_type": "ValueError",
+      "error": "--out must be outside bundle"
+    },
+    {
+      "check": "output_inside_extended",
+      "outcome": "PASS_EXPECTED_REJECTION",
+      "error_type": "ValueError",
+      "error": "--out must be outside bundle"
+    },
+    {
+      "check": "existing_external_output_no_overwrite",
+      "outcome": "PASS_EXPECTED_REJECTION",
+      "error_type": "FileExistsError",
+      "error": "--out must be a new file; refusing overwrite"
+    },
+    {
+      "check": "PRO_scratch_inside",
+      "outcome": "PASS_EXPECTED_REJECTION",
+      "error_type": "ValueError",
+      "error": "PRO scalar scratch must be outside bundle"
+    },
+    {
+      "check": "existing_PRO_scratch_no_overwrite",
+      "outcome": "PASS_EXPECTED_REJECTION",
+      "error_type": "FileExistsError",
+      "error": "PRO scalar scratch must be new; refusing overwrite"
+    },
+    {
+      "check": "post_deep_package_modification",
+      "outcome": "PASS_EXPECTED_REJECTION",
+      "error_type": "AssertionError",
+      "error": "SHA256 mismatch: SHA256SUMS.json -> START_HERE_RK1_zh.md"
+    },
+    {
+      "check": "original_manifest_preserved_and_copy_restored_no_bytecode",
+      "outcome": "PASS"
+    }
+  ],
+  "fixture": "\\\\?\\C:\\Users\\50176\\Documents\\Codex\\2026-10-09\\gb-gaden-turb-smoke-r0c-r0d\\work\\pmfs_rk1_matched_support_crossfit_20261010\\verifier_qa_fixture_20261010_192638",
+  "fixture_science_not_executed": true,
+  "original_package_modified": false,
+  "new_physics": 0
+}

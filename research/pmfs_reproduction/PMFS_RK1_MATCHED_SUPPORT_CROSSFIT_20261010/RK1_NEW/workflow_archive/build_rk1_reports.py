@@ -1,0 +1,260 @@
+"""Derive review tables/report/figure from the completed frozen RK1 outputs.
+No fit, native readout, transport, producer or additional experimental arm.
+"""
+import sys
+sys.dont_write_bytecode = True
+from pathlib import Path
+import csv, json, math, hashlib
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+BASE = Path(__file__).resolve().parents[2]
+WORK = Path(__file__).resolve().parent
+OUT = BASE/'outputs/PMFS_RK1_MATCHED_SUPPORT_CROSSFIT_20261010'
+PARENT = BASE/'outputs/PMFS_RK0_PRO_REVIEW_BUNDLE_20261010_V2'
+
+def load(p): return json.loads(p.read_text(encoding='utf-8'))
+def rows(p):
+    with p.open(encoding='utf-8', newline='') as f: return list(csv.DictReader(f))
+def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
+def write(p, s):
+    assert not p.exists(), f'Refuse overwrite {p}'
+    p.write_text(s.strip()+'\n', encoding='utf-8')
+def csvout(p, rr):
+    assert not p.exists()
+    with p.open('w', encoding='utf-8', newline='') as f:
+        w = csv.DictWriter(f,fieldnames=list(rr[0]));w.writeheader();w.writerows(rr)
+
+pre = load(OUT/'PRE_ANALYSIS_PREDICTION_SHA256.json')
+for n,h in pre.items(): assert sha(OUT/n) == h
+result = load(OUT/'RK1_RESULT.json')
+ledger = load(OUT/'EXECUTION_LEDGER.json')
+audit = load(WORK/'independent_validation/INDEPENDENT_VERIFY_RESULT.json')
+assert audit['status'] == 'PASS_INDEPENDENT_CACHE_ONLY_RECOMPUTATION'
+metrics = rows(OUT/'BANK_METRICS_ANALYSIS.csv')
+paired = rows(OUT/'TEST_BANK_PAIRED_COMPARISONS.csv')
+pred = rows(OUT/'PREDICTIONS_BLIND.csv')
+banks = [r['bank'] for r in paired]
+arms = ['U','S','C_ORACLE']
+mm = {(r['bank'],r['arm']): r for r in metrics if r['role']=='test'}
+
+# Fixed ten physical receptor positions: never treat the five blocks at a stop as independent.
+pose_rows = []
+for bank in banks:
+    z = [r for r in pred if r['role']=='test' and r['bank']==bank and r['membership_branch']=='0']
+    for pose in sorted({int(r['pose_id']) for r in z}):
+        pp = [r for r in z if int(r['pose_id'])==pose]
+        for arm in arms:
+            actual = 'C_'+bank.split('_')[0] if arm=='C_ORACLE' else arm
+            ee = [float(r[actual+'_prediction_ppm'])-float(r['target_phi64_ppm']) for r in pp]
+            full = math.fsum(float(r['target_phi64_ppm']) for r in pp)
+            eligible = math.fsum(float(r['target_Q64_ppm']) for r in pp)
+            pose_rows.append(dict(fold=pp[0]['fold'],bank=bank,pose_id=pose,arm=arm,
+                correlated_blocks=len(pp),independent_experiments_not_claimed=True,
+                Q_response_fraction=eligible/full if full else 'ZERO_TARGET',
+                Q_particle_fraction=sum(int(r['eligible_particles']) for r in pp)/sum(int(r['total_particles']) for r in pp),
+                tail_alone_positive_blocks=sum(int(r['tail_alone_event']) for r in pp),
+                MSE_ppm2=math.fsum(e*e for e in ee)/len(pp),
+                mean_signed_error_ppm=math.fsum(ee)/len(pp),
+                MAE_ppm=math.fsum(abs(e) for e in ee)/len(pp),
+                event_errors_native_F32=sum(r[actual+'_event']!=r['native_F32_event'] for r in pp)))
+csvout(OUT/'TEST_POSE_DIAGNOSTICS.csv',pose_rows)
+
+coverage = []
+for bank in banks:
+    pp = [r for r in pred if r['role']=='test' and r['bank']==bank and r['membership_branch']=='0']
+    coverage.append(dict(bank=bank,fold=pp[0]['fold'],planned_blocks=len(pp),distinct_pose_ids=len({r['pose_id'] for r in pp}),
+        Q_particle_fraction=sum(int(r['eligible_particles']) for r in pp)/sum(int(r['total_particles']) for r in pp),
+        Q_response_fraction=math.fsum(float(r['target_Q64_ppm']) for r in pp)/math.fsum(float(r['target_phi64_ppm']) for r in pp),
+        tail_alone_positive_blocks=sum(int(r['tail_alone_event']) for r in pp),
+        native_F32_positive_blocks=sum(int(r['native_F32_event']) for r in pp),
+        F32_F64_event_differences=sum(r['native_F32_event']!=r['target_phi64_event'] for r in pp),
+        phi64_minus_F32_max_abs=max(abs(float(r['phi64_minus_native_F32_ppm'])) for r in pp)))
+csvout(OUT/'TEST_COVERAGE_AND_THRESHOLD_SUMMARY.csv',coverage)
+
+summary = result['equal_bank_mean_test_MSE']
+decision = dict(
+    decision='MATCHED_SUPPORT_CONDITIONAL_RESPONSE_SIGNAL_CONFIRMED',
+    execution_and_independent_arithmetic='PASS',
+    shared_kernel_vs_four_classes='3_OF_4_MSE_IMPROVE_ONE_COUNTEREXAMPLE',
+    source_conditioned_oracle_vs_four_classes='4_OF_4_MSE_IMPROVE_IN_OLD_BANKS',
+    equal_bank_mean_MSE_ppm2={a:summary[a] for a in arms},
+    U_to_S_mean_MSE_relative_reduction=(summary['U']-summary['S'])/summary['U'],
+    S_to_C_ORACLE_mean_MSE_relative_reduction=(summary['S']-summary['C_ORACLE'])/summary['S'],
+    U_to_C_ORACLE_mean_MSE_relative_reduction=(summary['U']-summary['C_ORACLE'])/summary['U'],
+    deployable_unknown_source_method='NOT_IMPLEMENTED',
+    unique_height_or_sigma_cause='NOT_IDENTIFIED',
+    B4_wrong_convergence_complete_causal_explanation='NOT_ESTABLISHED',
+    CSCG_necessity='NOT_ESTABLISHED',
+    new_independent_confirmation='NOT_EXECUTED',
+    next_action='RETURN_SINGLE_COMBINED_PACKAGE_FOR_PRO_DECISION_NO_AUTOMATIC_NEW_RUN',
+    producer_run_count=1,new_physics_or_ROS_or_navigation=0,
+    limitations=['same exact native tail; all gains constrain the shared Q component',
+        'C is source-aware and nonnested with S; model capacity differs',
+        '4 old inspected physical realizations, not 200 independent experiments',
+        'fixed ten receptor poses and static wind index 10',
+        'continuous error gains do not establish localization or posterior gains'])
+write(OUT/'RK1_SCIENTIFIC_DECISION.json',json.dumps(decision,ensure_ascii=False,indent=2))
+
+# A diagnostic figure, with actual measured metrics; no error bars or significance claims.
+plt.rcParams.update({'font.family':'DejaVu Sans','font.size':10,'axes.spines.top':False,'axes.spines.right':False})
+fig,axs=plt.subplots(2,2,figsize=(12,8.4),constrained_layout=True)
+colors=['#5B6770','#287B8E','#D28438']; labels=['U: pooled XY','S: height x scale','C: source-aware oracle']
+x=np.arange(len(banks)); width=.23
+for i,a in enumerate(arms):
+    axs[0,0].bar(x+(i-1)*width,[float(mm[b,a]['MSE_ppm2']) for b in banks],width,color=colors[i],label=labels[i])
+    axs[0,1].bar(x+(i-1)*width,[float(mm[b,a]['mean_signed_error_ppm']) for b in banks],width,color=colors[i])
+    axs[1,1].bar(x+(i-1)*width,[int(mm[b,a]['event_errors_native_F32']) for b in banks],width,color=colors[i])
+axs[0,0].set_title('A  Whole-realization test concentration error');axs[0,0].set_ylabel('MSE (ppm squared)')
+axs[0,0].legend(frameon=False,fontsize=9)
+axs[0,1].set_title('B  Signed error remains conditional');axs[0,1].set_ylabel('Mean prediction - native (ppm)');axs[0,1].axhline(0,color='#555555',lw=.7)
+axs[1,0].bar(x-width/2,[100*r['Q_particle_fraction'] for r in coverage],width,color='#778C78',label='Particle exposure')
+axs[1,0].bar(x+width/2,[100*r['Q_response_fraction'] for r in coverage],width,color='#B1AAA0',label='Native response')
+axs[1,0].set_title('C  Scope of the shared component Q');axs[1,0].set_ylabel('Fraction covered (%)');axs[1,0].set_ylim(0,115)
+axs[1,0].legend(frameon=False,fontsize=9)
+axs[1,1].set_title('D  Binary error is a secondary endpoint');axs[1,1].set_ylabel('Threshold disagreements / 50 blocks');axs[1,1].set_ylim(0,11)
+for ax in axs.flat:
+    ax.set_xticks(x,banks);ax.grid(axis='y',alpha=.16);ax.set_axisbelow(True)
+axs[1,0].set_xticks(x,[r['bank']+'\n'+f"tail +: {r['tail_alone_positive_blocks']}/50" for r in coverage])
+fig.suptitle('RK1: matched-support crossfit on four old B4 realizations\nExact common native tail in every arm; no new localization run',fontsize=13)
+assert not (OUT/'RK1_PAIRED_RESPONSE_DIAGNOSTIC.png').exists()
+fig.savefig(OUT/'RK1_PAIRED_RESPONSE_DIAGNOSTIC.png',dpi=160)
+fig.savefig(OUT/'RK1_PAIRED_RESPONSE_DIAGNOSTIC.svg')
+plt.close(fig)
+write(OUT/'RK1_FIGURE_CAPTION_zh.md', '''
+# RK1 实际配对数据图说明
+
+图由BANK_METRICS_ANALYSIS.csv的test行及PREDICTIONS_BLIND.csv的test/main行派生，没有拟合新模型。A是每份完整留出库50块的浓度MSE；B是平均有符号误差；C为共同Q内粒子曝光/原生响应覆盖，横轴附注是尾项单独超0.1ppm的块数；D为二值检出与native float32端点不同的块数。
+
+四份材料以前已被查看，两折复用这四份材料。每库50块仅来自10个固定受体位置；没有误差棒、p值或200次独立实验的解释。C使用真生成条件事后选核且带同一原生尾项，不是未知源部署预测。连续误差严格等于Q内误差；尾项主要遮蔽二值效应。SVG可编辑，PNG为阅读预览。
+''')
+
+main_table='\n'.join(f"| {r['fold']} | {r['bank']} | {float(r['U_MSE_ppm2']):.9f} | {float(r['S_MSE_ppm2']):.9f} | {float(r['C_ORACLE_MSE_ppm2']):.9f} | {float(r['U_to_S_relative_reduction'])*100:+.2f}% | {float(r['S_to_C_relative_reduction'])*100:+.2f}% |" for r in paired)
+aux_table='\n'.join(f"| {b} | "+' | '.join(f"{float(mm[b,a]['mean_signed_error_ppm']):+.6f}" for a in arms)+' | '+' / '.join(mm[b,a]['event_errors_native_F32'] for a in arms)+' |' for b in banks)
+cov_table='\n'.join(f"| {r['bank']} | {100*r['Q_particle_fraction']:.2f}% | {100*r['Q_response_fraction']:.2f}% | {r['tail_alone_positive_blocks']}/50 | {r['native_F32_positive_blocks']}/50 |" for r in coverage)
+gap=load(WORK/'SCIENCE_FINE_CLASS_GAP_RECOMPUTATION.json')
+gap_table='\n'.join(f"| {r['fold']} | {r['rows']} | {r['weighted_gap_cosine']:.6f} | {r['gap_fit_relative_to_test_zero']:.6f} |" for r in gap)
+
+report=f'''
+# RK1：共同支持、整份实现留出的响应压缩机制实验
+
+## 1. 实际结论
+
+**本轮已完成一次针对性实验及独立全链复算，不是又一次缺文件审计。**最有证据的结论是：在本次共同支持Q组件内，共享XY响应均值残留源条件组成差异；普通高度×尺度四类部分恢复响应，源条件控制进一步降低整份留出实现的预测误差。正式判决为`MATCHED_SUPPORT_CONDITIONAL_RESPONSE_SIGNAL_CONFIRMED`。
+
+这将失效组成因素定位到“物理状态压缩后怎样转换成传感器响应”，可以保留为响应保真有限状态表示的研究依据。它没有证明高度单独是根因、CSCG必需，或B4错误收敛已被一个因素完整解释；也没有产生新的PMFS定位成绩。
+
+主端点S比U有3/4库改善，K2_1退化2.62%；C_ORACLE比S有4/4库改善。四库等权MSE为U={summary['U']:.9f}、S={summary['S']:.9f}、C_ORACLE={summary['C_ORACLE']:.9f}ppm²。U→S均值下降{decision['U_to_S_mean_MSE_relative_reduction']*100:.2f}%；S→C下降{decision['S_to_C_ORACLE_mean_MSE_relative_reduction']*100:.2f}%；U→C下降{decision['U_to_C_ORACLE_mean_MSE_relative_reduction']*100:.2f}%。这些是旧材料上的描述性配对效应，没有独立显著性结论。
+
+## 2. 为什么这一刀比继续翻旧文件有效
+
+RK0已证明同一物理参考中，中心占用与PID检出是不同变量，原生评分排序可以翻转；但共享核参考自拟合和S留出覆盖不足仍是混杂。本轮直接按完整realization交叉留出，并用相同Q及相同尾项约束所有臂，避免把未见kernel或不同选择区域误说成状态信息收益。
+
+只复用196份旧快照贡献缓存，没有新查询φ、气体、CFD、ROS、VM、导航或神经网络训练。真正新增计算是8张统计响应核及其一次固定配对分析。C7_0/1与K2_0/1以前已被查看，不是全新确认任务；原RK0测试库C7_2/3、K2_2/3没有被偷偷并入本轮拟合或改成绩。
+
+| 折 | 拟合完整库 | 测试完整库 | 高度切点m | sigma切点cm |
+|---|---|---|---:|---:|
+| T0_E1 | C7_0、K2_0 | C7_1、K2_1 | 0.8346050977706909 | 39.9754753112793 |
+| T1_E0 | C7_1、K2_1 | C7_0、K2_0 | 0.8248351812362671 | 40.01298904418945 |
+
+切点仅由相应拟合库曝光加权中位数求得。frame1001的重复成员按冻结50块计划计两次，block40替代成员另列而不增加主曝光。每库49个不同保存帧、50主块、10受体位姿。两折交换同四库，不能算成8份独立实验，200相关曝光更不能当成200次独立实验。
+
+## 3. 实验的可计算定义
+
+原生逐粒子贡献φ包含真实受体XYZ、3σ截止、三维LOS、sigma依赖高斯峰值及ppm加和，缓存保留float32。XY计数使用float32坐标及原点(-7.55,-7.88)、0.25m的数学floor；这是冻结诊断投影，不冒充原生二维粒子运动完全等价。
+
+细类k=2·1[z≥z_cut]+1[sigma≥sigma_cut]。每折Q是双方**拟合**库出现过的(XY,k)交集。所有臂估计核时均只用Q内同一组曝光，所有零φ照常进入分母。
+
+`h_U(c,a)=Σ_train,Q φ(j,a)/N_train,Q(c)`；`h_S(c,k,a)=Σ_train,Q φ(j,a)/N_train,Q(c,k)`。
+
+两个C核分别用C7或K2拟合库、同一Q估计XY均值h。两套核对每个测试bank都计算并保存；真实生成条件只在输出和哈希冻结之后用于C_ORACLE分析选择。文件名本身带源条件，因此是输出冻结流程，不声称双盲实验。
+
+`C_hat_model(a,t)=Σ_(j∉Q) φ(j,a,t)+Σ_(c或c,k) N_Q(t)·h_model(a)`。
+
+第一项为所有臂共用的原生精确尾项，是隐藏真值oracle，不是部署时可获得的预测。Q内数量及S类数量也取自真实粒子状态。所有全浓度预测的连续误差满足`C_hat−C_native64=C_hat_Q−C_native_Q`，独立科学检查最大偏差约4.4×10⁻¹⁶ppm。故尾项不掩盖Q的连续误差，但限制外推范围并可能遮蔽二值检出差。
+
+C与S不是嵌套模型。T0中U有6850个受体系数，S有20980个，两套C共13700个；T1对应6940、21510、13880。C相对U增加源条件/总系数，但总系数少于S；不能把C胜S简单归于更多参数，也不能宣称已排除信息与容量差异。它是条件诊断，不是严格容量匹配的充分性证明。
+
+## 4. 所有主结果与反例
+
+单位ppm²；正百分比为前一臂误差下降，负数为退化。
+
+| 折 | 留出库 | U MSE | S MSE | C_ORACLE MSE | U→S | S→C |
+|---|---|---:|---:|---:|---:|---:|
+{main_table}
+
+同源两折：C7的U→S均改善；K2一改善一退化。C相对S对两源两折均改善，保留“当前条件响应组成具有跨实现价值”的信号。但不是全部辅助指标同步改善：C7_0的C MAE为0.485279，高于S的0.478849；C7_1的C绝对bias为0.064810，大于S的0.047583。
+
+| 库 | U平均有符号误差ppm | S平均有符号误差ppm | C_ORACLE平均有符号误差ppm | U/S/C检出误差块数 |
+|---|---:|---:|---:|---|
+{aux_table}
+
+误差方向是共享U对C7低估、对K2高估，两折均保留；S减轻平均bias但不完全消除。更细分不保证每个有限实现的MSE都更低，K2_1是必须保留的反例。K2_0的S检出误差从7增到9，虽连续MSE改善；不存在“所有指标统一更好”。
+
+核的总体守恒只是按构造成立的加权恒等式，不能用来证明实际时序50次采样的零偏差。本轮核跨全拟合时段在每个固定受体位置估计，评价则取真实受体位置/时刻组合，二者抽样权重不同。训练50块的bias非零不是实现错误，也不是留出结论的替代标准。
+
+## 5. 共同支持与二值端点边界
+
+| 测试库 | Q粒子曝光覆盖 | Q原生响应覆盖 | 尾项独自正检出 | 原生正检出 |
+|---|---:|---:|---:|---:|
+{cov_table}
+
+18/200主块尾项独自超阈值，C7局部位姿Q响应甚至接近零，因此二值不变不等于Q状态无价值。每站详情见TEST_POSE_DIAGNOSTICS.csv，逐块粒子数、响应、原生尾项及所有arm预测见PREDICTIONS_BLIND.csv。F32/F64阈值差另列于TEST_COVERAGE_AND_THRESHOLD_SUMMARY.csv，没有将加和末位当成物理效应。
+
+没有未见h回填零或留出均值补核；Q外全部是精确尾项。不应以本轮全200点均有数值输出就宣布部署覆盖问题解决。
+
+## 6. 四类内是否还有源条件差：支持与限制一起交付
+
+每个Q细类和受体都列出拟合C7/K2条件均值、留出C7/K2条件均值及完整曝光数。留出某源未出现的细类明确UNSUPPORTED，不参与双源差比较。原先冻结的描述表有42490行，双方留出均支持的行分别18990与18980。
+
+按非零拟合差简单数符号，T0为625同向、460反向、216留出近零；T1为623同向、460反向、261近零。并非绝大多数细类方向一致，不能据此宣称处处稳定。
+
+独立审查另外对保存差向量作**事后描述性汇总**，包含所有双方支持行、不挑差阈值，以min(test_count_C7,test_count_K2)作权重：
+
+| 折 | 支持行 | 拟合/留出差的加权cosine | 差估计MSE / 假设无差的MSE |
+|---|---:|---:|---:|
+{gap_table}
+
+较大差的组成在两折具有相同方向的总体结构，配合整库C诊断改善支持残留源条件混合；没有显著性检验，行和粒子都相关。这两项补充数不是新增主端点，不能把事后汇总当预注册通过门。
+
+物理上，同一个0.25m XY格、同一个粗高度/尺度类，不保证同一连续格内位置、受体距离、实际高度、连续sigma或遮挡组成。源条件改变这些未保留变量的分布，φ对这些变量非线性；把φ平均成共同h后可以保持混合总体响应，同时丢掉源条件信息。**本轮展示这类压缩的可重复条件残差，但没有唯一分离哪一个连续变量。**
+
+## 7. 与B4原始失效链及源码的关系
+
+三项证据各回答不同环节：
+
+1. M3：导航可达二维支撑约束气体移动的干预改变真源得分，构成实现机制证据；干预固定列均风等条件，不能称对整个三维风模型的完全归因。
+2. PRO同bank、同scorer：原3D中心占用读出margin为−0.258862065822，实际受体PID阈值频率为+4.008206781851；共同blur后仍−0.508908775650对+3.303354838685。恢复的是高度、尺度、数量相加、遮挡等多个因素，不是高度单项。
+3. RK0/RK1：正确物理读出被压缩到共享条件均值时，普通分箱有部分价值；本轮整库留出且共同支持后，仍有源条件响应残差。这进一步缩小状态表示问题，未重新运行原生PMFS或证明修复最终错误收敛。
+
+锁定源码入口均在包内：PMFSLib.cpp:211为PruneUnreachableCells后的二维occupancy；Simulations.cpp:355为同一XY中心占用每时刻至多一次hit；:402为freeAt/visibility限制移动；:512为blur与分母、clamp；:240为跨测量格评分乘积。fake_gas_sensor.cpp:179/:323为PID读出；RK0 source/verify_raw_receiver_queries.py:106附近为真实受体贡献重算。SOURCE_CODE_EVIDENCE_INDEX.csv保留原路径和行号，本轮source/run_rk1.py保留实际Q、核分母及冻结选择流程。
+
+可具体描述失效链为：**传播域/状态表示限制→中心占用读出与真实受体响应不等价→源条件响应组成在压缩中被混合→错误匹配被测量地图及候选评分放大**。其中前三个已有不同层次干预或条件证据，最后的相依证据放大与B4自适应细分仍需单独因果验证；不把整条链统一标记已证。
+
+## 8. 数值资格与资源
+
+冻结合同SHA256：`{ledger['contract_SHA256']}`。实际入口1次，exit=0；墙钟{ledger['wall_s']:.3f}秒，峰值RSS={ledger['peak_RSS_bytes']/1024**2:.2f}MiB，低于300秒/512MiB上限。输出执行时约{ledger['output_bytes_before_ledger']/1024**2:.2f}MiB；后续报告、独立QA及合并旧证据是交付工作，不是第二次实验入口。
+
+独立checker没有导入producer：214项输入SHA、196缓存、204原生float32锚点、8张核、408×4共1632条arm值、40指标、42490细类差、两折分母/支持及冻结哈希全部通过。h和预测最大绝对差均0。本轮科学量采用窄数值容差、整数及SHA严格比较，不再用CSV换行字节相同替代跨平台数值检查；冻结CSV哈希仍保留。
+
+## 9. 给PRO的唯一决策与停止点
+
+请PRO集中回答：**整库留出下的条件响应残差，是否足以把下一有限原型聚焦于响应保真的有限状态构造，而非继续换数据/换理论；应如何在相同oracle信息、实际容量与预测预算下，与正确普通共享响应和固定分箱公平对照？**
+
+建议保留主问题“有限表示怎样保留候选源对受体响应的判别结构”。目前不跳到世界模型、CSCG训练或24份新气体。若下一阶段获批，需要新的几何/受体计划事前选择、明确kernel缺失策略及普通基线；任务目标须包含实际source-blind观测预测或源判别，不能由C_ORACLE真源选核代替。
+
+本次停止，原B4/R7/D0/D1/E3/M0/M1/M2/M3/RK0后验、所有STOP与HOLD保持原样。完整旧证据与本次正负结果同包交付，PRO不必再索取一轮缺字段材料。
+'''
+write(OUT/'RK1_MATCHED_SUPPORT_MECHANISM_REPORT_zh.md',report)
+
+index=rows(PARENT/'RK0_NEW/SOURCE_CODE_EVIDENCE_INDEX.csv')
+src=(OUT/'source/run_rk1.py').read_text(encoding='utf-8').splitlines()
+for needle,meaning in [('def accumulate','训练粒子Q过滤、完整零φ分母'),('def analyze','所有候选输出SHA冻结后才读生成映射'),('Q=sets[train','Q来自双方拟合库细key交集'),('pop=np.concatenate','切点仅拟合库曝光加权中位数'),('ph=x[','同一Q粒子mask、φ64及精确尾项'),("fit={'U'",'U/S/C核同一Q，C源条件非嵌套')]:
+    hits=[i+1 for i,s in enumerate(src) if needle in s]
+    assert len(hits)==1,(needle,hits)
+    index.append(dict(path='RK1_NEW/source/run_rk1.py',line=hits[0],evidence=meaning))
+csvout(OUT/'SOURCE_CODE_EVIDENCE_INDEX.csv',index)
+for n,h in pre.items(): assert sha(OUT/n)==h
+print(json.dumps(dict(status='REPORT_AND_DIAGNOSTIC_FIGURE_DERIVED_NO_NEW_FIT',per_pose_rows=len(pose_rows),science_decision=decision['decision']),ensure_ascii=False))

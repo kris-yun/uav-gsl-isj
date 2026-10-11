@@ -1,0 +1,36 @@
+{
+  "status": "PROPOSAL_NOT_EXECUTED",
+  "preferred_zero_generation_gate": {
+    "reuse": "same eight frozen M2 point-source banks and same reference/heldout split",
+    "new_generations": 0,
+    "new_2D_forwards": 0,
+    "query_times": "same actual captured receptor physical target times, both declared ambiguous-block branches",
+    "readouts_frozen_together": [
+      "native SampleConcentration -> native PID float -> original .1ppm block event",
+      "at least one filament centre in native .25m receiver xy cell; any height xy-projection",
+      "at least one filament centre in same xy cell and sensor_z-.125 <= centre_z < sensor_z+.125"
+    ],
+    "source_representation": "all point sources from same physical banks, no uniform/point mismatch",
+    "scale_policy": "same .25m receiver cells; vertical slab .25m fixed before results; both occupancy definitions reported",
+    "scores": "unchanged two-reference Jeffreys event predictive, Bernoulli log+Brier on independent full realized vectors",
+    "scope": "same physical field different explicit observation operators; not dimensional causality or localization performance",
+    "resource_budget": "must be separately registered by root before any native reader execution; this subtask only proposes"
+  },
+  "optional_point_source_2D_gate": {
+    "maximum_calls": 4,
+    "source_points": [[-3.2,-3.3],[-1.675,1.495]],
+    "RNG_states": "same M1 T/W initial state bundles, no new seed or outcome selection",
+    "kernel": "existing native SimulationSource::Mode::Point via isolated diagnostic entry",
+    "clarifies": "point versus uniform 1x1 source hypothesis only",
+    "does_not_clarify": "50/s versus 7/s release scale, full physical time, Gaussian-volume concentration versus centre occupation, z-dependent transport",
+    "new_navigation_goals": 0,
+    "new_native_posterior_updates": 0,
+    "not_yet_run": true
+  },
+  "stop_rules": [
+    "if same-bank centre occupancy still correctly separates both sources, do not assert observation-scale mechanism confirmed",
+    "if centre occupancy fails but PID succeeds, require independent unselected task before prototype promotion",
+    "if sigma/centres cannot be recovered faithfully from raw native files, HOLD; do not infer centres from concentration fields",
+    "do not choose best slab width, release rate, time window, seed, or threshold after results"
+  ]
+}

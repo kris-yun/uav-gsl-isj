@@ -1,0 +1,38 @@
+{
+  "reason": "Existing 3D paths occupy physically free voxels above native planar navigation obstacles. Point, wall slide and height slice interventions did not remove wrong preference. Test gas transport domain restriction directly.",
+  "adaptive_exploratory_stage": true,
+  "primary_intervention": "Only the gas movement free-space/visibility domain is extended to candidate-independent union of existing 3D free columns. Candidate generation, measured probability, confidence, scoring cells and Gaussian readout mask remain native.",
+  "observable_rule": "Set non-native-navigation-free hit map cells to zero before native normalization/blur. Normalize native free cells with unchanged record steps. Never blur raw unnormalised off-navigation counts.",
+  "wind_rule": "Complete the predeclared free-column uniform mean field for all native XY cells. Old navigation-free u/v exactly match completed height experiment. Old-mask baseline never visits extended cells; new entries therefore do not change its used transition kernel.",
+  "source_form": "Exact two point sources, oracle diagnostic only",
+  "wall_rule": "native rollback",
+  "sources": {
+    "C7": [
+      -3.2,
+      -3.3
+    ],
+    "K2": [
+      -1.675,
+      1.495
+    ]
+  },
+  "RNG_bundles": [
+    "T",
+    "W"
+  ],
+  "reuse_baseline": "Four existing COLUMN_FREE_UNIFORM_MEAN point/native-wall forwards",
+  "maximum_scientific_forward_calls": 4,
+  "maximum_parity_calls": 2,
+  "maximum_total_new_calls": 6,
+  "forward_wall_s": 60,
+  "forward_RSS_bytes": 536870912,
+  "build_wall_s": 180,
+  "build_RSS_bytes": 1610612736,
+  "new_GADEN": 0,
+  "new_CFD": 0,
+  "new_ROS": 0,
+  "new_navigation": 0,
+  "new_seed": 0,
+  "decision": "Report all four contrasts and ratio, path residence in non-navigation support and first divergence. No additional parameter, source or mask selection after results.",
+  "limitation": "Column union is a transport-support upper bound, may connect disjoint free layers and is not self-consistent 3D physics, a new deployed model, or a localization performance result. A flip would implicate this restricted-domain intervention under these two saved RNG bundles, not prove sole cause."
+}

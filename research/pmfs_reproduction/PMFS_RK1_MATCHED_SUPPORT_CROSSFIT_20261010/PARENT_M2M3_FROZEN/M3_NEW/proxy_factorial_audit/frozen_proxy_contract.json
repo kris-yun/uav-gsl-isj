@@ -1,0 +1,36 @@
+{
+  "task": "M3_READ_ONLY_2D_PROXY_VS_NATIVE_MAP_FACTORIAL_DIAGNOSTIC",
+  "status": "FROZEN_BEFORE_NEW_PROXY_DERIVED_OUTPUTS",
+  "inputs": "Frozen M1 two recorded RNG bundles, B4 final native measured map and 50 observed event labels; M2 independent 3D source-condition reference events",
+  "new_forward_calls": 0,
+  "new_ROS_nodes": 0,
+  "2D_candidates": {
+    "T": {"true_uniform_1x1": "T_true_fine", "wrong_uniform_1x1": "T_wrong_fine"},
+    "W": {"true_uniform_1x1": "W_true_fine", "wrong_uniform_1x1": "anchor_W_fine"}
+  },
+  "2D_map_variants": ["blurred_native_scoring_map", "unblurred_occupied_cell_frequency"],
+  "2D_recorded_steps": 200,
+  "2D_probability_qualification": "NOT_QUALIFIED_AS_PID_EVENT_PROBABILITY; occupied cell centre frequency has no ppm, source release/time/sensor operator differences remain",
+  "direct_raw_event_proxy": {
+    "receivers": "native B4 robot position converted with float32 native origin and 0.25m grid",
+    "observations": "same 50 frozen native block labels, five per each of ten distinct stops; all positive",
+    "log": "sum_j[y_j*log(h_cell)+(1-y_j)*log(1-h_cell)]",
+    "Brier": "mean_j[(y_j-h_cell)^2]",
+    "zero_one_rule": "retain exact 0 and 1; impossible events yield -infinity log score; no clipping",
+    "finite_step_sensitivity": "fixed p=(200*h+.5)/201 for both variants, sensitivity only; native unblurred h approximate integer k/200, blurred h is weighted pseudo-count, not beta posterior from actual events"
+  },
+  "native_similarity": {
+    "factor": "1-.4*confidence_i*abs(measured_belief_i-h_i)",
+    "scopes": ["all 447 free cells once", "10 direct receiver cells once", "50 repeated event-cell factors, explicitly correlated"],
+    "no_joint_likelihood_claim": true
+  },
+  "M2_3D_controls": {
+    "physical_reference_ids": ["C7_0", "C7_1", "K2_0", "K2_1"],
+    "actual_PID_receiver": "same physical service xyz/time and original one-message block, fixed p=(k+.5)/3 over two reference realizations",
+    "same_2D_grid_receiver_PID": "same physical service time, native robot cell centre at original sensor z, raw 3D threshold .1ppm; fixed p=(k+.5)/3 over two references",
+    "no_2D_3D_dimensional_causality_claim": true
+  },
+  "comparison_reporting": "per each of 50 blocks and 10 correlated stops, exact aggregate log/Brier/native scores; labels and source roles known because this is posthoc diagnostic",
+  "inference_boundary": "If 2D raw-event proxy also favors wrong, observed-map accumulation is not required for that proxy ordering; do not infer it is unnecessary for B4 full-system failure under an unqualified PID operator",
+  "next_call_permission": "No fresh forward or realization authorized by this read-only subtask; next experiment proposal only"
+}
