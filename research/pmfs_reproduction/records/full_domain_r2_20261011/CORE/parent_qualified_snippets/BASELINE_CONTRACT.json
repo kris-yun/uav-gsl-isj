@@ -1,0 +1,168 @@
+{
+  "status": "FROZEN_BEFORE_NATIVE_OUTPUT",
+  "upstream_commit": "4e141e162551e674f2f30ddb8859136c72139aac",
+  "historical": [
+    {
+      "id": "E3",
+      "scope": "N0_NATIVE_HISTORICAL_FROZEN_SNAPSHOT",
+      "settings": {
+        "maxRegionSize": 5,
+        "sourceDiscriminationPower": 0.3,
+        "refineFraction": 0.1,
+        "deltaTime": 0.1,
+        "noiseSTDev": 0.5,
+        "iterationsToRecord": 200,
+        "minWarmupIterations": 200,
+        "maxWarmupIterations": 500,
+        "blurSigmaX": 1.5,
+        "blurSigmaY": 1.5,
+        "initialExplorationMoves": 2,
+        "stepsSourceUpdate": 3
+      },
+      "metadata": {
+        "stamp_ns": 257702103340,
+        "width": 44,
+        "height": 48,
+        "cell_size": 0.25,
+        "origin_x": -5.5,
+        "origin_y": -6,
+        "free_cells": 1132,
+        "robot_x": -2.68952,
+        "robot_y": -2.67284
+      },
+      "input_SHA256": "144f49f6cf7b9a27e1a28280e922ce02489e09b06b4642d6d6f9b22c6e2c2fae",
+      "source_function": "Simulations::sourceProbFromMaps / simulateSourceInPosition",
+      "wind_mode": "USE_GADEN and useWindGroundTruth=True",
+      "ground_truth_wind_query_height_m": "captured_from_original_TF_and_map",
+      "native_success_preserved": true
+    },
+    {
+      "id": "B4",
+      "scope": "N0_NATIVE_HISTORICAL_FROZEN_SNAPSHOT",
+      "settings": {
+        "maxRegionSize": 5,
+        "sourceDiscriminationPower": 0.4,
+        "refineFraction": 0.1,
+        "deltaTime": 0.1,
+        "noiseSTDev": 0.2,
+        "iterationsToRecord": 200,
+        "minWarmupIterations": 200,
+        "maxWarmupIterations": 500,
+        "blurSigmaX": 1.5,
+        "blurSigmaY": 1.5,
+        "initialExplorationMoves": 2,
+        "stepsSourceUpdate": 3
+      },
+      "metadata": {
+        "stamp_ns": 278074371200,
+        "width": 34,
+        "height": 45,
+        "cell_size": 0.25,
+        "origin_x": -7.55,
+        "origin_y": -7.88,
+        "free_cells": 447,
+        "robot_x": -2.70797,
+        "robot_y": 1.83095
+      },
+      "input_SHA256": "9c61123712f7f3ab37d71833decee0721c4f398679b2995a0748e5dd3642d75c",
+      "source_function": "Simulations::sourceProbFromMaps / simulateSourceInPosition",
+      "wind_mode": "USE_GADEN and useWindGroundTruth=True",
+      "ground_truth_wind_query_height_m": -0.2,
+      "native_success_preserved": true
+    }
+  ],
+  "derived_scope": "N0_NATIVE_FIXED_OBSERVATION_HISTORY_CONTROLLED_REPLAY; actual native probability functions; no processGas callback or ROS wind service called",
+  "all50_blocks_fixed": true,
+  "source_update_stops_zero_based": [
+    3,
+    6,
+    9
+  ],
+  "source_update_blocks": [
+    20,
+    35,
+    50
+  ],
+  "native_terminal_report": "First original variance<1.5 is recorded; fixed50 shadow continues explicitly and cannot be called a new official action success",
+  "movement_rng_draws": "No navigation decisions occur; common historical core RNG state is reused, candidate-update RNG history is preserved; conditional replay does not reproduce navigation RNG consumption",
+  "wind_planar_information": "Native captured CFD10 planar vector at actual original anemometer height-.2m; verifies original USE_GADEN=True; no GMRF substitution",
+  "fixed_scoring_support": 447,
+  "source_hypothesis_support": "full original legal quadtree map",
+  "virtual_point_sampling": true,
+  "public_task_status": "Already-public RK2-B diagnostic6 and formerheldout6, now exploratory",
+  "derived_jobs": [
+    {
+      "oid": "D00",
+      "role": "diagnostic",
+      "event_file": "/home/zyc/ros2_ws/pmfs_native_mechanism_closure_r1_20261011/events/D00.csv",
+      "source_truth_in_payload": false
+    },
+    {
+      "oid": "D01",
+      "role": "diagnostic",
+      "event_file": "/home/zyc/ros2_ws/pmfs_native_mechanism_closure_r1_20261011/events/D01.csv",
+      "source_truth_in_payload": false
+    },
+    {
+      "oid": "D02",
+      "role": "diagnostic",
+      "event_file": "/home/zyc/ros2_ws/pmfs_native_mechanism_closure_r1_20261011/events/D02.csv",
+      "source_truth_in_payload": false
+    },
+    {
+      "oid": "D03",
+      "role": "diagnostic",
+      "event_file": "/home/zyc/ros2_ws/pmfs_native_mechanism_closure_r1_20261011/events/D03.csv",
+      "source_truth_in_payload": false
+    },
+    {
+      "oid": "D04",
+      "role": "diagnostic",
+      "event_file": "/home/zyc/ros2_ws/pmfs_native_mechanism_closure_r1_20261011/events/D04.csv",
+      "source_truth_in_payload": false
+    },
+    {
+      "oid": "D05",
+      "role": "diagnostic",
+      "event_file": "/home/zyc/ros2_ws/pmfs_native_mechanism_closure_r1_20261011/events/D05.csv",
+      "source_truth_in_payload": false
+    },
+    {
+      "oid": "O00",
+      "role": "heldout",
+      "event_file": "/home/zyc/ros2_ws/pmfs_native_mechanism_closure_r1_20261011/events/O00.csv",
+      "source_truth_in_payload": false
+    },
+    {
+      "oid": "O01",
+      "role": "heldout",
+      "event_file": "/home/zyc/ros2_ws/pmfs_native_mechanism_closure_r1_20261011/events/O01.csv",
+      "source_truth_in_payload": false
+    },
+    {
+      "oid": "O02",
+      "role": "heldout",
+      "event_file": "/home/zyc/ros2_ws/pmfs_native_mechanism_closure_r1_20261011/events/O02.csv",
+      "source_truth_in_payload": false
+    },
+    {
+      "oid": "O03",
+      "role": "heldout",
+      "event_file": "/home/zyc/ros2_ws/pmfs_native_mechanism_closure_r1_20261011/events/O03.csv",
+      "source_truth_in_payload": false
+    },
+    {
+      "oid": "O04",
+      "role": "heldout",
+      "event_file": "/home/zyc/ros2_ws/pmfs_native_mechanism_closure_r1_20261011/events/O04.csv",
+      "source_truth_in_payload": false
+    },
+    {
+      "oid": "O05",
+      "role": "heldout",
+      "event_file": "/home/zyc/ros2_ws/pmfs_native_mechanism_closure_r1_20261011/events/O05.csv",
+      "source_truth_in_payload": false
+    }
+  ],
+  "common_initial_RNG_SHA256": "937de8d65ae1ceedccbd08def117fc6181b5420903c6596af68c54ae2429a2fc"
+}
