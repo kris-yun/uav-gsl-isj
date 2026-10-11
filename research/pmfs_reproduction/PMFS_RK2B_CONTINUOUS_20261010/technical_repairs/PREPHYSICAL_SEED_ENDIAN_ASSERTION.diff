@@ -1,0 +1,31 @@
+--- failed assertion
++++ correct original LE / new BE validation
+@@ -1,7 +1,8 @@
+ """No gas generation: resource, runtime, source geometry and RNG initialization freeze."""
+ from common_b import *
+ import shutil,csv,numpy as np,importlib.util
+-CORE.mkdir(exist_ok=False);RAW.mkdir(exist_ok=False)
++CORE.mkdir(exist_ok=True);RAW.mkdir(exist_ok=True)
++assert not any(CORE.iterdir()) and not any(RAW.iterdir()),'Only resume the empty preflight directories'
+ plan=load(PARENT/'B_DESIGN_ONLY/B_PROSPECTIVE_GEOMETRY_ONLY_PLAN.json')
+ assert sha(PARENT/'B_DESIGN_ONLY/B_PROSPECTIVE_GEOMETRY_ONLY_PLAN.json')==load(WORK/'pro_handoff/machine_contract.json')['original_B_plan_SHA256']
+ seeds=load(WORK/'pro_handoff/NEW_SEED_PROPOSAL.json')
+@@ -10,7 +11,8 @@
+ extra=seeds[extra_key];assert len(extra)==12
+ records=plan['proposed_rng_initial_states']+extra
+ for r in records:
+-    assert int.from_bytes(hashlib.sha256(r['tag'].encode()).digest()[:4],'big')==r['proposed_uint32_seed']
++    byte_order='little' if r['role'] in ('reference','heldout') else 'big'
++    assert int.from_bytes(hashlib.sha256(r['tag'].encode()).digest()[:4],byte_order)==r['proposed_uint32_seed']
+     r['gaussian_seed']=r['proposed_uint32_seed']
+     r['uniform_tag']=r['tag']+'|native-uniform-stream-v1'
+     r['uniform_seed']=int.from_bytes(hashlib.sha256(r['uniform_tag'].encode()).digest()[:4],'big')
+@@ -61,7 +63,7 @@
+ assert hashes[str(old/'query_native')]=='52e282b03b7e109204c1b22b096ab41ca15e33a7cc24625b1b79feaa0b9789f5'
+ assert hashes[str(assets[-2])]=='00914f3d7114d45d764ff24be9e832da70d6e2e69528918f2c3c1143fea40295'
+ assert hashes[str(assets[-1])]=='18b07a284fd3432c77759499b96d2bb5153e945efe0b6644ce0537911697722a'
+-assert not subprocess.check_output(['pgrep','-af','filament_simulator|gsl_server|simpleFoam']).decode().strip() if False else True
++# Process isolation checked explicitly by final prephysical preflight.
+ inc=core/'src/gaden_common/third_party/gaden_core'
+ cmd=['c++','-O2','-std=c++20','-I'+str(old/'include'),'-I'+str(inc/'include'),'-I'+str(inc/'third_party/DDA/third_party/glm'),str(t/'rng_probe.cpp'),'-o',str(t/'rng_probe')]
+ started=time.monotonic();p=subprocess.run(cmd,capture_output=True,timeout=180);(t/'rng_build.stdout').write_bytes(p.stdout);(t/'rng_build.stderr').write_bytes(p.stderr);assert p.returncode==0,p.stderr.decode()

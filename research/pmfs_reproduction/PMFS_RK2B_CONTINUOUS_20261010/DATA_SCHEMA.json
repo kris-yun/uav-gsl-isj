@@ -1,0 +1,22 @@
+{
+  "candidate_forecasts": "forecasts/{F,U_query,S_query,L}.npz: [3,4,50], own candidate reference gas concentration ppm; F from native float32, compressed outputs float64; H0/H1 inference casts every method to float32",
+  "observables": "scalar_observations/{Oxx,Dxx}.npz observed_ppm[50] float32, no particle/label/state field",
+  "reference_roles": {
+    "reference": "original two used by M2 and M4",
+    "extra_reference": "additional two used for M4 and fixed pair sensitivity",
+    "diagnostic": "six separate, never kernel fitting or formal confirmation",
+    "heldout": "six formal independent process realizations"
+  },
+  "heads": {
+    "H0": "strict float32 C>float32(.1), Jeffreys frequency, mean Bernoulli log",
+    "H1": "empirical CRPS on log1p(C/1ppm), common M-specific F IQR, fallback1"
+  },
+  "reference_cache": "Per physical frame: all original filament records [N,4] float32 x/y/z[m],sigma[cm]; per-particle native contribution [N,10]float32 ppm including explicit zeros; native float32 serial totals; planned-block exposure multiplicity",
+  "physical_time": "QUERY_PHYSICAL_LINEAGE: target/actual/next saved time and frame; zero-order hold from latest actual saved time not after target",
+  "all_pose_matrix": "F_REFERENCE_ALL_POSES.npz [3,4,50,14]; test matrix evaluation_only/[OID]_F_allposes [50,14]; auxiliary poses use F fallback, never primary infer",
+  "truth": "evaluation_only/TRUTH_MAPPING.json consumed only for frozen prediction evaluation; not present in whitelisted infer subprocess",
+  "independence": "24 realizations with independently specified RNG streams; 50 temporal blocks/realization and 10 virtual stops are not independent experiments",
+  "stable_particle_ID": false,
+  "geometry": "Derived B task on locked B4 geometry; three hypotheses, static final wind10, virtual point schedule; no new PMFS navigation or original-paper statistical replication",
+  "M_names": "M2 and M4 here denote reference ensemble sizes, not historical stopped method modules"
+}

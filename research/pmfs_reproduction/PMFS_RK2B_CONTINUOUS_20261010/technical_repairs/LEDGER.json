@@ -1,0 +1,23 @@
+{
+  "repairs": [
+    {
+      "kind": "prephysical assertion",
+      "count": 1,
+      "physical_attempts_before_repair": 0,
+      "original_numeric_seeds_changed": false,
+      "reason": "Original B SHA seed convention little-endian, new PRO seeds big-endian; validation repaired, values retained."
+    },
+    {
+      "kind": "metadata upload path collision",
+      "count": 2,
+      "physical_attempts_before_repair": 0,
+      "action": "Existing preflight differs by JSON whitespace only; require full parsed object equality, preserve original bytes; all other existing files must match bytes; upload only absent files"
+    },
+    {
+      "kind": "derived export JSON stdout numpy scalar",
+      "count": 1,
+      "scientific_arrays_already_complete_before_print_failure": true,
+      "action": "Convert numpy scalar to Python scalar in JSON console output only; no model, score, input or saved scientific CSV changed"
+    }
+  ]
+}
