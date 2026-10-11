@@ -1,0 +1,92 @@
+{
+  "version": "RK2-BPLUS-CAPPED-V1",
+  "status": "GUIDANCE_NOT_EXECUTED",
+  "parent_commit": "5df5771ca916f209d041e3e3ecd548ec65eb8424",
+  "original_B_plan_SHA256": "9b771697e2f054e13f97fc19c93cabbff4dbdd5205c0c17d63b6298b314ab4c9",
+  "mode_choice": "24 preferred if resource preflight passes, else12; select before any new physical output; no performance-dependent expansion",
+  "new_realizations": {
+    "core": 12,
+    "maximum": 24,
+    "extended_per_source": {
+      "reference": 4,
+      "diagnostic": 2,
+      "heldout": 2
+    }
+  },
+  "generator": {
+    "existing_qualified_only": true,
+    "new_CFD": false,
+    "new_navigation": false,
+    "new_H03": false,
+    "max_parallel": 1,
+    "change_physics": false
+  },
+  "limits": {
+    "generation_s": 1800,
+    "response_s": 900,
+    "model_M2_s": 900,
+    "model_M4_s": 900,
+    "diagnostics_s": 600,
+    "total_scientific_s": 5400,
+    "runtime_RSS_bytes": 1073741824,
+    "optional_wrapper_build_s": 180,
+    "wrapper_build_RSS_bytes": 1610612736,
+    "disk24_bytes": 6442450944,
+    "disk12_bytes": 3221225472,
+    "free_disk_margin_bytes": 4294967296,
+    "technical_retries_per_class": 2,
+    "heartbeat_seconds": 30,
+    "self_check_seconds": 60
+  },
+  "methods": [
+    "F",
+    "U_query",
+    "S_query",
+    "L"
+  ],
+  "reference_budgets": [
+    2,
+    4
+  ],
+  "heads": [
+    "legacy_mean_Bernoulli_log",
+    "log1p_empirical_CRPS_reference_IQR"
+  ],
+  "forbidden_adaptation": [
+    "test_based_source_or_route_or_seed_selection",
+    "change_detection_threshold",
+    "change_temperature",
+    "change_ridge_lambda",
+    "increase_tree_leaf_budget",
+    "choose_score_head_after_test",
+    "reuse_hidden_test_state",
+    "train_new_network",
+    "new_theory_search_loop"
+  ],
+  "original_B_gate": {
+    "relative_source_NLL_gain_each_baseline": 0.1,
+    "max_individual_NLL_harm_nat": 0.2,
+    "Top1_error_increase_allowed": 0,
+    "ties": "abstain_error",
+    "M": 2,
+    "head": "legacy_mean_Bernoulli_log",
+    "additional": "information integrity and stated resource/capacity constraints pass"
+  },
+  "continue_on_scientific_failure": [
+    "run_remaining_registered_heads",
+    "run_registered_M4_if_precommitted",
+    "reference_sensitivity",
+    "prefix_and_future_prediction",
+    "coverage_and_cost",
+    "complete_evidence_package"
+  ],
+  "hard_stops": [
+    "invalid_physical_contract",
+    "information_leakage",
+    "unresolved_source_support",
+    "unresolved_RNG_binding",
+    "resource_ceiling",
+    "unrecoverable_integrity_error"
+  ],
+  "scientific_boundary": "B+ cannot overwrite B; F is finite-ensemble reference; one geometry is not cross-dataset verification; no main innovation is certified by this task"
+}
