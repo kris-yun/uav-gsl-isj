@@ -4,7 +4,7 @@ verification=dict(status='PASS_PORTABLE_R2_RECOMPUTATION',core_hashes_at_validat
 dump(CORE/'PORTABLE_VERIFICATION.json',verification)
 schema=dict(raw_chunk_fallback_if_total_above150MiB=True,reference_ranges=[['R000','R007'],['R008','R015'],['R016','R023'],['R024','R031']],common='observations/all6, N_POINT_ALL/all64, diagnostics, logs, entire rawmanifest',all_parts_same_RAW_root=True,no_negative_deleted=True,full_UNUSED1803_frame_bytes_not_carried=True)
 dump(CORE/'PACKAGE_SCHEMA.json',schema);shutil.copy2(WORK/'package_r2.py',CORE/'source/package_r2.py')
-dump(CORE/'MANIFEST_SHA256.json',{p.relative_to(CORE).as_posix():sha(p) for p in sorted(CORE.rglob('*')) if p.is_file() and p.name!='MANIFEST_SHA256.json'})
+dump(CORE/'MANIFEST_SHA256.json',{p.relative_to(CORE).as_posix():sha(p) for p in sorted(CORE.rglob('*')) if p.is_file() and p!=CORE/'MANIFEST_SHA256.json'})
 out=BASE/'outputs';stem='PMFS_FULL_DOMAIN_R2_20261011';files=[]
 def archive(path,root,select=lambda p:True):
  assert not path.exists()

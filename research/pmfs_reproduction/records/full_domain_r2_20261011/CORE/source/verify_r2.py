@@ -19,6 +19,7 @@ def sha(p):
  return h.hexdigest()
 def verify(core,rawroot=None):
  start=time.perf_counter();manifest=load(core/'MANIFEST_SHA256.json');hashes=0
+ assert set(manifest)=={p.relative_to(core).as_posix() for p in core.rglob('*') if p.is_file() and p!=core/'MANIFEST_SHA256.json'},'CORE manifest incomplete coverage'
  for name,v in manifest.items():assert sha(core/name)==v,name;hashes+=1
  cat=load(core/'SOURCE_CATALOG_AND_COVERAGE.json')['catalog'];ids=np.load(core/'SOURCE_CELL_TO_REGION.npy');mask=ids>=0;counts=validate_partition(ids,mask,32);assert mask.sum()==447 and np.array_equal(counts,np.array([c['cell_count'] for c in cat]));assert np.allclose(np.array([c['prior'] for c in cat]),counts/447,atol=1e-15)
  objects=0;diff=0;truthcheck=0
@@ -37,6 +38,7 @@ def verify(core,rawroot=None):
  con=load(core/'PAIR_CONTRACT_DIFF.json');contract_diff(con['O0'],con['O1'],allowed_paths=('readout',));assert con['changed_paths']==['readout']
  rawhash=physical=queries=native_candidates=native_updates=0;maxppm=maxnative=0
  if rawroot is not None:
+  assert set(load(rawroot/'MANIFEST_SHA256.json'))=={p.relative_to(rawroot).as_posix() for p in rawroot.rglob('*') if p.is_file() and p!=rawroot/'MANIFEST_SHA256.json'},'RAW manifest incomplete coverage'
   for name,v in load(rawroot/'MANIFEST_SHA256.json').items():assert sha(rawroot/name)==v,name;rawhash+=1
   occ=raw.occupancy(core/'geometry/OccupancyGrid3D.csv')
   for role in ['references','observations']:
