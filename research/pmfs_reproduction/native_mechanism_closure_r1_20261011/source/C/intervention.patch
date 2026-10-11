@@ -1,0 +1,105 @@
+--- original
++++ NMC
+@@ -9,6 +9,31 @@
+ #include <gaden/internal/compression.hpp>
+ #include <yaml-cpp/yaml.h>
+ 
++
++#include <sstream>
++#include <limits>
++namespace gaden {
++namespace NMC {
++thread_local uint64_t released=0, removed=0, navBlocks=0, physicalBlocks=0, noiseCalls=0;
++bool flag(const char* name){const char* v=std::getenv(name);return v && std::string(v)=="1";}
++const bool restrictNav=flag("NMC_RESTRICT_NAV"),fixHeight=flag("NMC_FIX_HEIGHT");
++Vector3i navIndex(Vector3 p){return {int(std::floor((p.x-float(-7.55))/.25f)),int(std::floor((p.y-float(-7.88))/.25f)),0};}
++const std::vector<bool>& nav(){
++ static const std::vector<bool> m=[](){
++  std::vector<bool> a(34*45,false);const char* path=std::getenv("NMC_NAV_PATH");
++  if(!path)throw std::runtime_error("NMC nav path missing");std::ifstream f(path);if(!f)throw std::runtime_error("NMC nav missing");
++  std::string line;std::getline(f,line);int n=0;
++  while(std::getline(f,line)){std::stringstream s(line);std::string x;int col=0,i=-1,free=-1;
++   while(std::getline(s,x,',')){if(col==0)i=std::stoi(x);if(col==3)free=std::stoi(x);col++;}
++   if(i!=n||free<0)throw std::runtime_error("NMC nav order");a.at(i)=free==1;n++;
++  }
++  if(n!=34*45||std::count(a.begin(),a.end(),true)!=447)throw std::runtime_error("NMC nav size");return a;
++ }();return m;
++}
++bool navFree(Vector3 p){auto i=navIndex(p);return i.x>=0&&i.x<34&&i.y>=0&&i.y<45&&nav().at(i.x+i.y*34);}
++}
++}
++
+ namespace gaden
+ {
+     static thread_local PrecalculatedGaussian<1000> gaussian; // random values following a gaussian distribution, precomputed for speed
+@@ -77,8 +102,16 @@
+ 
+     void RunningSimulation::AdvanceTimestep()
+     {
++        NMC::released=0;NMC::removed=0;NMC::navBlocks=0;NMC::physicalBlocks=0;NMC::noiseCalls=0;
+         AddFilaments();
+         MoveFilaments();
++        if(const char* p=std::getenv("NMC_STATE_TRACE")) {
++          static thread_local std::ofstream tr(p);static thread_local bool header=false;
++          if(!header){tr<<"iteration,time_before_increment_s,released,removed,alive,z_min,z_max,nav_blocks,physical_blocks,gaussian_cache_calls,gaussian_index,wind_index\n";header=true;}
++          float lo=std::numeric_limits<float>::infinity(),hi=-lo;
++          for(auto& f:*activeFilaments){lo=std::min(lo,f.position.z);hi=std::max(hi,f.position.z);}
++          tr<<std::setprecision(17)<<currentIteration<<','<<currentTime<<','<<NMC::released<<','<<NMC::removed<<','<<activeFilaments->size()<<','<<lo<<','<<hi<<','<<NMC::navBlocks<<','<<NMC::physicalBlocks<<','<<NMC::noiseCalls<<','<<gaussian.nmc_index()<<','<<config->windSequence.GetCurrentIndex()<<'\n';
++        }
+ 
+         if (parameters.saveResults && currentTime > lastSaveTime + parameters.saveDeltaTime)
+         {
+@@ -136,7 +169,7 @@
+ 
+             GADEN_VERIFY(attempts < safetyLimit, "Could not spawn filaments around source position! Is it inside the environment bounds?");
+ 
+-            activeFilaments->emplace_back(position, parameters.filamentInitialSigma);
++            activeFilaments->emplace_back(position, parameters.filamentInitialSigma);NMC::released++;
+         }
+ 
+         releaseAccumulator = releaseAccumulator - std::floor(releaseAccumulator);
+@@ -202,6 +235,8 @@
+             newPosition.x += gaussian.nextValue(0, parameters.filamentNoise_std) * parameters.deltaTime;
+             newPosition.y += gaussian.nextValue(0, parameters.filamentNoise_std) * parameters.deltaTime;
+             newPosition.z += gaussian.nextValue(0, parameters.filamentNoise_std) * parameters.deltaTime;
++            NMC::noiseCalls+=3;
++            if(NMC::fixHeight)newPosition.z=filament.position.z;
+ 
+             // 4. Check filament location
+             //------------------------------------
+@@ -209,7 +244,7 @@
+             GADEN_ASSERT(config->environment.IsInBounds(filament.position), "Filament is outside environment!");
+ 
+             if (destinationState == Environment::CellState::Outlet)
+-                isActive[i] = false;
++                {isActive[i] = false;NMC::removed++;}
+ 
+             // 4. Filament growth with time (this affects the posterior estimation of gas concentration at each cell)
+             //    Vd (small scale wind eddies) -> Difussion or change of the filament shape (growth with time)
+@@ -230,7 +265,7 @@
+         Vector3i startCell = config->environment.coordsToIndices(filament.position);
+         Vector3i endCell = config->environment.coordsToIndices(end);
+ 
+-        if (startCell == endCell)
++        if (startCell == endCell && (!NMC::restrictNav || NMC::navIndex(filament.position)==NMC::navIndex(end)))
+         {
+             filament.position = end;
+             return config->environment.at(startCell);
+@@ -253,11 +288,16 @@
+ 
+             // Check if the cell is occupied
+             Environment::CellState cellState = config->environment.at(filament.position);
+-            if (cellState == Environment::CellState::Obstacle || cellState == Environment::CellState::OutOfBounds)
++            bool physicalBlock=cellState == Environment::CellState::Obstacle || cellState == Environment::CellState::OutOfBounds;
++            bool navBlock=NMC::restrictNav && !NMC::navFree(filament.position);
++            if (physicalBlock || navBlock)
+             {
+                 Vector3i previousCell = config->environment.coordsToIndices(previous);
+                 Vector3i currentCell = config->environment.coordsToIndices(filament.position);
+                 Vector3 normal = previousCell - currentCell;
++                if(physicalBlock)NMC::physicalBlocks++;
++                else {NMC::navBlocks++;normal=Vector3(NMC::navIndex(previous)-NMC::navIndex(filament.position));}
++                if(normal==Vector3(0,0,0))throw std::runtime_error("NMC zero collision normal");
+ 
+                 filament.position = previous;
+ 

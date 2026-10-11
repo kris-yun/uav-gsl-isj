@@ -1,0 +1,5 @@
+arm,queries,MSE,MAE,threshold_disagreements,strict_zero_false_positive,scope
+frozen_L,300,0.1744993205252014,0.1279723047083988,20,11,original frozen forecast
+prior_only,300,0.23209053247445277,0.12490318605888359,6,0,known-state h replaced by prior; no refit; post-hoc
+empirical_zero_coefficient_reset,300,0.37630177933891346,0.155475706318603,4,0,h=0 where TRAINING prior=0; not universally physical
+exact_zero_query_oracle,300,0.1704917228902061,0.11521972204316176,9,0,uses exact F zero label; NOT a deployable method

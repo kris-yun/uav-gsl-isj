@@ -1,0 +1,59 @@
+{
+  "campaign": "NATIVE_MECHANISM_CLOSURE_R1",
+  "status": "PLAN_NOT_EXECUTED",
+  "anchor_commit": "a5d93c9433f6a70ddbfba87329073fcf959018ea",
+  "preserve_decisions": [
+    "RK2_A_PASS",
+    "RK2_B_FAIL",
+    "E3_OFFICIAL_SUCCESS",
+    "B4_WRONG_CONFIDENT_TERMINAL",
+    "all historical STOP/HOLD"
+  ],
+  "native_baseline_mandatory": true,
+  "F_is_native_PMFS": false,
+  "new_CFD": false,
+  "new_navigation": false,
+  "new_neural_training": false,
+  "retune_L": false,
+  "resource_caps": {
+    "science_wall_s": 7200,
+    "build_wall_s": 1200,
+    "review_packaging_wall_s": 600,
+    "total_wall_s": 9000,
+    "per_process_RSS_bytes": 1610612736,
+    "new_disk_bytes": 6442450944,
+    "free_reserve_bytes": 4294967296,
+    "native_2D_forward_calls": 24000,
+    "new_gas_generation_calls": 42,
+    "serial_physics_processes": 1,
+    "progress_every_s": 30,
+    "resource_check_every_s": 60
+  },
+  "generation_budget": {
+    "disabled_intervention_anchors": 2,
+    "conditional_factorial": 30,
+    "conditional_fresh_observations": 6,
+    "same_contract_technical_retries": 4
+  },
+  "factorial": {
+    "sources": "existing C7 K2 B000 B001 B002 only",
+    "RNG_states_per_source": 2,
+    "D0": "native physical occupancy AND extruded navigation support (algorithmic restriction)",
+    "D1": "native physical 3D support only, NOT XY column union",
+    "V0": "centre held at source height: all vertical-displacement mechanisms disabled together",
+    "V1": "native 3D displacement",
+    "reuse_D1V1_existing_banks": true,
+    "is_modified_native_PMFS_performance": false
+  },
+  "scope_labels": [
+    "N0_NATIVE",
+    "N_POINT_DIAGNOSTIC",
+    "P_SAME_ENGINE_COUNTERFACTUAL",
+    "L_LEGACY_SURROGATE"
+  ],
+  "on_scientific_fail": "Continue valid predeclared branches; never tune source, seed, path, threshold or scorer to rescue",
+  "on_shared_input_invalid": "Block dependent branches; preserve independent valid diagnostics and logs",
+  "confirmation": "Only after freeze and qualifying mechanism; six newly generated observations from unmodified physics; no new source/geometry claims",
+  "mother_theory_activation": "Conditional evidence only; no training in this campaign",
+  "plan": "01_Codex_原生机制闭合连续任务书.md"
+}

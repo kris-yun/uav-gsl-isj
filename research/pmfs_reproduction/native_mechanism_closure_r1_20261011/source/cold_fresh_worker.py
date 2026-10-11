@@ -1,0 +1,81 @@
+"""Bounded serial native core calls on existing inputs; never a navigation goal."""
+from pathlib import Path
+import os,json,time,subprocess,signal,csv,hashlib,shutil
+t=Path(__file__).resolve().parent
+tasks=json.loads((t/'COLD_FRESH_TASKS.json').read_text());contract=json.loads((t/'CAMPAIGN_CONTRACT.json').read_text())
+env=os.environ.copy();env.update(OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',MKL_NUM_THREADS='1',ROS_DOMAIN_ID='229',
+ LD_LIBRARY_PATH=json.loads((t/'ACTUAL_BINARY_PROVENANCE.json').read_text())['LD_LIBRARY_PATH'])
+prior=json.loads((t/'COLD_NATIVE_LEDGER.json').read_text());assert prior['status'].startswith('PASS')
+ledger=dict(status='RUNNING',records=[],native_2D_forward_calls=prior['native_2D_forward_calls'],offline_wall_s=prior['offline_wall_s'],prior_calls=prior['native_2D_forward_calls'],prior_wall_s=prior['offline_wall_s'],scientific_start_unix=time.time(),gas_calls=0)
+root=Path('/mnt/hgfs/workspace/PMFS_NATIVE_MECHANISM_CLOSURE_R1_DATA_20261011')
+# Existing physical banks are immutable; reserve1GiB for remaining original-world banks and packaging.
+wind_links=json.loads((root/'OWN_WIND_STORAGE_DEDUPLICATION.json').read_text())['records']
+excluded={str(root/'factorial'/r['logical_directory'].split('/factorial/')[1]) for r in wind_links}
+base_bytes=0
+for directory,dirs,files in os.walk(root):
+ dirs[:]=[n for n in dirs if str(Path(directory)/n) not in excluded]
+ for n in files:
+  p=Path(directory)/n
+  if not p.is_symlink():base_bytes+=p.stat().st_size
+base_storage=base_bytes+315529864+1073741824
+(t/'COLD_STORAGE_RESERVATION.json').write_text(json.dumps({'unique_campaign_bytes':base_bytes,'external_approved_binary_bytes':315529864,'future_reserved_bytes':1073741824,'conservative_total':base_storage}))
+assert base_storage<6442450944,'Conservative space reservation failed'
+
+lastprogress=0;lastresource=0
+def save():(t/'COLD_FRESH_LEDGER.json').write_text(json.dumps(ledger,indent=2))
+def heartbeat(task,pid=None,force=False):
+ global lastprogress
+ if not force and time.monotonic()-lastprogress<30:return
+ lastprogress=time.monotonic();a=dict(task=task,pid=pid,done=len(ledger['records']),total=len(tasks),forward_calls=ledger['native_2D_forward_calls'],elapsed_s=time.time()-ledger['scientific_start_unix'])
+ (t/'COLD_FRESH_PROGRESS.json').write_text(json.dumps(a));print(json.dumps(a),flush=True)
+def stop(p):
+ for s in [signal.SIGINT,signal.SIGTERM,signal.SIGKILL]:
+  try:os.killpg(p.pid,s);p.wait(timeout=3);return
+  except subprocess.TimeoutExpired:pass
+  except ProcessLookupError:return
+save()
+try:
+ for task in tasks:
+  mode=task['mode'];out=Path('/mnt/hgfs/workspace/PMFS_NATIVE_MECHANISM_CLOSURE_R1_DATA_20261011/native_cold_results')/task['id'];out.parent.mkdir(exist_ok=True);assert not out.exists()
+  cmd=['/dev/shm/nmc_cold/native_cold_entry',mode,task['input'],task['payload'],str(out)]
+  log=Path('/mnt/hgfs/workspace/PMFS_NATIVE_MECHANISM_CLOSURE_R1_DATA_20261011/native_cold_results')/(task['id']+'.log');start=time.monotonic();peak=0;reason=None
+  heartbeat(task['id'],force=True)
+  with log.open('w') as f:
+   p=subprocess.Popen(cmd,env=env,stdout=f,stderr=f,start_new_session=True)
+   while p.poll() is None:
+    rss=0
+    for item in Path('/proc').iterdir():
+     if not item.name.isdigit():continue
+     try:
+      if os.getpgid(int(item.name))!=p.pid:continue
+      for row in (item/'status').read_text().splitlines():
+       if row.startswith('VmRSS:'):rss+=int(row.split()[1])*1024
+     except (OSError,ProcessLookupError):pass
+    peak=max(peak,rss)
+    elapsed=time.monotonic()-start
+    if rss>1610612736:reason='RSS_CAP'
+    if elapsed>180:reason='PER_OBSERVATION180S_CAP'
+    if ledger['offline_wall_s']+elapsed>1800:reason='OFFLINE1800S_CAP'
+    if time.time()-contract['entry_unix']>9000:reason='GLOBAL9000S_CAP'
+    if time.monotonic()-lastresource>=60:
+     lastresource=time.monotonic()
+     size=base_storage+sum(q.stat().st_size for q in (root/'native_cold_results').rglob('*') if q.is_file())
+     if size>6442450944:reason='NEW_DISK_CAP'
+     if shutil.disk_usage(t).free<4294967296:reason='ROOT4GIB_RESERVE'
+     with (t/'RESOURCE_CHECKS.jsonl').open('a') as rc:rc.write(json.dumps(dict(task=task['id'],elapsed=elapsed,RSS=rss,bytes=size,root_free=shutil.disk_usage(t).free,physical_calls=0))+'\n')
+    if reason:stop(p);break
+    heartbeat(task['id'],p.pid);time.sleep(.1)
+   code=p.wait()
+  calls=sum(sum(1 for _ in csv.DictReader(q.open())) for q in out.rglob('candidates.csv')) if out.exists() else 0
+  ledger['native_2D_forward_calls']+=calls;ledger['offline_wall_s']+=time.monotonic()-start
+  rec=dict(id=task['id'],mode=mode,exitcode=code,wall_s=time.monotonic()-start,peak_RSS_bytes=peak,forward_calls=calls,resource_stop=reason)
+  if code:rec['last_log']=log.read_text(errors='replace')[-2500:]
+  ledger['records'].append(rec);save();heartbeat(task['id'],force=True)
+  if reason:ledger['status']='BUDGET_STOP';break
+  if code:ledger['status']='TECHNICAL_FAULT_STOP_DEPENDENT_NATIVE_TASKS';break
+  if ledger['native_2D_forward_calls']>24000:ledger['status']='FORWARD_BUDGET_STOP';break
+ else:ledger['status']='PASS_ALL_NATIVE_TASKS_COMPLETED'
+except Exception as e:ledger['status']='TECHNICAL_FAULT_STOP';ledger['error']=repr(e)
+finally:save();heartbeat(ledger['status'],force=True)
+raise SystemExit(0 if ledger['status'].startswith('PASS') else 1)
+
