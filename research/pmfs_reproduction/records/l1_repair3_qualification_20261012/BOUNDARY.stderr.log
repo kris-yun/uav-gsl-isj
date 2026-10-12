@@ -1,0 +1,10 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+Traceback (most recent call last):
+  File "/mnt/hgfs/workspace/PMFS_L1_REPAIR3_QUALIFICATION_20261012/repair_boundary.py", line 139, in <module>
+    try:main();status='PASS'
+  File "/mnt/hgfs/workspace/PMFS_L1_REPAIR3_QUALIFICATION_20261012/repair_boundary.py", line 93, in main
+    direct,r1,it1=project(raw);fd=faces(direct);rd=rms(fd)
+  File "/mnt/hgfs/workspace/PMFS_L1_REPAIR3_QUALIFICATION_20261012/repair_boundary.py", line 80, in project
+    sol,info=cg(L,rhs,M=M,rtol=1e-10,atol=1e-11,maxiter=4000,callback=callback)
+TypeError: cg() got an unexpected keyword argument 'rtol'

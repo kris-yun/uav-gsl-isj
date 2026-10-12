@@ -1,0 +1,184 @@
+{
+  "id": "L1_SINGLE_AUTHORIZED_EXTRA_REPAIR_CUMULATIVE_3",
+  "UTC": "2026-10-12T05:50:21.346959+00:00",
+  "frozen_anchor": "cc2cd7711bd5c2aeb3c10cb56d9d5af4b6b3b41f",
+  "branch": "research/l1-repair3-qualification-20261012",
+  "authorization": {
+    "question": "允许一次额外有界修复；不换源、风况或成功标准；通过后最多6次合计300秒前向；失败停止，不无限修补。",
+    "answer": "允许",
+    "UTC": "2026-10-12T05:39:03Z",
+    "sentinel": "Sentinel_d0ac9f7a6fc4819198dfb28417272aec",
+    "source": "direct human evidence reported in delegation"
+  },
+  "counter": {
+    "prior_repairs_used": 2,
+    "this_repair": 3,
+    "new_cumulative_limit": 3,
+    "reset": false,
+    "fourth_repair_authorized": false
+  },
+  "base_contract_sha256": "d5770083ae0ee719977c48cebc484879007d0fbac5a1da448199b5264238873a",
+  "old_proposal_sha256": "71be0ee57c88dcce7b519adb5cd133bec72110892d6c9edf8af50def62e52cb8",
+  "scope": "3D source-blind initial-state numerical/physics qualification only; no R4 experiment, no R5, no 447 sequential/native closed loop",
+  "unchanged": {
+    "support": {
+      "rows_x": 34,
+      "cols_y": 45,
+      "origin_xy": [
+        -7.55,
+        -7.88
+      ],
+      "resolution_m": 0.25,
+      "count": 447,
+      "mask_sha256": "b37d618ba0487881b9126a2687149db352441c390efd3d013c8f303a740dcc3c",
+      "horizontal_prior": "uniform447; heightnuisanceconditional doesnotchangehorizontalprior",
+      "selected_ordinals": [
+        111,
+        223,
+        334
+      ],
+      "pilot_native_flat_ids": [
+        547,
+        964,
+        1261
+      ],
+      "selection_rule": "floor((447-1)*q) forq=.25,.5,.75 nativeorder, chosenbeforegeometry/reference/readout"
+    },
+    "RNG": {
+      "master_definition": "SHA256(L1_20261011_V1/role) first4bytes littleendian; NOT plantstate or oldtaskseed",
+      "basis_seed": 695885782,
+      "wind_reference_seeds": [
+        3406067787,
+        3838033854
+      ],
+      "transport_seeds": [
+        [
+          3687581288,
+          1389526344
+        ],
+        [
+          1655264464,
+          784505585
+        ],
+        [
+          843615628,
+          3512567828
+        ]
+      ],
+      "height_seeds": [
+        [
+          1889685864,
+          285211037
+        ],
+        [
+          294832906,
+          2593066701
+        ],
+        [
+          2887144693,
+          3714430659
+        ]
+      ],
+      "same_candidate_order_law": true,
+      "reuse_trueplant_rng": false
+    },
+    "time": {
+      "release0_s": 0.0,
+      "frame500_s": 267.307098389,
+      "allowed_observation_cutoff_phys_s": 316.616420749,
+      "search_interval_s": [
+        316.616420749,
+        322.116543884
+      ],
+      "profile_end_target_s": 322.116543884,
+      "old_B4_goals_remainfrozen": true
+    },
+    "gas_physical_fields": {
+      "time_step": 0.1,
+      "num_filaments_sec": 7,
+      "ppm_filament_center": 10.0,
+      "filament_initial_std": 10.0,
+      "filament_growth_gamma": 15.0,
+      "filament_noise_std": 0.02,
+      "gas_type": 13,
+      "temperature": 298.0,
+      "pressure": 1.0
+    },
+    "sensor_pose": [
+      -0.9,
+      0.15,
+      -0.2
+    ],
+    "height_prior": "uniform amongfree3D voxelcenters at each nativecandidatexy; horizontal marginal remains1/447; no true sourceheight used",
+    "amplitude_prior": "HalfNormal(scale=1 m/s), sampled per independent reference; weak modeling assumption not measuredwindprocesssigma",
+    "tau_prior": "LogUniform(1s,267.307098389s); weak assumption, endpoints public unobserved duration not fittedB4",
+    "plant_source_CFD_generation_seeds_route_rules_frame500_success_standard": "all frozen; not read or modified"
+  },
+  "boundary_revision": {
+    "old_contract_explicitly_superseded_only_here": "old OOB-open airflow conflicts with native blocked/sliding OOB gas",
+    "new": "zero normal velocity at Obstacle and OOB; original marked Outlet only remains open; occupancy and native StepTowards unchanged",
+    "reuse": "restrict old projected faces then orthogonal reproject; prove nested P_new P_old=P_new by comparison to original raw modes; preserve basis RNG, modes and RMS rule",
+    "null_policy": "any corrected raw mode RMS<1e-8 is an unsupported prior mode => STOP; no invented replacement or renormalized numerical residue",
+    "nested_normalized_relative_tolerance": 2e-05,
+    "CG_rtol": 1e-10,
+    "CG_atol": 1e-11,
+    "CG_maxiter": 4000,
+    "projection_relative_residual_max": 1e-07,
+    "saved_float32_divergence_max_per_s": 1e-05,
+    "closed_normal_flux_exact": 0.0,
+    "old_paths": "never used as corrected-boundary samples"
+  },
+  "numerical_sampler_revision": {
+    "family": "ordinary Laplace Gaussian importance with analytic elimination of unobserved OU dimensions; target unchanged",
+    "observed_state": "local 2D wind at all 184 public historical observations; stationary OU covariance amplitude^2/24 * H H^T; unobserved dimensions sampled from conditional OU only after gate",
+    "likelihood": "wrapped Gaussian angle SD=0.3 rad, censored speed Gaussian SD=0.03 m/s; .032 in old prose means 0.03 squared, confirmed original fake_anemometer noise*0.1",
+    "hyperproposal": "fixed 32x24 cells uniform within logamp in [-6,3] and logtau in [0,log(267.307098389)]; probabilities from same-prior Cartesian Gaussian auxiliary evidence; mixture 0.99 grid +0.01 exact prior ensures entire target support; exact log proposal retained",
+    "localproposal": "L-BFGS-B exact-target mode, maxiter100, gtol1e-6; exact analytic Hessian at mode must be SPD, no regularization/resampling on failure; normalized Gaussian log density and exact target correction",
+    "seeds": "first two fixed original wind-reference seeds; extra 30 diagnostic-only seeds SHA256(L1_20261011_V1/wind_diagnostic_i) first4 little endian; never plant RNG",
+    "K_diagnostic": 32,
+    "pilot_selection": "first two predetermined references; no best ESS/path selection",
+    "diagnostic_thresholds": {
+      "pilot_importanceESS_over_2_min": 0.8,
+      "diagnostic_importanceESS_over_32_min": 0.8,
+      "gradient_infinity_max": 0.001,
+      "Hessian_SPD": true,
+      "local_observation_rank": 2,
+      "no_posterior_calibration_claim": true
+    },
+    "information": "no gas observations, no truth/CFD, no future wind; all 184 wind records must qualify time/TF"
+  },
+  "build_revision": {
+    "single_build_attempt": true,
+    "pinned_gaden_install_sha256": "0c33caad6ec2b13f3ef2854d8c7e916f5b73c7effe419c5ba26fd8d4fde994c1",
+    "explicit_libbsc": "/home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/build/gaden_common/third_party/gaden_core/third_party/libbsc/libbsc.so",
+    "ROS": "/opt/ros/humble/lib",
+    "bind": "absolute libbsc, rclcpp, rcutils plus rpath/rpath-link; inspect readelf/ldd with existing overlays; no installs or frozen library overwrite",
+    "TMPDIR": "isolated shared tmp; one thread"
+  },
+  "resources": {
+    "latest_ledger_sha256": "b021e373f84cb69960eb2a9f7f449ebcc45fdf346d52d3f8012700be657a0b97",
+    "latest_ledger_remaining_exact_s": 5537.991488,
+    "older_L1_remaining_s": 9426.578,
+    "balance_before_conservative_s": 5537.991,
+    "reservation_debit_s": 900,
+    "available_after_reservation_s": 4637.991,
+    "all_computation_hard_s": 900,
+    "pre_forward_computation_hard_s": 600,
+    "six_forwards_total_hard_s": 300,
+    "max_forward_calls": 6,
+    "single_scientific_RSS_bytes": 1073741824,
+    "aggregate_new_disk_bytes": 1073741824,
+    "reserve_disk_bytes": 4294967296,
+    "root_new_bytes_max": 67108864,
+    "engineering_preparation_wall": "separate from computation; no extra computational allowance"
+  },
+  "failure": "Any invalid static/numerical/information/boundary/link/resource gate stops this candidate and dependent gas/goal; no fourth repair, no retry under a new name",
+  "inference_claim_boundary": {
+    "full447_filter": "NOT_QUALIFIED",
+    "native_posterior_hitvariance_dual_ports": "NOT_CONNECTED",
+    "new_trueplant_batches": 0,
+    "native_goals": 0,
+    "R4": "ORDINARY_SUFFICIENT_IN_CONTROLLED_TASK_PRESERVED",
+    "R5": "STOP_PRESERVED"
+  }
+}
