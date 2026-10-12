@@ -1,0 +1,98 @@
+{
+  "qualification": "INVALID_BOUNDARY_CONTRACT / FAIL_FINITE_REFERENCE_IMPORTANCE",
+  "OOB_boundary_details": [
+    {
+      "axis": "x",
+      "side": "low",
+      "free_OOB_faces": 703,
+      "max_abs_velocity_m_s_per_unit_mode": 5.101276397705078,
+      "nonzero_mode_faces_above_1e_7": 16850,
+      "required_native_air_boundary": "zero normal flux underblockedOOB gas boundary"
+    },
+    {
+      "axis": "x",
+      "side": "high",
+      "free_OOB_faces": 3688,
+      "max_abs_velocity_m_s_per_unit_mode": 5.141441822052002,
+      "nonzero_mode_faces_above_1e_7": 88437,
+      "required_native_air_boundary": "zero normal flux underblockedOOB gas boundary"
+    },
+    {
+      "axis": "y",
+      "side": "low",
+      "free_OOB_faces": 533,
+      "max_abs_velocity_m_s_per_unit_mode": 5.885889530181885,
+      "nonzero_mode_faces_above_1e_7": 12775,
+      "required_native_air_boundary": "zero normal flux underblockedOOB gas boundary"
+    },
+    {
+      "axis": "y",
+      "side": "high",
+      "free_OOB_faces": 2208,
+      "max_abs_velocity_m_s_per_unit_mode": 4.726257801055908,
+      "nonzero_mode_faces_above_1e_7": 52698,
+      "required_native_air_boundary": "zero normal flux underblockedOOB gas boundary"
+    },
+    {
+      "axis": "z",
+      "side": "low",
+      "free_OOB_faces": 9910,
+      "max_abs_velocity_m_s_per_unit_mode": 4.378459453582764,
+      "nonzero_mode_faces_above_1e_7": 237837,
+      "required_native_air_boundary": "zero normal flux underblockedOOB gas boundary"
+    },
+    {
+      "axis": "z",
+      "side": "high",
+      "free_OOB_faces": 1335,
+      "max_abs_velocity_m_s_per_unit_mode": 4.66591215133667,
+      "nonzero_mode_faces_above_1e_7": 32012,
+      "required_native_air_boundary": "zero normal flux underblockedOOB gas boundary"
+    }
+  ],
+  "total_free_OOB_faces": 18377,
+  "OOB_normal_flux_zero": false,
+  "source_evidence": {
+    "file": "pinned gaden_core/src/RunningSimulation.cpp",
+    "StepTowards_block_lines": [
+      256,
+      267
+    ],
+    "Outlet_lines": [
+      269,
+      270
+    ],
+    "Environment_at_index_OOB_lines": [
+      47,
+      51
+    ],
+    "wind_provider": "newposition-aware interpolation doesnotalter originalStepTowards"
+  },
+  "wind_probability_weights": [
+    1.0,
+    4.1111354114931935e-140
+  ],
+  "log_weight_gap": 320.9482137729721,
+  "log10_weight_ratio": 139.38603821830702,
+  "ESS": 1.0,
+  "ESS_over_K": 0.5,
+  "registered_threshold": 0.8,
+  "ESS_gate_pass": false,
+  "two_references_are_not_full447_qualification_even_if_ESS_passed": true,
+  "source_level_failure": "OOB airflow open but nativegasblocked/sliding. Divergencepassdoesnotclose boundarypass.",
+  "statistical_failure_scope": "conditional sampler/hyperparameter coverage inadequate withK2; neither posteriorwindlaw itself nor realworld sourceidentifiability falsified",
+  "local_wind_linear_observation_rank": 2,
+  "local_wind_observation_singular_values": [
+    3.4820332527160645,
+    2.908813238143921
+  ],
+  "unobserved_coefficient_dimensions_given_fixed_isotropic_OU_hyperparameters": 22,
+  "rank_scope": "V1 finitefield basis, allwindatonehorizontalpoint; gasmeasurements mayprovideadditional information. Not a theorem of actual B4 source nonidentifiability.",
+  "saved_float32_basis_max_divergence_per_s": 5.21540641784668e-06,
+  "saved_float32_divergence_gate_pass": true,
+  "gas_forwards_started": 0,
+  "gas_forwards_completed": 0,
+  "native_goals": 0,
+  "field_or_path_regeneration": false,
+  "active_wall_s": 0.3129999999946449
+}

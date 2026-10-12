@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "C:\Users\50176\Documents\Codex\2026-10-09\gb-gaden-turb-smoke-r0c-r0d\work\l1_prepare_wind.py", line 148, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "C:\Users\50176\Documents\Codex\2026-10-09\gb-gaden-turb-smoke-r0c-r0d\work\l1_prepare_wind.py", line 145, in main
+    dump('L1_PREPARATION_RECEIPT.json',{'active_wall_s':time.monotonic()-start,'field_bytes':B.nbytes,'prior_coeff_path_bytes':sum(C.nbytes for C in refs),'new_gas_forward_calls':0,'proper_importance_correction':True,'wind_ESS_gate_pass':ess/2>=.8,'finiteK2_scientific_qualification':False,'geometry_support_pass':True,'field_projection_pass':max(residuals)<1e-5})
+  File "C:\Users\50176\Documents\Codex\2026-10-09\gb-gaden-turb-smoke-r0c-r0d\work\l1_prepare_wind.py", line 13, in dump
+    def dump(n,o):(OUT/n).write_text(json.dumps(o,indent=2)+'\n',encoding='utf8')
+                                     ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Anaconda\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "D:\Anaconda\Lib\json\encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "D:\Anaconda\Lib\json\encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "D:\Anaconda\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "D:\Anaconda\Lib\json\encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "D:\Anaconda\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bool_ is not JSON serializable

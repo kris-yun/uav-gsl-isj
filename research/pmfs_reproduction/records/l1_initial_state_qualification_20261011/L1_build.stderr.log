@@ -1,0 +1,16 @@
+/usr/bin/ld: warning: libbsc.so, needed by /home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/install/gaden_common/lib/libgaden.so, not found (try using -rpath or -rpath-link)
+/usr/bin/ld: warning: librclcpp.so, needed by /home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/install/gaden_common/lib/libgaden.so, not found (try using -rpath or -rpath-link)
+/usr/bin/ld: warning: librcutils.so, needed by /home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/install/gaden_common/lib/libgaden.so, not found (try using -rpath or -rpath-link)
+/usr/bin/ld: /mnt/hgfs/workspace/PMFS_L1_INITIAL_STATE_QUALIFICATION_20261011/tmp/ccZYMDYS.o: in function `gaden::L1RunningSimulation::SaveResults()':
+L1RunningSimulation.cpp:(.text+0x2c42): undefined reference to `bsc_compress'
+/usr/bin/ld: L1RunningSimulation.cpp:(.text+0x3106): undefined reference to `bsc_init'
+/usr/bin/ld: /home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/install/gaden_common/lib/libgaden.so: undefined reference to `bsc_block_info'
+/usr/bin/ld: /home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/install/gaden_common/lib/libgaden.so: undefined reference to `bsc_decompress'
+/usr/bin/ld: /home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/install/gaden_common/lib/libgaden.so: undefined reference to `g_rcutils_logging_initialized'
+/usr/bin/ld: /home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/install/gaden_common/lib/libgaden.so: undefined reference to `rcutils_logging_initialize'
+/usr/bin/ld: /home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/install/gaden_common/lib/libgaden.so: undefined reference to `rclcpp::get_logger(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+/usr/bin/ld: /home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/install/gaden_common/lib/libgaden.so: undefined reference to `rcutils_get_error_string'
+/usr/bin/ld: /home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/install/gaden_common/lib/libgaden.so: undefined reference to `rcutils_logging_logger_is_enabled_for'
+/usr/bin/ld: /home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/install/gaden_common/lib/libgaden.so: undefined reference to `rcutils_reset_error'
+/usr/bin/ld: /home/zyc/pmfs_clean_c1_preparation_r6_20261009/ws/install/gaden_common/lib/libgaden.so: undefined reference to `rcutils_log'
+collect2: error: ld returned 1 exit status

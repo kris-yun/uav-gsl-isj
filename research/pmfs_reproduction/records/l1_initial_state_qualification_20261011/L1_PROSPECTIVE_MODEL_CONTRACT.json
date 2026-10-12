@@ -1,0 +1,172 @@
+{
+  "id": "L1_SOURCE_BLIND_MARGINAL_INITIAL_STATE_V1",
+  "UTC": "2026-10-12T02:12:24.790616+00:00",
+  "authorization_provenance": "Parent delegation reports human L1 acceptance, quote: 同意,你不用问我自己判断. Original continuous research instruction remains. No unlimited/newplant authorization inferred.",
+  "scope": "first bounded qualification, not method efficacy;6forwards max and300s TOTAL batch",
+  "model_class": "mass-consistent projected finite spectral Gaussian wind withOU coefficients; ordinary importance-corrected conditional Gaussian path proposal; native3D GADEN gas propagation",
+  "unidentified_assumptions": [
+    "finite24-mode flow subspace",
+    "unseen past stationaryOU prior law",
+    "tau/amplitude and spatial spectrum",
+    "uniform height across legallyfree column at candidatexy"
+  ],
+  "not_identified_by_recent_local_observations": true,
+  "not_Navier_Stokes_or_calibrated_B4_wind": true,
+  "wind_space": {
+    "mode_count": 24,
+    "raw_modes": "3constant axes +7 public box harmonics [111,211,121,112,221,212,122] x3 axes, phasefixedbybasisRNG; no truthfield",
+    "projection": "min edgeL2 perturbation subject discrete divergence0; closed-wallflux0; geometrically marked outlets/OOB freeboundaryopen",
+    "normalized_mode_global_vector_RMS_m_s": 1.0,
+    "coefficient_stationary_std": "amplitude/sqrt(24)",
+    "amplitude_prior": "HalfNormal(scale=1 m/s), sampled per independent reference; weak modeling assumption not measuredwindprocesssigma",
+    "tau_prior": "LogUniform(1s,267.307098389s); weak assumption, endpoints public unobserved duration not fittedB4",
+    "height_prior": "uniform amongfree3D voxelcenters at each nativecandidatexy; horizontal marginal remains1/447; no true sourceheight used"
+  },
+  "wind_likelihood": {
+    "actual": "wrappedGaussian direction sigma0.3rad; max(0,speed+N(0,0.03²)) speed; horizontalonly",
+    "auxiliary_proposal": "CartesianGaussian covariance(.2m/s)^2 I; merely proposal, not new sensornoise; exact polar/speed correction retained",
+    "initialization": "GaussianFFBS conditioned only on184qualified public past wind records; no future message/CFD. Conditioning earlier latentpast on receivedhistory is initialization smoothing, not onlinefuture access",
+    "importance": "logZ_aux+sum(logL_actual-logL_aux); same wind reference andweight reusedallcandidate sources as declaredCRN"
+  },
+  "gas_operator": {
+    "pinned_library_SHA": "0c33caad6ec2b13f3ef2854d8c7e916f5b73c7effe419c5ba26fd8d4fde994c1",
+    "physical_fields": {
+      "time_step": 0.1,
+      "num_filaments_sec": 7,
+      "ppm_filament_center": 10.0,
+      "filament_initial_std": 10.0,
+      "filament_growth_gamma": 15.0,
+      "filament_noise_std": 0.02,
+      "gas_type": 13,
+      "temperature": 298.0,
+      "pressure": 1.0
+    },
+    "starting_state": "empty ONLY at public release0; fullcontinuous history retained",
+    "saveResults": false,
+    "preCalculateConcentrations": false,
+    "GPU": false,
+    "RNG_patch": "isolated renamedRunningSimulation with perinstance1000-Gaussian cache, checkpointable. Physicaladvection/buoyancy/collision/growth untouched; unusedserializationbuffers lazy only",
+    "delta_time": "native0.1s andnativefloatcurrentTime;endfirststepafter322.116543884, reportbracket/overshoot, noexactstateclaimbetweensteps"
+  },
+  "response_contract": {
+    "unit": "ppm",
+    "PID": "model30 correctionfalse native3D SampleConcentration",
+    "qualification_query": "frozen public sensorpose(-.9,.15,-.2), no actualgasread",
+    "inference_endpoint_if_later": "binarydetect atofficial0.1ppm, as single event response; continuousnotmultipliedasadditionalindependentobservation",
+    "likelihood_law": "marginalBernoulli conditional onpersistentlatentpath/particles; exactstateconditioning required; finite2-referenceestimate NOT accepted forproduction",
+    "composite_fallback": "none. No ad-hoc epsilon likelihood or reusedpropagated map cells"
+  },
+  "support": {
+    "rows_x": 34,
+    "cols_y": 45,
+    "origin_xy": [
+      -7.55,
+      -7.88
+    ],
+    "resolution_m": 0.25,
+    "count": 447,
+    "mask_sha256": "b37d618ba0487881b9126a2687149db352441c390efd3d013c8f303a740dcc3c",
+    "horizontal_prior": "uniform447; heightnuisanceconditional doesnotchangehorizontalprior",
+    "selected_ordinals": [
+      111,
+      223,
+      334
+    ],
+    "pilot_native_flat_ids": [
+      547,
+      964,
+      1261
+    ],
+    "selection_rule": "floor((447-1)*q) forq=.25,.5,.75 nativeorder, chosenbeforegeometry/reference/readout"
+  },
+  "RNG": {
+    "master_definition": "SHA256(L1_20261011_V1/role) first4bytes littleendian; NOT plantstate or oldtaskseed",
+    "basis_seed": 695885782,
+    "wind_reference_seeds": [
+      3406067787,
+      3838033854
+    ],
+    "transport_seeds": [
+      [
+        3687581288,
+        1389526344
+      ],
+      [
+        1655264464,
+        784505585
+      ],
+      [
+        843615628,
+        3512567828
+      ]
+    ],
+    "height_seeds": [
+      [
+        1889685864,
+        285211037
+      ],
+      [
+        294832906,
+        2593066701
+      ],
+      [
+        2887144693,
+        3714430659
+      ]
+    ],
+    "same_candidate_order_law": true,
+    "reuse_trueplant_rng": false
+  },
+  "time": {
+    "release0_s": 0.0,
+    "frame500_s": 267.307098389,
+    "allowed_observation_cutoff_phys_s": 316.616420749,
+    "search_interval_s": [
+      316.616420749,
+      322.116543884
+    ],
+    "profile_end_target_s": 322.116543884,
+    "old_B4_goals_remainfrozen": true
+  },
+  "budget": {
+    "balance_before_s": 11226.578,
+    "literature_and_prep_guard_s": 900,
+    "isolatedbuild_guard_s": 600,
+    "six_forward_TOTAL_hard_wall_s": 300,
+    "max_forward_calls": 6,
+    "scientificRSS_bytes": 1073741824,
+    "newdisk_bytes": 8589934592,
+    "reserve_bytes": 4294967296,
+    "rootnewwrite_bytes": 67108864,
+    "singlethread": true,
+    "planned_max_debit_s": 1800
+  },
+  "qual_gates": {
+    "all447_xy_havelegalheight": "otherwiseSTOPnoreplacement",
+    "flow_divergence_max_per_s": 1e-05,
+    "relative_projection_residual": 1e-07,
+    "closedwallflux": 0.0,
+    "gas_mass": "filamentbookkeeping births=survivors+outletremovals; notfullEulerianmassintegralproof",
+    "state": "finitefreepositions andpositivefinite sigma/ppm, completeagehistory",
+    "RNG": "state roundtrip anddistinctreference streams; no physicalrerun beyondsix",
+    "scale": "profileallfullprefix, project447/K>=32 withoutdroppingstate;boundmustfit1GiB/8GiB/wallet",
+    "statistics": "K2canneverqualifyfull447prediction; needindependentMCerror/ESS/calibration on allowedindependentdata beforegoal",
+    "initial_wind_sampling": "importanceESS/K>=.8 provisionalimportancegate;two_refsinsufficient regardlesspass",
+    "no_goals": "untilphysics/statistical/nativeports qualified"
+  },
+  "denied_inputs": [
+    "true sourcecoordinates/heightlabel",
+    "testplume/filament/concentrationfiles",
+    "alltrueCFD files",
+    "futurewindmessages",
+    "actualB4locationerror tochooseprior"
+  ],
+  "retrospective_case": "alreadyseenB4 engineeringplant, notindependentconfirmation",
+  "R5": "STOP_PRESERVED",
+  "changes_old_source_or_plant_seeds": false,
+  "input_sha256": {
+    "pastwindprojection": "9fbb110fa32fdcd435b9995355f462cf2e55c18e6ed2f3db8817a878228dc886",
+    "native_mask": "b37d618ba0487881b9126a2687149db352441c390efd3d013c8f303a740dcc3c",
+    "public_parameter_original": "84770703a9e9102aa83665faa9f86790fce9b3190f26da30cec4fcf1dde76018"
+  }
+}

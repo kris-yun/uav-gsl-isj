@@ -1,0 +1,175 @@
+--- pinned/RunningSimulation.cpp
++++ isolated/L1RunningSimulation.cpp
+@@ -1,4 +1,4 @@
+-#include "gaden/RunningSimulation.hpp"
++#include "gaden/L1RunningSimulation.hpp"
+ #include "YAML_Conversions.hpp"
+ #include "gaden/datatypes/GasTypes.hpp"
+ #include "gaden/internal/MathUtils.hpp"
+@@ -11,10 +11,9 @@
+ 
+ namespace gaden
+ {
+-    static thread_local PrecalculatedGaussian<1000> gaussian; // random values following a gaussian distribution, precomputed for speed
+-
+-    RunningSimulation::RunningSimulation(Parameters params, std::shared_ptr<EnvironmentConfiguration> const& envConfig)
+-        : parameters(params), Simulation(envConfig)
++
++    L1RunningSimulation::L1RunningSimulation(Parameters params, std::shared_ptr<EnvironmentConfiguration> const& envConfig)
++        : parameters(params), gaussian(params.referenceSeed), Simulation(envConfig)
+     {
+         if (parameters.windLoop)
+             config->windSequence.loopConfig = *parameters.windLoop;
+@@ -25,8 +24,8 @@
+         // so, to keep things more or less the same (good), we will scale the noise std by the most commonly used delta time -- 1/10th of a second
+         parameters.filamentNoise_std *= 10;
+ 
+-        filaments1.reserve(params.expectedNumIterations * params.numFilaments_sec / params.deltaTime);
+-        filaments2.reserve(params.expectedNumIterations * params.numFilaments_sec / params.deltaTime);
++        filaments1.reserve(size_t(std::ceil(params.expectedNumIterations * params.numFilaments_sec * params.deltaTime))+1);
++        filaments2.reserve(size_t(std::ceil(params.expectedNumIterations * params.numFilaments_sec * params.deltaTime))+1);
+         isActive.reserve(filaments1.capacity());
+         activeFilaments = &filaments1;
+         auxFilamentsVector = &filaments2;
+@@ -41,8 +40,7 @@
+         float filament_moles_cm3_center = params.filamentPPMcenter_initial / 1e6 * simulationMetadata.constants.numMolesAllGasesIncm3;                  //[moles of target gas / cm³]
+         simulationMetadata.constants.totalMolesInFilament = filament_moles_cm3_center * (sqrt(8 * pow(M_PI, 3)) * pow(params.filamentInitialSigma, 3)); // total number of moles in a filament
+ 
+-        rawBuffer.resize(serialization::defaultBufferSize);
+-        compressedBuffer.resize(serialization::defaultBufferSize);
++        if (parameters.saveResults) { rawBuffer.resize(serialization::defaultBufferSize); compressedBuffer.resize(serialization::defaultBufferSize); }
+ 
+         if (config->localAirflowDisturbances.size() != config->environment.numCells())
+             config->localAirflowDisturbances.resize(config->environment.numCells(), Vector3(0, 0, 0));
+@@ -72,10 +70,10 @@
+         }
+     }
+ 
+-    RunningSimulation::~RunningSimulation()
++    L1RunningSimulation::~L1RunningSimulation()
+     {}
+ 
+-    void RunningSimulation::AdvanceTimestep()
++    void L1RunningSimulation::AdvanceTimestep()
+     {
+         AddFilaments();
+         MoveFilaments();
+@@ -103,19 +101,19 @@
+         currentIteration++;
+     }
+ 
+-    const std::vector<Filament>& RunningSimulation::GetFilaments() const
++    const std::vector<Filament>& L1RunningSimulation::GetFilaments() const
+     {
+         return *activeFilaments;
+     }
+ 
+-    Vector3 RunningSimulation::SampleWind(const Vector3i& indices) const
++    Vector3 L1RunningSimulation::SampleWind(const Vector3i& indices) const
+     {
+         size_t cellIndex = config->environment.indexFrom3D(indices);
+         gaden::Vector3 windVec = config->windSequence.GetCurrent().at(cellIndex) + config->localAirflowDisturbances.at(cellIndex);
+         return windVec;
+     }
+ 
+-    void RunningSimulation::AddFilaments()
++    void L1RunningSimulation::AddFilaments()
+     {
+         ZoneScoped;
+         float numFilaments_iteration = parameters.numFilaments_sec * parameters.deltaTime;
+@@ -137,12 +135,13 @@
+             GADEN_VERIFY(attempts < safetyLimit, "Could not spawn filaments around source position! Is it inside the environment bounds?");
+ 
+             activeFilaments->emplace_back(position, parameters.filamentInitialSigma);
++            birthCount++;
+         }
+ 
+         releaseAccumulator = releaseAccumulator - std::floor(releaseAccumulator);
+     }
+ 
+-    void RunningSimulation::MoveFilaments()
++    void L1RunningSimulation::MoveFilaments()
+     {
+         ZoneScoped;
+         isActive.resize(activeFilaments->size());
+@@ -163,7 +162,7 @@
+         std::swap(activeFilaments, auxFilamentsVector);
+     }
+ 
+-    void RunningSimulation::MoveSingleFilament(size_t i)
++    void L1RunningSimulation::MoveSingleFilament(size_t i)
+     {
+         Filament& filament = activeFilaments->at(i);
+ 
+@@ -180,7 +179,7 @@
+             // 1. Simulate Advection (Va)
+             //    Large scale wind-eddies -> Movement of a filament as a whole by wind
+             //------------------------------------------------------------------------
+-            gaden::Vector3 windVec = SampleWind(cellIdx);
++            gaden::Vector3 windVec = SampleWindAtPosition(filament.position);
+             Vector3 newPosition = filament.position + windVec * parameters.deltaTime;
+ 
+             // 2. Simulate Gravity & Bouyant Force
+@@ -225,7 +224,7 @@
+     }
+ 
+     // move the filament as much as possible towards the desired final position, stopping if we find an obstacle along the way
+-    Environment::CellState RunningSimulation::StepTowards(Filament& filament, Vector3 end)
++    Environment::CellState L1RunningSimulation::StepTowards(Filament& filament, Vector3 end)
+     {
+         Vector3i startCell = config->environment.coordsToIndices(filament.position);
+         Vector3i endCell = config->environment.coordsToIndices(end);
+@@ -274,7 +273,7 @@
+         return Environment::CellState::Free;
+     }
+ 
+-    void RunningSimulation::UpdateConcentrationsCPU()
++    void L1RunningSimulation::UpdateConcentrationsCPU()
+     {
+ #pragma parallel for
+         for (size_t i = 0; i < concentrations->size(); i++)
+@@ -299,7 +298,7 @@
+         }
+     }
+ 
+-    void RunningSimulation::UpdateConcentrationsGPU()
++    void L1RunningSimulation::UpdateConcentrationsGPU()
+     {
+ #if GPU_ACCELERATION
+ 
+@@ -340,7 +339,7 @@
+ #endif
+     }
+ 
+-    void RunningSimulation::GetAABB(Filament const& filament, Vector3i& bbMin, Vector3i& bbMax)
++    void L1RunningSimulation::GetAABB(Filament const& filament, Vector3i& bbMin, Vector3i& bbMax)
+     {
+         bbMin = config->environment.coordsToIndices(filament.position - filament.sigma * 3 / 100.f);
+         bbMax = config->environment.coordsToIndices(filament.position + filament.sigma * 3 / 100.f);
+@@ -354,7 +353,7 @@
+         bbMax.z = std::min(bbMax.z, config->environment.description.dimensions.z - 1);
+     }
+ 
+-    void RunningSimulation::SaveResults()
++    void L1RunningSimulation::SaveResults()
+     {
+         ZoneScoped;
+         // check we can create the file
+@@ -451,7 +450,7 @@
+         last_saved_step++;
+     }
+ 
+-    void RunningSimulation::Parameters::ReadFromYAML(std::filesystem::path const& path)
++    void L1RunningSimulation::Parameters::ReadFromYAML(std::filesystem::path const& path)
+     {
+         try
+         {
+@@ -492,7 +491,7 @@
+         }
+     }
+ 
+-    bool RunningSimulation::Parameters::WriteToYAML(std::filesystem::path const& path)
++    bool L1RunningSimulation::Parameters::WriteToYAML(std::filesystem::path const& path)
+     {
+         try
+         {
