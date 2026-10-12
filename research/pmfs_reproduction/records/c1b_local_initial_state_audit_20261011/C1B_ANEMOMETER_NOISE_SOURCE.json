@@ -1,0 +1,442 @@
+{
+  "path": "/home/zyc/ros2_ws/src/GADEN/simulated_anemometer/src/fake_anemometer.cpp",
+  "sha256": "a66345204d879e9e61a75079976cbaaf7ad7e9111b21219c12dda56677361842",
+  "selected": [
+    {
+      "line": 8,
+      "text": ""
+    },
+    {
+      "line": 9,
+      "text": "typedef std::normal_distribution<double> NormalDistribution;"
+    },
+    {
+      "line": 10,
+      "text": "typedef std::mt19937 RandomGenerator;"
+    },
+    {
+      "line": 11,
+      "text": ""
+    },
+    {
+      "line": 50,
+      "text": ""
+    },
+    {
+      "line": 51,
+      "text": "    sensor.header.frame_id = input_fixed_frame;"
+    },
+    {
+      "line": 52,
+      "text": "    sensor.ns = \"sensor_visualization\";"
+    },
+    {
+      "line": 53,
+      "text": "    sensor.action = visualization_msgs::msg::Marker::ADD;"
+    },
+    {
+      "line": 63,
+      "text": ""
+    },
+    {
+      "line": 64,
+      "text": "    connector.header.frame_id = input_fixed_frame;"
+    },
+    {
+      "line": 65,
+      "text": "    connector.ns = \"sensor_visualization\";"
+    },
+    {
+      "line": 66,
+      "text": "    connector.action = visualization_msgs::msg::Marker::ADD;"
+    },
+    {
+      "line": 76,
+      "text": "    // Init Marker: arrow to display the wind direction measured."
+    },
+    {
+      "line": 77,
+      "text": "    wind_point.header.frame_id = input_sensor_frame;"
+    },
+    {
+      "line": 78,
+      "text": "    wind_point.action = visualization_msgs::msg::Marker::ADD;"
+    },
+    {
+      "line": 79,
+      "text": "    wind_point.ns = \"measured_wind\";"
+    },
+    {
+      "line": 82,
+      "text": "    // Init Marker: arrow to display the inverted wind direction measured."
+    },
+    {
+      "line": 83,
+      "text": "    wind_point_inv.header.frame_id = input_sensor_frame;"
+    },
+    {
+      "line": 84,
+      "text": "    wind_point_inv.action = visualization_msgs::msg::Marker::ADD;"
+    },
+    {
+      "line": 85,
+      "text": "    wind_point_inv.ns = \"measured_wind_inverted\";"
+    },
+    {
+      "line": 137,
+      "text": "                "
+    },
+    {
+      "line": 138,
+      "text": "                double wind_speed = std::hypot(u, v); // ignore the w component, because the anemometer is only 2D"
+    },
+    {
+      "line": 139,
+      "text": "                double wind_direction;"
+    },
+    {
+      "line": 140,
+      "text": ""
+    },
+    {
+      "line": 141,
+      "text": "                if (!use_map_ref_system)"
+    },
+    {
+      "line": 150,
+      "text": "                        {"
+    },
+    {
+      "line": 151,
+      "text": "                            downwind_map.header.frame_id = input_fixed_frame;"
+    },
+    {
+      "line": 152,
+      "text": "                            downwind_map.header.stamp = now();"
+    },
+    {
+      "line": 153,
+      "text": "                            downwind_map.vector.x = u;"
+    },
+    {
+      "line": 154,
+      "text": "                            downwind_map.vector.y = v;"
+    },
+    {
+      "line": 159,
+      "text": "                        tf2::doTransform(downwind_map, downwind_sensor, anemometer_transform_map);"
+    },
+    {
+      "line": 160,
+      "text": "                        wind_direction = std::atan2(-downwind_sensor.vector.y, -downwind_sensor.vector.x); // change signs to make it upwind"
+    },
+    {
+      "line": 161,
+      "text": "                    }"
+    },
+    {
+      "line": 162,
+      "text": "                    catch (tf2::TransformException& ex)"
+    },
+    {
+      "line": 169,
+      "text": "                    // for simulations"
+    },
+    {
+      "line": 170,
+      "text": "                    wind_direction = std::atan2(v, u);"
+    },
+    {
+      "line": 171,
+      "text": "                }"
+    },
+    {
+      "line": 172,
+      "text": ""
+    },
+    {
+      "line": 174,
+      "text": "                static RandomGenerator rng(static_cast<unsigned>(time(0)));"
+    },
+    {
+      "line": 175,
+      "text": "                static NormalDistribution gaussian_dist(0.0, noise_std);"
+    },
+    {
+      "line": 176,
+      "text": "                wind_direction = wind_direction + gaussian_dist(rng);"
+    },
+    {
+      "line": 177,
+      "text": "                wind_speed = std::max(0.0, wind_speed + gaussian_dist(rng) * 0.1f);"
+    },
+    {
+      "line": 178,
+      "text": ""
+    },
+    {
+      "line": 179,
+      "text": "                // Publish 2D Anemometer readings"
+    },
+    {
+      "line": 180,
+      "text": "                //------------------------------"
+    },
+    {
+      "line": 181,
+      "text": "                anemo_msg.header.stamp = now();"
+    },
+    {
+      "line": 182,
+      "text": "                if (use_map_ref_system)"
+    },
+    {
+      "line": 183,
+      "text": "                    anemo_msg.header.frame_id = input_fixed_frame;"
+    },
+    {
+      "line": 184,
+      "text": "                else"
+    },
+    {
+      "line": 185,
+      "text": "                    anemo_msg.header.frame_id = input_sensor_frame;"
+    },
+    {
+      "line": 186,
+      "text": ""
+    },
+    {
+      "line": 187,
+      "text": "                anemo_msg.sensor_label = \"Fake_Anemo\";"
+    },
+    {
+      "line": 188,
+      "text": "                anemo_msg.wind_direction = wind_direction; // rad"
+    },
+    {
+      "line": 189,
+      "text": "                anemo_msg.wind_speed = wind_speed;         // m/s"
+    },
+    {
+      "line": 190,
+      "text": "                // Publish fake_anemometer reading (m/s)"
+    },
+    {
+      "line": 191,
+      "text": "                sensor_read_pub->publish(anemo_msg);"
+    },
+    {
+      "line": 194,
+      "text": "                /*"
+    },
+    {
+      "line": 195,
+      "text": "                wind_point.header.stamp = now();"
+    },
+    {
+      "line": 196,
+      "text": "                wind_point.points.clear();"
+    },
+    {
+      "line": 197,
+      "text": "                wind_point.id = 1;  //unique identifier for each arrow"
+    },
+    {
+      "line": 200,
+      "text": "                wind_point.pose.position.z = 0.0;"
+    },
+    {
+      "line": 201,
+      "text": "                wind_point.pose.orientation = tf2_ros::createQuaternionMsgFromYaw(wind_direction_with_noise);"
+    },
+    {
+      "line": 202,
+      "text": "                wind_point.scale.x = 2*wind_speed;\t  //arrow lenght"
+    },
+    {
+      "line": 203,
+      "text": "                wind_point.scale.y = 0.1;\t  //arrow width"
+    },
+    {
+      "line": 204,
+      "text": "                wind_point.scale.z = 0.1;\t  //arrow height"
+    },
+    {
+      "line": 212,
+      "text": "                // Add inverted wind marker --> DownWind"
+    },
+    {
+      "line": 213,
+      "text": "                wind_point_inv.header.stamp = now();"
+    },
+    {
+      "line": 214,
+      "text": "                wind_point_inv.header.frame_id = anemo_msg.header.frame_id;"
+    },
+    {
+      "line": 215,
+      "text": "                wind_point_inv.points.clear();"
+    },
+    {
+      "line": 216,
+      "text": "                wind_point_inv.id = 1; // unique identifier for each arrow"
+    },
+    {
+      "line": 229,
+      "text": ""
+    },
+    {
+      "line": 230,
+      "text": "                tf2::Quaternion arrowOrientation(tf2::Vector3(0, 0, 1), wind_direction + M_PI);"
+    },
+    {
+      "line": 231,
+      "text": "                wind_point_inv.pose.orientation = tf2::toMsg(arrowOrientation);"
+    },
+    {
+      "line": 232,
+      "text": "                wind_point_inv.scale.x = 2 * wind_speed; // arrow lenght"
+    },
+    {
+      "line": 233,
+      "text": "                wind_point_inv.scale.y = 0.1;                          // arrow width"
+    },
+    {
+      "line": 234,
+      "text": "                wind_point_inv.scale.z = 0.1;                          // arrow height"
+    },
+    {
+      "line": 247,
+      "text": "            /*"
+    },
+    {
+      "line": 248,
+      "text": "            sensor.header.stamp = now();"
+    },
+    {
+      "line": 249,
+      "text": "            sensor.pose.position.x = x_pos;"
+    },
+    {
+      "line": 250,
+      "text": "            sensor.pose.position.y = y_pos;"
+    },
+    {
+      "line": 256,
+      "text": "            /*"
+    },
+    {
+      "line": 257,
+      "text": "            connector.header.stamp = now();"
+    },
+    {
+      "line": 258,
+      "text": "            connector.scale.z = z_pos;"
+    },
+    {
+      "line": 259,
+      "text": "            connector.pose.position.x = x_pos;"
+    },
+    {
+      "line": 278,
+      "text": "    // Noise"
+    },
+    {
+      "line": 279,
+      "text": "    noise_std = declare_parameter<double>(\"noise_std\", 0.1);"
+    },
+    {
+      "line": 280,
+      "text": ""
+    },
+    {
+      "line": 281,
+      "text": "    // Frequency (Hz)"
+    },
+    {
+      "line": 286,
+      "text": ""
+    },
+    {
+      "line": 287,
+      "text": "    RCLCPP_INFO(get_logger(), \"wind noise: %f\", noise_std);"
+    },
+    {
+      "line": 288,
+      "text": "}"
+    }
+  ],
+  "archived_B4_source_sha256": "b03f24478fbc954ae75baa6c6f25447f09cc6cb6b741abf48231064c7c61cdcc",
+  "archived_B4_selected": [
+    {
+      "line": 9,
+      "text": "typedef std::normal_distribution<double> NormalDistribution;"
+    },
+    {
+      "line": 138,
+      "text": "                double wind_speed = std::hypot(u, v); // ignore the w component, because the anemometer is only 2D"
+    },
+    {
+      "line": 152,
+      "text": "                            downwind_map.header.stamp = now();"
+    },
+    {
+      "line": 164,
+      "text": "                        wind_direction = std::atan2(-downwind_sensor.vector.y, -downwind_sensor.vector.x); // change signs to make it upwind"
+    },
+    {
+      "line": 174,
+      "text": "                    wind_direction = std::atan2(v, u);"
+    },
+    {
+      "line": 179,
+      "text": "                static NormalDistribution gaussian_dist(0.0, noise_std);"
+    },
+    {
+      "line": 180,
+      "text": "                wind_direction = wind_direction + gaussian_dist(rng);"
+    },
+    {
+      "line": 181,
+      "text": "                wind_speed = std::max(0.0, wind_speed + gaussian_dist(rng) * 0.1f);"
+    },
+    {
+      "line": 185,
+      "text": "                anemo_msg.header.stamp = now();"
+    },
+    {
+      "line": 192,
+      "text": "                anemo_msg.wind_direction = wind_direction; // rad"
+    },
+    {
+      "line": 193,
+      "text": "                anemo_msg.wind_speed = wind_speed;         // m/s"
+    },
+    {
+      "line": 199,
+      "text": "                wind_point.header.stamp = now();"
+    },
+    {
+      "line": 217,
+      "text": "                wind_point_inv.header.stamp = now();"
+    },
+    {
+      "line": 252,
+      "text": "            sensor.header.stamp = now();"
+    },
+    {
+      "line": 261,
+      "text": "            connector.header.stamp = now();"
+    },
+    {
+      "line": 283,
+      "text": "    noise_std = declare_parameter<double>(\"noise_std\", 0.1);"
+    },
+    {
+      "line": 289,
+      "text": "    use_map_ref_system = declare_parameter<bool>(\"use_map_ref_system\", false);"
+    }
+  ],
+  "live_source_equals_archived_B4": false
+}

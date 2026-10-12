@@ -1,0 +1,70 @@
+{
+  "UTC": "2026-10-12T00:29:33.887721+00:00",
+  "cutoff_receipt_ROS_ns": 60404529720,
+  "cutoff_basis": "goal invocation BEFORE native initialization; conservative prefix, no future decoding",
+  "allowed_source_files": {
+    "run/RUNTIME_STATUS.json": {
+      "sha256": "673c76fd9972d8158620b212eaca7b8a256fbbf5ceae0b58eea80a4c085c82bb",
+      "projection": "selected clock fields only; no outcome/truth"
+    },
+    "run/PHYSICAL_FRAME_TIME.csv": {
+      "sha256": "93336ebf17cc741034dd7aa72d5cac9af8f582e0acfa46e99b0e908e9785c8eb",
+      "projection": "frame and physical time only; no filament state"
+    },
+    "runtime/physical_clock_trace.csv": {
+      "sha256": "b4ce87ca0aae82017e35ecab8702f14b1a774fe5e004b918cc123ca7b916853a",
+      "projection": "clock binding and frame timestamps only"
+    },
+    "runtime/raw_ros_cdr.jsonl.gz": {
+      "sha256": "a95bfd4fddffe02a7ca6e8857d1446526728a0ad52e0aa9c6d26655d90e18854",
+      "projection": "topic/receipt metadata; decode only wind, clock, permitted TF prefix"
+    },
+    "runtime/consumer_messages.csv": {
+      "sha256": "d14d92100494fc79df3e4f474896622b9338867c702f6af9bb3898555c65565f",
+      "projection": "wind metadata counts only; no gas values"
+    },
+    "source/gsl/Common/Algorithm.cpp": {
+      "sha256": "def99bbb3310eecab5c6a437723f6798de07d30f6b463189d8e9ca0ae914614c",
+      "projection": "Initialize timing source, no parameter truth values"
+    },
+    "runtime_driver.py": {
+      "sha256": "7e35f2a0dc017d17c1d0161239d866ea734349f0900f9ee4dd7aeba1a3f1f95b",
+      "projection": "capture/timing code only"
+    },
+    "runtime/launch.log": {
+      "sha256": "4d81839765b00f1afb2cadebc2c9f9c086ee543d23b203b7ea7c0c9a669107dc",
+      "projection": "literal INITIALIZATON COMPLETED logger timestamp only"
+    },
+    "run/B4_generation_RESOLVED.yaml": {
+      "sha256": "84770703a9e9102aa83665faa9f86790fce9b3190f26da30cec4fcf1dde76018",
+      "projection": "explicit public parameter allowlist only"
+    },
+    "runtime/resolved_player_parameters.yaml": {
+      "sha256": "ccfba661b060085f6442b59761a3b7c08a131ca35ff21a1c446ac40ef5f3852e",
+      "projection": "explicit clock/playback allowlist only"
+    },
+    "runtime/preflight_PioneerP3DX_Anemometer_parameters.yaml": {
+      "sha256": "2cfcc49d5b87ccf923ee688f7ae6000321f67031b669cf34d983d50f25eed8ad",
+      "projection": "instrument metadata"
+    },
+    "runtime/preflight_PioneerP3DX_PID_parameters.yaml": {
+      "sha256": "35b72f8df67bde767e49a88e9d9d9c5310f4ea117bfe117c7f5ff29454c7fc4b",
+      "projection": "instrument metadata"
+    },
+    "contract": {
+      "path": "outputs/PMFS_R3_R5_CONTINUOUS_20261011/authorization/CODEX_R3_R5_CONTINUOUS_RESEARCH_CONTRACT_zh.md",
+      "sha256": "0a5ca1abeb650ce367e58f76f93480c025c9cecc507c0d2d22f910f36cbc770b"
+    }
+  },
+  "denied": [
+    "actual test plume/filaments/concentration fields",
+    "actual source coordinates/labels",
+    "all full CFD fields and /wind_value service answers",
+    "future wind/gas payloads",
+    "candidate/posterior/result values"
+  ],
+  "historical_auditor_exposure": "B4 was already inspected by supervisor. No independent-confirmation claim; inference input projection below excludes labels.",
+  "physics_calls": 0,
+  "goals": 0,
+  "is_new_scientific_prior_registered": false
+}

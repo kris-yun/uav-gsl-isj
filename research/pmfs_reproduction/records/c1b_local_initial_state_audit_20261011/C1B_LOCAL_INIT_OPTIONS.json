@@ -1,0 +1,235 @@
+{
+  "status": "DESIGN_OPTIONS_ONLY_NO_PRIOR_OR_REFERENCE_EXECUTED",
+  "recommended_next": "L1: register one source-blind generative missing-history law before any reference/score; a 3-anchor x2-reference profile is proposed, not authorized here",
+  "locked_constraints": [
+    "R5_STOP",
+    "same447 source support",
+    "no truth/complete CFD/future wind in LOCAL",
+    "same source/plant seeds and old results",
+    "300s official budget and variance gate unchanged",
+    "same main Euclidean-risk endpoint",
+    "no new plant realization",
+    "remaining compute wallet not reset"
+  ],
+  "data_fact": {
+    "unobserved_release_prefix_s": 267.407159464,
+    "eligible_wind_rows": 184,
+    "wind_spatial_positions": 1,
+    "vertical_wind_measured": false,
+    "pre_initialize_wind_PMFS_consumed": 0
+  },
+  "input_distribution_propagation_output": {
+    "inputs": [
+      "public world geometry/outlets and instrument model",
+      "447-cell common support and declared release/height support",
+      "public release start/time step/rate and actual frame clock",
+      "only received local wind and same permitted history for all arms"
+    ],
+    "distribution": "one registered π(U_past_and_spatial, X_init, q, height | permitted history, s), same hyperparameters/nuisance law across candidate sources; no test-source calibration",
+    "propagation": "begin X=0 at public release t=0, retain old3D state; marginalize unobserved past rather than zeroing at search; use instance-isolated RNG",
+    "outputs": [
+      "proper sequential response likelihood or preregistered justified proper-composite",
+      "normalized447-source mass",
+      "conditional receptor hit probability and its between-source variance",
+      "MC uncertainty/ESS/state checkpoint"
+    ],
+    "unresolved_model_parameters": [
+      "past wind temporal scale/amplitude",
+      "spatial and vertical wind law constrained by geometry/boundaries",
+      "relation of local measured wind to entire field",
+      "initial height/release nuisance prior",
+      "response probability/noise law and finite-reference adequacy"
+    ],
+    "public_sensor_noise_is_not_wind_process_prior": true
+  },
+  "options": [
+    {
+      "id": "L0",
+      "name": "use complete recorded release-to-search local history",
+      "contract_coverage": "principle covered, factual inputs absent",
+      "decision": "STOP_THIS_INPUT_PATH",
+      "reason": "earliest qualified same-epoch wind267.407s; no observation of release0..267s; do not search old plume/CFD as replacement"
+    },
+    {
+      "id": "L1",
+      "name": "source-blind generative marginal initialization",
+      "contract_coverage": "LOCAL/ordinary filtering principles covered; actual3D latent law not registered",
+      "decision": "RECOMMENDED_NEW_MODEL_CONTRACT",
+      "needs": [
+        "single declared missing-history/spatial/vertical wind prior and its independent basis",
+        "same hierarchy across all447 candidates, RNG/checkpoint hook",
+        "properppm response predictive law",
+        "full-support physical validity and finite-MC acceptance"
+      ],
+      "calibration_now": "only184 stationary horizontal readings can calibrate recent instrument observation; they cannot qualify unseen past/vertical field",
+      "forbidden": [
+        "choose prior by B4 location error",
+        "fill past with fullCFD10",
+        "make past deterministic currentwind",
+        "use true plume checkpoint as candidate initial state"
+      ],
+      "estimated_new_code_lines_range": [
+        800,
+        1600
+      ],
+      "estimate_not_measured": true
+    },
+    {
+      "id": "L2",
+      "name": "stationary conditional initial ensemble from current local wind",
+      "contract_coverage": "not originalN0 and not registered; additional stationarity/mixing assumption",
+      "decision": "OPTION_REQUIRING_PHYSICAL_FALSIFICATION",
+      "reason": "current point wind cannot establish early transient or full3D flow; requires independent mixing-time/readout discrepancy evidence, not B4 staticCFD name",
+      "risk": "may erase precisely the missing-history uncertainty under investigation"
+    },
+    {
+      "id": "L3",
+      "name": "bounded-age finite state initial response approximation",
+      "contract_coverage": "not registered; R5 complex memory remains stopped",
+      "decision": "OPTION_ONLY_AFTER_ORDINARY_INITIAL_LAW_EXISTS",
+      "reason": "must first bound response error relative to L1 with permitted histories and proper predictive calibration; response fidelity alone is not source decision gain"
+    },
+    {
+      "id": "L4",
+      "name": "play the same frozen gas from release frame0",
+      "contract_coverage": "changes frozen official playback500 and acquisition history",
+      "decision": "USER_SCIENTIFIC_CONTRACT_CHANGE_REQUIRED",
+      "reason": "knownzero at release0 may avoid unknown initialization but does not preserve official run; no automatic goal or physical regeneration"
+    },
+    {
+      "id": "L5",
+      "name": "append local prerelease/warm-up sampling",
+      "contract_coverage": "changes acquisition route/history or elapsed information budget",
+      "decision": "USER_SCIENTIFIC_CONTRACT_CHANGE_REQUIRED",
+      "reason": "later sampling cannot retroactively observe first267s; new controlled task would require a separate fair budget/initialization design"
+    }
+  ],
+  "proposed_profile_NOT_EXECUTED": {
+    "purpose": "cost/RNG/state/physics checks only, no source-truth evaluation or method selection",
+    "atomic_sources": 3,
+    "selection_rule": "public447 support indices at fixed quartiles in native order before labels; physical height legality first; do not choose true/wrong peak",
+    "references_per_source": 2,
+    "new_forward_calls_max": 6,
+    "physical_prefix_s": "full public release0 to conservative actual search interval316.616..322.117; no267s truncation",
+    "active_wall_hard_limit_s": 300,
+    "single_thread": true,
+    "RSS_limit_bytes": 1073741824,
+    "shared_storage_only": true,
+    "root_deletion_or_expansion": false,
+    "reference_rng": "new role-isolated keyed references require registration; frozen plant/source/nav seeds stay unchanged. Existing plant RNG never supplied as inference evidence",
+    "two_refs_not_sufficient_for_scientific_MC_gate": true,
+    "full447_scale_rule": "profile supplies cost estimates only;3anchors do not qualify all-support probabilities. Full447/K must fit remaining budget and independentMC criterion before execution"
+  },
+  "engineering_implementable_now": [
+    "scoped clock/role/unit parser",
+    "source-independent initial-law-required gate",
+    "schema and future/invalid-input rejection",
+    "standalone raw prefix decoding and metadata audit"
+  ],
+  "done_now": [
+    "prefix decoder215winds/186physical/184TF qualified",
+    "13SHA independent check",
+    "7fail-closed checks",
+    "release/playback/init time distinction",
+    "archivedinstrument noise law audit"
+  ],
+  "remaining_after_choice": [
+    "instance RNG/state operator change",
+    "3D missing-history model and common information adapter",
+    "proper response filter",
+    "actual native two-port consumer hook",
+    "bounded cost and full-support qualification"
+  ],
+  "code_and_time_estimate": "800–1600 newC++/filter/hook lines is planning range. Actual full implementation/build/physical profile time not measured; no promise of closing within remaining~3.12h",
+  "memory_planning_scenarios": [
+    {
+      "reference_count_K": 2,
+      "source_support": 447,
+      "birth_count_per_reference_at_init_no_exit_model": 2254.815807188,
+      "birth_count_per_reference_after_300s_no_exit_model": 4354.815807188,
+      "assumed_filament_bytes_range": [
+        32,
+        64
+      ],
+      "assumed_simultaneous_buffers": 2,
+      "initial_state_bytes_range": [
+        129011541,
+        258023082
+      ],
+      "end_state_bytes_range": [
+        249165141,
+        498330282
+      ],
+      "caveat": "planning arithmetic only. Actual exits, Filament sizeof, caching and copy/storage overhead require profiling; not measured RSS or a bound on implementation."
+    },
+    {
+      "reference_count_K": 4,
+      "source_support": 447,
+      "birth_count_per_reference_at_init_no_exit_model": 2254.815807188,
+      "birth_count_per_reference_after_300s_no_exit_model": 4354.815807188,
+      "assumed_filament_bytes_range": [
+        32,
+        64
+      ],
+      "assumed_simultaneous_buffers": 2,
+      "initial_state_bytes_range": [
+        258023082,
+        516046164
+      ],
+      "end_state_bytes_range": [
+        498330282,
+        996660564
+      ],
+      "caveat": "planning arithmetic only. Actual exits, Filament sizeof, caching and copy/storage overhead require profiling; not measured RSS or a bound on implementation."
+    },
+    {
+      "reference_count_K": 8,
+      "source_support": 447,
+      "birth_count_per_reference_at_init_no_exit_model": 2254.815807188,
+      "birth_count_per_reference_after_300s_no_exit_model": 4354.815807188,
+      "assumed_filament_bytes_range": [
+        32,
+        64
+      ],
+      "assumed_simultaneous_buffers": 2,
+      "initial_state_bytes_range": [
+        516046164,
+        1032092329
+      ],
+      "end_state_bytes_range": [
+        996660564,
+        1993321129
+      ],
+      "caveat": "planning arithmetic only. Actual exits, Filament sizeof, caching and copy/storage overhead require profiling; not measured RSS or a bound on implementation."
+    },
+    {
+      "reference_count_K": 24,
+      "source_support": 447,
+      "birth_count_per_reference_at_init_no_exit_model": 2254.815807188,
+      "birth_count_per_reference_after_300s_no_exit_model": 4354.815807188,
+      "assumed_filament_bytes_range": [
+        32,
+        64
+      ],
+      "assumed_simultaneous_buffers": 2,
+      "initial_state_bytes_range": [
+        1548138494,
+        3096276989
+      ],
+      "end_state_bytes_range": [
+        2989981694,
+        5979963389
+      ],
+      "caveat": "planning arithmetic only. Actual exits, Filament sizeof, caching and copy/storage overhead require profiling; not measured RSS or a bound on implementation."
+    }
+  ],
+  "memory_storage_notes": [
+    "shares frozen geometry, never duplicatefullCFD",
+    "whole-bank inRAM may exceed1GiB; chunked source/reference checkpoints can trade shared-diskIO forRAM",
+    "disk8GiB and reserve4GiB still hard;8GiB sufficiency is not measured",
+    "discarding oldfilaments needs physics/response error justification, not memoryconvenience"
+  ],
+  "new_physics_calls": 0,
+  "new_goals": 0,
+  "new_scientific_prior_chosen": false
+}

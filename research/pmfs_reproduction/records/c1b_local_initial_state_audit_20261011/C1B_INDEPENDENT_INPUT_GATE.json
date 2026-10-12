@@ -1,0 +1,49 @@
+{
+  "qualification": "PASS_CAUSAL_INPUT_PROJECTION_ONLY",
+  "input_SHA_count": 13,
+  "accepted_wind_rows": 184,
+  "physical_first_s": 267.40715946399996,
+  "physical_last_s": 316.116526369,
+  "release_to_search_history_complete": false,
+  "initial_state_qualification": "REQUIRES_NEW_3D_MARGINAL_MODEL_CONTRACT",
+  "fail_closed_tests": [
+    {
+      "name": "future_receipt",
+      "rejected": true,
+      "reason": "FUTURE_OR_UNRECEIVED_INPUT"
+    },
+    {
+      "name": "future_stamp",
+      "rejected": true,
+      "reason": "FUTURE_OR_UNRECEIVED_INPUT"
+    },
+    {
+      "name": "unknown_frame",
+      "rejected": true,
+      "reason": "UNREGISTERED_FRAME"
+    },
+    {
+      "name": "negative_speed",
+      "rejected": true,
+      "reason": "INVALID_SPEED"
+    },
+    {
+      "name": "NaN_speed",
+      "rejected": true,
+      "reason": "INVALID_SPEED"
+    },
+    {
+      "name": "zero_plume_at_search_is_not_evidence",
+      "rejected": true,
+      "reason": "UNOBSERVED_HISTORY_REQUIRES_REGISTERED_MARGINAL_MODEL"
+    },
+    {
+      "name": "unregistered_retrospective_prior",
+      "rejected": true,
+      "reason": "UNOBSERVED_HISTORY_REQUIRES_REGISTERED_MARGINAL_MODEL"
+    }
+  ],
+  "fresh_physical_calls": 0,
+  "goals": 0,
+  "active_wall_s": 0.014999999984866008
+}
