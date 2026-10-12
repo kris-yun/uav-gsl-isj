@@ -1,0 +1,722 @@
+{
+  "gaden_common/third_party/gaden_core/include/gaden/RunningSimulation.hpp": {
+    "sha256": "1f57a0ccfd02fa6cc3a18714cd96b795c49e4e81e41f4d4b136fc05f35040abe",
+    "lines": 90,
+    "selected": [
+      {
+        "line": 16,
+        "text": "            float deltaTime = 0.1;                // seconds\n            float windIterationDeltaTime = 1.0;   // seconds\n            float temperature = 298.f;            // K\n            float pressure = 1.f;                 // Atm"
+      },
+      {
+        "line": 19,
+        "text": "            float pressure = 1.f;                 // Atm\n            float filamentPPMcenter_initial = 20; //[ppm] Gas concentration at the center of the 3D gaussian (filament)\n            float filamentInitialSigma = 10.0;    //[cm] Sigma of the filament at t=0-> 3DGaussian shape\n            float filamentGrowthGamma = 10.0;     //[cm²/s] Growth ratio of the filament_std"
+      },
+      {
+        "line": 26,
+        "text": "\n            std::optional<LoopConfig> windLoop; // if this is not null, the simulation advances the wind sequence as time passes\n\n            // you can query the simulation as it runs, or store the state of the gas dispersion to disk and play it back later"
+      },
+      {
+        "line": 31,
+        "text": "            float saveDeltaTime = 0.5;\n            bool preCalculateConcentrations = false; // produce full concentration maps instead of serializing the filament positions. NOT RECOMMENDED!\n                                                     // it is *way* slower and produces *much* larger files, but could be useful for some applications\n            std::filesystem::path saveDataDirectory;"
+      },
+      {
+        "line": 40,
+        "text": "    public:\n        RunningSimulation(Parameters params, std::shared_ptr<EnvironmentConfiguration> const& envConfig);\n        ~RunningSimulation(); // we need to declare a destructor because of the unique_ptr to incomplete type (GPUAcc)\n        void AdvanceTimestep() override;"
+      },
+      {
+        "line": 41,
+        "text": "        RunningSimulation(Parameters params, std::shared_ptr<EnvironmentConfiguration> const& envConfig);\n        ~RunningSimulation(); // we need to declare a destructor because of the unique_ptr to incomplete type (GPUAcc)\n        void AdvanceTimestep() override;\n        const std::vector<Filament>& GetFilaments() const override;"
+      },
+      {
+        "line": 42,
+        "text": "        ~RunningSimulation(); // we need to declare a destructor because of the unique_ptr to incomplete type (GPUAcc)\n        void AdvanceTimestep() override;\n        const std::vector<Filament>& GetFilaments() const override;\n        float GetCurrentTime() { return currentTime; }"
+      },
+      {
+        "line": 56,
+        "text": "\n        // Only used in preCalculateConcentrations mode\n        void UpdateConcentrationsCPU();\n        void UpdateConcentrationsGPU();"
+      },
+      {
+        "line": 57,
+        "text": "        // Only used in preCalculateConcentrations mode\n        void UpdateConcentrationsCPU();\n        void UpdateConcentrationsGPU();\n        void GetAABB(Filament const& filament, Vector3i& min, Vector3i& max);"
+      },
+      {
+        "line": 58,
+        "text": "        void UpdateConcentrationsCPU();\n        void UpdateConcentrationsGPU();\n        void GetAABB(Filament const& filament, Vector3i& min, Vector3i& max);\n"
+      },
+      {
+        "line": 82,
+        "text": "\n        size_t last_saved_step = 0;\n        std::vector<uint8_t> rawBuffer;\n        std::vector<uint8_t> compressedBuffer;"
+      },
+      {
+        "line": 88,
+        "text": "        std::unique_ptr<class GPUAcceleration> gpuAcc;\n        std::vector<class ComputeConcentrationCommand> gpuCommands;\n    };\n} // namespace gaden"
+      }
+    ]
+  },
+  "gaden_common/third_party/gaden_core/include/gaden/Simulation.hpp": {
+    "sha256": "4818be2e1adb3536c14ead6760e228693e94db3ea340e98d87ecd26baee42f17",
+    "lines": 41,
+    "selected": [
+      {
+        "line": 17,
+        "text": "\n        virtual void AdvanceTimestep() = 0;\n        float SampleConcentration(const Vector3& point) const;\n"
+      },
+      {
+        "line": 18,
+        "text": "        virtual void AdvanceTimestep() = 0;\n        float SampleConcentration(const Vector3& point) const;\n\n        virtual Vector3 SampleWind(const Vector3i& indices) const;"
+      },
+      {
+        "line": 27,
+        "text": "        bool CheckLineOfSight(Vector3 start, Vector3 end) const;\n        float CalculateConcentration(const Vector3& point) const;\n        float CalculateConcentrationSingleFilament(const Filament& filament, const Vector3& samplePoint) const;\n"
+      },
+      {
+        "line": 28,
+        "text": "        float CalculateConcentration(const Vector3& point) const;\n        float CalculateConcentrationSingleFilament(const Filament& filament, const Vector3& samplePoint) const;\n\n        float ConcentrationAtCenter(Filament const& filament) const;"
+      },
+      {
+        "line": 30,
+        "text": "\n        float ConcentrationAtCenter(Filament const& filament) const;\n\n    public:"
+      },
+      {
+        "line": 39,
+        "text": "    protected:\n        std::optional<std::vector<float>> concentrations; // only valid if params.preCalculateConcentrations\n    };\n} // namespace gaden"
+      }
+    ]
+  },
+  "gaden_common/third_party/gaden_core/src/RunningSimulation.cpp": {
+    "sha256": "00d0763dc7f369bb716cb8ddf151b3f1112b9b832f137e3cea2d1ee852aabb9a",
+    "lines": 540,
+    "selected": [
+      {
+        "line": 16,
+        "text": "\n    RunningSimulation::RunningSimulation(Parameters params, std::shared_ptr<EnvironmentConfiguration> const& envConfig)\n        : parameters(params), Simulation(envConfig)\n    {"
+      },
+      {
+        "line": 19,
+        "text": "    {\n        if (parameters.windLoop)\n            config->windSequence.loopConfig = *parameters.windLoop;\n"
+      },
+      {
+        "line": 20,
+        "text": "        if (parameters.windLoop)\n            config->windSequence.loopConfig = *parameters.windLoop;\n\n        // this is a backwards compatibility hack"
+      },
+      {
+        "line": 37,
+        "text": "\n        // calculate the filament->concentration constants\n        //-------------------------------------------------\n        simulationMetadata.constants.numMolesAllGasesIncm3 = params.pressure / (R * params.temperature);"
+      },
+      {
+        "line": 58,
+        "text": "\n        if (parameters.preCalculateConcentrations)\n        {\n            concentrations.emplace();"
+      },
+      {
+        "line": 60,
+        "text": "        {\n            concentrations.emplace();\n            concentrations->resize(envConfig->environment.numCells(), 0.0);\n            GADEN_SERIOUS_WARN(\"\\n--------\\n\""
+      },
+      {
+        "line": 61,
+        "text": "            concentrations.emplace();\n            concentrations->resize(envConfig->environment.numCells(), 0.0);\n            GADEN_SERIOUS_WARN(\"\\n--------\\n\"\n                               \"Using 'preCalculateConcentrations'! This will make the simulation very slow. If you don't actively need this behaviour, it is strongly recommended to turn it off.\\n\""
+      },
+      {
+        "line": 63,
+        "text": "            GADEN_SERIOUS_WARN(\"\\n--------\\n\"\n                               \"Using 'preCalculateConcentrations'! This will make the simulation very slow. If you don't actively need this behaviour, it is strongly recommended to turn it off.\\n\"\n                               \"--------\");\n"
+      },
+      {
+        "line": 75,
+        "text": "\n    RunningSimulation::~RunningSimulation()\n    {}\n"
+      },
+      {
+        "line": 78,
+        "text": "\n    void RunningSimulation::AdvanceTimestep()\n    {\n        AddFilaments();"
+      },
+      {
+        "line": 85,
+        "text": "        {\n            if (parameters.preCalculateConcentrations)\n#if GPU_ACCELERATION\n                UpdateConcentrationsGPU();"
+      },
+      {
+        "line": 87,
+        "text": "#if GPU_ACCELERATION\n                UpdateConcentrationsGPU();\n#else\n                UpdateConcentrationsCPU();"
+      },
+      {
+        "line": 89,
+        "text": "#else\n                UpdateConcentrationsCPU();\n#endif\n"
+      },
+      {
+        "line": 96,
+        "text": "\n        if (parameters.windLoop && currentTime > lastWindUpdateTime + parameters.windIterationDeltaTime)\n        {\n            config->windSequence.AdvanceTimeStep();"
+      },
+      {
+        "line": 98,
+        "text": "        {\n            config->windSequence.AdvanceTimeStep();\n            lastWindUpdateTime = currentTime;\n        }"
+      },
+      {
+        "line": 114,
+        "text": "        size_t cellIndex = config->environment.indexFrom3D(indices);\n        gaden::Vector3 windVec = config->windSequence.GetCurrent().at(cellIndex) + config->localAirflowDisturbances.at(cellIndex);\n        return windVec;\n    }"
+      },
+      {
+        "line": 115,
+        "text": "        gaden::Vector3 windVec = config->windSequence.GetCurrent().at(cellIndex) + config->localAirflowDisturbances.at(cellIndex);\n        return windVec;\n    }\n"
+      },
+      {
+        "line": 181,
+        "text": "            // 1. Simulate Advection (Va)\n            //    Large scale wind-eddies -> Movement of a filament as a whole by wind\n            //------------------------------------------------------------------------\n            gaden::Vector3 windVec = SampleWind(cellIdx);"
+      },
+      {
+        "line": 183,
+        "text": "            //------------------------------------------------------------------------\n            gaden::Vector3 windVec = SampleWind(cellIdx);\n            Vector3 newPosition = filament.position + windVec * parameters.deltaTime;\n"
+      },
+      {
+        "line": 184,
+        "text": "            gaden::Vector3 windVec = SampleWind(cellIdx);\n            Vector3 newPosition = filament.position + windVec * parameters.deltaTime;\n\n            // 2. Simulate Gravity & Bouyant Force"
+      },
+      {
+        "line": 196,
+        "text": "            constexpr float mu = 19 * 1e-6; //[kg/s·m] dynamic viscosity of air\n            float terminal_buoyancy_velocity = (g * (1 - SpecificGravity.at(gasIndex)) * ro_air * ConcentrationAtCenter(filament) * 1e-6) / (18 * mu);\n            newPosition.z += terminal_buoyancy_velocity * parameters.deltaTime;\n"
+      },
+      {
+        "line": 214,
+        "text": "\n            // 4. Filament growth with time (this affects the posterior estimation of gas concentration at each cell)\n            //    Vd (small scale wind eddies) -> Difussion or change of the filament shape (growth with time)\n            //    R = sigma of a 3D gaussian -> Increasing sigma with time"
+      },
+      {
+        "line": 215,
+        "text": "            // 4. Filament growth with time (this affects the posterior estimation of gas concentration at each cell)\n            //    Vd (small scale wind eddies) -> Difussion or change of the filament shape (growth with time)\n            //    R = sigma of a 3D gaussian -> Increasing sigma with time\n            //------------------------------------------------------------------------"
+      },
+      {
+        "line": 245,
+        "text": "        // Traverse path\n        int steps = ceil(distance / config->environment.description.cellSize); // Make sure no two iteration steps are separated more than 1 cell\n        float increment = distance / steps;\n"
+      },
+      {
+        "line": 246,
+        "text": "        int steps = ceil(distance / config->environment.description.cellSize); // Make sure no two iteration steps are separated more than 1 cell\n        float increment = distance / steps;\n\n        for (int i = 0; i < steps; i++)"
+      },
+      {
+        "line": 248,
+        "text": "\n        for (int i = 0; i < steps; i++)\n        {\n            // Determine point in space to evaluate"
+      },
+      {
+        "line": 277,
+        "text": "\n    void RunningSimulation::UpdateConcentrationsCPU()\n    {\n#pragma parallel for"
+      },
+      {
+        "line": 280,
+        "text": "#pragma parallel for\n        for (size_t i = 0; i < concentrations->size(); i++)\n            (*concentrations)[i] = 0;\n"
+      },
+      {
+        "line": 281,
+        "text": "        for (size_t i = 0; i < concentrations->size(); i++)\n            (*concentrations)[i] = 0;\n\n        for (Filament const& filament : *activeFilaments)"
+      },
+      {
+        "line": 297,
+        "text": "                        if (CheckLineOfSight(filament.position, samplePoint))\n                            concentrations->at(config->environment.indexFrom3D(indices)) += CalculateConcentrationSingleFilament(filament, samplePoint);\n                    }\n        }"
+      },
+      {
+        "line": 302,
+        "text": "\n    void RunningSimulation::UpdateConcentrationsGPU()\n    {\n#if GPU_ACCELERATION"
+      },
+      {
+        "line": 335,
+        "text": "\n        gpuAcc->UpdateConcentrations(gpuCommands, *concentrations, *activeFilaments);\n        gpuCommands.clear();\n#else"
+      },
+      {
+        "line": 338,
+        "text": "#else\n        GADEN_SERIOUS_ERROR(\"Tried to call UpdateConcentrationsGPU(), but core library was compiled without GPU acceleration support.\");\n        GADEN_TERMINATE;\n#endif"
+      },
+      {
+        "line": 364,
+        "text": "        // Configure file name for saving the current snapshot\n        std::filesystem::path path = fmt::format(\"{}/iteration_{}\", savePath, last_saved_step);\n\n        // calculate the size we need the buffer to have"
+      },
+      {
+        "line": 369,
+        "text": "            size_t uncompressedSize;\n            if (parameters.preCalculateConcentrations)\n                uncompressedSize = concentrations->size() * sizeof(float) + 1000; // 1000 bytes is plenty for the all the environment information\n            else"
+      },
+      {
+        "line": 370,
+        "text": "            if (parameters.preCalculateConcentrations)\n                uncompressedSize = concentrations->size() * sizeof(float) + 1000; // 1000 bytes is plenty for the all the environment information\n            else\n                uncompressedSize = activeFilaments->size() * sizeof(Filament) + 1000;"
+      },
+      {
+        "line": 395,
+        "text": "\n        int windIndex = config->windSequence.GetCurrentIndex();\n        writer.Write(&windIndex); // index of the wind file (they are stored separately under (results_location)/wind/... )\n"
+      },
+      {
+        "line": 396,
+        "text": "        int windIndex = config->windSequence.GetCurrentIndex();\n        writer.Write(&windIndex); // index of the wind file (they are stored separately under (results_location)/wind/... )\n\n        if (!parameters.preCalculateConcentrations)"
+      },
+      {
+        "line": 398,
+        "text": "\n        if (!parameters.preCalculateConcentrations)\n        {\n            std::string mode(\"filaments\");"
+      },
+      {
+        "line": 406,
+        "text": "        {\n            ZoneScopedN(\"WriteConcentrations\");\n            std::string mode(\"concentrations\");\n            writer.WriteString(&mode);"
+      },
+      {
+        "line": 407,
+        "text": "            ZoneScopedN(\"WriteConcentrations\");\n            std::string mode(\"concentrations\");\n            writer.WriteString(&mode);\n            writer.WriteVector(&(*concentrations));"
+      },
+      {
+        "line": 409,
+        "text": "            writer.WriteString(&mode);\n            writer.WriteVector(&(*concentrations));\n        }\n"
+      },
+      {
+        "line": 451,
+        "text": "        }\n        last_saved_step++;\n    }\n"
+      },
+      {
+        "line": 472,
+        "text": "            FromYAML<float>     (yaml, \"deltaTime\",                 deltaTime);\n            FromYAML<float>     (yaml, \"windIterationDeltaTime\",    windIterationDeltaTime);\n            FromYAML<float>     (yaml, \"temperature\",               temperature);\n            FromYAML<float>     (yaml, \"pressure\",                  pressure);"
+      },
+      {
+        "line": 483,
+        "text": "            FromYAML<float>     (yaml, \"saveDeltaTime\",             saveDeltaTime);\n            FromYAML<bool>      (yaml, \"preCalculateConcentrations\",preCalculateConcentrations);\n            // clang-format on\n"
+      },
+      {
+        "line": 486,
+        "text": "\n            if (YAML::Node wind_yaml = yaml[\"windLooping\"])\n                windLoop = ParseLoopYAML(wind_yaml);\n        }"
+      },
+      {
+        "line": 487,
+        "text": "            if (YAML::Node wind_yaml = yaml[\"windLooping\"])\n                windLoop = ParseLoopYAML(wind_yaml);\n        }\n        catch (std::exception const& e)"
+      },
+      {
+        "line": 506,
+        "text": "            emitter << YAML::Key << \"deltaTime\"                 << YAML::Value << deltaTime;\n            emitter << YAML::Key << \"windIterationDeltaTime\"    << YAML::Value << windIterationDeltaTime;\n            emitter << YAML::Key << \"temperature\"               << YAML::Value << temperature;\n            emitter << YAML::Key << \"pressure\"                  << YAML::Value << pressure;"
+      },
+      {
+        "line": 517,
+        "text": "            emitter << YAML::Key << \"saveDeltaTime\"             << YAML::Value << saveDeltaTime;\n            emitter << YAML::Key << \"preCalculateConcentrations\"<< YAML::Value << preCalculateConcentrations;\n            // clang-format on\n"
+      },
+      {
+        "line": 520,
+        "text": "\n            if (windLoop)\n            {\n                emitter << YAML::Key << \"windLooping\";"
+      },
+      {
+        "line": 522,
+        "text": "            {\n                emitter << YAML::Key << \"windLooping\";\n                WriteLoopYAML(emitter, *windLoop);\n            }"
+      },
+      {
+        "line": 523,
+        "text": "                emitter << YAML::Key << \"windLooping\";\n                WriteLoopYAML(emitter, *windLoop);\n            }\n"
+      }
+    ]
+  },
+  "gaden_common/third_party/gaden_core/src/Simulation.cpp": {
+    "sha256": "d7617d52326ac5dc699567826916ade9a0ba43e4aaf75847fadf512fd10704fb",
+    "lines": 101,
+    "selected": [
+      {
+        "line": 18,
+        "text": "        // Traverse path\n        int steps = distance / config->environment.description.cellSize; // Make sure no two iteration steps are separated more than 1 cell\n        float increment = distance / steps;\n"
+      },
+      {
+        "line": 19,
+        "text": "        int steps = distance / config->environment.description.cellSize; // Make sure no two iteration steps are separated more than 1 cell\n        float increment = distance / steps;\n\n        for (int i = 1; i < steps; i++)"
+      },
+      {
+        "line": 21,
+        "text": "\n        for (int i = 1; i < steps; i++)\n        {\n            // Determine point in space to evaluate"
+      },
+      {
+        "line": 35,
+        "text": "\n    float Simulation::CalculateConcentration(const Vector3& samplePoint) const\n    {\n        float gas_conc = 0;"
+      },
+      {
+        "line": 46,
+        "text": "            if (distanceSqr < limitDistance * limitDistance && CheckLineOfSight(samplePoint, fil.position))\n                gas_conc += CalculateConcentrationSingleFilament(fil, samplePoint);\n        }\n"
+      },
+      {
+        "line": 52,
+        "text": "\n    float Simulation::CalculateConcentrationSingleFilament(const Filament& filament, const Vector3& samplePoint) const\n    {\n        // calculate how much gas concentration does one filament contribute to the queried location"
+      },
+      {
+        "line": 54,
+        "text": "    {\n        // calculate how much gas concentration does one filament contribute to the queried location\n        float sigma = filament.sigma;\n        float distance_cm = 100 * vmath::length(filament.position - samplePoint);"
+      },
+      {
+        "line": 58,
+        "text": "\n        float ppm = ConcentrationAtCenter(filament) *\n                    exp(-(distance_cm * distance_cm) / (2 * sigma * sigma));\n        return ppm;"
+      },
+      {
+        "line": 63,
+        "text": "\n    float Simulation::ConcentrationAtCenter(Filament const& filament) const\n    {\n        constexpr float pi_cubed = M_PI * M_PI * M_PI;"
+      },
+      {
+        "line": 73,
+        "text": "\n    float Simulation::SampleConcentration(const Vector3& samplePoint) const\n    {\n        if (!config->environment.IsInBounds(samplePoint))"
+      },
+      {
+        "line": 77,
+        "text": "        {\n            GADEN_ERROR(\"Requested gas concentration at a point outside the environment {}. Are you using the correct coordinates?\", samplePoint);\n            return 0;\n        }"
+      },
+      {
+        "line": 81,
+        "text": "\n        if (concentrations)\n            return concentrations->at(config->environment.indexFrom3D(config->environment.coordsToIndices(samplePoint)));\n        else"
+      },
+      {
+        "line": 82,
+        "text": "        if (concentrations)\n            return concentrations->at(config->environment.indexFrom3D(config->environment.coordsToIndices(samplePoint)));\n        else\n            return CalculateConcentration(samplePoint);"
+      },
+      {
+        "line": 84,
+        "text": "        else\n            return CalculateConcentration(samplePoint);\n    }\n"
+      },
+      {
+        "line": 91,
+        "text": "        {\n            GADEN_ERROR(\"Requested wind vector at a point outside the environment. Are you using the correct coordinates?\");\n            return {0, 0, 0};\n        }"
+      },
+      {
+        "line": 94,
+        "text": "        }\n        return config->windSequence.GetCurrent().at(config->environment.indexFrom3D(indices));\n    }\n"
+      }
+    ]
+  },
+  "gaden_common/third_party/gaden_core/src/PlaybackSimulation.cpp": {
+    "sha256": "458a7e2987c482898190f9208c5223ce9365f0b8b85c39410668d680363faed3",
+    "lines": 344,
+    "selected": [
+      {
+        "line": 32,
+        "text": "\n    void PlaybackSimulation::AdvanceTimestep()\n    {\n        std::string filename = fmt::format(\"{}/iteration_{}\", parameters.resultsDirectory.c_str(), currentIteration);"
+      },
+      {
+        "line": 121,
+        "text": "        }\n        AdvanceTimestep();\n        return true;\n    }"
+      },
+      {
+        "line": 136,
+        "text": "\n        int windIndex;\n        reader.Read(&windIndex, sizeof(int));\n        config->windSequence.SetCurrentIndex(windIndex);"
+      },
+      {
+        "line": 137,
+        "text": "        int windIndex;\n        reader.Read(&windIndex, sizeof(int));\n        config->windSequence.SetCurrentIndex(windIndex);\n"
+      },
+      {
+        "line": 138,
+        "text": "        reader.Read(&windIndex, sizeof(int));\n        config->windSequence.SetCurrentIndex(windIndex);\n\n        std::string modeStr;"
+      },
+      {
+        "line": 149,
+        "text": "        }\n        else if (modeStr == \"concentrations\")\n        {\n            mode = Mode::Concentration;"
+      },
+      {
+        "line": 151,
+        "text": "        {\n            mode = Mode::Concentration;\n            if (!concentrations)\n            {"
+      },
+      {
+        "line": 152,
+        "text": "            mode = Mode::Concentration;\n            if (!concentrations)\n            {\n                GADEN_INFO(\"Simulation was generated with pre-calculated concentrations\");"
+      },
+      {
+        "line": 154,
+        "text": "            {\n                GADEN_INFO(\"Simulation was generated with pre-calculated concentrations\");\n                concentrations.emplace();\n                concentrations->resize(config->environment.numCells(), 0.0);"
+      },
+      {
+        "line": 155,
+        "text": "                GADEN_INFO(\"Simulation was generated with pre-calculated concentrations\");\n                concentrations.emplace();\n                concentrations->resize(config->environment.numCells(), 0.0);\n            }"
+      },
+      {
+        "line": 156,
+        "text": "                concentrations.emplace();\n                concentrations->resize(config->environment.numCells(), 0.0);\n            }\n            reader.ReadVector(&(*concentrations));"
+      },
+      {
+        "line": 158,
+        "text": "            }\n            reader.ReadVector(&(*concentrations));\n        }\n        else"
+      },
+      {
+        "line": 258,
+        "text": "\n        int windIndex;\n        reader.Read(&windIndex, sizeof(int));\n        config->windSequence.SetCurrentIndex(windIndex);"
+      },
+      {
+        "line": 259,
+        "text": "        int windIndex;\n        reader.Read(&windIndex, sizeof(int));\n        config->windSequence.SetCurrentIndex(windIndex);\n"
+      },
+      {
+        "line": 260,
+        "text": "        reader.Read(&windIndex, sizeof(int));\n        config->windSequence.SetCurrentIndex(windIndex);\n\n        activeFilaments.clear();"
+      },
+      {
+        "line": 298,
+        "text": "\n        int windIndex;\n        reader.Read(&windIndex, sizeof(int));\n        config->windSequence.SetCurrentIndex(windIndex);"
+      },
+      {
+        "line": 299,
+        "text": "        int windIndex;\n        reader.Read(&windIndex, sizeof(int));\n        config->windSequence.SetCurrentIndex(windIndex);\n"
+      },
+      {
+        "line": 300,
+        "text": "        reader.Read(&windIndex, sizeof(int));\n        config->windSequence.SetCurrentIndex(windIndex);\n\n        activeFilaments.clear();"
+      },
+      {
+        "line": 326,
+        "text": "\n        int windIndex;\n        reader.Read(&windIndex, sizeof(int));\n        config->windSequence.SetCurrentIndex(windIndex);"
+      },
+      {
+        "line": 327,
+        "text": "        int windIndex;\n        reader.Read(&windIndex, sizeof(int));\n        config->windSequence.SetCurrentIndex(windIndex);\n"
+      },
+      {
+        "line": 328,
+        "text": "        reader.Read(&windIndex, sizeof(int));\n        config->windSequence.SetCurrentIndex(windIndex);\n\n        activeFilaments.clear();"
+      }
+    ]
+  },
+  "simulated_gas_sensor/src/fake_gas_sensor.cpp": {
+    "sha256": "d2d8bd53ce0cef10c4150105633bd6d47c375c47ccee69ecc978ceeb7fb1a37e",
+    "lines": 376,
+    "selected": [
+      {
+        "line": 2,
+        "text": "/*-------------------------------------------------------------------------------\n * This node simulates the response of a MOX gas sensor given the GT gas concentration\n * of the gases it is exposed to (request to simulation_player or dispersion_simulation)\n * - Gas concentration should be given in [ppm]"
+      },
+      {
+        "line": 4,
+        "text": " * of the gases it is exposed to (request to simulation_player or dispersion_simulation)\n * - Gas concentration should be given in [ppm]\n * - The Pkg response can be set to:  Resistance of the sensor (Rs), Resistance-ratio (Rs/R0), or Voltage (0-5V)\n * - Sensitivity to different gases is set based on manufacter datasheet"
+      },
+      {
+        "line": 38,
+        "text": "\n    // Service to request gas concentration\n    auto playerClient = create_client<gaden_msgs::srv::GasPosition>(\"/odor_value\");\n"
+      },
+      {
+        "line": 110,
+        "text": "\n            // Get Gas concentration at current position (of each gas present)\n            // Service request to the simulator\n            auto request = std::make_shared<gaden_msgs::srv::GasPosition::Request>();"
+      },
+      {
+        "line": 122,
+        "text": "\n                // Simulate Gas_Sensor response given this GT values of the concentration!\n                olfaction_msgs::msg::GasSensor sensor_msg;\n                sensor_msg.header.frame_id = input_sensor_frame;"
+      },
+      {
+        "line": 126,
+        "text": "                sensor_msg.header.stamp = now();\n                switch (input_sensor_model)\n                {\n                case 0: // MOX TGS2620"
+      },
+      {
+        "line": 134,
+        "text": "                    sensor_msg.raw = simulate_mox_as_line_loglog(response);\n                    sensor_msg.raw_air = Sensitivity_Air[input_sensor_model] * R0[input_sensor_model];\n                    sensor_msg.calib_a = sensitivity_lineloglog[input_sensor_model][0][0]; // Calib for Ethanol\n                    sensor_msg.calib_b = sensitivity_lineloglog[input_sensor_model][0][1]; // Calib for Ethanol"
+      },
+      {
+        "line": 135,
+        "text": "                    sensor_msg.raw_air = Sensitivity_Air[input_sensor_model] * R0[input_sensor_model];\n                    sensor_msg.calib_a = sensitivity_lineloglog[input_sensor_model][0][0]; // Calib for Ethanol\n                    sensor_msg.calib_b = sensitivity_lineloglog[input_sensor_model][0][1]; // Calib for Ethanol\n                    break;"
+      },
+      {
+        "line": 136,
+        "text": "                    sensor_msg.calib_a = sensitivity_lineloglog[input_sensor_model][0][0]; // Calib for Ethanol\n                    sensor_msg.calib_b = sensitivity_lineloglog[input_sensor_model][0][1]; // Calib for Ethanol\n                    break;\n                case 1: // MOX TGS2600"
+      },
+      {
+        "line": 144,
+        "text": "                    sensor_msg.raw = simulate_mox_as_line_loglog(response);\n                    sensor_msg.raw_air = Sensitivity_Air[input_sensor_model] * R0[input_sensor_model];\n                    sensor_msg.calib_a = sensitivity_lineloglog[input_sensor_model][0][0]; // Calib for Ethanol\n                    sensor_msg.calib_b = sensitivity_lineloglog[input_sensor_model][0][1]; // Calib for Ethanol"
+      },
+      {
+        "line": 145,
+        "text": "                    sensor_msg.raw_air = Sensitivity_Air[input_sensor_model] * R0[input_sensor_model];\n                    sensor_msg.calib_a = sensitivity_lineloglog[input_sensor_model][0][0]; // Calib for Ethanol\n                    sensor_msg.calib_b = sensitivity_lineloglog[input_sensor_model][0][1]; // Calib for Ethanol\n                    break;"
+      },
+      {
+        "line": 146,
+        "text": "                    sensor_msg.calib_a = sensitivity_lineloglog[input_sensor_model][0][0]; // Calib for Ethanol\n                    sensor_msg.calib_b = sensitivity_lineloglog[input_sensor_model][0][1]; // Calib for Ethanol\n                    break;\n                case 2: // MOX TGS2611"
+      },
+      {
+        "line": 154,
+        "text": "                    sensor_msg.raw = simulate_mox_as_line_loglog(response);\n                    sensor_msg.raw_air = Sensitivity_Air[input_sensor_model] * R0[input_sensor_model];\n                    sensor_msg.calib_a = sensitivity_lineloglog[input_sensor_model][0][0]; // Calib for Ethanol\n                    sensor_msg.calib_b = sensitivity_lineloglog[input_sensor_model][0][1]; // Calib for Ethanol"
+      },
+      {
+        "line": 155,
+        "text": "                    sensor_msg.raw_air = Sensitivity_Air[input_sensor_model] * R0[input_sensor_model];\n                    sensor_msg.calib_a = sensitivity_lineloglog[input_sensor_model][0][0]; // Calib for Ethanol\n                    sensor_msg.calib_b = sensitivity_lineloglog[input_sensor_model][0][1]; // Calib for Ethanol\n                    break;"
+      },
+      {
+        "line": 156,
+        "text": "                    sensor_msg.calib_a = sensitivity_lineloglog[input_sensor_model][0][0]; // Calib for Ethanol\n                    sensor_msg.calib_b = sensitivity_lineloglog[input_sensor_model][0][1]; // Calib for Ethanol\n                    break;\n                case 3: // MOX TGS2610"
+      },
+      {
+        "line": 164,
+        "text": "                    sensor_msg.raw = simulate_mox_as_line_loglog(response);\n                    sensor_msg.raw_air = Sensitivity_Air[input_sensor_model] * R0[input_sensor_model];\n                    sensor_msg.calib_a = sensitivity_lineloglog[input_sensor_model][0][0]; // Calib for Ethanol\n                    sensor_msg.calib_b = sensitivity_lineloglog[input_sensor_model][0][1]; // Calib for Ethanol"
+      },
+      {
+        "line": 165,
+        "text": "                    sensor_msg.raw_air = Sensitivity_Air[input_sensor_model] * R0[input_sensor_model];\n                    sensor_msg.calib_a = sensitivity_lineloglog[input_sensor_model][0][0]; // Calib for Ethanol\n                    sensor_msg.calib_b = sensitivity_lineloglog[input_sensor_model][0][1]; // Calib for Ethanol\n                    break;"
+      },
+      {
+        "line": 166,
+        "text": "                    sensor_msg.calib_a = sensitivity_lineloglog[input_sensor_model][0][0]; // Calib for Ethanol\n                    sensor_msg.calib_b = sensitivity_lineloglog[input_sensor_model][0][1]; // Calib for Ethanol\n                    break;\n                case 4: // MOX TGS2612"
+      },
+      {
+        "line": 174,
+        "text": "                    sensor_msg.raw = simulate_mox_as_line_loglog(response);\n                    sensor_msg.raw_air = Sensitivity_Air[input_sensor_model] * R0[input_sensor_model];\n                    sensor_msg.calib_a = sensitivity_lineloglog[input_sensor_model][0][0]; // Calib for Ethanol\n                    sensor_msg.calib_b = sensitivity_lineloglog[input_sensor_model][0][1]; // Calib for Ethanol"
+      },
+      {
+        "line": 175,
+        "text": "                    sensor_msg.raw_air = Sensitivity_Air[input_sensor_model] * R0[input_sensor_model];\n                    sensor_msg.calib_a = sensitivity_lineloglog[input_sensor_model][0][0]; // Calib for Ethanol\n                    sensor_msg.calib_b = sensitivity_lineloglog[input_sensor_model][0][1]; // Calib for Ethanol\n                    break;"
+      },
+      {
+        "line": 176,
+        "text": "                    sensor_msg.calib_a = sensitivity_lineloglog[input_sensor_model][0][0]; // Calib for Ethanol\n                    sensor_msg.calib_b = sensitivity_lineloglog[input_sensor_model][0][1]; // Calib for Ethanol\n                    break;\n"
+      },
+      {
+        "line": 179,
+        "text": "\n                case 30: // PID miniRaeLite\n                    sensor_msg.technology = sensor_msg.TECH_PID;\n                    sensor_msg.manufacturer = sensor_msg.MANU_RAE;"
+      },
+      {
+        "line": 180,
+        "text": "                case 30: // PID miniRaeLite\n                    sensor_msg.technology = sensor_msg.TECH_PID;\n                    sensor_msg.manufacturer = sensor_msg.MANU_RAE;\n                    sensor_msg.mpn = sensor_msg.MPN_MINIRAELITE;"
+      },
+      {
+        "line": 201,
+        "text": "                {\n                    RCLCPP_WARN(get_logger(), \"[fake_gas_sensor] Cannot read Gas Concentrations from simulator.\");\n                    notified = true;\n                }"
+      },
+      {
+        "line": 228,
+        "text": "// This method employes a curve fitting based on a line in the loglog scale to set the sensitivity\nfloat FakeGasSensor::simulate_mox_as_line_loglog(std::shared_ptr<gaden_msgs::srv::GasPosition_Response> GT_gas_concentrations)\n{\n    if (first_reading)"
+      },
+      {
+        "line": 233,
+        "text": "        // Init sensor to its Baseline lvl\n        sensor_output = Sensitivity_Air[input_sensor_model]; // RS_R0 value at air\n        previous_sensor_output = sensor_output;\n        first_reading = false;"
+      },
+      {
+        "line": 239,
+        "text": "    {\n        // 1. Set Sensor Output based on gas concentrations (gas type dependent)\n        //---------------------------------------------------------------------\n        //  RS/R0 = A*conc^B (a line in the loglog scale)"
+      },
+      {
+        "line": 245,
+        "text": "        // Handle multiple gases\n        for (int i = 0; i < GT_gas_concentrations->positions[0].concentration.size(); i++)\n        {\n            int gas_id;"
+      },
+      {
+        "line": 248,
+        "text": "            int gas_id;\n            if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"ethanol\"))\n                gas_id = 0;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"methane\"))"
+      },
+      {
+        "line": 250,
+        "text": "                gas_id = 0;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"methane\"))\n                gas_id = 1;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"hydrogen\"))"
+      },
+      {
+        "line": 252,
+        "text": "                gas_id = 1;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"hydrogen\"))\n                gas_id = 2;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"propanol\"))"
+      },
+      {
+        "line": 254,
+        "text": "                gas_id = 2;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"propanol\"))\n                gas_id = 3;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"chlorine\"))"
+      },
+      {
+        "line": 256,
+        "text": "                gas_id = 3;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"chlorine\"))\n                gas_id = 4;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"fluorine\"))"
+      },
+      {
+        "line": 258,
+        "text": "                gas_id = 4;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"fluorine\"))\n                gas_id = 5;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"acetone\"))"
+      },
+      {
+        "line": 260,
+        "text": "                gas_id = 5;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"acetone\"))\n                gas_id = 6;\n            else"
+      },
+      {
+        "line": 270,
+        "text": "            /*\n            if (input_sensor_model == 0)\n            {\n                GT_gas_concentrations->gas_conc[i] *= 10;"
+      },
+      {
+        "line": 272,
+        "text": "            {\n                GT_gas_concentrations->gas_conc[i] *= 10;\n            }\n            else if (input_sensor_model ==2)"
+      },
+      {
+        "line": 274,
+        "text": "            }\n            else if (input_sensor_model ==2)\n            {\n                GT_gas_concentrations->gas_conc[i] *= 20;"
+      },
+      {
+        "line": 276,
+        "text": "            {\n                GT_gas_concentrations->gas_conc[i] *= 20;\n            }\n            */"
+      },
+      {
+        "line": 280,
+        "text": "\n            // Value of RS/R0 for the given gas and concentration\n            RS_R0 = sensitivity_lineloglog[input_sensor_model][gas_id][0] *\n                    pow(GT_gas_concentrations->positions[0].concentration[i], sensitivity_lineloglog[input_sensor_model][gas_id][1]);"
+      },
+      {
+        "line": 281,
+        "text": "            // Value of RS/R0 for the given gas and concentration\n            RS_R0 = sensitivity_lineloglog[input_sensor_model][gas_id][0] *\n                    pow(GT_gas_concentrations->positions[0].concentration[i], sensitivity_lineloglog[input_sensor_model][gas_id][1]);\n"
+      },
+      {
+        "line": 282,
+        "text": "            RS_R0 = sensitivity_lineloglog[input_sensor_model][gas_id][0] *\n                    pow(GT_gas_concentrations->positions[0].concentration[i], sensitivity_lineloglog[input_sensor_model][gas_id][1]);\n\n            // Ensure we never overpass the baseline level (max allowed)"
+      },
+      {
+        "line": 285,
+        "text": "            // Ensure we never overpass the baseline level (max allowed)\n            if (RS_R0 > Sensitivity_Air[input_sensor_model])\n                RS_R0 = Sensitivity_Air[input_sensor_model];\n"
+      },
+      {
+        "line": 286,
+        "text": "            if (RS_R0 > Sensitivity_Air[input_sensor_model])\n                RS_R0 = Sensitivity_Air[input_sensor_model];\n\n            // Increment with respect the Baseline"
+      },
+      {
+        "line": 289,
+        "text": "            // Increment with respect the Baseline\n            resistance_variation += Sensitivity_Air[input_sensor_model] - RS_R0;\n        }\n"
+      },
+      {
+        "line": 293,
+        "text": "        // Calculate final RS_R0 given the final resistance variation\n        RS_R0 = Sensitivity_Air[input_sensor_model] - resistance_variation;\n\n        // Ensure a minimum sensor resitance"
+      },
+      {
+        "line": 303,
+        "text": "        if (RS_R0 < previous_sensor_output) // rise\n            tau = tau_value[input_sensor_model][0][0];\n        else // decay\n            tau = tau_value[input_sensor_model][0][1];"
+      },
+      {
+        "line": 305,
+        "text": "        else // decay\n            tau = tau_value[input_sensor_model][0][1];\n\n        // Use a low pass filter"
+      },
+      {
+        "line": 319,
+        "text": "    // Return Sensor response for current time instant as the Sensor Resistance in Ohms\n    return (sensor_output * R0[input_sensor_model]);\n}\n"
+      },
+      {
+        "line": 322,
+        "text": "\n// Simulate PID response : Weighted Sum of all gases\nfloat FakeGasSensor::simulate_pid(std::shared_ptr<gaden_msgs::srv::GasPosition_Response> GT_gas_concentrations)\n{"
+      },
+      {
+        "line": 323,
+        "text": "// Simulate PID response : Weighted Sum of all gases\nfloat FakeGasSensor::simulate_pid(std::shared_ptr<gaden_msgs::srv::GasPosition_Response> GT_gas_concentrations)\n{\n    // Handle multiple gases"
+      },
+      {
+        "line": 327,
+        "text": "    float accumulated_conc = 0.0;\n    for (int i = 0; i < GT_gas_concentrations->positions[0].concentration.size(); i++)\n    {\n        if (use_PID_correction_factors)"
+      },
+      {
+        "line": 329,
+        "text": "    {\n        if (use_PID_correction_factors)\n        {\n            int gas_id;"
+      },
+      {
+        "line": 332,
+        "text": "            int gas_id;\n            if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"ethanol\"))\n                gas_id = 0;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"methane\"))"
+      },
+      {
+        "line": 334,
+        "text": "                gas_id = 0;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"methane\"))\n                gas_id = 1;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"hydrogen\"))"
+      },
+      {
+        "line": 336,
+        "text": "                gas_id = 1;\n            else if (!strcmp(GT_gas_concentrations->gas_type[i].c_str(), \"hydrogen\"))\n                gas_id = 2;\n            else"
+      },
+      {
+        "line": 340,
+        "text": "            {\n                RCLCPP_ERROR(get_logger(), \"[fake_PID] PID response is not configured for this gas type!\");\n                return 0.0;\n            }"
+      },
+      {
+        "line": 343,
+        "text": "            }\n            if (PID_correction_factors[gas_id] != 0)\n                accumulated_conc += GT_gas_concentrations->positions[0].concentration[i] / PID_correction_factors[gas_id];\n        }"
+      },
+      {
+        "line": 344,
+        "text": "            if (PID_correction_factors[gas_id] != 0)\n                accumulated_conc += GT_gas_concentrations->positions[0].concentration[i] / PID_correction_factors[gas_id];\n        }\n        else"
+      },
+      {
+        "line": 347,
+        "text": "        else\n            accumulated_conc += GT_gas_concentrations->positions[0].concentration[i];\n    }\n    return accumulated_conc;"
+      },
+      {
+        "line": 361,
+        "text": "    // Sensor Model\n    input_sensor_model = declare_parameter<int>(\"sensor_model\", 30);\n\n    // sensor_frame"
+      },
+      {
+        "line": 366,
+        "text": "\n    // PID_correction_factors\n    use_PID_correction_factors = declare_parameter<bool>(\"use_PID_correction_factors\", false);\n"
+      },
+      {
+        "line": 367,
+        "text": "    // PID_correction_factors\n    use_PID_correction_factors = declare_parameter<bool>(\"use_PID_correction_factors\", false);\n\n    node_rate = declare_parameter<float>(\"rate\", 10.0);"
+      },
+      {
+        "line": 372,
+        "text": "    RCLCPP_INFO(get_logger(), \"The data provided in the roslaunch file is:\");\n    RCLCPP_INFO(get_logger(), \"Sensor model: %d\", input_sensor_model);\n    RCLCPP_INFO(get_logger(), \"Fixed frame: %s\", input_fixed_frame.c_str());\n    RCLCPP_INFO(get_logger(), \"Sensor frame: %s\", input_sensor_frame.c_str());"
+      }
+    ]
+  }
+}
