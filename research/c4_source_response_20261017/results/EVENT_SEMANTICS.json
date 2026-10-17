@@ -1,0 +1,18 @@
+{
+  "status": "HOLD_EVENT_OPERATOR_NOT_IDENTIFIED",
+  "native_prediction_event": "At least one massless 2D filament centre occupies a cell in a recorded timestep, then fixed spatial blur",
+  "actual_event": "Consumed PID concentration mean exceeds 0.1 ppm",
+  "native_filament_fields": [
+    "position.x",
+    "position.y"
+  ],
+  "source_point_files": "2D source release positions only, not trajectories",
+  "missing_native_fields": [
+    "3D filament positions and vertical motion",
+    "filament age and radius/sigma",
+    "filament gas amount/mass or source strength mapping",
+    "sensor concentration superposition and response operator"
+  ],
+  "not_performed": "No arbitrary occupancy-to-ppm factor, no threshold fit, no 3D model, no new physical world",
+  "distinction": "World generation parameters and actual 3D fields exist, but do not turn the captured 2D model output into a calibrated PID event by themselves."
+}

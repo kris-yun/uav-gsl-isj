@@ -1,0 +1,29 @@
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /tmp/c4a17_readout
+[ 33%] Building CXX object CMakeFiles/readout.dir/native_functions.cpp.o
+[ 66%] Building CXX object CMakeFiles/readout.dir/readout2026.cpp.o
+In file included from /mnt/hgfs/workspace/C4A17/readout_code/readout2026.cpp:1:
+/mnt/hgfs/workspace/C4A17/readout_code/native_support.hpp: In member function ‘GSL::Vector2Int GSL::Grid2DMetadata::coordinatesToIndices(float, float) const’:
+/mnt/hgfs/workspace/C4A17/readout_code/native_support.hpp:25:76: warning: narrowing conversion of ‘((x - ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::origin.DDA::Vector2::x)) / ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::cellSize))’ from ‘float’ to ‘int’ [-Wnarrowing]
+   25 |  Vector2Int coordinatesToIndices(float x,float y)const{return {(x-origin.x)/cellSize,(y-origin.y)/cellSize};}
+      |                                                                ~~~~~~~~~~~~^~~~~~~~~
+/mnt/hgfs/workspace/C4A17/readout_code/native_support.hpp:25:98: warning: narrowing conversion of ‘((y - ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::origin.DDA::Vector2::y)) / ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::cellSize))’ from ‘float’ to ‘int’ [-Wnarrowing]
+   25 |  Vector2Int coordinatesToIndices(float x,float y)const{return {(x-origin.x)/cellSize,(y-origin.y)/cellSize};}
+      |                                                                                      ~~~~~~~~~~~~^~~~~~~~~
+In file included from /mnt/hgfs/workspace/C4A17/readout_code/native_functions.cpp:1:
+/mnt/hgfs/workspace/C4A17/readout_code/native_support.hpp: In member function ‘GSL::Vector2Int GSL::Grid2DMetadata::coordinatesToIndices(float, float) const’:
+/mnt/hgfs/workspace/C4A17/readout_code/native_support.hpp:25:76: warning: narrowing conversion of ‘((x - ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::origin.DDA::Vector2::x)) / ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::cellSize))’ from ‘float’ to ‘int’ [-Wnarrowing]
+   25 |  Vector2Int coordinatesToIndices(float x,float y)const{return {(x-origin.x)/cellSize,(y-origin.y)/cellSize};}
+      |                                                                ~~~~~~~~~~~~^~~~~~~~~
+/mnt/hgfs/workspace/C4A17/readout_code/native_support.hpp:25:98: warning: narrowing conversion of ‘((y - ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::origin.DDA::Vector2::y)) / ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::cellSize))’ from ‘float’ to ‘int’ [-Wnarrowing]
+   25 |  Vector2Int coordinatesToIndices(float x,float y)const{return {(x-origin.x)/cellSize,(y-origin.y)/cellSize};}
+      |                                                                                      ~~~~~~~~~~~~^~~~~~~~~
+[100%] Linking CXX executable readout
+[100%] Built target readout

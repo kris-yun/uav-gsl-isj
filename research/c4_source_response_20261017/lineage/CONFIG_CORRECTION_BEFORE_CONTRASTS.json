@@ -1,0 +1,29 @@
+{
+  "time": "2026-10-17T07:49:33.967830-07:00",
+  "reason": "Adapter erroneously hard-coded the C4 noise for C3. Correct to the actual captured C3 noise=.25 before contrasts. No PMFS physical/method change; no contrast performed before this correction.",
+  "old_sha256": "d0b416024a4e1560b2bb339eb671c7b72b40799306b7981af81229fd7616c5bd",
+  "new_sha256": "f880a8c07ba8377c882827d22c31c316ecba45dfccbe3c646821cacc027a75f2",
+  "changes": {
+    "C4": {
+      "blurSigmaX": 1.5,
+      "blurSigmaY": 1.5,
+      "deltaTime": 0.1,
+      "iterationsToRecord": 200,
+      "maxWarmupIterations": 500,
+      "minWarmupIterations": 200,
+      "noiseSTDev": 0.5,
+      "sourceDiscriminationPower": 0.3
+    },
+    "C3": {
+      "blurSigmaX": 1.5,
+      "blurSigmaY": 1.5,
+      "deltaTime": 0.1,
+      "iterationsToRecord": 200,
+      "maxWarmupIterations": 500,
+      "minWarmupIterations": 200,
+      "noiseSTDev": 0.25,
+      "sourceDiscriminationPower": 0.3
+    }
+  },
+  "retained_failure": "logs/parity_C3_update_2.stderr; EXECUTION.json; results/parity/C3_update_2"
+}

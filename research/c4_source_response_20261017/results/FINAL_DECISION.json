@@ -1,0 +1,31 @@
+{
+  "verdict": "HOLD_INSUFFICIENT_IDENTIFICATION",
+  "scope": "Corrected-wind 2026 C4 fixed histories; C3 normal control; not author-original data or new robot task gains",
+  "main_innovation_established": false,
+  "unique_physical_root_cause_identified": false,
+  "source_representation": "Uniform 0.25m refinement and correct area likelihood marginalization did not restore final C4 discrimination",
+  "randomness": "Early C4 ranking is RNG-sensitive; three frozen prediction states did not repair final C4. Rare events and temporal truncation not excluded.",
+  "event_semantics": "Native 2D centre occupancy is not the actual PID mean-threshold event. Missing native mass, sigma, age, z and sensor operator prevent a qualified matching control.",
+  "finite_time": "Native true-source warmup 44.8/44.0s plus20s recorded; first-exit stopping is not receiver-wise convergence. Convergence untested.",
+  "ordinary_3d_control": "Not run; cannot attribute the remaining gap uniquely to 2D geometry",
+  "prediction_states": [
+    2026101701,
+    2026101702,
+    2026101703
+  ],
+  "native_parity_candidates_per_pass": 293,
+  "native_raw_blur_score_max_abs_difference": 0,
+  "ordinary_control_calls": 10122,
+  "completed_all_forward_calls_including_parity_and_oracle": 11206,
+  "additional_incomplete_validation_forward_call": 1,
+  "total_executed_forward_calls": 11207,
+  "ordinary_control_cpu_s": 217.5043670000001,
+  "posterior_readouts": 57,
+  "source_receiver_rows": 83918,
+  "new_gas_worlds": 0,
+  "new_ROS_episodes": 0,
+  "new_GADEN_service_calls": 0,
+  "new_modules": 0,
+  "next_minimum_test": "Predeclared native-2D warmup/record-duration convergence at frozen source representations, observations, wind, event, score and prediction states; extra diagnostic compute reported separately.",
+  "stop": "No more experiments started after this verdict"
+}

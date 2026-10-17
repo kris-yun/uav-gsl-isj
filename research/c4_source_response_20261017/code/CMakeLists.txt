@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.16)
+project(c4_forward_attribution LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 20)
+find_package(OpenCV REQUIRED COMPONENTS core imgproc)
+add_executable(forward forward.cpp native_forward.cpp native_math.cpp)
+target_include_directories(forward PRIVATE dda ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(forward PRIVATE ${OpenCV_LIBS})
+target_compile_options(forward PRIVATE -O2 -g0)

@@ -1,0 +1,119 @@
+{
+  "scope": "Fixed captured histories only; no new gas worlds, ROS episodes, training or algorithms",
+  "cases": [
+    {
+      "case": "C4",
+      "epoch": 0,
+      "native_update": "D:\\ZYC\\A-gas\\workspace\\NATIVE_PMFS_WIND_RECOVERY_20261014\\PORTABLE_DATA\\cases\\C4\\native_execution\\runtime\\updates\\update_0",
+      "truth": [
+        -0.77,
+        2.2,
+        -0.2
+      ],
+      "implementation": "2026_4e141e162551e674f2f30ddb8859136c72139aac_corrected_wind",
+      "identity": "CORRECTED_WIND_NEW_WORLD",
+      "metadata": {
+        "stamp_ns": 237434531440,
+        "width": 33,
+        "height": 47,
+        "cell_size": 0.25,
+        "origin_x": -5.392730236053467,
+        "origin_y": -7.45088005065918,
+        "free_cells": 518,
+        "robot_x": -0.486253,
+        "robot_y": 2.08945
+      },
+      "archived_rounded_origin": [
+        -5.39273,
+        -7.45088
+      ],
+      "exact_origin_source": "actual map CDR, cast to native float",
+      "fixture": "D:\\ZYC\\A-gas\\workspace\\C4A17\\inputs\\C4_update_0"
+    },
+    {
+      "case": "C4",
+      "epoch": 1,
+      "native_update": "D:\\ZYC\\A-gas\\workspace\\NATIVE_PMFS_WIND_RECOVERY_20261014\\PORTABLE_DATA\\cases\\C4\\native_execution\\runtime\\updates\\update_1",
+      "truth": [
+        -0.77,
+        2.2,
+        -0.2
+      ],
+      "implementation": "2026_4e141e162551e674f2f30ddb8859136c72139aac_corrected_wind",
+      "identity": "CORRECTED_WIND_NEW_WORLD",
+      "metadata": {
+        "stamp_ns": 351834763900,
+        "width": 33,
+        "height": 47,
+        "cell_size": 0.25,
+        "origin_x": -5.392730236053467,
+        "origin_y": -7.45088005065918,
+        "free_cells": 518,
+        "robot_x": 0.0208258,
+        "robot_y": 1.91799
+      },
+      "archived_rounded_origin": [
+        -5.39273,
+        -7.45088
+      ],
+      "exact_origin_source": "actual map CDR, cast to native float",
+      "fixture": "D:\\ZYC\\A-gas\\workspace\\C4A17\\inputs\\C4_update_1"
+    },
+    {
+      "case": "C3",
+      "epoch": 2,
+      "native_update": "D:\\ZYC\\A-gas\\workspace\\NATIVE_PMFS_WIND_RECOVERY_20261014\\PORTABLE_DATA\\cases\\C3\\native_execution\\runtime\\updates\\update_2",
+      "truth": [
+        -2.7,
+        0.8,
+        -0.1
+      ],
+      "implementation": "2026_4e141e162551e674f2f30ddb8859136c72139aac_corrected_wind",
+      "identity": "CORRECTED_WIND_NEW_WORLD",
+      "metadata": {
+        "stamp_ns": 334001554480,
+        "width": 33,
+        "height": 47,
+        "cell_size": 0.25,
+        "origin_x": -5.392730236053467,
+        "origin_y": -7.45088005065918,
+        "free_cells": 518,
+        "robot_x": -1.52482,
+        "robot_y": -1.86214
+      },
+      "archived_rounded_origin": [
+        -5.39273,
+        -7.45088
+      ],
+      "exact_origin_source": "actual map CDR, cast to native float",
+      "fixture": "D:\\ZYC\\A-gas\\workspace\\C4A17\\inputs\\C3_update_2"
+    }
+  ],
+  "normal_control_rule": "C3 latest complete update, native converged error 0.433755 m; selected before new prediction runs",
+  "parameters": {
+    "deltaTime": 0.1,
+    "noiseSTDev": 0.5,
+    "iterationsToRecord": 200,
+    "minWarmupIterations": 200,
+    "maxWarmupIterations": 500,
+    "blurSigmaX": 1.5,
+    "blurSigmaY": 1.5,
+    "sourceDiscriminationPower": 0.3
+  },
+  "prediction_rng_states": [
+    2026101701,
+    2026101702,
+    2026101703
+  ],
+  "parity": "All archived candidates for both C4 updates and C3 update_2; source releases and Gaussian table/index restored; no contrast until raw and blurred maps match",
+  "A": "Same final native source partition; three independent prediction states, unchanged measured maps/wind/scoring",
+  "B": "For each legal source cell: one full simulation from its native final leaf versus one from its own 0.25m cell; all sources receive equal area allocation. Same number of simulations, release rate, recorded horizon and maximum warmup budget. Actual CPU/particle moves reported separately.",
+  "marginalization": "Both score(mean_response) and area_weighted_mean(exp(logscore)) reported; fine cell posterior retained and likelihood integrated back into original leaves",
+  "competitor": "Prior update posterior first row-major maximum from captured input.csv, frozen before new responses; epoch 0 abstains",
+  "truth_use": "Only post-hoc metrics; never source selection, seeds, source weights or parameter tuning",
+  "event_semantics": "No ppm-threshold surrogate without filament mass, radius/sigma, age, z and sensor response; report unavailable quantities",
+  "maximum_forward_calls": 12000,
+  "maximum_child_cpu_s": 1800,
+  "maximum_output_mib": 200,
+  "termination": "Stop after these contrasts and scientific verdict; no new ROS loop or innovation module"
+}

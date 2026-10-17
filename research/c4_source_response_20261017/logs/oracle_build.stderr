@@ -1,0 +1,11 @@
+/mnt/hgfs/workspace/C4A17/oracle_code/forward.cpp: In function ‘int main(int, char**)’:
+/mnt/hgfs/workspace/C4A17/oracle_code/forward.cpp:34:2: error: ‘elseif’ was not declared in this scope
+   34 |  elseif(mode=="parity"){jobs=candidates;}
+      |  ^~~~~~
+/mnt/hgfs/workspace/C4A17/oracle_code/forward.cpp:35:2: error: ‘else’ without a previous ‘if’
+   35 |  else if(mode=="region"){for(auto r:leaves){r["candidate_id"]=r.at("node_id");r["parent_id"]=r.at("node_id");jobs.push_back(r);}}
+      |  ^~~~
+gmake[2]: *** [CMakeFiles/forward.dir/build.make:76: CMakeFiles/forward.dir/forward.cpp.o] Error 1
+gmake[2]: *** Waiting for unfinished jobs....
+gmake[1]: *** [CMakeFiles/Makefile2:83: CMakeFiles/forward.dir/all] Error 2
+gmake: *** [Makefile:91: all] Error 2

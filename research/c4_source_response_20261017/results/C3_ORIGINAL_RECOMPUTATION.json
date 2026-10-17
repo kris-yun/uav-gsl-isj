@@ -1,0 +1,487 @@
+{
+  "case": "C3",
+  "status": "NATIVE_CONVERGED_WITHIN_1P5M",
+  "original_native_status": {
+    "case": "C3",
+    "input_class": "CORRECTED_WIND_NATIVE_DEVELOPMENT_NOT_INNOVATION",
+    "physical_qualification": "WIND_FULL_ARRAY_AND_SHORT_RUNTIME_GATE_PASS_CONSUMER_AUDIT_PENDING",
+    "native_goal_count": 1,
+    "fixture_messages_injected": 0,
+    "generated_gas_data": 0,
+    "processes": [
+      {
+        "name": "launch",
+        "pid": 115945,
+        "returncode": 0
+      },
+      {
+        "name": "gmrf",
+        "pid": 115946,
+        "returncode": 0
+      },
+      {
+        "name": "parameter_dump",
+        "pid": 116201,
+        "returncode": 0
+      }
+    ],
+    "preflight": "PASS",
+    "counts": {
+      "/tf_static": 4,
+      "/PioneerP3DX/map": 1,
+      "/PioneerP3DX/Anemometer/WindSensor_reading": 1256,
+      "/native20/wind_to": 1256,
+      "/clock": 3241,
+      "/PioneerP3DX/ground_truth": 3245,
+      "/tf": 3287,
+      "/PioneerP3DX/PID/Sensor_reading": 619,
+      "/PioneerP3DX/cmd_vel": 536
+    },
+    "nonzero_cmd_vel_messages": 489,
+    "pose_samples": 3245,
+    "goal_invocation_ROS_ns": 56501222350,
+    "goal_accepted": true,
+    "result": "NATIVE_ACTION_RETURNED",
+    "action_status": 4,
+    "localization_success": true,
+    "wall_seconds": 51.72272515296936
+  },
+  "source_xyz_m": [
+    -2.7,
+    0.8,
+    -0.1
+  ],
+  "robot_start_xyz_m": [
+    -1.4,
+    -5.8,
+    -0.9
+  ],
+  "sensor_xyz_m": [
+    -1.4,
+    -5.8,
+    -0.4
+  ],
+  "source_sensor_height_difference_m": 0.30000000000000004,
+  "official_wind_path": "3,5-1_fast/3,5-1_fast",
+  "native_noise_stdev": 0.25,
+  "source_discrimination_power": 0.3,
+  "observed_events": 50,
+  "positive_events": 30,
+  "measurement_stops": 10,
+  "clock_messages": 3241,
+  "clock_backwards": 0,
+  "native_returned_point_metrics": {
+    "raw": "-1 253.1 0.539895 0.433755 9 1.4745",
+    "native_recorded_failure": false,
+    "navigation_time_s": -1.0,
+    "search_time_s": 253.1,
+    "mean_error_m": 0.539895,
+    "best5pct_error_m": 0.433755,
+    "movement_iterations": 9,
+    "variance_m2": 1.4745
+  },
+  "complete_source_updates": 3,
+  "native_candidate_calls": 301,
+  "updates": [
+    {
+      "update": "update_0",
+      "metadata": {
+        "stamp_ns": 186702084350,
+        "width": 33,
+        "height": 47,
+        "cell_size": 0.25,
+        "origin_x": -5.39273,
+        "origin_y": -7.45088,
+        "free_cells": 518,
+        "robot_x": -0.445665,
+        "robot_y": 2.10816
+      },
+      "truth_legal": true,
+      "truth_cell_index": 1099,
+      "truth_cell_mass": 0.0005960179141718634,
+      "truth_strict_rank": 337,
+      "within_0p5m_mass": 0.024045286200379042,
+      "within_1p5m_mass": 0.14712993957962203,
+      "posterior_mean_xy": [
+        -1.8612633820144822,
+        -2.5487576248759365
+      ],
+      "posterior_mean_error_m": 3.4521959307829717,
+      "diagnostic_best5pct_xy": [
+        -1.4035442612837887,
+        -4.267061772120193
+      ],
+      "diagnostic_best5pct_error_m": 5.230287992542287,
+      "variance_m2": 8.815704839954243,
+      "variance_threshold": 1.5,
+      "concentrated": false,
+      "truth_in90pct_set": false,
+      "area90pct_free_fraction": 0.5694980694980695,
+      "native_candidate_calls": 107,
+      "max_logscore_recompute_error": 8.881784197001252e-16,
+      "posterior_parity_max_abs_error": 6.938893903907228e-18,
+      "source_contrast": {
+        "truth_final_leaf": "quadtree_7_33_4_3",
+        "best_final_leaf": "quadtree_15_11_1_1",
+        "same_leaf": false,
+        "native_logscore_best_minus_truth": 2.889114832538854,
+        "mean_direct_stop_Brier_best_minus_truth": -0.2700389089976763,
+        "inside_0p5m_sample_neighborhood_logcontrast": 2.541979268259446,
+        "outside_0p5m_sample_neighborhood_logcontrast": 0.3471355642794082,
+        "direct_stop_diagnostic": [
+          {
+            "stop": 0,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.4672876000404358,
+            "best_leaf_h": 0.8386775255203247,
+            "Brier_best_minus_truth": -0.2577575602984332,
+            "receiver_xy_m": [
+              -1.399999976158142,
+              -5.800000190734863
+            ]
+          },
+          {
+            "stop": 1,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.9068616628646851,
+            "best_leaf_h": 0.0,
+            "Brier_best_minus_truth": -0.8223980755737017,
+            "receiver_xy_m": [
+              -3.583073139190674,
+              1.040047287940979
+            ]
+          },
+          {
+            "stop": 2,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.0,
+            "best_leaf_h": 0.0,
+            "Brier_best_minus_truth": 0.0,
+            "receiver_xy_m": [
+              0.7760177254676819,
+              -3.393113374710083
+            ]
+          },
+          {
+            "stop": 3,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 1.0888998986047227e-05,
+            "best_leaf_h": 0.0,
+            "Brier_best_minus_truth": -1.1857029891813754e-10,
+            "receiver_xy_m": [
+              -0.44566506147384644,
+              2.1081550121307373
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "update": "update_1",
+      "metadata": {
+        "stamp_ns": 276401446185,
+        "width": 33,
+        "height": 47,
+        "cell_size": 0.25,
+        "origin_x": -5.39273,
+        "origin_y": -7.45088,
+        "free_cells": 518,
+        "robot_x": 0.522393,
+        "robot_y": 0.0426729
+      },
+      "truth_legal": true,
+      "truth_cell_index": 1099,
+      "truth_cell_mass": 0.0019038496956638072,
+      "truth_strict_rank": 94,
+      "within_0p5m_mass": 0.07871838069903678,
+      "within_1p5m_mass": 0.3963945143837128,
+      "posterior_mean_xy": [
+        -1.943605479734675,
+        -0.7774227136474028
+      ],
+      "posterior_mean_error_m": 1.7493984931450433,
+      "diagnostic_best5pct_xy": [
+        -1.7426448898889846,
+        -0.9459461866141881
+      ],
+      "diagnostic_best5pct_error_m": 1.991194840644255,
+      "variance_m2": 3.7086123897629735,
+      "variance_threshold": 1.5,
+      "concentrated": false,
+      "truth_in90pct_set": true,
+      "area90pct_free_fraction": 0.20077220077220076,
+      "native_candidate_calls": 97,
+      "max_logscore_recompute_error": 1.7763568394002505e-15,
+      "posterior_parity_max_abs_error": 1.0408340855860843e-17,
+      "source_contrast": {
+        "truth_final_leaf": "quadtree_7_33_4_3",
+        "best_final_leaf": "quadtree_15_24_1_1",
+        "same_leaf": false,
+        "native_logscore_best_minus_truth": 2.60905750729552,
+        "mean_direct_stop_Brier_best_minus_truth": -0.1364387157430544,
+        "inside_0p5m_sample_neighborhood_logcontrast": 2.308227647373204,
+        "outside_0p5m_sample_neighborhood_logcontrast": 0.300829859922316,
+        "direct_stop_diagnostic": [
+          {
+            "stop": 0,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.40293264389038086,
+            "best_leaf_h": 0.5727977156639099,
+            "Brier_best_minus_truth": -0.1739876359897572,
+            "receiver_xy_m": [
+              -1.399999976158142,
+              -5.800000190734863
+            ]
+          },
+          {
+            "stop": 1,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.8737621903419495,
+            "best_leaf_h": 0.0,
+            "Brier_best_minus_truth": -0.7634603652711611,
+            "receiver_xy_m": [
+              -3.583073139190674,
+              1.040047287940979
+            ]
+          },
+          {
+            "stop": 2,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.0,
+            "best_leaf_h": 0.0,
+            "Brier_best_minus_truth": 0.0,
+            "receiver_xy_m": [
+              0.7760177254676819,
+              -3.393113374710083
+            ]
+          },
+          {
+            "stop": 3,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.0,
+            "best_leaf_h": 0.0,
+            "Brier_best_minus_truth": 0.0,
+            "receiver_xy_m": [
+              -0.44566506147384644,
+              2.1081550121307373
+            ]
+          },
+          {
+            "stop": 4,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.8794850707054138,
+            "best_leaf_h": 0.9352553486824036,
+            "Brier_best_minus_truth": -0.010331978308641965,
+            "receiver_xy_m": [
+              -1.875069499015808,
+              -3.397517204284668
+            ]
+          },
+          {
+            "stop": 5,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.9133163690567017,
+            "best_leaf_h": 0.9848560094833374,
+            "Brier_best_minus_truth": -0.007284711424745183,
+            "receiver_xy_m": [
+              -2.294884443283081,
+              -3.617546558380127
+            ]
+          },
+          {
+            "stop": 6,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.002513803308829665,
+            "best_leaf_h": 0.0,
+            "Brier_best_minus_truth": -6.319207075482973e-06,
+            "receiver_xy_m": [
+              0.5223931074142456,
+              0.04267294704914093
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "update": "update_2",
+      "metadata": {
+        "stamp_ns": 334001554480,
+        "width": 33,
+        "height": 47,
+        "cell_size": 0.25,
+        "origin_x": -5.39273,
+        "origin_y": -7.45088,
+        "free_cells": 518,
+        "robot_x": -1.52482,
+        "robot_y": -1.86214
+      },
+      "truth_legal": true,
+      "truth_cell_index": 1099,
+      "truth_cell_mass": 0.004238511784381045,
+      "truth_strict_rank": 52,
+      "within_0p5m_mass": 0.25867193534775207,
+      "within_1p5m_mass": 0.8041068532864315,
+      "posterior_mean_xy": [
+        -2.4051188528750562,
+        0.34774758348646984
+      ],
+      "posterior_mean_error_m": 0.5398954891199318,
+      "diagnostic_best5pct_xy": [
+        -2.4364997858413533,
+        0.45545463224744426
+      ],
+      "diagnostic_best5pct_error_m": 0.43375554555693774,
+      "variance_m2": 1.4744965966446837,
+      "variance_threshold": 1.5,
+      "concentrated": true,
+      "truth_in90pct_set": true,
+      "area90pct_free_fraction": 0.11969111969111969,
+      "native_candidate_calls": 97,
+      "max_logscore_recompute_error": 3.552713678800501e-15,
+      "posterior_parity_max_abs_error": 1.3877787807814457e-17,
+      "source_contrast": {
+        "truth_final_leaf": "quadtree_7_33_4_3",
+        "best_final_leaf": "quadtree_11_32_1_1",
+        "same_leaf": false,
+        "native_logscore_best_minus_truth": 2.3026880769687343,
+        "mean_direct_stop_Brier_best_minus_truth": -0.09077213098921577,
+        "inside_0p5m_sample_neighborhood_logcontrast": 1.9542670991397106,
+        "outside_0p5m_sample_neighborhood_logcontrast": 0.34842097782902326,
+        "direct_stop_diagnostic": [
+          {
+            "stop": 0,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.41791048645973206,
+            "best_leaf_h": 0.5012128353118896,
+            "Brier_best_minus_truth": -0.09003956611594166,
+            "receiver_xy_m": [
+              -1.399999976158142,
+              -5.800000190734863
+            ]
+          },
+          {
+            "stop": 1,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.9039499759674072,
+            "best_leaf_h": 0.022584103047847748,
+            "Brier_best_minus_truth": -0.8166155173410004,
+            "receiver_xy_m": [
+              -3.583073139190674,
+              1.040047287940979
+            ]
+          },
+          {
+            "stop": 2,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.0,
+            "best_leaf_h": 0.0,
+            "Brier_best_minus_truth": 0.0,
+            "receiver_xy_m": [
+              0.7760177254676819,
+              -3.393113374710083
+            ]
+          },
+          {
+            "stop": 3,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 9.922695426212158e-06,
+            "best_leaf_h": 1.7957103409571573e-05,
+            "Brier_best_minus_truth": 2.2399767834067534e-10,
+            "receiver_xy_m": [
+              -0.44566506147384644,
+              2.1081550121307373
+            ]
+          },
+          {
+            "stop": 4,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.860518753528595,
+            "best_leaf_h": 0.9066060781478882,
+            "Brier_best_minus_truth": -0.010732593478298469,
+            "receiver_xy_m": [
+              -1.875069499015808,
+              -3.397517204284668
+            ]
+          },
+          {
+            "stop": 5,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.8757801055908203,
+            "best_leaf_h": 0.9685251712799072,
+            "Brier_best_minus_truth": -0.014439917324068574,
+            "receiver_xy_m": [
+              -2.294884443283081,
+              -3.617546558380127
+            ]
+          },
+          {
+            "stop": 6,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.008285061456263065,
+            "best_leaf_h": 0.04147520288825035,
+            "Brier_best_minus_truth": 0.0016515502112874744,
+            "receiver_xy_m": [
+              0.5223931074142456,
+              0.04267294704914093
+            ]
+          },
+          {
+            "stop": 7,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.9649175405502319,
+            "best_leaf_h": 0.8619661927223206,
+            "Brier_best_minus_truth": 0.01782255299052693,
+            "receiver_xy_m": [
+              -2.322281837463379,
+              0.2537243068218231
+            ]
+          },
+          {
+            "stop": 8,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.8648585677146912,
+            "best_leaf_h": 0.8333423137664795,
+            "Brier_best_minus_truth": 0.009511577660585857,
+            "receiver_xy_m": [
+              -1.5091444253921509,
+              -1.37904691696167
+            ]
+          },
+          {
+            "stop": 9,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.9095684885978699,
+            "best_leaf_h": 0.942567765712738,
+            "Brier_best_minus_truth": -0.0048793967192466425,
+            "receiver_xy_m": [
+              -1.5248206853866577,
+              -1.8621431589126587
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "scope": "One default initialization in this configuration; point metrics use original native log when available, last completed trace estimates are diagnostic only. Direct-stop contrast is not a calibrated replacement likelihood. Capture has I/O costs."
+}
