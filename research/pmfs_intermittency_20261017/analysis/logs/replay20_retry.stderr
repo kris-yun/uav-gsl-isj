@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/scripts/replay20.py", line 10, in <module>
+    c=e['case'];root=P/e['native_path'];ev=np.loadtxt(root/'runtime/measurement_events.csv',delimiter=',',ndmin=2);updates=sorted((root/'runtime/updates').glob('*/COMPLETE.txt'),key=lambda p:int(p.parent.name.split('_')[-1]));first=updates[0].parent;m=json.loads((first/'metadata.json').read_text());inp=list(csv.DictReader((first/'input.csv').open()));free=np.array([i for i,a in enumerate(inp) if a['occupancy']=='1']);par,parameter_origin=read_parameters(root);settings=[par.get('hitPriorProbability',.3),par['kernelSigma'],par['kernelStretchConstant'],par['confidenceSigmaSpatial'],par['confidenceMeasurementWeight'],par['localEstimationWindowSize']]
+  File "/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/scripts/parameters.py", line 10, in read_parameters
+    m=re.search(r'"'+k+r'"\s*:\s*([\d.]+)',text);assert m,(root,k);out[k]=float(m[1])
+AssertionError: (PosixPath('/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/PORTABLE_DATA/cases/C2/native_execution'), 'localEstimationWindowSize')

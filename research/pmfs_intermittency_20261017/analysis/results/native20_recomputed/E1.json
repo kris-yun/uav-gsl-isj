@@ -1,0 +1,127 @@
+{
+  "case": "E1",
+  "status": "SEARCH_HORIZON_REACHED",
+  "original_native_status": {
+    "case": "E1",
+    "input_class": "CORRECTED_WIND_NATIVE_DEVELOPMENT_NOT_INNOVATION",
+    "physical_qualification": "WIND_FULL_ARRAY_AND_SHORT_RUNTIME_GATE_PASS_CONSUMER_AUDIT_PENDING",
+    "native_goal_count": 1,
+    "fixture_messages_injected": 0,
+    "generated_gas_data": 0,
+    "processes": [
+      {
+        "name": "launch",
+        "pid": 118920,
+        "returncode": -15
+      },
+      {
+        "name": "gmrf",
+        "pid": 118921,
+        "returncode": 0
+      },
+      {
+        "name": "parameter_dump",
+        "pid": 119176,
+        "returncode": 0
+      }
+    ],
+    "preflight": "PASS",
+    "counts": {
+      "/tf_static": 4,
+      "/PioneerP3DX/PID/Sensor_reading": 713,
+      "/clock": 3959,
+      "/PioneerP3DX/ground_truth": 3964,
+      "/tf": 4006,
+      "/PioneerP3DX/map": 1,
+      "/PioneerP3DX/Anemometer/WindSensor_reading": 1361,
+      "/native20/wind_to": 1361,
+      "/PioneerP3DX/cmd_vel": 384
+    },
+    "nonzero_cmd_vel_messages": 326,
+    "pose_samples": 3964,
+    "goal_invocation_ROS_ns": 100402068840,
+    "goal_accepted": true,
+    "resource_stop_reason": "SIMULATION_SEARCH_BUDGET_300S",
+    "budget_stop_ROS_ns": 400501236640,
+    "result": "RUNTIME_ERROR",
+    "error": "External 300 simulated-second search guard reached; no extended localization permitted",
+    "traceback": "Traceback (most recent call last):\n  File \"/home/zyc/ros2_ws/native_pmfs_wind_recovery_20261014/E1/runtime_driver.py\", line 145, in <module>\n    raise RuntimeError('External 300 simulated-second search guard reached; no extended localization permitted')\nRuntimeError: External 300 simulated-second search guard reached; no extended localization permitted\n"
+  },
+  "source_xyz_m": [
+    4.3,
+    1.4,
+    0.9
+  ],
+  "robot_start_xyz_m": [
+    0.0,
+    5.3,
+    0.0
+  ],
+  "sensor_xyz_m": [
+    0.0,
+    5.3,
+    0.5
+  ],
+  "source_sensor_height_difference_m": 0.4,
+  "official_wind_path": "W5/W5",
+  "native_noise_stdev": 0.05,
+  "source_discrimination_power": 0.3,
+  "observed_events": 35,
+  "positive_events": 23,
+  "measurement_stops": 7,
+  "clock_messages": 3959,
+  "clock_backwards": 0,
+  "native_returned_point_metrics": null,
+  "complete_source_updates": 1,
+  "native_candidate_calls": 168,
+  "updates": [
+    {
+      "update": "update_0",
+      "metadata": {
+        "stamp_ns": 217701681675,
+        "width": 44,
+        "height": 48,
+        "cell_size": 0.25,
+        "origin_x": -5.5,
+        "origin_y": -6,
+        "free_cells": 1132,
+        "robot_x": -2.43108,
+        "robot_y": 3.64763
+      },
+      "truth_legal": false,
+      "truth_cell_index": 1315,
+      "truth_cell_mass": 0.0,
+      "truth_strict_rank": null,
+      "within_0p5m_mass": 0.012403857514654056,
+      "within_1p5m_mass": 0.12652491304954708,
+      "posterior_mean_xy": [
+        1.5460034949880617,
+        0.027809571887312968
+      ],
+      "posterior_mean_error_m": 3.0769145780508835,
+      "diagnostic_best5pct_xy": [
+        3.193032172673212,
+        1.2650024569376694
+      ],
+      "diagnostic_best5pct_error_m": 1.1151690936218845,
+      "variance_m2": 16.467566287949214,
+      "variance_threshold": 1.5,
+      "concentrated": false,
+      "truth_in90pct_set": false,
+      "area90pct_free_fraction": 0.6219081272084805,
+      "native_candidate_calls": 168,
+      "max_logscore_recompute_error": 1.3322676295501878e-15,
+      "posterior_parity_max_abs_error": 1.734723475976807e-18,
+      "source_contrast": null
+    }
+  ],
+  "scope": "One default initialization in this configuration; point metrics use original native log when available, last completed trace estimates are diagnostic only. Direct-stop contrast is not a calibrated replacement likelihood. Capture has I/O costs. Wind identity is checked independently by portable_wind_chain.py.",
+  "wind_run_identity": "CORRECTED_WIND_NEW_WORLD",
+  "source_wind_group": "5b05a786b636",
+  "last_update_tail_diagnostic": {
+    "measurement_windows_after_last_source_input": 15,
+    "tail_fraction": 0.42857142857142855,
+    "last_source_input_ns": 217701681675,
+    "last_consumed_window_ns": 357301232780
+  }
+}

@@ -1,0 +1,487 @@
+{
+  "case": "A4",
+  "status": "SEARCH_HORIZON_REACHED",
+  "original_native_status": {
+    "case": "A4",
+    "input_class": "CORRECTED_WIND_NATIVE_DEVELOPMENT_NOT_INNOVATION",
+    "physical_qualification": "WIND_FULL_ARRAY_AND_SHORT_RUNTIME_GATE_PASS_CONSUMER_AUDIT_PENDING",
+    "native_goal_count": 1,
+    "fixture_messages_injected": 0,
+    "generated_gas_data": 0,
+    "processes": [
+      {
+        "name": "launch",
+        "pid": 113383,
+        "returncode": 0
+      },
+      {
+        "name": "gmrf",
+        "pid": 113384,
+        "returncode": 0
+      },
+      {
+        "name": "parameter_dump",
+        "pid": 113642,
+        "returncode": 2
+      }
+    ],
+    "preflight": "PASS",
+    "counts": {
+      "/tf_static": 4,
+      "/PioneerP3DX/map": 1,
+      "/PioneerP3DX/Anemometer/WindSensor_reading": 1598,
+      "/native20/wind_to": 1598,
+      "/PioneerP3DX/PID/Sensor_reading": 799,
+      "/PioneerP3DX/ground_truth": 3901,
+      "/tf": 3900,
+      "/clock": 3900,
+      "/PioneerP3DX/cmd_vel": 635
+    },
+    "nonzero_cmd_vel_messages": 502,
+    "pose_samples": 3901,
+    "goal_invocation_ROS_ns": 104101335450,
+    "goal_accepted": true,
+    "resource_stop_reason": "SIMULATION_SEARCH_BUDGET_300S",
+    "budget_stop_ROS_ns": 404101364660,
+    "result": "RUNTIME_ERROR",
+    "error": "External 300 simulated-second search guard reached; no extended localization permitted",
+    "traceback": "Traceback (most recent call last):\n  File \"/home/zyc/ros2_ws/native_pmfs_wind_recovery_20261014/A4/runtime_driver.py\", line 140, in <module>\n    raise RuntimeError('External 300 simulated-second search guard reached; no extended localization permitted')\nRuntimeError: External 300 simulated-second search guard reached; no extended localization permitted\n"
+  },
+  "source_xyz_m": [
+    3.1,
+    4.3,
+    0.5
+  ],
+  "robot_start_xyz_m": [
+    5.0,
+    0.8,
+    0.0
+  ],
+  "sensor_xyz_m": [
+    5.0,
+    0.8,
+    0.5
+  ],
+  "source_sensor_height_difference_m": 0.0,
+  "official_wind_path": "1,2,3-5,6",
+  "native_noise_stdev": 0.5,
+  "source_discrimination_power": 0.3,
+  "observed_events": 60,
+  "positive_events": 24,
+  "measurement_stops": 12,
+  "clock_messages": 3900,
+  "clock_backwards": 0,
+  "native_returned_point_metrics": null,
+  "complete_source_updates": 3,
+  "native_candidate_calls": 496,
+  "updates": [
+    {
+      "update": "update_0",
+      "metadata": {
+        "stamp_ns": 183301420355,
+        "width": 40,
+        "height": 40,
+        "cell_size": 0.25,
+        "origin_x": 0,
+        "origin_y": 0,
+        "free_cells": 1195,
+        "robot_x": 7.92906,
+        "robot_y": 1.4741
+      },
+      "truth_legal": true,
+      "truth_cell_index": 692,
+      "truth_cell_mass": 0.0034596674076725247,
+      "truth_strict_rank": 23,
+      "within_0p5m_mass": 0.03776314354742867,
+      "within_1p5m_mass": 0.19129021820191006,
+      "posterior_mean_xy": [
+        3.6642443308995265,
+        5.016380458565515
+      ],
+      "posterior_mean_error_m": 0.911906040317089,
+      "diagnostic_best5pct_xy": [
+        3.914023492090142,
+        3.3046569502196403
+      ],
+      "diagnostic_best5pct_error_m": 1.2858234841612968,
+      "variance_m2": 11.90937400321878,
+      "variance_threshold": 1.5,
+      "concentrated": false,
+      "truth_in90pct_set": true,
+      "area90pct_free_fraction": 0.5297071129707113,
+      "native_candidate_calls": 164,
+      "max_logscore_recompute_error": 1.7763568394002505e-15,
+      "posterior_parity_max_abs_error": 1.734723475976807e-18,
+      "source_contrast": {
+        "truth_final_leaf": "quadtree_12_17_2_2",
+        "best_final_leaf": "quadtree_17_11_1_1",
+        "same_leaf": false,
+        "native_logscore_best_minus_truth": 0.10027709306322917,
+        "mean_direct_stop_Brier_best_minus_truth": -0.0023930205664405096,
+        "inside_0p5m_sample_neighborhood_logcontrast": 0.12072701625993576,
+        "outside_0p5m_sample_neighborhood_logcontrast": -0.02044992319670659,
+        "direct_stop_diagnostic": [
+          {
+            "stop": 0,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.8958491086959839,
+            "best_leaf_h": 0.9652337431907654,
+            "Brier_best_minus_truth": -0.009638715546895327,
+            "receiver_xy_m": [
+              5.0,
+              0.800000011920929
+            ]
+          },
+          {
+            "stop": 1,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.011188487522304058,
+            "best_leaf_h": 0.0,
+            "Brier_best_minus_truth": -0.0001251822530367536,
+            "receiver_xy_m": [
+              2.0845508575439453,
+              3.30777645111084
+            ]
+          },
+          {
+            "stop": 2,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 9.9745932402584e-08,
+            "best_leaf_h": 0.0,
+            "Brier_best_minus_truth": -9.949251030860857e-15,
+            "receiver_xy_m": [
+              4.912861347198486,
+              5.811214447021484
+            ]
+          },
+          {
+            "stop": 3,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.01754995994269848,
+            "best_leaf_h": 0.022356579080224037,
+            "Brier_best_minus_truth": 0.00019181553417998987,
+            "receiver_xy_m": [
+              7.9290571212768555,
+              1.4741020202636719
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "update": "update_1",
+      "metadata": {
+        "stamp_ns": 274701904210,
+        "width": 40,
+        "height": 40,
+        "cell_size": 0.25,
+        "origin_x": 0,
+        "origin_y": 0,
+        "free_cells": 1195,
+        "robot_x": 2.16819,
+        "robot_y": 5.45221
+      },
+      "truth_legal": true,
+      "truth_cell_index": 692,
+      "truth_cell_mass": 0.011532389147080442,
+      "truth_strict_rank": 8,
+      "within_0p5m_mass": 0.1373731874471787,
+      "within_1p5m_mass": 0.42869614663826583,
+      "posterior_mean_xy": [
+        3.664954965373818,
+        3.9322384501956353
+      ],
+      "posterior_mean_error_m": 0.6741087971648493,
+      "diagnostic_best5pct_xy": [
+        3.146162352884684,
+        3.9316077756078673
+      ],
+      "diagnostic_best5pct_error_m": 0.3712732064348751,
+      "variance_m2": 7.380885729767579,
+      "variance_threshold": 1.5,
+      "concentrated": false,
+      "truth_in90pct_set": true,
+      "area90pct_free_fraction": 0.46443514644351463,
+      "native_candidate_calls": 170,
+      "max_logscore_recompute_error": 2.6645352591003757e-15,
+      "posterior_parity_max_abs_error": 1.214306433183765e-17,
+      "source_contrast": {
+        "truth_final_leaf": "quadtree_12_17_1_1",
+        "best_final_leaf": "quadtree_10_17_1_1",
+        "same_leaf": false,
+        "native_logscore_best_minus_truth": 0.41114614422197326,
+        "mean_direct_stop_Brier_best_minus_truth": -0.03161995644006787,
+        "inside_0p5m_sample_neighborhood_logcontrast": 0.38864214001787395,
+        "outside_0p5m_sample_neighborhood_logcontrast": 0.022504004204099176,
+        "direct_stop_diagnostic": [
+          {
+            "stop": 0,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.9119279980659485,
+            "best_leaf_h": 0.8823065757751465,
+            "Brier_best_minus_truth": 0.006095064581099763,
+            "receiver_xy_m": [
+              5.0,
+              0.800000011920929
+            ]
+          },
+          {
+            "stop": 1,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.0136058758944273,
+            "best_leaf_h": 0.12342656403779984,
+            "Brier_best_minus_truth": 0.015048996851322546,
+            "receiver_xy_m": [
+              2.0845508575439453,
+              3.30777645111084
+            ]
+          },
+          {
+            "stop": 2,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 9.9745932402584e-08,
+            "best_leaf_h": 6.959832177244607e-08,
+            "Brier_best_minus_truth": -5.105324637319917e-15,
+            "receiver_xy_m": [
+              4.912861347198486,
+              5.811214447021484
+            ]
+          },
+          {
+            "stop": 3,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.022048156708478928,
+            "best_leaf_h": 0.019645534455776215,
+            "Brier_best_minus_truth": -0.00010017419018855389,
+            "receiver_xy_m": [
+              7.9290571212768555,
+              1.4741020202636719
+            ]
+          },
+          {
+            "stop": 4,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.47888365387916565,
+            "best_leaf_h": 0.8293077945709229,
+            "Brier_best_minus_truth": -0.24242641720008695,
+            "receiver_xy_m": [
+              2.8660471439361572,
+              3.912734270095825
+            ]
+          },
+          {
+            "stop": 5,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 4.270804083716939e-07,
+            "best_leaf_h": 8.861183232511394e-06,
+            "Brier_best_minus_truth": 7.833817060492614e-11,
+            "receiver_xy_m": [
+              1.5868492126464844,
+              5.820098876953125
+            ]
+          },
+          {
+            "stop": 6,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.001099826069548726,
+            "best_leaf_h": 0.006636596750468016,
+            "Brier_best_minus_truth": 4.2834799045063626e-05,
+            "receiver_xy_m": [
+              2.16819429397583,
+              5.45220947265625
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "update": "update_2",
+      "metadata": {
+        "stamp_ns": 338001952795,
+        "width": 40,
+        "height": 40,
+        "cell_size": 0.25,
+        "origin_x": 0,
+        "origin_y": 0,
+        "free_cells": 1195,
+        "robot_x": 3.38204,
+        "robot_y": 3.0675
+      },
+      "truth_legal": true,
+      "truth_cell_index": 692,
+      "truth_cell_mass": 0.006333920724520744,
+      "truth_strict_rank": 32,
+      "within_0p5m_mass": 0.17327388238692373,
+      "within_1p5m_mass": 0.6591192280426968,
+      "posterior_mean_xy": [
+        2.3101798101154243,
+        5.0817835422851125
+      ],
+      "posterior_mean_error_m": 1.1113061861328615,
+      "diagnostic_best5pct_xy": [
+        2.3094983812315246,
+        4.6904272017128505
+      ],
+      "diagnostic_best5pct_error_m": 0.8816610511488568,
+      "variance_m2": 2.9898609829324077,
+      "variance_threshold": 1.5,
+      "concentrated": false,
+      "truth_in90pct_set": true,
+      "area90pct_free_fraction": 0.13305439330543933,
+      "native_candidate_calls": 162,
+      "max_logscore_recompute_error": 3.552713678800501e-15,
+      "posterior_parity_max_abs_error": 1.3877787807814457e-17,
+      "source_contrast": {
+        "truth_final_leaf": "quadtree_12_17_2_2",
+        "best_final_leaf": "quadtree_9_18_1_1",
+        "same_leaf": false,
+        "native_logscore_best_minus_truth": 2.147051063520309,
+        "mean_direct_stop_Brier_best_minus_truth": -0.06682079148374821,
+        "inside_0p5m_sample_neighborhood_logcontrast": 1.9388323743139553,
+        "outside_0p5m_sample_neighborhood_logcontrast": 0.20821868920635328,
+        "direct_stop_diagnostic": [
+          {
+            "stop": 0,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.9195427298545837,
+            "best_leaf_h": 0.8769088387489319,
+            "Brier_best_minus_truth": 0.008678061658883962,
+            "receiver_xy_m": [
+              5.0,
+              0.800000011920929
+            ]
+          },
+          {
+            "stop": 1,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.009014944545924664,
+            "best_leaf_h": 0.2807329297065735,
+            "Brier_best_minus_truth": 0.07872970859646983,
+            "receiver_xy_m": [
+              2.0845508575439453,
+              3.30777645111084
+            ]
+          },
+          {
+            "stop": 2,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 9.9745932402584e-08,
+            "best_leaf_h": 7.50654010062135e-08,
+            "Brier_best_minus_truth": -4.314436602637218e-15,
+            "receiver_xy_m": [
+              4.912861347198486,
+              5.811214447021484
+            ]
+          },
+          {
+            "stop": 3,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.024597318843007088,
+            "best_leaf_h": 0.014921831898391247,
+            "Brier_best_minus_truth": -0.000382367027060705,
+            "receiver_xy_m": [
+              7.9290571212768555,
+              1.4741020202636719
+            ]
+          },
+          {
+            "stop": 4,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.40965285897254944,
+            "best_leaf_h": 0.9262185096740723,
+            "Brier_best_minus_truth": -0.34306603860456963,
+            "receiver_xy_m": [
+              2.8660471439361572,
+              3.912734270095825
+            ]
+          },
+          {
+            "stop": 5,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 6.36989625490969e-07,
+            "best_leaf_h": 0.00027701526414602995,
+            "Brier_best_minus_truth": 7.673705081411176e-08,
+            "receiver_xy_m": [
+              1.5868492126464844,
+              5.820098876953125
+            ]
+          },
+          {
+            "stop": 6,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.0,
+            "truth_leaf_h": 0.0013648689491674304,
+            "best_leaf_h": 0.041394200176000595,
+            "Brier_best_minus_truth": 0.0017116169409624063,
+            "receiver_xy_m": [
+              2.16819429397583,
+              5.45220947265625
+            ]
+          },
+          {
+            "stop": 7,
+            "measurements": 5,
+            "empirical_hit_fraction": 0.8,
+            "truth_leaf_h": 0.46149420738220215,
+            "best_leaf_h": 0.8603447079658508,
+            "Brier_best_minus_truth": -0.11094468785631978,
+            "receiver_xy_m": [
+              3.147852897644043,
+              3.447514533996582
+            ]
+          },
+          {
+            "stop": 8,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.6576644778251648,
+            "best_leaf_h": 0.9357194900512695,
+            "Brier_best_minus_truth": -0.11306162578344825,
+            "receiver_xy_m": [
+              3.0883355140686035,
+              4.183341979980469
+            ]
+          },
+          {
+            "stop": 9,
+            "measurements": 5,
+            "empirical_hit_fraction": 1.0,
+            "truth_leaf_h": 0.5322734713554382,
+            "best_leaf_h": 0.8300133943557739,
+            "Brier_best_minus_truth": -0.18987265949944643,
+            "receiver_xy_m": [
+              3.3820436000823975,
+              3.0674991607666016
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "scope": "One default initialization in this configuration; point metrics use original native log when available, last completed trace estimates are diagnostic only. Direct-stop contrast is not a calibrated replacement likelihood. Capture has I/O costs. Wind identity is checked independently by portable_wind_chain.py.",
+  "wind_run_identity": "CORRECTED_WIND_NEW_WORLD",
+  "source_wind_group": "9b7d81f6083d",
+  "last_update_tail_diagnostic": {
+    "measurement_windows_after_last_source_input": 10,
+    "tail_fraction": 0.16666666666666666,
+    "last_source_input_ns": 338001952795,
+    "last_consumed_window_ns": 398001616880
+  }
+}

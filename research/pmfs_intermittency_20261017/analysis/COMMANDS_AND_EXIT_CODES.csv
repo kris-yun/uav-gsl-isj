@@ -1,0 +1,23 @@
+scientific_command,preserved_log_or_receipt,exit_code
+start_b4.py,b4_execution.json,0
+portable_recompute.py --data PORTABLE_DATA --out native20_recomputed,native20.stdout,0
+prepare_native.py; cmake configure/build,build.stdout,0
+replay20.py [first full attempt],replay20.stderr,1
+replay20.py [launch fallback incomplete],replay20_retry.stderr,1
+"replay20.py [literal/default fallback, numeric parity]",replay20_complete.stdout,0
+controls20.py [first serialization attempt],controls20.stderr,1
+controls20.py [four frozen arms],controls20_retry.stdout,0
+controls20.py [original-double native decoder],controls20_final.stdout,0
+controls20.py [Beta intervals],controls20_intervals.stderr,0
+cmake build ordinary_controls C++,build_controls.stdout,0
+controls20.py [final C++/NumPy differential],controls20_cpp_final.stderr,0
+portable_clock_gate.py,results/clock20.json,0
+portable_geometry_gate.py,results/geometry20.json,0
+portable_wind_chain.py,wind20.stdout,0
+"screen.py [46 historical, all20]",screen_final.stdout,0
+"export_pid.py [rclpy deserialize, no node]",export_pid.stdout,0
+export_pid_no_ros.py [independent decoder],results/PID_DECODER_QA.json,0
+stop_influence.py,stop_influence_final.stdout,0
+summarize.py,summarize.stdout,0
+ctest --test-dir build --output-on-failure,ctest_final.stdout,0
+provenance_windows.py,provenance.stdout,0

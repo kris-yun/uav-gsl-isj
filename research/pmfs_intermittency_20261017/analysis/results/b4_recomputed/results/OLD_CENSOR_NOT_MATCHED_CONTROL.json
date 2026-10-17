@@ -1,0 +1,63 @@
+{
+  "old_resolved_subset": {
+    "convergence_thr": 1.5,
+    "use_sim_time": true,
+    "maxSearchTime": 300.0,
+    "useWindGroundTruth": true,
+    "distanceWeight": 0.15,
+    "blurSigmaX": 1.5,
+    "minWarmupIterations": 200
+  },
+  "old_player_subset": {
+    "initial_iteration": 500,
+    "player_freq": 2.0,
+    "allow_looping": false,
+    "use_sim_time": true,
+    "simulation_data_0": "/home/zyc/pmfs_b4_native_validation_20261009/one_realization_B4"
+  },
+  "current_profile": {
+    "convergence_thr": 1.0,
+    "use_sim_time": false,
+    "maxSearchTime": 1000000,
+    "useWindGroundTruth": false,
+    "source": "2024-07-19 historical source, unchanged measurement/planning formulas",
+    "player": {
+      "allow_looping": false,
+      "gas_display_color_0": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "initial_iteration": 500,
+      "loop_from_iteration": 800,
+      "loop_to_iteration": 900,
+      "num_simulators": 1,
+      "occupancyFile": "/home/zyc/pmfs_b4_native_validation_20261009/derived_B4/OccupancyGrid3D.csv",
+      "player_freq": 2.0,
+      "projectPath": "",
+      "qos_overrides": {
+        "/clock": {
+          "subscription": {
+            "depth": 1,
+            "durability": "volatile",
+            "history": "keep_last",
+            "reliability": "best_effort"
+          }
+        },
+        "/parameter_events": {
+          "publisher": {
+            "depth": 1000,
+            "durability": "volatile",
+            "history": "keep_last",
+            "reliability": "reliable"
+          }
+        }
+      },
+      "r7_clock_trace_path": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/cases/P24X5_B4_WALL5_V2_R01_T01/runtime/physical_clock_trace.csv",
+      "r7_frame_time_csv": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/cases/P24X5_B4_WALL5_V2_R01_T01/AUTHOR_WALL_FILE_CADENCE.csv",
+      "simulation_data_0": "/home/zyc/pmfs_b4_native_validation_20261009/one_realization_B4",
+      "use_sim_time": false
+    }
+  },
+  "conclusion": "Different wind access, clocks, stopping budget and implementation parameters; older horizon censoring cannot identify a physical PMFS failure condition or be pooled as a matched counterexample."
+}

@@ -1,0 +1,39 @@
+In file included from /mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/readout2026.cpp:1:
+/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/native_support.hpp: In member function ‘GSL::Vector2Int GSL::Grid2DMetadata::coordinatesToIndices(float, float) const’:
+/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/native_support.hpp:25:76: warning: narrowing conversion of ‘((x - ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::origin.DDA::Vector2::x)) / ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::cellSize))’ from ‘float’ to ‘int’ [-Wnarrowing]
+   25 |  Vector2Int coordinatesToIndices(float x,float y)const{return {(x-origin.x)/cellSize,(y-origin.y)/cellSize};}
+      |                                                                ~~~~~~~~~~~~^~~~~~~~~
+/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/native_support.hpp:25:98: warning: narrowing conversion of ‘((y - ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::origin.DDA::Vector2::y)) / ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::cellSize))’ from ‘float’ to ‘int’ [-Wnarrowing]
+   25 |  Vector2Int coordinatesToIndices(float x,float y)const{return {(x-origin.x)/cellSize,(y-origin.y)/cellSize};}
+      |                                                                                      ~~~~~~~~~~~~^~~~~~~~~
+In file included from /mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/native_functions.cpp:1:
+/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/native_support.hpp: In member function ‘GSL::Vector2Int GSL::Grid2DMetadata::coordinatesToIndices(float, float) const’:
+/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/native_support.hpp:25:76: warning: narrowing conversion of ‘((x - ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::origin.DDA::Vector2::x)) / ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::cellSize))’ from ‘float’ to ‘int’ [-Wnarrowing]
+   25 |  Vector2Int coordinatesToIndices(float x,float y)const{return {(x-origin.x)/cellSize,(y-origin.y)/cellSize};}
+      |                                                                ~~~~~~~~~~~~^~~~~~~~~
+/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/native_support.hpp:25:98: warning: narrowing conversion of ‘((y - ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::origin.DDA::Vector2::y)) / ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::cellSize))’ from ‘float’ to ‘int’ [-Wnarrowing]
+   25 |  Vector2Int coordinatesToIndices(float x,float y)const{return {(x-origin.x)/cellSize,(y-origin.y)/cellSize};}
+      |                                                                                      ~~~~~~~~~~~~^~~~~~~~~
+In file included from /mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/replay2026.cpp:1:
+/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/native_support.hpp: In member function ‘GSL::Vector2Int GSL::Grid2DMetadata::coordinatesToIndices(float, float) const’:
+/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/native_support.hpp:25:76: warning: narrowing conversion of ‘((x - ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::origin.DDA::Vector2::x)) / ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::cellSize))’ from ‘float’ to ‘int’ [-Wnarrowing]
+   25 |  Vector2Int coordinatesToIndices(float x,float y)const{return {(x-origin.x)/cellSize,(y-origin.y)/cellSize};}
+      |                                                                ~~~~~~~~~~~~^~~~~~~~~
+/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/native_support.hpp:25:98: warning: narrowing conversion of ‘((y - ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::origin.DDA::Vector2::y)) / ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::cellSize))’ from ‘float’ to ‘int’ [-Wnarrowing]
+   25 |  Vector2Int coordinatesToIndices(float x,float y)const{return {(x-origin.x)/cellSize,(y-origin.y)/cellSize};}
+      |                                                                                      ~~~~~~~~~~~~^~~~~~~~~
+/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/replay2026.cpp: In function ‘int main(int, char**)’:
+/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/replay2026.cpp:19:80: warning: narrowing conversion of ‘(s.GSL::PMFS_internal::HitProbabilitySettings::kernelSigma / ((double)1 + ((s.GSL::PMFS_internal::HitProbabilitySettings::kernelStretchConstant * speed) / s.GSL::PMFS_internal::HitProbabilitySettings::kernelSigma)))’ from ‘double’ to ‘float’ [-Wnarrowing]
+   19 |   double angle=-angles::normalize_angle(dir+M_PI/2);Vector2 sigma{s.kernelSigma/(1+s.kernelStretchConstant*speed/s.kernelSigma),s.kernelSigma+s.kernelStretchConstant*speed};
+      |                                                                   ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/replay2026.cpp:19:142: warning: narrowing conversion of ‘(s.GSL::PMFS_internal::HitProbabilitySettings::kernelSigma + (s.GSL::PMFS_internal::HitProbabilitySettings::kernelStretchConstant * speed))’ from ‘double’ to ‘float’ [-Wnarrowing]
+   19 |   double angle=-angles::normalize_angle(dir+M_PI/2);Vector2 sigma{s.kernelSigma/(1+s.kernelStretchConstant*speed/s.kernelSigma),s.kernelSigma+s.kernelStretchConstant*speed};
+      |                                                                                                                                 ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/native_functions.cpp:1:
+/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/native_support.hpp: In member function ‘GSL::Vector2Int GSL::Grid2DMetadata::coordinatesToIndices(float, float) const’:
+/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/native_support.hpp:25:76: warning: narrowing conversion of ‘((x - ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::origin.DDA::Vector2::x)) / ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::cellSize))’ from ‘float’ to ‘int’ [-Wnarrowing]
+   25 |  Vector2Int coordinatesToIndices(float x,float y)const{return {(x-origin.x)/cellSize,(y-origin.y)/cellSize};}
+      |                                                                ~~~~~~~~~~~~^~~~~~~~~
+/mnt/hgfs/workspace/INTERMITTENCY_CAUSAL_AUDIT_20261017/cpp/native_support.hpp:25:98: warning: narrowing conversion of ‘((y - ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::origin.DDA::Vector2::y)) / ((float)((const GSL::Grid2DMetadata*)this)->GSL::Grid2DMetadata::cellSize))’ from ‘float’ to ‘int’ [-Wnarrowing]
+   25 |  Vector2Int coordinatesToIndices(float x,float y)const{return {(x-origin.x)/cellSize,(y-origin.y)/cellSize};}
+      |                                                                                      ~~~~~~~~~~~~^~~~~~~~~
