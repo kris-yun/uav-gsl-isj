@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "D:\ZYC\A-gas\workspace\INTERMITTENCY_CAUSAL_AUDIT_20261017\scripts\publish_windows.py", line 25, in <module>
+    remote=git('ls-remote','--heads','origin',branch).split()[0];assert remote==head;print('REMOTE_VERIFIED',i,head,flush=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ZYC\A-gas\workspace\INTERMITTENCY_CAUSAL_AUDIT_20261017\scripts\publish_windows.py", line 6, in git
+    t=time.time();q=subprocess.run(['git','-c','core.longpaths=true','-c','gc.auto=0','-c','maintenance.auto=false','-c','http.version=HTTP/1.1','-c','http.lowSpeedLimit=1000','-c','http.lowSpeedTime=60',*args],cwd=repo,capture_output=True,text=True,timeout=timeout);logs.append(dict(command=list(args),returncode=q.returncode,stdout=q.stdout,stderr=q.stderr,wall_s=time.time()-t));(R/'logs/GIT_PUBLICATION.json').write_text(json.dumps(logs,indent=2));assert q.returncode==0,(args,q.stderr);return q.stdout.strip()
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ^^^^^^^^^^^^^^^
+AssertionError: (('ls-remote', '--heads', 'origin', 'codex/pmfs-intermittency-evidence-20261017'), "fatal: unable to access 'https://github.com/kris-yun/uav-gsl-isj.git/': schannel: failed to receive handshake, SSL/TLS connection failed\n")

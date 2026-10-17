@@ -21,3 +21,6 @@ stop_influence.py,stop_influence_final.stdout,0
 summarize.py,summarize.stdout,0
 ctest --test-dir build --output-on-failure,ctest_final.stdout,0
 provenance_windows.py,provenance.stdout,0
+reproduce_all.py --out ICQA17 [15 offline commands],results/PORTABLE_QA/EXECUTION.json,0
+package_qa_windows.py [8 full output byte identities],results/PORTABLE_QA/PRIMARY_OUTPUT_EQUALITY.json,0
+prepare_native.py [prefer bundled headers]; build; ctest,logs/ctest_bundled.stdout,0

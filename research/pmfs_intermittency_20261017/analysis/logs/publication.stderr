@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "D:\ZYC\A-gas\workspace\INTERMITTENCY_CAUSAL_AUDIT_20261017\scripts\publish_windows.py", line 19, in <module>
+    git('add','--',*group);names=git('diff','--cached','--name-only').splitlines();assert names and all(n.startswith(prefix+'/') for n in names)
+    ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ZYC\A-gas\workspace\INTERMITTENCY_CAUSAL_AUDIT_20261017\scripts\publish_windows.py", line 6, in git
+    t=time.time();q=subprocess.run(['git','-c','gc.auto=0','-c','maintenance.auto=false','-c','http.version=HTTP/1.1','-c','http.lowSpeedLimit=1000','-c','http.lowSpeedTime=60',*args],cwd=repo,capture_output=True,text=True,timeout=timeout);logs.append(dict(command=list(args),returncode=q.returncode,stdout=q.stdout,stderr=q.stderr,wall_s=time.time()-t));(R/'logs/GIT_PUBLICATION.json').write_text(json.dumps(logs,indent=2));assert q.returncode==0,(args,q.stderr);return q.stdout.strip()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\50176\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\50176\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "C:\Users\50176\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 1538, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 206] 文件名或扩展名太长。

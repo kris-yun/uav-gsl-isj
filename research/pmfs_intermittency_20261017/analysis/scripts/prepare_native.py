@@ -17,8 +17,9 @@ mathf += [extract(mathtext,'    Vector2 ExpectedValue('),extract(mathtext,'    d
 v=(S/'algorithms/PMFS/internal/VisibilityMap.hpp').read_text();v='\n'.join(a for a in v.splitlines() if not a.startswith('#include'))
 (O/'visibility.hpp').write_text(v)
 dda=Path('/home/zyc/ros2_ws/src/GSL/gsl_server/third_party/DDA/include')
-if dda.exists():shutil.copytree(dda,O/'dda',dirs_exist_ok=True)
-else:assert (O/'dda/DDA/Vectors.h').exists(),'Use bundled frozen DDA headers; no internet dependency.'
+if (O/'dda/DDA/Vectors.h').exists():pass # Prefer bundled frozen headers, including on the original VM.
+elif dda.exists():shutil.copytree(dda,O/'dda',dirs_exist_ok=True)
+else:raise FileNotFoundError('Bundled frozen DDA headers missing; no internet fallback.')
 rows=[]
 for name,f in zip(['EstimateHitProbabilities','PropagateProbabilities','applyFalloffLogOdds'],functions):
  rows.append({'function':name,'official_body_sha256':hashlib.sha256(f.encode()).hexdigest(),'exact_verbatim_extraction':True})

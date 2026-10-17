@@ -18,6 +18,7 @@ python3 reproduce_all.py --out /absolute/path/NEW_REVIEW_FOLDER
 ```
 
 必须使用不存在的新目录，约需1.5GiB临时空间。计算本身很小，许多小文件的解包/复制可能慢于数学计算。
+在Windows共享盘HGFS上使用短输出根目录，例如`/mnt/hgfs/workspace/ICQA17`，避免宿主长路径限制。
 输出包括全部命令、退出码、墙钟、子进程CPU和累计子进程RSS；不预告固定完成时间。
 仅检查包完整性：`python3 reproduce_all.py --out UNUSED --verify-only`。
 
