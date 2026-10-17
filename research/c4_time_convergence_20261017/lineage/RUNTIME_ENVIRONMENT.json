@@ -1,0 +1,19 @@
+{
+  "forward_runtime": {
+    "os": "Ubuntu 22.04 x86_64 VM",
+    "compiler": "g++ 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04.3)",
+    "cmake": "3.22.1",
+    "opencv": "4.5.4",
+    "zlib": "1.2.11",
+    "python": "3.10.12",
+    "numpy": "1.26.4",
+    "vm_root_available_bytes": 5544947712
+  },
+  "analysis_runtime": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "numpy": "2.3.5",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "query_command": "ssh zyc@192.168.111.128: g++ --version; cmake --version; pkg-config --modversion opencv4 zlib; python3 version/numpy; uname -m; df -B1 /",
+  "query_exit_code": 0
+}

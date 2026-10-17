@@ -1,0 +1,19 @@
+Tool-captured stderr from interrupted first driver invocation, transcribed for the audit:
+Traceback (most recent call last):
+  File "/mnt/hgfs/workspace/C4H17/scripts/run.py", line 39, in <module>
+    execute(...)
+  File "/mnt/hgfs/workspace/C4H17/scripts/run.py", line 17, in execute
+    q=subprocess.run(cmd,env=env,stdout=out,stderr=err)
+  File "/usr/lib/python3.10/subprocess.py", line 505, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+  File "/usr/lib/python3.10/subprocess.py", line 1146, in communicate
+    self.wait()
+  File "/usr/lib/python3.10/subprocess.py", line 1209, in wait
+    return self._wait(timeout=timeout)
+  File "/usr/lib/python3.10/subprocess.py", line 1917, in _wait
+    (pid, sts) = self._try_wait(0)
+  File "/usr/lib/python3.10/subprocess.py", line 1917, in _try_wait
+    (pid, sts) = os.waitpid(self.pid, wait_flags)
+KeyboardInterrupt
+Outer command exit: 1
+Full preserved old driver: lineage/run_v1_repeated_hgfs_scan.py

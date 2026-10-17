@@ -1,0 +1,81 @@
+[
+  {
+    "command": [
+      "C:\\Users\\50176\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "D:\\ZYC\\A-gas\\workspace\\C4H17\\prepare.py"
+    ],
+    "exit_code": 0,
+    "scope": "Input integrity and source/job freeze; no forward calls",
+    "status": "FROZEN_BEFORE_FORWARD_RESULTS"
+  },
+  {
+    "command": [
+      "C:\\Users\\50176\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "D:\\ZYC\\A-gas\\workspace\\C4H17\\scripts\\analyze.py"
+    ],
+    "exit_code": 0,
+    "stdout": "logs/analyze.stdout",
+    "stderr": "logs/analyze.stderr",
+    "scope": "Stored data only"
+  },
+  {
+    "command": [
+      "C:\\Users\\50176\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "D:\\ZYC\\A-gas\\workspace\\C4H17\\scripts\\audit_and_report.py"
+    ],
+    "exit_code": 0,
+    "stdout": "logs/audit_report.stdout",
+    "stderr": "logs/audit_report.stderr",
+    "scope": "RNG conservation checks and report; no simulation"
+  },
+  {
+    "command": [
+      "ssh",
+      "zyc@192.168.111.128",
+      "kill -INT 393061"
+    ],
+    "exit_code": 0,
+    "scope": "Driver intervention; failure and one incomplete source recorded in lineage/DRIVER_INTERRUPTION.log"
+  },
+  {
+    "command": [
+      "python",
+      "scripts/export_historical.py"
+    ],
+    "attempt": 1,
+    "exit_code": 1,
+    "log": "logs/export_historical_attempt1.stderr",
+    "forward_calls": 0
+  },
+  {
+    "command": [
+      "python",
+      "scripts/export_historical.py"
+    ],
+    "attempt": 2,
+    "exit_code": 0,
+    "stdout": "logs/export_historical.stdout",
+    "stderr": "logs/export_historical.stderr",
+    "forward_calls": 0
+  },
+  {
+    "command": [
+      "python",
+      "reproduce.py",
+      "--analysis-out",
+      "C4H17_QA/fresh_analysis"
+    ],
+    "exit_code": 0,
+    "forward_calls": 0,
+    "result": "lineage/REPLAY_QA.json"
+  },
+  {
+    "command": [
+      "python",
+      "scripts/export_pid.py"
+    ],
+    "exit_code": 0,
+    "forward_calls": 0,
+    "result": "lineage/PID_EXPORT_IDENTITY.json"
+  }
+]

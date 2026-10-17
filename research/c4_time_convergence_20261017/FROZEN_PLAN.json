@@ -1,0 +1,236 @@
+{
+  "timestamp": "2026-10-17T09:34:57.724144-07:00",
+  "objective": "C4 native 2D warmup and recording convergence only",
+  "implementation": "2026_4e141e162551e674f2f30ddb8859136c72139aac_corrected_wind_true_horizontal_wind",
+  "prior_archive_sha256": "518de2e838a014c35b7a8ea7320afffd10d39f3eb7455f4d040f04ec1addb834",
+  "cases": [
+    {
+      "key": "C4_update_0",
+      "context": {
+        "case": "C4",
+        "epoch": 0,
+        "truth_idx": 1272,
+        "truth_parent": "quadtree_17_36_2_3",
+        "truth_parent_cells": [
+          1205,
+          1206,
+          1238,
+          1239,
+          1271,
+          1272
+        ],
+        "prelocked_competitor": null,
+        "prelocked_competitor_parent": null,
+        "events_consumed": 20,
+        "updates_after_this_unchanged": true
+      },
+      "metadata": {
+        "stamp_ns": 237434531440,
+        "width": 33,
+        "height": 47,
+        "cell_size": 0.25,
+        "origin_x": -5.392730236053467,
+        "origin_y": -7.45088005065918,
+        "free_cells": 518,
+        "robot_x": -0.486253,
+        "robot_y": 2.08945
+      },
+      "settings": {
+        "blurSigmaX": 1.5,
+        "blurSigmaY": 1.5,
+        "deltaTime": 0.1,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500,
+        "minWarmupIterations": 200,
+        "noiseSTDev": 0.5,
+        "sourceDiscriminationPower": 0.3
+      },
+      "jobs_per_state": 8
+    },
+    {
+      "key": "C4_update_1",
+      "context": {
+        "case": "C4",
+        "epoch": 1,
+        "truth_idx": 1272,
+        "truth_parent": "quadtree_17_36_4_6",
+        "truth_parent_cells": [
+          1205,
+          1206,
+          1207,
+          1208,
+          1238,
+          1239,
+          1240,
+          1241,
+          1271,
+          1272,
+          1273,
+          1274,
+          1304,
+          1305,
+          1306,
+          1307,
+          1337,
+          1338,
+          1339,
+          1340,
+          1370,
+          1371,
+          1372,
+          1373
+        ],
+        "prelocked_competitor": 514,
+        "prelocked_competitor_parent": "quadtree_19_15_1_1",
+        "events_consumed": 35,
+        "updates_after_this_unchanged": true
+      },
+      "metadata": {
+        "stamp_ns": 351834763900,
+        "width": 33,
+        "height": 47,
+        "cell_size": 0.25,
+        "origin_x": -5.392730236053467,
+        "origin_y": -7.45088005065918,
+        "free_cells": 518,
+        "robot_x": 0.0208258,
+        "robot_y": 1.91799
+      },
+      "settings": {
+        "blurSigmaX": 1.5,
+        "blurSigmaY": 1.5,
+        "deltaTime": 0.1,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500,
+        "minWarmupIterations": 200,
+        "noiseSTDev": 0.5,
+        "sourceDiscriminationPower": 0.3
+      },
+      "jobs_per_state": 28
+    },
+    {
+      "key": "C3_update_2",
+      "context": {
+        "case": "C3",
+        "epoch": 2,
+        "truth_idx": 1099,
+        "truth_parent": "quadtree_7_33_4_3",
+        "truth_parent_cells": [
+          1096,
+          1097,
+          1098,
+          1099,
+          1129,
+          1130,
+          1131,
+          1132,
+          1162,
+          1163,
+          1164,
+          1165
+        ],
+        "prelocked_competitor": 807,
+        "prelocked_competitor_parent": "quadtree_15_24_1_1",
+        "events_consumed": 50,
+        "updates_after_this_unchanged": true
+      },
+      "metadata": {
+        "stamp_ns": 334001554480,
+        "width": 33,
+        "height": 47,
+        "cell_size": 0.25,
+        "origin_x": -5.392730236053467,
+        "origin_y": -7.45088005065918,
+        "free_cells": 518,
+        "robot_x": -1.52482,
+        "robot_y": -1.86214
+      },
+      "settings": {
+        "blurSigmaX": 1.5,
+        "blurSigmaY": 1.5,
+        "deltaTime": 0.1,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500,
+        "minWarmupIterations": 200,
+        "noiseSTDev": 0.25,
+        "sourceDiscriminationPower": 0.3
+      },
+      "jobs_per_state": 16
+    }
+  ],
+  "prediction_states": [
+    2026101701,
+    2026101702,
+    2026101703
+  ],
+  "conditions": [
+    {
+      "id": "adaptive_R20",
+      "warmup_steps": -1,
+      "record_steps": 200,
+      "arm": "native_adaptive_reference"
+    },
+    {
+      "id": "W45_R20",
+      "warmup_steps": 225,
+      "record_steps": 200,
+      "arm": "A"
+    },
+    {
+      "id": "W90_R20",
+      "warmup_steps": 450,
+      "record_steps": 200,
+      "arm": "A"
+    },
+    {
+      "id": "W180_R20",
+      "warmup_steps": 900,
+      "record_steps": 200,
+      "arm": "A"
+    },
+    {
+      "id": "W360_R20",
+      "warmup_steps": 1800,
+      "record_steps": 200,
+      "arm": "A"
+    },
+    {
+      "id": "W180_R40",
+      "warmup_steps": 900,
+      "record_steps": 400,
+      "arm": "B"
+    },
+    {
+      "id": "W180_R80",
+      "warmup_steps": 900,
+      "record_steps": 800,
+      "arm": "B"
+    }
+  ],
+  "unique_conditions": 7,
+  "maximum_forward_calls": 1092,
+  "maximum_child_cpu_s": 1800,
+  "maximum_output_MiB": 512,
+  "minimum_VM_free_GiB": 5,
+  "source_rule": "Native true region, all its legal 0.25m subcells, exact xy diagnostic oracle, old prelocked competitor in region and fine RNG streams; C4 update_0 has no comparator and none is invented.",
+  "rng_rule": "Each source and state restores its exact prior per-source RNG, Gaussian table/index before each time condition. Adaptive diagnostic must reproduce prior raw/blur maps and logscore exactly. No random reselection.",
+  "warmup_time": "Native move dt = 2*0.1 seconds, 5 releases per iteration, fixed 45/90/180/360 seconds = 225/450/900/1800 iterations. Keep native phase-dependent release cadence unchanged.",
+  "record_time": "Native dt=.1 seconds, 20/40/80 seconds = 200/400/800 iterations. A/B overlap W180_R20 simulated once.",
+  "diagnostics": "10s nonoverlapping recording blocks and cumulative maps; all-frame receiver occupancy/first filament arrivals/entries and survivor/exits counts. Fixed historic 2D wind, no evolving weather.",
+  "convergence_rule": {
+    "raw_near_zero": 0.01,
+    "raw_plateau_absolute": 0.02,
+    "blur_plateau_absolute": 0.02,
+    "logscore_plateau_absolute": 0.1,
+    "requirement": "All three prediction states checked separately; late warmup receiver block trend, recording block nonstationarity and survivor growth/exit throughput reported. Persistent zeros alone never establish convergence. Thresholds are descriptive diagnostic screens, not calibrated confidence bounds.",
+    "limitations": "Only 3 computation states; temporal frames and particles are correlated, not independent worlds. A source compartment with continued survivor growth or sparse arrivals cannot be called converged simply because two means are zero."
+  },
+  "restrictions": [
+    "No new ROS or gas worlds",
+    "No new localization modules",
+    "No mixing new pair scores with old candidates into a posterior",
+    "No new Top5/MAP/mean/full ranks",
+    "No parameter extension beyond frozen schedule",
+    "Stop after report/package/push"
+  ]
+}

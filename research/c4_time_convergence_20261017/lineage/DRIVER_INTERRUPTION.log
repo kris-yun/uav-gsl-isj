@@ -1,0 +1,7 @@
+Driver command: python3 /mnt/hgfs/workspace/C4H17/scripts/run.py
+Intervention: SIGINT sent to the verified driver PID 393061 while optimizing repeated HGFS global metadata scans.
+Race: W360 state 2026101701 finished, and 2026101702 had begun by the time the signal arrived.
+Observed failure: KeyboardInterrupt in subprocess.wait, outer SSH exit 1.
+2026101702 preserved 27 complete source rows and a partial final fine_competitor directory. No source/RNG reselection.
+Recovery: retain those 27 completed results, repeat only the incomplete last source with its exact saved RNG and Gaussian state; account one failed start separately.
+This is our orchestration error, not a PMFS failure or a scientific observation.
