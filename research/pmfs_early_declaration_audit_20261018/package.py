@@ -2,7 +2,7 @@ from pathlib import Path
 import hashlib,json,shutil,subprocess,zipfile
 R=Path(__file__).resolve().parent
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
-dest=Path(r'C:\Users\50176\Downloads\PMFS_提前错误声明_时钟与B2核清_四回合原始证据_20261018_复核版.zip')
+dest=Path(r'C:\Users\50176\Downloads\PMFS_提前错误声明_时钟与B2核清_四回合原始证据_20261018_最终验收版.zip')
 assert not dest.exists(),'Never overwrite an earlier delivery'
 guest_binary=R/'install/lib/gsl_server/gsl_actionserver_node';(R/'binaries').mkdir(exist_ok=True);shutil.copyfile(guest_binary,R/'binaries/gsl_actionserver_node')
 readme='''# PMFS 提前错误声明审计
@@ -15,7 +15,7 @@ readme='''# PMFS 提前错误声明审计
 
 离线复算：`python reproduce.py --out /tmp/pmfs_early_audit_replay_01`
 
-离线复算需要Python+NumPy与Linux g++/C++20，自动在新输出目录解开所附旧基线；不会启动ROS、气体世界或AIMMD。五个核心结果表必须逐字节一致。原始完整ROS复跑仍需要本机已有世界与安装，包中没有所有世界帧，也不把这些帧当算法免费参考库。
+离线复算需要Python+NumPy与Linux g++/C++20，自动在新输出目录解开所附旧基线；不会启动ROS、气体世界或AIMMD。输入文件必须逐字节匹配SHA；五个重算表须在双精度容差1e-12内一致，允许跨平台BLAS末位浮点差异。原始完整ROS复跑仍需要本机已有世界与安装，包中没有所有世界帧，也不把这些帧当算法免费参考库。
 
 `FORMULA_CONTROLS_NATIVE_CPP_READOUT.csv`是权威Top5/方差读出；NumPy控制表另留用于评分/概率核查。
 '''
