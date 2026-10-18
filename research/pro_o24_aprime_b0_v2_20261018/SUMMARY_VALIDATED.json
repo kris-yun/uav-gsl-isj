@@ -1,0 +1,130 @@
+{
+  "baseline_commit": "631145657461c41840f6844f118de57d1e747ea4",
+  "native_data_role": "5 historic O24 episodes 2D saved candidate maps only; 1 HOLD domain case",
+  "cross_update_train": "first source update within each episode, all later updates untouched",
+  "cross_update_all29_rank8": [
+    {
+      "method": "uncentered_pod",
+      "rank": 8,
+      "updates": 29,
+      "median_score_rmse": 0.9418856442371834,
+      "median_source_tvd": 0.2292465004054266,
+      "candidate_best_preserved": 6,
+      "source_cell_argmax_preserved": 7
+    },
+    {
+      "method": "centered_pod",
+      "rank": 8,
+      "updates": 29,
+      "median_score_rmse": 0.7555207739720347,
+      "median_source_tvd": 0.21832079597592405,
+      "candidate_best_preserved": 6,
+      "source_cell_argmax_preserved": 8
+    },
+    {
+      "method": "train_alpha_weighted_pod",
+      "rank": 8,
+      "updates": 29,
+      "median_score_rmse": 0.8887728633971712,
+      "median_source_tvd": 0.24943020068667449,
+      "candidate_best_preserved": 5,
+      "source_cell_argmax_preserved": 3
+    }
+  ],
+  "cross_update_ordinary_fallback": [
+    {
+      "cohort": "HOLD_EXCLUDED_20",
+      "method": "centered_pod",
+      "scoring": "plain_compressed",
+      "n_updates": 20,
+      "median_logscore_rmse": 0.7358765604783384,
+      "median_posterior_tvd": 0.18347791341925207,
+      "MAP_preserved_count": 8,
+      "candidate_best_preserved_count": 6,
+      "median_new_support_alpha_mass": 0.5122021522168201
+    },
+    {
+      "cohort": "HOLD_EXCLUDED_20",
+      "method": "centered_pod",
+      "scoring": "ordinary_exact_new_support_fallback",
+      "n_updates": 20,
+      "median_logscore_rmse": 0.3230410754810737,
+      "median_posterior_tvd": 0.0662876823544557,
+      "MAP_preserved_count": 12,
+      "candidate_best_preserved_count": 14,
+      "median_new_support_alpha_mass": 0.5122021522168201
+    },
+    {
+      "cohort": "HOLD_EXCLUDED_20",
+      "method": "train_alpha_weighted_pod",
+      "scoring": "plain_compressed",
+      "n_updates": 20,
+      "median_logscore_rmse": 0.8261374742731293,
+      "median_posterior_tvd": 0.2267718430762099,
+      "MAP_preserved_count": 3,
+      "candidate_best_preserved_count": 5,
+      "median_new_support_alpha_mass": 0.5122021522168201
+    },
+    {
+      "cohort": "HOLD_EXCLUDED_20",
+      "method": "train_alpha_weighted_pod",
+      "scoring": "ordinary_exact_new_support_fallback",
+      "n_updates": 20,
+      "median_logscore_rmse": 0.24461438133267732,
+      "median_posterior_tvd": 0.049841515960247496,
+      "MAP_preserved_count": 15,
+      "candidate_best_preserved_count": 14,
+      "median_new_support_alpha_mass": 0.5122021522168201
+    },
+    {
+      "cohort": "HOLD_ONLY_9",
+      "method": "centered_pod",
+      "scoring": "plain_compressed",
+      "n_updates": 9,
+      "median_logscore_rmse": 1.0126585468654454,
+      "median_posterior_tvd": 0.44605730116202613,
+      "MAP_preserved_count": 0,
+      "candidate_best_preserved_count": 0,
+      "median_new_support_alpha_mass": 0.6601056347388394
+    },
+    {
+      "cohort": "HOLD_ONLY_9",
+      "method": "centered_pod",
+      "scoring": "ordinary_exact_new_support_fallback",
+      "n_updates": 9,
+      "median_logscore_rmse": 0.5039387551119282,
+      "median_posterior_tvd": 0.056861197455795674,
+      "MAP_preserved_count": 7,
+      "candidate_best_preserved_count": 4,
+      "median_new_support_alpha_mass": 0.6601056347388394
+    },
+    {
+      "cohort": "HOLD_ONLY_9",
+      "method": "train_alpha_weighted_pod",
+      "scoring": "plain_compressed",
+      "n_updates": 9,
+      "median_logscore_rmse": 1.183691722182489,
+      "median_posterior_tvd": 0.4679039146872774,
+      "MAP_preserved_count": 0,
+      "candidate_best_preserved_count": 0,
+      "median_new_support_alpha_mass": 0.6601056347388394
+    },
+    {
+      "cohort": "HOLD_ONLY_9",
+      "method": "train_alpha_weighted_pod",
+      "scoring": "ordinary_exact_new_support_fallback",
+      "n_updates": 9,
+      "median_logscore_rmse": 0.2949803428237287,
+      "median_posterior_tvd": 0.04646080099803407,
+      "MAP_preserved_count": 7,
+      "candidate_best_preserved_count": 6,
+      "median_new_support_alpha_mass": 0.6601056347388394
+    }
+  ],
+  "e2_asset": "Metadata for 168 old E2 GADEN concentration cubes found; 72 OPEN, 48 SEALED_DEV, 48 SEALED_H03; none of physical cubes included in this turn",
+  "e2_timebase": "Existing E2C-R1 timebase PASS, reconstructed/independently crosschecked writer clock 55.1-292.31s",
+  "e2c144_status": "HOLD source location contract, zero completed runs",
+  "e2_adapter_test": "24 synthetic source-run examples, 72 source-target-method score rows, 9 faulty contracts rejected, 0 real E2 cases tested",
+  "physical_aprime": "HOLD no physical source-to-ppm response matrix received",
+  "B_gain": "NOT_DEMONSTRATED"
+}
