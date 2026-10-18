@@ -1,0 +1,33 @@
+--- stage0/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp
++++ rng-recording/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp
+@@ -12,6 +12,7 @@
+ #include <DDA/DDA.h>
+ #include <fstream>
+ #include <atomic>
++#include <omp.h>
+ #include <chrono>
+ #include <iomanip>
+ #include <cstdlib>
+@@ -187,11 +188,13 @@
+         result.valid = true;
+         result.hitMap.resize(measuredHitProb.data.size(), 0.0);
+ 
++        const auto rngBefore = Utils::O24Capture();
+         SimulationSource source(node, measuredHitProb.metadata);
+         simulateSourceInPosition(source, result.hitMap, true, settings.maxWarmupIterations, settings.iterationsToRecord, settings.deltaTime,
+                                  settings.noiseSTDev);
+ 
+         result.sourceProb = sourceProbFromMaps(measuredHitProb, result.hitMap);
++        const auto rngAfter = Utils::O24Capture();
+         // Capture the exact maps already computed by the native forward model.
+         // No random draws, parameters, source choices, or score values change.
+         if (const char* base = std::getenv("NATIVE_PMFS_CANDIDATE_AUDIT")) {
+@@ -205,6 +208,8 @@
+                 maps.write(reinterpret_cast<const char*>(result.hitMap.data()),result.hitMap.size()*sizeof(float));
+                 rows<<std::setprecision(17)<<auditUpdate.load()<<","<<++call<<","<<node->origin.x<<","<<node->origin.y<<","<<node->size.x<<","<<node->size.y<<","<<result.sourceProb<<","<<offset<<","<<result.hitMap.size()<<"\n";
+                 maps.flush();rows.flush();
++                if(const char*rp=std::getenv("O24_RNG_TRACE")){static std::ofstream rng(rp);rng<<"{\"update\":"<<auditUpdate.load()<<",\"call\":"<<call<<",\"omp_thread\":"<<omp_get_thread_num()<<",\"origin_x\":"<<node->origin.x<<",\"origin_y\":"<<node->origin.y<<",\"size_x\":"<<node->size.x<<",\"size_y\":"<<node->size.y<<",\"before\":"<<rngBefore.json()<<",\"after\":"<<rngAfter.json()<<"}\n";rng.flush();Utils::O24WriteCache(std::string(rp)+".cache");}
++
+             }
+         }
+ 

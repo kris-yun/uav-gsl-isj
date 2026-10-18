@@ -1,0 +1,30 @@
+{
+  "initial_postcheck": "FAIL_OWNED_LIFECYCLE_MANAGER_REMAINED_AFTER_BATCH",
+  "preserved": [
+    {
+      "pid": 130966,
+      "domain": "225",
+      "create_time": 1792049594.28,
+      "command": [
+        "/opt/ros/humble/lib/nav2_lifecycle_manager/lifecycle_manager",
+        "--ros-args",
+        "--log-level",
+        "ERROR",
+        "--ros-args",
+        "-r",
+        "__node:=lifecycle_manager_navigation",
+        "-r",
+        "__ns:=/PioneerP3DX",
+        "--params-file",
+        "/tmp/launch_params_nhi0st46",
+        "--params-file",
+        "/tmp/launch_params_avcp94rc",
+        "--params-file",
+        "/tmp/launch_params_u35c1m3p"
+      ],
+      "status_after_SIGTERM": "sleeping",
+      "shutdown": "SIGKILL_EXIT"
+    }
+  ],
+  "scope": "After all four results; only verified owned PID stopped. No episode rerun or scientific parameter change."
+}

@@ -1,0 +1,23 @@
+--- stage0/src/gsl_server/algorithms/Common/Utils/Math.hpp
++++ rng-recording/src/gsl_server/algorithms/Common/Utils/Math.hpp
+@@ -1,5 +1,6 @@
+ #pragma once
+ #include <vector>
++#include <gsl_server/algorithms/Common/Utils/O24RandomAudit.hpp>
+ #include <deque>
+ #include <gsl_server/core/Vectors.hpp>
+ #include <cfloat>
+@@ -71,11 +72,13 @@
+             m_index = uniformRandom(0, Size);
+             for (size_t i = 0; i < Size; i++)
+                 m_precalculatedTable[i] = Utils::randomFromGaussian(0, 1);
++            O24NoteCache(&m_index,m_precalculatedTable.data(),Size);
+         }
+ 
+         float nextValue(float mean, float stdev)
+         {
+             m_index = (m_index + 1) % Size;
++            O24NoteCacheNext(m_precalculatedTable[m_index]);
+             return mean + stdev * m_precalculatedTable[m_index];
+         }
+     private:

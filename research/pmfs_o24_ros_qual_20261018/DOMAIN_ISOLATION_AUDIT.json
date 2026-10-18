@@ -1,0 +1,60 @@
+{
+  "status": "HOLD_A2_R02_DOMAIN225_PREEXISTING_LIFECYCLE_MANAGER_COLLISION",
+  "evidence": {
+    "pid": 130966,
+    "domain": "225",
+    "create_time": 1792049594.28,
+    "command": [
+      "/opt/ros/humble/lib/nav2_lifecycle_manager/lifecycle_manager",
+      "--ros-args",
+      "--log-level",
+      "ERROR",
+      "--ros-args",
+      "-r",
+      "__node:=lifecycle_manager_navigation",
+      "-r",
+      "__ns:=/PioneerP3DX",
+      "--params-file",
+      "/tmp/launch_params_nhi0st46",
+      "--params-file",
+      "/tmp/launch_params_avcp94rc",
+      "--params-file",
+      "/tmp/launch_params_u35c1m3p"
+    ],
+    "status_after_SIGTERM": "sleeping",
+    "shutdown": "SIGKILL_EXIT"
+  },
+  "launch_params": [
+    {
+      "path": "/tmp/launch_params_nhi0st46",
+      "mtime_epoch_s": 1792047958.4921794,
+      "text": "/PioneerP3DX/lifecycle_manager_navigation:\n  ros__parameters:\n    use_sim_time: true\n"
+    },
+    {
+      "path": "/tmp/launch_params_avcp94rc",
+      "mtime_epoch_s": 1792047958.4931765,
+      "text": "/PioneerP3DX/lifecycle_manager_navigation:\n  ros__parameters:\n    autostart: true\n"
+    },
+    {
+      "path": "/tmp/launch_params_u35c1m3p",
+      "mtime_epoch_s": 1792047958.4941738,
+      "text": "/PioneerP3DX/lifecycle_manager_navigation:\n  ros__parameters:\n    node_names: !!python/tuple\n    - map_server\n    - planner_server\n    - controller_server\n    - bt_navigator\n    - behavior_server\n"
+    }
+  ],
+  "existed_before_batch_days": 3.0581463979874495,
+  "affected_role": "O24G_A2_R02",
+  "same_namespace": "/PioneerP3DX",
+  "potential_targets": [
+    "map_server",
+    "planner_server",
+    "controller_server",
+    "bt_navigator",
+    "behavior_server"
+  ],
+  "cause": "Pre-run name-filter checked ros2/basic_sim/runtime_driver/gsl_actionserver/gmrf_wind, omitted lifecycle_manager. Domain225 incorrectly treated as vacant.",
+  "qualified_claim": "Four real ROS episodes and RNG evidence remain recorded; A2 R02 isolation and task-performance qualification HOLD. No proof of intervention and no proof of no intervention.",
+  "correction": "POST_RUN_CLEANUP initially called it current-owned leftover. Creation time and saved launch-file times show a historical orphan; that initial label is withdrawn. Files retained unchanged as audit history.",
+  "retry_policy": "Frozen total_goal_cap4,technical_retry_cap0. No automatic fifth goal.",
+  "new_ROS": 0,
+  "new_worlds": 0
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "stage": "configure",
+    "argv": [
+      "cmake",
+      "-S",
+      "/mnt/hgfs/workspace/PMFS_O24_ROS_QUAL_20261018/source_runtime",
+      "-B",
+      "/mnt/hgfs/workspace/PMFS_O24_ROS_QUAL_20261018/build",
+      "-DCMAKE_BUILD_TYPE=Release",
+      "-DCMAKE_INSTALL_PREFIX=/mnt/hgfs/workspace/PMFS_O24_ROS_QUAL_20261018/install",
+      "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+    ],
+    "exit_code": 0,
+    "wall_s": 6.6418516780249774,
+    "cpu_s": 2.371444
+  },
+  {
+    "stage": "compile",
+    "argv": [
+      "cmake",
+      "--build",
+      "/mnt/hgfs/workspace/PMFS_O24_ROS_QUAL_20261018/build",
+      "--parallel",
+      "1"
+    ],
+    "exit_code": 0,
+    "wall_s": 158.5256222570315,
+    "cpu_s": 135.460905
+  },
+  {
+    "stage": "install",
+    "argv": [
+      "cmake",
+      "--install",
+      "/mnt/hgfs/workspace/PMFS_O24_ROS_QUAL_20261018/build"
+    ],
+    "exit_code": 0,
+    "wall_s": 0.46850697800982744,
+    "cpu_s": 0.05852199999999819
+  }
+]

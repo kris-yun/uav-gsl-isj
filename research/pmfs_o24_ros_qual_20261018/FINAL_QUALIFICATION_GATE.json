@@ -1,0 +1,74 @@
+{
+  "status": "HOLD_ROS_ISOLATION_A2_R02_BUILD_AND_RNG_PASS_FOUR_RAW_EPISODES_RETAINED",
+  "source_manifest_files": 128,
+  "build_exit_codes": [
+    0,
+    0,
+    0
+  ],
+  "binary_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+  "roles": [
+    {
+      "role": "O24G_A2_R01",
+      "parameters": "PASS",
+      "candidate_records": 1052,
+      "stream_replay": "PASS",
+      "final_native_CPP_readout": "PASS_WITH_NATIVE_TEXT_PRINTING_PRECISION",
+      "valid_windows": 95,
+      "empty_guard_events": [],
+      "domain_isolation": "NO_CONFIRMED_COLLISION_IN_SAVED_AND_POST_RUN_PROCESS_RECORDS_PRECHECK_INCOMPLETE"
+    },
+    {
+      "role": "O24G_A2_R02",
+      "parameters": "PASS",
+      "candidate_records": 1804,
+      "stream_replay": "PASS",
+      "final_native_CPP_readout": "PASS_WITH_NATIVE_TEXT_PRINTING_PRECISION",
+      "valid_windows": 155,
+      "empty_guard_events": [],
+      "domain_isolation": "HOLD_CONFIRMED_HISTORICAL_DOMAIN_COLLISION"
+    },
+    {
+      "role": "O24G_B2_R01",
+      "parameters": "PASS",
+      "candidate_records": 633,
+      "stream_replay": "PASS",
+      "final_native_CPP_readout": "PASS_WITH_NATIVE_TEXT_PRINTING_PRECISION",
+      "valid_windows": 80,
+      "empty_guard_events": [],
+      "domain_isolation": "NO_CONFIRMED_COLLISION_IN_SAVED_AND_POST_RUN_PROCESS_RECORDS_PRECHECK_INCOMPLETE"
+    },
+    {
+      "role": "O24G_B2_R02",
+      "parameters": "PASS",
+      "candidate_records": 856,
+      "stream_replay": "PASS",
+      "final_native_CPP_readout": "PASS_WITH_NATIVE_TEXT_PRINTING_PRECISION",
+      "valid_windows": 110,
+      "empty_guard_events": [
+        {
+          "event": "30",
+          "node_clock_ns": "1792314304239172528",
+          "window_start_node_ns": "1792314303836944404",
+          "gas_count": "0",
+          "wind_count": "1",
+          "concentration_mean_ppm": "",
+          "wind_speed_mean": "",
+          "wind_direction_mean": "",
+          "status": "WAIT_EMPTY_OBSERVATION"
+        }
+      ],
+      "domain_isolation": "NO_CONFIRMED_COLLISION_IN_SAVED_AND_POST_RUN_PROCESS_RECORDS_PRECHECK_INCOMPLETE"
+    }
+  ],
+  "source_updates": 28,
+  "candidate_records": 4345,
+  "posterior_max_abs_error": 1.3877787807814457e-17,
+  "linear_alpha_max_abs_error": 1.1102230246251565e-16,
+  "map_score_max_relative_error": 2.2300546003566298e-15,
+  "GO_scope": "Source build, native parameter binding and recorded RNG streams PASS. All four real episodes remain raw evidence. Overall clean ROS qualification HOLD due confirmed preexisting lifecycle manager on A2 R02 domain225; no numerical parity test removes this runtime confound.",
+  "paper_performance": "HOLD",
+  "new_worlds": 0,
+  "AIMMD": 0,
+  "technical_retries": 0
+}

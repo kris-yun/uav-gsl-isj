@@ -1,0 +1,80 @@
+{
+  "archive": "C:\\Users\\50176\\Downloads\\PMFS_O24_ROS与随机状态验收_A2B2四回合_含隔离HOLD_20261018.zip",
+  "archive_sha256": "e41712cbb4d19e336a4a725a64ad217deaca749cfc90956d48f377e99bf371fd",
+  "archive_bytes": 11145230,
+  "payload_files": 401,
+  "research_root": "D:\\ZYC\\UAV\\.codex\\worktrees\\pmfs-paper-eq6-20261017\\A-gas\\research\\pmfs_o24_ros_qual_20261018",
+  "scope": "Four actual ROS episodes and all raw evidence. No complete gas frame archive or entire ROS installation. Offline QA can replay maps and RNG without worlds.",
+  "scientific_verdict": "HOLD_DOMAIN225_PREEXISTING_LIFECYCLE_MANAGER",
+  "fresh_archive_extraction_offline_QA": {
+    "status": "PASS_OFFLINE_EVIDENCE_REPRODUCTION_RUNTIME_ISOLATION_HOLD_RETAINED",
+    "verified_original_payload_files": 401,
+    "commands": [
+      {
+        "script": "analyze.py",
+        "exit_code": 0,
+        "wall_s": 1.1994158739689738
+      },
+      {
+        "script": "verify_readout_guest.py",
+        "exit_code": 0,
+        "wall_s": 1.3880789570976049
+      },
+      {
+        "script": "validate_rng_guest.py",
+        "exit_code": 0,
+        "wall_s": 15.812817902071401
+      },
+      {
+        "script": "final_checks.py",
+        "exit_code": 0,
+        "wall_s": 3.801263469038531
+      }
+    ],
+    "numeric_comparisons": [
+      {
+        "file": "O24_EPISODES.csv",
+        "rows": 4,
+        "max_numeric_abs_difference": 0.0,
+        "status": "PASS_NUMERIC_1e_11"
+      },
+      {
+        "file": "O24_SOURCE_UPDATE_METRICS.csv",
+        "rows": 28,
+        "max_numeric_abs_difference": 5.2735593669694936e-15,
+        "status": "PASS_NUMERIC_1e_11"
+      },
+      {
+        "file": "NATIVE_REPLAY_PARITY.csv",
+        "rows": 28,
+        "max_numeric_abs_difference": 2.2300546003566298e-15,
+        "status": "PASS_NUMERIC_1e_11"
+      },
+      {
+        "file": "O24_NATIVE_CPP_READOUT.csv",
+        "rows": 28,
+        "max_numeric_abs_difference": 0.0,
+        "status": "PASS_NUMERIC_1e_11"
+      },
+      {
+        "file": "O24_P24_SEPARATE_RESULTS.csv",
+        "rows": 4,
+        "max_numeric_abs_difference": 0.0,
+        "status": "PASS_NUMERIC_1e_11"
+      },
+      {
+        "file": "FORWARD_AND_RECORDING_COST.csv",
+        "rows": 4,
+        "max_numeric_abs_difference": 8.881784197001252e-16,
+        "status": "PASS_NUMERIC_1e_11"
+      }
+    ],
+    "RNG_candidate_records": 4345,
+    "new_ROS_goals": 0,
+    "new_forward_propagation_calls": 0,
+    "new_worlds": 0,
+    "AIMMD": 0,
+    "scientific_verdict": "HOLD_ROS_ISOLATION_A2_R02_BUILD_AND_RNG_PASS_FOUR_RAW_EPISODES_RETAINED",
+    "scope": "This QA reproduces saved evidence and preserves the historical domain225 qualification HOLD; it does not qualify a clean robot episode."
+  }
+}
