@@ -1,0 +1,70 @@
+--- official2024/gmrf_node.cpp
++++ TF_qualified/gmrf_node.cpp
+@@ -14,6 +14,9 @@
+ //========================================================================================
+ 
+ #include "gmrf_node.h"
++#include <fstream>
++#include <cstdlib>
++#include <iomanip>
+ #include <geometry_msgs/msg/pose_stamped.hpp>
+ #include <geometry_msgs/msg/transform_stamped.hpp>
+ #include "Utils.h"
+@@ -109,7 +112,8 @@
+     static auto tf_listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer);
+ 
+     // 1. Get wind measurement
+-    double downwind_direction_map;
++    double downwind_direction_map = 0.0;
++    bool direction_valid = false;
+     mutex_anemometer.lock();
+     try
+     {
+@@ -134,6 +138,7 @@
+                 tf_buffer->transform(anemometer_upWind_pose, map_upWind_pose, frame_id.c_str());
+ 
+                 downwind_direction_map = angles::normalize_angle(Utils::getYaw(map_upWind_pose.pose.orientation) + 3.14159);
++                direction_valid = true;
+             }
+             catch (tf2::TransformException& ex)
+             {
+@@ -143,6 +148,7 @@
+         else
+         {
+             downwind_direction_map = 0.0;
++            direction_valid = true;
+         }
+     }
+     catch (std::exception e)
+@@ -168,7 +174,7 @@
+     }
+ 
+     // 3. Add observation to the GMRF map
+-    if (module_init)
++    if (module_init && know_sensor_pose && direction_valid)
+     {
+         // Current sensor pose in the map
+         float x_pos = transform.transform.translation.x;
+@@ -177,6 +183,22 @@
+         mutex_anemometer.lock();
+         // RCLCPP_INFO(get_logger(), "[GMRF] New obs: %.2f m/s, %.2f rad at (%.2f,%.2f)", reading_speed,reading_direction,x_pos,y_pos);
+         my_map->insertObservation_GMRF(reading_speed, downwind_direction_map, x_pos, y_pos, GMRF_lambdaObs);
++        // Passive evidence only: no measurements are synthesized or changed.
++        static std::ofstream accepted;
++        static bool trace_initialized = false;
++        if (!trace_initialized) {
++            trace_initialized = true;
++            if (const char* path = std::getenv("GMRF_R2_TRACE")) {
++                accepted.open(path);
++                accepted << "receipt_ros_ns,message_stamp_ns,x,y,speed,downwind_map_rad\n" << std::setprecision(17);
++            }
++        }
++        if (accepted.is_open()) {
++            accepted << now().nanoseconds() << "," << (int64_t(msg->header.stamp.sec)*1000000000LL+msg->header.stamp.nanosec)
++                     << "," << x_pos << "," << y_pos << "," << reading_speed << "," << downwind_direction_map << "\n";
++            accepted.flush();
++        }
++
+         mutex_anemometer.unlock();
+     }
+ }

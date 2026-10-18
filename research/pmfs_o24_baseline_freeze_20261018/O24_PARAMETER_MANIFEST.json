@@ -1,0 +1,83 @@
+{
+  "status": "FROZEN_INTENDED_VALUES_NOT_RUNTIME_RESOLVED_PARAMETERS",
+  "values": {
+    "use_sim_time": false,
+    "useWindGroundTruth": false,
+    "sourceDiscriminationPower": 0.2,
+    "convergence_thr": 1.5,
+    "maxSearchTime": 300.0,
+    "stop_and_measure_time": 0.4,
+    "confidenceMeasurementWeight": 1.0,
+    "confidenceSigmaSpatial": 1.0,
+    "kernelSigma": 1.5,
+    "kernelStretchConstant": 1.5,
+    "hitPriorProbability": 0.3,
+    "scale": 25,
+    "maxUpdatesPerStop": 5,
+    "stepsSourceUpdate": 3,
+    "refineFraction": 0.1,
+    "maxRegionSize": 5,
+    "deltaTime": 0.1,
+    "noiseSTDev": 0.5,
+    "iterationsToRecord": 200,
+    "maxWarmupIterations": 500,
+    "th_gas_present": 0.1,
+    "th_wind_present": 0.02,
+    "robot_location_topic": "ground_truth",
+    "enose_topic": "PID/Sensor_reading",
+    "anemometer_topic": "/native20/wind_to",
+    "anemometer_frame": "PioneerP3DX_anemometer_frame",
+    "openMoveSetExpasion": 5,
+    "explorationProbability": 0.05,
+    "initialExplorationMoves": 2,
+    "localEstimationWindowSize": 2,
+    "convergence_steps": 5,
+    "markers_height": 0.2,
+    "distanceThreshold": 0.5,
+    "headless": true
+  },
+  "confidence_formula": "alpha=1-exp(-Omega/sigmaOmega^2)",
+  "score_formula": "product_over_free_cells(1-D*alpha*abs(measured-predicted))",
+  "readout": "Native Top5 weighted position",
+  "age_event": "Pinned code centre-cell simultaneous any-hit; no age-radius law invented",
+  "compiler_flags": {
+    "USE_GADEN": false,
+    "USE_GUI": false,
+    "USE_TRACY": false,
+    "Release": true,
+    "OMP_THREADS": 4
+  },
+  "runtime_parameter_service_gate_required": true,
+  "convergence_steps_is_unused_by_native_stop": true,
+  "input_permission_and_visual_differences_from_official_launch": [
+    "useWindGroundTruth True->False; paired with USE_GADEN OFF, intentional deployment information restriction",
+    "anemometer_topic routes saved upwind-to-downwind adapter; GMRF consumes original local upwind message",
+    "headless False->True and GUI build OFF; avoids graphical startup but not assumed identical runtime timing"
+  ],
+  "per_case": {
+    "A2": {
+      "source_xyz": [
+        1.75,
+        8.6,
+        0.5
+      ],
+      "start_xyz": [
+        5.8,
+        0.8,
+        0.0
+      ]
+    },
+    "B2": {
+      "source_xyz": [
+        -0.4,
+        -2.9,
+        -0.3
+      ],
+      "start_xyz": [
+        -0.8,
+        2.3,
+        -0.7
+      ]
+    }
+  }
+}

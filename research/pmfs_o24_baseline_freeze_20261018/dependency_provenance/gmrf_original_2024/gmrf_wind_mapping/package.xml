@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>gmrf_wind_mapping</name>
+  <version>0.0.0</version>
+  <description>This packages estimates the average windflow present in an environment from a set of 2D anemometer measurements.
+               The implementation is based on Gaussian Markov Random Fields</description>
+  <maintainer email="jgmonroy@uma.es">Javier G Monroy</maintainer>
+
+  <license>GPLv3</license>
+  <author>Javier G. Monroy</author>  
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+    
+  <!-- Dependencies needed to compile this package. -->
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>  
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>visualization_msgs</build_depend>
+  <build_depend>olfaction_msgs</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>opencv2</build_depend>
+  <build_depend>eigen</build_depend>
+  <build_depend>tf2_geometry_msgs</build_depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

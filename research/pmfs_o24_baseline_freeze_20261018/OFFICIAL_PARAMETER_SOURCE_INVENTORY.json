@@ -1,0 +1,502 @@
+{
+  "launch_entries": [
+    {
+      "line": 106,
+      "key": "sensor_topic",
+      "expression": "parse_substitution(\"$(var robot_name)/Anemometer/WindSensor_reading\")"
+    },
+    {
+      "line": 107,
+      "key": "map_topic",
+      "expression": "parse_substitution(\"$(var robot_name)/map\")"
+    },
+    {
+      "line": 108,
+      "key": "cell_size",
+      "expression": "0.25"
+    },
+    {
+      "line": 116,
+      "key": "deltaTime",
+      "expression": "0.1"
+    },
+    {
+      "line": 117,
+      "key": "speed",
+      "expression": "5.0"
+    },
+    {
+      "line": 118,
+      "key": "worldFile",
+      "expression": "parse_substitution(\"$(find-pkg-share pmfs_env)/scenarios/$(var scenario)/basicSim/$(var simulation).yaml\")"
+    },
+    {
+      "line": 133,
+      "key": "use_rviz",
+      "expression": "\"False\""
+    },
+    {
+      "line": 134,
+      "key": "scenario",
+      "expression": "LaunchConfiguration(\"scenario\").perform(context)"
+    },
+    {
+      "line": 135,
+      "key": "simulation",
+      "expression": "LaunchConfiguration(\"simulation\").perform(context)"
+    },
+    {
+      "line": 147,
+      "key": "scenario",
+      "expression": "LaunchConfiguration(\"scenario\")"
+    },
+    {
+      "line": 148,
+      "key": "namespace",
+      "expression": "LaunchConfiguration(\"robot_name\")"
+    },
+    {
+      "line": 31,
+      "key": "method",
+      "expression": "parse_substitution(\"$(var method)\")"
+    },
+    {
+      "line": 45,
+      "key": "use_sim_time",
+      "expression": "False"
+    },
+    {
+      "line": 46,
+      "key": "maxSearchTime",
+      "expression": "300.0"
+    },
+    {
+      "line": 47,
+      "key": "robot_location_topic",
+      "expression": "\"ground_truth\""
+    },
+    {
+      "line": 48,
+      "key": "stop_and_measure_time",
+      "expression": "0.4"
+    },
+    {
+      "line": 49,
+      "key": "th_gas_present",
+      "expression": "parse_substitution(\"$(var th_gas_present)\")"
+    },
+    {
+      "line": 50,
+      "key": "th_wind_present",
+      "expression": "parse_substitution(\"$(var th_wind_present)\")"
+    },
+    {
+      "line": 51,
+      "key": "ground_truth_x",
+      "expression": "parse_substitution(\"$(var source_x)\")"
+    },
+    {
+      "line": 52,
+      "key": "ground_truth_y",
+      "expression": "parse_substitution(\"$(var source_y)\")"
+    },
+    {
+      "line": 53,
+      "key": "resultsFile",
+      "expression": "parse_substitution(\"Results/$(var simulation)/$(var method).csv\")"
+    },
+    {
+      "line": 55,
+      "key": "scale",
+      "expression": "25"
+    },
+    {
+      "line": 56,
+      "key": "markers_height",
+      "expression": "0.2"
+    },
+    {
+      "line": 58,
+      "key": "anemometer_frame",
+      "expression": "parse_substitution(\"$(var robot_name)_anemometer_frame\")"
+    },
+    {
+      "line": 59,
+      "key": "openMoveSetExpasion",
+      "expression": "5"
+    },
+    {
+      "line": 60,
+      "key": "explorationProbability",
+      "expression": "0.05"
+    },
+    {
+      "line": 61,
+      "key": "convergence_thr",
+      "expression": "1.5"
+    },
+    {
+      "line": 64,
+      "key": "useDiffusionTerm",
+      "expression": "True"
+    },
+    {
+      "line": 65,
+      "key": "stdevHit",
+      "expression": "1.0"
+    },
+    {
+      "line": 66,
+      "key": "stdevMiss",
+      "expression": "1.2"
+    },
+    {
+      "line": 67,
+      "key": "infoTaxis",
+      "expression": "parse_substitution(\"$(var use_infotaxis)\")"
+    },
+    {
+      "line": 68,
+      "key": "allowMovementRepetition",
+      "expression": "parse_substitution(\"$(var use_infotaxis)\")"
+    },
+    {
+      "line": 72,
+      "key": "headless",
+      "expression": "False"
+    },
+    {
+      "line": 73,
+      "key": "maxUpdatesPerStop",
+      "expression": "5"
+    },
+    {
+      "line": 74,
+      "key": "kernelSigma",
+      "expression": "1.5"
+    },
+    {
+      "line": 75,
+      "key": "kernelStretchConstant",
+      "expression": "1.5"
+    },
+    {
+      "line": 76,
+      "key": "hitPriorProbability",
+      "expression": "0.3"
+    },
+    {
+      "line": 77,
+      "key": "confidenceSigmaSpatial",
+      "expression": "1.0"
+    },
+    {
+      "line": 78,
+      "key": "confidenceMeasurementWeight",
+      "expression": "1.0"
+    },
+    {
+      "line": 79,
+      "key": "initialExplorationMoves",
+      "expression": "parse_substitution(\"$(var initialExplorationMoves)\")"
+    },
+    {
+      "line": 81,
+      "key": "useWindGroundTruth",
+      "expression": "True"
+    },
+    {
+      "line": 82,
+      "key": "stepsSourceUpdate",
+      "expression": "3"
+    },
+    {
+      "line": 83,
+      "key": "maxRegionSize",
+      "expression": "5"
+    },
+    {
+      "line": 84,
+      "key": "sourceDiscriminationPower",
+      "expression": "parse_substitution(\"$(var sourceDiscriminationPower)\")"
+    },
+    {
+      "line": 85,
+      "key": "refineFraction",
+      "expression": "0.1"
+    },
+    {
+      "line": 86,
+      "key": "deltaTime",
+      "expression": "parse_substitution(\"$(var filamentDeltaTime)\")"
+    },
+    {
+      "line": 87,
+      "key": "noiseSTDev",
+      "expression": "parse_substitution(\"$(var filament_movement_stdev)\")"
+    },
+    {
+      "line": 88,
+      "key": "iterationsToRecord",
+      "expression": "parse_substitution(\"$(var iterationsToRecord)\")"
+    },
+    {
+      "line": 89,
+      "key": "maxWarmupIterations",
+      "expression": "parse_substitution(\"$(var maxWarmupIterations)\")"
+    },
+    {
+      "line": 92,
+      "key": "step",
+      "expression": "0.5"
+    },
+    {
+      "line": 160,
+      "key": "sensor_frame",
+      "expression": "parse_substitution(\"$(var robot_name)_anemometer_frame\")"
+    },
+    {
+      "line": 161,
+      "key": "fixed_frame",
+      "expression": "\"map\""
+    },
+    {
+      "line": 162,
+      "key": "noise_std",
+      "expression": "0.3"
+    },
+    {
+      "line": 163,
+      "key": "use_map_ref_system",
+      "expression": "False"
+    },
+    {
+      "line": 164,
+      "key": "use_sim_time",
+      "expression": "True"
+    },
+    {
+      "line": 172,
+      "key": "use_sim_time",
+      "expression": "True"
+    },
+    {
+      "line": 185,
+      "key": "sensor_model",
+      "expression": "30"
+    },
+    {
+      "line": 186,
+      "key": "sensor_frame",
+      "expression": "parse_substitution(\"$(var robot_name)_pid_frame\")"
+    },
+    {
+      "line": 187,
+      "key": "fixed_frame",
+      "expression": "\"map\""
+    },
+    {
+      "line": 188,
+      "key": "noise_std",
+      "expression": "20.1"
+    },
+    {
+      "line": 189,
+      "key": "use_sim_time",
+      "expression": "True"
+    },
+    {
+      "line": 197,
+      "key": "use_sim_time",
+      "expression": "True"
+    }
+  ],
+  "core_getParam_lines": [
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFS.cpp",
+      "line": 50,
+      "text": "settings.movement.openMoveSetExpasion = getParam<int>(\"openMoveSetExpasion\", 5);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFS.cpp",
+      "line": 51,
+      "text": "settings.movement.explorationProbability = getParam<double>(\"explorationProbability\", 0.1);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFS.cpp",
+      "line": 52,
+      "text": "settings.movement.initialExplorationMoves = getParam<int>(\"initialExplorationMoves\", 5);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFS.cpp",
+      "line": 54,
+      "text": "settings.visualization.markers_height = getParam<double>(\"markers_height\", 0);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFS.cpp",
+      "line": 55,
+      "text": "IF_GUI(settings.visualization.headless = getParam<bool>(\"headless\", false));"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFS.cpp",
+      "line": 57,
+      "text": "settings.declaration.threshold = getParam<double>(\"convergence_thr\", 0.5); // threshold for source declaration"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFS.cpp",
+      "line": 58,
+      "text": "settings.declaration.steps = getParam<int>(\"convergence_steps\", 5);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFS.cpp",
+      "line": 65,
+      "text": "int scale = getParam<int>(\"scale\", 65); // scale for dynamic map reduction"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 287,
+      "text": "std::string anemometer_frame = algorithm.getParam<std::string>(\"anemometer_frame\", \"anemometer_frame\");"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 401,
+      "text": "settings.useWindGroundTruth = algorithm.getParam<bool>(\"useWindGroundTruth\", false);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 402,
+      "text": "settings.sourceDiscriminationPower = algorithm.getParam<double>(\"sourceDiscriminationPower\", 1);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 403,
+      "text": "settings.refineFraction = algorithm.getParam<double>(\"refineFraction\", 10);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 404,
+      "text": "settings.stepsBetweenSourceUpdates = algorithm.getParam<int>(\"stepsSourceUpdate\", 10);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 405,
+      "text": "settings.maxRegionSize = algorithm.getParam<int>(\"maxRegionSize\", 5);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 406,
+      "text": "settings.deltaTime = algorithm.getParam<double>(\"deltaTime\", 0.2);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 407,
+      "text": "settings.noiseSTDev = algorithm.getParam<double>(\"noiseSTDev\", 0.5);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 408,
+      "text": "settings.iterationsToRecord = algorithm.getParam<int>(\"iterationsToRecord\", 200);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 409,
+      "text": "settings.maxWarmupIterations = algorithm.getParam<int>(\"maxWarmupIterations\", 500);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 414,
+      "text": "settings.prior = algorithm.getParam<double>(\"hitPriorProbability\", 0.1);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 415,
+      "text": "settings.maxUpdatesPerStop = algorithm.getParam<int>(\"maxUpdatesPerStop\", 3);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 416,
+      "text": "settings.kernelSigma = algorithm.getParam<double>(\"kernelSigma\", 0.5);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 417,
+      "text": "settings.kernelStretchConstant = algorithm.getParam<double>(\"kernelStretchConstant\", 1);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 418,
+      "text": "settings.confidenceMeasurementWeight = algorithm.getParam<double>(\"confidenceMeasurementWeight\", 0.5);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 419,
+      "text": "settings.confidenceSigmaSpatial = algorithm.getParam<double>(\"confidenceSigmaSpatial\", 0.5);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "line": 420,
+      "text": "settings.localEstimationWindowSize = algorithm.getParam<int>(\"localEstimationWindowSize\", 2);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Algorithm.cpp",
+      "line": 24,
+      "text": "localizationSub = node->create_subscription<PoseWithCovarianceStamped>(getParam<std::string>(\"robot_location_topic\", \"amcl_pose\"), 1,"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Algorithm.cpp",
+      "line": 34,
+      "text": "gasSub = node->create_subscription<olfaction_msgs::msg::GasSensor>(getParam<std::string>(\"enose_topic\", \"PID/Sensor_reading\"), 1,"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Algorithm.cpp",
+      "line": 38,
+      "text": "getParam<std::string>(\"anemometer_topic\", \"Anemometer/WindSensor_reading\"), 1, std::bind(&Algorithm::windCallback, this, _1));"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Algorithm.cpp",
+      "line": 57,
+      "text": "resultLogging.maxSearchTime = getParam<double>(\"maxSearchTime\", 1000.0);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Algorithm.cpp",
+      "line": 58,
+      "text": "resultLogging.distanceThreshold = getParam<double>(\"distanceThreshold\", 0.5);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Algorithm.cpp",
+      "line": 59,
+      "text": "resultLogging.sourcePositionGT.x = getParam<float>(\"ground_truth_x\", 0.0);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Algorithm.cpp",
+      "line": 60,
+      "text": "resultLogging.sourcePositionGT.y = getParam<float>(\"ground_truth_y\", 0.0);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Algorithm.cpp",
+      "line": 61,
+      "text": "resultLogging.resultsFile = getParam<std::string>(\"resultsFile\", \"\");"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Algorithm.cpp",
+      "line": 62,
+      "text": "resultLogging.navigationPathFile = getParam<std::string>(\"navigationPathFile\", \"\");"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Algorithm.cpp",
+      "line": 64,
+      "text": "thresholdGas = getParam<double>(\"th_gas_present\", 0.1);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Algorithm.cpp",
+      "line": 65,
+      "text": "thresholdWind = getParam<double>(\"th_wind_present\", 0.1);"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/StopAndMeasureState.cpp",
+      "line": 9,
+      "text": "measure_time = algorithm->getParam<double>(\"stop_and_measure_time\", 2.0);"
+    }
+  ],
+  "not_a_runtime_parameter_snapshot": true
+}

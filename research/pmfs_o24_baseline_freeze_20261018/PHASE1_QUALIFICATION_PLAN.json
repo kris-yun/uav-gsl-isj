@@ -1,0 +1,95 @@
+{
+  "status": "DRAFT_FROZEN_SCOPE_NOT_AUTHORIZATION_NOT_READY_TO_LAUNCH",
+  "roles": [
+    {
+      "id": "O24G_A2_R01",
+      "case": "A2",
+      "repeat": 1,
+      "information": "GMRF/local sensor only",
+      "start": [
+        5.8,
+        0.8,
+        0.0
+      ],
+      "native_cutoff_wall_s": 300,
+      "seed": null,
+      "seed_status": "NOT_FREEZABLE_BY_UPSTREAM_API_HOLD"
+    },
+    {
+      "id": "O24G_A2_R02",
+      "case": "A2",
+      "repeat": 2,
+      "information": "GMRF/local sensor only",
+      "start": [
+        5.8,
+        0.8,
+        0.0
+      ],
+      "native_cutoff_wall_s": 300,
+      "seed": null,
+      "seed_status": "NOT_FREEZABLE_BY_UPSTREAM_API_HOLD"
+    },
+    {
+      "id": "O24G_B2_R01",
+      "case": "B2",
+      "repeat": 1,
+      "information": "GMRF/local sensor only",
+      "start": [
+        -0.8,
+        2.3,
+        -0.7
+      ],
+      "native_cutoff_wall_s": 300,
+      "seed": null,
+      "seed_status": "NOT_FREEZABLE_BY_UPSTREAM_API_HOLD"
+    },
+    {
+      "id": "O24G_B2_R02",
+      "case": "B2",
+      "repeat": 2,
+      "information": "GMRF/local sensor only",
+      "start": [
+        -0.8,
+        2.3,
+        -0.7
+      ],
+      "native_cutoff_wall_s": 300,
+      "seed": null,
+      "seed_status": "NOT_FREEZABLE_BY_UPSTREAM_API_HOLD"
+    }
+  ],
+  "real_ROS_episodes": 4,
+  "new_worlds": 0,
+  "AIMMD": 0,
+  "science_parameter_changes_from_declared_O24": 0,
+  "variance_threshold_m2": 1.5,
+  "native_clock": "wall",
+  "D": 0.2,
+  "confidence": "linear_Omega",
+  "source_domain": "Original all-pixels-free coarse support; B2 exclusion retained",
+  "stop_on_scientific_failure": "Keep it; no extra rerun to select a favorable result",
+  "technical_retry_cap": 0,
+  "phase0_limits": "No VM, ROS, CFD, cloud tasks, other chats; host C++ only",
+  "next_phase_requires_direct_user_approval": true,
+  "proposed_total_host_budget_s": 2400,
+  "guest_free_floor_bytes": 5368709120,
+  "host_free_floor_bytes": 2147483648,
+  "build_storage": "Prefer sharedD build to avoid reducingVM free reserve; do not delete/move existing data",
+  "required_before_any_goal": [
+    "New full O24 ROS build with prepared source and macros; record uniqueELF SHA",
+    "Runtime dependencies SHA must be verified live, not assumed from cached expectations",
+    "All resolved ROS parameters and local-wind branch observed, map/player/sensor preflight",
+    "RNG seed/state protocol audited and frozen; current upstream no external seed knob",
+    "Ensure planned per-message/query/frame/window mapping is actually captured, otherwise restrict attribution"
+  ],
+  "required_outputs": [
+    "native declaration bool and stop reason",
+    "wall/robot/physical-frame time mapping",
+    "nativeTop5/full-mean/MAPerror and whole-posterior variance",
+    "truth1m/2mneighborhood probability mass asdiagnostics, not altered success criterion",
+    "fixedsource-pair logratio and allcandidateowner/RNG provenance",
+    "allraw observations, consumerwindows, navigation and actualparameters",
+    "full candidatecalls and CPU/cost includinginstrumentation"
+  ],
+  "no_stop_shadow_runs_authorized": false
+}

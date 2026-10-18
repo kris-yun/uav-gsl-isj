@@ -1,0 +1,67 @@
+--- PMFS-U24-SOURCE/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp
++++ PMFS-O24-PORT-GMRF/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp
+@@ -10,11 +10,17 @@
+ #include <opencv2/imgproc.hpp>
+ 
+ #include <DDA/DDA.h>
++#include <fstream>
++#include <atomic>
++#include <chrono>
++#include <iomanip>
++#include <cstdlib>
+ #include <gsl_server/algorithms/Common/Utils/Profiling.hpp>
+ 
+ namespace GSL::PMFS_internal
+ {
+     namespace NQA = Utils::NQA;
++    static std::atomic<size_t> auditUpdate{0};
+     using HashSet = std::unordered_set<Vector2Int>;
+ 
+     // We have a long list of pre-calculated random values for Speeeeeeeeeeeeeeeeed
+@@ -64,6 +70,7 @@
+         ZoneScoped;
+         GSL_INFO_COLOR(fmt::terminal_color::yellow, "Started simulations. Might take a while!");
+         Utils::Time::Stopwatch stopwatch;
++        ++auditUpdate; // Passive identity for each source update; never used by the algorithm.
+         std::vector<NQA::Node> localCopyLeaves = QTleaves;
+ 
+         // first, coarse simulation based on the quadtree decomposition of the map
+@@ -159,6 +166,15 @@
+ 
+         Utils::NormalizeDistribution(sourceProb);
+         GSL_INFO("Time ellapsed in simulation = {} s", stopwatch.ellapsed());
++        if (const char* path = std::getenv("NATIVE_PMFS_POSTERIOR_TRACE")) {
++            static std::ofstream trace(path);static size_t update = 0;
++            if (update==0) trace << "update,row,col,x_m,y_m,cell_size_m,source_probability,hit_log_odds,hit_omega,hit_confidence,estimated_wind_u,estimated_wind_v\n";
++            trace << std::setprecision(17);++update;
++            for (int y=0;y<sourceProb.metadata.dimensions.y;++y) for (int x=0;x<sourceProb.metadata.dimensions.x;++x) if(sourceProb.freeAt(x,y)) {
++                const auto p=sourceProb.metadata.indexToCoordinates(x,y);const auto h=measuredHitProb.dataAt(x,y);const auto w=wind.dataAt(x,y);
++                trace<<update<<","<<y<<","<<x<<","<<p.x<<","<<p.y<<","<<sourceProb.metadata.cellSize<<","<<sourceProb.dataAt(x,y)<<","<<h.logOdds<<","<<h.omega<<","<<h.confidence<<","<<w.x<<","<<w.y<<"\n";
++            } trace.flush();
++        }
+     }
+ 
+     Simulations::SimulationResult Simulations::runSimulation(std::vector<LeafScore>& scores, size_t index)
+@@ -176,6 +192,22 @@
+                                  settings.noiseSTDev);
+ 
+         result.sourceProb = sourceProbFromMaps(measuredHitProb, result.hitMap);
++        // Capture the exact maps already computed by the native forward model.
++        // No random draws, parameters, source choices, or score values change.
++        if (const char* base = std::getenv("NATIVE_PMFS_CANDIDATE_AUDIT")) {
++            #pragma omp critical(native_passive_candidate_audit)
++            {
++                static std::ofstream maps(std::string(base)+".f32",std::ios::binary);
++                static std::ofstream rows(std::string(base)+".csv");
++                static size_t call=0;
++                if(call==0) rows<<"update,call,origin_x,origin_y,size_x,size_y,score,offset_bytes,count\n";
++                const auto offset=maps.tellp();
++                maps.write(reinterpret_cast<const char*>(result.hitMap.data()),result.hitMap.size()*sizeof(float));
++                rows<<std::setprecision(17)<<auditUpdate.load()<<","<<++call<<","<<node->origin.x<<","<<node->origin.y<<","<<node->size.x<<","<<node->size.y<<","<<result.sourceProb<<","<<offset<<","<<result.hitMap.size()<<"\n";
++                maps.flush();rows.flush();
++            }
++        }
++
+ 
+         scores[index].score = result.sourceProb;
+ 

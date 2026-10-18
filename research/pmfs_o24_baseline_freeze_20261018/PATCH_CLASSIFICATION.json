@@ -1,0 +1,48 @@
+{
+  "status": "FIVE_PREPARED_DIFFERENCES_DISCLOSED_NO_PAPER_FORMULA_PATCH",
+  "patches": [
+    {
+      "path": "CMakeLists.txt",
+      "classification": "BUILD_DEPENDENCY_AND_INFORMATION_PERMISSION",
+      "upstream_sha256": "6f6266773312a97323bc11500a9c5f81b85054239712addd8a50eea5c929144b",
+      "prepared_sha256": "81b2a997fc7f36c58974e3292f2b076726005ee312442afbc1b6ded8442ee312",
+      "patch_sha256": "0f8907faadb6f057acd17a34f4e0f20bb70d5f152755f8b8a23057dcbee39430",
+      "not_claimed_semantics_preserving_for_all_inputs": false
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/StopAndMeasureState.cpp",
+      "classification": "INPUT_TRAJECTORY_ADAPTER_EMPTY_OBSERVATION_GUARD_AND_PASSIVE_TRACE",
+      "upstream_sha256": "398d02a8d509c0914dcf78d0a19035f966026a83d5ab6868bd7015ed680dda55",
+      "prepared_sha256": "a474c4b58b939e732c4db103de9b297d8f3979e6ef62bb44d158b39ddfc20dd4",
+      "patch_sha256": "983106596f4ab959d883743392c48daa3f88ba906efc6fc7289ed7775b09466e",
+      "not_claimed_semantics_preserving_for_all_inputs": true
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/internal/Simulations.cpp",
+      "classification": "PASSIVE_EXPORT_ADAPTER_WITH_SCHEDULING_CAVEAT",
+      "upstream_sha256": "8779fd97f12dc730fd06cd376d7751e4aff8c3e724f1abe210cdc6a11f96866c",
+      "prepared_sha256": "0548140610c751900cca0eb23ce49e056bcae4fd9b3eb0aea42827489434d008",
+      "patch_sha256": "60dd0b6c51399a2225811c7bff18e5c2d49d06461c21a131d6a9fa4f60ea8961",
+      "not_claimed_semantics_preserving_for_all_inputs": true
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFS.cpp",
+      "classification": "STARTUP_MAP_READINESS_ADAPTER",
+      "upstream_sha256": "3a169b7e7b977524dcb0114c2c2b6f96ea676714901284ebfc9a9372b553e0ed",
+      "prepared_sha256": "673c6f4cd71a3b3e75baee5cb7c1d1d07b717966b9aeca42f6fecd98a8aa66d7",
+      "patch_sha256": "499ac7fb297b63f38763b3baef36c7329774b93fe46b81eeb4000fbca62cd7f4",
+      "not_claimed_semantics_preserving_for_all_inputs": true
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFS_utils.cpp",
+      "classification": "DISCLOSED_RECTANGULAR_MOMENT_DOMAIN_REPAIR",
+      "upstream_sha256": "2972b7e50e4390047aae99792f6d3482f9474bde636f19b3f73a0970451902bb",
+      "prepared_sha256": "662d0d628d1fbfb3f8a8f895cec12b4140648d724f4baefe70e7a10648e75978",
+      "patch_sha256": "4efdf4e51d6ebf25c4233b829c96268b72811f04a1a2f55bfed4ca557b97e33b",
+      "not_claimed_semantics_preserving_for_all_inputs": true
+    }
+  ],
+  "confidence_and_scoring_match_official": true,
+  "Math_cpp_byte_identical": true,
+  "recording_call_order": "No extra direct random calls; OpenMP/time-seeding and I/O scheduling can change which candidate consumes which random state. Not claimed identical RNG trajectory."
+}

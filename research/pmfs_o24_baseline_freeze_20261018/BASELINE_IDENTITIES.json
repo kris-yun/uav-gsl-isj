@@ -1,0 +1,85 @@
+{
+  "identities": [
+    {
+      "id": "PMFS-U24-SOURCE",
+      "status": "SOURCE_IDENTITY_FROZEN",
+      "source": "a8d5a764b7cbfc1d5d1887aebfe890e2c75d7533",
+      "formula": "linear_Omega",
+      "D": 0.2,
+      "threshold_m2": 1.5,
+      "wind": "Upstream launch True; effective branch also depends on USE_GADEN",
+      "executable": "NOT_BUILT_IN_THIS_HOST_PREFLIGHT",
+      "performance": null
+    },
+    {
+      "id": "PMFS-O24-PORT-GMRF",
+      "status": "PREPARED_SOURCE_PARAMETERS_FROZEN_ROS_BUILD_AND_RESULTS_PENDING",
+      "source": "a8d5a764b7cbfc1d5d1887aebfe890e2c75d7533",
+      "formula": "linear_Omega",
+      "D": 0.2,
+      "threshold_m2": 1.5,
+      "wind": "GMRF/local available observations",
+      "USE_GADEN": false,
+      "parameters": {
+        "use_sim_time": false,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 0.2,
+        "convergence_thr": 1.5,
+        "maxSearchTime": 300.0,
+        "stop_and_measure_time": 0.4,
+        "confidenceMeasurementWeight": 1.0,
+        "confidenceSigmaSpatial": 1.0,
+        "kernelSigma": 1.5,
+        "kernelStretchConstant": 1.5,
+        "hitPriorProbability": 0.3,
+        "scale": 25,
+        "maxUpdatesPerStop": 5,
+        "stepsSourceUpdate": 3,
+        "refineFraction": 0.1,
+        "maxRegionSize": 5,
+        "deltaTime": 0.1,
+        "noiseSTDev": 0.5,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500
+      },
+      "executable": "NOT_BUILT_NOT_A_P24_ELF",
+      "performance": null
+    },
+    {
+      "id": "PMFS-O24-ORACLE-WIND",
+      "status": "IDENTITY_SPEC_ONLY_NO_BINARY_NO_RESULTS",
+      "source": "a8d5a764b7cbfc1d5d1887aebfe890e2c75d7533",
+      "formula": "linear_Omega",
+      "D": 0.2,
+      "threshold_m2": 1.5,
+      "wind": "Actual bound true-wind service required",
+      "USE_GADEN": true,
+      "executable": null,
+      "performance": null
+    },
+    {
+      "id": "PMFS-P24-PAPER-FIRST",
+      "status": "FROZEN_EXISTING_FOUR_REAL_RUNS_NOT_OUR_O24_RESULTS",
+      "source": "a8d5a764b7cbfc1d5d1887aebfe890e2c75d7533",
+      "formula": "squared_Omega",
+      "D": 1.0,
+      "threshold_m2": 1.0,
+      "wind": "GMRF",
+      "USE_GADEN": false,
+      "existing_binary_sha256": "e415acdcd910a2fb6c703cdf8447e531d6aa4a1dc6ebb2204257240068d08899",
+      "results_sha256": "8fc989139e01ee9d4a1d555feaf0fb30196f698e6a2f05d29e11a87394ed3886"
+    },
+    {
+      "id": "PMFS-A-PRIME",
+      "status": "NOT_IMPLEMENTED_NO_RESULTS",
+      "parent": "PMFS-O24-PORT-GMRF",
+      "formula": null,
+      "D": null,
+      "threshold_m2": null,
+      "wind": "Must share evaluation information protocol",
+      "executable": null,
+      "performance": null
+    }
+  ],
+  "prohibit_ambiguous_PMFS_original_label": true
+}

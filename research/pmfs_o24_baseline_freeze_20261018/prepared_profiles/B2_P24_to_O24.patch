@@ -1,0 +1,52 @@
+--- P24_actual/B2
++++ O24_PREPARED_ONLY/B2
+@@ -1,3 +1,4 @@
++# NOT EXECUTABLE QUALIFICATION: requires user-approved ROS build and newly frozen case IDs.
+ import os
+ 
+ from launch import LaunchDescription
+@@ -43,7 +44,7 @@
+             PushRosNamespace(LaunchConfiguration("robot_name")),
+             Node(
+                 package="gsl_server",
+-                executable='/home/zyc/ros2_ws/pmfs_early_declaration_20261018/gsl_actionserver_node',
++                executable='/home/zyc/ros2_ws/pmfs_o24_port_gmrf_20261018/NOT_BUILT/gsl_actionserver_node',
+                 name="GSL",
+                 parameters=[
+                     # Common
+@@ -55,7 +56,7 @@
+                     {"th_wind_present": parse_substitution("$(var th_wind_present)")},
+                     {"ground_truth_x": parse_substitution("$(var source_x)")},
+                     {"ground_truth_y": parse_substitution("$(var source_y)")},
+-                    {'resultsFile': '/mnt/hgfs/workspace/PMFS_EARLY_DECLARATION_AUDIT_20261018/cases/EA18_B2_R01/runtime/native_results.csv'}, {'navigationPathFile': '/mnt/hgfs/workspace/PMFS_EARLY_DECLARATION_AUDIT_20261018/cases/EA18_B2_R01/runtime/navigation_path.csv'},
++                    {'resultsFile': '/mnt/hgfs/workspace/PMFS_O24_PHASE1_PENDING_APPROVAL/B2/native_results.csv'}, {'navigationPathFile': '/mnt/hgfs/workspace/PMFS_O24_PHASE1_PENDING_APPROVAL/B2/navigation_path.csv'},
+                     
+                     {"scale": 25},
+                     {"markers_height": 0.2},
+@@ -63,7 +64,7 @@
+                     {"anemometer_frame": parse_substitution("$(var robot_name)_anemometer_frame")},
+                     {"openMoveSetExpasion": 5},
+                     {"explorationProbability": 0.05},
+-                    {"convergence_thr": 1.0},
++                    {"convergence_thr": 1.5},
+                     
+                     #GrGSL
+                     {"useDiffusionTerm": True},
+@@ -86,7 +87,7 @@
+                     {"useWindGroundTruth": False},
+                     {"stepsSourceUpdate": 3},
+                     {"maxRegionSize": 5},
+-                    {"sourceDiscriminationPower": 1.0},
++                    {"sourceDiscriminationPower": 0.2},
+                     {"refineFraction": 0.1},
+                     {"deltaTime": parse_substitution("$(var filamentDeltaTime)")},
+                     {"noiseSTDev": parse_substitution("$(var filament_movement_stdev)")},
+@@ -124,7 +125,7 @@
+             ],
+     )
+ 
+-    gaden_player = Node(package='gaden_player', executable='/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/public_clock_player', name='gaden_player', remappings=[('/odor_value','/native20/raw_odor_value'),('/wind_value','/native20/raw_wind_value')], parameters=[{'use_sim_time': False, 'player_freq': 2.0, 'initial_iteration': 500, 'num_simulators': 1, 'allow_looping': False, 'loop_from_iteration': 800, 'loop_to_iteration': 900, 'simulation_data_0': '/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/one_realization', 'occupancyFile': '/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/derived/5d9684e340a6/OccupancyGrid3D.csv', 'r7_frame_time_csv': '/home/zyc/ros2_ws/pmfs_early_declaration_20261018/cases/EA18_B2_R01/AUTHOR_WALL_FILE_CADENCE.csv', 'r7_clock_trace_path': '/mnt/hgfs/workspace/PMFS_EARLY_DECLARATION_AUDIT_20261018/cases/EA18_B2_R01/runtime/physical_clock_trace.csv'}])
++    gaden_player = Node(package='gaden_player', executable='/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/public_clock_player', name='gaden_player', remappings=[('/odor_value','/native20/raw_odor_value'),('/wind_value','/native20/raw_wind_value')], parameters=[{'use_sim_time': False, 'player_freq': 2.0, 'initial_iteration': 500, 'num_simulators': 1, 'allow_looping': False, 'loop_from_iteration': 800, 'loop_to_iteration': 900, 'simulation_data_0': '/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/one_realization', 'occupancyFile': '/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/derived/5d9684e340a6/OccupancyGrid3D.csv', 'r7_frame_time_csv': '/home/zyc/ros2_ws/pmfs_early_declaration_20261018/cases/EA18_B2_R01/AUTHOR_WALL_FILE_CADENCE.csv', 'r7_clock_trace_path': '/mnt/hgfs/workspace/PMFS_O24_PHASE1_PENDING_APPROVAL/B2/physical_clock_trace.csv'}])
+ 
+     nav2 = IncludeLaunchDescription(
+         PythonLaunchDescriptionSource(

@@ -1,0 +1,14 @@
+{
+  "status": "NATIVE_RNG_SOURCE_UNCHANGED_EXACT_STREAM_FREEZE_HOLD",
+  "Math_cpp_sha256": "c5ea772b4084bd7016fef3e72513180418c521acf90a98a79a1a9b252908d937",
+  "native_facts": [
+    "thread_local minstd_rand0 is default constructed, no exposed runtime seeding API",
+    "uniformRandom uses thread-local high_resolution_clock seed and xxHash32 state",
+    "PrecalculatedGaussian uses a uniform-random initial table phase and2500 normal values",
+    "OpenMP dynamic scheduling assigns candidates to thread-local streams"
+  ],
+  "passive_capture": "No extra direct uniformRandom/randomFromGaussian/nextValue calls. Critical file I/O, timing and thread scheduling are not guaranteed inert. This is an explicitly disclosed instrumentation adaptation.",
+  "externally_freezable_seed_parameter": null,
+  "preselected_seed_values": null,
+  "pending": "Before strict seeded phase1, audit/approve a separate native-state capture/replay protocol; do not invent four seed numbers or silently force new RNG behavior. No such RNG adapter was added here."
+}
