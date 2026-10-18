@@ -1,0 +1,36 @@
+3562 IEEE TRANSACTIONS ON ROBOTICS, VOL. 40, 2024
+Fig. 11. Time required to ﬁnish the search in each experiment. For Surge-Cast, the time it took for it to reach the smallest distance to the source, as rep orted in
+Fig. 10.
+Fig. 12. Stream trace of the airﬂow near the source position in scenario B2.
+The strong three-dimensionality of the dispersion process poses a challenge for
+the proposed method, since the dispersion model used by PMFS only considers
+two dimensions.
+placed at a different location and/or the airﬂow inlets and outlets
+have changed.
+We compare the currently presented algorithm (labeled in
+the results as PMFS) to the algorithm presented in [19],( l a -
+beled GrGSL) and Surge-Cast plume tracking [42]. Each of
+the experiments comprised 30 runs for each of the algorithms,
+which are considered to end once the variance of the probability
+distribution of the source location falls below a ﬁxed threshold
+– in this case, 1˜m2. In the case of Surge-Cast, which does not
+have a probability distribution for the source, the algorithm is
+allowed to run uninterrupted for 300 s.
+The real-world experiments correspond to simulations D1 and
+E1, respectively. The gas source was an ultrasonic vibration
+humidiﬁer loaded with a 96% ethanol solution. We used a Giraff
+robot equipped with a photoionization detector (PID) and an
+Fig. 13. Snapshot of the calculated probabilities during the search in the
+real-world environment. (a) Hit probability map, with the arrows inside the
+cells showing the estimated wind direction. (b) Source location probability
+distribution. The red arrow is the pose of the robot, and the blue lines indicate
+the measurements of the laser scanner.
+ultrasonic anemometer for GSL, and with a 2-D laser scanner
+and RGB-D camera for navigation. Because these experiments
+are vastly more time-consuming to carry out, only 10 runs of
+each algorithm were recorded as a way to validate the more
+extensive simulation results.
+C. Results
+Results are shown in Fig. 10. For PMFS and GrGSL, the
+“error” value displayed in Fig. 10 is the distance in meters
+Authorized licensed use limited to: Zhejiang University. Downloaded on October 11,2026 at 02:26:37 UTC from IEEE Xplore.  Restrictions apply. 

@@ -1,0 +1,50 @@
+--- qualified_20261017/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp
++++ passive_audit_20261018/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp
+@@ -11,6 +11,8 @@
+ 
+ #include <DDA/DDA.h>
+ #include <fstream>
++#include <atomic>
++#include <chrono>
+ #include <iomanip>
+ #include <cstdlib>
+ #include <gsl_server/algorithms/Common/Utils/Profiling.hpp>
+@@ -18,6 +20,7 @@
+ namespace GSL::PMFS_internal
+ {
+     namespace NQA = Utils::NQA;
++    static std::atomic<size_t> auditUpdate{0};
+     using HashSet = std::unordered_set<Vector2Int>;
+ 
+     // We have a long list of pre-calculated random values for Speeeeeeeeeeeeeeeeed
+@@ -67,6 +70,7 @@
+         ZoneScoped;
+         GSL_INFO_COLOR(fmt::terminal_color::yellow, "Started simulations. Might take a while!");
+         Utils::Time::Stopwatch stopwatch;
++        ++auditUpdate; // Passive identity for each source update; never used by the algorithm.
+         std::vector<NQA::Node> localCopyLeaves = QTleaves;
+ 
+         // first, coarse simulation based on the quadtree decomposition of the map
+@@ -188,6 +192,22 @@
+                                  settings.noiseSTDev);
+ 
+         result.sourceProb = sourceProbFromMaps(measuredHitProb, result.hitMap);
++        // Capture the exact maps already computed by the native forward model.
++        // No random draws, parameters, source choices, or score values change.
++        if (const char* base = std::getenv("NATIVE_PMFS_CANDIDATE_AUDIT")) {
++            #pragma omp critical(native_passive_candidate_audit)
++            {
++                static std::ofstream maps(std::string(base)+".f32",std::ios::binary);
++                static std::ofstream rows(std::string(base)+".csv");
++                static size_t call=0;
++                if(call==0) rows<<"update,call,origin_x,origin_y,size_x,size_y,score,offset_bytes,count\n";
++                const auto offset=maps.tellp();
++                maps.write(reinterpret_cast<const char*>(result.hitMap.data()),result.hitMap.size()*sizeof(float));
++                rows<<std::setprecision(17)<<auditUpdate.load()<<","<<++call<<","<<node->origin.x<<","<<node->origin.y<<","<<node->size.x<<","<<node->size.y<<","<<result.sourceProb<<","<<offset<<","<<result.hitMap.size()<<"\n";
++                maps.flush();rows.flush();
++            }
++        }
++
+ 
+         scores[index].score = result.sourceProb;
+ 

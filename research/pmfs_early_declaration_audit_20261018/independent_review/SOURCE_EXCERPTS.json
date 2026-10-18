@@ -1,0 +1,93 @@
+[
+  {
+    "path": "D:\\ZYC\\A-gas\\workspace\\CLP16\\source\\reference_package\\actual_runtime\\gaden_core\\src\\Environment.cpp",
+    "line_start": 125,
+    "line_end": 170,
+    "scope": "cached GADEN core parser; format evidence, not proof of 2024 dependency provenance",
+    "text": "\n            cells.resize(description.dimensions.x * description.dimensions.y * description.dimensions.z, CellState::Uninitialized);\n\n            int x_idx = 0;\n            int y_idx = 0;\n            int z_idx = 0;\n\n            while (std::getline(infile, line))\n            {\n                std::stringstream ss(line);\n                if (z_idx >= description.dimensions.z)\n                {\n                    printf(\"Too many lines! z_idx=%d but num_cells_z=%d\", z_idx, description.dimensions.z);\n                    return ReadResult::READING_FAILED;\n                }\n\n                if (line == \";\")\n                {\n                    // New Z-layer\n                    z_idx++;\n                    x_idx = 0;\n                    y_idx = 0;\n                }\n                else\n                { // New line with constant x_idx and all the y_idx values\n                    while (ss)\n                    {\n                        int f;\n                        ss >> std::skipws >> f;\n                        if (!ss.fail())\n                        {\n                            cells[indexFrom3D(Vector3i(x_idx, y_idx, z_idx))] = static_cast<CellState>(f);\n                            y_idx++;\n                        }\n                    }\n\n                    // Line has ended\n                    x_idx++;\n                    y_idx = 0;\n                }\n            }\n        }\n        catch (const std::exception& e)\n        {\n            GADEN_ERROR(\"Exception caught while trying to parse environment file '{}': '{}'\", filePath.c_str(), e.what());\n        }"
+  },
+  {
+    "path": "D:\\ZYC\\A-gas\\workspace\\CLP16\\source\\reference_package\\actual_runtime\\gaden_core\\src\\Environment.cpp",
+    "line_start": 185,
+    "line_end": 205,
+    "scope": "cached GADEN core CSV writer",
+    "text": "        outfile << \"#env_min(m) \" << description.minCoord.x << \" \" << description.minCoord.y << \" \" << description.minCoord.z << \"\\n\";\n        outfile << \"#env_max(m) \" << description.maxCoord.x << \" \" << description.maxCoord.y << \" \" << description.maxCoord.z << \"\\n\";\n        outfile << \"#num_cells \" << description.dimensions.x << \" \" << description.dimensions.y << \" \" << description.dimensions.z << \"\\n\";\n        outfile << \"#cell_size(m) \" << description.cellSize << \"\\n\";\n        // things are repeated to scale them up (the image is too small!)\n        for (int height = 0; height < description.dimensions.z; height++)\n        {\n            for (int col = 0; col < description.dimensions.x; col++)\n            {\n                for (int row = 0; row < description.dimensions.y; row++)\n                {\n                    CellState state = atRef(Vector3i{col, row, height});\n                    outfile << (state == CellState::Free ? 0\n                                                         : (state == CellState::Outlet ? 2\n                                                                                       : 1))\n                            << \" \";\n                }\n                outfile << \"\\n\";\n            }\n            outfile << \";\\n\";\n        }"
+  },
+  {
+    "path": "D:\\ZYC\\A-gas\\workspace\\CLP16\\source\\reference_package\\actual_runtime\\gaden_core\\include\\gaden\\Environment.hpp",
+    "line_start": 13,
+    "line_end": 22,
+    "scope": "cached GADEN state definitions",
+    "text": "    {\n    public:\n        enum class CellState : uint8_t\n        {\n            Free = 0,        // cell is empty, gas can be here\n            Obstacle = 1,    // cell is occupied by an obstacle, no filaments can go through it\n            Outlet = 2,      // if a filament enters this cell it is removed from the simulation\n            OutOfBounds = 3, // invalid cell, position is out of the map bounds\n            Uninitialized = 255\n        };"
+  },
+  {
+    "path": "D:\\ZYC\\A-gas\\workspace\\PMFS_PAPER_FIRST_ROS_QUAL_20261017\\official_exact\\Environment_config\\PMFS\\launch\\main_simbot_launch.py",
+    "line_start": 43,
+    "line_end": 68,
+    "scope": "locked Sep18 official PMFS clock and scale",
+    "text": "                parameters=[\n                    # Common\n                    {'use_sim_time': False},\t\n                    {\"maxSearchTime\": 300.0},\n                    {\"robot_location_topic\": \"ground_truth\"},\n                    {\"stop_and_measure_time\": 0.4},\n                    {\"th_gas_present\": parse_substitution(\"$(var th_gas_present)\")},\n                    {\"th_wind_present\": parse_substitution(\"$(var th_wind_present)\")},\n                    {\"ground_truth_x\": parse_substitution(\"$(var source_x)\")},\n                    {\"ground_truth_y\": parse_substitution(\"$(var source_y)\")},\n                    {\"resultsFile\": parse_substitution(\"Results/$(var simulation)/$(var method).csv\")},\n                    \n                    {\"scale\": 25},\n                    {\"markers_height\": 0.2},\n\n                    {\"anemometer_frame\": parse_substitution(\"$(var robot_name)_anemometer_frame\")},\n                    {\"openMoveSetExpasion\": 5},\n                    {\"explorationProbability\": 0.05},\n                    {\"convergence_thr\": 1.5},\n                    \n                    #GrGSL\n                    {\"useDiffusionTerm\": True},\n                    {\"stdevHit\": 1.0},\n                    {\"stdevMiss\": 1.2},\n                    {\"infoTaxis\": parse_substitution(\"$(var use_infotaxis)\")},\n                    {\"allowMovementRepetition\": parse_substitution(\"$(var use_infotaxis)\")},"
+  },
+  {
+    "path": "D:\\ZYC\\A-gas\\workspace\\PMFS_PAPER_FIRST_ROS_QUAL_20261017\\official_exact\\Environment_config\\PMFS\\launch\\main_simbot_launch.py",
+    "line_start": 128,
+    "line_end": 139,
+    "scope": "locked Sep18 BasicSim speed",
+    "text": "                    \"gaden_player_launch.py\",\n                )\n            ]\n        ),\n        launch_arguments={\n            \"use_rviz\": \"False\",\n            \"scenario\": LaunchConfiguration(\"scenario\").perform(context),\n            \"simulation\": LaunchConfiguration(\"simulation\").perform(context)\n        }.items(),\n    )\n\n    nav2 = IncludeLaunchDescription("
+  },
+  {
+    "path": "D:\\ZYC\\A-gas\\workspace\\CLP16\\source\\reference_package\\actual_runtime\\basic_sim\\src\\BasicSim.cpp",
+    "line_start": 25,
+    "line_end": 63,
+    "scope": "cached runtime robot clock equation",
+    "text": "{\n    clockPub = create_publisher<rosgraph_msgs::msg::Clock>(\"/clock\", rclcpp::QoS(1).best_effort());\n    mapPub = create_publisher<nav_msgs::msg::OccupancyGrid>(\"/basic_sim/map\", rclcpp::QoS(1).transient_local());\n    resetRobotsSub = create_subscription<std_msgs::msg::String>(\"/basic_sim/reset\", rclcpp::QoS(1).transient_local(),\n                                                                std::bind(&BasicSim::ResetRobotsToStartingPose, this, std::placeholders::_1));\n    deltaTime = declare_parameter<double>(\"deltaTime\", 0.1);\n    speed = declare_parameter<double>(\"speed\", 1);\n\n    auto file = declare_parameter<std::string>(\"worldFile\", \"\");\n    parseFile(file);\n    startTime = now();\n    currentTime = rclcpp::Time(0);\n}\n\nvoid BasicSim::Update()\n{\n#if 1\n    Profiling::ScopedStopwatch stopwatch(\"MainLoop\");\n#endif\n    updateTime();\n    \n    for (Robot& robot : robots)\n        robot.OnUpdate(deltaTime);\n\n    publishClock();\n}\n\nvoid BasicSim::updateTime()\n{\n    rclcpp::Duration ellapsed = (now() - startTime);\n    currentTime = rclcpp::Time{(int64_t)(speed * ellapsed.nanoseconds())};\n}\n\nvoid BasicSim::publishClock()\n{\n    rosgraph_msgs::msg::Clock msg;\n    msg.clock = currentTime;\n    clockPub->publish(msg);\n}"
+  },
+  {
+    "path": "D:\\ZYC\\A-gas\\workspace\\CLP16\\source\\reference_package\\actual_runtime\\sensor_clock_source_audit\\historical2024_simulation_player.cpp",
+    "line_start": 117,
+    "line_end": 143,
+    "scope": "cached historical player wall-clock file loading and exclusive loop end",
+    "text": "    rclcpp::Rate r(100); // Set max rate at 100Hz (for handling services - Top Speed!!)\n    int iteration_counter = initial_iteration;\n    auto shared_this = shared_from_this();\n    while (rclcpp::ok())\n    {\n        if ((now() - time_last_loaded_file).seconds() >= 1 / player_freq)\n        {\n            if (verbose)\n                GADEN_INFO(\"Playing simulation iteration {}\", iteration_counter);\n            // Read Gas and Wind data from log_files\n            load_all_data_from_logfiles(iteration_counter);\n            display_current_gas_distribution(); // Rviz visualization\n            iteration_counter++;\n\n            // Looping?\n            if (allow_looping)\n            {\n                if (iteration_counter >= loop_to_iteration)\n                {\n                    iteration_counter = loop_from_iteration;\n                    if (verbose)\n                        GADEN_INFO(\"Looping\");\n                }\n            }\n            time_last_loaded_file = now();\n        }\n"
+  },
+  {
+    "path": "D:\\ZYC\\A-gas\\workspace\\CLP16\\source\\reference_package\\actual_runtime\\sensor_clock_source_audit\\historical2024_fake_gas_sensor.cpp",
+    "line_start": 72,
+    "line_end": 83,
+    "scope": "cached historical PID rate loop",
+    "text": "\n    // Loop\n    auto tf_buffer = std::make_unique<tf2_ros::Buffer>(this->get_clock());\n    auto listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer);\n\n    while (rclcpp::ok() && !playerClient->wait_for_service(std::chrono::seconds(5)))\n        RCLCPP_INFO(get_logger(), \"WAITING FOR GADEN_PLAYER SERVICE\");\n\n    rclcpp::Rate rate(node_rate);\n    first_reading = true;\n    notified = false;\n    while (rclcpp::ok())"
+  },
+  {
+    "path": "D:\\ZYC\\A-gas\\workspace\\CLP16\\source\\reference_package\\actual_runtime\\sensor_clock_source_audit\\historical2024_fake_anemometer.cpp",
+    "line_start": 88,
+    "line_end": 98,
+    "scope": "cached historical anemometer rate loop",
+    "text": "    auto tf_buffer = std::make_unique<tf2_ros::Buffer>(this->get_clock());\n    auto listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer);\n\n    while (rclcpp::ok() && !playerClient->wait_for_service(std::chrono::seconds(5)))\n        RCLCPP_INFO(get_logger(), \"WAITING FOR GADEN_PLAYER SERVICE\");\n\n    rclcpp::Rate r(frequency);\n    while (rclcpp::ok())\n    {\n        rclcpp::spin_some(shared_this);\n"
+  },
+  {
+    "path": "D:\\ZYC\\A-gas\\workspace\\PMFS_PAPER_FIRST_ROS_QUAL_20261017\\source_runtime\\src\\gsl_server\\algorithms\\Common\\Algorithm.cpp",
+    "line_start": 42,
+    "line_end": 57,
+    "scope": "actual PMFS startTime",
+    "text": "        //extra safety net for when the middleware hangs and the node gets stuck in service/action spinning\n        static auto exit_timer = node->create_wall_timer(std::chrono::seconds((int)resultLogging.maxSearchTime + 10), //extra time to make sure this only happens if the node is deadlocked\n                                 []()\n        {\n            rclcpp::shutdown();\n            GSL_ERROR(\"GLOBAL TIMEOUT WAS EXCEEDED, BUT NODE IS STILL RUNNING. STOPPING FORCEFULLY.\");\n            CLOSE_PROGRAM;\n        });\n\n        startTime = node->now();\n        GSL_INFO_COLOR(fmt::terminal_color::blue, \"INITIALIZATON COMPLETED\");\n    }\n\n    void Algorithm::declareParameters()\n    {\n        resultLogging.maxSearchTime = getParam<double>(\"maxSearchTime\", 1000.0);"
+  },
+  {
+    "path": "D:\\ZYC\\A-gas\\workspace\\PMFS_PAPER_FIRST_ROS_QUAL_20261017\\source_runtime\\src\\gsl_server\\algorithms\\PMFS\\PMFS_utils.cpp",
+    "line_start": 117,
+    "line_end": 130,
+    "scope": "actual result search_t",
+    "text": "        }\n        return x + y;\n    }\n\n    void PMFS::saveResultsToFile(GSLResult result)\n    {\n        // 1. Search time.\n        rclcpp::Duration time_spent = node->now() - startTime;\n        double search_t = time_spent.seconds();\n\n        Vector2 sourceLocationAll = expectedValueSource(1);\n        Vector2 sourceLocation = expectedValueSource(0.05);\n\n        double error = sqrt(pow(resultLogging.sourcePositionGT.x - sourceLocation.x, 2) + pow(resultLogging.sourcePositionGT.y - sourceLocation.y, 2));"
+  },
+  {
+    "path": "D:\\ZYC\\A-gas\\workspace\\CLP16\\source\\reference_package\\actual_runtime\\gaden_core\\src\\PlaybackSimulation.cpp",
+    "line_start": 98,
+    "line_end": 106,
+    "scope": "current core advances post-load and resets only when currentIteration > inclusive endpoint",
+    "text": "        {\n            reader.Read(&config->environment.versionMinor, sizeof(int));\n            LoadLogfile(reader);\n        }\n        currentIteration++;\n\n        if (loopConfig.loop && currentIteration > loopConfig.to)\n            currentIteration = loopConfig.from;\n    }"
+  },
+  {
+    "path": "D:\\ZYC\\A-gas\\workspace\\CLP16\\source\\reference_package\\actual_runtime\\public_clock_player\\simulation_player.cpp",
+    "line_start": 393,
+    "line_end": 408,
+    "scope": "trace frame tests old/current frame against inclusive endpoint after Scene AdvanceTimestep",
+    "text": "    if (stamp < r7AnchorROS) throw std::runtime_error(\"ROS clock moved backwards\");\n    const double elapsed=double(stamp-r7AnchorROS)/1e9;\n    if (playbackMetadata.loop.loop)\n    {\n        bool changed=false;\n        while (elapsed >= r20NextElapsed)\n        {\n            Scene->AdvanceTimestep();\n            if (r7Frame >= size_t(playbackMetadata.loop.to))\n            { r7Frame=playbackMetadata.loop.from; ++r20Cycles; }\n            else ++r7Frame;\n            r20FrameStartElapsed=r20NextElapsed;\n            r20NextElapsed += r7Times.at(r7Frame+1)-r7Times.at(r7Frame);\n            changed=true;\n        }\n        const double target=r7Times.at(r7Frame)+(elapsed-r20FrameStartElapsed);"
+  }
+]

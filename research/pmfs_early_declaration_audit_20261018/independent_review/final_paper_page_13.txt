@@ -1,0 +1,120 @@
+OJEDA et al.: ROBOTIC GSL WITH PROBABILISTIC MAPPING AND ONLINE DISPERSION SIMULA TION 3563
+between the ground-truth source location and the source position
+declared by the algorithm after reaching the convergence crite-
+rion. For Surge-Cast, since it is a purely navigational algorithm
+that does not have a mechanism for source declaration, the
+value displayed is the minimum distance between the robot
+position and the source achieved during the search. While this
+is certainly a different metric, we show it alongside the error in
+source declaration to provide a reference value that should give
+the reader an indication of the complexity of the setup – i.e.,
+experiments where Surge-Cast performs well can be assumed to
+have clear, uninterrupted gas plumes that extend to the source
+position.
+Fig. 11 also shows the total time in seconds required for the
+algorithm to ﬁnd the gas source. Again, in the case of Surge-Cast
+the lack of a source declaration mechanism means that we cannot
+report the same metric as with the other two algorithms, instead
+showing the amount of time it took to reach the closest position
+to the source (the one reported in Fig. 10). Similarly to the error
+ﬁgure, this cannot be interpreted as a direct comparison, but
+rather as a baseline reference value.
+It can be observed that the proposed method outperforms
+GrGSL in the majority of the more complex environments, while
+obtaining comparable results in the simpler cases. Experiment
+B2 proves to be particularly challenging, with both algorithms
+producing estimations that are, on average, more than 2 m away
+from the actual source position. This shows one of the main
+limitations of our proposed method, which is that it very strongly
+relies on obtaining an accurate estimation of the direction of the
+airﬂow, and is unable to do so when the three-dimensionality
+of the environment plays an important role (Fig. 12 shows a
+stream trace of the airﬂow around the point where the source
+is placed). In other cases (see scenarios B1, C1 and C2), the
+new method is able to produce much better estimations than
+the previous algorithm, because GrGSL tends to produce an
+estimation that is as far upwind as possible inside the gas plume,
+while the reasoning of the new method (comparing the plume
+that would be produced if the source was in a speciﬁc location
+to the currently mapped plume) allows it to produce estimations
+that are not aligned with the airﬂow currents.
+Regarding the time required for convergence, it can be ob-
+served that there is neither PMFS pr GrGSL manage a clear
+improvement over the other. There is high variance on which
+method achieves the best time for any given experiment, and both
+of them tend to be comparable to the amount of time required for
+a reactive navigation algorithm like Surge-Cast. Further testing
+with multiple movement strategies (for example, the concept
+discussed in Section V- A, where the cost of each movement is
+taken into consideration alongside its information value) would
+be required to draw more relevant conclusions about the search
+time.
+The results obtained in the real-world experiments are co-
+herent with what might be expected given the simulations. It
+can be observed that both methods obtain comparable results,
+both in terms of the error in the ﬁnal estimation, and in the
+amount of time required to produce it. While the error recorded
+from PMFS is on average lower in both scenarios, the variance
+of the results and the lower repetition count of the real-world
+experiment compared to the simulations, make this relatively
+small difference not very meaningful. Fig. 13 shows a snapshot
+of the probabilities calculated by PMFS (of each Hi, and of S)
+during the search in environment D. It can be observed that the
+area that receives the highest probability of containing the source
+is at the start of the plume (following it upwind), but that, given
+that many cells remain unobserved (with P(Hi|Z) ≈P(Hi)
+andαi ≈0) there still exists signiﬁcant uncertainty in P(S|H).
+VII. C ONCLUSION
+The GSL algorithm presented in this work revolves around
+the idea of using a forward gas dispersion model to estimate the
+gas plume that would be produced if the source was in a certain
+position, and comparing that prediction with the data that has
+been obtained so far.
+The speciﬁcs of the model used and the calculations done
+with those results, as presented here, should not be considered
+a ﬁnalized solution, but merely a ﬁrst attempt at making a
+feasible implementation of the concept. Indeed, many of the
+most important limitations of the method (mainly those related
+to the 3-D phenomena) could be addressed by using more
+robust, more accurate methods for the airﬂow estimation and the
+gas dispersion, although a compromise between accuracy and
+computational complexity will always be required to perform
+on-line simulations during the search.
+Another limitation that should be addressed by future work is
+the need to know the map of the environment in advance. Devel-
+oping methods for estimating the airﬂow and simulating the gas
+dispersion in partially observed environments with uncertainty
+would be of great importance in making the concepts presented
+here ﬁt for real applications.
+REFERENCES
+[1] D. Karakaya, O. Ulucan, and M. Turkan, “Electronic nose and its appli-
+cations: A survey,” Int. J. Automat. Comput. , vol. 17, no. 2, pp. 179–209,
+2020.
+[2] S. Feng et al., “Review on smart gas sensing technology,”Sensors (Switzer-
+land), vol. 19, no. 17, pp. 1–22, 2019.
+[3] A. Francis, S. Li, C. Grifﬁths, and J. Sienz, “Gas source localization and
+mapping with mobile robots: A review,” J. Field Robot. , vol. 39, no. 8,
+pp. 1341–1373, 2022.
+[4] R. Visvanathan et al., “Improved mobile robot based gas distribution
+mapping through propagated distance transform for structured indoor
+environment,” Adv. Robot., vol. 34, no. 10, pp. 637–647, May 2020.
+[5] A. Gongora, J. Monroy, and J. Gonzalez-Jimenez, “Joint estimation of gas
+and wind maps for fast-response applications,” Appl. Math. Modelling ,
+vol. 87, pp. 655–674, 2020.
+[6] J. Burgués, V . Hernández, A. J. Lilienthal, and S. Marco, “Gas distri-
+bution mapping and source localization using a 3D grid of metal oxide
+semiconductor sensors,” Sensors Actuators B: Chem. , vol. 304, 2020,
+Art. no. 127309.
+[7] X. xing Chen and J. Huang, “Odor source localization algorithms on
+mobile robots: A review and future outlook,”Robot. Auton. Syst., vol. 112,
+no. November, pp. 123–136, Feb. 2019.
+[8] T. Lewis and K. Bhaganagar, “A comprehensive review of plume source
+detection using unmanned vehicles for environmental sensing,” Sci. Total
+Environ., vol. 762, no. Dec., pp. 144029–144029, 2021.
+[9] Z. Li, Z. F. Tian, T. fu Lu, and H. Wang, “Assessment of different plume-
+tracing algorithms for indoor plumes,” Building Environ., vol. 173, no.
+Oct. 2019, pp. 106746–106746, 2020.
+[10] J. Macedo, L. Marques, and E. Costa, “A comparative study of bio-inspired
+odour source localisation strategies from the state-action perspective,”
+Sensors, vol. 19, no. 10, pp. 2231–2231, 2019.
+Authorized licensed use limited to: Zhejiang University. Downloaded on October 11,2026 at 02:26:37 UTC from IEEE Xplore.  Restrictions apply. 

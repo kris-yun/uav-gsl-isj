@@ -1,0 +1,42 @@
+[
+  {
+    "stage": "configure",
+    "argv": [
+      "cmake",
+      "-S",
+      "/mnt/hgfs/workspace/PMFS_EARLY_DECLARATION_AUDIT_20261018/source_runtime",
+      "-B",
+      "/mnt/hgfs/workspace/PMFS_EARLY_DECLARATION_AUDIT_20261018/build",
+      "-DCMAKE_BUILD_TYPE=Release",
+      "-DCMAKE_INSTALL_PREFIX=/mnt/hgfs/workspace/PMFS_EARLY_DECLARATION_AUDIT_20261018/install",
+      "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+    ],
+    "exit_code": 0,
+    "wall_s": 6.900398923899047,
+    "cpu_s": 2.392448
+  },
+  {
+    "stage": "compile",
+    "argv": [
+      "cmake",
+      "--build",
+      "/mnt/hgfs/workspace/PMFS_EARLY_DECLARATION_AUDIT_20261018/build",
+      "--parallel",
+      "1"
+    ],
+    "exit_code": 0,
+    "wall_s": 160.65063906810246,
+    "cpu_s": 134.854835
+  },
+  {
+    "stage": "install",
+    "argv": [
+      "cmake",
+      "--install",
+      "/mnt/hgfs/workspace/PMFS_EARLY_DECLARATION_AUDIT_20261018/build"
+    ],
+    "exit_code": 0,
+    "wall_s": 0.46717234200332314,
+    "cpu_s": 0.058695000000003716
+  }
+]

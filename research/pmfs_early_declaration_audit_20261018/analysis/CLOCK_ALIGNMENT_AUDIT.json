@@ -1,0 +1,32 @@
+[
+  {
+    "component": "PMFS",
+    "paper": "Paper gives variance declaration, not an exact ROS clock configuration",
+    "official": "main_simbot_launch.py use_sim_time=False; Algorithm::startTime=node->now(); stop window0.4",
+    "runtime": "Unchanged false/system-clock seconds"
+  },
+  {
+    "component": "BasicSim",
+    "paper": "Accelerated clock factor not recovered from manuscript",
+    "official": "deltaTime0.1 speed5.0; currentTime=speed*(now-startTime)",
+    "runtime": "5x slope confirmed from recorded /clock"
+  },
+  {
+    "component": "PID/anemometer",
+    "paper": "Local robot sensor inputs",
+    "official": "use_sim_time=True; historical C++ main loops use rclcpp::Rate wall default clock",
+    "runtime": "Stamped in robot clock; measured10Hz/20Hz wall"
+  },
+  {
+    "component": "GADEN player",
+    "paper": "Generated physical plume snapshots, original raw worlds/seeds unavailable",
+    "official": "player_freq2Hz, node now() wall; initial A2=200 and exclusive100..199 loop; B2=500 nonloop",
+    "runtime": "Existing disclosed public_clock_player maps actual files onto0.5wall-second cadence; no generated world"
+  },
+  {
+    "component": "search time comparison",
+    "paper": "30-trial means, Fig11 A2~87s B2~110.5s",
+    "official": "PMFS saved search_t uses native node clock",
+    "runtime": "Report native wall time and robot duration separately. Multiplying/dividing by5 does not recover author experimental semantics."
+  }
+]

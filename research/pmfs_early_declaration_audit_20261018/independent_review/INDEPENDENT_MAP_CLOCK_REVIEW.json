@@ -1,0 +1,259 @@
+{
+  "created_utc": "2026-10-18T07:36:13.873972+00:00",
+  "scope": "host-only read-only inspection of existing assets; no VM/build/ROS/simulation",
+  "verdict": "CONFIRM_MAP_SERIALIZATION_AND_INHERITED_MULTI_CLOCK_WITH_LIMITS",
+  "official_commit": "a8d5a764b7cbfc1d5d1887aebfe890e2c75d7533",
+  "official_tree": "bbb303fa43d1f2f7a67fb76c7352e43a7e35bb0a",
+  "official_files_verified": 185,
+  "map_results": [
+    {
+      "case": "A2",
+      "run": "PF24_A2_T02",
+      "official_source_xyz": [
+        1.75,
+        8.6,
+        0.5
+      ],
+      "origin_xy": [
+        0,
+        0
+      ],
+      "nominal_resolution_m": 0.01,
+      "runtime_float_resolution_m": 0.009999999776482582,
+      "image_size_wh": [
+        1000,
+        1000
+      ],
+      "full_map_byte_parity": true,
+      "source_map_index_xy": [
+        175,
+        860
+      ],
+      "source_image_pixel_col_row": [
+        175,
+        139
+      ],
+      "source_image_value": 255,
+      "source_nav_occupancy": 0,
+      "native_coarse_size_m": 0.24999999441206455,
+      "coarse_source_col_row": [
+        7,
+        34
+      ],
+      "source_coarse_cell_in_support": true,
+      "support_count": 1195,
+      "nearest_legal_center": {
+        "col": 6,
+        "row": 34,
+        "x_m": 1.625,
+        "y_m": 8.625
+      },
+      "nearest_legal_center_distance_m": 0.12747548783981968
+    },
+    {
+      "case": "B2",
+      "run": "PF24_B2_Q01",
+      "official_source_xyz": [
+        -0.4,
+        -2.9,
+        -0.3
+      ],
+      "origin_xy": [
+        -7.55,
+        -7.88
+      ],
+      "nominal_resolution_m": 0.01,
+      "runtime_float_resolution_m": 0.009999999776482582,
+      "image_size_wh": [
+        870,
+        1140
+      ],
+      "full_map_byte_parity": true,
+      "source_map_index_xy": [
+        715,
+        498
+      ],
+      "source_image_pixel_col_row": [
+        715,
+        641
+      ],
+      "source_image_value": 0,
+      "source_nav_occupancy": 100,
+      "native_coarse_size_m": 0.24999999441206455,
+      "coarse_source_col_row": [
+        28,
+        19
+      ],
+      "source_coarse_cell_in_support": false,
+      "support_count": 448,
+      "nearest_legal_center": {
+        "col": 29,
+        "row": 19,
+        "x_m": -0.17500019073486328,
+        "y_m": -3.005000114440918
+      },
+      "nearest_legal_center_distance_m": 0.24829405591345477,
+      "three_dimensional": {
+        "path": "D:\\ZYC\\A-gas\\workspace\\NATIVE_PMFS_FULL20_20261014\\derived\\5d9684e340a6\\OccupancyGrid3D.csv",
+        "minimum_xyz": [
+          -7.55,
+          -7.8795,
+          -1.0185
+        ],
+        "dimensions_xyz": [
+          87,
+          114,
+          33
+        ],
+        "step_m": 0.1,
+        "serialization": "outer z; each line constant x; each token y; semicolon after every z layer",
+        "source_index_xyz": [
+          71,
+          49,
+          7
+        ],
+        "source_physical_line_1based": 692,
+        "source_token_1based": 50,
+        "source_state": 0,
+        "source_state_semantics": "Free=0",
+        "source_z_interval": [
+          -0.3184999999999999,
+          -0.21849999999999992
+        ],
+        "vertical_column": [
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "nav_y_origin_minus_3D_y_origin_m": -0.0004999999999997229
+      }
+    }
+  ],
+  "clock_results": [
+    {
+      "case": "A2",
+      "gsl": {
+        "use_sim_time": false,
+        "stop_and_measure_time": 0.4,
+        "scale": 25,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 1.0
+      },
+      "basic_sim": {
+        "use_sim_time": false,
+        "speed": 5.0,
+        "deltaTime": 0.1
+      },
+      "sensors": {
+        "PID_use_sim_time": true,
+        "anemometer_use_sim_time": true
+      },
+      "gaden_player": {
+        "use_sim_time": false,
+        "player_freq": 2.0,
+        "initial_iteration": 200,
+        "allow_looping": true,
+        "loop_from_iteration": 100,
+        "loop_to_iteration": 199
+      },
+      "recorded_preflight_rates": {
+        "wall_delta_s": 2.013314669020474,
+        "ROS_delta_s": 9.99943834,
+        "real_time_factor": 4.966654489665526,
+        "gas_samples_per_ROS_second": 2.000112338309594,
+        "wind_samples_per_ROS_second": 4.000224676619188,
+        "stop_window_wall_s": 0.4,
+        "expected_robot_clock_window_s": 2.0,
+        "gas_samples_per_wall_second": 9.933866924900757,
+        "wind_samples_per_wall_second": 19.867733849801514
+      }
+    },
+    {
+      "case": "B2",
+      "gsl": {
+        "use_sim_time": false,
+        "stop_and_measure_time": 0.4,
+        "scale": 25,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 1.0
+      },
+      "basic_sim": {
+        "use_sim_time": false,
+        "speed": 5.0,
+        "deltaTime": 0.1
+      },
+      "sensors": {
+        "PID_use_sim_time": true,
+        "anemometer_use_sim_time": true
+      },
+      "gaden_player": {
+        "use_sim_time": false,
+        "player_freq": 2.0,
+        "initial_iteration": 500,
+        "allow_looping": false,
+        "loop_from_iteration": 800,
+        "loop_to_iteration": 900
+      },
+      "recorded_preflight_rates": {
+        "wall_delta_s": 2.000084180966951,
+        "ROS_delta_s": 9.999817245,
+        "real_time_factor": 4.999698182786255,
+        "gas_samples_per_ROS_second": 2.0000365516680003,
+        "wind_samples_per_ROS_second": 4.000073103336001,
+        "stop_window_wall_s": 0.4,
+        "expected_robot_clock_window_s": 2.0,
+        "gas_samples_per_wall_second": 9.999579112880587,
+        "wind_samples_per_wall_second": 19.999158225761175
+      }
+    }
+  ],
+  "paper_pages": [
+    {
+      "pdf_page": 12,
+      "printed_page": 3562
+    },
+    {
+      "pdf_page": 13,
+      "printed_page": 3563
+    }
+  ],
+  "limitations": [
+    "The 3D CSV is a locally generated world, not an author-published original experimental trajectory. Cached GADEN parser/writer confirm serialization, not a proof of the exact 2024 dependency commit.",
+    "Final paper Fig12 explicitly concerns B2 3D airflow; it does not say the 2D source cell was excluded, nor quantify exclusion as the cause of current errors.",
+    "Nearest legal source support is about 0.2483m away; support exclusion alone does not establish the cause of 4.366m declaration error.",
+    "Mixed clocks are present in locked official launch. Paper does not pin exact runtime clock semantics or 30 trial seeds. Do not scale reported search time by five and call it a reproduction.",
+    "Fig11 explicitly prints A2=87.0s and B2=110.5s (one decimal place). These are published 30-trial means, not available raw trial times. No runtime clock equivalence has been established.",
+    "A2 endpoint parameter translation200->199 is justified by historical exclusive vs current core inclusive order; CASE_META wording inclusive100..200 is misleading. See PLAYBACK_LOOP_ORDER_REVIEW.json for actual trace coverage.",
+    "This independent review adds no experimental repetitions and does not qualify S2 or prove the 2024 paper was exactly reproduced."
+  ]
+}
