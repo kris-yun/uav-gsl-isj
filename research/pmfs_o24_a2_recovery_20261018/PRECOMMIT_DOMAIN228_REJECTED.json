@@ -1,0 +1,595 @@
+{
+  "user_authorization": "2026-10-18 user approved exactly one A2 recovery after domain cleanup, same scientific parameters, keep all old evidence, no AIMMD",
+  "roles": [
+    {
+      "id": "O24G_A2_ISO_R03",
+      "case": "A2",
+      "repeat": 3,
+      "domain": 228,
+      "guest_path": "/home/zyc/ros2_ws/pmfs_o24_port_gmrf_20261018/cases/O24G_A2_ISO_R03",
+      "runtime_shared": "/mnt/hgfs/workspace/PMFS_O24_A2_RECOVERY_20261018/cases/O24G_A2_ISO_R03/runtime"
+    }
+  ],
+  "primary_goals": 1,
+  "total_goal_cap": 1,
+  "technical_retry_cap": 0,
+  "total_batch_wall_s": 900,
+  "max_goal_wall_s": 420,
+  "guest_free_floor_bytes": 5368709120,
+  "host_free_floor_bytes": 2147483648,
+  "parameters": {
+    "use_sim_time": false,
+    "useWindGroundTruth": false,
+    "sourceDiscriminationPower": 0.2,
+    "convergence_thr": 1.5,
+    "maxSearchTime": 300.0,
+    "stop_and_measure_time": 0.4,
+    "confidenceMeasurementWeight": 1.0,
+    "confidenceSigmaSpatial": 1.0,
+    "kernelSigma": 1.5,
+    "kernelStretchConstant": 1.5,
+    "hitPriorProbability": 0.3,
+    "scale": 25,
+    "maxUpdatesPerStop": 5,
+    "stepsSourceUpdate": 3,
+    "refineFraction": 0.1,
+    "maxRegionSize": 5,
+    "deltaTime": 0.1,
+    "noiseSTDev": 0.5,
+    "iterationsToRecord": 200,
+    "maxWarmupIterations": 500
+  },
+  "expected_parameters": {
+    "use_sim_time": false,
+    "useWindGroundTruth": false,
+    "sourceDiscriminationPower": 0.2,
+    "convergence_thr": 1.5,
+    "maxSearchTime": 300.0,
+    "stop_and_measure_time": 0.4,
+    "confidenceMeasurementWeight": 1.0,
+    "confidenceSigmaSpatial": 1.0,
+    "kernelSigma": 1.5,
+    "kernelStretchConstant": 1.5,
+    "hitPriorProbability": 0.3,
+    "scale": 25,
+    "maxUpdatesPerStop": 5,
+    "stepsSourceUpdate": 3,
+    "refineFraction": 0.1,
+    "maxRegionSize": 5,
+    "deltaTime": 0.1,
+    "noiseSTDev": 0.5,
+    "iterationsToRecord": 200,
+    "maxWarmupIterations": 500,
+    "th_gas_present": 0.1,
+    "th_wind_present": 0.02,
+    "robot_location_topic": "ground_truth",
+    "enose_topic": "PID/Sensor_reading",
+    "anemometer_topic": "/native20/wind_to",
+    "anemometer_frame": "PioneerP3DX_anemometer_frame",
+    "openMoveSetExpasion": 5,
+    "explorationProbability": 0.05,
+    "initialExplorationMoves": 2,
+    "localEstimationWindowSize": 2,
+    "convergence_steps": 5,
+    "markers_height": 0.2,
+    "distanceThreshold": 0.5
+  },
+  "source_files": [
+    {
+      "path": "CMake/CommonDependencies.cmake",
+      "sha256": "d5ceaa7846640f9f4159b4617f7e60570452f638f44642f6e39baf89a18183bb"
+    },
+    {
+      "path": "CMake/HandleConditionals.cmake",
+      "sha256": "a3e012e908451d68c0ffbd92a83cd97cc8807e64ea2a8abac0218e9a6487abaf"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "sha256": "81b2a997fc7f36c58974e3292f2b076726005ee312442afbc1b6ded8442ee312"
+    },
+    {
+      "path": "package.xml",
+      "sha256": "6775477a3c9d31efe33354df33b6225397d7c0160848899e1dce1618e3847c11"
+    },
+    {
+      "path": "resources/imgui.ini",
+      "sha256": "fe1d9600e354a5383f10f5783dd1a7fbe49dc0f59ee6c0c4cd32c17a5d29a5e4"
+    },
+    {
+      "path": "resources/ontology.yaml",
+      "sha256": "ab19e77d52201be5597af7ed48d294c7a5854cdb45331540ba385e31086c0509"
+    },
+    {
+      "path": "src/aux_nodes/gsl_server_call.cpp",
+      "sha256": "aa625920d514470d960a502c0d9cb4911de8c1839d6820f98648d98efc4e6590"
+    },
+    {
+      "path": "src/aux_nodes/send_pose.cpp",
+      "sha256": "041d7c887f3575da9ea493b4c4ba5f45a8b34af8cd3aaf3eed995a8efa594d28"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Algorithm.cpp",
+      "sha256": "6f32b79455cc27a4aef7724c3e801b777050c659447ae1dafc9e2066b9dec7d2"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Algorithm.hpp",
+      "sha256": "29a9f3647e4f2d9a8fb5e97932f4aef8f5608b46cfa92a4fd3a9474830fd8505"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/CMakeLists.txt",
+      "sha256": "3a001ef2f0398e883312dfdfd094d8f043e5b68bc7c765b31038f3dab719a4b8"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Grid2D.hpp",
+      "sha256": "e00ae6a9329c405b68f6c2ad00f8a0aadbc7f97b2cc50457f20cdf55efb9ca3d"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Grid3D.hpp",
+      "sha256": "16408fc99e2338a725ee9a1ae2841882514bc7c5736fde5d2898df9b4db2964d"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/GSLState.hpp",
+      "sha256": "b9ed5dcdd682bf4b3e0222ac1baebc709f01da3852f930cfd35f6f167c731eee"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/MovingState.cpp",
+      "sha256": "d359b80f2bd541aad88ce99585b673485617b876aaf2751a27112618ba6cfa20"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/MovingState.hpp",
+      "sha256": "b10dd436e347d22891ef3c33502c507a0aab989c84b78b3cc9994a7c27a5a87e"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Occupancy.hpp",
+      "sha256": "48f9b23d1633f5f981505707cb60bba43076d9c5a8d866bb108df2de878c1f83"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/StopAndMeasureState.cpp",
+      "sha256": "a474c4b58b939e732c4db103de9b297d8f3979e6ef62bb44d158b39ddfc20dd4"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/StopAndMeasureState.hpp",
+      "sha256": "bbb45fc8d37b76981f6224f07865177779effe133bf8e38ba6f63b79c0ec23f7"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Utils/BufferWrapper.hpp",
+      "sha256": "3803a215073d7b4d2bf04ef75034b712996743e4e934e4c6e6b028090716e866"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Utils/Collections.hpp",
+      "sha256": "d5315e7ce8278065b6e6e2874fb2816fdf92d16bd199ec5b9df5cf2ce5af098b"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Utils/Color.hpp",
+      "sha256": "69053da74b89fcc7d8eac37160245bb5423d51c3f2c3d6b9e0697061f1c4c991"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Utils/Math.cpp",
+      "sha256": "1b4c8fa9b49cedff6ada282cf8e84cb141763e1eda6a0106278be04f0790a684"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Utils/Math.hpp",
+      "sha256": "0efc89f7ad1810b2f13277b82c7ca3b4864539892416fa325963e9d76885e1f2"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Utils/NQAQuadtree.cpp",
+      "sha256": "17af36adf9268140b81be1d039e450c0e2c1e3c00909a884c3bec6b5f07015bb"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Utils/NQAQuadtree.hpp",
+      "sha256": "30a0e4656510f5e137d1bc4f5caf460a149eed974c4ed84f9dd44c2d24935ff6"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Utils/O24RandomAudit.hpp",
+      "sha256": "96ba30e7b663a0711eae5a741534b0dd6864c3da4f1cc97abbdeff015b98936d"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Utils/Profiling.hpp",
+      "sha256": "799e1b7761e90dbccbbee1ad8bc73e608bddc2351d1afaf1fca31ef7d7d008c3"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Utils/RosUtils.cpp",
+      "sha256": "6ee23bb474f00ec7c4ebc65e4f87f2e38921877721a4dbad39cc190ceb4f53e5"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Utils/RosUtils.hpp",
+      "sha256": "780a5f6b7aa94ec2039d8660bd30445af291ec3fc6e6d9ea5acf1b820cda8946"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/Utils/Time.hpp",
+      "sha256": "a18146f3ed204e6f87877228df87d78456fbfa7a098c8d0cd74f62e6a5f9f85d"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/WaitForGasState.cpp",
+      "sha256": "f21dec066dc3578848e5674a271ac9826f5b15b17587c9dffcfe6c99d7f7e5ff"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/WaitForGasState.hpp",
+      "sha256": "3619768e2b9efda0368ebeb7698822cf4b7195683e716896159271cd3b4157fa"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/WaitForMapState.cpp",
+      "sha256": "a64902327a290d2196427264330efc31dcb7bb0d0ed19c1a812de22d55df8d3b"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/WaitForMapState.hpp",
+      "sha256": "a58b034501b45b57c0a0c4b04592b5a5c8773b7355f51262bf91c1d2ad14f2cb"
+    },
+    {
+      "path": "src/gsl_server/algorithms/GrGSL/CMakeLists.txt",
+      "sha256": "69efe72f58cfc832f54442a79ca4bc0587cabdea337b9d6e36e26e3f3d702c9c"
+    },
+    {
+      "path": "src/gsl_server/algorithms/GrGSL/GrGSL.cpp",
+      "sha256": "dd76d7fe9b68e7905883f845dc241c8c982d715c7e9e5aa856eebde72e17978e"
+    },
+    {
+      "path": "src/gsl_server/algorithms/GrGSL/GrGSL.hpp",
+      "sha256": "d6dde4b02f4047cc87066400279961895624900295d4d0c18e071b52a48da2dc"
+    },
+    {
+      "path": "src/gsl_server/algorithms/GrGSL/GrGSL_internal.hpp",
+      "sha256": "10651a7f905d40767c838417d6829e1b2cf2acd45cad196747a26565e953a2bb"
+    },
+    {
+      "path": "src/gsl_server/algorithms/GrGSL/MovingStateGrGSL.cpp",
+      "sha256": "21ff2c97a68b61dff8c60ac88e24fd17e049d9aa15e66e57a3ff750f5679511e"
+    },
+    {
+      "path": "src/gsl_server/algorithms/GrGSL/MovingStateGrGSL.hpp",
+      "sha256": "e378e50853eb2ed65ecb22225b9bf16b7378222488cec43c7c9a69743442e929"
+    },
+    {
+      "path": "src/gsl_server/algorithms/gsl_algorithms.hpp",
+      "sha256": "80198603ef80e2a85c45ec2cff754a0a65a782b46cf6f45c205540b000c08ce2"
+    },
+    {
+      "path": "src/gsl_server/algorithms/ParticleFilter/CMakeLists.txt",
+      "sha256": "b4ab81f78116d87e19df67d69120fe51ff2137484e955b10554e291b7284197a"
+    },
+    {
+      "path": "src/gsl_server/algorithms/ParticleFilter/ParticleFilter.cpp",
+      "sha256": "ed51f9dda2067c7c0d6406595f49cfcf9b01ee6ef51c2d491a7979dfc59e47e4"
+    },
+    {
+      "path": "src/gsl_server/algorithms/ParticleFilter/ParticleFilter.hpp",
+      "sha256": "c7aad5af6c6ed1205e5ca4a3b22120eb881fa21a0781c721166a744dcd21e6b5"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PlumeTracking/CMakeLists.txt",
+      "sha256": "5dc57ffded61e509d3121b2145ddbdc1a561fb0d21053215a5234748aebdf396"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PlumeTracking/MovingStatePlumeTracking.cpp",
+      "sha256": "962010c918b9719862ee4fa5e3017a279995014863d70874d51bbf6b4c2dd64a"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PlumeTracking/MovingStatePlumeTracking.hpp",
+      "sha256": "d08636d55081d0bd96d9848f9211810b17f3024fe55aa4b87e65d0e35bb3cedb"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PlumeTracking/PlumeTracking.cpp",
+      "sha256": "bbb590e234b4f7901375a16379a0916b85700a5a0dc00e0820f5d6d52756c582"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PlumeTracking/PlumeTracking.hpp",
+      "sha256": "e5d3d6392694d1b5b068d93b17fb4a84bdd3270706edb718cb6e51588ac197a0"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PlumeTracking/SurgeCast/SurgeCast.cpp",
+      "sha256": "d8440b6fa48ec89fbd62d6dfd69fa35b3a1c121602270def4f1cb30ab4ad3ec6"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PlumeTracking/SurgeCast/SurgeCast.hpp",
+      "sha256": "30b43622df56ffd9f5bfd9c0673f0ce35cf3b858e47d6bb643bb87a6b811e636"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PlumeTracking/SurgeSpiral/SurgeSpiral.cpp",
+      "sha256": "db2735ad2dc69f547dd670828294e56d9b82f7d7ec1313ba0432f3ac487c63fb"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PlumeTracking/SurgeSpiral/SurgeSpiral.hpp",
+      "sha256": "d7824c13f90e7fb04106d2d260ba8f657e945ef42c996b1b2f2995dc32e6bd90"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/CMakeLists.txt",
+      "sha256": "ba317cec6190e150eae2f452711a9e90e0c7ebd9e57129b5d27b8ae2b454f1db"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/internal/HitProbability.hpp",
+      "sha256": "2746452b492ba31f273f8208cdcf6521061820ef15583ae269c5e0c0726c5591"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/internal/HitProbKernel.hpp",
+      "sha256": "47cf4760eed5309009e211784b7aae4d3f73445745c38ba168eead7cc56f5069"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/internal/PublishersAndSubscribers.hpp",
+      "sha256": "f865e36f577126ba09a065463fba0c23c14e05520f473bb5e1d924e2436abef5"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/internal/Settings.hpp",
+      "sha256": "8f7c754d38e214afe7ae1a641ec0e36f146c06ee2afebc3c58c94ce424563375"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/internal/Simulations.cpp",
+      "sha256": "d3ec944a116e73ba81aac5099dde042f40ecf67e632cf1ddf22f4b0f006b4b2e"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/internal/Simulations.hpp",
+      "sha256": "5d45535e86b36fff8a054b872c8a829c0d58f9c890cb7c8e49108aa839c8fcc4"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/internal/UI.cpp",
+      "sha256": "c7ff77d24c4ff8f8a00820923440e250b951d2421de42b933b9ed5eb82b4f2d9"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/internal/UI.hpp",
+      "sha256": "485c9bf5b74e6de2ff00fff29a720620cb812ada168450e2ec5336e13bbab8b9"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/internal/VisibilityMap.hpp",
+      "sha256": "2749b4346b45dd0d8461251a5fc292549a7510e6d265084edebf04e4166cbc71"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/MovingStatePMFS.cpp",
+      "sha256": "adb91284e2ba9ccfd6a8aa2ffdfb4070348657df729cc9c6d1b5b5c4a7227541"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/MovingStatePMFS.hpp",
+      "sha256": "91432811b22e07daf854174bc04f03661924801bacbbb8e53436393e4246de40"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFS.cpp",
+      "sha256": "673c6f4cd71a3b3e75baee5cb7c1d1d07b717966b9aeca42f6fecd98a8aa66d7"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFS.hpp",
+      "sha256": "734b0428249a2bda76895544b4c555082d0a74bbb269814f85b7b36d02e33344"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFS_utils.cpp",
+      "sha256": "662d0d628d1fbfb3f8a8f895cec12b4140648d724f4baefe70e7a10648e75978"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "sha256": "131812758eab06810bad74217dc6526a892065e586ff7acaa8e53cbed108d814"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.hpp",
+      "sha256": "308d42e4cdeb83f538e6aafdac61afa4bb76f11d6d9fc287557cc65293a8a5e4"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSViz.cpp",
+      "sha256": "51cadd4a2966f8474e95d91ce6e60d3abb02813b607a34e96811f43cefe31cd3"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSViz.hpp",
+      "sha256": "d89da2950c436dd741937a4ebbd7b2d94a7a14a0d8f5aca655ebb67d4326ce7e"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/CMakeLists.txt",
+      "sha256": "3abe4caf3877be15439bbead41ab33d42a1fa3228deaeffff79d305ba11eeddb"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/SemanticPMFS/MovingStateSemanticPMFS.cpp",
+      "sha256": "a73ca50fad615682aa0ee550e1135c1c735de8cc741fa96a8daf9b0311f3968d"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/SemanticPMFS/MovingStateSemanticPMFS.hpp",
+      "sha256": "1c425385c1774f5a2188db9381e5802c205196dc777464b7f8ec9018fb7b57be"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/SemanticPMFS/SemanticPMFS.cpp",
+      "sha256": "502951831dba5747c3989f7680da804f105186dbfd9f4b30581ade2b5fdc694b"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/SemanticPMFS/SemanticPMFS.hpp",
+      "sha256": "8a13148d5474968dea1ef56cdf4f82987e8eaa723b31eaba9b8bbdf74516f6fc"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/SemanticPMFS/SemanticPMFSPubs.hpp",
+      "sha256": "d65cb3e7c5a2e20b629b96093275e8322c9504b139b550303696329a8dcad6cb"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/SemanticPMFS/SemanticPMFSSettings.hpp",
+      "sha256": "13671939b5ed3b59e24326ba60f4adc05047df60bc640fd80a8ab1a6bd4838ee"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/Semantics/AABB.hpp",
+      "sha256": "fea6400239537b03e704b79157255fc70743ca36d67c60e7f6f46c81ecb97d47"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/Semantics/ClassMap.cpp",
+      "sha256": "25506c1f5c0eb7a992b1e6e95bebbd75420b915e27c7f6dfb4c07cf331812a25"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/Semantics/ClassMap.hpp",
+      "sha256": "e740097b06229a46af2d64f4a4aa45954618f7f6ed5cc1b2929ba9cc40d5ce51"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/Semantics/ClassMap2D.cpp",
+      "sha256": "d98355bfc75aa8a22f6e4766b3adcfdac7cf6826c4de0ecad5ff54bfa142e41c"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/Semantics/ClassMap2D.hpp",
+      "sha256": "58f00ed3fac277f06884c1a42954f8cffa7ccef3fa28d4c6bf79fe689dea556f"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/Semantics/ClassMapVoxeland.cpp",
+      "sha256": "db5398688d1819c9410ea7fe38d6e1eb0d24270f5e6c69e7c8b0ad808bc6ad45"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/Semantics/ClassMapVoxeland.hpp",
+      "sha256": "6758195ab641ac27c26c7a2f960c12bbd2ad023f1640f04f23b7dae14d55663c"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/Semantics/Common/ClassDistribution.hpp",
+      "sha256": "cad7044e0ba634a33f7a3c71639071580755a884ea2440d150453655a85e406c"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/Semantics/Common/ISemantics.hpp",
+      "sha256": "45b36ea024a6cc79602321a76d7041755efdc173330ac50849edbbadb9e79075"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Semantics/Semantics/Common/SemanticsType.hpp",
+      "sha256": "944656f116e0c3b3d5890f58e1bf9144693cbccc7354c1ebb09a60d5494c772e"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Spiral/CMakeLists.txt",
+      "sha256": "aa0b65a02824006da334244ad3a3eab7b49df0dd16112343f4b9ffedce2384f7"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Spiral/Spiral.cpp",
+      "sha256": "877612d26f9d77debec2c7295c886828d6e5653f58d8860283bcdb312bd17931"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Spiral/Spiral.hpp",
+      "sha256": "3638e2b38bf351da212a94a67c4b96d77aeb02dd05a090fd0426b2ae724f0e34"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Spiral/StopAndMeasureStateSpiral.cpp",
+      "sha256": "2acbb097b69f830661d67f0b81640ec036e64aa4d8beace2fd96a90391f9214a"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Spiral/StopAndMeasureStateSpiral.hpp",
+      "sha256": "26022778f87bf8afb5ebd7714b17579ff426c3a756c50d39b136b945c657e254"
+    },
+    {
+      "path": "src/gsl_server/core/ConditionalMacros.hpp",
+      "sha256": "8a09498772f64aa0b7d780b87dcc81ef728cba1400d00a17fa58a6642a862365"
+    },
+    {
+      "path": "src/gsl_server/core/FunctionQueue.hpp",
+      "sha256": "2a30f2f4cd76d7f384dfc3a976a7d05ed82180acd00ce9513e8718f9c64c4038"
+    },
+    {
+      "path": "src/gsl_server/core/GSLResult.hpp",
+      "sha256": "c6f53f046f7c654df08c41af234bea932316c93e5c4f009e1de5d2039427cfeb"
+    },
+    {
+      "path": "src/gsl_server/core/Logging.hpp",
+      "sha256": "ad7de33aff7f5b6915db08767c78ab6ba1e275db79ce47b71c62ff7f1d3bad03"
+    },
+    {
+      "path": "src/gsl_server/core/Macros.hpp",
+      "sha256": "ad2602ee5159d43faca0f3a286de7136366bf34d22eb000e003ccff25314eeae"
+    },
+    {
+      "path": "src/gsl_server/core/Navigation.hpp",
+      "sha256": "94d5367af073e36abfeb1fcf1a05af7ff59a5d7d93e50580f07013353ca34b0f"
+    },
+    {
+      "path": "src/gsl_server/core/ros_typedefs.hpp",
+      "sha256": "d17737275039c03d6f63a56c6073830d8c8d4918cb0107abe2b8bda072af6baa"
+    },
+    {
+      "path": "src/gsl_server/core/Vectors.hpp",
+      "sha256": "59daa0d83881a75c1d37ab842c361540484a33057e3c9563be0048c88eea7e6a"
+    },
+    {
+      "path": "src/gsl_server/core/VectorsImpl/vmath_DDACustomVec.hpp",
+      "sha256": "d2353fddd55db2ff29283acae6f5b84236fe470b2ef5387efd4a860c7efb96e3"
+    },
+    {
+      "path": "src/gsl_server/core/VectorsImpl/vmath_glm.hpp",
+      "sha256": "3d5639aac541126884ac5297a122687f214f339eb2f1f0f9ab3f852f2acc0d79"
+    },
+    {
+      "path": "src/gsl_server/gsl_server.cpp",
+      "sha256": "f875ca29012ad57af51b2371557db68e24b63189ac5b3baab16373a9c66f6e23"
+    },
+    {
+      "path": "src/gsl_server/gsl_server.hpp",
+      "sha256": "08e107013c6817477bcac800351859d26c27b778eb8649d1f342d4d48941bcd7"
+    },
+    {
+      "path": "third_party/DDA/.gitignore",
+      "sha256": "6a77e3910349d8b34514f653bb246a365bfe2c7ff1ed16c3f1bf9f2bbdae0a26"
+    },
+    {
+      "path": "third_party/DDA/CMakeLists.txt",
+      "sha256": "6c756497d1c34f0a2a3bbbd32872f5ca702053d5a5f3394dd70d15b82c354433"
+    },
+    {
+      "path": "third_party/DDA/include/DDA/2D/Map.h",
+      "sha256": "bc485c0624594c334317bcea7e7d33e891e8f315fd90e6b5b892cac4b649fe8c"
+    },
+    {
+      "path": "third_party/DDA/include/DDA/2D/RayCast.h",
+      "sha256": "0e8c22e16eb246b6dbbec5067f95ba83cf4181f6a62c5bd30d1a549956bd3ec8"
+    },
+    {
+      "path": "third_party/DDA/include/DDA/2D/RayMarch.h",
+      "sha256": "863f5982942a2035a2658dd84f9b96c5735e4446143f0c220ff8e0aa2a9cadd2"
+    },
+    {
+      "path": "third_party/DDA/include/DDA/3D/Map.h",
+      "sha256": "d854ffeba812143c8b5eb7fad983f7d0f2c9686096f725e5e7fc719b076ce387"
+    },
+    {
+      "path": "third_party/DDA/include/DDA/3D/RayCast.h",
+      "sha256": "44df1cd712a2e9e7b8beb4c73c05684c90678505ce2ff499da9e2b41cbeab8db"
+    },
+    {
+      "path": "third_party/DDA/include/DDA/3D/RayMarch.h",
+      "sha256": "0aedc27c6e79ecd1d324c3ca08b69bc5d696f1dd6fde1ced24989771a7304945"
+    },
+    {
+      "path": "third_party/DDA/include/DDA/Common.h",
+      "sha256": "63b78292d70c40f2085fe2b1fad62dabea40c2aa1fc27207496611cc5fb270e6"
+    },
+    {
+      "path": "third_party/DDA/include/DDA/DDA.h",
+      "sha256": "021b3ed647a4f2d06aa0a6ea584fa279f1e78a4ac1452c7a472f558e3bb3ba73"
+    },
+    {
+      "path": "third_party/DDA/include/DDA/Vector2.h",
+      "sha256": "4bc68982a3d93053ef61373401018594dcdbe3e798097dcd8c9a244fd1e01016"
+    },
+    {
+      "path": "third_party/DDA/include/DDA/Vector2Int.h",
+      "sha256": "05ba95ad011b8f11e3b0309e4a8f87086e0efbcd96eac52c16a7b53c5ab32aed"
+    },
+    {
+      "path": "third_party/DDA/include/DDA/Vector3.h",
+      "sha256": "8bc2eff399d7c61b94ba84230224b40b50c50e5351039d6bd0208f4501acac0e"
+    },
+    {
+      "path": "third_party/DDA/include/DDA/Vector3Int.h",
+      "sha256": "d66286c74df15f02990e5e55bca2119f3c683788d0ff5ed0389e4ae46c7af3bf"
+    },
+    {
+      "path": "third_party/DDA/include/DDA/Vectors.h",
+      "sha256": "df604c9db8d344d56587450a4e2e5a1bdc416b2d269592fe57a56644983be30f"
+    },
+    {
+      "path": "third_party/DDA/test/test.cpp",
+      "sha256": "3e407ee8c9e50891bfe0b667d2f2f94024f20c1badebe61c408bef1074113462"
+    },
+    {
+      "path": "third_party/StateMachine/CMakeLists.txt",
+      "sha256": "cfd0bbcad640102afad4cdeabba13af12b4475b074ea9ed67a249f58e83ea2d1"
+    },
+    {
+      "path": "third_party/StateMachine/include/StateMachines/State.h",
+      "sha256": "a5964cd91cd5d8e7c2b5b2b1374808821506ba66db0d9a7b7ed09c4ea0df7c24"
+    },
+    {
+      "path": "third_party/StateMachine/include/StateMachines/StateMachine.h",
+      "sha256": "edad8407b29538199cfa7ceff0127c5a7b96cf2ae737f8f3fd8477eaa9c19319"
+    },
+    {
+      "path": "third_party/StateMachine/test/test.cpp",
+      "sha256": "24d0f95d323fe5e728b60823385555edec2d6ba4fece301b757d457d009bc1f9"
+    },
+    {
+      "path": "third_party/xxHash/include/xxHash/xxhash32.h",
+      "sha256": "740751b816e3775586c430b64b51112b890c05c3cb0f74889f2aeea74e937653"
+    }
+  ],
+  "binary_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+  "new_worlds": 0,
+  "AIMMD": 0,
+  "RNG": "Keep native initialization; record actual seed/state/cachephase/candidateowner and validate stream replay. No claim of deterministic future action trajectory."
+}

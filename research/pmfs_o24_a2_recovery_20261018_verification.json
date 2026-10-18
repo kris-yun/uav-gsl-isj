@@ -1,0 +1,80 @@
+{
+  "UTC": "2026-10-18T09:38:31.854033+00:00",
+  "archive": "C:\\Users\\50176\\Downloads\\PMFS_O24_最终冻结_A2隔离补跑与五回合完整证据_V2_20261018.zip",
+  "archive_bytes": 14502006,
+  "archive_sha256": "6dde39b661292e6d2cbebd83529d9a1fd1fc6b354dabe852868377532de5b867",
+  "verified_payload_entries": 371,
+  "previous_archive_sha256": "e41712cbb4d19e336a4a725a64ad217deaca749cfc90956d48f377e99bf371fd",
+  "research_root": "D:\\ZYC\\UAV\\.codex\\worktrees\\pmfs-paper-eq6-20261017\\A-gas\\research\\pmfs_o24_a2_recovery_20261018",
+  "branch": "codex/pmfs-o24-ros-qualification-20261018",
+  "scientific_source_commit": "a8d5a764b7cbfc1d5d1887aebfe890e2c75d7533",
+  "runtime_recovery": "PASS",
+  "paper_performance": "HOLD",
+  "new_ROS_goals": 1,
+  "total_ROS_goals_preserved": 5,
+  "new_worlds": 0,
+  "AIMMD": 0,
+  "fresh_archive_offline_QA": {
+    "status": "PASS_ARCHIVE_EXTRACTION_OFFLINE_RECOVERY_REPRODUCTION",
+    "payload_files": 367,
+    "commands": [
+      {
+        "script": "analyze.py",
+        "exit_code": 0,
+        "wall_s": 0.6272236229851842
+      },
+      {
+        "script": "verify_readout_guest.py",
+        "exit_code": 0,
+        "wall_s": 1.4361020589713007
+      },
+      {
+        "script": "validate_rng_guest.py",
+        "exit_code": 0,
+        "wall_s": 4.598304404062219
+      },
+      {
+        "script": "minimal_score_sample/replay_score.py",
+        "exit_code": 0,
+        "wall_s": 0.19593863002955914
+      },
+      {
+        "script": "verify_recovery.py",
+        "exit_code": 0,
+        "wall_s": 0.5835725429933518
+      }
+    ],
+    "numeric_comparisons": [
+      {
+        "file": "O24_EPISODES.csv",
+        "rows": 1,
+        "max_numeric_abs_difference": 0.0
+      },
+      {
+        "file": "O24_SOURCE_UPDATE_METRICS.csv",
+        "rows": 6,
+        "max_numeric_abs_difference": 0.0
+      },
+      {
+        "file": "NATIVE_REPLAY_PARITY.csv",
+        "rows": 6,
+        "max_numeric_abs_difference": 0.0
+      },
+      {
+        "file": "O24_NATIVE_CPP_READOUT.csv",
+        "rows": 6,
+        "max_numeric_abs_difference": 0.0
+      },
+      {
+        "file": "FORWARD_AND_RECORDING_COST.csv",
+        "rows": 1,
+        "max_numeric_abs_difference": 0.0
+      }
+    ],
+    "RNG_candidate_records": 990,
+    "new_ROS_goals": 0,
+    "new_forward_calls": 0,
+    "new_worlds": 0,
+    "AIMMD": 0
+  }
+}
