@@ -1,0 +1,88 @@
+--- previous_qualified_runtime/runtime_driver.py
++++ paper_first_Sep24/runtime_driver.py
+@@ -16,10 +16,10 @@
+ from gsl_actions.action import DoGSL
+ from tf2_ros import Buffer,TransformListener
+ 
+-T=Path('/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/cases/P24_B2_WALL5_VALID_V2_R01');R=Path('/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/cases/P24_B2_WALL5_VALID_V2_R01/runtime');R.mkdir(exist_ok=True)
++T=Path('/home/zyc/ros2_ws/pmfs_paper_first_qual_20261017/cases/PF24_B2_Q01');R=Path('/mnt/hgfs/workspace/PMFS_PAPER_FIRST_ROS_QUAL_20261017/cases/PF24_B2_Q01/runtime');R.mkdir(exist_ok=True)
+ META=json.loads((T/'CASE_META.json').read_text())
+ assert not (T/'RUN_STARTED.json').exists()
+-os.environ.update(ROS_DOMAIN_ID='229',OMP_NUM_THREADS='4',OPENBLAS_NUM_THREADS='1',PMFS_R5_CAPTURE=str(R/'updates'),PMFS_R5_CONSUMERS=str(R/'consumer_messages.csv'),PMFS_R5_EVENTS=str(R/'measurement_events.csv'),PMFS_R5_PLAYER=str(R/'player_frames.csv'))
++os.environ.update(ROS_DOMAIN_ID='226',OMP_NUM_THREADS='4',OPENBLAS_NUM_THREADS='1',PMFS_R5_CAPTURE=str(R/'updates'),PMFS_R5_CONSUMERS=str(R/'consumer_messages.csv'),PMFS_R5_EVENTS=str(R/'measurement_events.csv'),PMFS_R5_PLAYER=str(R/'player_frames.csv'))
+ os.environ['NATIVE_PMFS_WINDOW_TRACE']=str(R/'native_window_consumption.csv')
+ os.environ['NATIVE_PMFS_POSTERIOR_TRACE']=str(R/'native_posterior_updates.csv')
+ processes=[]
+@@ -48,8 +48,8 @@
+  try:
+   task_args=(task_peer/'cmdline').read_bytes()
+   task_env=(task_peer/'environ').read_bytes().split(b'\0')
+-  if b'pmfs_official_repro_audit_20261016'in task_args and b'ROS_DOMAIN_ID=229'in task_env:
+-   raise RuntimeError('Pre-node ROS_DOMAIN_ID229 already occupied by PID'+task_peer.name)
++  if b'pmfs_official_repro_audit_20261016'in task_args and b'ROS_DOMAIN_ID=226'in task_env:
++   raise RuntimeError('Pre-node ROS_DOMAIN_ID226 already occupied by PID'+task_peer.name)
+  except(FileNotFoundError,PermissionError,ProcessLookupError):pass
+ 
+ rclpy.init();node=Node('b4_capture_and_wind_adapter',parameter_overrides=[rclpy.parameter.Parameter('use_sim_time',value=True)])
+@@ -118,7 +118,7 @@
+  assert all(math.isfinite(v) for v in [*w.u,*w.v,*w.w]),'nonfinite wind'
+  assert len(g.positions)==1 and all(math.isfinite(v) and v>=0 for v in g.positions[0].concentration),'nonfinite gas'
+  assert abs(pos.z-META['sensor_xyz'][2])<1e-5,'sensor elevation mismatch'
+- pre=dict(lifecycle=states,sensor_xyz=[pos.x,pos.y,pos.z],gas_types=list(g.gas_type),gas_ppm=list(g.positions[0].concentration),wind_uvw=[list(w.u),list(w.v),list(w.w)],ROS_DOMAIN_ID=229,sim_clock_ns=node.get_clock().now().nanoseconds,input_class=status['input_class'],B4_physics_qualification=status['physical_qualification'])
++ pre=dict(lifecycle=states,sensor_xyz=[pos.x,pos.y,pos.z],gas_types=list(g.gas_type),gas_ppm=list(g.positions[0].concentration),wind_uvw=[list(w.u),list(w.v),list(w.w)],ROS_DOMAIN_ID=226,sim_clock_ns=node.get_clock().now().nanoseconds,input_class=status['input_class'],B4_physics_qualification=status['physical_qualification'])
+  # Before the single goal, verify native raw message types, frames, stamps and stationary TF.
+  pid=latest['/PioneerP3DX/PID/Sensor_reading'];an=latest['/PioneerP3DX/Anemometer/WindSensor_reading']
+  assert pid.raw_units==pid.UNITS_PPM and pid.technology==pid.TECH_PID and math.isfinite(pid.raw) and pid.raw>=0
+@@ -137,6 +137,9 @@
+  for n in ['gaden_player','PioneerP3DX/PID','PioneerP3DX/Anemometer','basic_sim']:
+   snapshot_parameters('/'+n,'preflight_'+n.replace('/','_')+'_parameters.json')
+  pre.update(message_age_sim_seconds=ages,PID_units='ppm',PID_model=30,PID_response='sum ppm; correction_factors=false from pinned code/default; resolved dump saved',probe_source_neighborhood_ppm=list(pconc.positions[0].concentration),probe_is_input_to_algorithm=False,gas_frame_binding='physical_clock_trace.csv records wall-file cadence, actual physical snapshot times in original_physical_frame_timeline',sensor_frames=[pid.header.frame_id,an.header.frame_id],native_goal_count=0)
++ navmap=latest['/PioneerP3DX/map'];rawmap=bytes((int(v)&255)for v in navmap.data)
++ (R/'navigation_map.s8').write_bytes(rawmap)
++ (R/'NAVIGATION_MAP_METADATA.json').write_text(json.dumps(dict(width=navmap.info.width,height=navmap.info.height,resolution=navmap.info.resolution,origin_x=navmap.info.origin.position.x,origin_y=navmap.info.origin.position.y,occupancy_sha256=__import__('hashlib').sha256(rawmap).hexdigest()),indent=2))
+  (R/'PREFLIGHT.json').write_text(json.dumps(pre,indent=2));status['preflight']='PASS';save_status()
+  # Existing data exhaustion is a wall-file-cadence censor, not a PMFS failure.
+  import csv
+@@ -166,7 +169,7 @@
+  (R/'CLOCK_SENSOR_RATE_PREFLIGHT.json').write_text(json.dumps(dict(wall_delta_s=wall_delta,ROS_delta_s=ros_delta,real_time_factor=ros_delta/wall_delta,gas_samples_per_ROS_second=gas_rate,wind_samples_per_ROS_second=wind_rate,stop_window_wall_s=.4,expected_robot_clock_window_s=2.,gas_samples_per_wall_second=gas_rate*ros_delta/wall_delta,wind_samples_per_wall_second=wind_rate*ros_delta/wall_delta),indent=2))
+ 
+  # Verify the exact native executable and local GMRF before admitting one goal.
+- expected_binary=Path('/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/pmfs_observation_validity_node_v2')
++ expected_binary=Path('/home/zyc/ros2_ws/pmfs_paper_first_qual_20261017/install/lib/gsl_server/gsl_actionserver_node')
+  candidates=[]
+  for proc in Path('/proc').iterdir():
+   if not proc.name.isdigit():continue
+@@ -193,23 +196,30 @@
+ 
+ 
+  # Preflight does not trigger a candidate update. One and only one real GSL goal.
+- (T/'RUN_STARTED.json').write_text(json.dumps(dict(wall_time=time.time(),ROS_ns=node.get_clock().now().nanoseconds,native_goal_count=1,input_class=status['input_class'],maxSearchTime=1000000.,max_goal_wall_s=None,PMFS_manuscript_maximum_seconds=None)))
++ (T/'RUN_STARTED.json').write_text(json.dumps(dict(wall_time=time.time(),ROS_ns=node.get_clock().now().nanoseconds,native_goal_count=1,input_class=status['input_class'],maxSearchTime=300.,max_goal_wall_s=420.,PMFS_manuscript_maximum_seconds=None)))
+  status['goal_invocation_ROS_ns']=node.get_clock().now().nanoseconds;status['native_goal_count']=1;goal=DoGSL.Goal();goal.gsl_method='PMFS';sent=action.send_goal_async(goal)
+  end=time.time()+10
+  while not sent.done() and time.time()<end:rclpy.spin_once(node,timeout_sec=.1)
+  if not sent.done() or not sent.result().accepted:raise RuntimeError('GSL goal not accepted')
+  handle=sent.result();result=handle.get_result_async();starttime=time.time();status['goal_accepted']=True
+  dump_started=False;last_status=0
+- deadline=datetime.datetime.fromisoformat(json.loads((Path('/mnt/hgfs/workspace/PMFS_OFFICIAL_REPRO_AUDIT_20261016')/'BATCH_STARTED.json').read_text())['UTC']).timestamp()+10800
++ deadline=time.time()+420.0
+  while not result.done() and time.time()<deadline:
+   rclpy.spin_once(node,timeout_sec=.05)
+   if data_end_system_s is not None and time.time()>=data_end_system_s:
+    status['resource_stop_reason']='EXISTING_CONTINUOUS_PHYSICAL_RECORDING_EXHAUSTED';handle.cancel_goal_async();raise RuntimeError('External data recording ended; not a PMFS scientific failure or manuscript time cutoff')
+-  if shutil.disk_usage('/home/zyc').free<5*1024**3 or shutil.disk_usage('/mnt/hgfs/workspace').free<10*1024**3:
++  if shutil.disk_usage('/home/zyc').free<5*1024**3 or shutil.disk_usage('/mnt/hgfs/workspace').free<2*1024**3:
+    status['resource_stop_reason']='DISK_RESERVE_REACHED';handle.cancel_goal_async();raise RuntimeError('External resource reserve reached')
+   if time.time()-last_status>5:save_status();last_status=time.time()
+   if not dump_started and time.time()-starttime>1:
+    snapshot_parameters('/PioneerP3DX/GSL','resolved_GSL_parameters.json')
++   pp=json.loads((R/'resolved_GSL_parameters.json').read_text())
++   values={}
++   for k,v in zip(pp['names'],pp['values']):
++    values[k]=v['bool_value'] if v['type']==1 else v['integer_value'] if v['type']==2 else v['double_value'] if v['type']==3 else v['string_value']
++   for k,v in META['expected_parameters'].items():
++    assert k in values and values[k]==v,('RESOLVED_BASELINE_PARAMETER_MISMATCH',k,values.get(k),v)
++   (R/'BASELINE_PARAMETER_GATE.json').write_text(json.dumps(dict(status='PASS_ACTUAL_NODE_PARAMETER_VALUES',checked=META['expected_parameters']),indent=2))
+    dump_started=True
+   if not Path('/proc/'+str(candidates[0]['pid'])+'/exe').exists():
+    status['technical_reason']='NATIVE_PROCESS_EXITED_WITHOUT_ACTION_RESULT';raise RuntimeError('Native process exited before action result; technical evidence retained')

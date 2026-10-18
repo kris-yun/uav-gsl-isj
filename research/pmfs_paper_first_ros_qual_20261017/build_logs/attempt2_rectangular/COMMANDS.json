@@ -1,0 +1,42 @@
+[
+  {
+    "stage": "configure",
+    "command": [
+      "cmake",
+      "-S",
+      "/home/zyc/ros2_ws/pmfs_paper_first_qual_20261017/src/gsl_server",
+      "-B",
+      "/home/zyc/ros2_ws/pmfs_paper_first_qual_20261017/build",
+      "-DCMAKE_BUILD_TYPE=Release",
+      "-DCMAKE_INSTALL_PREFIX=/home/zyc/ros2_ws/pmfs_paper_first_qual_20261017/install",
+      "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+    ],
+    "exit_code": 0,
+    "wall_s": 1.0149816570337862,
+    "child_cpu_s": 0.808186
+  },
+  {
+    "stage": "compile",
+    "command": [
+      "cmake",
+      "--build",
+      "/home/zyc/ros2_ws/pmfs_paper_first_qual_20261017/build",
+      "--parallel",
+      "1"
+    ],
+    "exit_code": 0,
+    "wall_s": 8.10496637201868,
+    "child_cpu_s": 7.729961
+  },
+  {
+    "stage": "install",
+    "command": [
+      "cmake",
+      "--install",
+      "/home/zyc/ros2_ws/pmfs_paper_first_qual_20261017/build"
+    ],
+    "exit_code": 0,
+    "wall_s": 1.0140865639550611,
+    "child_cpu_s": 0.020742999999999734
+  }
+]

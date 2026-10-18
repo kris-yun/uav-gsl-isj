@@ -1,0 +1,10 @@
+--- official/src/gsl_server/algorithms/PMFS/PMFS.cpp
++++ runtime/src/gsl_server/algorithms/PMFS/PMFS.cpp
+@@ -110,6 +110,7 @@
+         functionQueue.run();
+ 
+         // Update visualization
++        if (!visibilityMap.has_value()) return; // Do not read map-derived arrays before the map callback.
+         dynamic_cast<MovingStatePMFS*>(movingState.get())->publishMarkers();
+         PMFSViz::ShowHitProb(Grid2D<HitProbability>(hitProbability, occupancy, gridMetadata), settings.visualization, pubs);
+         PMFSViz::ShowSourceProb(Grid2D<double>(sourceProbability, occupancy, gridMetadata), settings.visualization, pubs);

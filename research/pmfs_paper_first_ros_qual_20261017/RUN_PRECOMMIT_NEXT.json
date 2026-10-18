@@ -1,0 +1,56 @@
+{
+  "status": "FROZEN_BEFORE_A2_B2_NEW_GOALS",
+  "roles": [
+    {
+      "id": "PF24_A2_T01",
+      "case": "A2",
+      "guest_path": "/home/zyc/ros2_ws/pmfs_paper_first_qual_20261017/cases/PF24_A2_T01",
+      "runtime_shared": "/mnt/hgfs/workspace/PMFS_PAPER_FIRST_ROS_QUAL_20261017/cases/PF24_A2_T01/runtime",
+      "domain": 226,
+      "goal_limit": 1,
+      "max_wall_s": 420
+    },
+    {
+      "id": "PF24_B2_Q01",
+      "case": "B2",
+      "guest_path": "/home/zyc/ros2_ws/pmfs_paper_first_qual_20261017/cases/PF24_B2_Q01",
+      "runtime_shared": "/mnt/hgfs/workspace/PMFS_PAPER_FIRST_ROS_QUAL_20261017/cases/PF24_B2_Q01/runtime",
+      "domain": 226,
+      "goal_limit": 1,
+      "max_wall_s": 420
+    }
+  ],
+  "primary_goals": 2,
+  "technical_retry_cap": 2,
+  "total_goal_cap": 4,
+  "retry_condition": "Infrastructure or qualification failure only. Native timeout/nondeclaration is retained, not retried to seek a positive result.",
+  "native_time_limit_s": 300,
+  "limit_source": "Pinned GitHub launch, NOT claimed a universal paper PMFS cutoff",
+  "clock_profile": "Public native5x robot clock/wall PMFS/player-wall cadence",
+  "parameters": {
+    "use_sim_time": false,
+    "useWindGroundTruth": false,
+    "sourceDiscriminationPower": 1.0,
+    "convergence_thr": 1.0,
+    "maxSearchTime": 300.0,
+    "stop_and_measure_time": 0.4,
+    "confidenceMeasurementWeight": 1.0,
+    "confidenceSigmaSpatial": 1.0,
+    "kernelSigma": 1.5,
+    "kernelStretchConstant": 1.5,
+    "hitPriorProbability": 0.3,
+    "scale": 25,
+    "maxUpdatesPerStop": 5,
+    "stepsSourceUpdate": 3,
+    "refineFraction": 0.1,
+    "maxRegionSize": 5,
+    "deltaTime": 0.1,
+    "noiseSTDev": 0.5,
+    "iterationsToRecord": 200,
+    "maxWarmupIterations": 500
+  },
+  "no_new_gas_worlds": true,
+  "no_AIMMD": true,
+  "technical_attempt_already_retained": "PF24_A2_Q01",
+  "cumulative_goals_if_all_complete": 3
+}

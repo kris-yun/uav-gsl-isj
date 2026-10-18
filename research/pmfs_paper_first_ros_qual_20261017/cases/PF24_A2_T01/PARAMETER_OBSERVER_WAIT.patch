@@ -1,0 +1,22 @@
+--- observer_early_snapshot
++++ observer_wait_declared_params
+@@ -221,10 +221,15 @@
+    values={}
+    for k,v in zip(pp['names'],pp['values']):
+     values[k]=v['bool_value'] if v['type']==1 else v['integer_value'] if v['type']==2 else v['double_value'] if v['type']==3 else v['string_value']
+-   for k,v in META['expected_parameters'].items():
+-    assert k in values and values[k]==v,('RESOLVED_BASELINE_PARAMETER_MISMATCH',k,values.get(k),v)
+-   (R/'BASELINE_PARAMETER_GATE.json').write_text(json.dumps(dict(status='PASS_ACTUAL_NODE_PARAMETER_VALUES',checked=META['expected_parameters']),indent=2))
+-   dump_started=True
++   missing=[k for k in META['expected_parameters']if k not in values]
++   if missing:
++    (R/'PARAMETER_DECLARATION_WAIT.json').write_text(json.dumps(dict(missing=missing,elapsed_after_goal_s=time.time()-starttime),indent=2))
++    if time.time()-starttime>20:raise RuntimeError('REQUIRED_PARAMETERS_NOT_DECLARED:'+str(missing))
++   else:
++    for k,v in META['expected_parameters'].items():
++     assert values[k]==v,('RESOLVED_BASELINE_PARAMETER_MISMATCH',k,values.get(k),v)
++    (R/'BASELINE_PARAMETER_GATE.json').write_text(json.dumps(dict(status='PASS_ACTUAL_NODE_PARAMETER_VALUES',checked=META['expected_parameters']),indent=2))
++    dump_started=True
+   if not Path('/proc/'+str(candidates[0]['pid'])+'/exe').exists():
+    status['technical_reason']='NATIVE_PROCESS_EXITED_WITHOUT_ACTION_RESULT';raise RuntimeError('Native process exited before action result; technical evidence retained')
+   if launch.poll() is not None and not result.done():

@@ -1,0 +1,20 @@
+--- author_Sep18/src/gsl_server/algorithms/PMFS/PMFS_utils.cpp
++++ paper_all_free_cells/src/gsl_server/algorithms/PMFS/PMFS_utils.cpp
+@@ -69,7 +69,7 @@
+         std::vector<CellData> data;
+         for (int i = 0; i < gridMetadata.dimensions.x; i++)
+         {
+-            for (int j = 0; j < gridMetadata.dimensions.x; j++)
++            for (int j = 0; j < gridMetadata.dimensions.y; j++)
+             {
+                 if (occupancy[gridMetadata.indexOf({i, j})] == Occupancy::Free)
+                 {
+@@ -104,7 +104,7 @@
+         double x = 0, y = 0;
+         for (int i = 0; i < gridMetadata.dimensions.x; i++)
+         {
+-            for (int j = 0; j < gridMetadata.dimensions.x; j++)
++            for (int j = 0; j < gridMetadata.dimensions.y; j++)
+             {
+                 if (occupancy[gridMetadata.indexOf({i, j})] == Occupancy::Free)
+                 {

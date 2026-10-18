@@ -1,0 +1,138 @@
+{
+  "status": "COMPLETED_RECORDS_RECHECKED_NOT_PAPER_REPRODUCTION_PASS",
+  "official_pinned_source_files_checked": 185,
+  "build_source_commit": "a8d5a764b7cbfc1d5d1887aebfe890e2c75d7533",
+  "local_binary_SHA_matches": true,
+  "rectangular_fix_actual_two_y_loop_changes_verified": true,
+  "rectangular_fix_in_current_patch_classification": true,
+  "classification_note": "If false, intermediate PATCH_CLASSIFICATION does not enumerate separately precommitted rectangular engineering repair; peer notified to reconcile final release table.",
+  "episodes": [
+    {
+      "role": "PF24_A2_T02",
+      "case": "A2",
+      "truth_xy": [
+        1.75,
+        8.6
+      ],
+      "native_declared": true,
+      "declared_top5_error_logged_m": 4.85474,
+      "declared_top5_error_recomputed_from_native_coordinates_m": 4.854739423699688,
+      "native_search_system_clock_s": 33.5465,
+      "PMFS_use_sim_time": false,
+      "basic_sim_clock_factor": 4.966654489665526,
+      "truth_supported": true,
+      "consumed_windows": 35,
+      "required_actual_ROS_parameters": {
+        "use_sim_time": false,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 1.0,
+        "convergence_thr": 1.0,
+        "maxSearchTime": 300.0,
+        "stop_and_measure_time": 0.4,
+        "confidenceMeasurementWeight": 1.0,
+        "confidenceSigmaSpatial": 1.0,
+        "scale": 25
+      },
+      "official_PGM_map_bytes_equal": true,
+      "state_checks": [
+        {
+          "update": 1,
+          "mass": 0.9999999999999865,
+          "max_eq6_error": 0.0,
+          "recomputed_mean": [
+            3.3768008869005643,
+            2.841346861728331
+          ],
+          "recomputed_variance": 1.9435675371715582,
+          "native_readout_variance": 1.9435675589489503,
+          "truth_source_cell": [
+            7,
+            34
+          ],
+          "truth_supported": true,
+          "native_top5_xy": [
+            3.3637099266052246,
+            2.7120769023895264
+          ]
+        },
+        {
+          "update": 2,
+          "mass": 1.0000000000000016,
+          "max_eq6_error": 0.0,
+          "recomputed_mean": [
+            1.4830662687715814,
+            3.7239903899941913
+          ],
+          "recomputed_variance": 0.6656747637020444,
+          "native_readout_variance": 0.6656747637020497,
+          "truth_source_cell": [
+            7,
+            34
+          ],
+          "truth_supported": true,
+          "native_top5_xy": [
+            1.4630416631698608,
+            3.753748893737793
+          ]
+        }
+      ],
+      "binary_sha256": "78ca758e1b79a8e2f9ebe0480cdbad6211baba512523ef664160c015aa1a5dec"
+    },
+    {
+      "role": "PF24_B2_Q01",
+      "case": "B2",
+      "truth_xy": [
+        -0.4,
+        -2.9
+      ],
+      "native_declared": true,
+      "declared_top5_error_logged_m": 4.36641,
+      "declared_top5_error_recomputed_from_native_coordinates_m": 4.366405639051409,
+      "native_search_system_clock_s": 14.4709,
+      "PMFS_use_sim_time": false,
+      "basic_sim_clock_factor": 4.999698182786255,
+      "truth_supported": false,
+      "consumed_windows": 20,
+      "required_actual_ROS_parameters": {
+        "use_sim_time": false,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 1.0,
+        "convergence_thr": 1.0,
+        "maxSearchTime": 300.0,
+        "stop_and_measure_time": 0.4,
+        "confidenceMeasurementWeight": 1.0,
+        "confidenceSigmaSpatial": 1.0,
+        "scale": 25
+      },
+      "official_PGM_map_bytes_equal": true,
+      "state_checks": [
+        {
+          "update": 1,
+          "mass": 1.0,
+          "max_eq6_error": 1.1102230246251565e-16,
+          "recomputed_mean": [
+            -1.5126042083636428,
+            1.3044151224403089
+          ],
+          "recomputed_variance": 0.32869542007660135,
+          "native_readout_variance": 0.32869542089707565,
+          "truth_source_cell": [
+            28,
+            19
+          ],
+          "truth_supported": false,
+          "native_top5_xy": [
+            -1.5139137506484985,
+            1.321930170059204
+          ]
+        }
+      ],
+      "binary_sha256": "78ca758e1b79a8e2f9ebe0480cdbad6211baba512523ef664160c015aa1a5dec"
+    }
+  ],
+  "clock_definition": "PMFS saveResults uses node->now()-startTime. Actual use_sim_time=false means PMFS search_s follows its system clock; separate basic_sim /clock factor5 and gas-file time mappings must not be conflated.",
+  "age_radius_reconstruction_added": false,
+  "formal_paper_statistical_reproduction_pass": false,
+  "new_experiments_in_this_review": 0,
+  "records_only_no_current_VM_process_or_binary_inspection": true
+}

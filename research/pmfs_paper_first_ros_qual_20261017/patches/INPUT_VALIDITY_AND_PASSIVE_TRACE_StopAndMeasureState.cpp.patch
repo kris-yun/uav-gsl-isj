@@ -1,0 +1,36 @@
+--- official/src/gsl_server/algorithms/Common/StopAndMeasureState.cpp
++++ runtime/src/gsl_server/algorithms/Common/StopAndMeasureState.cpp
+@@ -1,6 +1,9 @@
+ #include <gsl_server/algorithms/Common/StopAndMeasureState.hpp>
+ #include <gsl_server/algorithms/Common/Algorithm.hpp>
+ #include <gsl_server/algorithms/Common/Utils/Math.hpp>
++#include <fstream>
++#include <iomanip>
++#include <cstdlib>
+ 
+ namespace GSL
+ {
+@@ -22,11 +25,23 @@
+     {
+         if ((algorithm->node->now() - time_stopped).seconds() >= measure_time)
+         {
++            const char* tracePath = std::getenv("NATIVE_PMFS_WINDOW_TRACE");
++            static std::ofstream trace;
++            static size_t windowEvent = 0;
++            if (tracePath && !trace.is_open()) {
++                trace.open(tracePath);
++                trace << "event,node_clock_ns,window_start_node_ns,gas_count,wind_count,concentration_mean_ppm,wind_speed_mean,wind_direction_mean,status\n" << std::setprecision(17);
++            }
++            if (gas_v.empty() || windSpeed_v.empty() || windDirection_v.empty()) {
++                if (trace.is_open()) {trace << ++windowEvent << "," << algorithm->node->now().nanoseconds() << "," << time_stopped.nanoseconds() << "," << gas_v.size() << "," << windSpeed_v.size() << ",,,,WAIT_EMPTY_OBSERVATION\n";trace.flush();}
++                return;
++            }
+             double concentration = average_concentration();
+             double windSpeed = average_windSpeed();
+             double windDirection = average_windDirection();
+ 
+             GSL_INFO("avg_gas={:.2};  avg_windSpeed={:.2};  avg_wind_dir={:.2}", concentration, windSpeed, windDirection);
++            if (trace.is_open()) {trace << ++windowEvent << "," << algorithm->node->now().nanoseconds() << "," << time_stopped.nanoseconds() << "," << gas_v.size() << "," << windSpeed_v.size() << "," << concentration << "," << windSpeed << "," << windDirection << ",CONSUMED\n";trace.flush();}
+             algorithm->processGasAndWindMeasurements(concentration, windSpeed, windDirection);
+         }
+     }

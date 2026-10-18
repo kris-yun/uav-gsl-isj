@@ -1,0 +1,50 @@
+{
+  "recorded_roles": 1,
+  "requested": 2,
+  "rows": [
+    {
+      "id": "PF24_A2_Q01",
+      "case": "A2",
+      "controller_exit_code": 0,
+      "wall_s": 22.067299150046892,
+      "result": {
+        "case": "A2",
+        "input_class": "PAPER_FIRST_SEP2024_EQ6_RECTANGULAR_DISCLOSED_ADAPTATIONS",
+        "physical_qualification": "WIND_FULL_ARRAY_AND_SHORT_RUNTIME_GATE_PASS_CONSUMER_AUDIT_PENDING",
+        "native_goal_count": 1,
+        "fixture_messages_injected": 0,
+        "generated_gas_data": 0,
+        "processes": [
+          {
+            "name": "launch",
+            "pid": 401236,
+            "returncode": 0
+          },
+          {
+            "name": "gmrf",
+            "pid": 401237,
+            "returncode": 0
+          }
+        ],
+        "preflight": "PASS",
+        "counts": {
+          "/tf_static": 4,
+          "/PioneerP3DX/map": 1,
+          "/PioneerP3DX/PID/Sensor_reading": 170,
+          "/PioneerP3DX/Anemometer/WindSensor_reading": 341,
+          "/native20/wind_to": 341,
+          "/PioneerP3DX/ground_truth": 762,
+          "/clock": 762,
+          "/tf": 762
+        },
+        "nonzero_cmd_vel_messages": 0,
+        "pose_samples": 762,
+        "goal_invocation_ROS_ns": 83701605810,
+        "goal_accepted": true,
+        "result": "RUNTIME_ERROR",
+        "error": "('RESOLVED_BASELINE_PARAMETER_MISMATCH', 'stop_and_measure_time', None, 0.4)",
+        "traceback": "Traceback (most recent call last):\n  File \"/mnt/hgfs/workspace/PMFS_PAPER_FIRST_ROS_QUAL_20261017/cases/PF24_A2_Q01/runtime_driver.py\", line 225, in <module>\n    assert k in values and values[k]==v,('RESOLVED_BASELINE_PARAMETER_MISMATCH',k,values.get(k),v)\nAssertionError: ('RESOLVED_BASELINE_PARAMETER_MISMATCH', 'stop_and_measure_time', None, 0.4)\n"
+      }
+    }
+  ]
+}

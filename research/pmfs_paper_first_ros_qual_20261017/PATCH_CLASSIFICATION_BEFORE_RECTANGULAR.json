@@ -1,0 +1,38 @@
+{
+  "patches": [
+    {
+      "path": "CMakeLists.txt",
+      "kind": "BUILD_ONLY",
+      "original_sha256": "6f6266773312a97323bc11500a9c5f81b85054239712addd8a50eea5c929144b",
+      "runtime_sha256": "81b2a997fc7f36c58974e3292f2b076726005ee312442afbc1b6ded8442ee312"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+      "kind": "PAPER_EQ6",
+      "original_sha256": "131812758eab06810bad74217dc6526a892065e586ff7acaa8e53cbed108d814",
+      "runtime_sha256": "102fbc64f7fe85e8da43dc195ab46b112067fb0e6a529131452169b41ebe7b49"
+    },
+    {
+      "path": "src/gsl_server/algorithms/Common/StopAndMeasureState.cpp",
+      "kind": "INPUT_VALIDITY_AND_PASSIVE_TRACE",
+      "original_sha256": "398d02a8d509c0914dcf78d0a19035f966026a83d5ab6868bd7015ed680dda55",
+      "runtime_sha256": "a474c4b58b939e732c4db103de9b297d8f3979e6ef62bb44d158b39ddfc20dd4"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/PMFS.cpp",
+      "kind": "MAP_STARTUP_GUARD",
+      "original_sha256": "3a169b7e7b977524dcb0114c2c2b6f96ea676714901284ebfc9a9372b553e0ed",
+      "runtime_sha256": "673c6f4cd71a3b3e75baee5cb7c1d1d07b717966b9aeca42f6fecd98a8aa66d7"
+    },
+    {
+      "path": "src/gsl_server/algorithms/PMFS/internal/Simulations.cpp",
+      "kind": "PASSIVE_SOURCE_OMEGA_TRACE",
+      "original_sha256": "8779fd97f12dc730fd06cd376d7751e4aff8c3e724f1abe210cdc6a11f96866c",
+      "runtime_sha256": "1cb144acc6b9390c8b24155c6805a4d5166715f0e6e9d00f9732d7399e465899"
+    }
+  ],
+  "scientific_change": "Eq6 only plus separately frozen paper parameter overrides",
+  "not_innovation": true,
+  "age_growth_not_added": true,
+  "all_other_author_files_unchanged": true
+}

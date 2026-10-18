@@ -1,0 +1,55 @@
+{
+  "status": "PASS_COMPLETE_SEPTEMBER_BASELINE_BUILD",
+  "attempt": "attempt2_rectangular",
+  "source_commit": "a8d5a764b7cbfc1d5d1887aebfe890e2c75d7533",
+  "binary": "/home/zyc/ros2_ws/pmfs_paper_first_qual_20261017/install/lib/gsl_server/gsl_actionserver_node",
+  "binary_sha256": "78ca758e1b79a8e2f9ebe0480cdbad6211baba512523ef664160c015aa1a5dec",
+  "wall_s": 10.146955784992315,
+  "commands": [
+    {
+      "stage": "configure",
+      "command": [
+        "cmake",
+        "-S",
+        "/home/zyc/ros2_ws/pmfs_paper_first_qual_20261017/src/gsl_server",
+        "-B",
+        "/home/zyc/ros2_ws/pmfs_paper_first_qual_20261017/build",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_INSTALL_PREFIX=/home/zyc/ros2_ws/pmfs_paper_first_qual_20261017/install",
+        "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+      ],
+      "exit_code": 0,
+      "wall_s": 1.0149816570337862,
+      "child_cpu_s": 0.808186
+    },
+    {
+      "stage": "compile",
+      "command": [
+        "cmake",
+        "--build",
+        "/home/zyc/ros2_ws/pmfs_paper_first_qual_20261017/build",
+        "--parallel",
+        "1"
+      ],
+      "exit_code": 0,
+      "wall_s": 8.10496637201868,
+      "child_cpu_s": 7.729961
+    },
+    {
+      "stage": "install",
+      "command": [
+        "cmake",
+        "--install",
+        "/home/zyc/ros2_ws/pmfs_paper_first_qual_20261017/build"
+      ],
+      "exit_code": 0,
+      "wall_s": 1.0140865639550611,
+      "child_cpu_s": 0.020742999999999734
+    }
+  ],
+  "guest_peak_owned_rss_bytes": 619413504,
+  "reused_old_object_files": false,
+  "all_objects_built_in_new_directory": true,
+  "new_ROS": 0,
+  "new_worlds": 0
+}

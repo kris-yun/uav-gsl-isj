@@ -1,0 +1,11 @@
+--- /home/zyc/ros2_ws/native_pmfs_full20_20261014/loop_player_ws/src/gaden_player/src/simulation_player.cpp
++++ /home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/public_clock_player_build/simulation_player.cpp
+@@ -141,7 +141,7 @@
+         if (playbackMetadata.loop.loop)
+         {
+             const size_t from=playbackMetadata.loop.from, to=playbackMetadata.loop.to;
+-            if (from > to || to+1 >= r7Times.size() || r7Frame > to)
++            if (from > to || to+1 >= r7Times.size() || r7Frame > to+1)
+                 throw std::runtime_error("Invalid qualified cyclic playback bounds");
+             r20NextElapsed=r7Times.at(r7Frame+1)-r7Times.at(r7Frame);
+         }

@@ -1,0 +1,28 @@
+--- official/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp
++++ runtime/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp
+@@ -10,6 +10,9 @@
+ #include <opencv2/imgproc.hpp>
+ 
+ #include <DDA/DDA.h>
++#include <fstream>
++#include <iomanip>
++#include <cstdlib>
+ #include <gsl_server/algorithms/Common/Utils/Profiling.hpp>
+ 
+ namespace GSL::PMFS_internal
+@@ -159,6 +162,15 @@
+ 
+         Utils::NormalizeDistribution(sourceProb);
+         GSL_INFO("Time ellapsed in simulation = {} s", stopwatch.ellapsed());
++        if (const char* path = std::getenv("NATIVE_PMFS_POSTERIOR_TRACE")) {
++            static std::ofstream trace(path);static size_t update = 0;
++            if (update==0) trace << "update,row,col,x_m,y_m,cell_size_m,source_probability,hit_log_odds,hit_omega,hit_confidence,estimated_wind_u,estimated_wind_v\n";
++            trace << std::setprecision(17);++update;
++            for (int y=0;y<sourceProb.metadata.dimensions.y;++y) for (int x=0;x<sourceProb.metadata.dimensions.x;++x) if(sourceProb.freeAt(x,y)) {
++                const auto p=sourceProb.metadata.indexToCoordinates(x,y);const auto h=measuredHitProb.dataAt(x,y);const auto w=wind.dataAt(x,y);
++                trace<<update<<","<<y<<","<<x<<","<<p.x<<","<<p.y<<","<<sourceProb.metadata.cellSize<<","<<sourceProb.dataAt(x,y)<<","<<h.logOdds<<","<<h.omega<<","<<h.confidence<<","<<w.x<<","<<w.y<<"\n";
++            } trace.flush();
++        }
+     }
+ 
+     Simulations::SimulationResult Simulations::runSimulation(std::vector<LeafScore>& scores, size_t index)
