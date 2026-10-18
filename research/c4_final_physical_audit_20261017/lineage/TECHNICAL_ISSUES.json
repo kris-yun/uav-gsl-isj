@@ -1,0 +1,36 @@
+{
+  "scientific_forward_runs_started": 6,
+  "scientific_forward_runs_completed": 6,
+  "additional_forward_retries": 0,
+  "issues": [
+    {
+      "stage": "new audit tool: physical_prepare.py first invocation",
+      "error": "AssertionError: Exact consumed event/PID match required",
+      "resolution": "The assumption that every consumption timestamp equals one raw PID timestamp was rejected. All 45 windows are retained; only 10 have exact timestamp/value single-message equality. Other window membership is explicitly unverified. No data removed or simulator rerun."
+    },
+    {
+      "stage": "new C++ observer first compilation",
+      "error": "uLongf/uncompress were declared inside gaden's zlib namespace; missing iostream",
+      "resolution": "Use zlib:: names and include iostream. Native concentration and advection kernels unchanged.",
+      "log": "logs/build_physical.stderr"
+    },
+    {
+      "stage": "new C++ observer second compilation",
+      "error": "Linker cannot find transitive libbsc symbols",
+      "resolution": "Explicit link search path and libbsc dependency.",
+      "log": "logs/build_physical_2.stderr"
+    },
+    {
+      "stage": "new C++ observer first execution",
+      "error": "Dynamic loader cannot find libbsc.so",
+      "resolution": "Set the exact existing R6 libbsc directory in child LD_LIBRARY_PATH; no library changed.",
+      "log": "logs/physical_events_3.stderr"
+    },
+    {
+      "stage": "new deterministic report analysis first invocation",
+      "error": "TypeError: duplicate serial key in dictionary keyword merge",
+      "resolution": "Use explicit dictionary merge for matching identical source keys. Stored observation results and six simulations unchanged."
+    }
+  ],
+  "not_claimed": "These new-tool failures are not PMFS deficiencies or scientific performance failures."
+}

@@ -1,0 +1,33 @@
+{
+  "gas_queries": 883,
+  "gas_service_clock_rows": 883,
+  "unique_interval_bindings": 878,
+  "ambiguous": [
+    {
+      "serial": 676,
+      "matching_service_clock_rows": 2
+    },
+    {
+      "serial": 792,
+      "matching_service_clock_rows": 3
+    },
+    {
+      "serial": 793,
+      "matching_service_clock_rows": 3
+    },
+    {
+      "serial": 794,
+      "matching_service_clock_rows": 3
+    },
+    {
+      "serial": 826,
+      "matching_service_clock_rows": 2
+    }
+  ],
+  "consumers": 505,
+  "consumed_events_exact_single_PID_match": 10,
+  "consumed_events": 45,
+  "query_bound_consumed_events": 10,
+  "matching_rule": "One gas_service clock row inside recorded request/response interval; exact response value plus <=250 ms following PID stamp for consumer association",
+  "limits": "No independent samples claimed; consumer association is timestamp/value supported, no shared message ID. Exact event stamp/value match is checked separately."
+}

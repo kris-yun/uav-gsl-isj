@@ -1,0 +1,42 @@
+{
+  "primary_verdict": "HOLD_CONVERGENCE_UNRESOLVED",
+  "secondary_finding": "RESPONSE_IMPROVEMENT_WITHOUT_DISCRIMINATION_GAIN",
+  "ordinary_forward_convergence_effect_fully_established": false,
+  "residual_response_mismatch_at_convergence_established": false,
+  "finite_time_affects_c4_response": true,
+  "all_c4_final_pair_scores_still_negative": true,
+  "exact_point_oracle_discrete_2d_paths_to_stops_2_4_5_observed_in_all_three_states": true,
+  "wrong_interpretation_rejected": "Initial near-zero response alone proves a missing 2D source-receiver pathway",
+  "normal_control": "C3 fine true-cell/competitor gap flips from positive under adaptive warmup to negative at W360_R20. Longer is not uniformly better.",
+  "excluded": [
+    "The time extension results are caused by changes to wind/map/noise/source/scoring: unchanged-kernel and 156-source exact parity checks pass.",
+    "The selected C4 stop cells are absolutely unreachable by the diagnostic native 2D trajectories: explicit oracle arrivals refute this stronger claim."
+  ],
+  "not_excluded": [
+    "Finite predictive population and correlated random approximation",
+    "Warmup/record phase transition and lack of a demonstrated receiver-wise stationary regime",
+    "PID-threshold versus massless-centre occupancy event semantics",
+    "3D effects on response probabilities, not absolute path existence"
+  ],
+  "next_minimum_proposal": {
+    "status": "PROPOSED_NOT_EXECUTED",
+    "type": "Ordinary phase-consistent 2D numerical control",
+    "sources": "Existing C4 0.25m true source cell and prelocked 0.25m competitor, exact same three recorded per-source states",
+    "calls": 6,
+    "horizon_seconds": 360,
+    "dt": 0.1,
+    "releases_per_iteration": 5,
+    "measurement": "One continuous native recording-stage kernel trajectory per source/state from empty, 20s blocks, survivor/exits and receiver arrivals; no warmup/record dt/cadence switch. This is a separate unexecuted protocol with a fixed 360s ceiling.",
+    "purpose": "Separate the existing native warmup protocol from a constant-step continuous simulation; still numerical diagnosis, not a PMFS correction or innovation.",
+    "stopping": "If response/population remains nonstationary, retain HOLD without chasing an arbitrary steady limit; do not jump to 3D/world-model necessity."
+  },
+  "no_new_full_posterior": true,
+  "no_ROS": true,
+  "no_new_gas_world": true,
+  "no_innovation_or_task_gain_claim": true,
+  "planned_successful_calls": 1092,
+  "actual_call_starts_including_one_incomplete": 1093,
+  "completed_simulation_cpu_s": 175.918353,
+  "completed_particle_moves": 3579265572,
+  "stop_after_package_and_independent_branch": true
+}

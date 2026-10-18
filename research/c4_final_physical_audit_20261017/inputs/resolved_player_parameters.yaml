@@ -1,0 +1,32 @@
+/gaden_player:
+  ros__parameters:
+    allow_looping: false
+    gas_display_color_0:
+    - 0.0
+    - 1.0
+    - 0.0
+    initial_iteration: 500
+    loop_from_iteration: 800
+    loop_to_iteration: 900
+    num_simulators: 1
+    occupancyFile: /mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/derived/c5f5c47a61f0/OccupancyGrid3D.csv
+    player_freq: 2.0
+    projectPath: ''
+    qos_overrides:
+      /clock:
+        subscription:
+          depth: 1
+          durability: volatile
+          history: keep_last
+          reliability: best_effort
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    r7_clock_trace_path: /home/zyc/ros2_ws/native_pmfs_wind_recovery_20261014/C4/runtime/physical_clock_trace.csv
+    r7_frame_time_csv: /mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/C4/PHYSICAL_FRAME_TIME.csv
+    simulation_data_0: /mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/C4/one_realization
+    use_sim_time: true
+
