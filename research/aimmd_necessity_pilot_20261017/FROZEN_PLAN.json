@@ -1,0 +1,67 @@
+{
+  "created_utc": "2026-10-18T03:47:05.156101+00:00",
+  "identity": "Fixed-horizon 2026 corrected-wind PMFS numerical necessity pilot; not a 2024 reproduction or a new physical world",
+  "objective": "Test whether undersampled task-relevant paths create source-pair numerical error before introducing a sampler",
+  "cases": [
+    {
+      "key": "C4_update_1",
+      "truth_job": "fine_truth_1272",
+      "competitor_job": "fine_competitor",
+      "competitor_cell": 514,
+      "diagnostic_stops": [
+        2,
+        4,
+        5
+      ]
+    },
+    {
+      "key": "C3_update_2",
+      "truth_job": "fine_truth_1099",
+      "competitor_job": "fine_competitor",
+      "competitor_cell": 807,
+      "diagnostic_stops": "all consumed receptors"
+    }
+  ],
+  "warmup_steps": 1800,
+  "warmup_dt": 0.2,
+  "record_steps": 200,
+  "record_dt": 0.1,
+  "physical_target": "E of the native whole-population blurred 20s occupancy map after the frozen 360s warmup; score is ell(E map), separately report E ell(map). No steady-state claim.",
+  "native_multifilament_event": "For each cell and timestep, indicator(at least one native filament centre); never replace it with single-particle first passage or sum of weighted hits.",
+  "reference_replicates_per_source": 128,
+  "independent_MC_batches": 24,
+  "MC_replicates_per_source_per_batch": 4,
+  "states": "Deterministic SHA256 prediction-state design; fresh native constructor cache/index/RNG, cyclic 2500-value Gaussian table unchanged; not new GADEN world seeds",
+  "total_primary_source_calls": 896,
+  "parity_source_calls": 4,
+  "maximum_source_call_starts": 900,
+  "maximum_child_cpu_s": 900,
+  "maximum_host_wall_s": 2700,
+  "maximum_payload_MiB": 256,
+  "minimum_VM_free_GiB": 5,
+  "rare_path_screen": {
+    "maximum_descriptive_fraction_of_births_visiting_receptor": 0.01,
+    "minimum_observed_distinct_visitors": 3,
+    "caution": "Filaments share native randomness, so this is a descriptive rarity screen, not independent Bernoulli inference."
+  },
+  "numerical_task_screen": {
+    "reference_uncertainty_rule": "Compare disjoint reference halves and linearised whole-cloud replicate standard error; no confidence claim from particles/frames",
+    "material_rare_region_score_error_fraction": 0.2,
+    "score_neighbourhood_chebyshev_radius_cells": 5,
+    "path_error_link": "Report exact source-pair logscore error from the frozen rare receptor neighbourhood, its signed covariance contribution, and reference-relative ordering errors"
+  },
+  "conditional_gate2": {
+    "required": "Only if material task-relevant low-path sampling error is identified with a qualified finite-horizon reference and a mathematically admissible sampling state/weight.",
+    "comparators": [
+      "ordinary MC",
+      "ordinary stratification/weighted ensemble",
+      "receptor source-contrast guided forward path sampling"
+    ],
+    "pass_criterion": "At matched inclusive CPU cost, pair-score RMSE at least 20% lower than strongest ordinary comparator, no increase in incorrect ordering. Training/proposal/resampling/reweighting charged.",
+    "same_kernel_and_event_required": true,
+    "no_backwards_wind_reversal": true,
+    "no_network_before_necessity": true
+  },
+  "conditional_task_gate": "More accurate numerical estimates cannot be called task improvements if the qualified target source-pair score still prefers the wrong source. Do not alter physics/scoring/horizon to make it pass.",
+  "stop": "If necessity/reference/target qualification fails, preserve negative/HOLD evidence and stop. No time/seed/parameter search, new worlds, ROS, weak/strong 2x2 completion or C4 unique-cause pursuit."
+}
