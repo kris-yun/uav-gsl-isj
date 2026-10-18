@@ -1,0 +1,11 @@
+--- a/gsl_server/src/gsl_server/algorithms/PMFS/PMFSLib.cpp
++++ b/gsl_server/src/gsl_server/algorithms/PMFS/PMFSLib.cpp
+@@ -78,7 +78,7 @@
+ 
+             // confidence
+             cell.omega += Utils::evaluate1DGaussian(cell.distanceFromRobot, settings.confidenceSigmaSpatial);
+-            double exponent = -cell.omega / std::pow(settings.confidenceMeasurementWeight, 2);
++            double exponent = -(cell.omega * cell.omega) / std::pow(settings.confidenceMeasurementWeight, 2);
+             cell.confidence = 1 - std::exp(exponent);
+         }
+     }

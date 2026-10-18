@@ -1,0 +1,111 @@
+{
+  "status": "EIGHT_CPP_COMPONENT_COMMANDS_EXIT0",
+  "commands": [
+    {
+      "name": "build",
+      "argv": [
+        "g++",
+        "-std=c++17",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/cpp/check.cpp",
+        "-o",
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/execution/eq6_check"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.8861502259969711,
+      "child_cpu_s": 0.831779
+    },
+    {
+      "name": "unit",
+      "argv": [
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/execution/eq6_check",
+        "--unit"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.012611474026925862,
+      "child_cpu_s": 0.0024590000000000445
+    },
+    {
+      "name": "A2_update_0",
+      "argv": [
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/execution/eq6_check",
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/fixtures/A2_update_0",
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/execution/A2_update_0.csv"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.23025278805289418,
+      "child_cpu_s": 0.03970100000000003
+    },
+    {
+      "name": "A2_update_1",
+      "argv": [
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/execution/eq6_check",
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/fixtures/A2_update_1",
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/execution/A2_update_1.csv"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.2091309349052608,
+      "child_cpu_s": 0.03760699999999999
+    },
+    {
+      "name": "B2_update_0",
+      "argv": [
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/execution/eq6_check",
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/fixtures/B2_update_0",
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/execution/B2_update_0.csv"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.1599791389890015,
+      "child_cpu_s": 0.025245999999999963
+    },
+    {
+      "name": "B2_update_1",
+      "argv": [
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/execution/eq6_check",
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/fixtures/B2_update_1",
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/execution/B2_update_1.csv"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.16225215594749898,
+      "child_cpu_s": 0.024858999999999964
+    },
+    {
+      "name": "grid_build",
+      "argv": [
+        "g++",
+        "-std=c++17",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/cpp/grid_probe.cpp",
+        "-o",
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/execution/grid_probe"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.3587599260499701,
+      "child_cpu_s": 0.31390999999999997
+    },
+    {
+      "name": "grid_run",
+      "argv": [
+        "/mnt/hgfs/workspace/PMFS_EQ6_ALIGNMENT_20261017/execution/grid_probe"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.006606000009924173,
+      "child_cpu_s": 0.0022089999999999957
+    }
+  ],
+  "guest_child_cpu_s": 1.27777,
+  "sum_guest_command_wall_s": 2.0257426439784467,
+  "desktop_analysis_cpu_not_measured": true,
+  "not_an_algorithm_efficiency_benchmark": true,
+  "analysis_attempt1_exit_code": 1,
+  "analysis_attempt2_exit_code": 0,
+  "new_forward_simulations": 0,
+  "new_rng_states": 0,
+  "new_gas_worlds": 0,
+  "new_ROS_episodes": 0,
+  "AIMMD_or_S2_runs": 0
+}

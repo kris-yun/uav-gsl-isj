@@ -1,0 +1,141 @@
+{
+  "versions": [
+    {
+      "version": "ROS1_20230530",
+      "commit": "c05d72bcbc4f5442fb3e14f58b5100eb6f708edb",
+      "confidence_source": "source\\ROS1_20230530\\gsl_actionserver\\src\\algorithms\\PMFS\\PMFS_GSL\\pmfs_core.cpp",
+      "confidence_omega_lines": [
+        {
+          "path": "source/ROS1_20230530/gsl_actionserver/src/algorithms/PMFS/PMFS_GSL/pmfs_core.cpp",
+          "line": 124,
+          "text": "                omega += Utils::evaluate1DGaussian(localVariable[r][c].distanceFromRobot, settings.hitProbability.confidence_sigma_spatial);",
+          "sha256": "212bc1aa5348546d19f46293c28bc940c526bad9fbae0716b3a620193284fa88"
+        },
+        {
+          "path": "source/ROS1_20230530/gsl_actionserver/src/algorithms/PMFS/PMFS_GSL/pmfs_core.cpp",
+          "line": 125,
+          "text": "                double exponent = -omega / std::pow(settings.hitProbability.confidence_measurement_weight,2);",
+          "sha256": "212bc1aa5348546d19f46293c28bc940c526bad9fbae0716b3a620193284fa88"
+        }
+      ],
+      "confidence_matches_squared_paper_equation": false,
+      "filament_declaration": "Utils::Vector2 position;\n        bool active = false;",
+      "age_or_radius_field_in_filament": false,
+      "recording": "current center cell occupied once per time step",
+      "simulation_source": "source\\ROS1_20230530\\gsl_actionserver\\src\\algorithms\\PMFS\\pmfs_simulations.cpp",
+      "has_gaussian_blur": false,
+      "growth_law_recovered": false,
+      "paper_baseline_pass": false
+    },
+    {
+      "version": "PAPER_ERA_20240719",
+      "commit": "2e1406708e9e95f1fd0e4b591ebddddf55f7a023",
+      "confidence_source": "source\\PAPER_ERA_20240719\\gsl_server\\src\\server\\algorithms\\PMFS\\PMFSLib.cpp",
+      "confidence_omega_lines": [
+        {
+          "path": "source/PAPER_ERA_20240719/gsl_server/src/server/algorithms/PMFS/PMFSLib.cpp",
+          "line": 87,
+          "text": "            cell.omega += Utils::evaluate1DGaussian(cell.distanceFromRobot, settings.confidenceSigmaSpatial);",
+          "sha256": "8b8969f93c42d03846e1e6174b07d091ccd144c540fa42c1e9f5bb254b0e8c34"
+        },
+        {
+          "path": "source/PAPER_ERA_20240719/gsl_server/src/server/algorithms/PMFS/PMFSLib.cpp",
+          "line": 88,
+          "text": "            double exponent = -cell.omega / std::pow(settings.confidenceMeasurementWeight, 2);",
+          "sha256": "8b8969f93c42d03846e1e6174b07d091ccd144c540fa42c1e9f5bb254b0e8c34"
+        }
+      ],
+      "confidence_matches_squared_paper_equation": false,
+      "filament_declaration": "Vector2 position;\n        bool active = false;",
+      "age_or_radius_field_in_filament": false,
+      "recording": "current center cell occupied once per time step",
+      "simulation_source": "source\\PAPER_ERA_20240719\\gsl_server\\src\\server\\algorithms\\PMFS\\Simulations.cpp",
+      "has_gaussian_blur": false,
+      "growth_law_recovered": false,
+      "paper_baseline_pass": false
+    },
+    {
+      "version": "AUTHOR_FIX_20240918",
+      "commit": "a8d5a764b7cbfc1d5d1887aebfe890e2c75d7533",
+      "confidence_source": "source\\AUTHOR_FIX_20240918\\gsl_server\\src\\gsl_server\\algorithms\\PMFS\\PMFSLib.cpp",
+      "confidence_omega_lines": [
+        {
+          "path": "source/AUTHOR_FIX_20240918/gsl_server/src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+          "line": 80,
+          "text": "            cell.omega += Utils::evaluate1DGaussian(cell.distanceFromRobot, settings.confidenceSigmaSpatial);",
+          "sha256": "131812758eab06810bad74217dc6526a892065e586ff7acaa8e53cbed108d814"
+        },
+        {
+          "path": "source/AUTHOR_FIX_20240918/gsl_server/src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+          "line": 81,
+          "text": "            double exponent = -cell.omega / std::pow(settings.confidenceMeasurementWeight, 2);",
+          "sha256": "131812758eab06810bad74217dc6526a892065e586ff7acaa8e53cbed108d814"
+        }
+      ],
+      "confidence_matches_squared_paper_equation": false,
+      "filament_declaration": "Vector2 position;\n        bool active = false;",
+      "age_or_radius_field_in_filament": false,
+      "recording": "current center cell occupied once per time step",
+      "simulation_source": "source\\AUTHOR_FIX_20240918\\gsl_server\\src\\gsl_server\\algorithms\\PMFS\\internal\\Simulations.cpp",
+      "has_gaussian_blur": false,
+      "growth_law_recovered": false,
+      "paper_baseline_pass": false
+    },
+    {
+      "version": "AUTHOR_20241010",
+      "commit": "b2802032dc3aed70a0cde0112e5d7f4a439aaf82",
+      "confidence_source": "source\\AUTHOR_20241010\\gsl_server\\src\\gsl_server\\algorithms\\PMFS\\PMFSLib.cpp",
+      "confidence_omega_lines": [
+        {
+          "path": "source/AUTHOR_20241010/gsl_server/src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+          "line": 80,
+          "text": "            cell.omega += Utils::evaluate1DGaussian(cell.distanceFromRobot, settings.confidenceSigmaSpatial);",
+          "sha256": "d2c6345e74277742f7dd59f6a6d6987b408bec512e6962aa8d4a43965ddc50c0"
+        },
+        {
+          "path": "source/AUTHOR_20241010/gsl_server/src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+          "line": 81,
+          "text": "            double exponent = -cell.omega / std::pow(settings.confidenceMeasurementWeight, 2);",
+          "sha256": "d2c6345e74277742f7dd59f6a6d6987b408bec512e6962aa8d4a43965ddc50c0"
+        }
+      ],
+      "confidence_matches_squared_paper_equation": false,
+      "filament_declaration": "Vector2 position;\n        bool active = false;",
+      "age_or_radius_field_in_filament": false,
+      "recording": "current center cell occupied once per time step",
+      "simulation_source": "source\\AUTHOR_20241010\\gsl_server\\src\\gsl_server\\algorithms\\PMFS\\internal\\Simulations.cpp",
+      "has_gaussian_blur": false,
+      "growth_law_recovered": false,
+      "paper_baseline_pass": false
+    },
+    {
+      "version": "CURRENT_20260220",
+      "commit": "4e141e162551e674f2f30ddb8859136c72139aac",
+      "confidence_source": "source\\CURRENT_20260220\\gsl_server\\src\\gsl_server\\algorithms\\PMFS\\PMFSLib.cpp",
+      "confidence_omega_lines": [
+        {
+          "path": "source/CURRENT_20260220/gsl_server/src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+          "line": 84,
+          "text": "            cell.omega += Utils::evaluate1DGaussian(cell.distanceFromRobot, settings.confidenceSigmaSpatial);",
+          "sha256": "cf960378f1126e7b2002535b223b03344ad3ae8d12b0761c8017b3c5cdd6147b"
+        },
+        {
+          "path": "source/CURRENT_20260220/gsl_server/src/gsl_server/algorithms/PMFS/PMFSLib.cpp",
+          "line": 85,
+          "text": "            double exponent = -cell.omega / std::pow(settings.confidenceMeasurementWeight, 2);",
+          "sha256": "cf960378f1126e7b2002535b223b03344ad3ae8d12b0761c8017b3c5cdd6147b"
+        }
+      ],
+      "confidence_matches_squared_paper_equation": false,
+      "filament_declaration": "Vector2 position;",
+      "age_or_radius_field_in_filament": false,
+      "recording": "current center cell occupied once per time step",
+      "simulation_source": "source\\CURRENT_20260220\\gsl_server\\src\\gsl_server\\algorithms\\PMFS\\internal\\Simulations.cpp",
+      "has_gaussian_blur": true,
+      "growth_law_recovered": false,
+      "paper_baseline_pass": false
+    }
+  ],
+  "absence_scope": "Inspected Filament declarations and complete simulation/recording functions in these five pinned snapshots; not a theorem about every historical commit.",
+  "constant_sigma_non_equivalence": "Matching exponents for positive Omega requires sigma_code^2 = sigma_paper^2 / Omega, hence no global constant works for varying accumulated Omega."
+}

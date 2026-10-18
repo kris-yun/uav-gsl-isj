@@ -1,0 +1,79 @@
+{
+  "case": "A2",
+  "scenario": "A",
+  "source_xyz": [
+    1.75,
+    8.6,
+    0.5
+  ],
+  "robot_start_xyz": [
+    5.8,
+    0.8,
+    0.0
+  ],
+  "sensor_xyz": [
+    5.8,
+    0.8,
+    0.5
+  ],
+  "official_wind_path": "1,2,3-5,6",
+  "derived_key": "9b7d81f6083d",
+  "shared_case_path": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2",
+  "vm_case_path": "/home/zyc/ros2_ws/native_pmfs_wind_recovery_20261014/A2",
+  "player": {
+    "use_sim_time": false,
+    "player_freq": 2.0,
+    "initial_iteration": 200,
+    "num_simulators": 1,
+    "allow_looping": true,
+    "loop_from_iteration": 100,
+    "loop_to_iteration": 199,
+    "simulation_data_0": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/one_realization",
+    "occupancyFile": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/derived/9b7d81f6083d/OccupancyGrid3D.csv",
+    "r7_frame_time_csv": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/cases/P24_A2_WALL5_VALID_V2_R02/AUTHOR_WALL_FILE_CADENCE.csv",
+    "r7_clock_trace_path": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/cases/P24_A2_WALL5_VALID_V2_R02/runtime/physical_clock_trace.csv"
+  },
+  "official_playback_loop": true,
+  "effective_loop": true,
+  "loop_equivalence_requirement": "R20 player honors original inclusive frame100..200 cycle and real per-frame durations; ROS clock remains monotone.",
+  "pinned_configuration_sha256": "215d5fe972a0aed2dae3fe8e1cbc1f50666e147cba63ef5e5069f37f2cb13cef",
+  "pinned_start_sha256": "aa0612dab32dc8f40d4dd332ac2bab11a07f279973de2ee50ec3c41063b95a18",
+  "wind_input_run_identity": "NATIVE_PMFS_WIND_RECOVERY_20261014",
+  "wind_field_group_gate": "9b7d81f6083d",
+  "prior_zero_wind_case": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/A2",
+  "audit_setting": {
+    "id": "P24_A2_WALL5_VALID_V2_R02",
+    "case": "A2",
+    "profile": "PAPER_ERA_NATIVE_INTERFACE_QUALIFICATION",
+    "ground_truth_wind": false,
+    "convergence_variance_m2": 1.0
+  },
+  "audit_profile": "PMFS_AUTHOR_FORMULAS_WITH_OBSERVATION_AND_MAP_READY_GUARDS_PUBLIC_CLOCK",
+  "original_case_path": "/home/zyc/ros2_ws/native_pmfs_wind_recovery_20261014/A2",
+  "clock_adaptation": "Public example clock: BasicSim5x; nativePMFSwall; sensorheadersROS5x with wall-rate10/20Hz; playerfiles2Hzwall. Native formula unchanged.",
+  "PAPER_PROTOCOL_STATUS": "Historical native code/interface qualification; exact author snapshot, formula/config discrepancies, original clock semantics and30-repeat statistics remain unconfirmed.",
+  "GMRF_adaptation": "Reject missingTF observations, trace accepted callbacks; estimator core/weights unchanged.",
+  "execution_policy": "Sequential, pre-node domain vacancy guard; prior rejected technical trials preserved.",
+  "parameter_capture": "Direct native ListParameters/GetParameters services while spinning observer, no CLI daemon",
+  "original_physical_frame_timeline": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/PHYSICAL_FRAME_TIME.csv",
+  "loop_protocol": "2024source post-increment>=to: A2initial200 once then100..199. Converted to equivalent modern inclusive to199.",
+  "observation_validity_guard": {
+    "UTC": "2026-10-16T10:44:35.783842+00:00",
+    "status": "PASS_BUILD_NOT_RUNTIME_PASS",
+    "seconds": 22.18140379700344,
+    "binary": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/pmfs_observation_validity_node_v2",
+    "sha256": "fcf4fcbb29444c9b59028df63c1348487e0d4b407fb68bf278a2f28dbbabe878",
+    "formula_changes": false,
+    "map_readiness_guard": true,
+    "control_change": "If a sampling window has no gas or wind observations, wait without manufacturing a zero/non-detection. Retain original0.4clock window, averages, maxUpdatesPerStop and all PMFS formulas/planning/settings.",
+    "passive_exports": [
+      "Actualcountsandmeansperconsumedwindow",
+      "Numericalnormalizedsourceposterior/hitconfidence/estimatedwindaftereachsourceupdate"
+    ],
+    "original_author_binary_preserved": true,
+    "not_innovation": true
+  },
+  "source_original_unchanged": false,
+  "source_probability_and_planning_formulas_changed": false,
+  "frozen_repeat": 2
+}

@@ -1,0 +1,143 @@
+{
+  "status": "PASS_RECOMPUTED_FIXED_SUPPORT_TV_RANKS_SOURCE_IDENTITY_NOT_FULL_PMFS",
+  "source_commit": "a8d5a764b7cbfc1d5d1887aebfe890e2c75d7533",
+  "only_one_formula_line_modified": true,
+  "scope": "Independent read-only recheck of existing results. No rerun of C++ binary, candidate propagation, physics or ROS.",
+  "diagnostic_inputs": "2026 corrected-wind A2/B2 recorded Omega and candidate maps; not September trial histories",
+  "rows": [
+    {
+      "context": "A2_update_0",
+      "free_cells": 1195,
+      "tv": 0.06833976801850228,
+      "truth_cell": 1367,
+      "truth_supported": true,
+      "recomputed_strict_truth_ranks": {
+        "author_confidence": 141,
+        "paper_eq6_only": 142
+      },
+      "total_source_mass_native": 1.0000000000000002,
+      "total_source_mass_eq6": 1.0
+    },
+    {
+      "context": "A2_update_1",
+      "free_cells": 1195,
+      "tv": 0.024262068726923346,
+      "truth_cell": 1367,
+      "truth_supported": true,
+      "recomputed_strict_truth_ranks": {
+        "author_confidence": 112,
+        "paper_eq6_only": 110
+      },
+      "total_source_mass_native": 1.0000000000000002,
+      "total_source_mass_eq6": 0.9999999999999999
+    },
+    {
+      "context": "B2_update_0",
+      "free_cells": 447,
+      "tv": 0.0658455118731734,
+      "truth_cell": 674,
+      "truth_supported": false,
+      "recomputed_strict_truth_ranks": {},
+      "total_source_mass_native": 0.9999999999999999,
+      "total_source_mass_eq6": 0.9999999999999999
+    },
+    {
+      "context": "B2_update_1",
+      "free_cells": 447,
+      "tv": 0.08366401610250594,
+      "truth_cell": 674,
+      "truth_supported": false,
+      "recomputed_strict_truth_ranks": {},
+      "total_source_mass_native": 1.0000000000000002,
+      "total_source_mass_eq6": 0.9999999999999999
+    }
+  ],
+  "native_score_max_difference_reported": 2.3092638912203256e-14,
+  "native_posterior_max_difference_reported": 1.5265566588595902e-16,
+  "native_parity_scope": "Reported by peer command results; this checker independently recalculates cell-mass TV, ranks, source identity and patch isolation, not all614 forward-map scores.",
+  "eligibility": {
+    "status": "EQ6_COMPONENT_AND_FIXED_TREE_SENSITIVITY_COMPLETE_STRICT_PAPER_BASELINE_HOLD",
+    "new_forward_calls": 0,
+    "new_ros": 0,
+    "new_worlds": 0,
+    "AIMMD_resumed": false,
+    "paper_eq6_aligned": true,
+    "age_radius_resolved": false,
+    "original_experiment_commit_identified": false,
+    "all_algorithm_parameters_paper_matched": false,
+    "full_paper_reproduction": false,
+    "closed_loop_gain_tested": false,
+    "formal_figures_8_10_11_statistical_comparison_eligible": false,
+    "limitations": [
+      "Only the Eq6 confidence exponent changes. Candidate maps/history/score coefficient/final tree remain frozen.",
+      "2026 corrected-wind diagnostic is not the author 2024 experiment.",
+      "B2 truth cell674 is outside the stored legal source support. Its zero source mass is a support fact, not an Eq6 failure or improvement.",
+      "Eq6 could change adaptive refinement and movement; these alternative trajectories are not reconstructed.",
+      "No age-dependent radius law is invented; no historical Omega or RNG is fabricated.",
+      "No claim that lower diagnostic error is innovation or general improvement."
+    ]
+  },
+  "files": [
+    {
+      "path": "D:\\ZYC\\A-gas\\_staging\\FSR_S2_PMFS_PAPER_BASELINE_AUDIT_V1_20261018\\source\\AUTHOR_FIX_20240918\\gsl_server\\src\\gsl_server\\algorithms\\PMFS\\PMFSLib.cpp",
+      "bytes": 21466,
+      "sha256": "131812758eab06810bad74217dc6526a892065e586ff7acaa8e53cbed108d814"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\workspace\\PMFS_EQ6_ALIGNMENT_20261017\\author_release\\gsl_server\\src\\gsl_server\\algorithms\\PMFS\\PMFSLib.cpp",
+      "bytes": 21466,
+      "sha256": "131812758eab06810bad74217dc6526a892065e586ff7acaa8e53cbed108d814"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\workspace\\PMFS_EQ6_ALIGNMENT_20261017\\paper_eq6\\gsl_server\\src\\gsl_server\\algorithms\\PMFS\\PMFSLib.cpp",
+      "bytes": 21481,
+      "sha256": "102fbc64f7fe85e8da43dc195ab46b112067fb0e6a529131452169b41ebe7b49"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\workspace\\PMFS_EQ6_ALIGNMENT_20261017\\PATCH_CHECK.json",
+      "bytes": 349,
+      "sha256": "46c8ff5959cf60c93ad8c43419376d4091fe7bd2a186b0ab221461f8e9999d27"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\workspace\\PMFS_EQ6_ALIGNMENT_20261017\\paper_eq6_only.patch",
+      "bytes": 558,
+      "sha256": "0fb053ad2966c682e8ac5f7b10ac4ba4e7db562663ea7f37647ce06971669a4e"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\workspace\\PMFS_EQ6_ALIGNMENT_20261017\\analysis_v2\\CELL_CONFIDENCE_AND_SOURCE.csv",
+      "bytes": 409071,
+      "sha256": "0b9669fd06a80318326f0897644ce6fcebf37362558c3ea2b34c75c23ac34f2a"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\workspace\\PMFS_EQ6_ALIGNMENT_20261017\\analysis_v2\\SOURCE_COMPARISON.csv",
+      "bytes": 2260,
+      "sha256": "d9945d22dc679942b931e74057182d75a0e51e49d7fc3e5b04f284ccfd80dcf0"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\workspace\\PMFS_EQ6_ALIGNMENT_20261017\\analysis_v2\\PARITY_CHECKS.json",
+      "bytes": 1500,
+      "sha256": "4ad51bf3d423f0864f5cd8305b4599cd898a5a396e0ba0a5c9dbe63b81e6441b"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\workspace\\PMFS_EQ6_ALIGNMENT_20261017\\analysis_v2\\DECISION.json",
+      "bytes": 1144,
+      "sha256": "673e35d92ccd0a037f2723e44be0f401ba6e3d8ca5ba9240fe2edd732e415ac1"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\workspace\\PMFS_EQ6_ALIGNMENT_20261017\\execution\\COMMANDS.json",
+      "bytes": 2163,
+      "sha256": "8c57799a034536bd5640fb3ad6fd7cb846f1a22bda365e6676a0a7d155df3b1c"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\workspace\\PMFS_EQ6_ALIGNMENT_20261017\\execution\\RESULT.json",
+      "bytes": 278,
+      "sha256": "ed79dda9011c2540facfdb3cfe31c74b3136e56da2bbcad1661bdd2e8ec0d268"
+    },
+    {
+      "path": "D:\\ZYC\\A-gas\\workspace\\PMFS_EQ6_ALIGNMENT_20261017\\HISTORICAL_2024_ELIGIBILITY.json",
+      "bytes": 4378,
+      "sha256": "b011520b49dfc9130b9eae6e5bd90504e8fb794e87bbc53951d4830124c64d23"
+    }
+  ],
+  "new_scientific_jobs": 0
+}
