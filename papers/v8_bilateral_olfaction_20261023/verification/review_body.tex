@@ -1,0 +1,235 @@
+\hypertarget{v8ux7814ux7a76ux7a3fux91cdux6784ux4e0eux5b8cux6574ux6027ux5ba1ux67e5}{%
+\section{V8研究稿重构与完整性审查}\label{v8ux7814ux7a76ux7a3fux91cdux6784ux4e0eux5b8cux6574ux6027ux5ba1ux67e5}}
+
+\textbf{审查日期：2026年10月23日。对象：原Overleaf工程的独立副本。}
+本报告与论文配套，提供修改对照、文献核验、算法与证据边界、尚待证明的结论，以及审稿视角的完整性判断。这里的``审稿视角''指独立检查程序与批判性评阅，不代表真人专家、期刊编辑或同行已经认可该方法。
+
+\hypertarget{ux4ea4ux4ed8ux6027ux8d28ux4e0eux603bux4f53ux5224ux65ad}{%
+\subsection{1.
+交付性质与总体判断}\label{ux4ea4ux4ed8ux6027ux8d28ux4e0eux603bux4f53ux5224ux65ad}}
+
+新稿已经围绕``有限采样下的竞争源辨识''形成完整科研主线：M1改造双侧镜像嗅觉前端及源条件证据；M2改变下一次双机测量几何；M3在完整合法源集上计成本分配观测并持续审计。原CREL、TSDC、PIP不再作为正式三个创新。主输出保持二维源位置概率图；两机属于第一篇的同步测量配置，后续多机管理和实飞部署不混入本篇贡献数目。
+
+\textbf{当前可交付为方法研究讨论稿，尚不能据此宣称已有投稿级性能优势。}
+原生开发结果反而表明：在两个已标定源、四个独立DEV世界中，普通单点、完整联合观测均4/4严格判对，而M1仅2/4，平面MAP均误差约2.427
+m。固定选择目标在共同强度一位编码阶段提前饱和，动态镜像通道没有进入评价。设计完整、条件性推导成立与真实定位有效是三种不同状态。
+
+本轮工作只修改论文与配套图文，没有改动冻结V7算法，没有重训通道，没有新造仿真世界，没有把软件回归次数写成定位实验样本。所有新增实验项均标为待执行，10\%只保留为需要前瞻登记的研究目标。
+
+\hypertarget{ux539fux59cbux6750ux6599ux6062ux590dux4e0eux7f3aux53e3}{%
+\subsection{2.
+原始材料恢复与缺口}\label{ux539fux59cbux6750ux6599ux6062ux590dux4e0eux7f3aux53e3}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+材料
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+本轮实际处理
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+证据边界
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+原Overleaf ZIP &
+恢复main.tex、aas.cls、aas.cfg、picins.sty、原3图及原修改注释；保留原ZIP、另建工程副本
+& 不是另起无关综述；原主文件和差异记录可追溯 \\
+研究背景.pptx &
+读取可编辑内容，修复本地中文字体环境后导出矢量图，保留原PPTX &
+概念场景，不是已经资格化的湖岸浓度数据 \\
+第二章\_科学逻辑与写作草案\_20261021.md &
+读取2.1任务固有难点、2.2具体方法不足的写作要求 &
+结合本轮双机/V7要求更新旧单机范围 \\
+第一二章V2讨论稿PDF及ZIP & 核对原有第一、二章组织和短时传播任务的范围 &
+不继承其未核验性能，也不把短时气团态势改成当前主输出 \\
+10-5文献 (2)(1).zip &
+完整阅读10篇PDF、共123页；另对关键方法图和消融表做图像核查 &
+借鉴论证结构，不复制算法或借用其成绩 \\
+V7四份核心方法文档、方法PPTX及原生报告 &
+按冻结提交逐文件读取，并审查实际代码和JSON收据 &
+文件说明与代码能力冲突时明确记录；旧图的LP已修正 \\
+独立``小论文撰写要求PDF'' &
+本轮可访问附件、Library文件与历史材料检索未定位 &
+列为缺失，不能假称已经逐条遵循导师条款 \\
+R3窗口级原收据 & 恢复相关方法汇总，未完整定位所述数值的窗口原收据 &
+正文只保留限定性历史线索，不重述未经复核的15.7/16数字 \\
+\end{longtable}
+
+原始ZIP的SHA256为\nolinkurl{a88a5bd97a90d8b5e0b807337cef2baad6be9b2785a16fd599615676fbd31b6c}。输入文件的完整大小及SHA见\nolinkurl{provenance/INPUT_MATERIAL_MANIFEST.json}。V7方法与原生记录固定于\nolinkurl{061ecf5ddea0a59dcf932b5038ad646b7af454a4}；51份V7快照和6份历史报告的Git
+blob
+SHA均与远端对象字节一致。这里核验的是已下载证据文件的一致性；14,424个原生帧的核验结论来自冻结执行报告，本轮没有重新下载全体物理归档再运行一次。
+
+\hypertarget{ux9898ux76eeux4e0eux7b2cux4e00ux4e8cux7ae0ux7684ux72ecux7acbux5ba1ux67e5}{%
+\subsection{3.
+题目与第一、二章的独立审查}\label{ux9898ux76eeux4e0eux7b2cux4e00ux4e8cux7ae0ux7684ux72ecux7acbux5ba1ux67e5}}
+
+中文题名：\textbf{双侧镜像嗅觉与主动反证驱动的无人机气体源概率定位}。
+
+英文题名：\textbf{Probabilistic UAV Gas Source Localization via
+Bilateral Opponent Olfaction and Active Falsification}。
+
+题目去掉``候选源因果推断''，因为受控候选比较尚不足以证明独立因果识别创新；去掉``湖岸''，因为实际动态物理开发数据主要来自House。保留``概率定位''，使研究目标与二维源图一致。``主动反证''描述观测分配和后缀审计，不暗示所有候选都能在有限预算内被严格排除。
+
+\hypertarget{ux5f15ux8a00ux903bux8f91}{%
+\subsubsection{引言逻辑}\label{ux5f15ux8a00ux903bux8f91}}
+
+危险泄漏处置需要定位释放位置；无人机只能获得路径上的局部气体、风与位置。间歇传播、未知风历史、有限带宽和两侧响应差使``闻到气体''``返回羽流''与``确认气源''不同。文献按分布建图、源条件反演、双侧行为与主动采样各自解决的对象组织，随后落到三个具体缺口：表示是否保留源差，测量几何是否使差异可读出，错误高置信是否影响后续访问。
+
+PMFS已有历史命中累积和主动选点，新稿没有设置``原算法没有历史/不会主动搜索''的假对手。增加第二架无人机只是增加资源，必须与相同两机输入、完整联合观测和联合EIG比较。PNAS与Nature工作提供具体生物计算结构，其原任务不是二维气源后验；引用母文不是源定位性能证明。
+
+\hypertarget{ux7b2cux4e8cux7ae0ux903bux8f91}{%
+\subsubsection{第二章逻辑}\label{ux7b2cux4e8cux7ae0ux903bux8f91}}
+
+2.1从任务出发，定义三维合法源、飞行域和观测域、物理时钟、同步测量、传感器动态及二维投影。传播随机性、源间混淆、有限读出与测点不足属于任何方法都需面对的困难。
+
+2.2回到原生PMFS实际计算：有限窗浓度阈值事件、风相关命中图累积、候选二维传播预测、置信加权逐格兼容乘积及候选方差式选点。累计历史已经存在；源图更新也不能误写成反复乘旧后验。B4、M4/RK、R3与V7负结果各有独立条件，只提供研究动机，不共同证明一个唯一根因。
+
+2.3统一原始块、完整已见历史、源与共享干扰状态、动作和二维输出。完整历史显式包含冻结训练配置与行进期侧信息。当前固定表是编码符号的条件分布，不能混写为完整原始时间序列分布。数据处理不等式说明M1不创造信息；M2通过改变实际位置取得新证据；M3负责分配与复核。
+
+\hypertarget{ux4e09ux4e2aux8d21ux732eux7684ux6765ux6e90ux8fd0ux7b97ux4e0eux9a8cux8bc1ux72b6ux6001}{%
+\subsection{4.
+三个贡献的来源、运算与验证状态}\label{ux4e09ux4e2aux8d21ux732eux7684ux6765ux6e90ux8fd0ux7b97ux4e0eux9a8cux8bc1ux72b6ux6001}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+模块
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+已有来源与不能归为原创的部分
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+本稿具体二次设计
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+当前验证状态
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+M1主创新候选 & PNAS 2026的时间滤波、整流、镜像相减；JS和贝叶斯归一化 &
+源对分离目标、有限核库选择、共模/奇部联合符号、共享干扰状态下的一次后验更新
+& 实现存在；原生2/4、0动态通道；独立收益未建立 \\
+M2辅助一 & Nature 2026的气味进入/退出方向记忆；均值/梯度与协方差二次型 &
+方向记忆提出返回区域；竞争源响应差设计双点基线；记忆区域外合法付费复测 &
+解析原型与条件模型；真实响应/事件阈值、原生闭环未验证 \\
+M3辅助二 & 主动序贯检验、非同质成本分配、可预测似然比与Ville界 &
+完整源支撑、后验独立覆盖、审计触发源对挑战、可恢复当前相容列表；审计不回乘后验
+& LP等价和条件风险界可推导；物理校准及恢复收益未验证 \\
+\end{longtable}
+
+\hypertarget{m1ux5df2ux5199ux6e05ux7684ux8fd0ux7b97}{%
+\subsubsection{4.1
+M1已写清的运算}\label{m1ux5df2ux5199ux6e05ux7684ux8fd0ux7b97}}
+
+输入先按背景与尺度作对数压缩，以真实物理时间求均值和因果指数滤波，计算两种左右镜像整流响应之差。共同强度保留为一位，选中的奇部采用三值量化，形成每块一个联合符号；这些量不能假装独立后多乘几次。固定总Dirichlet质量使嵌套量化边缘化一致，避免通道数变化同时改变总平滑强度。
+
+通道选择基于不同源与干扰状态的最坏JS及截断覆盖。嵌套表示可说明模型内目标单调，但不提供一般次模、贪心全局最优或最少通道保证。当前只有一个源对，共同强度TRAIN
+JS约0.242586超过0.04阈值，目标已经饱和；任何新增通道增益均为0。这是当前选择结构已发现的问题，本文没有暗中改为另一目标再重写首轮结果。
+
+固定核库不是PNAS学习滤波器的完整复现。原生best-one选中静态梯度，也不构成动态母网络复现。学习镜像滤波器或改为预测损失仅是待实现设计，须重新冻结训练/测试协议。M1可以检验有限模型、有限数据下是否更可靠，却不能用确定性编码的信息不等式声称增加了原始信息。
+
+\hypertarget{m2ux5df2ux8865ux9f50ux7684ux63a5ux53e3}{%
+\subsubsection{4.2
+M2已补齐的接口}\label{m2ux5df2ux8865ux9f50ux7684ux63a5ux53e3}}
+
+当前解析控制演示把两侧浓度均值越阈作为组级事件，用两机平面中心的真实运动方向更新记忆；阈值0.3不是已经标定的原生PID气味边界。方向散布递推忽略跨事件相关项，是工程二阶近似。返回区域不是经过概率覆盖校准的真实羽流边界。
+
+几何分数使用原始浓度均值/梯度及完整联合协方差，与M1对数通道分开。矩阵必须正定；局部线性化需半径与Hessian条件，长基线不能自动继承短基线误差界。合法端点不等于整段安全航路或同步到达。所有当前可执行提议还须映射到已安装、已标定的有限动作编号；RBF只给均值和梯度，不自动产生新几何下的完整联合符号似然。
+
+\hypertarget{m3ux5df2ux8865ux9f50ux7684ux63a5ux53e3ux4e0eux6761ux4ef6ux8bc1ux660e}{%
+\subsubsection{4.3
+M3已补齐的接口与条件证明}\label{m3ux5df2ux8865ux9f50ux7684ux63a5ux53e3ux4e0eux6761ux4ef6ux8bc1ux660e}}
+
+正常成本分配是当前主假设对所有竞争源的最坏KL/成本，而不是所有源对共同maximin；图3已按此纠正。动作频率与资源份额不能混用。M2只约束正常利用，覆盖和明确挑战仍可访问物理合法、可负担的区域外动作。无正挑战信息时可完全退回覆盖，不强造有信息动作。
+
+后缀审计保持一个干扰状态贯穿整个后缀，分母对整段似然取最大值。备择预测必须在新结果之前冻结且归一化。替代路径质量为零时保持零，全族支持失败不能靠概率地板造赢家。风险证明通过标准似然比过程的点态支配成立；审计量自身不必是超鞅。真实条件模型包含性、完整历史、依赖处理和重启错误预算均为前提，拟合表不会自动带来真实羽流风险保证。
+
+当前相容列表允许恢复，从未越界列表则单调缩小；二者不是源后验。审计反馈只改变下一动作。已被赋予结构零质量的源不能靠乘法后验恢复；``低概率仍保留''与``零概率自动复活''必须分开。
+
+\hypertarget{ux5df2ux53d1ux751fux7ed3ux679cux4e0eux6b63ux5f0fux5b9eux9a8cux7f3aux53e3}{%
+\subsection{5.
+已发生结果与正式实验缺口}\label{ux5df2ux53d1ux751fux7ed3ux679cux4e0eux6b63ux5f0fux5b9eux9a8cux7f3aux53e3}}
+
+原生记录为House01、两个释放位置、每源4个传播实现。每世界1803帧，共14,424帧；各源r01/r02为TRAIN、r03/r04为DEV。固定50---70
+s窗口实际含33帧，约0.6
+s间隔。两个探针各为4格中心浓度均值，采样池中心相距约7.003
+m。因此这是粗采样理想浓度读出下的固定观测对照，不是真实双机PID飞行试验。
+
+71项软件测试、1200项原生浓度查询回归以及C++/Python推理一致性支持软件与读出链的可复核性，不支持方法比基线更强。正文列全R2收据的11个方法项，特别保留母特征Gaussian可达4/4，以及母结构直方图存在两次并列的事实。原记录按固定顺序破并列造成某些均MAP误差为0，正文脚注说明这不是无歧义成功，也不代表连续源定位零米误差。
+
+后续实验已分为同观测H1、几何H2、反证H3及完整定位：PMFS-1U/2U、raw-joint、母结构固定核与原可学习结构直接迁移、联合EIG、成本Chernoff及各独立消融均列入。固定轨迹与自主闭环分别报告；同双机、传感器数、原始流、实际移动/稳定/驻留时间及训练预算均须公平。行进期信息不能只提供给M2却不给强基线。
+
+划分单位是独立传播世界。源、风、实现和场景留出需要预先登记；窗口和帧不能膨胀独立样本数。当前有限源表没有未见源条件预测能力，必须补齐参数化或前向接口后再做该验证。评价包括严格Top-1、MAP、原生O24口径Top-5\%、源对分离、NLL/Brier/概率覆盖及错误高置信恢复。完整S2
+DAY/NIGHT、真实双机闭环与实飞仍是待执行项。
+
+\hypertarget{ux5ba1ux7a3fux89c6ux89d2ux7684ux5b8cux6574ux6027ux7ed3ux8bba}{%
+\subsection{6.
+审稿视角的完整性结论}\label{ux5ba1ux7a3fux89c6ux89d2ux7684ux5b8cux6574ux6027ux7ed3ux8bba}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+审查维度
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+当前结论
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+尚未消除的实质风险
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+问题与主线 & 已经明确；第一二章的因果链与三个模块对应 &
+需由新实验检验任务是否确实需要动态镜像 \\
+创新归属 & 母文算子、标准统计工具与二次设计分开 &
+当前竞争源选择仍可能只是较弱压缩；新颖性须与更强直接先行研究对照 \\
+数学闭合 & 完整历史、共享状态、有限动作、边界分支、LP与审计假设已补齐 &
+条件证明尚不能外推成真实风险保证 \\
+实现对应 & 固定V7代码与论文接口一致性已审查；旧图差异已修订 &
+原生M2/M3和新几何条件预测没有端到端成绩 \\
+证据诚实 & 负结果、并列、有限候选、小样本和软件验证边界均保留 &
+M1无独立收益；不具备声称显著提高的依据 \\
+实验完整性 & 比较矩阵、消融、成本与信息权限已规定 &
+多数正式实验未执行，无法填入排名和置信区间 \\
+应用范围 & House与S2、二维源图与气团态势分开 &
+湖岸物理资格、真实传感器、旋翼和实飞均待验证 \\
+写作层次 & 已借鉴团队论文的具体失败---运算---验证对应方式 &
+研究稿内容偏详，取得实验后应压缩重复状态说明并重新平衡篇幅 \\
+送审条件 & 可用于导师讨论和实验命题冻结 &
+目标期刊、独立写作要求、作者复核、AI政策、匿名补充材料尚需最终处理 \\
+\end{longtable}
+
+本稿最需解决的科研问题不是措辞强弱，而是M1在可区分但非饱和的任务上是否提供普通完整观测之外的有限样本收益。若该命题不成立，应如实调整主创新，而不能靠引入更多规划模块掩盖观测表示本身缺乏增益。M2/M3的集成价值可以单独研究，但不能替M1已经发生的负结果作证。
+
+\hypertarget{ux81eaux52a8ux5316ux5b66ux62a5ux683cux5f0fux53ccux76f2ux4e0eaiux8981ux6c42}{%
+\subsection{7.
+《自动化学报》格式、双盲与AI要求}\label{ux81eaux52a8ux5316ux5b66ux62a5ux683cux5f0fux53ccux76f2ux4e0eaiux8981ux6c42}}
+
+核对日期为2026-10-23。官方投稿须知为\url{https://www.aas.net.cn/news/tgxz.htm}，模板页为\url{https://www.aas.net.cn/news/lunwenmoban.htm}。须知明确初投上传PDF且不强制模板，要求可靠论据、完整标引及删除全部作者身份信息；模板页还列出了录用后模板与灰度EPS等历史排版要求。本轮保留原aas类和中文研究稿结构，使用XeLaTeX及矢量PDF图，并不宣称已经满足录用后全部制版要求。
+
+需要特别区分的是AI规则：官方不仅要求披露名称、版本、时间、过程和作用，还规定核心内容不应由AI工具生成，不得生成或改动原始数据和实验结果。本文已经标注ChatGPT/GPT-6
+Astra
+Pro、2026-10-23及辅助重构、文献/代码核查、公式整理、示意图与编译作用；但\textbf{披露本身不等于已满足核心内容要求}。正式投稿前必须由科研作者独立形成、复核和承担责任，按目标期刊重新核查，不能把这次辅助研究稿直接宣称合规投稿稿。
+
+主PDF移除了原模板的假卷期和作者页眉，PDF作者元数据为空；公开仓库链接、历史补充文件和源文件仍可能指向研究身份。当前是可追溯研究包，不是已经认证的双盲送审包。原始资料完整保留供作者使用，匿名化应在确定目标期刊和送审版本后另做。
+
+\hypertarget{ux4feeux6539ux6587ux4ef6ux4e0eux56feux6587ux5bf9ux5e94}{%
+\subsection{8.
+修改文件与图文对应}\label{ux4feeux6539ux6587ux4ef6ux4e0eux56feux6587ux5bf9ux5e94}}
+
+\nolinkurl{CHANGELOG.md}逐项对照旧稿与新稿；\nolinkurl{provenance/original_to_v8.diff}保存展开章节后的文本差异。原类文件未改，原主文件另存。图1复用研究背景中的双机相关场景，图2复用原PMFS矢量方法图并修正缺字/标签，图3依原V7可编辑方法图重绘当前接口，图4展开镜像内部运算，图5展开几何与审计决策。PPTX和TikZ源均保留，未用截图拼接。
+
+图中的记忆、几何距离、KL与审计量分别属于不同计算对象；只有新原始观测经M1联合编码后更新源权重一次。五幅示意图均不包含虚构性能曲线。正文的真实结果由表格承载，尚未运行的实验仅列计划。
+
+以下附录分别提供10篇团队论文阅读索引、当前正文29项文献逐条核验、原稿35项文献处置，以及待证明命题。详细阅读日志、元数据和审查过程文件随工程提供；没有把不能取得的最终全文或书目信息补写成``已核验''。

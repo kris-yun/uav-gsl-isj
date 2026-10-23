@@ -1,0 +1,81 @@
+% Editable bilateral opponent operator and source-specific adaptation.
+\documentclass[tikz,border=5pt]{standalone}
+\usepackage{fontspec,xeCJK,amsmath,amssymb}
+\IfFontExistsTF{TeX Gyre Termes}{\setmainfont{TeX Gyre Termes}}{\setmainfont{Latin Modern Roman}}
+\IfFontExistsTF{TeX Gyre Heros}{\setsansfont{TeX Gyre Heros}}{\setsansfont{Latin Modern Sans}}
+\setCJKmainfont{FandolSong-Regular.otf}[BoldFont=FandolSong-Bold.otf]
+\setCJKsansfont{FandolHei-Regular.otf}[BoldFont=FandolHei-Bold.otf]
+\usetikzlibrary{arrows.meta,calc,positioning,fit,backgrounds}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,>=Stealth,
+ font=\sffamily\fontsize{9}{11}\selectfont,
+ box/.style={draw=black!75,fill=white,rounded corners=1.5pt,align=center,inner sep=5pt},
+ group/.style={draw=black!75,fill=black!2,rounded corners=2pt,line width=.7pt},
+ arr/.style={->,line width=.7pt,draw=black!85},
+ head/.style={font=\sffamily\bfseries\fontsize{10.6}{13}\selectfont,align=left},
+ note/.style={font=\sffamily\fontsize{8.8}{11}\selectfont,align=center}]
+
+\node[box,anchor=north west,minimum width=17.6cm,minimum height=1.08cm,text width=17cm] (input) at (0,0)
+ {\textbf{输入：两侧同步读数与真实时钟} $W_t=\{(\tau_{t,n},y^L_{t,n},y^R_{t,n})\}$，左 $L\equiv+$、右 $R\equiv-$\\
+ 事前冻结的背景与尺度变换：$\xi^u_{t,n}=\log(1+[y^u_{t,n}-b_0]_+/c_0)$；保持左右顺序与实际采样时刻};
+
+\draw[group] (0,-1.7) rectangle (8.85,-7.0);
+\node[head,anchor=north west] at (.25,-1.88) {借鉴的母结构：共享滤波、整流、镜像相减};
+\node[note,anchor=north,text width=8.25cm] at (4.42,-2.38)
+ {两条分支共享 $f_{1k},f_{2k},b_k$，仅交换左右输入};
+
+\node[box,anchor=north west,minimum width=3.8cm,minimum height=1cm,text width=3.45cm] (leftf) at (.35,-2.95)
+ {$\Xi_t^L\xrightarrow{f_{1k}}\langle f_{1k},\Xi_t^L\rangle$\\
+  $\Xi_t^R\xrightarrow{f_{2k}}\langle f_{2k},\Xi_t^R\rangle$};
+\node[box,anchor=north west,minimum width=3.8cm,minimum height=1cm,text width=3.45cm] (rightf) at (4.7,-2.95)
+ {$\Xi_t^R\xrightarrow{f_{1k}}\langle f_{1k},\Xi_t^R\rangle$\\
+  $\Xi_t^L\xrightarrow{f_{2k}}\langle f_{2k},\Xi_t^L\rangle$};
+\node[box,anchor=north west,minimum width=3.8cm,minimum height=1.1cm,text width=3.45cm] (leftq) at (.35,-4.55)
+ {$\begin{aligned}q_{LR}&=[\langle f_{1k},\Xi_t^L\rangle\\&+\langle f_{2k},\Xi_t^R\rangle+b_k]_+\end{aligned}$};
+\node[box,anchor=north west,minimum width=3.8cm,minimum height=1.1cm,text width=3.45cm] (rightq) at (4.7,-4.55)
+ {$\begin{aligned}q_{RL}&=[\langle f_{1k},\Xi_t^R\rangle\\&+\langle f_{2k},\Xi_t^L\rangle+b_k]_+\end{aligned}$};
+\draw[arr] (input.south -| 4.42,0)--(4.42,-1.7);
+\draw[arr] (leftf.south)--(leftq.north);
+\draw[arr] (rightf.south)--(rightq.north);
+\node[box,anchor=north west,minimum width=8.15cm,minimum height=.7cm,text width=7.75cm] (h) at (.35,-6.10)
+ {$h_{t,k}=q_{LR}-q_{RL}$\quad 左右对换后变号};
+\draw[arr] (leftq.south)--(leftq.south |- h.north);
+\draw[arr] (rightq.south)--(rightq.south |- h.north);
+
+\node[box,anchor=north west,minimum width=8.15cm,minimum height=1.1cm,text width=7.7cm] (even) at (.35,-7.45)
+ {\textbf{同时保留共同强度：交换左右不变}\\
+ $e_t=\sum_n\omega_{t,n}(\xi^L_{t,n}+\xi^R_{t,n})/2$\\
+ 权重 $\omega_{t,n}$ 由真实时钟的梯形平均确定};
+\draw[arr] (input.west)--(-.4,-.54) |- (even.west);
+\node[note,anchor=north,text width=8.25cm] at (4.42,-9.15)
+ {当前采用固定因果指数核库，另含静态梯度通道。\\母文的可学习滤波器不属于本轮已完成实现。};
+
+\draw[group] (9.55,-1.7) rectangle (17.6,-10.25);
+\node[head,anchor=north west] at (9.8,-1.88) {本文源判别改造：选择、联合标定与更新};
+\node[box,anchor=north west,minimum width=7.35cm,minimum height=1.3cm,text width=6.95cm] (selection) at (9.9,-2.6)
+ {源对最不利JS覆盖：$J_a(\mathcal J)$\\
+ 固定核库选择：$0\le |\mathcal J_a|\le m$\\
+ 本次原生动态通道为0（覆盖提前饱和）};
+\node[box,anchor=north west,minimum width=7.35cm,minimum height=1.4cm,text width=6.95cm] (symbol) at (9.9,-4.55)
+ {共同强度一位 + 奇部三值 $\longrightarrow$ 一个联合符号\\
+ $Z_t=b_{e,t}+2\sum_{j=0}^{m_a-1}3^j b_{k_j,t}$\\
+ 同一原始块仅形成一份联合源证据};
+\node[box,anchor=north west,minimum width=7.35cm,minimum height=1.35cm,text width=6.95cm] (law) at (9.9,-6.55)
+ {源条件表 $\widehat P(Z_t\mid a_t,s_i,r)$\\
+ 固定总Dirichlet质量；保留共享干扰 $r$\\
+ 仅用训练数据标定并冻结};
+\node[box,anchor=north west,minimum width=7.35cm,minimum height=1.35cm,text width=6.95cm] (post) at (9.9,-8.5)
+ {一次联合权重更新 $w_{t-1}(i,r)\to w_t(i,r)$\\
+ $\pi_t(s_i)=\sum_r w_t(i,r)\ \longrightarrow\ P_t(g)$\\
+ 最终输出二维源概率图};
+\draw[arr] (selection.south)--(symbol.north);
+\draw[arr] (symbol.south)--(law.north);
+\draw[arr] (law.south)--(post.north);
+\coordinate (jointinput) at (9.18,-5.25);
+\draw[arr] (h.east)--(9.18,-6.45)--(jointinput)--(symbol.west);
+\draw[arr] (even.east)--(9.0,-8.12)--(9.0,-5.25)--(jointinput);
+\fill (jointinput) circle[radius=1.35pt];
+\node[note,anchor=north,text width=17.6cm] at (8.8,-10.65)
+ {图示区分母算子与任务改造。确定性编码不增加原始信息；可靠性与定位增益须用独立数据检验。};
+\end{tikzpicture}
+\end{document}

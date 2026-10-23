@@ -1,0 +1,94 @@
+% Editable geometry and decision/audit information flow.
+\documentclass[tikz,border=5pt]{standalone}
+\usepackage{fontspec,xeCJK,amsmath,amssymb}
+\IfFontExistsTF{TeX Gyre Termes}{\setmainfont{TeX Gyre Termes}}{\setmainfont{Latin Modern Roman}}
+\IfFontExistsTF{TeX Gyre Heros}{\setsansfont{TeX Gyre Heros}}{\setsansfont{Latin Modern Sans}}
+\setCJKmainfont{FandolSong-Regular.otf}[BoldFont=FandolSong-Bold.otf]
+\setCJKsansfont{FandolHei-Regular.otf}[BoldFont=FandolHei-Bold.otf]
+\usetikzlibrary{arrows.meta,calc,positioning,fit,backgrounds,patterns}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,>=Stealth,
+ font=\sffamily\fontsize{9.4}{12}\selectfont,
+ box/.style={draw=black!75,fill=white,rounded corners=1.5pt,align=center,inner sep=5pt},
+ group/.style={draw=black!75,fill=black!2,rounded corners=2pt,line width=.7pt},
+ arr/.style={->,line width=.7pt,draw=black!85},
+ head/.style={font=\sffamily\bfseries\fontsize{10.6}{13}\selectfont,align=left},
+ note/.style={font=\sffamily\fontsize{8.8}{11}\selectfont,align=center}]
+
+\draw[group] (0,0) rectangle (8.65,-9.50);
+\node[head,anchor=north west] at (.25,-.2) {M2\quad 共同采样高度上的判别几何};
+\node[note,anchor=north,text width=7.9cm] at (4.32,-.73)
+ {返回区域提出测量中心；所有端点与路径仍须合法};
+
+% The dashed outline is a schematic legal observation/flying region.
+\draw[dashed,draw=black!60,line width=.7pt,fill=white]
+ (.6,-6.55)--(7.75,-6.55)--(8.02,-4.1)--(7.54,-1.7)--(4.55,-1.23)--(.72,-1.55)--cycle;
+\node[note,anchor=north west,fill=white,inner sep=2pt] at (.88,-1.57) {物理合法域（示意）};
+
+% Moving return region: origin is the current pair center, not an old border point.
+\path[fill=black!12,draw=black!50,densely dashed,line width=.7pt]
+ (1.28,-5.18)--(5.95,-1.37)--(6.86,-2.65)--(1.58,-5.60)--cycle;
+\coordinate (current) at (1.43,-5.39);
+\coordinate (q) at (4.35,-3.37);
+\coordinate (qm) at (3.47,-2.71);
+\coordinate (qp) at (5.23,-4.03);
+\fill (current) circle[radius=2pt];
+\node[note,anchor=north west] at (.8,-5.78) {当前双机中心};
+\draw[arr,line width=1pt] (current)--(3.15,-4.10);
+\node[note,rotate=36,fill=black!12,inner sep=1pt] at (2.38,-4.28) {记忆方向 $\mathbf u_t$};
+\node[note,align=center] at (5.97,-2.12) {返回记忆区域\\$\mathcal T_t$};
+
+% Pair baseline and source gradient difference, shown as a qualified local case.
+\draw[<->,line width=.9pt] (qm)--(qp);
+\filldraw[fill=white,line width=.8pt] (qm) circle[radius=3.5pt];
+\filldraw[fill=white,line width=.8pt] (qp) circle[radius=3.5pt];
+\fill (q) circle[radius=2pt];
+\node[note,anchor=south east,fill=white,inner sep=1.5pt] at (3.44,-2.64) {$\mathbf q-\tfrac d2\mathbf u$};
+\node[note,anchor=north west,fill=white,inner sep=1.5pt] at (5.29,-4.08) {$\mathbf q+\tfrac d2\mathbf u$};
+\node[note,anchor=south west,fill=white,inner sep=1pt] at (4.32,-3.24) {$\mathbf q$};
+\draw[arr] (4.52,-3.14)--(5.61,-3.96);
+\node[note,anchor=west,fill=white,inner sep=1pt] at (5.68,-3.7) {$\mathbf u$};
+\draw[arr,densely dotted,line width=.85pt] (3.72,-3.92)--(4.81,-4.74);
+\node[note,anchor=north east,fill=white,inner sep=1pt] at (4.78,-4.86) {源梯度差 $\Delta\mathbf g$};
+
+\filldraw[fill=black!65,draw=black] (7.02,-5.55) circle[radius=2.6pt];
+\node[note,anchor=north,fill=white,inner sep=1pt] at (6.57,-5.86) {记忆区外的\\合法复测};
+\draw[->,densely dashed,draw=black!60] (5.82,-5.29)--(6.87,-5.52);
+
+\node[box,anchor=north west,minimum width=7.9cm,minimum height=1.55cm,text width=7.5cm] at (.38,-7.01)
+ {评价源响应差与池化联合协方差\\
+ $D_{ij}^{\rm geom}=\Delta\mathbf z_{ij}^{\top}[\Sigma_i+\Sigma_j+\lambda_g I]^{-1}\Delta\mathbf z_{ij}$\\
+ 短基线：局部资格成立时，才使用梯度线性近似\\
+ 长基线：使用精确端点预测，并另行标定\\
+ 图中方向平行为条件示意，不表示所有噪声下均最优};
+
+\draw[group] (9.35,0) rectangle (17.85,-9.50);
+\node[head,anchor=north west] at (9.6,-.2) {M3\quad 动作成本与独立审计账本};
+\node[box,anchor=north west,minimum width=7.3cm,minimum height=1.52cm,text width=6.9cm] (action) at (9.95,-1.04)
+ {\textbf{正常利用 + 付费覆盖 / 显式挑战}\\
+ 主假设对全部竞争源的最坏KL / 成本\\
+ $\rho_t=(1-\epsilon)\lambda_t+\epsilon\nu_t$\\
+ 仅选合法、可负担且已标定的动作};
+\node[box,anchor=north west,minimum width=7.3cm,minimum height=1.12cm,text width=6.9cm] (observe) at (9.95,-3.2)
+ {\textbf{执行两机移动与驻留，记录真实成本}\\
+ 新的唯一原始块 $X_t$\ $\longrightarrow$\ 联合符号 $Z_t$};
+\draw[arr] (action.south)--(observe.north);
+
+\node[box,anchor=north west,minimum width=3.36cm,minimum height=1.45cm,text width=3.0cm] (post) at (9.95,-5.02)
+ {\textbf{源概率账本}\\一个块只更新一次\\$w_{t-1}\to w_t$\\输出 $P_t(g)$};
+\node[box,anchor=north west,minimum width=3.36cm,minimum height=1.45cm,text width=3.0cm] (audit) at (13.89,-5.02)
+ {\textbf{新后缀审计}\\$E_i(t)$ 与 $\mathcal C_t$\\可相容列表可恢复\\不回乘源后验};
+\draw[arr] (observe.south)--(13.6,-4.66)--(post.north |- 0,-4.66)--(post.north);
+\draw[arr] (13.6,-4.66)--(audit.north |- 0,-4.66)--(audit.north);
+\fill (13.6,-4.66) circle[radius=1.3pt];
+\draw[arr] (post.west)--(9.6,-5.745)--(9.6,-1.8)--(action.west |- 0,-1.8);
+\node[note,rotate=90,fill=black!2,inner sep=1pt] at (9.6,-3.65) {当前主假设};
+\draw[arr] (audit.east)--(17.6,-5.745)--(17.6,-1.8)--(action.east |- 0,-1.8);
+\node[note,rotate=90,fill=black!2,inner sep=1pt] at (17.6,-3.65) {仅反馈下一动作};
+
+\node[note,anchor=north,text width=7.15cm,align=left] at (13.6,-7.08)
+ {记忆、几何评分和审计量用于决策。\\同一原始块在源后验中只计为一个联合证据。\\列表重新相容不等于零源质量会自动复活。};
+\node[note,anchor=north,text width=17.85cm] at (8.92,-9.93)
+ {几何和数据流均为设计示意，未报告完整原生双机闭环或连续未知源定位成绩。};
+\end{tikzpicture}
+\end{document}

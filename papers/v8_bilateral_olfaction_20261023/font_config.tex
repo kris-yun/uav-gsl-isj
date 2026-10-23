@@ -1,0 +1,13 @@
+% Portable fonts included with standard TeX Live / Overleaf; no system-specific paths.
+\IfFontExistsTF{TeX Gyre Termes}{\setmainfont{TeX Gyre Termes}}{\setmainfont{Latin Modern Roman}}
+\IfFontExistsTF{TeX Gyre Heros}{\setsansfont{TeX Gyre Heros}}{\setsansfont{Latin Modern Sans}}
+\setCJKmainfont{FandolSong-Regular.otf}[BoldFont=FandolSong-Bold.otf,ItalicFont=FandolKai-Regular.otf]
+\setCJKsansfont{FandolHei-Regular.otf}[BoldFont=FandolHei-Bold.otf]
+\setCJKmonofont{FandolFang-Regular.otf}
+% Small OFL-licensed renamed subset for the verified author character 鋆.
+\IfFileExists{fonts/V8ReferenceFallback.otf}{%
+  \setCJKfallbackfamilyfont{\CJKrmdefault}[Path=fonts/]{V8ReferenceFallback.otf}%
+}{\IfFileExists{../fonts/V8ReferenceFallback.otf}{%
+  \setCJKfallbackfamilyfont{\CJKrmdefault}[Path=../fonts/]{V8ReferenceFallback.otf}%
+}{}}
+\xeCJKsetup{PunctStyle=quanjiao,AutoFallBack=true}

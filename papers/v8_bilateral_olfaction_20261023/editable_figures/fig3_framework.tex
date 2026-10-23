@@ -1,0 +1,88 @@
+% Editable vector framework, V8. Original V7 PPT retained separately.
+% Compile with XeLaTeX. All geometry and labels are native TikZ.
+\documentclass[tikz,border=5pt]{standalone}
+\usepackage{fontspec,xeCJK,amsmath,amssymb}
+\IfFontExistsTF{TeX Gyre Termes}{\setmainfont{TeX Gyre Termes}}{\setmainfont{Latin Modern Roman}}
+\IfFontExistsTF{TeX Gyre Heros}{\setsansfont{TeX Gyre Heros}}{\setsansfont{Latin Modern Sans}}
+\setCJKmainfont{FandolSong-Regular.otf}[BoldFont=FandolSong-Bold.otf]
+\setCJKsansfont{FandolHei-Regular.otf}[BoldFont=FandolHei-Bold.otf]
+\usetikzlibrary{arrows.meta,calc,positioning,fit,backgrounds}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,>=Stealth,
+ font=\sffamily\fontsize{9.4}{12}\selectfont,
+ box/.style={draw=black!75,fill=white,rounded corners=1.5pt,align=center,inner sep=5pt},
+ group/.style={draw=black!80,fill=black!2,rounded corners=2pt,line width=.7pt},
+ arr/.style={->,line width=.7pt,draw=black!85},
+ info/.style={->,dashed,line width=.6pt,draw=black!65},
+ head/.style={font=\sffamily\bfseries\fontsize{10.6}{13}\selectfont,align=left},
+ tinytext/.style={font=\sffamily\fontsize{8.7}{10.6}\selectfont,align=center}]
+
+% Fixed coordinates keep the information paths stable during editing.
+\node[box,anchor=north west,minimum width=5.35cm,minimum height=1.45cm,text width=4.98cm] (input) at (0,0)
+ {\textbf{同步物理输入}\\实际时间戳；三维采样位置\\两侧气体序列；可用局地风};
+\node[box,anchor=north west,minimum width=5.35cm,minimum height=1.45cm,text width=4.98cm] (ledger) at (6.05,0)
+ {\textbf{唯一原始观测账本}\\块ID、动作、时钟、原始读数\\驻留块 $X_t$ 与行进侧信息 $H_t^{\rm tr}$};
+\node[box,anchor=north west,minimum width=5.35cm,minimum height=1.45cm,text width=4.98cm] (cal) at (12.1,0)
+ {\textbf{事前冻结的模型与支持}\\合法候选源；共享干扰机制\\有限核库；已标定动作与条件表};
+\draw[arr] (input.east)--(ledger.west);
+
+
+% M1: internal operators and source-specific adaptation.
+\draw[group] (0,-2.15) rectangle (10.45,-6.4);
+\node[head,anchor=north west] at (.25,-2.31) {M1\quad 面向竞争源的双侧镜像联合通道};
+\node[tinytext,anchor=north west,text width=9.8cm,align=left] at (.3,-2.82)
+ {母结构：因果滤波、整流与镜像相减；二次改造：源对选择与联合源证据};
+\node[box,anchor=north west,font=\sffamily\fontsize{8.5}{10.5}\selectfont,minimum width=2.2cm,minimum height=1.34cm,text width=1.89cm] (gate) at (.3,-3.36)
+ {时钟/传感\\同步与带宽\\输入资格};
+\node[box,anchor=north west,font=\sffamily\fontsize{8.5}{10.5}\selectfont,minimum width=2.2cm,minimum height=1.34cm,text width=1.89cm] (filter) at (2.85,-3.36)
+ {固定因果库\\$f_{1k},f_{2k}$\\有限参数};
+\node[box,anchor=north west,font=\sffamily\fontsize{8.5}{10.5}\selectfont,minimum width=2.2cm,minimum height=1.34cm,text width=1.89cm] (mirror) at (5.4,-3.36)
+ {镜像与整流\\左右对换\\$q_{LR}-q_{RL}$};
+\node[box,anchor=north west,font=\sffamily\fontsize{8.5}{10.5}\selectfont,minimum width=2.2cm,minimum height=1.34cm,text width=1.89cm] (select) at (7.95,-3.36)
+ {源对JS选择\\$0\!\le\!|\mathcal J_a|\!\le\!m$\\本次动态数0};
+\draw[arr] (gate.east)--(filter.west);
+\draw[arr] (filter.east)--(mirror.west);
+\draw[arr] (mirror.east)--(select.west);
+\node[box,anchor=north west,minimum width=9.85cm,minimum height=1.03cm,text width=9.3cm] (joint) at (.3,-5.08)
+ {共同强度 $e_t$ 与所选 $h_{t,k}$\ $\longrightarrow$\ 一个联合符号 $Z_t$\\源条件表 $\widehat P(Z_t\mid s_i,r,a_t)$；一个原始块只更新一次源权重};
+\draw[arr] (select.south)--(9.05,-4.91)--(joint.north -| select.south);
+\draw[arr] (ledger.south)--(8.73,-1.82)--(1.4,-1.82)--(1.4,-2.15);
+\node[tinytext,fill=white,inner sep=2pt] at (4.72,-1.82) {新增同步块 $X_t$};
+
+% Posterior output is separate from the audit list.
+\node[box,anchor=north west,minimum width=6.25cm,minimum height=1.55cm,text width=5.82cm] (posterior) at (11.2,-2.15)
+ {\textbf{源--机制联合权重与二维源图}\\$w_t(i,r)\ \longrightarrow\ \pi_t(s_i)=\sum_r w_t(i,r)$\\$P_t(g)=\sum_{i:\Pi(s_i)\in g}\pi_t(s_i)$};
+\draw[info] (cal.south)--(posterior.north -| cal.south);
+\draw[arr] (joint.east)--(10.82,-5.595)--(10.82,-2.93)--(posterior.west);
+
+% M2: proposals never remove legal paid coverage.
+\draw[group] (0,-6.88) rectangle (10.45,-9.35);
+\node[head,anchor=north west] at (.25,-7.05) {M2\quad 边界方向记忆与判别式双机几何};
+\node[align=left,anchor=north west,text width=9.8cm] at (.3,-7.59)
+ {已发生运动与进入事件 $H_t^{\rm tr}$\ $\longrightarrow$\ 返回记忆区域\\训练响应均值、梯度差、联合协方差\ $\longrightarrow$\ 双点提议\\仅约束正常利用；覆盖与挑战保留记忆区外的合法动作};
+
+% M3 uses the incumbent against every opponent, not all unordered pairs.
+\draw[group] (11.2,-4.37) rectangle (17.45,-9.35);
+\node[head,anchor=north west] at (11.43,-4.54) {M3\quad 完整源集的成本约束反证};
+\node[align=center,anchor=north,text width=5.73cm,font=\sffamily\fontsize{9}{11}\selectfont] at (14.325,-5.08)
+ {当前主假设 $i_{t+1}$，对手为全部 $j\ne i_{t+1}$\\[2pt]
+ $\textstyle\max_{y\ge0,v}v$，$\textstyle\sum_a c_{t+1}(a)y_a=1$\\[2pt]
+ $\textstyle\sum_a y_aD_{i_{t+1}j,t+1}(a)\ge v,\quad\forall j\ne i_{t+1}$\\[2pt]
+ $\lambda_{t+1,a}=y_a/\sum_b y_b$\\
+ $\rho_{t+1}=(1-\epsilon)\lambda_{t+1}+\epsilon\nu_{t+1}$};
+\node[box,anchor=north west,font=\sffamily\fontsize{9}{11}\selectfont,minimum width=5.65cm,minimum height=1.1cm,text width=5.25cm] (audit) at (11.5,-7.82)
+ {同一新 $Z_t$ 的后缀审计 $E_i(t)$\\可相容列表仅反馈下一动作\\审计量不回乘源后验};
+\draw[arr] (posterior.south)--(14.325,-4.37);
+\node[tinytext,fill=white,inner sep=2pt] at (14.325,-4.04) {当前源判断与动作条件预测};
+\draw[arr] (10.45,-7.56)--(11.2,-7.56);
+
+% Execute, pay, observe; no audit-to-posterior evidence arrow.
+\node[box,anchor=north west,minimum width=7.5cm,minimum height=.98cm,text width=7.05cm] (execute) at (5,-10.02)
+ {\textbf{执行下一双机动作 $a_{t+1}$：路径、基线与驻留}\\记录实际成本，获得下一唯一原始观测块};
+\draw[arr] (14.325,-9.35)--(14.325,-10.51)--(execute.east);
+\draw[arr] (execute.west)--(-.42,-10.51)--(-.42,-.73)--(input.west);
+\node[tinytext,fill=white,inner sep=2pt] at (2.2,-10.51) {执行后的新实测};
+\node[tinytext,anchor=north,text width=17.45cm] at (8.72,-11.35)
+ {方法与信息流示意；本次原生对照动态通道为0，完整双机主动闭环仍待验证。};
+\end{tikzpicture}
+\end{document}

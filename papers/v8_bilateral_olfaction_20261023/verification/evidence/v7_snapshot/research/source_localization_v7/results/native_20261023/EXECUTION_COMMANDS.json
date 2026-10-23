@@ -1,0 +1,71 @@
+{
+  "cwd": "D:\\ZYC\\UAV\\.codex\\worktrees\\v7-native-source-discrimination-20261023\\A-gas\\research\\source_localization_v7",
+  "commands": [
+    {
+      "command": "git fetch --no-tags origin research/active-source-discrimination-v7",
+      "exit_code": 0,
+      "evidence": "input pinned commit verified"
+    },
+    {
+      "command": "python -m venv .venv; .venv/Scripts/python -m pip install -r requirements-tested.txt",
+      "exit_code": 0,
+      "evidence": "DEPENDENCY_INSTALL.log"
+    },
+    {
+      "command": "python scripts/run_tests.py --out results/native_20261023/r0_tests",
+      "exit_code": 1,
+      "evidence": "r0_tests/TEST_RECEIPT.json"
+    },
+    {
+      "command": "python native/recover_assets.py",
+      "exit_code": 0,
+      "evidence": "recover.log"
+    },
+    {
+      "command": "native/build_native.cmd",
+      "exit_code": 0,
+      "evidence": "native_build.log"
+    },
+    {
+      "command": "python native/extract_existing_worlds.py",
+      "exit_code": 0,
+      "evidence": "extraction_first.log"
+    },
+    {
+      "command": "python scripts/run_tests.py --out results/native_20261023/r0_tests_windows_fixed; V7_OCB_ROOT=local_assets/ocb_x00",
+      "exit_code": 0,
+      "evidence": "r0_tests_windows_fixed/TEST_RECEIPT.json"
+    },
+    {
+      "command": "python native/fit_native.py",
+      "exit_code": 0,
+      "evidence": "train.log"
+    },
+    {
+      "command": "python native/evaluate_native.py",
+      "exit_code": 0,
+      "evidence": "dev_first.log"
+    },
+    {
+      "command": "native/build_native.cmd after adding inference API",
+      "exit_code": 0,
+      "evidence": "native_build_inference.log"
+    },
+    {
+      "command": "python native/verify_native.py",
+      "exit_code": 0,
+      "evidence": "native_qa_first.log"
+    },
+    {
+      "command": "python frozen_O24/verify_package.py",
+      "exit_code": 0,
+      "evidence": "O24_FROZEN_END_QA.log"
+    },
+    {
+      "command": "python native/verify_delivery.py",
+      "exit_code": 0,
+      "evidence": "portable_recompute.log"
+    }
+  ],
+  "inherited_network_credentials_not_recorded": true
+}

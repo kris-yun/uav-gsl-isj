@@ -1,0 +1,63 @@
+% !TEX TS-program = xelatex
+% !TEX encoding = UTF-8
+% V8 research manuscript, rebuilt from the user's original aas project.
+\RequirePackage{iftex}
+\ifXeTeX\else\PackageError{UAV-GSL-V8}{Use XeLaTeX}{Select XeLaTeX in Overleaf.}\fi
+\PassOptionsToPackage{fontset=fandol}{ctex}
+\documentclass{aas}
+\usepackage{amsmath,amssymb,bm,mathtools}
+\usepackage{graphicx,booktabs,tabularx,array,multirow}
+\usepackage{ccaption,microtype,placeins,xcolor,enumitem}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,shapes.geometric}
+\usepackage{xurl}
+\usepackage[unicode,hidelinks]{hyperref}
+\input{font_config.tex}
+\hypersetup{pdftitle={双侧镜像嗅觉与主动反证驱动的无人机气体源概率定位},pdfauthor={},pdfsubject={V8研究稿，非投稿定稿},pdfkeywords={气体源定位，镜像嗅觉，源判别，主动感知}}
+\setlength{\abovedisplayskip}{6pt plus 2pt minus 2pt}
+\setlength{\belowdisplayskip}{6pt plus 2pt minus 2pt}
+\setlength{\jot}{3pt}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0pt}
+\setlength{\emergencystretch}{2em}
+\setlist{nosep,leftmargin=1.7em,topsep=3pt}
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\KL}{\operatorname{KL}}
+\newcommand{\JS}{\operatorname{JS}}
+\newcommand{\ccite}[1]{\nobreak\cite{#1}}
+\newcommand{\pending}{\textit{待执行}}
+\newcommand{\researchstatus}[1]{\par\noindent\textbf{验证状态.} #1\par}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\renewcommand{\refname}{\centering\normalsize\bfseries 参考文献}
+% Remove fake journal volume, issue, author and DOI fields in this research draft.
+\makeatletter
+\AtBeginDocument{%
+\def\ps@aas@firstheadings{\let\@oddfoot\@empty\let\@evenfoot\@empty
+ \def\@oddhead{\vbox{\hbox to\textwidth{\small 无人机气体源概率定位研究稿\hfill V8\quad 2026-10-23\quad\thepage}\vskip2mm\hrule}}\let\@evenhead\@oddhead}
+\def\ps@aasheadings{\let\@oddfoot\@empty\let\@evenfoot\@empty
+ \def\@oddhead{\vbox{\hbox to\textwidth{\small 双侧镜像嗅觉与主动反证定位\hfill V8 研究稿\quad\thepage}\vskip2mm\hrule}}\let\@evenhead\@oddhead}
+}
+\makeatother
+\begin{document}
+\cntitle{双侧镜像嗅觉与主动反证驱动的\\无人机气体源概率定位}
+\cnauthor{研究讨论稿}
+\cnabstract{针对间歇羽流下有限局部测量难以区分竞争气源、错误源判断可能持续影响后续采样的问题，研究以同步双机嗅觉观测为输入的气体源概率定位方法。构建源判别导向的双侧镜像嗅觉联合通道，将因果时间滤波、非线性整流和左右镜像相减用于提取候选源相关差异，并在同一观测块内联合建模共模强度与镜像响应；利用动态气味边界的进入方向记忆约束候选测量区域，以源响应差选择双机基线；在完整合法源集中进行成本约束的反证动作分配，以新观测后缀审计当前源判断。主输出为二维源位置概率图，审计结果仅影响后续决策。基于已恢复的8个原生GADEN归档世界，在两个已标定源、4个独立开发世界的粗采样理想浓度读出对照中，普通单点及完整双点方法均为4/4严格判对，当前镜像通道选择方法为2/4，平均平面MAP误差2.427\,m。训练目标提前饱和导致动态镜像通道未被选入，尚未建立相对普通联合观测的独立增益。本文据此给出完整方法研究稿、条件性理论及分层验证方案，双机主动闭环和湖岸泛化性能仍待检验。}
+\cnkeyword{气体源定位，双侧镜像嗅觉，竞争源判别，主动感知，序贯假设检验，源概率图}
+\entitle{Probabilistic UAV Gas Source Localization via Bilateral Opponent Olfaction and Active Falsification}
+\enauthor{Research manuscript}
+\enabstract{Intermittent plumes can make competing gas sources difficult to distinguish from limited local measurements, while an incorrect source belief can influence subsequent sensing. This manuscript develops a probabilistic localization method using synchronized observations from a pair of UAVs. A source-discriminative bilateral opponent channel combines causal temporal filtering, rectification, and mirrored subtraction, and jointly models common intensity and opponent responses within each observation block. Entry-direction memory at dynamic odor boundaries proposes sensing regions, while differences between source-conditioned responses determine the sensing baseline. Cost-constrained action allocation retains all admissible sources and uses a fresh observation suffix to audit current source hypotheses. The primary output is a two-dimensional source probability map; audit statistics affect future decisions without being counted again as gas evidence. A bounded comparison used eight restored native GADEN archive worlds, with two calibrated source locations and four independent development worlds under coarse sampling and ideal concentration readout. Ordinary single-point and full paired-observation methods classified all four development worlds correctly, whereas the current channel-selection method classified two, with a mean planar MAP error of 2.427 m. Its training objective saturated before any dynamic opponent channel was selected. The present evidence therefore does not establish a localization advantage. The manuscript specifies the algorithms, conditional theoretical statements, and controlled validation plan; native dual-UAV closed-loop performance and lakeshore generalization remain to be tested.}
+\enkeyword{gas source localization, bilateral opponent olfaction, source discrimination, active sensing, sequential hypothesis testing, source probability map}
+\makeatletter\gdef\aas@doi{}\gdef\caddress{}\gdef\aas@enaddress{}\makeatother
+\maketitle
+\pagestyle{aasheadings}
+\raggedbottom
+\input{sections/01_introduction.tex}
+\input{sections/02_problem.tex}
+\input{sections/03_04_methods.tex}
+\input{sections/05_experiments.tex}
+\input{sections/06_conclusion.tex}
+\FloatBarrier
+\input{references.tex}
+\end{document}

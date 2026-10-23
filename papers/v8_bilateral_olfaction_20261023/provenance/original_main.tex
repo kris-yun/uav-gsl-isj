@@ -1,0 +1,330 @@
+% !TEX TS-program = xelatex
+% !TEX encoding = UTF-8
+\RequirePackage{iftex}
+\ifPDFTeX
+  \PackageError{RAIOM-AAS}{xxx}{ XeLaTeX}
+\fi
+\documentclass{aas}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{ccaption}
+\usepackage{microtype}
+\usepackage{placeins}
+\usepackage{xcolor}
+\setlength{\abovedisplayskip}{7pt plus 2pt minus 2pt}
+\setlength{\belowdisplayskip}{7pt plus 2pt minus 2pt}
+\setlength{\abovedisplayshortskip}{7pt plus 2pt minus 2pt}
+\setlength{\belowdisplayshortskip}{7pt plus 2pt minus 2pt}
+\setlength{\jot}{3pt}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0pt}
+\setcounter{page}{1}
+
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\ccite}[1]{\nobreak\cite{#1}}
+\newcommand{\rarejun}{\raisebox{-0.10em}{\includegraphics[height=0.92em]{figures/rare_jun.png}}}
+\newCJKfontfamily\rarehanfont{Noto Serif CJK SC}
+\newcommand{\raresheng}{{\rarehanfont 昇}}
+
+
+\begin{document}
+
+\cntitle{{\hei {\resizebox{0.92\textwidth}{!}{{基于候选源因果推断的湖岸无人机气源定位}}}}}
+\cnauthor{作者姓名$^{\scriptscriptstyle1}$\hspace{2em}通信作者$^{\scriptscriptstyle1}$}
+
+\cnabstract{{湖岸环境中的局地风、岸线、障碍和湍流会使气体传播呈现明显的随机性与间歇性，此外移动气体传感器的响应和恢复过程也会使当前读数受到历史暴露影响，因此无人机难以仅凭局部浓度稳定判断泄漏源位置。本文面向湖岸无人机气体源定位，以地图与障碍、局部风场、无人机位姿与采样轨迹以及气体读数为输入，在概率建图与前向仿真（Probabilistic Mapping and Forward Simulation，PMFS）的候选源推断框架上，构建由当前源判断、未来观测预测和下一步采样组成的闭环方法。首先，在给定环境、已执行轨迹和传感器状态后，比较不同候选源对实际观测的解释能力，并更新候选源后验概率。其次，对候选飞行路径预测不同源假设下的未来传感器观测，保留能够区分候选源的路径差异。最后，根据候选动作执行后期望降低的源位置不确定性，并结合飞行风险选择下一步动作。该方法持续输出候选源概率分布、泄漏源位置估计和下一步飞行动作，使历史源推断与未来动作评价使用一致的观测描述。}}
+
+\cnkeyword{{无人机, 气体源定位, 湖岸环境, 候选源因果推断, 未来观测预测, 主动感知}}
+\makeatletter\gdef\aas@doi{}\makeatother
+
+\entitle{{{UAV Gas Source Localization in Lakeshore Environments via Candidate-Source Causal Inference}}}
+\enauthor{AUTHOR Name$^{1}$\qquad CORRESPONDING Author$^{1}$}
+
+\enabstract{{Local wind, shorelines, obstacles, and turbulence make gas dispersion in lakeshore environments highly stochastic and intermittent. The response and recovery dynamics of a mobile gas sensor further make the current reading dependent on previous exposure, so a UAV cannot reliably infer the leakage-source location from local concentration alone. This work addresses UAV gas source localization using maps and obstacles, local wind observations, UAV pose and sampling trajectory, and gas measurements as inputs. Building on the candidate-source inference framework of Probabilistic Mapping and Forward Simulation (PMFS), we formulate localization as a closed loop of current source inference, future observation prediction, and next-sampling action selection. Candidate sources are first evaluated through a controlled causal comparison in which the environment, executed trajectory, and sensor state are fixed while the source hypothesis is varied, yielding an updated source posterior. Future sensor observations are then predicted for feasible flight paths under different source hypotheses while retaining route-dependent differences useful for source discrimination. Finally, the next action is selected according to the expected reduction in source-location uncertainty together with a flight-risk penalty. The method continuously outputs the candidate-source posterior, the estimated leakage-source position, and the next UAV action, so that historical source inference and future action evaluation share a consistent observation description.}}
+
+\enkeyword{{Unmanned aerial vehicle, gas source localization, lakeshore environment, candidate-source causal inference, future observation prediction, active sensing}}
+\cnaddress{作者姓名,通信作者. {{基于候选源因果推断的湖岸无人机气源定位}}. 自动化学报, 20XX, \textbf{XX}(X): X--X}
+\enaddress{Author Name, Corresponding Author. {UAV Gas Source Localization in Lakeshore Environments via Candidate-Source Causal Inference}. \textsl{Acta Automatica Sinica}, 20XX, \textbf{XX}(X): X--X}
+
+\maketitle
+\makeatletter
+\def\ps@aasheadings{
+    \let\@evenhead\@empty\let\@evenfoot\@empty
+    \let\@oddhead\@empty\let\@oddfoot\@empty
+    \def\@evenhead{%
+        \vbox{%
+            \vskip 3.2mm%
+            \hbox to \textwidth {\hbox{\zihao{5-}\thepage} \hfill \hbox{\zihao{5-}\song 自\hskip 2.30em动\hskip 2.30em化\hskip 2.30em学\hskip 2.30em报} \hfill \hbox{\zihao{5-} XX\hskip 0.18em{\zihao{5-}\song 卷\ }}}%
+            \vskip 2.0mm%
+            \hbox to \textwidth{\noindent\rule[2mm]{\textwidth}{0.5pt}}%
+        }%
+    }
+    \def\@oddhead{%
+        \vbox{%
+            \vskip 3.2mm%
+            \hbox to \textwidth {\quad {\zihao{5-} X\hskip 0.18em}{\zihao{5-}\song 期}\hfill{\small\zihao{5-}\song 作者姓名等 基于候选源因果推断的湖岸无人机气源定位}\hfill {\zihao{5-}\thepage}}%
+            \vskip 2.0mm%
+            \hbox to \textwidth{\noindent\rule[2mm]{\textwidth}{0.5pt}}%
+        }
+    }%
+}
+\makeatother
+\pagestyle{aasheadings}
+\raggedbottom
+
+
+
+\section{引言}
+
+{
+\textbf{气体源定位的核心任务是利用有限的局部测量确定未知泄漏源的位置。}
+危险气体泄漏可能威胁人员安全，也可能造成持续的环境影响。无人机能够在不接近危险源的情况下快速进入目标区域，并连续获取气体、风场和位姿信息，因此已成为移动气体源定位的重要平台\ccite{1,2}。现有机器人气体源定位方法已经从规则搜索发展到概率推断、气体分布建图和主动采样\ccite{1,17}。与简单寻找局部高浓度位置不同，源定位需要根据沿飞行轨迹获得的有限观测，反推出哪些位置更可能是真实泄漏源，本质上是一个由局部观测反推未知源位置的逆问题。
+
+\textbf{随机气体传播和传感器动态使局部观测难以与源位置建立稳定对应关系。}
+气体释放后会受到背景风、岸线、障碍和湍流共同影响，高浓度气团可能间歇出现，也可能被输送到远离泄漏源的位置\ccite{14,18}。因此，同一泄漏源在不同风况和不同采样轨迹下可以产生明显不同的观测，不同源位置也可能在局部形成相似读数。与此同时，移动气体传感器具有有限的响应和恢复速度，当前测量还可能保留前一段气体暴露的影响\ccite{5,15}。单个时刻的浓度大小因此不能稳定反映源距离，可靠定位需要同时利用历史气体序列、局部风场、无人机运动和传感器状态。
+
+\textbf{概率源推断、气体前向传播和主动感知为处理这种不确定性提供了基础。}
+概率建图与前向仿真（Probabilistic Mapping and Forward Simulation，PMFS）先利用实测信息形成气体命中概率图，再从多个候选源出发进行前向传播，并根据预测结果与观测信息的一致性更新源位置概率\ccite{3}。Gaden-RT（气体扩散仿真工具）能够为候选源提供可交互的前向传播结果\ccite{7}，数据驱动羽流模型和信息驱动气体建图则用于提高复杂环境中的预测与采样效率\ccite{8,9}。在运动决策方面，Infotaxis（信息趋向搜索）及后续信息路径规划方法通过比较不同动作可能带来的不确定性变化选择采样位置\ccite{6,32}。这些研究分别提供了候选源推断、未来观测建模和主动采样所需的基本工具。
+
+\textbf{现有闭环定位仍面临一个问题，当前源判断与未来动作评价往往没有使用一致的观测生成描述。}
+候选源的前向传播结果通常需要压缩为空间概率、命中事件或局部一致性分数，这种处理容易弱化观测的时间顺序、实际采样路径和传感器记忆信息。另一方面，主动规划必须预测执行某条路径后传感器可能得到什么观测。如果这一未来观测模型与当前源后验采用的观测依据不同，源判断和动作评价就会建立在两套不同的概率含义上。还需要注意，同一源在不同传播环境下本来就可能产生不同响应，因此不能简单要求不同风况下得到相同的观测表征。更合理的做法是在环境、路径和传感器状态给定后，判断实际观测对各候选源的支持程度，并用同一种条件观测描述预测未来路径下可能获得的测量。
+
+\textbf{针对上述问题，本文将无人机气体源定位构建为候选源因果推断、未来观测预测和主动采样相互衔接的闭环过程。}
+首先，在固定当前环境、已执行轨迹和传感器状态等背景条件后，仅改变候选源假设，比较不同候选源对真实观测的解释能力，并由此更新候选源后验概率。这种受控比较构成本文候选源因果推断的核心。其次，对每条可执行候选路径预测不同源假设下可能出现的未来传感器观测，保留能够区分这些源假设的路径差异。最后，根据候选动作执行后期望降低的源位置不确定性评价动作的信息价值，并结合飞行风险选择下一步动作。整个过程持续输出候选源概率分布、当前源位置估计和下一步飞行动作，使已有观测用于判断哪个源更可能，未来观测用于判断下一步去哪里更有区分能力。
+}
+
+\section{问题分析与总体方案}
+%2.1场景画出来，任务描述清楚;根据场景和任务提出挑战性问题;总结现有研究工作是如何解决挑战性问题;
+%2.2研究动机,总结清楚现有工作有什么缺点,缺点的问题要具象化,不能粗略,解释为什么还有这个问题
+%解决的问题要明确
+{
+图\ref{fig:scene_compare}给出了本文研究的湖岸无人机气体源定位任务。固定但未知的泄漏源位于可搜索区域内，气体在局地风、岸线和障碍作用下形成随机、时变且不连续的空间分布。无人机携带气体传感器、风速风向传感器和定位模块，沿实际飞行轨迹连续获得局部气体、风场和位姿信息。算法既不知道真实源位置，也不能直接获得完整气体场，只能利用已经采集的局部测量逐步更新源位置判断，并决定下一步采样位置。
+}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.98\textwidth]{figures/figure1_scene_original.pdf}
+\caption{{湖岸无人机气体源定位任务。未知泄漏源产生的气体在局地风、岸线和障碍作用下随机传播，无人机沿实际轨迹获取局部气体、风场和位姿测量，并利用这些信息持续估计源位置。}}
+\label{fig:scene_compare}
+\end{figure*}
+
+{
+本文采用离散决策时刻$t$描述闭环定位过程。固定泄漏源记为$\mathbf s^*$，候选源集合记为$\mathcal S=\{s_1,\ldots,s_J\}$，其中$s_j=[x_j,y_j,z_j]^{\mathsf T}$。第$t$次决策前已经获得的任务信息记为$\mathcal D_t$。它包括地图与障碍$G$、环境边界信息$B$、局部风场观测$\hat{\mathbf u}_{1:t}$、无人机采样轨迹$X_{1:t}^{\mathrm{obs}}$、气体传感器记录$M_{1:t}^{\mathrm{obs}}$以及任务开始前固定的运行参数$\Xi$。
+}
+\begin{equation}
+\left.
+\begin{aligned}
+\mathbf s^*&=[x_s,y_s,z_s]^{\mathsf T}\in\Omega,\\
+\mathcal D_t&=\left\{G,B,\hat{\mathbf u}_{1:t},X_{1:t}^{\mathrm{obs}},M_{1:t}^{\mathrm{obs}},\Xi\right\}.
+\end{aligned}
+\right\}
+\label{eq:task_variables}
+\end{equation}
+
+{
+闭环定位需要同时回答源在哪里和下一步去哪里。源位置判断由候选源后验概率$\pi_t(s)$和当前估计位置$\hat{\mathbf s}_t$表示，运动决策由当前可执行动作集合$\mathcal A_t$中的最优动作$a_t^*$表示。本文的主要输出写为
+}
+\begin{equation}
+\left.
+\begin{aligned}
+\pi_t(s_j)&=P(S=s_j\mid\mathcal D_t),\\
+\hat{\mathbf s}_t&=\arg\max_{s_j\in\mathcal S}\pi_t(s_j),\\
+a_t^*&=\arg\max_{a\in\mathcal A_t}J_t(a).
+\end{aligned}
+\right\}
+\label{eq:task_outputs}
+\end{equation}
+
+
+{
+  其中$\boldsymbol\pi_t=[\pi_t(s_1),\ldots,\pi_t(s_J)]$表示完整的候选源概率分布，$J_t(a)$表示动作$a$的综合评价值，$\mathcal A_t$只包含满足地图边界和飞行可行性约束的动作。这样，局部测量是算法输入，候选源后验和位置估计是定位结果，$a_t^*$是规划结果。
+}
+
+{
+气体、风场和位姿测量需要先统一到同一空间与时间基准。记世界坐标系、无人机机体系和风传感器坐标系分别为$\mathcal F_W$、$\mathcal F_B$和$\mathcal F_S$。风传感器在$\mathcal F_S$中测得$^{S}\mathbf u_t^{\mathrm{obs}}$，其安装偏移为$^{B}\mathbf p_S$。采用机器人感知中的标准刚体变换\ccite{33}，世界坐标系下的风矢量和实际采样位置分别写为
+}
+\begin{equation}
+\left.
+\begin{aligned}
+{}^{W}\mathbf u_t^{\mathrm{obs}}&={}^{W}\mathbf R_{B,t}\,{}^{B}\mathbf R_{S}\,{}^{S}\mathbf u_t^{\mathrm{obs}},\\
+{}^{W}\mathbf x_{S,t}&={}^{W}\mathbf x_{B,t}+{}^{W}\mathbf R_{B,t}\,{}^{B}\mathbf p_S.
+\end{aligned}
+\right\}
+\label{eq:coordinate_transforms}
+\end{equation}
+
+{
+在物理层面，源位置、环境条件和随机传播过程共同决定气体在空间和时间上的分布。本文用统一的前向算子表示这一关系
+}
+\begin{equation}
+C(\mathbf x,t)=\mathcal T(\mathbf s^*,E_t,U,\mathbf x,t),
+\label{eq:transport_operator_definition}
+\end{equation}
+{
+其中$E_t$表示当前环境条件，$U$表示一次随机传播实现，$C(\mathbf x,t)$表示位置$\mathbf x$和时刻$t$处的物理浓度。Gaden-RT用于实现候选源的气体传播前向计算\ccite{7}。在线定位阶段使用的是无人机实际获取的局部气体、风场和位姿观测，完整气体场只用于建立候选源的前向响应，不作为算法能够直接获得的在线观测。
+}
+
+{
+物理浓度还不能直接等同于传感器读数。气体传感器具有响应、恢复和可能的延迟过程，当前输出会受到前序暴露影响\ccite{5,15}。本文用传感器动态算子$\mathcal G_{\psi}$表示物理浓度序列到可测传感器响应的转换，其中$\psi$表示传感器动态参数。历史候选源比较和未来路径预测都经过同一观测层，使两部分使用相同含义的传感器观测量。
+}
+
+{
+由此，整个定位过程需要依次解决三个问题。第一，候选源因果推断需要在固定当前环境、已执行轨迹和传感器状态等背景条件后，仅改变候选源假设，判断哪些候选源更能解释已经获得的真实观测。第二，未来观测预测需要回答无人机执行不同候选路径后，在各个源假设下可能得到怎样的传感器观测。第三，预测信息规划需要回答哪一个候选动作最有可能进一步区分仍然存在较大概率的源位置，同时满足飞行安全和可执行性要求。
+
+这三个环节组成同一闭环信息流
+}
+\begin{equation}
+\left.
+\begin{aligned}
+(\mathcal D_t,\mathcal S)
+&\xrightarrow{\text{候选源因果推断}}
+\boldsymbol\pi_t,\\
+(\mathcal D_t,\mathcal S,\mathcal A_t)
+&\xrightarrow{\text{未来观测预测}}
+\mathbf Q_t,\\
+(\boldsymbol\pi_t,\mathbf Q_t)
+&\xrightarrow{\text{预测信息规划}}
+a_t^*.
+\end{aligned}
+\right\}
+\label{eq:belief_prediction_action}
+\end{equation}
+
+{
+其中$\mathbf Q_t=[q_t(s,a)]$表示不同候选源与候选动作对应的未来检测概率矩阵。图\ref{fig:method_loop}进一步给出了三个环节之间的输入、输出和信息传递关系。左侧CREL在固定当前数据$\mathcal D_t$、共享传播成员$U_{1:M}$和传感器初始状态的条件下，仅替换候选源$S=s_j$，沿已经执行的采样轨迹重放候选源响应，并利用历史检测事件形成复合证据$L_t(s)$，进而得到源后验$\boldsymbol\pi_t$和最大后验源位置估计。右上方TSDC从当前无人机状态出发，对可执行动作集合$\mathcal A_t$中的候选采样路径进行未来传播与传感器响应预测，得到$\mathbf Q_t$。右下方PIP同时使用$\boldsymbol\pi_t$和$\mathbf Q_t$计算各动作的信息价值$J_t(a)$，选择$a_t^*=\arg\max_a J_t(a)$。无人机执行所选动作后获得新观测，信息历史更新为$\mathcal D_{t+1}$，随后进入下一轮候选源推断与动作选择。
+}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.98\textwidth]{figures/figure2_algorithm_route_clear.pdf}
+\caption{{无人机气体源定位的受控比较与闭环信息流。CREL在固定当前数据、共享传播成员和传感器状态后，仅改变候选源假设，并利用历史检测事件更新源后验$\boldsymbol\pi_t$。TSDC对可执行采样路径预测未来检测概率矩阵$\mathbf Q_t$。PIP结合$\boldsymbol\pi_t$和$\mathbf Q_t$计算动作信息价值$J_t(a)$并选择$a_t^*$，执行后获得新观测并更新$\mathcal D_{t+1}$。}}
+\label{fig:method_loop}
+\end{figure*}
+
+\section{候选源因果遭遇规律（CREL）}
+
+PMFS对候选源逐一进行前向传播，并根据预测结果和实际观测之间的一致性更新源位置概率\ccite{3}。CREL保留候选源前向模拟这一基础，但改变候选源证据的组织方式。设$s\in\mathcal S$为一个候选源，$U_k$为第$k$个随机传播成员。CREL在相同环境历史和相同随机成员规则下，仅改变候选源位置，先生成源条件气体场，再沿已经执行的真实轨迹读取对应位置和时刻的浓度。这样可以把气体传播与轨迹采样分开，候选源$s$在第$b$个测量段的传播和采样关系写为
+\begin{equation}
+\left.
+\begin{aligned}
+C^{s,k}(\mathbf x,\tau)&=F_{\mathrm{GADEN}}(s,E_{1:t},U_k,\mathbf x,\tau),\\
+\mathbf c_{t,skb}&=\left\{C^{s,k}(\mathbf x_n^{\mathrm{obs}},t_n)\right\}_{n\in I_b}.
+\end{aligned}
+\right\}
+\label{eq:crel_forward_sample}
+\end{equation}
+
+其中$E_{1:t}$表示与历史观测对应的环境条件，$I_b$表示第$b$个测量段。CREL的因果在受控候选源比较上，保持环境、已执行轨迹和随机传播规则一致，只比较不同候选源对同一观测历史的解释能力。该处理与因果推断中固定背景条件、区分目标因素与干扰因素的思想一致\ccite{16,29}。
+
+候选源产生的浓度序列不能直接与真实传感器检测结果比较。记$m^-_{t,b}$为由已观测气体历史确定的第$b$个测量段初始传感器记忆状态，$\mathcal G_{\psi}$先将$\mathbf c_{t,skb}$转换为模拟传感器响应$\widetilde{\mathbf m}_{t,skb}$，再判断该段是否达到检测阈值$\theta$。有限随机成员的检测频率采用Jeffreys平滑\ccite{30}，历史检测概率可写为
+\begin{equation}
+\left.
+\begin{aligned}
+\widetilde{\mathbf m}_{t,skb}&=\mathcal G_{\psi}(\mathbf c_{t,skb},m^-_{t,b}),\\
+Z_{t,skb}&=\I\!\left[\max \widetilde{\mathbf m}_{t,skb}>\theta\right],\\
+\widetilde q_t(s,b)&=\frac{\sum_{k=1}^{M}Z_{t,skb}+\tfrac12}{M+1}.
+\end{aligned}
+\right\}
+\label{eq:crel_sensor_probability}
+\end{equation}
+
+真实传感器在同一测量段的检测结果记为$Y_{t,b}=\I[\max_{n\in I_b}M_n^{\mathrm{obs}}>\theta]$。因此，$\widetilde q_t(s,b)$与$Y_{t,b}$处在同一传感器观测尺度，并且都对应第$b$个测量段。各测量段共同形成候选源$s$的分段复合似然$L_t(s)$，再与任务开始时的源先验$\pi_0(s)$结合得到当前后验，二者写为
+\begin{equation}
+\left.
+\begin{aligned}
+L_t(s)&=\prod_{b\in V_t}\left[\widetilde q_t(s,b)\right]^{Y_{t,b}}
+\left[1-\widetilde q_t(s,b)\right]^{1-Y_{t,b}},\\[1mm]
+\pi_t(s)&=\frac{\pi_0(s)L_t(s)}{\sum_{j\in\mathcal S}\pi_0(j)L_t(j)}.
+\end{aligned}
+\right\}
+\label{eq:crel_evidence_posterior}
+\end{equation}
+
+这里的$L_t(s)$用于累积不同测量段对候选源的支持程度，不把相邻测量段解释为严格独立的随机样本。传感器的时间记忆已经通过每个测量段开始前的状态$m^-_{t,b}$进入$\mathcal G_{\psi}$。CREL由同一初始先验归一化全部累计证据，避免同一批历史观测被重复叠加，同时保留测量位置、测量时间和传感器状态的对应关系。
+
+\section{未来检测概率（TSDC）}
+
+TSDC把CREL中用于历史比较的传感器观测尺度延伸到未来动作。设$\mathcal A_t$为第$t$次决策时满足地图边界和飞行可行性约束的候选动作集合，$a\in\mathcal A_t$表示一个候选动作，$m_t$表示由当前可观测气体历史确定的传感器记忆状态。对候选源$s$和随机传播成员$k$，先沿动作$a$对应的未来测量窗提取浓度序列$\mathbf c^+_{t,ska}$，再使用与CREL相同的$\mathcal G_{\psi}$生成模拟传感器响应。未来检测事件和源条件检测概率写为
+\begin{equation}
+\left.
+\begin{aligned}
+\widetilde{\mathbf m}^{+}_{t,ska}&=\mathcal G_{\psi}(\mathbf c^{+}_{t,ska},m_t),\\
+Z^{+}_{t,ska}&=\I\!\left[\max \widetilde{\mathbf m}^{+}_{t,ska}>\theta\right],\\
+q_t(s,a)&=\frac{\sum_{k=1}^{M}Z^{+}_{t,ska}+\tfrac12}{M+1}.
+\end{aligned}
+\right\}
+\label{eq:tsdc_detection_probability}
+\end{equation}
+
+这里$\mathbf c^+_{t,ska}$描述候选动作下的物理浓度过程，$\widetilde{\mathbf m}^{+}_{t,ska}$描述同一过程经过传感器动态后的可观测响应。TSDC输出的$q_t(s,a)$因此直接对应未来传感器检测事件，即$q_t(s,a)=P(Y_{t+1}=1\mid S=s,a,\mathcal D_t)$。经典committor描述系统从当前状态进入未来目标事件的概率\ccite{35}，。由于CREL和TSDC使用同一$\mathcal G_{\psi}$和同一检测阈值，历史源证据与未来动作预测保持一致的观测含义。
+
+\section{预测信息规划（PIP）}
+
+近期气体源定位工作已经利用移动测量和累计信息评价采样位置\ccite{5,6}。PIP不重新定义新的不确定性指标，而是直接使用CREL输出的$\pi_t(s)$和TSDC输出的$q_t(s,a)$判断候选动作能否区分当前仍有可能的源位置。对任一候选动作$a$，先由当前源后验得到总体检测概率$\bar q_t(a)$，再计算未来二值检测对候选源的期望信息价值$J_t(a)$，并选择信息价值最大的动作，三者写为
+\begin{equation}
+\left.
+\begin{aligned}
+\bar q_t(a)&=\sum_{s\in\mathcal S}\pi_t(s)q_t(s,a),\\
+J_t(a)&=H\!\left(\bar q_t(a)\right)-\sum_{s\in\mathcal S}\pi_t(s)H\!\left(q_t(s,a)\right),\\
+a_t^*&=\arg\max_{a\in\mathcal A_t}J_t(a).
+\end{aligned}
+\right\}
+\label{eq:pip_information_action}
+\end{equation}
+
+其中$H(p)=-p\log p-(1-p)\log(1-p)$为二值熵\ccite{31}。第一行给出动作$a$下的总体检测概率，第二行衡量不同候选源的未来检测结果能否被区分，第三行给出动作选择。该表达等价于候选源$S$与未来二值检测$Y_{t+1}$在给定动作$a$和当前信息$\mathcal D_t$时的互信息，因此保持经典信息论含义\ccite{31,32}。现代信息型序贯设计也常用期望信息变化评价下一次观测价值\ccite{13,12}。
+
+当不同候选源对同一动作给出的$q_t(s,a)$很接近时，未来检测结果难以区分源假设，$J_t(a)$较低。当不同候选源的预测差异较大时，新观测更可能改变源后验，$J_t(a)$随之增大。与经典Infotaxis\ccite{32}相比，PIP的主要变化不是重新定义熵，而是将统一的源条件传感器检测概率直接接入动作评价。
+
+\section{算法流程与创新性分析}
+
+
+
+\section{实验}
+
+
+\section{结论与展望}
+
+本文研究湖岸随机气体传播条件下的无人机气体源定位问题，CREL通过统一候选源比较条件、分离气体场生成与轨迹采样，并把候选源响应转换到真实传感器观测尺度后形成当前源概率。TSDC使用同一传感器动态模型预测候选动作下的源条件未来检测概率，使历史源证据和未来动作预测具有一致的观测含义。PIP进一步结合当前源概率和未来检测概率计算动作信息价值，从而连接当前源推断、未来观测预测和下一步采样。后续研究将结合真实湖岸风场、不同传感器动态和更复杂飞行约束，进一步检验该闭环方法在不同环境尺度下的适用范围。
+
+\FloatBarrier\FloatBarrier
+
+\begin{thebibliography}{99}
+\bibitem{1} Francis A, Li S, Griffiths C, Sienz J. Gas source localization and mapping with mobile robots: A review. {\sl Journal of Field Robotics}, 2022, {\bf 39}(8): 1341--1373. DOI: 10.1002/rob.22109
+\bibitem{17} 何丽, 杜洋\rarejun, 李知远, 冉腾, 肖文东, 姚佳程. 移动机器人主动嗅觉气源定位方法研究综述. {\sl 计算机工程与应用}, 2025, {\bf 61}(10): 36--49.
+\bibitem{2} Ercolani C, Jin W, Martinoli A. 3D gas sensing with multiple nano aerial vehicles: Interference analysis, algorithms and experimental validation. {\sl Sensors}, 2023, {\bf 23}(20): 8512. DOI: 10.3390/s23208512
+\bibitem{19} 许顺, 黄宇鼎, 范靖, 汤达恒, 吕游. 三维环境中无人机气味源定位研究. {\sl 电子测量与仪器学报}, 2025, {\bf 39}(7): 236--246. DOI: 10.13382/j.jemi.B2508218
+\bibitem{20} 张学锋, 唐晶晶, 江军, 陈迪. 大中型化工装置区多无人机查找泄漏源仿真研究. {\sl 中国安全科学学报}, 2026, {\bf 36}(5): 56--63. DOI: 10.16265/j.cnki.issn1003-3033.2026.05.1091
+\bibitem{14} Welch B M, Horel J D, Sauer J A. Application of the NCAR FastEddy microscale model to a lake breeze front. {\sl Atmosphere}, 2024, {\bf 15}(7): 809. DOI: 10.3390/atmos15070809
+\bibitem{4} Tian C, Wang A, Fan H, Wiedemann T, Luo Y, Yang L, Lin W, Lilienthal A J, Chen X. Deep learning based topography aware gas source localization with mobile robot. In: {\sl 2025 IEEE International Conference on Robotics and Automation}. IEEE, 2025: 4380--4386. DOI: 10.1109/ICRA55743.2025.11128134
+\bibitem{18} 李世钰, 袁杰, 谢霖伟, 郭旭, 张宁宁. 局部风信息启发的AVW-PPO室内气源定位算法. {\sl 哈尔滨工业大学学报}, 2025, {\bf 57}(8): 57--68.
+\bibitem{5} Jin W, Martinoli A. Sense in motion with belief clustering: Efficient gas source localization with mobile robots. In: {\sl 2024 IEEE International Conference on Robotics and Automation}. IEEE, 2024: 14909--14916. DOI: 10.1109/ICRA57147.2024.10611440
+\bibitem{15} Norzam W A S, Hawari H F, Kamarudin K, Juffry Z H M, Hussein N A A, Gupta M, Abdullah A N. Mobile robot gas source localization using SLAM-GDM with a graphene-based gas sensor. {\sl Electronics}, 2023, {\bf 12}(1): 171. DOI: 10.3390/electronics12010171
+\bibitem{25} 王蕊, 吴玲玲, 李淑娟, 张欢, 徐智霞. 基于无线传感网络的重气泄漏监测与定位. {\sl 火箭军工程大学学报}, 2025, {\bf 39}(2): 70--78. DOI: 10.20189/j.cnki.CN/61-1527/E.202502008
+\bibitem{26} 陈泽众, 姚逸卿, 阳媛, 鲍琳欣. 基于时间加权最大似然估计的室内气体源定位方法. {\sl 仪器仪表学报}, 2025, {\bf 46}(2): 92--102.
+\bibitem{3} Ojeda P, Monroy J, Gonzalez-Jimenez J. Robotic gas source localization with probabilistic mapping and online dispersion simulation. {\sl IEEE Transactions on Robotics}, 2024, {\bf 40}: 3551--3564. DOI: 10.1109/TRO.2024.3426368
+\bibitem{7} Ojeda P, Monroy J, Gonzalez-Jimenez J. Gaden-RT: A real time and interactive gas dispersion simulator for mobile robotics. {\sl SoftwareX}, 2025, {\bf 32}: 102388. DOI: 10.1016/j.softx.2025.102388
+\bibitem{8} Gongora A, Monroy J, Rahbar F, Ercolani C, Gonzalez-Jimenez J, Martinoli A. Information-driven gas distribution mapping for autonomous mobile robots. {\sl Sensors}, 2023, {\bf 23}(12): 5387. DOI: 10.3390/s23125387
+\bibitem{9} Jin W, Rahbar F, Ercolani C, Martinoli A. Towards efficient gas leak detection in built environments: Data-driven plume modeling for gas sensing robots. In: {\sl 2023 IEEE International Conference on Robotics and Automation}. IEEE, 2023: 7749--7755. DOI: 10.1109/ICRA48891.2023.10160816
+\bibitem{6} Jin W, Leroy H, Bösel-Schmid N, Martinoli A. Cumulative informative path planning for efficient gas source localization with mobile robots. In: {\sl 2025 IEEE/RSJ International Conference on Intelligent Robots and Systems}. IEEE, 2025: 18088--18094. DOI: 10.1109/IROS60139.2025.11246224
+\bibitem{10} Hassan S, Wang L, Mahmud K R. Robotic odor source localization via vision and olfaction fusion navigation algorithm. {\sl Sensors}, 2024, {\bf 24}(7): 2309. DOI: 10.3390/s24072309
+\bibitem{11} Fukui C, Uchida T, Koizumi S, Murayama Y, Liu H, Nakata T, Terutsuki D. Advanced bio-hybrid drone for superior odor-source localization: High-precision and extended-range detection capabilities. {\sl npj Robotics}, 2025, {\bf 3}: 4. DOI: 10.1038/s44182-025-00020-9
+\bibitem{28} Wang S, Sun S, Liu M, Gao B, Wang Y, Lin F. Resource-aware probability-based collaborative odor source localization using multiple UAVs. {\sl China Communications}, 2025, {\bf 22}(12): 269--280. DOI: 10.23919/JCC.ja.2023-0208
+\bibitem{21} 史天乐, 李飞, 陈\raresheng, 卢春喜, 王维. 基于CFD模拟的人工神经网络动态溯源模型. {\sl 化工进展}, 2025, {\bf 44}(8): 4772--4784. DOI: 10.16085/j.issn.1000-6613.2025-0551
+\bibitem{22} 陈增强, 齐聪聪, 赵怡雯, 程义. 基于多策略改进哈里斯鹰优化算法的危化品泄漏源反演. {\sl 上海交通大学学报}, 2026, {\bf 60}(5): 860--870. DOI: 10.16183/j.cnki.jsjtu.2024.452
+\bibitem{23} 江逸远, 谷小婧, 顾幸生. 基于红外视频的VOCs泄漏源定位与气羽实例分割. {\sl 华东理工大学学报(自然科学版)}, 2024, {\bf 50}(5): 695--707. DOI: 10.14135/j.cnki.1006-3080.20231011002
+\bibitem{24} 李鹏, 单钰强. 基于协方差拟合的离格气体泄漏源定位方法. {\sl 电子器件}, 2023, {\bf 46}(2): 478--484. DOI: 10.3969/j.issn.1005-9490.2023.02.028
+\bibitem{27} 董红召, 金灿, 唐伟, 佘翊妮, 林盈盈. 基于遗传-模式搜索算法的微尺度管控区域大气污染物PM$_{2.5}$溯源. {\sl 浙江大学学报(工学版)}, 2024, {\bf 58}(6): 1296--1304. DOI: 10.3785/j.issn.1008-973X.2024.06.019
+\bibitem{16} Andreou M, Chen N, Bollt E. Assimilative causal inference. {\sl Nature Communications}, 2026, {\bf 17}: 1854. DOI: 10.1038/s41467-026-68568-0
+\bibitem{29} Pearl J. {\sl Causality: Models, Reasoning, and Inference}. 2nd ed. Cambridge: Cambridge University Press, 2009.
+\bibitem{13} Huan X, Jagalur J, Marzouk Y M. Optimal experimental design: Formulations and computations. {\sl Acta Numerica}, 2024, {\bf 33}: 715--840. DOI: 10.1017/S0962492924000023
+\bibitem{31} Shannon C E. A mathematical theory of communication. {\sl Bell System Technical Journal}, 1948, {\bf 27}(3): 379--423.
+\bibitem{32} Vergassola M, Villermaux E, Shraiman B I. ``Infotaxis'' as a strategy for searching without gradients. {\sl Nature}, 2007, {\bf 445}(7126): 406--409. DOI: 10.1038/nature05464
+\bibitem{33} Thrun S, Burgard W, Fox D. {\sl Probabilistic Robotics}. Cambridge, MA: MIT Press, 2005.
+\bibitem{12} Sloman S J, Bharti A, Martinelli J, Kaski S. Bayesian active learning in the presence of nuisance parameters. In: {\sl Proceedings of the Fortieth Conference on Uncertainty in Artificial Intelligence}. PMLR, 2024, {\bf 244}: 3245--3263.
+\bibitem{30} Jeffreys H. {\sl Theory of Probability}. 3rd ed. Oxford: Clarendon Press, 1961.
+\bibitem{35} Metzner P, Schütte C, Vanden-Eijnden E. Transition path theory for Markov jump processes. {\sl Multiscale Modeling \& Simulation}, 2009, {\bf 7}(3): 1192--1219. DOI: 10.1137/070699500
+\bibitem{34} Brier G W. Verification of forecasts expressed in terms of probability. {\sl Monthly Weather Review}, 1950, {\bf 78}(1): 1--3.
+\end{thebibliography}
+
+\end{document}
