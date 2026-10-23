@@ -1,0 +1,370 @@
+{
+  "status": "READONLY_ORIGINAL_M1_STRUCTURE_AUDIT_COMPLETE",
+  "original_model_sha256": "8687342253ddbf4749578233897a93a9553d6ef6c22485c498223001f57aff3f",
+  "unchanged_coverage_target": 0.04,
+  "selection": [
+    []
+  ],
+  "original_train_receipt": {
+    "operator": "source-pair-cover mirrored bank",
+    "variant": "secondary",
+    "actions": [
+      {
+        "action": "frozen_pool12_pool17",
+        "selected": [],
+        "source_pairs": [
+          [
+            0,
+            1
+          ]
+        ],
+        "robust_training_js": [
+          0.24258597169364066
+        ],
+        "search": [
+          {
+            "filter": "static_gradient",
+            "training_objective": 0.04,
+            "gain": 0.0
+          }
+        ],
+        "unseparated_pairs": [],
+        "certificate": "TRAINING_DIAGNOSTIC_ONLY_NOT_A_POPULATION_GUARANTEE"
+      }
+    ],
+    "smoothing_mode": "fixed_total",
+    "alpha_total": 1.0,
+    "training_blocks_per_source_mechanism": 2,
+    "counts_are_not_independent_frames_by_default": true,
+    "static_mode": false,
+    "strictly_temporal_claim": false,
+    "known_statistics": "JS distance, histogram likelihood and Bayes normalization are not claimed new"
+  },
+  "training_rows": [
+    {
+      "world_id": "ocb_r2_cfg00_r01",
+      "source": "A",
+      "even": 0.22154421201761765,
+      "static_odd": -0.22154421201761765,
+      "encoded_symbol": 0,
+      "left_all_zero": true,
+      "right_all_zero": false,
+      "threshold": 0.22961639664103675,
+      "all_coarse_cues": [
+        -0.22154421201761765,
+        -0.3707999053067998,
+        -0.029767149921978264,
+        -0.38568074504365685,
+        -0.05952882939569226,
+        -0.4450007068893743,
+        -0.17816875308712715
+      ]
+    },
+    {
+      "world_id": "ocb_r2_cfg00_r02",
+      "source": "A",
+      "even": 0.22540081333707768,
+      "static_odd": -0.22540081333707768,
+      "encoded_symbol": 0,
+      "left_all_zero": true,
+      "right_all_zero": false,
+      "threshold": 0.22961639664103675,
+      "all_coarse_cues": [
+        -0.22540081333707768,
+        -0.32869960163789724,
+        -0.03969600146014146,
+        -0.33275795780066303,
+        -0.04781271378567309,
+        -0.35727004992739614,
+        -0.09683689803913936
+      ]
+    },
+    {
+      "world_id": "ocb_r2_s2x_x00_r01",
+      "source": "B",
+      "even": 0.23383197994499583,
+      "static_odd": 0.23383197994499583,
+      "encoded_symbol": 1,
+      "left_all_zero": false,
+      "right_all_zero": true,
+      "threshold": 0.22961639664103675,
+      "all_coarse_cues": [
+        0.23383197994499583,
+        0.28636334099496324,
+        0.0,
+        0.292891776009925,
+        0.0,
+        0.34222815313485555,
+        0.09854578412583212
+      ]
+    },
+    {
+      "world_id": "ocb_r2_s2x_x00_r02",
+      "source": "B",
+      "even": 0.5374422121252541,
+      "static_odd": 0.5374422121252541,
+      "encoded_symbol": 1,
+      "left_all_zero": false,
+      "right_all_zero": true,
+      "threshold": 0.22961639664103675,
+      "all_coarse_cues": [
+        0.5374422121252541,
+        0.5847532616301343,
+        0.005204462805910914,
+        0.5961054429053902,
+        0.027908825356423028,
+        0.646626225603417,
+        0.12895039075247627
+      ]
+    }
+  ],
+  "exact_null_model": {
+    "description": "each of two sources has two independent world-level Bernoulli(0.5) observations, identical source laws; frozen total smoothing alpha=1",
+    "enumerated_cases": 16,
+    "false_saturation_cases": 10,
+    "probability_of_saturation_in_this_constructed_null": 0.625,
+    "scope": "mathematical finite-sample counterexample, not a measured GADEN false-positive rate",
+    "cases": [
+      {
+        "four_independent_null_world_bits": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "js": 0.0,
+        "target_saturated": false
+      },
+      {
+        "four_independent_null_world_bits": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "js": 0.06465997358168779,
+        "target_saturated": true
+      },
+      {
+        "four_independent_null_world_bits": [
+          0,
+          0,
+          1,
+          0
+        ],
+        "js": 0.06465997358168779,
+        "target_saturated": true
+      },
+      {
+        "four_independent_null_world_bits": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "js": 0.24258597169364066,
+        "target_saturated": true
+      },
+      {
+        "four_independent_null_world_bits": [
+          0,
+          1,
+          0,
+          0
+        ],
+        "js": 0.06465997358168779,
+        "target_saturated": true
+      },
+      {
+        "four_independent_null_world_bits": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "js": 0.0,
+        "target_saturated": false
+      },
+      {
+        "four_independent_null_world_bits": [
+          0,
+          1,
+          1,
+          0
+        ],
+        "js": 0.0,
+        "target_saturated": false
+      },
+      {
+        "four_independent_null_world_bits": [
+          0,
+          1,
+          1,
+          1
+        ],
+        "js": 0.06465997358168779,
+        "target_saturated": true
+      },
+      {
+        "four_independent_null_world_bits": [
+          1,
+          0,
+          0,
+          0
+        ],
+        "js": 0.06465997358168779,
+        "target_saturated": true
+      },
+      {
+        "four_independent_null_world_bits": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "js": 0.0,
+        "target_saturated": false
+      },
+      {
+        "four_independent_null_world_bits": [
+          1,
+          0,
+          1,
+          0
+        ],
+        "js": 0.0,
+        "target_saturated": false
+      },
+      {
+        "four_independent_null_world_bits": [
+          1,
+          0,
+          1,
+          1
+        ],
+        "js": 0.06465997358168779,
+        "target_saturated": true
+      },
+      {
+        "four_independent_null_world_bits": [
+          1,
+          1,
+          0,
+          0
+        ],
+        "js": 0.24258597169364066,
+        "target_saturated": true
+      },
+      {
+        "four_independent_null_world_bits": [
+          1,
+          1,
+          0,
+          1
+        ],
+        "js": 0.06465997358168779,
+        "target_saturated": true
+      },
+      {
+        "four_independent_null_world_bits": [
+          1,
+          1,
+          1,
+          0
+        ],
+        "js": 0.06465997358168779,
+        "target_saturated": true
+      },
+      {
+        "four_independent_null_world_bits": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "js": 0.0,
+        "target_saturated": false
+      }
+    ]
+  },
+  "common_intensity_loss_counterexample": {
+    "training_readings": [
+      [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.0,
+          2.0
+        ]
+      ],
+      [
+        [
+          3.0,
+          0.0
+        ],
+        [
+          4.0,
+          0.0
+        ]
+      ]
+    ],
+    "training_even": [
+      [
+        0.34657359027997264,
+        0.5493061443340549
+      ],
+      [
+        0.6931471805599453,
+        0.8047189562170501
+      ]
+    ],
+    "threshold": 0.6212266624470001,
+    "training_symbols": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "training_js": 0.24258597169364066,
+    "new_constructed_readings": [
+      [
+        0.0,
+        8.0
+      ],
+      [
+        8.0,
+        0.0
+      ]
+    ],
+    "new_common_symbols": [
+      1,
+      1
+    ],
+    "predicted_sources": [
+      1,
+      1
+    ],
+    "true_sources": [
+      0,
+      1
+    ],
+    "opposite_side_information_retained_in_raw_pair": true,
+    "dynamic_information_required": false,
+    "scope": "constructed amplitude-shift illustration, not another gas-world result"
+  },
+  "separated_findings": {
+    "easy_source_task": "ordinary single point already solved original frozen pair",
+    "small_sample_JS": "point estimate has no world-generalization coverage certificate",
+    "saturation": "one-pair clipped sum is already at its global maximum, so no additional filter can improve objective",
+    "quantization": "even-only one-bit map is many-to-one and discards left/right side; histogram can also tie on unseen symbols",
+    "dynamic_necessity": "not established by the previous pair; this audit does not fit a new dynamic model"
+  },
+  "no_modified_threshold_or_M1_training": true,
+  "no_new_DEV_read": true
+}

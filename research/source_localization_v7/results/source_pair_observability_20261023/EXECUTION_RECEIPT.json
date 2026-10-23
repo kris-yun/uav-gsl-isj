@@ -1,0 +1,50 @@
+{
+  "parent_commit": "061ecf5ddea0a59dcf932b5038ad646b7af454a4",
+  "protocol_sha256": "52a84e8139ead88473d809bd01491c4457b54f5c2d7441ac7fc6c887ed763b76",
+  "extraction_wall_s": 34.62965640006587,
+  "TRAIN_analysis_wall_s": 1.069615599932149,
+  "DEV_check_wall_s": 0.410300699993968,
+  "original_missing_Path_import_failure_retained": true,
+  "new_physical_worlds": 0,
+  "new_ROS": 0,
+  "M1_threshold_change": false,
+  "peak_RSS_and_GPU_not_instrumented": true,
+  "commands": [
+    {
+      "command": "python native/observability_20261023/extract_train.py first attempt",
+      "exit_code": 1
+    },
+    {
+      "command": "python native/observability_20261023/extract_train.py after import repair",
+      "exit_code": 0
+    },
+    {
+      "command": "python native/observability_20261023/m1_structure_audit.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python native/observability_20261023/analyze_train.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python native/observability_20261023/check_selected_dev.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python native/observability_20261023/check_selected_dev.py evaluate",
+      "exit_code": 0
+    },
+    {
+      "command": "python native/observability_20261023/verify_audit.py first scoped check",
+      "exit_code": 0
+    },
+    {
+      "command": "python native/observability_20261023/verify_audit.py complete TRAIN and DEV check",
+      "exit_code": 0
+    },
+    {
+      "command": "python native/observability_20261023/finalize_audit.py",
+      "exit_code": 0
+    }
+  ]
+}
