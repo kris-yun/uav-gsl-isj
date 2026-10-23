@@ -17,6 +17,8 @@ class Observation:
     action: Action
     wind: tuple[float, float]
     gas: float
+    wind_available: tuple[bool, bool] = (True, True)
+    gas_available: bool = True
 
 @dataclass(frozen=True)
 class Mechanism:
@@ -36,4 +38,8 @@ def observation_to_dict(obs: Observation) -> dict:
     return asdict(obs)
 
 def observation_from_dict(obj: dict) -> Observation:
-    return Observation(str(obj['uid']), Action(**obj['action']), tuple(map(float,obj['wind'][:2])), float(obj['gas']))
+    allowed = {'uid','action','wind','gas','wind_available','gas_available'}
+    if set(obj)-allowed:
+        raise ValueError('Unknown or privileged observation fields: '+str(set(obj)-allowed))
+    return Observation(str(obj['uid']), Action(**obj['action']), tuple(map(float,obj['wind'][:2])), float(obj['gas']),
+                       tuple(map(bool,obj.get('wind_available',(True,True)))), bool(obj.get('gas_available',True)))

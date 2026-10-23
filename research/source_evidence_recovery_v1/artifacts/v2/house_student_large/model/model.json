@@ -1,0 +1,49 @@
+{
+  "format": "gsl_neural_joint_v2",
+  "config": {
+    "hidden": 96,
+    "geometry_width": 16,
+    "query_width": 32,
+    "modes": 8,
+    "gas_model": "censored_lognormal",
+    "gas_lod": 0.1,
+    "length_scale": 6.628725528717041,
+    "wind_scale": 1.0,
+    "time_scale": 1.0,
+    "source_height": 0.20000000298023224,
+    "min_wind_sigma": 0.02,
+    "min_log_gas_sigma": 0.05,
+    "time_semantics": "record_index",
+    "scope": "NUMERICAL_ONLY"
+  },
+  "geometry": {
+    "landmarks": [],
+    "occupancy": [],
+    "geometry_id": "empty_geometry_engineering"
+  },
+  "version": "ce2f203a0424cdb73f24",
+  "parameters": 56927,
+  "receipt": {
+    "status": "COMPLETE",
+    "variant": "nll",
+    "epochs_completed": 40,
+    "wall_seconds": 80.68600784299633,
+    "parameters": 56927,
+    "device": "cpu",
+    "max_cuda_allocated_bytes": 0,
+    "manifest_sha256": "6b6eb5feab955f37e07f3faa162da75e5b0bd99be1d7f8a5b86a14d4bd59c70a",
+    "training_episodes": 192,
+    "unique_lineage_groups": 96,
+    "scope": "NUMERICAL_ONLY",
+    "native_3d_physics_claim": false,
+    "test_values_read": 0,
+    "target_teacher_version": null,
+    "normalized_density_anchor": true,
+    "evidence_constraint_status": "NOT_APPLICABLE",
+    "last_epoch_train_evidence_risk": null,
+    "target_binding": {},
+    "directional_supervision": false
+  },
+  "weights_sha256": "87a1ea3ad69c4270edc0810f7a05962d677c6e3a0add028e638e26a372541f4e",
+  "deployable_inputs": "legal history, candidate coordinates, static geometry, mechanism"
+}

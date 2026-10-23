@@ -1,0 +1,85 @@
+{
+  "format": "gsl_physical_teacher_v2",
+  "config": {
+    "hidden": 96,
+    "geometry_width": 32,
+    "query_width": 64,
+    "modes": 4,
+    "gas_model": "binary",
+    "gas_lod": 1e-06,
+    "length_scale": 2.0,
+    "wind_scale": 1.0,
+    "time_scale": 1.0,
+    "source_height": 0.2,
+    "min_wind_sigma": 0.02,
+    "min_log_gas_sigma": 0.05,
+    "time_semantics": "seconds",
+    "scope": "ENGINEERING_ONLY"
+  },
+  "geometry": {
+    "landmarks": [
+      [
+        0.0,
+        0.0,
+        0.2
+      ],
+      [
+        0.0,
+        3.0,
+        0.2
+      ],
+      [
+        3.0,
+        0.0,
+        0.2
+      ],
+      [
+        3.0,
+        3.0,
+        0.2
+      ]
+    ],
+    "occupancy": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "geometry_id": "manufactured_square_boundary"
+  },
+  "version": "33401dd6983af3d6fa65",
+  "parameters": 82733,
+  "receipt": {
+    "status": "COMPLETE",
+    "scope": "ENGINEERING_ONLY",
+    "native_GADEN_teacher": "BLOCKED_QUALIFIED_MULTI_SOURCE_BANK_MISSING",
+    "parameters": 82733,
+    "epochs": 9,
+    "training_episodes": 48,
+    "bank_worlds": 4,
+    "device": "cpu",
+    "wall_seconds": 0.7855678370033274,
+    "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+    "test_values_read": 0,
+    "source_ids_as_features": false,
+    "full_field_read_only_during_training": true,
+    "continuation": {
+      "status": "COMPLETE",
+      "resumed_from_epoch": 8,
+      "epochs_completed": 9,
+      "requested_epoch_cap": 9,
+      "resume_checkpoint": "/workspace/scratch/f825a7b8b273/source_evidence_recovery_v2/artifacts/v2/teacher_resume_check/resume",
+      "resume_checkpoint_sha256": "4fc3893165425a19c90885fc414eb8a91c9c063433ea9a27a1724bf7b34f23b4",
+      "prior_curve_available": true,
+      "preserved_curve_rows": 8,
+      "prior_curve_snapshot": "training_curve_before_resume_000008_c45c9c5ec908.json",
+      "prior_receipt_snapshot": "training_receipt_before_resume_000008_1a8ee6ef8731.json"
+    }
+  },
+  "weights_sha256": "19286aae1920422da58705732c374b9d5d28d212f712200aa0236f6c1ec2da4f",
+  "deployable_inputs": "legal history, candidate coordinates, static geometry, mechanism",
+  "field_width": 32,
+  "training_only": true,
+  "native_malliavin_asd": "BLOCKED_NOT_INSTRUMENTED",
+  "derivative_scope": "smooth_surrogate_only; not unbiased simulator derivative"
+}

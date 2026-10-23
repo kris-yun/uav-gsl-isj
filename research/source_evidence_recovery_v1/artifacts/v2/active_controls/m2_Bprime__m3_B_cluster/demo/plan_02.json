@@ -1,0 +1,239 @@
+{
+  "op": "plan",
+  "plan_id": "84f1539febae4a51ad9b76989df6d252:3",
+  "actions": [
+    {
+      "x": 2.4,
+      "y": 2.4,
+      "z": 0.5,
+      "time": 7.0,
+      "dwell": 1.0
+    },
+    {
+      "x": 2.5,
+      "y": 2.4,
+      "z": 0.5,
+      "time": 8.0,
+      "dwell": 1.0
+    },
+    {
+      "x": 2.6,
+      "y": 2.4,
+      "z": 0.5,
+      "time": 9.0,
+      "dwell": 1.0
+    }
+  ],
+  "reason": "max_score",
+  "counterevidence_test_reserved": false,
+  "source_map": {
+    "x": [
+      0.5,
+      2.5
+    ],
+    "y": [
+      0.5,
+      2.5
+    ],
+    "probability_mass": [
+      [
+        0.4707415744187768,
+        0.1588742908382167
+      ],
+      [
+        0.2750713643192609,
+        0.09531277042374563
+      ]
+    ],
+    "candidate_support": [
+      [
+        true,
+        true
+      ],
+      [
+        true,
+        true
+      ]
+    ],
+    "sum": 0.9999999999999999,
+    "map_xy": [
+      0.5,
+      0.5
+    ],
+    "posterior_mean_xy": [
+      1.0083741225239247,
+      1.2407682694860132
+    ]
+  },
+  "model_version": "bc9f35020f4be90e6f1a",
+  "risk_spent": 0.0,
+  "adequacy": {
+    "status": "not_calibrated",
+    "counterevidence_allowed": true,
+    "coverage_claim": "model-conditional only; physical error unbounded"
+  },
+  "power_diagnostics": {
+    "status": "COMPLETED_MODEL_CONDITIONAL_DIAGNOSTIC",
+    "scope": "one_frozen_generator_codebook_not_physical_identifiability",
+    "model_version": "bc9f35020f4be90e6f1a",
+    "null_source": 0,
+    "challenge_indices": [
+      3,
+      1
+    ],
+    "nominal_mechanism": 0,
+    "alpha": 0.025,
+    "cost_normalized_gain_tolerance": 1e-12,
+    "length": 3,
+    "word_alphabet_size": 8,
+    "draws": 512,
+    "exact_codebook": false,
+    "confidence_failure_probability": 0.0008333333333333334,
+    "tv_radius_min": 0.12539387236081362,
+    "tv_radius_max": 0.12539387236081362,
+    "layer_order": [
+      "nominal_clean",
+      "all_mechanisms_clean",
+      "all_mechanisms_corruption",
+      "all_mechanisms_corruption_tv"
+    ],
+    "layers": {
+      "nominal_clean": {
+        "alpha": 0.025,
+        "null_hypotheses": 1,
+        "alternative_hypotheses": 2,
+        "lp_power": 0.031994645247657306,
+        "power_bound": 0.0319946452476573,
+        "null_risk_bound": 0.025000000000000005,
+        "risk_slack": -3.469446951953614e-18,
+        "power_excess_over_alpha": 0.006994645247657298,
+        "cost_adjusted_gain": 0.002331548415885766,
+        "has_certified_gain": true,
+        "null_tv_radius_max": 0.0,
+        "alternative_tv_radius_max": 0.0,
+        "corruption": {
+          "max_flips": 0,
+          "max_erasures": 0,
+          "max_burst": 0
+        },
+        "solver_status": "model_and_MC_bound"
+      },
+      "all_mechanisms_clean": {
+        "alpha": 0.025,
+        "null_hypotheses": 2,
+        "alternative_hypotheses": 4,
+        "lp_power": 0.029647224319781743,
+        "power_bound": 0.029647224319781743,
+        "null_risk_bound": 0.025,
+        "risk_slack": 0.0,
+        "power_excess_over_alpha": 0.004647224319781741,
+        "cost_adjusted_gain": 0.0015490747732605805,
+        "has_certified_gain": true,
+        "null_tv_radius_max": 0.0,
+        "alternative_tv_radius_max": 0.0,
+        "corruption": {
+          "max_flips": 0,
+          "max_erasures": 0,
+          "max_burst": 0
+        },
+        "solver_status": "model_and_MC_bound"
+      },
+      "all_mechanisms_corruption": {
+        "alpha": 0.025,
+        "null_hypotheses": 2,
+        "alternative_hypotheses": 4,
+        "lp_power": 0.025,
+        "power_bound": 0.024999999999999998,
+        "null_risk_bound": 0.025000000000000005,
+        "risk_slack": -3.469446951953614e-18,
+        "power_excess_over_alpha": -3.469446951953614e-18,
+        "cost_adjusted_gain": 0.0,
+        "has_certified_gain": false,
+        "null_tv_radius_max": 0.0,
+        "alternative_tv_radius_max": 0.0,
+        "corruption": {
+          "max_flips": 1,
+          "max_erasures": 0,
+          "max_burst": 0
+        },
+        "solver_status": "model_and_MC_bound"
+      },
+      "all_mechanisms_corruption_tv": {
+        "alpha": 0.025,
+        "null_hypotheses": 2,
+        "alternative_hypotheses": 4,
+        "lp_power": 0.024999999999999994,
+        "power_bound": 0.024999999999999988,
+        "null_risk_bound": 0.02500000000000002,
+        "risk_slack": -1.734723475976807e-17,
+        "power_excess_over_alpha": -1.3877787807814457e-17,
+        "cost_adjusted_gain": 0.0,
+        "has_certified_gain": false,
+        "null_tv_radius_max": 0.12539387236081362,
+        "alternative_tv_radius_max": 0.12539387236081362,
+        "corruption": {
+          "max_flips": 1,
+          "max_erasures": 0,
+          "max_burst": 0
+        },
+        "solver_status": "model_and_MC_bound"
+      }
+    },
+    "lp_power_losses": {
+      "adding_mechanisms": 0.002347420927875564,
+      "adding_corruption": 0.004647224319781741,
+      "adding_tv_uncertainty": 6.938893903907228e-18
+    },
+    "nested_lp_power_within_numerical_tolerance": true,
+    "fallback_for_this_block": true,
+    "bottleneck": {
+      "cause": "declared_corruption_budget",
+      "layer": "all_mechanisms_corruption",
+      "power_bound": 0.024999999999999998,
+      "alpha": 0.025,
+      "power_excess_over_alpha": -3.469446951953614e-18,
+      "interpretation": "first_relaxed_layer_without_a_certified_gain_for_this_model"
+    },
+    "pairwise_necessary_bounds": {
+      "closest_clean_pair": {
+        "null_source": 0,
+        "null_mechanism": 0,
+        "alternative_source": 3,
+        "alternative_mechanism": 0,
+        "clean_tv_distance": 0.05859375,
+        "null_tv_radius": 0.12539387236081362,
+        "alternative_tv_radius": 0.12539387236081362,
+        "tv_ball_minimum_distance": 0.0,
+        "tv_balls_intersect": true,
+        "clean_pair_power_upper_bound": 0.08359375,
+        "tv_pair_power_upper_bound": 0.025
+      },
+      "closest_tv_ambiguity_pair": {
+        "null_source": 0,
+        "null_mechanism": 0,
+        "alternative_source": 3,
+        "alternative_mechanism": 0,
+        "clean_tv_distance": 0.05859375,
+        "null_tv_radius": 0.12539387236081362,
+        "alternative_tv_radius": 0.12539387236081362,
+        "tv_ball_minimum_distance": 0.0,
+        "tv_balls_intersect": true,
+        "clean_pair_power_upper_bound": 0.08359375,
+        "tv_pair_power_upper_bound": 0.025
+      },
+      "scope": "necessary_pairwise_model_bound_not_physical_identifiability"
+    },
+    "risk_budget_spent": 0.0,
+    "action_taken": false,
+    "limitations": [
+      "Relaxed-layer tests are diagnostic and must not replace the committed robust test.",
+      "A layer's failure does not prove physical source non-identifiability.",
+      "MC bounds describe sampling inside the generator, not physical model discrepancy.",
+      "The nonzero-TV LP uses a conservative range-times-radius constraint; exact recomputed power is a certificate for its chosen test, not a globally optimal exact-TV power.",
+      "No adaptive sampling or new confidence allocation is performed."
+    ]
+  },
+  "full_observation_eig": [],
+  "wall_seconds": 0.5847164930019062,
+  "risk_scope": "learned model + declared channel + MC bound; not a physical false-rejection certificate"
+}

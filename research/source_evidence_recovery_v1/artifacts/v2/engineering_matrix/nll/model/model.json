@@ -1,0 +1,75 @@
+{
+  "format": "gsl_neural_joint_v2",
+  "config": {
+    "hidden": 48,
+    "geometry_width": 16,
+    "query_width": 32,
+    "modes": 4,
+    "gas_model": "binary",
+    "gas_lod": 1e-06,
+    "length_scale": 2.0,
+    "wind_scale": 1.0,
+    "time_scale": 1.0,
+    "source_height": 0.2,
+    "min_wind_sigma": 0.02,
+    "min_log_gas_sigma": 0.05,
+    "time_semantics": "seconds",
+    "scope": "ENGINEERING_ONLY"
+  },
+  "geometry": {
+    "landmarks": [
+      [
+        0.0,
+        0.0,
+        0.2
+      ],
+      [
+        0.0,
+        3.0,
+        0.2
+      ],
+      [
+        3.0,
+        0.0,
+        0.2
+      ],
+      [
+        3.0,
+        3.0,
+        0.2
+      ]
+    ],
+    "occupancy": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "geometry_id": "manufactured_square_boundary"
+  },
+  "version": "5d3ab14cacae2f4d1102",
+  "parameters": 20139,
+  "receipt": {
+    "status": "COMPLETE",
+    "variant": "nll",
+    "epochs_completed": 8,
+    "wall_seconds": 3.293690089994925,
+    "parameters": 20139,
+    "device": "cpu",
+    "max_cuda_allocated_bytes": 0,
+    "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+    "training_episodes": 48,
+    "unique_lineage_groups": 48,
+    "scope": "ENGINEERING_ONLY",
+    "native_3d_physics_claim": false,
+    "test_values_read": 0,
+    "target_teacher_version": null,
+    "normalized_density_anchor": true,
+    "evidence_constraint_status": "NOT_APPLICABLE",
+    "last_epoch_train_evidence_risk": null,
+    "target_binding": {},
+    "directional_supervision": false
+  },
+  "weights_sha256": "2f761899b08539b11492bfb93183fef2050deadd877f2f925539ca5d23acb757",
+  "deployable_inputs": "legal history, candidate coordinates, static geometry, mechanism"
+}

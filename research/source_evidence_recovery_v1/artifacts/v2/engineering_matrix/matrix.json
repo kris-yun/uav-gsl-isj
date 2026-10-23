@@ -1,0 +1,395 @@
+{
+  "protocol": {
+    "scope": "MANUFACTURED_BACKEND_ENGINEERING_ONLY",
+    "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+    "target_sha256": "fdc74a6a3df72832fe85ed158240f2c35d763b0db010dbc4707d4049d066e078",
+    "variants": [
+      [
+        "nll",
+        "nll",
+        true
+      ],
+      [
+        "distribution",
+        "distribution",
+        true
+      ],
+      [
+        "privileged_pair",
+        "privileged_pair",
+        true
+      ],
+      [
+        "mean_log",
+        "mean_log",
+        true
+      ],
+      [
+        "projected_endpoint",
+        "projected_evidence",
+        false
+      ],
+      [
+        "projected_evidence",
+        "projected_evidence",
+        true
+      ],
+      [
+        "projected_no_anchor",
+        "projected_no_anchor",
+        true
+      ]
+    ],
+    "epochs": 8,
+    "seed": 23,
+    "batch_size": 8,
+    "learning_rate": 0.002,
+    "model_capacity": "manifest config; identical in all rows",
+    "data_order": "identical, teacher target sampling uses a separate RNG",
+    "evaluation": "all development rows and all legal source candidates",
+    "selection_rule": "no winner selection or post-result tuning",
+    "scientific_claim": false
+  },
+  "rows": [
+    {
+      "name": "nll",
+      "fit": {
+        "status": "COMPLETE",
+        "variant": "nll",
+        "epochs_completed": 8,
+        "wall_seconds": 3.293690089994925,
+        "parameters": 20139,
+        "device": "cpu",
+        "max_cuda_allocated_bytes": 0,
+        "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+        "training_episodes": 48,
+        "unique_lineage_groups": 48,
+        "scope": "ENGINEERING_ONLY",
+        "native_3d_physics_claim": false,
+        "test_values_read": 0,
+        "target_teacher_version": null,
+        "normalized_density_anchor": true,
+        "evidence_constraint_status": "NOT_APPLICABLE",
+        "last_epoch_train_evidence_risk": null,
+        "target_binding": {},
+        "directional_supervision": false
+      },
+      "development": {
+        "status": "COMPLETE_OFFLINE_DEVELOPMENT",
+        "scope": "ENGINEERING_ONLY",
+        "split": "development",
+        "episodes": 12,
+        "source_groups": 1,
+        "lineage_groups": 12,
+        "source_balanced_metrics": {
+          "top1": 0.3333333333333333,
+          "map_error_m": 1.540440114519881,
+          "top5_error_m": 1.540440114519881,
+          "true_log_margin": -0.24143020311991373,
+          "truth_nll": 1.3513906640923228,
+          "brier": 0.7304002221230532
+        },
+        "wrong_high_confidence_count": 0,
+        "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+        "model_version": "5d3ab14cacae2f4d1102",
+        "wall_seconds": 0.18946232499729376,
+        "not_native_PMFS_comparison": true,
+        "not_frozen_confirmation": true
+      }
+    },
+    {
+      "name": "distribution",
+      "fit": {
+        "status": "COMPLETE",
+        "variant": "distribution",
+        "epochs_completed": 8,
+        "wall_seconds": 6.807941920000303,
+        "parameters": 20139,
+        "device": "cpu",
+        "max_cuda_allocated_bytes": 0,
+        "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+        "training_episodes": 48,
+        "unique_lineage_groups": 48,
+        "scope": "ENGINEERING_ONLY",
+        "native_3d_physics_claim": false,
+        "test_values_read": 0,
+        "target_teacher_version": "d177075c2c2c1d5cdb93",
+        "normalized_density_anchor": true,
+        "evidence_constraint_status": "TRAIN_MINIBATCH_DIAGNOSTIC_NOT_A_CERTIFICATE",
+        "last_epoch_train_evidence_risk": 0.2143930196762085,
+        "target_binding": {
+          "targets_sha256": "fdc74a6a3df72832fe85ed158240f2c35d763b0db010dbc4707d4049d066e078",
+          "teacher_version": "d177075c2c2c1d5cdb93"
+        },
+        "directional_supervision": false
+      },
+      "development": {
+        "status": "COMPLETE_OFFLINE_DEVELOPMENT",
+        "scope": "ENGINEERING_ONLY",
+        "split": "development",
+        "episodes": 12,
+        "source_groups": 1,
+        "lineage_groups": 12,
+        "source_balanced_metrics": {
+          "top1": 0.0,
+          "map_error_m": 2.2071067811865475,
+          "top5_error_m": 2.2071067811865475,
+          "true_log_margin": -0.24181084831555685,
+          "truth_nll": 1.3461842924745637,
+          "brier": 0.746455976261343
+        },
+        "wrong_high_confidence_count": 0,
+        "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+        "model_version": "9617280f3ee1b5f49178",
+        "wall_seconds": 0.16107354500127258,
+        "not_native_PMFS_comparison": true,
+        "not_frozen_confirmation": true
+      }
+    },
+    {
+      "name": "privileged_pair",
+      "fit": {
+        "status": "COMPLETE",
+        "variant": "privileged_pair",
+        "epochs_completed": 8,
+        "wall_seconds": 13.872182317005354,
+        "parameters": 20139,
+        "device": "cpu",
+        "max_cuda_allocated_bytes": 0,
+        "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+        "training_episodes": 48,
+        "unique_lineage_groups": 48,
+        "scope": "ENGINEERING_ONLY",
+        "native_3d_physics_claim": false,
+        "test_values_read": 0,
+        "target_teacher_version": "d177075c2c2c1d5cdb93",
+        "normalized_density_anchor": true,
+        "evidence_constraint_status": "TRAIN_MINIBATCH_DIAGNOSTIC_NOT_A_CERTIFICATE",
+        "last_epoch_train_evidence_risk": 0.1003904677927494,
+        "target_binding": {
+          "targets_sha256": "fdc74a6a3df72832fe85ed158240f2c35d763b0db010dbc4707d4049d066e078",
+          "teacher_version": "d177075c2c2c1d5cdb93"
+        },
+        "directional_supervision": true
+      },
+      "development": {
+        "status": "COMPLETE_OFFLINE_DEVELOPMENT",
+        "scope": "ENGINEERING_ONLY",
+        "split": "development",
+        "episodes": 12,
+        "source_groups": 1,
+        "lineage_groups": 12,
+        "source_balanced_metrics": {
+          "top1": 0.0,
+          "map_error_m": 2.2071067811865475,
+          "top5_error_m": 2.2071067811865475,
+          "true_log_margin": -0.793276866277059,
+          "truth_nll": 1.8014166272052494,
+          "brier": 0.9391700951040174
+        },
+        "wrong_high_confidence_count": 0,
+        "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+        "model_version": "d9dd5e505296f2c180b2",
+        "wall_seconds": 0.1610147510000388,
+        "not_native_PMFS_comparison": true,
+        "not_frozen_confirmation": true
+      }
+    },
+    {
+      "name": "mean_log",
+      "fit": {
+        "status": "COMPLETE",
+        "variant": "mean_log",
+        "epochs_completed": 8,
+        "wall_seconds": 14.314773626996612,
+        "parameters": 20139,
+        "device": "cpu",
+        "max_cuda_allocated_bytes": 0,
+        "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+        "training_episodes": 48,
+        "unique_lineage_groups": 48,
+        "scope": "ENGINEERING_ONLY",
+        "native_3d_physics_claim": false,
+        "test_values_read": 0,
+        "target_teacher_version": "d177075c2c2c1d5cdb93",
+        "normalized_density_anchor": true,
+        "evidence_constraint_status": "TRAIN_MINIBATCH_DIAGNOSTIC_NOT_A_CERTIFICATE",
+        "last_epoch_train_evidence_risk": 0.1003904677927494,
+        "target_binding": {
+          "targets_sha256": "fdc74a6a3df72832fe85ed158240f2c35d763b0db010dbc4707d4049d066e078",
+          "teacher_version": "d177075c2c2c1d5cdb93"
+        },
+        "directional_supervision": true
+      },
+      "development": {
+        "status": "COMPLETE_OFFLINE_DEVELOPMENT",
+        "scope": "ENGINEERING_ONLY",
+        "split": "development",
+        "episodes": 12,
+        "source_groups": 1,
+        "lineage_groups": 12,
+        "source_balanced_metrics": {
+          "top1": 0.0,
+          "map_error_m": 2.2071067811865475,
+          "top5_error_m": 2.2071067811865475,
+          "true_log_margin": -0.793276866277059,
+          "truth_nll": 1.8014166272052494,
+          "brier": 0.9391700951040174
+        },
+        "wrong_high_confidence_count": 0,
+        "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+        "model_version": "d9dd5e505296f2c180b2",
+        "wall_seconds": 0.16668639900308335,
+        "not_native_PMFS_comparison": true,
+        "not_frozen_confirmation": true
+      }
+    },
+    {
+      "name": "projected_endpoint",
+      "fit": {
+        "status": "COMPLETE",
+        "variant": "projected_evidence",
+        "epochs_completed": 8,
+        "wall_seconds": 8.293560036996496,
+        "parameters": 20139,
+        "device": "cpu",
+        "max_cuda_allocated_bytes": 0,
+        "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+        "training_episodes": 48,
+        "unique_lineage_groups": 48,
+        "scope": "ENGINEERING_ONLY",
+        "native_3d_physics_claim": false,
+        "test_values_read": 0,
+        "target_teacher_version": "d177075c2c2c1d5cdb93",
+        "normalized_density_anchor": true,
+        "evidence_constraint_status": "TRAIN_MINIBATCH_DIAGNOSTIC_NOT_A_CERTIFICATE",
+        "last_epoch_train_evidence_risk": 0.09896624895433585,
+        "target_binding": {
+          "targets_sha256": "fdc74a6a3df72832fe85ed158240f2c35d763b0db010dbc4707d4049d066e078",
+          "teacher_version": "d177075c2c2c1d5cdb93"
+        },
+        "directional_supervision": false
+      },
+      "development": {
+        "status": "COMPLETE_OFFLINE_DEVELOPMENT",
+        "scope": "ENGINEERING_ONLY",
+        "split": "development",
+        "episodes": 12,
+        "source_groups": 1,
+        "lineage_groups": 12,
+        "source_balanced_metrics": {
+          "top1": 0.0,
+          "map_error_m": 2.2071067811865475,
+          "top5_error_m": 2.2071067811865475,
+          "true_log_margin": -0.7855930974086126,
+          "truth_nll": 1.794982653101381,
+          "brier": 0.9367683535725333
+        },
+        "wrong_high_confidence_count": 0,
+        "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+        "model_version": "0f4177a6fb4d144431b6",
+        "wall_seconds": 0.17827633499837248,
+        "not_native_PMFS_comparison": true,
+        "not_frozen_confirmation": true
+      }
+    },
+    {
+      "name": "projected_evidence",
+      "fit": {
+        "status": "COMPLETE",
+        "variant": "projected_evidence",
+        "epochs_completed": 8,
+        "wall_seconds": 13.908876993002195,
+        "parameters": 20139,
+        "device": "cpu",
+        "max_cuda_allocated_bytes": 0,
+        "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+        "training_episodes": 48,
+        "unique_lineage_groups": 48,
+        "scope": "ENGINEERING_ONLY",
+        "native_3d_physics_claim": false,
+        "test_values_read": 0,
+        "target_teacher_version": "d177075c2c2c1d5cdb93",
+        "normalized_density_anchor": true,
+        "evidence_constraint_status": "TRAIN_MINIBATCH_DIAGNOSTIC_NOT_A_CERTIFICATE",
+        "last_epoch_train_evidence_risk": 0.1003904826939106,
+        "target_binding": {
+          "targets_sha256": "fdc74a6a3df72832fe85ed158240f2c35d763b0db010dbc4707d4049d066e078",
+          "teacher_version": "d177075c2c2c1d5cdb93"
+        },
+        "directional_supervision": true
+      },
+      "development": {
+        "status": "COMPLETE_OFFLINE_DEVELOPMENT",
+        "scope": "ENGINEERING_ONLY",
+        "split": "development",
+        "episodes": 12,
+        "source_groups": 1,
+        "lineage_groups": 12,
+        "source_balanced_metrics": {
+          "top1": 0.0,
+          "map_error_m": 2.2071067811865475,
+          "top5_error_m": 2.2071067811865475,
+          "true_log_margin": -0.7932780385017395,
+          "truth_nll": 1.801417625422081,
+          "brier": 0.9391704934275427
+        },
+        "wrong_high_confidence_count": 0,
+        "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+        "model_version": "854c68782a4bb9f9752c",
+        "wall_seconds": 0.16962193899962585,
+        "not_native_PMFS_comparison": true,
+        "not_frozen_confirmation": true
+      }
+    },
+    {
+      "name": "projected_no_anchor",
+      "fit": {
+        "status": "COMPLETE",
+        "variant": "projected_no_anchor",
+        "epochs_completed": 8,
+        "wall_seconds": 12.040170987005695,
+        "parameters": 20139,
+        "device": "cpu",
+        "max_cuda_allocated_bytes": 0,
+        "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+        "training_episodes": 48,
+        "unique_lineage_groups": 48,
+        "scope": "ENGINEERING_ONLY",
+        "native_3d_physics_claim": false,
+        "test_values_read": 0,
+        "target_teacher_version": "d177075c2c2c1d5cdb93",
+        "normalized_density_anchor": false,
+        "evidence_constraint_status": "TRAIN_MINIBATCH_DIAGNOSTIC_NOT_A_CERTIFICATE",
+        "last_epoch_train_evidence_risk": 0.009847771124138186,
+        "target_binding": {
+          "targets_sha256": "fdc74a6a3df72832fe85ed158240f2c35d763b0db010dbc4707d4049d066e078",
+          "teacher_version": "d177075c2c2c1d5cdb93"
+        },
+        "directional_supervision": true
+      },
+      "development": {
+        "status": "COMPLETE_OFFLINE_DEVELOPMENT",
+        "scope": "ENGINEERING_ONLY",
+        "split": "development",
+        "episodes": 12,
+        "source_groups": 1,
+        "lineage_groups": 12,
+        "source_balanced_metrics": {
+          "top1": 0.3333333333333333,
+          "map_error_m": 1.4714045207910316,
+          "top5_error_m": 1.4714045207910316,
+          "true_log_margin": -0.2858440081278483,
+          "truth_nll": 1.4327821866324548,
+          "brier": 0.7788318921852561
+        },
+        "wrong_high_confidence_count": 0,
+        "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+        "model_version": "e941c4e50c8a774f1a0d",
+        "wall_seconds": 0.15988188199844444,
+        "not_native_PMFS_comparison": true,
+        "not_frozen_confirmation": true
+      }
+    }
+  ]
+}

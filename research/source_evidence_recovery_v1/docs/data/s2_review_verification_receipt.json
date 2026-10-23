@@ -1,0 +1,116 @@
+{
+  "status": "PASS_ARCHIVE_AND_SAVED_NUMERICAL_RECOMPUTATION_NOT_SCIENTIFIC_ADMISSION",
+  "package": {
+    "files": 5591,
+    "bytes": 742325619
+  },
+  "sealed_current": {
+    "files": 2186,
+    "bytes": 487450994
+  },
+  "T0": {
+    "files": 1653,
+    "bytes": 198072798
+  },
+  "npz_CRC_checked": 26,
+  "no_new_simulation": true,
+  "inlet_recomputed": [
+    {
+      "role": "DAY",
+      "comparison": "same_dt_mesh",
+      "probes": 137,
+      "theta_RMSE_K": 0.000993733538989364,
+      "wind_RMSE_m_s": 0.023148935513493098,
+      "CH4_RMSE_mol_m3": 6.3197546628410055e-09
+    },
+    {
+      "role": "DAY",
+      "comparison": "same_grid_dt",
+      "probes": 137,
+      "theta_RMSE_K": 2.6189649330025535e-05,
+      "wind_RMSE_m_s": 0.00015420626974705598,
+      "CH4_RMSE_mol_m3": 1.6646178820221646e-10
+    },
+    {
+      "role": "NIGHT",
+      "comparison": "same_dt_mesh",
+      "probes": 137,
+      "theta_RMSE_K": 0.0023500549241448863,
+      "wind_RMSE_m_s": 0.02851139305352158,
+      "CH4_RMSE_mol_m3": 5.812503799804672e-09
+    },
+    {
+      "role": "NIGHT",
+      "comparison": "same_grid_dt",
+      "probes": 137,
+      "theta_RMSE_K": 6.781042952771142e-05,
+      "wind_RMSE_m_s": 0.00020058510959457298,
+      "CH4_RMSE_mol_m3": 1.6771837626613353e-10
+    }
+  ],
+  "prior_ground_recomputed": [
+    {
+      "role": "DAY",
+      "group": "0.5m_AGL",
+      "theta_RMSE_K": 0.011812013848813257,
+      "wind_RMSE_m_s": 0.0034033512686737787,
+      "physical_s": 0.125
+    },
+    {
+      "role": "DAY",
+      "group": "1m_AGL",
+      "theta_RMSE_K": 0.005305747273961294,
+      "wind_RMSE_m_s": 0.002339576946366875,
+      "physical_s": 0.125
+    },
+    {
+      "role": "DAY",
+      "group": "2m_AGL",
+      "theta_RMSE_K": 0.002640715831423823,
+      "wind_RMSE_m_s": 0.0037325467637010236,
+      "physical_s": 0.125
+    },
+    {
+      "role": "NIGHT",
+      "group": "0.5m_AGL",
+      "theta_RMSE_K": 0.015986092546970226,
+      "wind_RMSE_m_s": 0.00409419205496176,
+      "physical_s": 0.125
+    },
+    {
+      "role": "NIGHT",
+      "group": "1m_AGL",
+      "theta_RMSE_K": 0.007202482413418277,
+      "wind_RMSE_m_s": 0.0028564161284402533,
+      "physical_s": 0.125
+    },
+    {
+      "role": "NIGHT",
+      "group": "2m_AGL",
+      "theta_RMSE_K": 0.0038373336679322695,
+      "wind_RMSE_m_s": 0.0046329143209243116,
+      "physical_s": 0.125
+    }
+  ],
+  "thermal_cold_restart_exact": true,
+  "native_NIGHT_future_files_exact": 366,
+  "Gaussian_birth_solid_fraction": 0.02267035411949186,
+  "T0_queries": [
+    {
+      "role": "DAY",
+      "queries": 729,
+      "max_reader_native_ppm_error": 6.923513493203512e-11,
+      "moving_queries": 30,
+      "invalid_distinguished_from_valid_zero": true
+    },
+    {
+      "role": "NIGHT",
+      "queries": 729,
+      "max_reader_native_ppm_error": 5.581356850217073e-11,
+      "moving_queries": 30,
+      "invalid_distinguished_from_valid_zero": true
+    }
+  ],
+  "science_verdict": "WARM_DAY_NIGHT_HOLD: source interface controls passed; thermal spatial/crop/global momentum and native warm source/pointwind bridge not qualified.",
+  "no_GPU_no_PDE_no_Windows_executable_launched": true
+}

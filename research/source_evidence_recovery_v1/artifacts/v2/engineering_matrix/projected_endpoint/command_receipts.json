@@ -1,0 +1,49 @@
+[
+  {
+    "phase": "train",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "gsl_recovery.v2_cli",
+      "train-student",
+      "--manifest",
+      "artifacts/v2/engineering_data/manifest.json",
+      "--out",
+      "artifacts/v2/engineering_matrix/projected_endpoint",
+      "--variant",
+      "projected_evidence",
+      "--epochs",
+      "8",
+      "--seed",
+      "23",
+      "--batch-size",
+      "8",
+      "--learning-rate",
+      "0.002",
+      "--device",
+      "cpu",
+      "--targets",
+      "artifacts/v2/projected_targets",
+      "--no-directional"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 10.699591071999748
+  },
+  {
+    "phase": "evaluate",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "gsl_recovery.v2_cli",
+      "evaluate",
+      "--manifest",
+      "artifacts/v2/engineering_data/manifest.json",
+      "--model",
+      "artifacts/v2/engineering_matrix/projected_endpoint/model",
+      "--out",
+      "artifacts/v2/engineering_matrix/projected_endpoint/development"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 1.5996345489984378
+  }
+]

@@ -4,16 +4,18 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gsl-source-evidence-recovery"
-version = "0.1.0"
+version = "0.2.0"
 description = "Executable research candidate for source-evidence learning, replay, and active counterevidence"
 requires-python = ">=3.10"
 dependencies = ["numpy>=1.24", "scipy>=1.10", "PyYAML>=6.0"]
 
 [project.optional-dependencies]
 test = ["pytest>=8.0"]
+neural = ["torch>=2.7,<3"]
 
 [project.scripts]
 gsl-recovery = "gsl_recovery.cli:main"
+gsl-recovery-v2 = "gsl_recovery.v2_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

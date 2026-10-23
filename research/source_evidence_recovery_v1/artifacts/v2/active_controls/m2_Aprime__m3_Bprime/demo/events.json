@@ -1,0 +1,2045 @@
+[
+  {
+    "request": {
+      "op": "plan",
+      "navigation_qualified": true,
+      "action_blocks": [
+        [
+          {
+            "x": 0.4,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 0.5,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 0.6000000000000001,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          }
+        ],
+        [
+          {
+            "x": 0.5,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 0.6,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 0.7,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          }
+        ],
+        [
+          {
+            "x": 2.4,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 2.5,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 2.6,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          }
+        ],
+        [
+          {
+            "x": 2.4,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 2.5,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 2.6,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          }
+        ]
+      ]
+    },
+    "response": {
+      "op": "plan",
+      "plan_id": "3627f0e0705543319ba50ce57da98560:1",
+      "actions": [
+        {
+          "x": 2.4,
+          "y": 2.4,
+          "z": 0.5,
+          "time": 1.0,
+          "dwell": 1.0
+        },
+        {
+          "x": 2.5,
+          "y": 2.4,
+          "z": 0.5,
+          "time": 2.0,
+          "dwell": 1.0
+        },
+        {
+          "x": 2.6,
+          "y": 2.4,
+          "z": 0.5,
+          "time": 3.0,
+          "dwell": 1.0
+        }
+      ],
+      "reason": "full_gas_wind_joint_eig_fallback",
+      "counterevidence_test_reserved": false,
+      "source_map": {
+        "x": [
+          0.5,
+          2.5
+        ],
+        "y": [
+          0.5,
+          2.5
+        ],
+        "probability_mass": [
+          [
+            0.25,
+            0.25
+          ],
+          [
+            0.25,
+            0.25
+          ]
+        ],
+        "candidate_support": [
+          [
+            true,
+            true
+          ],
+          [
+            true,
+            true
+          ]
+        ],
+        "sum": 1.0,
+        "map_xy": [
+          0.5,
+          0.5
+        ],
+        "posterior_mean_xy": [
+          1.5,
+          1.5
+        ]
+      },
+      "model_version": "bc9f35020f4be90e6f1a",
+      "risk_spent": 0.0,
+      "adequacy": {
+        "status": "not_calibrated",
+        "counterevidence_allowed": true,
+        "coverage_claim": "model-conditional only; physical error unbounded"
+      },
+      "power_diagnostics": {
+        "status": "COMPLETED_MODEL_CONDITIONAL_DIAGNOSTIC",
+        "scope": "one_frozen_generator_codebook_not_physical_identifiability",
+        "model_version": "bc9f35020f4be90e6f1a",
+        "null_source": 0,
+        "challenge_indices": [
+          1,
+          2
+        ],
+        "nominal_mechanism": 0,
+        "alpha": 0.025,
+        "cost_normalized_gain_tolerance": 1e-12,
+        "length": 3,
+        "word_alphabet_size": 8,
+        "draws": 512,
+        "exact_codebook": false,
+        "confidence_failure_probability": 0.005,
+        "tv_radius_min": 0.1182110744345554,
+        "tv_radius_max": 0.1182110744345554,
+        "layer_order": [
+          "nominal_clean",
+          "all_mechanisms_clean",
+          "all_mechanisms_corruption",
+          "all_mechanisms_corruption_tv"
+        ],
+        "layers": {
+          "nominal_clean": {
+            "alpha": 0.025,
+            "null_hypotheses": 1,
+            "alternative_hypotheses": 2,
+            "lp_power": 0.031451612903225803,
+            "power_bound": 0.031451612903225803,
+            "null_risk_bound": 0.025,
+            "risk_slack": 0.0,
+            "power_excess_over_alpha": 0.006451612903225802,
+            "cost_adjusted_gain": 0.002150537634408601,
+            "has_certified_gain": true,
+            "null_tv_radius_max": 0.0,
+            "alternative_tv_radius_max": 0.0,
+            "corruption": {
+              "max_flips": 0,
+              "max_erasures": 0,
+              "max_burst": 0
+            },
+            "solver_status": "model_and_MC_bound"
+          },
+          "all_mechanisms_clean": {
+            "alpha": 0.025,
+            "null_hypotheses": 2,
+            "alternative_hypotheses": 4,
+            "lp_power": 0.025903824947427812,
+            "power_bound": 0.025903824947427812,
+            "null_risk_bound": 0.025,
+            "risk_slack": 0.0,
+            "power_excess_over_alpha": 0.0009038249474278108,
+            "cost_adjusted_gain": 0.00030127498247593695,
+            "has_certified_gain": true,
+            "null_tv_radius_max": 0.0,
+            "alternative_tv_radius_max": 0.0,
+            "corruption": {
+              "max_flips": 0,
+              "max_erasures": 0,
+              "max_burst": 0
+            },
+            "solver_status": "model_and_MC_bound"
+          },
+          "all_mechanisms_corruption": {
+            "alpha": 0.025,
+            "null_hypotheses": 2,
+            "alternative_hypotheses": 4,
+            "lp_power": 0.025,
+            "power_bound": 0.025,
+            "null_risk_bound": 0.025,
+            "risk_slack": 0.0,
+            "power_excess_over_alpha": 0.0,
+            "cost_adjusted_gain": 0.0,
+            "has_certified_gain": false,
+            "null_tv_radius_max": 0.0,
+            "alternative_tv_radius_max": 0.0,
+            "corruption": {
+              "max_flips": 1,
+              "max_erasures": 0,
+              "max_burst": 0
+            },
+            "solver_status": "model_and_MC_bound"
+          },
+          "all_mechanisms_corruption_tv": {
+            "alpha": 0.025,
+            "null_hypotheses": 2,
+            "alternative_hypotheses": 4,
+            "lp_power": 0.024999999999999998,
+            "power_bound": 0.02499999999999996,
+            "null_risk_bound": 0.025000000000000036,
+            "risk_slack": -3.469446951953614e-17,
+            "power_excess_over_alpha": -4.163336342344337e-17,
+            "cost_adjusted_gain": 0.0,
+            "has_certified_gain": false,
+            "null_tv_radius_max": 0.1182110744345554,
+            "alternative_tv_radius_max": 0.1182110744345554,
+            "corruption": {
+              "max_flips": 1,
+              "max_erasures": 0,
+              "max_burst": 0
+            },
+            "solver_status": "model_and_MC_bound"
+          }
+        },
+        "lp_power_losses": {
+          "adding_mechanisms": 0.005547787955797991,
+          "adding_corruption": 0.0009038249474278108,
+          "adding_tv_uncertainty": 3.469446951953614e-18
+        },
+        "nested_lp_power_within_numerical_tolerance": true,
+        "fallback_for_this_block": true,
+        "bottleneck": {
+          "cause": "declared_corruption_budget",
+          "layer": "all_mechanisms_corruption",
+          "power_bound": 0.025,
+          "alpha": 0.025,
+          "power_excess_over_alpha": 0.0,
+          "interpretation": "first_relaxed_layer_without_a_certified_gain_for_this_model"
+        },
+        "pairwise_necessary_bounds": {
+          "closest_clean_pair": {
+            "null_source": 0,
+            "null_mechanism": 0,
+            "alternative_source": 2,
+            "alternative_mechanism": 0,
+            "clean_tv_distance": 0.046875,
+            "null_tv_radius": 0.1182110744345554,
+            "alternative_tv_radius": 0.1182110744345554,
+            "tv_ball_minimum_distance": 0.0,
+            "tv_balls_intersect": true,
+            "clean_pair_power_upper_bound": 0.071875,
+            "tv_pair_power_upper_bound": 0.025
+          },
+          "closest_tv_ambiguity_pair": {
+            "null_source": 0,
+            "null_mechanism": 0,
+            "alternative_source": 1,
+            "alternative_mechanism": 0,
+            "clean_tv_distance": 0.056640625,
+            "null_tv_radius": 0.1182110744345554,
+            "alternative_tv_radius": 0.1182110744345554,
+            "tv_ball_minimum_distance": 0.0,
+            "tv_balls_intersect": true,
+            "clean_pair_power_upper_bound": 0.081640625,
+            "tv_pair_power_upper_bound": 0.025
+          },
+          "scope": "necessary_pairwise_model_bound_not_physical_identifiability"
+        },
+        "risk_budget_spent": 0.0,
+        "action_taken": false,
+        "limitations": [
+          "Relaxed-layer tests are diagnostic and must not replace the committed robust test.",
+          "A layer's failure does not prove physical source non-identifiability.",
+          "MC bounds describe sampling inside the generator, not physical model discrepancy.",
+          "The nonzero-TV LP uses a conservative range-times-radius constraint; exact recomputed power is a certificate for its chosen test, not a globally optimal exact-TV power.",
+          "No adaptive sampling or new confidence allocation is performed."
+        ]
+      },
+      "full_observation_eig": [
+        {
+          "eig": 0.01751773686568768,
+          "standard_error": 0.04114764370137183,
+          "draws": 16,
+          "log_prob_evaluations": 136,
+          "likelihood_evaluations": 136,
+          "prefix_log_prob_evaluations": 8,
+          "conditional_log_prob_evaluations": 128,
+          "sample_calls": 16,
+          "evaluated_source_count": 4,
+          "evaluated_mechanism_count": 2,
+          "source_sampling_counts": [
+            4,
+            4,
+            3,
+            5
+          ],
+          "mechanism_sampling_counts": [
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              4
+            ]
+          ],
+          "log_ratio_min": -0.2927212143689424,
+          "log_ratio_max": 0.3094543606698714,
+          "status": "MODEL_MONTE_CARLO_ESTIMATE_NOT_CERTIFICATE",
+          "quantity": "I(source; whole future local-wind and gas observations | legal history)"
+        },
+        {
+          "eig": 0.02453931038953846,
+          "standard_error": 0.03859624227718502,
+          "draws": 16,
+          "log_prob_evaluations": 136,
+          "likelihood_evaluations": 136,
+          "prefix_log_prob_evaluations": 8,
+          "conditional_log_prob_evaluations": 128,
+          "sample_calls": 16,
+          "evaluated_source_count": 4,
+          "evaluated_mechanism_count": 2,
+          "source_sampling_counts": [
+            6,
+            2,
+            5,
+            3
+          ],
+          "mechanism_sampling_counts": [
+            [
+              1,
+              5
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "log_ratio_min": -0.3277688095410465,
+          "log_ratio_max": 0.22888053350647652,
+          "status": "MODEL_MONTE_CARLO_ESTIMATE_NOT_CERTIFICATE",
+          "quantity": "I(source; whole future local-wind and gas observations | legal history)"
+        },
+        {
+          "eig": 0.025316513648364423,
+          "standard_error": 0.041845019792743965,
+          "draws": 16,
+          "log_prob_evaluations": 136,
+          "likelihood_evaluations": 136,
+          "prefix_log_prob_evaluations": 8,
+          "conditional_log_prob_evaluations": 128,
+          "sample_calls": 16,
+          "evaluated_source_count": 4,
+          "evaluated_mechanism_count": 2,
+          "source_sampling_counts": [
+            4,
+            4,
+            3,
+            5
+          ],
+          "mechanism_sampling_counts": [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              3,
+              2
+            ]
+          ],
+          "log_ratio_min": -0.26419831448021913,
+          "log_ratio_max": 0.38760368257802913,
+          "status": "MODEL_MONTE_CARLO_ESTIMATE_NOT_CERTIFICATE",
+          "quantity": "I(source; whole future local-wind and gas observations | legal history)"
+        },
+        {
+          "eig": 0.04273704184221265,
+          "standard_error": 0.03528184794947286,
+          "draws": 16,
+          "log_prob_evaluations": 136,
+          "likelihood_evaluations": 136,
+          "prefix_log_prob_evaluations": 8,
+          "conditional_log_prob_evaluations": 128,
+          "sample_calls": 16,
+          "evaluated_source_count": 4,
+          "evaluated_mechanism_count": 2,
+          "source_sampling_counts": [
+            6,
+            5,
+            1,
+            4
+          ],
+          "mechanism_sampling_counts": [
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              4,
+              0
+            ]
+          ],
+          "log_ratio_min": -0.22768094539653116,
+          "log_ratio_max": 0.3090310055192411,
+          "status": "MODEL_MONTE_CARLO_ESTIMATE_NOT_CERTIFICATE",
+          "quantity": "I(source; whole future local-wind and gas observations | legal history)"
+        }
+      ],
+      "wall_seconds": 1.4141060190013377,
+      "risk_scope": "learned model + declared channel + MC bound; not a physical false-rejection certificate"
+    }
+  },
+  {
+    "request": {
+      "op": "observe",
+      "observations": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 2.4,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.23737344876153632,
+            0.33057623565572414
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.5,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.09357633205347454,
+            0.6209206170674096
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.6,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.3557703641256964,
+            0.6069462696187333
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ]
+    },
+    "response": {
+      "op": "update",
+      "observations": 3,
+      "test": {
+        "status": "executed",
+        "rejected": false,
+        "trigger_replay": false,
+        "null_source": 0,
+        "rejection_probability": null,
+        "recovery_list": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "word": [
+          1,
+          0,
+          1
+        ],
+        "evidence_rule": "raw observations only; this decision is not a likelihood factor",
+        "counterevidence_status": "abstained",
+        "model_version": "bc9f35020f4be90e6f1a"
+      },
+      "adequacy": {
+        "status": "not_calibrated",
+        "counterevidence_allowed": true,
+        "coverage_claim": "model-conditional only; physical error unbounded"
+      },
+      "model_version": "bc9f35020f4be90e6f1a",
+      "source_map": {
+        "x": [
+          0.5,
+          2.5
+        ],
+        "y": [
+          0.5,
+          2.5
+        ],
+        "probability_mass": [
+          [
+            0.35161660476973755,
+            0.14929958646338315
+          ],
+          [
+            0.35044441297376117,
+            0.14863939579311813
+          ]
+        ],
+        "candidate_support": [
+          [
+            true,
+            true
+          ],
+          [
+            true,
+            true
+          ]
+        ],
+        "sum": 1.0,
+        "map_xy": [
+          0.5,
+          0.5
+        ],
+        "posterior_mean_xy": [
+          1.0958779645130026,
+          1.4981676175337586
+        ]
+      },
+      "source_log_posterior": [
+        -1.045213887978683,
+        -1.0485531785975795,
+        -1.901800344277511,
+        -1.906232068825851
+      ],
+      "joint_posterior": [
+        [
+          0.1758083023848689,
+          0.1758083023848689
+        ],
+        [
+          0.1752222064868807,
+          0.1752222064868807
+        ],
+        [
+          0.07464979323169163,
+          0.07464979323169163
+        ],
+        [
+          0.07431969789655912,
+          0.07431969789655912
+        ]
+      ],
+      "conditional_mechanism_posterior": [
+        [
+          0.49999999999999994,
+          0.49999999999999994
+        ],
+        [
+          0.49999999999999994,
+          0.49999999999999994
+        ],
+        [
+          0.49999999999999994,
+          0.49999999999999994
+        ],
+        [
+          0.49999999999999994,
+          0.49999999999999994
+        ]
+      ],
+      "maximum_suffix_replay_discrepancy": null,
+      "diagnosis_added_as_evidence": false
+    }
+  },
+  {
+    "request": {
+      "op": "plan",
+      "navigation_qualified": true,
+      "action_blocks": [
+        [
+          {
+            "x": 0.4,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 0.5,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 0.6000000000000001,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          }
+        ],
+        [
+          {
+            "x": 0.5,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 0.6,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 0.7,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          }
+        ],
+        [
+          {
+            "x": 2.4,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 2.5,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 2.6,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          }
+        ],
+        [
+          {
+            "x": 2.4,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 2.5,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 2.6,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          }
+        ]
+      ]
+    },
+    "response": {
+      "op": "plan",
+      "plan_id": "3627f0e0705543319ba50ce57da98560:2",
+      "actions": [
+        {
+          "x": 0.5,
+          "y": 2.4,
+          "z": 0.5,
+          "time": 4.0,
+          "dwell": 1.0
+        },
+        {
+          "x": 0.6,
+          "y": 2.4,
+          "z": 0.5,
+          "time": 5.0,
+          "dwell": 1.0
+        },
+        {
+          "x": 0.7,
+          "y": 2.4,
+          "z": 0.5,
+          "time": 6.0,
+          "dwell": 1.0
+        }
+      ],
+      "reason": "full_gas_wind_joint_eig_fallback",
+      "counterevidence_test_reserved": false,
+      "source_map": {
+        "x": [
+          0.5,
+          2.5
+        ],
+        "y": [
+          0.5,
+          2.5
+        ],
+        "probability_mass": [
+          [
+            0.35161660476973755,
+            0.14929958646338315
+          ],
+          [
+            0.35044441297376117,
+            0.14863939579311813
+          ]
+        ],
+        "candidate_support": [
+          [
+            true,
+            true
+          ],
+          [
+            true,
+            true
+          ]
+        ],
+        "sum": 1.0,
+        "map_xy": [
+          0.5,
+          0.5
+        ],
+        "posterior_mean_xy": [
+          1.0958779645130026,
+          1.4981676175337586
+        ]
+      },
+      "model_version": "bc9f35020f4be90e6f1a",
+      "risk_spent": 0.0,
+      "adequacy": {
+        "status": "not_calibrated",
+        "counterevidence_allowed": true,
+        "coverage_claim": "model-conditional only; physical error unbounded"
+      },
+      "power_diagnostics": {
+        "status": "COMPLETED_MODEL_CONDITIONAL_DIAGNOSTIC",
+        "scope": "one_frozen_generator_codebook_not_physical_identifiability",
+        "model_version": "bc9f35020f4be90e6f1a",
+        "null_source": 0,
+        "challenge_indices": [
+          2,
+          1
+        ],
+        "nominal_mechanism": 0,
+        "alpha": 0.025,
+        "cost_normalized_gain_tolerance": 1e-12,
+        "length": 3,
+        "word_alphabet_size": 8,
+        "draws": 512,
+        "exact_codebook": false,
+        "confidence_failure_probability": 0.0016666666666666668,
+        "tv_radius_min": 0.12266507930998312,
+        "tv_radius_max": 0.12266507930998312,
+        "layer_order": [
+          "nominal_clean",
+          "all_mechanisms_clean",
+          "all_mechanisms_corruption",
+          "all_mechanisms_corruption_tv"
+        ],
+        "layers": {
+          "nominal_clean": {
+            "alpha": 0.025,
+            "null_hypotheses": 1,
+            "alternative_hypotheses": 2,
+            "lp_power": 0.031888977635782745,
+            "power_bound": 0.03188897763578275,
+            "null_risk_bound": 0.025,
+            "risk_slack": 0.0,
+            "power_excess_over_alpha": 0.00688897763578275,
+            "cost_adjusted_gain": 0.00229632587859425,
+            "has_certified_gain": true,
+            "null_tv_radius_max": 0.0,
+            "alternative_tv_radius_max": 0.0,
+            "corruption": {
+              "max_flips": 0,
+              "max_erasures": 0,
+              "max_burst": 0
+            },
+            "solver_status": "model_and_MC_bound"
+          },
+          "all_mechanisms_clean": {
+            "alpha": 0.025,
+            "null_hypotheses": 2,
+            "alternative_hypotheses": 4,
+            "lp_power": 0.02684632825242132,
+            "power_bound": 0.02684632825242132,
+            "null_risk_bound": 0.025,
+            "risk_slack": 0.0,
+            "power_excess_over_alpha": 0.0018463282524213177,
+            "cost_adjusted_gain": 0.000615442750807106,
+            "has_certified_gain": true,
+            "null_tv_radius_max": 0.0,
+            "alternative_tv_radius_max": 0.0,
+            "corruption": {
+              "max_flips": 0,
+              "max_erasures": 0,
+              "max_burst": 0
+            },
+            "solver_status": "model_and_MC_bound"
+          },
+          "all_mechanisms_corruption": {
+            "alpha": 0.025,
+            "null_hypotheses": 2,
+            "alternative_hypotheses": 4,
+            "lp_power": 0.025,
+            "power_bound": 0.024999999999999998,
+            "null_risk_bound": 0.025000000000000005,
+            "risk_slack": -3.469446951953614e-18,
+            "power_excess_over_alpha": -3.469446951953614e-18,
+            "cost_adjusted_gain": 0.0,
+            "has_certified_gain": false,
+            "null_tv_radius_max": 0.0,
+            "alternative_tv_radius_max": 0.0,
+            "corruption": {
+              "max_flips": 1,
+              "max_erasures": 0,
+              "max_burst": 0
+            },
+            "solver_status": "model_and_MC_bound"
+          },
+          "all_mechanisms_corruption_tv": {
+            "alpha": 0.025,
+            "null_hypotheses": 2,
+            "alternative_hypotheses": 4,
+            "lp_power": 0.025,
+            "power_bound": 0.024999999999999998,
+            "null_risk_bound": 0.0250000000000001,
+            "risk_slack": -9.71445146547012e-17,
+            "power_excess_over_alpha": -3.469446951953614e-18,
+            "cost_adjusted_gain": 0.0,
+            "has_certified_gain": false,
+            "null_tv_radius_max": 0.12266507930998312,
+            "alternative_tv_radius_max": 0.12266507930998312,
+            "corruption": {
+              "max_flips": 1,
+              "max_erasures": 0,
+              "max_burst": 0
+            },
+            "solver_status": "model_and_MC_bound"
+          }
+        },
+        "lp_power_losses": {
+          "adding_mechanisms": 0.005042649383361426,
+          "adding_corruption": 0.0018463282524213177,
+          "adding_tv_uncertainty": 0.0
+        },
+        "nested_lp_power_within_numerical_tolerance": true,
+        "fallback_for_this_block": true,
+        "bottleneck": {
+          "cause": "declared_corruption_budget",
+          "layer": "all_mechanisms_corruption",
+          "power_bound": 0.024999999999999998,
+          "alpha": 0.025,
+          "power_excess_over_alpha": -3.469446951953614e-18,
+          "interpretation": "first_relaxed_layer_without_a_certified_gain_for_this_model"
+        },
+        "pairwise_necessary_bounds": {
+          "closest_clean_pair": {
+            "null_source": 0,
+            "null_mechanism": 1,
+            "alternative_source": 2,
+            "alternative_mechanism": 1,
+            "clean_tv_distance": 0.060546875,
+            "null_tv_radius": 0.12266507930998312,
+            "alternative_tv_radius": 0.12266507930998312,
+            "tv_ball_minimum_distance": 0.0,
+            "tv_balls_intersect": true,
+            "clean_pair_power_upper_bound": 0.085546875,
+            "tv_pair_power_upper_bound": 0.025
+          },
+          "closest_tv_ambiguity_pair": {
+            "null_source": 0,
+            "null_mechanism": 0,
+            "alternative_source": 2,
+            "alternative_mechanism": 0,
+            "clean_tv_distance": 0.10546875,
+            "null_tv_radius": 0.12266507930998312,
+            "alternative_tv_radius": 0.12266507930998312,
+            "tv_ball_minimum_distance": 0.0,
+            "tv_balls_intersect": true,
+            "clean_pair_power_upper_bound": 0.13046875,
+            "tv_pair_power_upper_bound": 0.025
+          },
+          "scope": "necessary_pairwise_model_bound_not_physical_identifiability"
+        },
+        "risk_budget_spent": 0.0,
+        "action_taken": false,
+        "limitations": [
+          "Relaxed-layer tests are diagnostic and must not replace the committed robust test.",
+          "A layer's failure does not prove physical source non-identifiability.",
+          "MC bounds describe sampling inside the generator, not physical model discrepancy.",
+          "The nonzero-TV LP uses a conservative range-times-radius constraint; exact recomputed power is a certificate for its chosen test, not a globally optimal exact-TV power.",
+          "No adaptive sampling or new confidence allocation is performed."
+        ]
+      },
+      "full_observation_eig": [
+        {
+          "eig": -0.04680805797668809,
+          "standard_error": 0.05478239566322782,
+          "draws": 16,
+          "log_prob_evaluations": 136,
+          "likelihood_evaluations": 136,
+          "prefix_log_prob_evaluations": 8,
+          "conditional_log_prob_evaluations": 128,
+          "sample_calls": 16,
+          "evaluated_source_count": 4,
+          "evaluated_mechanism_count": 2,
+          "source_sampling_counts": [
+            11,
+            0,
+            3,
+            2
+          ],
+          "mechanism_sampling_counts": [
+            [
+              5,
+              6
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "log_ratio_min": -0.5185193720064616,
+          "log_ratio_max": 0.24480614503295312,
+          "status": "MODEL_MONTE_CARLO_ESTIMATE_NOT_CERTIFICATE",
+          "quantity": "I(source; whole future local-wind and gas observations | legal history)"
+        },
+        {
+          "eig": 0.019891656627365813,
+          "standard_error": 0.02487389692820222,
+          "draws": 16,
+          "log_prob_evaluations": 136,
+          "likelihood_evaluations": 136,
+          "prefix_log_prob_evaluations": 8,
+          "conditional_log_prob_evaluations": 128,
+          "sample_calls": 16,
+          "evaluated_source_count": 4,
+          "evaluated_mechanism_count": 2,
+          "source_sampling_counts": [
+            4,
+            8,
+            1,
+            3
+          ],
+          "mechanism_sampling_counts": [
+            [
+              2,
+              2
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "log_ratio_min": -0.12190687609043804,
+          "log_ratio_max": 0.19550801906469095,
+          "status": "MODEL_MONTE_CARLO_ESTIMATE_NOT_CERTIFICATE",
+          "quantity": "I(source; whole future local-wind and gas observations | legal history)"
+        },
+        {
+          "eig": -0.011038647724313476,
+          "standard_error": 0.027880398625435305,
+          "draws": 16,
+          "log_prob_evaluations": 136,
+          "likelihood_evaluations": 136,
+          "prefix_log_prob_evaluations": 8,
+          "conditional_log_prob_evaluations": 128,
+          "sample_calls": 16,
+          "evaluated_source_count": 4,
+          "evaluated_mechanism_count": 2,
+          "source_sampling_counts": [
+            11,
+            4,
+            0,
+            1
+          ],
+          "mechanism_sampling_counts": [
+            [
+              5,
+              6
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ]
+          ],
+          "log_ratio_min": -0.21900985632356273,
+          "log_ratio_max": 0.244664580212147,
+          "status": "MODEL_MONTE_CARLO_ESTIMATE_NOT_CERTIFICATE",
+          "quantity": "I(source; whole future local-wind and gas observations | legal history)"
+        },
+        {
+          "eig": -0.010480434661678834,
+          "standard_error": 0.02540719308500175,
+          "draws": 16,
+          "log_prob_evaluations": 136,
+          "likelihood_evaluations": 136,
+          "prefix_log_prob_evaluations": 8,
+          "conditional_log_prob_evaluations": 128,
+          "sample_calls": 16,
+          "evaluated_source_count": 4,
+          "evaluated_mechanism_count": 2,
+          "source_sampling_counts": [
+            2,
+            8,
+            4,
+            2
+          ],
+          "mechanism_sampling_counts": [
+            [
+              1,
+              1
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "log_ratio_min": -0.1994903420749976,
+          "log_ratio_max": 0.274841754409497,
+          "status": "MODEL_MONTE_CARLO_ESTIMATE_NOT_CERTIFICATE",
+          "quantity": "I(source; whole future local-wind and gas observations | legal history)"
+        }
+      ],
+      "wall_seconds": 2.1474892309997813,
+      "risk_scope": "learned model + declared channel + MC bound; not a physical false-rejection certificate"
+    }
+  },
+  {
+    "request": {
+      "op": "observe",
+      "observations": [
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 0.5,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.2530128434442866,
+            0.5620874348945434
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_4",
+          "action": {
+            "x": 0.6,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.30130605417348266,
+            0.6482171095733428
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_5",
+          "action": {
+            "x": 0.7,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.052829066457172225,
+            0.5394194198393931
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ]
+    },
+    "response": {
+      "op": "update",
+      "observations": 6,
+      "test": {
+        "status": "executed",
+        "rejected": false,
+        "trigger_replay": false,
+        "null_source": 0,
+        "rejection_probability": null,
+        "recovery_list": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "word": [
+          0,
+          0,
+          0
+        ],
+        "evidence_rule": "raw observations only; this decision is not a likelihood factor",
+        "counterevidence_status": "abstained",
+        "model_version": "bc9f35020f4be90e6f1a"
+      },
+      "adequacy": {
+        "status": "not_calibrated",
+        "counterevidence_allowed": true,
+        "coverage_claim": "model-conditional only; physical error unbounded"
+      },
+      "model_version": "bc9f35020f4be90e6f1a",
+      "source_map": {
+        "x": [
+          0.5,
+          2.5
+        ],
+        "y": [
+          0.5,
+          2.5
+        ],
+        "probability_mass": [
+          [
+            0.42521751743310193,
+            0.1340517296242021
+          ],
+          [
+            0.33420615212596627,
+            0.1065246008167297
+          ]
+        ],
+        "candidate_support": [
+          [
+            true,
+            true
+          ],
+          [
+            true,
+            true
+          ]
+        ],
+        "sum": 0.9999999999999999,
+        "map_xy": [
+          0.5,
+          0.5
+        ],
+        "posterior_mean_xy": [
+          0.9811526608818635,
+          1.3814615058853918
+        ]
+      },
+      "source_log_posterior": [
+        -0.8551544352606532,
+        -1.0959972544745202,
+        -2.0095295115545984,
+        -2.2393793269232507
+      ],
+      "joint_posterior": [
+        [
+          0.21260875871655102,
+          0.21260875871655102
+        ],
+        [
+          0.16710307606298316,
+          0.16710307606298316
+        ],
+        [
+          0.06702586481210106,
+          0.06702586481210106
+        ],
+        [
+          0.05326230040836486,
+          0.05326230040836486
+        ]
+      ],
+      "conditional_mechanism_posterior": [
+        [
+          0.49999999999999994,
+          0.49999999999999994
+        ],
+        [
+          0.49999999999999994,
+          0.49999999999999994
+        ],
+        [
+          0.49999999999999994,
+          0.49999999999999994
+        ],
+        [
+          0.49999999999999994,
+          0.49999999999999994
+        ]
+      ],
+      "maximum_suffix_replay_discrepancy": null,
+      "diagnosis_added_as_evidence": false
+    }
+  },
+  {
+    "request": {
+      "op": "plan",
+      "navigation_qualified": true,
+      "action_blocks": [
+        [
+          {
+            "x": 0.4,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 0.5,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 8.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 0.6000000000000001,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 9.0,
+            "dwell": 1.0
+          }
+        ],
+        [
+          {
+            "x": 0.5,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 0.6,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 8.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 0.7,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 9.0,
+            "dwell": 1.0
+          }
+        ],
+        [
+          {
+            "x": 2.4,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 2.5,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 8.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 2.6,
+            "y": 0.5,
+            "z": 0.5,
+            "time": 9.0,
+            "dwell": 1.0
+          }
+        ],
+        [
+          {
+            "x": 2.4,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 2.5,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 8.0,
+            "dwell": 1.0
+          },
+          {
+            "x": 2.6,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 9.0,
+            "dwell": 1.0
+          }
+        ]
+      ]
+    },
+    "response": {
+      "op": "plan",
+      "plan_id": "3627f0e0705543319ba50ce57da98560:3",
+      "actions": [
+        {
+          "x": 0.5,
+          "y": 2.4,
+          "z": 0.5,
+          "time": 7.0,
+          "dwell": 1.0
+        },
+        {
+          "x": 0.6,
+          "y": 2.4,
+          "z": 0.5,
+          "time": 8.0,
+          "dwell": 1.0
+        },
+        {
+          "x": 0.7,
+          "y": 2.4,
+          "z": 0.5,
+          "time": 9.0,
+          "dwell": 1.0
+        }
+      ],
+      "reason": "full_gas_wind_joint_eig_fallback",
+      "counterevidence_test_reserved": false,
+      "source_map": {
+        "x": [
+          0.5,
+          2.5
+        ],
+        "y": [
+          0.5,
+          2.5
+        ],
+        "probability_mass": [
+          [
+            0.425217517433102,
+            0.13405172962420212
+          ],
+          [
+            0.3342061521259663,
+            0.10652460081672971
+          ]
+        ],
+        "candidate_support": [
+          [
+            true,
+            true
+          ],
+          [
+            true,
+            true
+          ]
+        ],
+        "sum": 1.0000000000000002,
+        "map_xy": [
+          0.5,
+          0.5
+        ],
+        "posterior_mean_xy": [
+          0.9811526608818638,
+          1.381461505885392
+        ]
+      },
+      "model_version": "bc9f35020f4be90e6f1a",
+      "risk_spent": 0.0,
+      "adequacy": {
+        "status": "not_calibrated",
+        "counterevidence_allowed": true,
+        "coverage_claim": "model-conditional only; physical error unbounded"
+      },
+      "power_diagnostics": {
+        "status": "COMPLETED_MODEL_CONDITIONAL_DIAGNOSTIC",
+        "scope": "one_frozen_generator_codebook_not_physical_identifiability",
+        "model_version": "bc9f35020f4be90e6f1a",
+        "null_source": 0,
+        "challenge_indices": [
+          3,
+          1
+        ],
+        "nominal_mechanism": 0,
+        "alpha": 0.025,
+        "cost_normalized_gain_tolerance": 1e-12,
+        "length": 3,
+        "word_alphabet_size": 8,
+        "draws": 512,
+        "exact_codebook": false,
+        "confidence_failure_probability": 0.0008333333333333334,
+        "tv_radius_min": 0.12539387236081362,
+        "tv_radius_max": 0.12539387236081362,
+        "layer_order": [
+          "nominal_clean",
+          "all_mechanisms_clean",
+          "all_mechanisms_corruption",
+          "all_mechanisms_corruption_tv"
+        ],
+        "layers": {
+          "nominal_clean": {
+            "alpha": 0.025,
+            "null_hypotheses": 1,
+            "alternative_hypotheses": 2,
+            "lp_power": 0.030680885972108288,
+            "power_bound": 0.030680885972108288,
+            "null_risk_bound": 0.025,
+            "risk_slack": 0.0,
+            "power_excess_over_alpha": 0.005680885972108286,
+            "cost_adjusted_gain": 0.0018936286573694287,
+            "has_certified_gain": true,
+            "null_tv_radius_max": 0.0,
+            "alternative_tv_radius_max": 0.0,
+            "corruption": {
+              "max_flips": 0,
+              "max_erasures": 0,
+              "max_burst": 0
+            },
+            "solver_status": "model_and_MC_bound"
+          },
+          "all_mechanisms_clean": {
+            "alpha": 0.025,
+            "null_hypotheses": 2,
+            "alternative_hypotheses": 4,
+            "lp_power": 0.028264933950409177,
+            "power_bound": 0.028264933950409174,
+            "null_risk_bound": 0.02500000000000001,
+            "risk_slack": -6.938893903907228e-18,
+            "power_excess_over_alpha": 0.0032649339504091726,
+            "cost_adjusted_gain": 0.0010883113168030575,
+            "has_certified_gain": true,
+            "null_tv_radius_max": 0.0,
+            "alternative_tv_radius_max": 0.0,
+            "corruption": {
+              "max_flips": 0,
+              "max_erasures": 0,
+              "max_burst": 0
+            },
+            "solver_status": "model_and_MC_bound"
+          },
+          "all_mechanisms_corruption": {
+            "alpha": 0.025,
+            "null_hypotheses": 2,
+            "alternative_hypotheses": 4,
+            "lp_power": 0.024999999999999998,
+            "power_bound": 0.024999999999999998,
+            "null_risk_bound": 0.025000000000000005,
+            "risk_slack": -3.469446951953614e-18,
+            "power_excess_over_alpha": -3.469446951953614e-18,
+            "cost_adjusted_gain": 0.0,
+            "has_certified_gain": false,
+            "null_tv_radius_max": 0.0,
+            "alternative_tv_radius_max": 0.0,
+            "corruption": {
+              "max_flips": 1,
+              "max_erasures": 0,
+              "max_burst": 0
+            },
+            "solver_status": "model_and_MC_bound"
+          },
+          "all_mechanisms_corruption_tv": {
+            "alpha": 0.025,
+            "null_hypotheses": 2,
+            "alternative_hypotheses": 4,
+            "lp_power": 0.024999999999999988,
+            "power_bound": 0.02499999999999995,
+            "null_risk_bound": 0.02500000000000013,
+            "risk_slack": -1.2836953722228372e-16,
+            "power_excess_over_alpha": -5.204170427930421e-17,
+            "cost_adjusted_gain": 0.0,
+            "has_certified_gain": false,
+            "null_tv_radius_max": 0.12539387236081362,
+            "alternative_tv_radius_max": 0.12539387236081362,
+            "corruption": {
+              "max_flips": 1,
+              "max_erasures": 0,
+              "max_burst": 0
+            },
+            "solver_status": "model_and_MC_bound"
+          }
+        },
+        "lp_power_losses": {
+          "adding_mechanisms": 0.0024159520216991102,
+          "adding_corruption": 0.0032649339504091796,
+          "adding_tv_uncertainty": 1.0408340855860843e-17
+        },
+        "nested_lp_power_within_numerical_tolerance": true,
+        "fallback_for_this_block": true,
+        "bottleneck": {
+          "cause": "declared_corruption_budget",
+          "layer": "all_mechanisms_corruption",
+          "power_bound": 0.024999999999999998,
+          "alpha": 0.025,
+          "power_excess_over_alpha": -3.469446951953614e-18,
+          "interpretation": "first_relaxed_layer_without_a_certified_gain_for_this_model"
+        },
+        "pairwise_necessary_bounds": {
+          "closest_clean_pair": {
+            "null_source": 0,
+            "null_mechanism": 1,
+            "alternative_source": 1,
+            "alternative_mechanism": 1,
+            "clean_tv_distance": 0.060546875,
+            "null_tv_radius": 0.12539387236081362,
+            "alternative_tv_radius": 0.12539387236081362,
+            "tv_ball_minimum_distance": 0.0,
+            "tv_balls_intersect": true,
+            "clean_pair_power_upper_bound": 0.085546875,
+            "tv_pair_power_upper_bound": 0.025
+          },
+          "closest_tv_ambiguity_pair": {
+            "null_source": 0,
+            "null_mechanism": 0,
+            "alternative_source": 3,
+            "alternative_mechanism": 0,
+            "clean_tv_distance": 0.072265625,
+            "null_tv_radius": 0.12539387236081362,
+            "alternative_tv_radius": 0.12539387236081362,
+            "tv_ball_minimum_distance": 0.0,
+            "tv_balls_intersect": true,
+            "clean_pair_power_upper_bound": 0.097265625,
+            "tv_pair_power_upper_bound": 0.025
+          },
+          "scope": "necessary_pairwise_model_bound_not_physical_identifiability"
+        },
+        "risk_budget_spent": 0.0,
+        "action_taken": false,
+        "limitations": [
+          "Relaxed-layer tests are diagnostic and must not replace the committed robust test.",
+          "A layer's failure does not prove physical source non-identifiability.",
+          "MC bounds describe sampling inside the generator, not physical model discrepancy.",
+          "The nonzero-TV LP uses a conservative range-times-radius constraint; exact recomputed power is a certificate for its chosen test, not a globally optimal exact-TV power.",
+          "No adaptive sampling or new confidence allocation is performed."
+        ]
+      },
+      "full_observation_eig": [
+        {
+          "eig": 0.0173294325693676,
+          "standard_error": 0.041240733504899624,
+          "draws": 16,
+          "log_prob_evaluations": 136,
+          "likelihood_evaluations": 136,
+          "prefix_log_prob_evaluations": 8,
+          "conditional_log_prob_evaluations": 128,
+          "sample_calls": 16,
+          "evaluated_source_count": 4,
+          "evaluated_mechanism_count": 2,
+          "source_sampling_counts": [
+            6,
+            4,
+            2,
+            4
+          ],
+          "mechanism_sampling_counts": [
+            [
+              3,
+              3
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          "log_ratio_min": -0.45248682731004886,
+          "log_ratio_max": 0.2555707005106256,
+          "status": "MODEL_MONTE_CARLO_ESTIMATE_NOT_CERTIFICATE",
+          "quantity": "I(source; whole future local-wind and gas observations | legal history)"
+        },
+        {
+          "eig": 0.023663137646031222,
+          "standard_error": 0.0575738255781804,
+          "draws": 16,
+          "log_prob_evaluations": 136,
+          "likelihood_evaluations": 136,
+          "prefix_log_prob_evaluations": 8,
+          "conditional_log_prob_evaluations": 128,
+          "sample_calls": 16,
+          "evaluated_source_count": 4,
+          "evaluated_mechanism_count": 2,
+          "source_sampling_counts": [
+            4,
+            5,
+            4,
+            3
+          ],
+          "mechanism_sampling_counts": [
+            [
+              4,
+              0
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "log_ratio_min": -0.23486207687598726,
+          "log_ratio_max": 0.5699828363466284,
+          "status": "MODEL_MONTE_CARLO_ESTIMATE_NOT_CERTIFICATE",
+          "quantity": "I(source; whole future local-wind and gas observations | legal history)"
+        },
+        {
+          "eig": 0.004377934112076737,
+          "standard_error": 0.040286725067007555,
+          "draws": 16,
+          "log_prob_evaluations": 136,
+          "likelihood_evaluations": 136,
+          "prefix_log_prob_evaluations": 8,
+          "conditional_log_prob_evaluations": 128,
+          "sample_calls": 16,
+          "evaluated_source_count": 4,
+          "evaluated_mechanism_count": 2,
+          "source_sampling_counts": [
+            10,
+            4,
+            1,
+            1
+          ],
+          "mechanism_sampling_counts": [
+            [
+              6,
+              4
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "log_ratio_min": -0.36948113868442567,
+          "log_ratio_max": 0.2716967633011551,
+          "status": "MODEL_MONTE_CARLO_ESTIMATE_NOT_CERTIFICATE",
+          "quantity": "I(source; whole future local-wind and gas observations | legal history)"
+        },
+        {
+          "eig": -0.022603312772400366,
+          "standard_error": 0.0442807569337256,
+          "draws": 16,
+          "log_prob_evaluations": 136,
+          "likelihood_evaluations": 136,
+          "prefix_log_prob_evaluations": 8,
+          "conditional_log_prob_evaluations": 128,
+          "sample_calls": 16,
+          "evaluated_source_count": 4,
+          "evaluated_mechanism_count": 2,
+          "source_sampling_counts": [
+            6,
+            4,
+            3,
+            3
+          ],
+          "mechanism_sampling_counts": [
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "log_ratio_min": -0.290473365978408,
+          "log_ratio_max": 0.364814433564034,
+          "status": "MODEL_MONTE_CARLO_ESTIMATE_NOT_CERTIFICATE",
+          "quantity": "I(source; whole future local-wind and gas observations | legal history)"
+        }
+      ],
+      "wall_seconds": 2.942535712994868,
+      "risk_scope": "learned model + declared channel + MC bound; not a physical false-rejection certificate"
+    }
+  },
+  {
+    "request": {
+      "op": "observe",
+      "observations": [
+        {
+          "uid": "env_6",
+          "action": {
+            "x": 0.5,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.18124493941474978,
+            0.714445517129487
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_7",
+          "action": {
+            "x": 0.6,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 8.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.2549859708826426,
+            0.7032456932200669
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_8",
+          "action": {
+            "x": 0.7,
+            "y": 2.4,
+            "z": 0.5,
+            "time": 9.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.0689238038232064,
+            0.6410599249200725
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ]
+    },
+    "response": {
+      "op": "update",
+      "observations": 9,
+      "test": {
+        "status": "executed",
+        "rejected": false,
+        "trigger_replay": false,
+        "null_source": 0,
+        "rejection_probability": null,
+        "recovery_list": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "word": [
+          1,
+          0,
+          0
+        ],
+        "evidence_rule": "raw observations only; this decision is not a likelihood factor",
+        "counterevidence_status": "abstained",
+        "model_version": "bc9f35020f4be90e6f1a"
+      },
+      "adequacy": {
+        "status": "not_calibrated",
+        "counterevidence_allowed": true,
+        "coverage_claim": "model-conditional only; physical error unbounded"
+      },
+      "model_version": "bc9f35020f4be90e6f1a",
+      "source_map": {
+        "x": [
+          0.5,
+          2.5
+        ],
+        "y": [
+          0.5,
+          2.5
+        ],
+        "probability_mass": [
+          [
+            0.48199768523796205,
+            0.09185612683288703
+          ],
+          [
+            0.3563758726424549,
+            0.06977031528669599
+          ]
+        ],
+        "candidate_support": [
+          [
+            true,
+            true
+          ],
+          [
+            true,
+            true
+          ]
+        ],
+        "sum": 1.0,
+        "map_xy": [
+          0.5,
+          0.5
+        ],
+        "posterior_mean_xy": [
+          0.823252884239166,
+          1.3522923758583019
+        ]
+      },
+      "source_log_posterior": [
+        -0.7298159673539361,
+        -1.0317692830887992,
+        -2.3875317647782524,
+        -2.6625466420975883
+      ],
+      "joint_posterior": [
+        [
+          0.24099884261898089,
+          0.24099884261898089
+        ],
+        [
+          0.17818793632122734,
+          0.17818793632122734
+        ],
+        [
+          0.04592806341644349,
+          0.04592806341644349
+        ],
+        [
+          0.03488515764334797,
+          0.03488515764334797
+        ]
+      ],
+      "conditional_mechanism_posterior": [
+        [
+          0.49999999999999994,
+          0.49999999999999994
+        ],
+        [
+          0.49999999999999994,
+          0.49999999999999994
+        ],
+        [
+          0.49999999999999994,
+          0.49999999999999994
+        ],
+        [
+          0.49999999999999994,
+          0.49999999999999994
+        ]
+      ],
+      "maximum_suffix_replay_discrepancy": null,
+      "diagnosis_added_as_evidence": false
+    }
+  }
+]

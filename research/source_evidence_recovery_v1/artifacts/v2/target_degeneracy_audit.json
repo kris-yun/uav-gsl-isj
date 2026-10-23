@@ -1,0 +1,4229 @@
+{
+  "status": "COMPLETE_READ_ONLY_TARGET_DEGENERACY_DIAGNOSIS",
+  "scope": "MANUFACTURED_BACKEND_ENGINEERING_ONLY",
+  "input_sha256": {
+    "artifacts/v2/engineering_matrix/matrix.json": "f06cf7c92f766616cafddbbf3d269f98b5afd58788703182f409b1c59dc1304a",
+    "artifacts/v2/projected_targets/targets.json": "fdc74a6a3df72832fe85ed158240f2c35d763b0db010dbc4707d4049d066e078",
+    "artifacts/v2/teacher_engineering/model/model.json": "ae47b2312c9cff7d89ed8074ec2ae6cebf3056731080a7ede1777a2559573411",
+    "artifacts/v2/teacher_engineering/model/weights.pt": "16042f076edbac97664ebf5ff41226fb0d703e30bd07b11bcede6cae022826d6"
+  },
+  "teacher_version_matches_targets": true,
+  "target_sha256_matches_matrix": true,
+  "rows": 32,
+  "teacher_atoms": 4,
+  "diagnostic_probability_dtype": "float64 from unchanged saved weights",
+  "operations": {
+    "trained": false,
+    "changed_hyperparameters": false,
+    "generated_new_observations": false,
+    "modified_teacher_or_targets_or_matrix": false,
+    "recomputed_existing_targets": true,
+    "computed_wind_only_history_factors": true
+  },
+  "target_label_differences": {
+    "pair": {
+      "projected_vs_privileged": {
+        "absolute_difference": {
+          "count": 32,
+          "min": 0.0,
+          "median": 0.0,
+          "mean": 4.0978193283081055e-08,
+          "max": 9.5367431640625e-07
+        },
+        "exact_equal_count": 28,
+        "within_1e-6_count": 32
+      },
+      "projected_vs_mean_log": {
+        "absolute_difference": {
+          "count": 32,
+          "min": 0.0,
+          "median": 0.0,
+          "mean": 4.0978193283081055e-08,
+          "max": 9.5367431640625e-07
+        },
+        "exact_equal_count": 28,
+        "within_1e-6_count": 32
+      },
+      "privileged_vs_mean_log": {
+        "absolute_difference": {
+          "count": 32,
+          "min": 0.0,
+          "median": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "exact_equal_count": 32,
+        "within_1e-6_count": 32
+      },
+      "projected_magnitude": {
+        "count": 32,
+        "min": 0.0033636093139648438,
+        "median": 0.2550930678844452,
+        "mean": 0.28471919521689415,
+        "max": 0.8836114406585693
+      }
+    },
+    "direction": {
+      "projected_vs_privileged": {
+        "absolute_difference": {
+          "count": 32,
+          "min": 0.0,
+          "median": 4.0978193283081055e-08,
+          "mean": 4.895264282822609e-08,
+          "max": 1.210719347000122e-07
+        },
+        "exact_equal_count": 5,
+        "within_1e-6_count": 32
+      },
+      "projected_vs_mean_log": {
+        "absolute_difference": {
+          "count": 32,
+          "min": 0.0,
+          "median": 4.0978193283081055e-08,
+          "mean": 4.895264282822609e-08,
+          "max": 1.210719347000122e-07
+        },
+        "exact_equal_count": 5,
+        "within_1e-6_count": 32
+      },
+      "privileged_vs_mean_log": {
+        "absolute_difference": {
+          "count": 32,
+          "min": 0.0,
+          "median": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        },
+        "exact_equal_count": 32,
+        "within_1e-6_count": 32
+      },
+      "projected_magnitude": {
+        "count": 32,
+        "min": 0.003696650266647339,
+        "median": 0.259087011218071,
+        "mean": 0.28555036324542016,
+        "max": 0.8951687216758728
+      }
+    }
+  },
+  "saved_label_recomputation_absolute_error": {
+    "projected_pair": {
+      "count": 32,
+      "min": 0.0,
+      "median": 0.0,
+      "mean": 0.0,
+      "max": 0.0
+    },
+    "privileged_pair": {
+      "count": 32,
+      "min": 0.0,
+      "median": 0.0,
+      "mean": 0.0,
+      "max": 0.0
+    },
+    "mean_log_pair": {
+      "count": 32,
+      "min": 0.0,
+      "median": 0.0,
+      "mean": 0.0,
+      "max": 0.0
+    },
+    "projected_direction": {
+      "count": 32,
+      "min": 0.0,
+      "median": 0.0,
+      "mean": 0.0,
+      "max": 0.0
+    },
+    "privileged_direction": {
+      "count": 32,
+      "min": 0.0,
+      "median": 0.0,
+      "mean": 0.0,
+      "max": 0.0
+    },
+    "mean_log_direction": {
+      "count": 32,
+      "min": 0.0,
+      "median": 0.0,
+      "mean": 0.0,
+      "max": 0.0
+    }
+  },
+  "responsibility_summary": {
+    "history": {
+      "ESS": {
+        "count": 96,
+        "min": 1.0,
+        "median": 1.0000000000000009,
+        "mean": 1.0000000000043177,
+        "max": 1.0000000001057807
+      },
+      "maximum_weight": {
+        "count": 96,
+        "min": 0.9999999999471096,
+        "median": 0.9999999999999996,
+        "mean": 0.9999999999978412,
+        "max": 1.0
+      },
+      "top_to_second_log_odds": {
+        "count": 96,
+        "min": 23.662916930118012,
+        "median": 35.37554620970339,
+        "mean": 34.3744538139678,
+        "max": 43.41537215269612
+      },
+      "entropy_nats": {
+        "count": 96,
+        "min": 6.061601351064728e-18,
+        "median": 1.65624551575159e-14,
+        "mean": 5.497391298944744e-11,
+        "max": 1.3044902762845912e-09
+      },
+      "second_weight": {
+        "count": 96,
+        "min": 1.3961865318123553e-19,
+        "median": 4.558370990394637e-16,
+        "mean": 2.1578948248965206e-12,
+        "max": 5.2884177167503257e-11
+      }
+    },
+    "history_future": {
+      "ESS": {
+        "count": 96,
+        "min": 1.0,
+        "median": 1.0,
+        "mean": 1.0,
+        "max": 1.0
+      },
+      "maximum_weight": {
+        "count": 96,
+        "min": 1.0,
+        "median": 1.0,
+        "mean": 1.0,
+        "max": 1.0
+      },
+      "top_to_second_log_odds": {
+        "count": 96,
+        "min": 46.063043480041834,
+        "median": 60.66269732100447,
+        "mean": 61.80587238064469,
+        "max": 78.36539342983787
+      },
+      "entropy_nats": {
+        "count": 96,
+        "min": 7.252774111293241e-33,
+        "median": 3.040592685234044e-25,
+        "mean": 2.403777193817933e-20,
+        "max": 4.55435653676153e-19
+      },
+      "second_weight": {
+        "count": 96,
+        "min": 9.254267763449213e-35,
+        "median": 5.016374393410271e-27,
+        "mean": 5.113895671890465e-22,
+        "max": 9.887224535510126e-21
+      }
+    },
+    "wind_only_history": {
+      "ESS": {
+        "count": 32,
+        "min": 1.0,
+        "median": 1.000000000000001,
+        "mean": 1.000000000004448,
+        "max": 1.0000000001062563
+      },
+      "maximum_weight": {
+        "count": 32,
+        "min": 0.9999999999468718,
+        "median": 0.9999999999999994,
+        "mean": 0.999999999997776,
+        "max": 1.0
+      },
+      "top_to_second_log_odds": {
+        "count": 32,
+        "min": 23.658428787441743,
+        "median": 35.30462878179884,
+        "mean": 34.369705813036454,
+        "max": 43.422508743426654
+      },
+      "entropy_nats": {
+        "count": 32,
+        "min": 6.019485427903493e-18,
+        "median": 1.733272029890637e-14,
+        "mean": 5.6458338403360837e-11,
+        "max": 1.3101098183137075e-09
+      }
+    },
+    "history_source_a_b_TV": {
+      "count": 32,
+      "min": 1.1007686532262952e-20,
+      "median": 1.4613915365130802e-17,
+      "mean": 2.064096404273721e-13,
+      "max": 5.004742135493833e-12
+    },
+    "all_history_winners_equal_wind_winner_count": 32,
+    "all_full_winners_equal_rollout_mode_count": 32
+  },
+  "stored_path_consistency": {
+    "status_counts": {
+      "OK_FINITE_BANK": 32
+    },
+    "minimum_ESS": {
+      "count": 32,
+      "min": 1.0,
+      "median": 1.0,
+      "mean": 1.0,
+      "max": 1.0
+    },
+    "absolute_quadrature_defect": {
+      "count": 32,
+      "min": 0.0,
+      "median": 1.341104507446289e-07,
+      "mean": 1.7698766896501184e-07,
+      "max": 1.1336524039506912e-06
+    },
+    "quadrature_orders": [
+      8
+    ],
+    "scope": "numerical endpoint/path consistency of smooth finite-bank surrogate; not a physics or ranking certificate"
+  },
+  "matrix_development_results_preserved": {
+    "nll": {
+      "top1": 0.3333333333333333,
+      "map_error_m": 1.540440114519881,
+      "true_log_margin": -0.24143020311991373,
+      "truth_nll": 1.3513906640923228,
+      "brier": 0.7304002221230532
+    },
+    "distribution": {
+      "top1": 0.0,
+      "map_error_m": 2.2071067811865475,
+      "true_log_margin": -0.24181084831555685,
+      "truth_nll": 1.3461842924745637,
+      "brier": 0.746455976261343
+    },
+    "privileged_pair": {
+      "top1": 0.0,
+      "map_error_m": 2.2071067811865475,
+      "true_log_margin": -0.793276866277059,
+      "truth_nll": 1.8014166272052494,
+      "brier": 0.9391700951040174
+    },
+    "mean_log": {
+      "top1": 0.0,
+      "map_error_m": 2.2071067811865475,
+      "true_log_margin": -0.793276866277059,
+      "truth_nll": 1.8014166272052494,
+      "brier": 0.9391700951040174
+    },
+    "projected_endpoint": {
+      "top1": 0.0,
+      "map_error_m": 2.2071067811865475,
+      "true_log_margin": -0.7855930974086126,
+      "truth_nll": 1.794982653101381,
+      "brier": 0.9367683535725333
+    },
+    "projected_evidence": {
+      "top1": 0.0,
+      "map_error_m": 2.2071067811865475,
+      "true_log_margin": -0.7932780385017395,
+      "truth_nll": 1.801417625422081,
+      "brier": 0.9391704934275427
+    },
+    "projected_no_anchor": {
+      "top1": 0.3333333333333333,
+      "map_error_m": 1.4714045207910316,
+      "true_log_margin": -0.2858440081278483,
+      "truth_nll": 1.4327821866324548,
+      "brier": 0.7788318921852561
+    }
+  },
+  "matrix_model_identity": {
+    "privileged_pair": "d9dd5e505296f2c180b2",
+    "mean_log": "d9dd5e505296f2c180b2",
+    "projected_evidence": "854c68782a4bb9f9752c"
+  },
+  "interpretation": {
+    "primary": "Historical local wind almost completely identifies one exogenous bank atom. The same atom dominates both source endpoints and midpoint before and after the future block, so mixture-before-log, expected-log, and privileged-single-atom targets numerically coincide.",
+    "implementation_check": "All six serialized target labels are recomputed independently from the matching frozen checkpoint. Coincidence is explained by responsibility concentration, not evidence that the three algebraic target implementations are accidentally aliased.",
+    "path_check": "Small endpoint/path defect confirms integration consistency only. A min ESS of one signals no effective nuisance mixing in this target set.",
+    "scientific_consequence": "This engineering matrix is not diagnostic of the independent benefit of source-conditioned projection: its target ablations are almost identical treatments.",
+    "negative_result_retained": "The observed development deterioration versus NLL is a real negative result for this frozen toy experiment. Degeneracy does not erase it, prove that projection works elsewhere, or identify the sole cause of student generalization failure.",
+    "no_post_result_tuning": "No replacement data, changed teacher, retraining, retuned objective, or revised evaluation set is produced by this audit."
+  },
+  "per_target_responsibilities": [
+    {
+      "index": 0,
+      "history_episode": "engineering_1",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 1,
+      "wind_only_history": {
+        "weights": [
+          1.8094794829440457e-22,
+          0.9999999999966949,
+          3.3050647375026673e-12,
+          5.074083534903573e-30
+        ],
+        "ESS": 1.0000000000066103,
+        "maximum_weight": 0.9999999999966949,
+        "winner": 1,
+        "top_to_second_log_odds": 26.435565055066785,
+        "entropy_nats": 9.067638783282156e-11
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.532463393511014e-22,
+              0.9999999999962561,
+              3.743839879386708e-12,
+              5.2562387812283085e-30
+            ],
+            "ESS": 1.0000000000074878,
+            "maximum_weight": 0.9999999999962561,
+            "winner": 1,
+            "top_to_second_log_odds": 26.310909325481827,
+            "entropy_nats": 1.0224772568699801e-10,
+            "nonwinner_mass": 3.743894083640953e-12,
+            "second_weight": 3.743839879386708e-12
+          },
+          "history_future": {
+            "weights": [
+              1.760757746627753e-34,
+              1.0,
+              9.887224535510126e-21,
+              2.636699727841627e-48
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 1,
+            "top_to_second_log_odds": 46.063043480041834,
+            "entropy_nats": 4.55435653676153e-19,
+            "nonwinner_mass": 0.0,
+            "second_weight": 9.887224535510126e-21
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.69864234031628e-22,
+              0.9999999999966427,
+              3.3573422169033687e-12,
+              5.033764427142188e-30
+            ],
+            "ESS": 1.0000000000067146,
+            "maximum_weight": 0.9999999999966427,
+            "winner": 1,
+            "top_to_second_log_odds": 26.419871461835086,
+            "entropy_nats": 9.205786425895508e-11,
+            "nonwinner_mass": 3.3573144264664734e-12,
+            "second_weight": 3.3573422169033687e-12
+          },
+          "history_future": {
+            "weights": [
+              2.038719904165145e-34,
+              1.0,
+              8.230450113876939e-21,
+              2.3868333657806423e-48
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 1,
+            "top_to_second_log_odds": 46.246446247837426,
+            "entropy_nats": 3.8062906878693304e-19,
+            "nonwinner_mass": 0.0,
+            "second_weight": 8.230450113876939e-21
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.6090380110975877e-22,
+              0.9999999999964411,
+              3.558877765183878e-12,
+              5.165684959547706e-30
+            ],
+            "ESS": 1.0000000000071179,
+            "maximum_weight": 0.9999999999964411,
+            "winner": 1,
+            "top_to_second_log_odds": 26.3615758552568,
+            "entropy_nats": 9.737655710228803e-11,
+            "nonwinner_mass": 3.558930927738402e-12,
+            "second_weight": 3.558877765183878e-12
+          },
+          "history_future": {
+            "weights": [
+              1.8892011868320903e-34,
+              1.0,
+              9.076152767753852e-21,
+              2.528337116358213e-48
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 1,
+            "top_to_second_log_odds": 46.14863655404152,
+            "entropy_nats": 4.1885207538804527e-19,
+            "nonwinner_mass": 0.0,
+            "second_weight": 9.076152767753852e-21
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 3.865386598372185e-13
+    },
+    {
+      "index": 1,
+      "history_episode": "engineering_9",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 2,
+      "wind_only_history": {
+        "weights": [
+          7.140262091519774e-36,
+          1.430187027943429e-14,
+          0.9999999999999818,
+          4.01656435249411e-15
+        ],
+        "ESS": 1.0000000000000364,
+        "maximum_weight": 0.9999999999999818,
+        "winner": 2,
+        "top_to_second_log_odds": 31.878386077425283,
+        "entropy_nats": 6.072706789320673e-13
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.3292875227526126e-35,
+              2.0133470276248978e-14,
+              0.9999999999999749,
+              4.8998810907003665e-15
+            ],
+            "ESS": 1.0000000000000502,
+            "maximum_weight": 0.9999999999999749,
+            "winner": 2,
+            "top_to_second_log_odds": 31.536392776860687,
+            "entropy_nats": 8.214770196805475e-13,
+            "nonwinner_mass": 2.4980018054066022e-14,
+            "second_weight": 2.0133470276248978e-14
+          },
+          "history_future": {
+            "weights": [
+              1.9192173658285604e-65,
+              3.522263873290382e-28,
+              1.0,
+              1.658795911244122e-25
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 2,
+            "top_to_second_log_odds": 57.05853534035189,
+            "entropy_nats": 9.48711189719436e-24,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.658795911244122e-25
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.2393271620471362e-35,
+              1.9279965433978862e-14,
+              0.9999999999999758,
+              4.8701963559478645e-15
+            ],
+            "ESS": 1.0000000000000484,
+            "maximum_weight": 0.9999999999999758,
+            "winner": 2,
+            "top_to_second_log_odds": 31.579709898573288,
+            "entropy_nats": 7.935590254503262e-13,
+            "nonwinner_mass": 2.4202861936828413e-14,
+            "second_weight": 1.9279965433978862e-14
+          },
+          "history_future": {
+            "weights": [
+              1.7519323881247017e-65,
+              3.3445698612478552e-28,
+              1.0,
+              1.6338959176472055e-25
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 2,
+            "top_to_second_log_odds": 57.073660028332455,
+            "entropy_nats": 9.34640144866158e-24,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.6338959176472055e-25
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.2929768863929487e-35,
+              1.9770699146281514e-14,
+              0.9999999999999754,
+              4.899071469092234e-15
+            ],
+            "ESS": 1.0000000000000493,
+            "maximum_weight": 0.9999999999999754,
+            "winner": 2,
+            "top_to_second_log_odds": 31.55457539435335,
+            "entropy_nats": 8.099260535626209e-13,
+            "nonwinner_mass": 2.4646951146678475e-14,
+            "second_weight": 1.9770699146281514e-14
+          },
+          "history_future": {
+            "weights": [
+              1.8474327394658482e-65,
+              3.4449640394164344e-28,
+              1.0,
+              1.6512099934106135e-25
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 2,
+            "top_to_second_log_odds": 57.063118976353465,
+            "entropy_nats": 9.444103622612938e-24,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.6512099934106135e-25
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 8.856839983613713e-16
+    },
+    {
+      "index": 2,
+      "history_episode": "engineering_8",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 1,
+      "wind_only_history": {
+        "weights": [
+          4.357080629306528e-22,
+          0.9999999999999964,
+          3.516425726838759e-15,
+          4.912986006793216e-33
+        ],
+        "ESS": 1.000000000000007,
+        "maximum_weight": 0.9999999999999964,
+        "winner": 1,
+        "top_to_second_log_odds": 33.28133133969903,
+        "entropy_nats": 1.205840648554947e-13
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              3.781885256887382e-22,
+              0.999999999999996,
+              3.888086692784436e-15,
+              5.060341992966751e-33
+            ],
+            "ESS": 1.000000000000008,
+            "maximum_weight": 0.999999999999996,
+            "winner": 1,
+            "top_to_second_log_odds": 33.18085921103421,
+            "entropy_nats": 1.3300687869699938e-13,
+            "nonwinner_mass": 3.885780586188048e-15,
+            "second_weight": 3.888086692784436e-15
+          },
+          "history_future": {
+            "weights": [
+              3.4870331243936585e-39,
+              1.0,
+              2.8274892595193703e-27,
+              1.5133702285253878e-59
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 1,
+            "top_to_second_log_odds": 61.13040838041678,
+            "entropy_nats": 1.7284557312597012e-25,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.8274892595193703e-27
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              4.20342082324323e-22,
+              0.9999999999999964,
+              3.482970800778868e-15,
+              4.830658870687338e-33
+            ],
+            "ESS": 1.000000000000007,
+            "maximum_weight": 0.9999999999999964,
+            "winner": 1,
+            "top_to_second_log_odds": 33.29089078691572,
+            "entropy_nats": 1.1950393491119261e-13,
+            "nonwinner_mass": 3.4416913763379853e-15,
+            "second_weight": 3.482970800778868e-15
+          },
+          "history_future": {
+            "weights": [
+              4.01885930884945e-39,
+              1.0,
+              2.4076104847398965e-27,
+              1.4100853949908765e-59
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 1,
+            "top_to_second_log_odds": 61.291162755305976,
+            "entropy_nats": 1.4756524607192942e-25,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.4076104847398965e-27
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              3.9844027734073206e-22,
+              0.9999999999999962,
+              3.686897373392996e-15,
+              4.961916002822856e-33
+            ],
+            "ESS": 1.0000000000000075,
+            "maximum_weight": 0.9999999999999962,
+            "winner": 1,
+            "top_to_second_log_odds": 33.233991110764535,
+            "entropy_nats": 1.263050924503088e-13,
+            "nonwinner_mass": 3.6637359812630166e-15,
+            "second_weight": 3.686897373392996e-15
+          },
+          "history_future": {
+            "weights": [
+              3.7283364614706004e-39,
+              1.0,
+              2.6276892892578263e-27,
+              1.4713620215445454e-59
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 1,
+            "top_to_second_log_odds": 61.20369264808271,
+            "entropy_nats": 1.608242876347248e-25,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.6276892892578263e-27
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 4.246025720045937e-16
+    },
+    {
+      "index": 3,
+      "history_episode": "engineering_12",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 0,
+      "wind_only_history": {
+        "weights": [
+          0.9999999999999996,
+          3.641034277716566e-21,
+          2.572353666372328e-33,
+          3.8202740264296555e-16
+        ],
+        "ESS": 1.0000000000000009,
+        "maximum_weight": 0.9999999999999996,
+        "winner": 0,
+        "top_to_second_log_odds": 35.501039333191606,
+        "entropy_nats": 1.4006630411859983e-14
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              0.9999999999999998,
+              2.7199222139773887e-21,
+              1.3235848794868749e-33,
+              2.417573902744067e-16
+            ],
+            "ESS": 1.0000000000000004,
+            "maximum_weight": 0.9999999999999998,
+            "winner": 0,
+            "top_to_second_log_odds": 35.958596970122194,
+            "entropy_nats": 8.91542996468709e-15,
+            "nonwinner_mass": 2.220446049250313e-16,
+            "second_weight": 2.417573902744067e-16
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              1.3891640662685079e-36,
+              9.263754431278643e-64,
+              2.434846695721715e-34
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 77.39800936588082,
+            "entropy_nats": 1.895992417969089e-32,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.434846695721715e-34
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              0.9999999999999998,
+              2.908224685578677e-21,
+              1.5514191940077097e-33,
+              2.7397507677025097e-16
+            ],
+            "ESS": 1.0000000000000004,
+            "maximum_weight": 0.9999999999999998,
+            "winner": 0,
+            "top_to_second_log_odds": 35.83349453233444,
+            "entropy_nats": 1.0039666540844312e-14,
+            "nonwinner_mass": 2.220446049250313e-16,
+            "second_weight": 2.7397507677025097e-16
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              1.54689172221034e-36,
+              1.2109272760981043e-63,
+              3.002306876082371e-34
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 77.18851220993258,
+            "entropy_nats": 2.3301911862000465e-32,
+            "nonwinner_mass": 0.0,
+            "second_weight": 3.002306876082371e-34
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              0.9999999999999998,
+              2.8091477901548442e-21,
+              1.4310374214093881e-33,
+              2.5744057212390597e-16
+            ],
+            "ESS": 1.0000000000000004,
+            "maximum_weight": 0.9999999999999998,
+            "winner": 0,
+            "top_to_second_log_odds": 35.895742768292976,
+            "entropy_nats": 9.463198092829447e-15,
+            "nonwinner_mass": 2.220446049250313e-16,
+            "second_weight": 2.5744057212390597e-16
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              1.4660735199228754e-36,
+              1.062158436260317e-63,
+              2.715000181341022e-34
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 77.28910114161938,
+            "entropy_nats": 2.1104958784905019e-32,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.715000181341022e-34
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 1.6108937399157946e-17
+    },
+    {
+      "index": 4,
+      "history_episode": "engineering_11",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 3,
+      "wind_only_history": {
+        "weights": [
+          3.369124848252389e-17,
+          2.4072230069111752e-27,
+          1.3883131813411645e-12,
+          0.9999999999986116
+        ],
+        "ESS": 1.000000000002777,
+        "maximum_weight": 0.9999999999986116,
+        "winner": 3,
+        "top_to_second_log_odds": 27.302931644322268,
+        "entropy_nats": 3.929474269091888e-11
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              3.121037576529159e-17,
+              2.2581713048674984e-27,
+              1.3562745117340861e-12,
+              0.9999999999986438
+            ],
+            "ESS": 1.0000000000027125,
+            "maximum_weight": 0.9999999999986438,
+            "winner": 3,
+            "top_to_second_log_odds": 27.326279504615886,
+            "entropy_nats": 3.841937101422208e-11,
+            "nonwinner_mass": 1.3562484468820912e-12,
+            "second_weight": 1.3562745117340861e-12
+          },
+          "history_future": {
+            "weights": [
+              8.729308771731755e-30,
+              1.190028077083934e-47,
+              1.3121258286643185e-21,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 48.0826383609576,
+            "entropy_nats": 6.309047228782385e-20,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.3121258286643185e-21
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              2.7106675858915863e-17,
+              2.183546767864852e-27,
+              1.4549923583610033e-12,
+              0.9999999999985449
+            ],
+            "ESS": 1.0000000000029101,
+            "maximum_weight": 0.9999999999985449,
+            "winner": 3,
+            "top_to_second_log_odds": 27.256020467302992,
+            "entropy_nats": 4.11133938269614e-11,
+            "nonwinner_mass": 1.4550582960737302e-12,
+            "second_weight": 1.4549923583610033e-12
+          },
+          "history_future": {
+            "weights": [
+              7.052557477200351e-30,
+              1.1110519799220347e-47,
+              1.4322470131446506e-21,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 47.99504240399935,
+            "entropy_nats": 6.874075660227593e-20,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.4322470131446506e-21
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              2.8868717623328256e-17,
+              2.209883336524634e-27,
+              1.4039001120657297e-12,
+              0.999999999998596
+            ],
+            "ESS": 1.000000000002808,
+            "maximum_weight": 0.999999999998596,
+            "winner": 3,
+            "top_to_second_log_odds": 27.2917669581068,
+            "entropy_nats": 3.9720002157589695e-11,
+            "nonwinner_mass": 1.4038770146385104e-12,
+            "second_weight": 1.4039001120657297e-12
+          },
+          "history_future": {
+            "weights": [
+              7.77648840846606e-30,
+              1.1423591535883442e-47,
+              1.3685697474211178e-21,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 48.04052073834619,
+            "entropy_nats": 6.574680385408781e-20,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.3685697474211178e-21
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 9.876589975923128e-14
+    },
+    {
+      "index": 5,
+      "history_episode": "engineering_22",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 3,
+      "wind_only_history": {
+        "weights": [
+          1.3728408087225412e-18,
+          1.8272078704839888e-32,
+          6.678588049433673e-16,
+          0.9999999999999993
+        ],
+        "ESS": 1.0000000000000013,
+        "maximum_weight": 0.9999999999999993,
+        "winner": 3,
+        "top_to_second_log_odds": 34.94245489254319,
+        "entropy_nats": 2.4059224442375744e-14
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.8664397079410367e-18,
+              2.1151831833346588e-32,
+              5.979832992116762e-16,
+              0.9999999999999993
+            ],
+            "ESS": 1.0000000000000013,
+            "maximum_weight": 0.9999999999999993,
+            "winner": 3,
+            "top_to_second_log_odds": 35.05296884807185,
+            "entropy_nats": 2.170341650674039e-14,
+            "nonwinner_mass": 5.551115123125783e-16,
+            "second_weight": 5.979832992116762e-16
+          },
+          "history_future": {
+            "weights": [
+              1.2340863852151141e-44,
+              1.5988633651734454e-64,
+              6.380086353726231e-25,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 55.711445692519234,
+            "entropy_nats": 3.55443834409202e-23,
+            "nonwinner_mass": 0.0,
+            "second_weight": 6.380086353726231e-25
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.5591823477809655e-18,
+              1.955197367992387e-32,
+              6.269038725817777e-16,
+              0.9999999999999993
+            ],
+            "ESS": 1.0000000000000013,
+            "maximum_weight": 0.9999999999999993,
+            "winner": 3,
+            "top_to_second_log_odds": 35.005738458280284,
+            "entropy_nats": 2.2675296988573636e-14,
+            "nonwinner_mass": 6.661338147750939e-16,
+            "second_weight": 6.269038725817777e-16
+          },
+          "history_future": {
+            "weights": [
+              9.672526095231126e-45,
+              1.458516456702275e-64,
+              6.941763358578677e-25,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 55.62707149635634,
+            "entropy_nats": 3.8614996665844284e-23,
+            "nonwinner_mass": 0.0,
+            "second_weight": 6.941763358578677e-25
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.7060873628647774e-18,
+              2.0266617443876232e-32,
+              6.094675957303258e-16,
+              0.9999999999999993
+            ],
+            "ESS": 1.0000000000000013,
+            "maximum_weight": 0.9999999999999993,
+            "winner": 3,
+            "top_to_second_log_odds": 35.03394589171653,
+            "entropy_nats": 2.2087988593867083e-14,
+            "nonwinner_mass": 6.661338147750939e-16,
+            "second_weight": 6.094675957303258e-16
+          },
+          "history_future": {
+            "weights": [
+              1.0863219569153063e-44,
+              1.5182591422213161e-64,
+              6.633142034138792e-25,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 55.67254872127921,
+            "entropy_nats": 3.69283923070757e-23,
+            "nonwinner_mass": 0.0,
+            "second_weight": 6.633142034138792e-25
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 1.4613915365130802e-17
+    },
+    {
+      "index": 6,
+      "history_episode": "engineering_44",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 3,
+      "wind_only_history": {
+        "weights": [
+          2.575327579594948e-20,
+          5.1295571792335534e-36,
+          1.226894896438522e-17,
+          1.0
+        ],
+        "ESS": 1.0,
+        "maximum_weight": 1.0,
+        "winner": 3,
+        "top_to_second_log_odds": 38.93946007781325,
+        "entropy_nats": 4.7890786857435905e-16
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.962828676069276e-20,
+              4.707228919408331e-36,
+              1.3502052920409501e-17,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 38.84368993183115,
+            "entropy_nats": 5.253602360392281e-16,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.3502052920409501e-17
+          },
+          "history_future": {
+            "weights": [
+              1.984550414110909e-31,
+              9.3595010463303e-61,
+              1.5943925244051744e-31,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 70.69474548596115,
+            "entropy_nats": 2.533614720260017e-29,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.984550414110909e-31
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              2.0805050986541448e-20,
+              4.746359351623606e-36,
+              1.3096084916991894e-17,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 38.87421834965198,
+            "entropy_nats": 5.100429305909693e-16,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.3096084916991894e-17
+          },
+          "history_future": {
+            "weights": [
+              2.134485349476282e-31,
+              9.594900269925326e-61,
+              1.5583177703567826e-31,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 70.62191231930251,
+            "entropy_nats": 2.612830940156599e-29,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.134485349476282e-31
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              2.0245872203051834e-20,
+              4.727777810523962e-36,
+              1.3278261278672326e-17,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 38.86040346622715,
+            "entropy_nats": 5.169166667431643e-16,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.3278261278672326e-17
+          },
+          "history_future": {
+            "weights": [
+              2.067005969808923e-31,
+              9.48613263753876e-61,
+              1.572427541978143e-31,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 70.65403671396857,
+            "entropy_nats": 2.5757069729086086e-29,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.067005969808923e-31
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 2.0357238382172774e-19
+    },
+    {
+      "index": 7,
+      "history_episode": "engineering_7",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 3,
+      "wind_only_history": {
+        "weights": [
+          8.567685105728412e-18,
+          7.329912577889739e-36,
+          2.2351449714929873e-19,
+          1.0
+        ],
+        "ESS": 1.0,
+        "maximum_weight": 1.0,
+        "winner": 3,
+        "top_to_second_log_odds": 39.298534093788724,
+        "entropy_nats": 3.4629625299589326e-16
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              7.474330996355155e-18,
+              7.078026749745187e-36,
+              2.3268368422843507e-19,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 39.435057057436694,
+            "entropy_nats": 3.0473387133458316e-16,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.474330996355155e-18
+          },
+          "history_future": {
+            "weights": [
+              5.8717988865567086e-36,
+              4.982340287387742e-66,
+              1.2012320942405654e-32,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 73.49937520055737,
+            "entropy_nats": 8.833744213428244e-31,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.2012320942405654e-32
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              8.768482097184914e-18,
+              7.471220992702648e-36,
+              2.19196856740362e-19,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 39.27536796148693,
+            "entropy_nats": 3.5380300401152554e-16,
+            "nonwinner_mass": 0.0,
+            "second_weight": 8.768482097184914e-18
+          },
+          "history_future": {
+            "weights": [
+              7.334765963032885e-36,
+              5.390384660891199e-66,
+              1.1022462744811203e-32,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 73.58537281048113,
+            "entropy_nats": 8.116854161444611e-31,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.1022462744811203e-32
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              8.072471341076196e-18,
+              7.246708476041502e-36,
+              2.2520422259742397e-19,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 39.35807200044069,
+            "entropy_nats": 3.2738656487020655e-16,
+            "nonwinner_mass": 0.0,
+            "second_weight": 8.072471341076196e-18
+          },
+          "history_future": {
+            "weights": [
+              6.504526326275308e-36,
+              5.14883292474351e-66,
+              1.148827268919086e-32,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 73.54398131990689,
+            "entropy_nats": 8.454203124502213e-31,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.148827268919086e-32
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 6.538189641589158e-19
+    },
+    {
+      "index": 8,
+      "history_episode": "engineering_15",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 0,
+      "wind_only_history": {
+        "weights": [
+          1.0,
+          1.093417395070074e-20,
+          2.076712913371952e-34,
+          7.99673813709724e-18
+        ],
+        "ESS": 1.0,
+        "maximum_weight": 1.0,
+        "winner": 0,
+        "top_to_second_log_odds": 39.36749794822148,
+        "entropy_nats": 3.153141330141141e-16
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.0,
+              1.2431359514174203e-20,
+              2.55950613819223e-34,
+              9.286138855541581e-18
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 39.21800883119328,
+            "entropy_nats": 3.6475365538034617e-16,
+            "nonwinner_mass": 0.0,
+            "second_weight": 9.286138855541581e-18
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              2.546264983769537e-34,
+              2.4435638370693656e-59,
+              1.5811582996873873e-31
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 70.9219802032959,
+            "entropy_nats": 1.1233583954025441e-29,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.5811582996873873e-31
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.0,
+              1.3313097242378398e-20,
+              2.956283450185458e-34,
+              1.0237308166712583e-17
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 39.12049296318345,
+            "entropy_nats": 4.010978231641792e-16,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.0237308166712583e-17
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              2.8407747512761877e-34,
+              3.138809726339021e-59,
+              1.8896678273305635e-31
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 70.74373682192534,
+            "entropy_nats": 1.3390159574070383e-29,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.8896678273305635e-31
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.0,
+              1.2886203951769362e-20,
+              2.760287887961717e-34,
+              9.782636064417662e-18
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 39.16592268992544,
+            "entropy_nats": 3.8373613184225883e-16,
+            "nonwinner_mass": 0.0,
+            "second_weight": 9.782636064417662e-18
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              2.69732118840602e-34,
+              2.7898034995797413e-59,
+              1.7402532527533002e-31
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 70.82610723262063,
+            "entropy_nats": 1.2346385464287256e-29,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.7402532527533002e-31
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 4.760255244496029e-19
+    },
+    {
+      "index": 9,
+      "history_episode": "engineering_36",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 0,
+      "wind_only_history": {
+        "weights": [
+          1.0,
+          1.0222156154366881e-27,
+          1.1490317561581035e-39,
+          5.046316870269916e-17
+        ],
+        "ESS": 1.0,
+        "maximum_weight": 1.0,
+        "winner": 0,
+        "top_to_second_log_odds": 37.52528793632375,
+        "entropy_nats": 1.8936449358115955e-15
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.0,
+              9.075162171613158e-28,
+              8.678946288460413e-40,
+              4.223408742431088e-17
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 37.70330402004255,
+            "entropy_nats": 1.5923646382243572e-15,
+            "nonwinner_mass": 0.0,
+            "second_weight": 4.223408742431088e-17
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              1.1085881378128287e-39,
+              1.6415321792351062e-64,
+              3.1538610654666814e-32
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 72.53409553850307,
+            "entropy_nats": 2.2876246978150943e-30,
+            "nonwinner_mass": 0.0,
+            "second_weight": 3.1538610654666814e-32
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.0,
+              8.542164510538723e-28,
+              7.523636359570134e-40,
+              3.8018946950513486e-17
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 37.80844703446721,
+            "entropy_nats": 1.4374373421379488e-15,
+            "nonwinner_mass": 0.0,
+            "second_weight": 3.8018946950513486e-17
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              1.0052056193560745e-39,
+              1.2847507846920708e-64,
+              2.6201411601093724e-32
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 72.71949478158348,
+            "entropy_nats": 1.9053535044589243e-30,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.6201411601093724e-32
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.0,
+              8.812898598694915e-28,
+              8.104787319360407e-40,
+              4.0194543524485844e-17
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 37.75280042070218,
+            "entropy_nats": 1.5174565797360422e-15,
+            "nonwinner_mass": 0.0,
+            "second_weight": 4.0194543524485844e-17
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              1.0577593699625114e-39,
+              1.4619321400159134e-64,
+              2.8934344117948543e-32
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 72.62027880146339,
+            "entropy_nats": 2.1012202317111663e-30,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.8934344117948543e-32
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 2.107570236925347e-18
+    },
+    {
+      "index": 10,
+      "history_episode": "engineering_23",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 0,
+      "wind_only_history": {
+        "weights": [
+          0.9999999999999996,
+          3.1639047617247743e-20,
+          1.5279348341514515e-32,
+          3.59210280808207e-16
+        ],
+        "ESS": 1.0000000000000009,
+        "maximum_weight": 0.9999999999999996,
+        "winner": 0,
+        "top_to_second_log_odds": 35.56262371647067,
+        "entropy_nats": 1.3219969851233193e-14
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              0.9999999999999998,
+              2.720415347381261e-20,
+              1.1077173114023298e-32,
+              2.938865264632758e-16
+            ],
+            "ESS": 1.0000000000000004,
+            "maximum_weight": 0.9999999999999998,
+            "winner": 0,
+            "top_to_second_log_odds": 35.7633379454682,
+            "entropy_nats": 1.0733633340519042e-14,
+            "nonwinner_mass": 2.220446049250313e-16,
+            "second_weight": 2.938865264632758e-16
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              2.4309546286064558e-36,
+              4.453867603290446e-60,
+              1.9209038528468627e-30
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 68.42475695786177,
+            "entropy_nats": 1.314375786203647e-28,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.9209038528468627e-30
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              0.9999999999999998,
+              2.827521278368092e-20,
+              1.2028245289151793e-32,
+              3.136908988672511e-16
+            ],
+            "ESS": 1.0000000000000004,
+            "maximum_weight": 0.9999999999999998,
+            "winner": 0,
+            "top_to_second_log_odds": 35.69812357133493,
+            "entropy_nats": 1.1421493808291412e-14,
+            "nonwinner_mass": 2.220446049250313e-16,
+            "second_weight": 3.136908988672511e-16
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              2.531006266480969e-36,
+              4.8794548437746605e-60,
+              2.0736809565624447e-30
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 68.34822752185555,
+            "entropy_nats": 1.4173262527939648e-28,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.0736809565624447e-30
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              0.9999999999999998,
+              2.764566765996306e-20,
+              1.147262724707044e-32,
+              3.0255177229856913e-16
+            ],
+            "ESS": 1.0000000000000004,
+            "maximum_weight": 0.9999999999999998,
+            "winner": 0,
+            "top_to_second_log_odds": 35.73427926297165,
+            "entropy_nats": 1.1034759145358514e-14,
+            "nonwinner_mass": 2.220446049250313e-16,
+            "second_weight": 3.0255177229856913e-16
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              2.4700692435182853e-36,
+              4.623461883605449e-60,
+              1.9857910388960354e-30
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 68.39153544680558,
+            "entropy_nats": 1.3581150074466266e-28,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.9857910388960354e-30
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 9.90272173164259e-18
+    },
+    {
+      "index": 11,
+      "history_episode": "engineering_43",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 2,
+      "wind_only_history": {
+        "weights": [
+          5.0374803088133694e-36,
+          3.89391391728062e-12,
+          0.999999999996106,
+          1.4463181401259637e-17
+        ],
+        "ESS": 1.000000000007788,
+        "maximum_weight": 0.999999999996106,
+        "winner": 2,
+        "top_to_second_log_odds": 26.27160631572115,
+        "entropy_nats": 1.0619393050744757e-10
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              4.5751926504784595e-36,
+              3.801739229362805e-12,
+              0.9999999999961982,
+              1.4109306562252234e-17
+            ],
+            "ESS": 1.0000000000076037,
+            "maximum_weight": 0.9999999999961982,
+            "winner": 2,
+            "top_to_second_log_odds": 26.295562461963833,
+            "entropy_nats": 1.037712665321473e-10,
+            "nonwinner_mass": 3.8017367032239235e-12,
+            "second_weight": 3.801739229362805e-12
+          },
+          "history_future": {
+            "weights": [
+              3.0783960355519835e-66,
+              2.7966753460089954e-24,
+              1.0,
+              7.16095707119329e-30
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 2,
+            "top_to_second_log_odds": 54.233610896591195,
+            "entropy_nats": 1.516742830835589e-22,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.7966753460089954e-24
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              5.2623810432343245e-36,
+              4.091217496371895e-12,
+              0.9999999999959088,
+              1.4639909729048207e-17
+            ],
+            "ESS": 1.0000000000081823,
+            "maximum_weight": 0.9999999999959088,
+            "winner": 2,
+            "top_to_second_log_odds": 26.22217851379202,
+            "entropy_nats": 1.1137237485795333e-10,
+            "nonwinner_mass": 4.091171845743702e-12,
+            "second_weight": 4.091217496371895e-12
+          },
+          "history_future": {
+            "weights": [
+              3.895510268385811e-66,
+              3.1797502073748897e-24,
+              1.0,
+              7.601652739221975e-30
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 2,
+            "top_to_second_log_odds": 54.105239589290285,
+            "entropy_nats": 1.7204165648875068e-22,
+            "nonwinner_mass": 0.0,
+            "second_weight": 3.1797502073748897e-24
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              4.915727695182002e-36,
+              3.947292344701888e-12,
+              0.9999999999960527,
+              1.4391886617824683e-17
+            ],
+            "ESS": 1.0000000000078946,
+            "maximum_weight": 0.9999999999960527,
+            "winner": 2,
+            "top_to_second_log_odds": 26.257991254415973,
+            "entropy_nats": 1.075958129229995e-10,
+            "nonwinner_mass": 3.9472869417522816e-12,
+            "second_weight": 3.947292344701888e-12
+          },
+          "history_future": {
+            "weights": [
+              3.4681127930307616e-66,
+              2.9838454420841917e-24,
+              1.0,
+              7.39230649621555e-30
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 2,
+            "top_to_second_log_odds": 54.16882934640521,
+            "entropy_nats": 1.6163191040288572e-22,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.9838454420841917e-24
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 2.894014589147864e-13
+    },
+    {
+      "index": 12,
+      "history_episode": "engineering_21",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 0,
+      "wind_only_history": {
+        "weights": [
+          1.0,
+          7.503753480510097e-19,
+          8.884426749045059e-35,
+          5.517616909008338e-20
+        ],
+        "ESS": 1.0,
+        "maximum_weight": 1.0,
+        "winner": 0,
+        "top_to_second_log_odds": 41.733713407466965,
+        "entropy_nats": 3.3762668292372e-17
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.0,
+              7.648068799927659e-19,
+              9.6594207434861e-35,
+              6.117567682575121e-20
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 41.71466359537179,
+            "entropy_nats": 3.461010652555343e-17,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.648068799927659e-19
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              3.0920857381771855e-36,
+              1.6237181171422591e-62,
+              2.8996312655945797e-33
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 74.92072448969027,
+            "entropy_nats": 2.1749529714209256e-31,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.8996312655945797e-33
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.0,
+              8.414384768539945e-19,
+              1.1639194441908804e-34,
+              6.916758827851145e-20
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 41.619174053201476,
+            "entropy_nats": 3.8071493107632794e-17,
+            "nonwinner_mass": 0.0,
+            "second_weight": 8.414384768539945e-19
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              3.550196727627941e-36,
+              2.1478811262875184e-62,
+              3.485687397500228e-33
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 74.73664279942132,
+            "entropy_nats": 2.6079836250969035e-31,
+            "nonwinner_mass": 0.0,
+            "second_weight": 3.485687397500228e-33
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.0,
+              8.04271379016505e-19,
+              1.0676585552521354e-34,
+              6.552264767463042e-20
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 41.6643502045583,
+            "entropy_nats": 3.6403703652774424e-17,
+            "nonwinner_mass": 0.0,
+            "second_weight": 8.04271379016505e-19
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              3.3339954976255766e-36,
+              1.8965757379620771e-62,
+              3.224402957923335e-33
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 74.81456026502042,
+            "entropy_nats": 2.4150463981211244e-31,
+            "nonwinner_mass": 0.0,
+            "second_weight": 3.224402957923335e-33
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 4.231175415699442e-20
+    },
+    {
+      "index": 13,
+      "history_episode": "engineering_17",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 2,
+      "wind_only_history": {
+        "weights": [
+          6.852698369548931e-35,
+          2.727585334087972e-12,
+          0.9999999999972722,
+          1.777670876501506e-16
+        ],
+        "ESS": 1.0000000000054556,
+        "maximum_weight": 0.9999999999972722,
+        "winner": 2,
+        "top_to_second_log_odds": 26.62760439113177,
+        "entropy_nats": 7.536332810206598e-11
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              6.066636768096864e-35,
+              2.649090099656315e-12,
+              0.9999999999973508,
+              1.7057263374523518e-16
+            ],
+            "ESS": 1.0000000000052984,
+            "maximum_weight": 0.9999999999973508,
+            "winner": 2,
+            "top_to_second_log_odds": 26.656804893509094,
+            "entropy_nats": 7.32716851570263e-11,
+            "nonwinner_mass": 2.6492141813605485e-12,
+            "second_weight": 2.649090099656315e-12
+          },
+          "history_future": {
+            "weights": [
+              2.666347366842049e-64,
+              2.097765540957264e-21,
+              1.0,
+              5.398071364509798e-31
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 2,
+            "top_to_second_log_odds": 47.613414202740955,
+            "entropy_nats": 9.988177963945653e-20,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.097765540957264e-21
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              5.282603868586235e-35,
+              2.4637776269147968e-12,
+              0.999999999997536,
+              1.6348659348994144e-16
+            ],
+            "ESS": 1.000000000004928,
+            "maximum_weight": 0.999999999997536,
+            "winner": 2,
+            "top_to_second_log_odds": 26.729325323144526,
+            "entropy_nats": 6.832508539962849e-11,
+            "nonwinner_mass": 2.46391795855061e-12,
+            "second_weight": 2.4637776269147968e-12
+          },
+          "history_future": {
+            "weights": [
+              2.1625787439159967e-64,
+              1.879571344584328e-21,
+              1.0,
+              5.044843055260722e-31
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 2,
+            "top_to_second_log_odds": 47.72324321023075,
+            "entropy_nats": 8.969924044377203e-20,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.879571344584328e-21
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              5.652893722703232e-35,
+              2.553085725640971e-12,
+              0.9999999999974467,
+              1.6705576870764558e-16
+            ],
+            "ESS": 1.0000000000051066,
+            "maximum_weight": 0.9999999999974467,
+            "winner": 2,
+            "top_to_second_log_odds": 26.693718399835962,
+            "entropy_nats": 7.071071115897106e-11,
+            "nonwinner_mass": 2.553290912032935e-12,
+            "second_weight": 2.553085725640971e-12
+          },
+          "history_future": {
+            "weights": [
+              2.3901116109972746e-64,
+              1.9813146174020193e-21,
+              1.0,
+              5.217472930960985e-31
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 2,
+            "top_to_second_log_odds": 47.67052638030176,
+            "entropy_nats": 9.44503107729209e-20,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.9813146174020193e-21
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 1.852523796446248e-13
+    },
+    {
+      "index": 14,
+      "history_episode": "engineering_0",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 3,
+      "wind_only_history": {
+        "weights": [
+          3.53930424821358e-18,
+          3.8076761553012e-33,
+          8.728421093640825e-17,
+          1.0
+        ],
+        "ESS": 1.0,
+        "maximum_weight": 1.0,
+        "winner": 3,
+        "top_to_second_log_odds": 36.977362087239335,
+        "entropy_nats": 3.3697583245094146e-15
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              3.106242262106097e-18,
+              3.507697627326951e-33,
+              8.70846619243725e-17,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 36.97965090285047,
+            "entropy_nats": 3.3455827076623607e-15,
+            "nonwinner_mass": 0.0,
+            "second_weight": 8.70846619243725e-17
+          },
+          "history_future": {
+            "weights": [
+              6.070640737176527e-32,
+              1.7723414653674533e-62,
+              1.3227227344358687e-32,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 71.87925881828971,
+            "entropy_nats": 5.334450142052397e-30,
+            "nonwinner_mass": 0.0,
+            "second_weight": 6.070640737176527e-32
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              2.8941839647239554e-18,
+              3.4521880356803616e-33,
+              9.05229920126007e-17,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 36.940927800065694,
+            "entropy_nats": 3.460881541004596e-15,
+            "nonwinner_mass": 0.0,
+            "second_weight": 9.05229920126007e-17
+          },
+          "history_future": {
+            "weights": [
+              5.170566682842511e-32,
+              1.6660349001947014e-62,
+              1.411346873153119e-32,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 72.0397406834617,
+            "entropy_nats": 4.759918919246643e-30,
+            "nonwinner_mass": 0.0,
+            "second_weight": 5.170566682842511e-32
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              2.9907232931779635e-18,
+              3.475139936068106e-33,
+              8.879411304804698e-17,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 36.96021132059625,
+            "entropy_nats": 3.4025279069665214e-15,
+            "nonwinner_mass": 0.0,
+            "second_weight": 8.879411304804698e-17
+          },
+          "history_future": {
+            "weights": [
+              5.568475956544529e-32,
+              1.7119331045780867e-62,
+              1.3667114608668175e-32,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 71.96560157572937,
+            "entropy_nats": 5.010147731745596e-30,
+            "nonwinner_mass": 0.0,
+            "second_weight": 5.568475956544529e-32
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 1.8251941928051737e-18
+    },
+    {
+      "index": 15,
+      "history_episode": "engineering_3",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 1,
+      "wind_only_history": {
+        "weights": [
+          4.9951748976714765e-21,
+          0.9999999999999976,
+          2.4483640214734765e-15,
+          2.48797478936424e-32
+        ],
+        "ESS": 1.0000000000000049,
+        "maximum_weight": 0.9999999999999976,
+        "winner": 1,
+        "top_to_second_log_odds": 33.64335633973329,
+        "entropy_nats": 8.48139073815092e-14
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              4.7367541798848116e-21,
+              0.9999999999999976,
+              2.4386088754606705e-15,
+              2.4358815650750435e-32
+            ],
+            "ESS": 1.0000000000000049,
+            "maximum_weight": 0.9999999999999976,
+            "winner": 1,
+            "top_to_second_log_odds": 33.64734865120112,
+            "entropy_nats": 8.449543538576414e-14,
+            "nonwinner_mass": 2.4424906541753444e-15,
+            "second_weight": 2.4386088754606705e-15
+          },
+          "history_future": {
+            "weights": [
+              1.821505200429599e-37,
+              1.0,
+              1.9773160402276567e-25,
+              4.688534966714905e-56
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 1,
+            "top_to_second_log_odds": 56.882886934952246,
+            "entropy_nats": 1.1247544475109138e-23,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.9773160402276567e-25
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              4.928062371883545e-21,
+              0.9999999999999976,
+              2.348449353556175e-15,
+              2.3946965500946117e-32
+            ],
+            "ESS": 1.0000000000000049,
+            "maximum_weight": 0.9999999999999976,
+            "winner": 1,
+            "top_to_second_log_odds": 33.68502113410171,
+            "entropy_nats": 8.155028719403185e-14,
+            "nonwinner_mass": 2.3314683517128287e-15,
+            "second_weight": 2.348449353556175e-15
+          },
+          "history_future": {
+            "weights": [
+              1.8983723194224784e-37,
+              1.0,
+              1.8886545990042659e-25,
+              4.559105097093648e-56
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 1,
+            "top_to_second_log_odds": 56.928762601645495,
+            "entropy_nats": 1.0751876930338033e-23,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.8886545990042659e-25
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              4.8416876045695536e-21,
+              0.9999999999999976,
+              2.3877746268186392e-15,
+              2.4138122751871308e-32
+            ],
+            "ESS": 1.0000000000000049,
+            "maximum_weight": 0.9999999999999976,
+            "winner": 1,
+            "top_to_second_log_odds": 33.668414581213284,
+            "entropy_nats": 8.283530319614254e-14,
+            "nonwinner_mass": 2.4424906541753444e-15,
+            "second_weight": 2.3877746268186392e-15
+          },
+          "history_future": {
+            "weights": [
+              1.8655121811492983e-37,
+              1.0,
+              1.9258550680475098e-25,
+              4.618503657651525e-56
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 1,
+            "top_to_second_log_odds": 56.90925726454159,
+            "entropy_nats": 1.0959898152189474e-23,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.9258550680475098e-25
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 4.5079856606343785e-17
+    },
+    {
+      "index": 16,
+      "history_episode": "engineering_5",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 0,
+      "wind_only_history": {
+        "weights": [
+          1.0,
+          9.473486277993754e-26,
+          2.789052349327169e-40,
+          1.3862579900599659e-19
+        ],
+        "ESS": 1.0,
+        "maximum_weight": 1.0,
+        "winner": 0,
+        "top_to_second_log_odds": 43.422508743426654,
+        "entropy_nats": 6.019485427903493e-18
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.0,
+              9.659396889814488e-26,
+              2.8026256666137892e-40,
+              1.3961865318123553e-19
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 43.41537215269612,
+            "entropy_nats": 6.061601351064728e-18,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.3961865318123553e-19
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              9.699002269438194e-42,
+              8.477027897390897e-64,
+              1.8164189791423858e-29
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 66.17810072787215,
+            "entropy_nats": 1.202071581657951e-27,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.8164189791423858e-29
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.0,
+              1.0630539887568314e-25,
+              3.4271654517560737e-40,
+              1.6163401653433146e-19
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 43.26895233058362,
+            "entropy_nats": 6.993740669355284e-18,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.6163401653433146e-19
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              1.1285967811968696e-41,
+              1.1778910140564591e-63,
+              2.3085287109506476e-29
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 65.93835729688078,
+            "entropy_nats": 1.5222059097287783e-27,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.3085287109506476e-29
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.0,
+              1.013050091384098e-25,
+              3.1019228922582184e-40,
+              1.5069450551815453e-19
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 43.33903230764073,
+            "entropy_nats": 6.530959873506853e-18,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.5069450551815453e-19
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              1.0487088594161644e-41,
+              1.0067875954446573e-63,
+              2.0671439770407527e-29
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 66.04879976347814,
+            "entropy_nats": 1.365323786219435e-27,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.0671439770407527e-29
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 1.1007686532262952e-20
+    },
+    {
+      "index": 17,
+      "history_episode": "engineering_12",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 0,
+      "wind_only_history": {
+        "weights": [
+          0.9999999999999996,
+          3.641034277716566e-21,
+          2.572353666372328e-33,
+          3.8202740264296555e-16
+        ],
+        "ESS": 1.0000000000000009,
+        "maximum_weight": 0.9999999999999996,
+        "winner": 0,
+        "top_to_second_log_odds": 35.501039333191606,
+        "entropy_nats": 1.4006630411859983e-14
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              0.9999999999999998,
+              2.908224685578677e-21,
+              1.5514191940077097e-33,
+              2.7397507677025097e-16
+            ],
+            "ESS": 1.0000000000000004,
+            "maximum_weight": 0.9999999999999998,
+            "winner": 0,
+            "top_to_second_log_odds": 35.83349453233444,
+            "entropy_nats": 1.0039666540844312e-14,
+            "nonwinner_mass": 2.220446049250313e-16,
+            "second_weight": 2.7397507677025097e-16
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              8.147958382519687e-39,
+              6.281120522038264e-66,
+              1.2179073966855628e-34
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 78.09075902439399,
+            "entropy_nats": 9.511445903671423e-33,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.2179073966855628e-34
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              0.9999999999999998,
+              2.6663565903590617e-21,
+              1.2536912656724644e-33,
+              2.286989161737734e-16
+            ],
+            "ESS": 1.0000000000000004,
+            "maximum_weight": 0.9999999999999998,
+            "winner": 0,
+            "top_to_second_log_odds": 36.01412531194933,
+            "entropy_nats": 8.458562345555505e-15,
+            "nonwinner_mass": 2.220446049250313e-16,
+            "second_weight": 2.286989161737734e-16
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              7.181767459470925e-39,
+              4.529282466117642e-66,
+              9.254267763449213e-35
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 78.36539342983787,
+            "entropy_nats": 7.252774111293241e-33,
+            "nonwinner_mass": 0.0,
+            "second_weight": 9.254267763449213e-35
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              0.9999999999999998,
+              2.7725371546362038e-21,
+              1.387612236437537e-33,
+              2.5042928057135326e-16
+            ],
+            "ESS": 1.0000000000000004,
+            "maximum_weight": 0.9999999999999998,
+            "winner": 0,
+            "top_to_second_log_odds": 35.923355106314155,
+            "entropy_nats": 9.218435816635331e-15,
+            "nonwinner_mass": 2.220446049250313e-16,
+            "second_weight": 2.5042928057135326e-16
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              7.631029600143609e-39,
+              5.345035746514159e-66,
+              1.06964785496167e-34
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 78.22056367500396,
+            "entropy_nats": 8.36751557963896e-33,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.06964785496167e-34
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 2.2638201232286393e-17
+    },
+    {
+      "index": 18,
+      "history_episode": "engineering_1",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 1,
+      "wind_only_history": {
+        "weights": [
+          1.8094794829440457e-22,
+          0.9999999999966949,
+          3.3050647375026673e-12,
+          5.074083534903573e-30
+        ],
+        "ESS": 1.0000000000066103,
+        "maximum_weight": 0.9999999999966949,
+        "winner": 1,
+        "top_to_second_log_odds": 26.435565055066785,
+        "entropy_nats": 9.067638783282156e-11
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.532463393511014e-22,
+              0.9999999999962561,
+              3.743839879386708e-12,
+              5.2562387812283085e-30
+            ],
+            "ESS": 1.0000000000074878,
+            "maximum_weight": 0.9999999999962561,
+            "winner": 1,
+            "top_to_second_log_odds": 26.310909325481827,
+            "entropy_nats": 1.0224772568699801e-10,
+            "nonwinner_mass": 3.743894083640953e-12,
+            "second_weight": 3.743839879386708e-12
+          },
+          "history_future": {
+            "weights": [
+              2.012551760269961e-40,
+              1.0,
+              1.895152979589456e-21,
+              4.7580596904394276e-54
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 1,
+            "top_to_second_log_odds": 47.71498738958336,
+            "entropy_nats": 9.042720052244221e-20,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.895152979589456e-21
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.69864234031628e-22,
+              0.9999999999966427,
+              3.3573422169033687e-12,
+              5.033764427142188e-30
+            ],
+            "ESS": 1.0000000000067146,
+            "maximum_weight": 0.9999999999966427,
+            "winner": 1,
+            "top_to_second_log_odds": 26.419871461835086,
+            "entropy_nats": 9.205786425895508e-11,
+            "nonwinner_mass": 3.3573144264664734e-12,
+            "second_weight": 3.3573422169033687e-12
+          },
+          "history_future": {
+            "weights": [
+              2.3291120597784103e-40,
+              1.0,
+              1.5786502605736856e-21,
+              4.309241848301002e-54
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 1,
+            "top_to_second_log_odds": 47.89771673638845,
+            "entropy_nats": 7.561374300678421e-20,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.5786502605736856e-21
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.6090380110975877e-22,
+              0.9999999999964411,
+              3.558877765183878e-12,
+              5.165684959547706e-30
+            ],
+            "ESS": 1.0000000000071179,
+            "maximum_weight": 0.9999999999964411,
+            "winner": 1,
+            "top_to_second_log_odds": 26.3615758552568,
+            "entropy_nats": 9.737655710228803e-11,
+            "nonwinner_mass": 3.558930927738402e-12,
+            "second_weight": 3.558877765183878e-12
+          },
+          "history_future": {
+            "weights": [
+              2.1588020259613022e-40,
+              1.0,
+              1.740302680189944e-21,
+              4.5635621526834856e-54
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 1,
+            "top_to_second_log_odds": 47.800227900644636,
+            "entropy_nats": 8.318686472918199e-20,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.740302680189944e-21
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 3.865386598372185e-13
+    },
+    {
+      "index": 19,
+      "history_episode": "engineering_33",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 3,
+      "wind_only_history": {
+        "weights": [
+          6.391085553613512e-18,
+          1.2134650393612496e-32,
+          1.5069696331557402e-16,
+          0.9999999999999998
+        ],
+        "ESS": 1.0000000000000004,
+        "maximum_weight": 0.9999999999999998,
+        "winner": 3,
+        "top_to_second_log_odds": 36.431260718990444,
+        "entropy_nats": 5.965158443828937e-15
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              4.656251730044681e-18,
+              1.0876265204046189e-32,
+              1.678433794650033e-16,
+              0.9999999999999998
+            ],
+            "ESS": 1.0000000000000004,
+            "maximum_weight": 0.9999999999999998,
+            "winner": 3,
+            "top_to_second_log_odds": 36.3235003944082,
+            "entropy_nats": 6.504526853350934e-15,
+            "nonwinner_mass": 2.220446049250313e-16,
+            "second_weight": 1.678433794650033e-16
+          },
+          "history_future": {
+            "weights": [
+              2.028224591359845e-21,
+              2.869556431340624e-51,
+              6.7306376142414195e-31,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 47.64712612803135,
+            "entropy_nats": 9.663907296725747e-20,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.028224591359845e-21
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              4.3059038044044776e-18,
+              1.0702819590051316e-32,
+              1.750125357792552e-16,
+              0.9999999999999998
+            ],
+            "ESS": 1.0000000000000004,
+            "maximum_weight": 0.9999999999999998,
+            "winner": 3,
+            "top_to_second_log_odds": 36.281674069510515,
+            "entropy_nats": 6.743970600729652e-15,
+            "nonwinner_mass": 2.220446049250313e-16,
+            "second_weight": 1.750125357792552e-16
+          },
+          "history_future": {
+            "weights": [
+              1.7970714004923712e-21,
+              2.790788362206593e-51,
+              7.1798963129024725e-31,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 47.768128612700735,
+            "entropy_nats": 8.584273783476066e-20,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.7970714004923712e-21
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              4.469780191095621e-18,
+              1.0779215402046769e-32,
+              1.713538003555016e-16,
+              0.9999999999999998
+            ],
+            "ESS": 1.0000000000000004,
+            "maximum_weight": 0.9999999999999998,
+            "winner": 3,
+            "top_to_second_log_odds": 36.302801246912395,
+            "entropy_nats": 6.621231671155745e-15,
+            "nonwinner_mass": 2.220446049250313e-16,
+            "second_weight": 1.713538003555016e-16
+          },
+          "history_future": {
+            "weights": [
+              1.9017153746428418e-21,
+              2.8249346504594595e-51,
+              6.953053588549844e-31,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 47.711530645247926,
+            "entropy_nats": 9.073375142409375e-20,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.9017153746428418e-21
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 3.759752119946058e-18
+    },
+    {
+      "index": 20,
+      "history_episode": "engineering_2",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 2,
+      "wind_only_history": {
+        "weights": [
+          3.108643259446537e-36,
+          1.108252018926042e-14,
+          0.9999999999999862,
+          2.564743460409792e-15
+        ],
+        "ESS": 1.0000000000000275,
+        "maximum_weight": 0.9999999999999862,
+        "winner": 2,
+        "top_to_second_log_odds": 32.13340728555088,
+        "entropy_nats": 4.560533760653362e-13
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.7703492199766587e-36,
+              8.399673552600281e-15,
+              0.9999999999999893,
+              2.1778424316848813e-15
+            ],
+            "ESS": 1.0000000000000213,
+            "maximum_weight": 0.9999999999999893,
+            "winner": 2,
+            "top_to_second_log_odds": 32.41058355260227,
+            "entropy_nats": 3.5642138501436316e-13,
+            "nonwinner_mass": 1.0658141036401503e-14,
+            "second_weight": 8.399673552600281e-15
+          },
+          "history_future": {
+            "weights": [
+              1.2769335913029858e-67,
+              1.1098981466850966e-29,
+              1.0,
+              7.102563983459991e-26
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 2,
+            "top_to_second_log_odds": 57.90675657455667,
+            "entropy_nats": 4.113604413311839e-24,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.102563983459991e-26
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              2.1886617868086512e-36,
+              9.266061842573479e-15,
+              0.9999999999999882,
+              2.352694077471457e-15
+            ],
+            "ESS": 1.0000000000000235,
+            "maximum_weight": 0.9999999999999882,
+            "winner": 2,
+            "top_to_second_log_odds": 32.312417933799324,
+            "entropy_nats": 3.9042352808270684e-13,
+            "nonwinner_mass": 1.1546319456101628e-14,
+            "second_weight": 9.266061842573479e-15
+          },
+          "history_future": {
+            "weights": [
+              1.7740579154910152e-67,
+              1.3075821882312995e-29,
+              1.0,
+              7.89118741256955e-26
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 2,
+            "top_to_second_log_odds": 57.8014657984211,
+            "entropy_nats": 4.562091624278542e-24,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.89118741256955e-26
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.9583339366932044e-36,
+              8.798977045222085e-15,
+              0.9999999999999889,
+              2.2646297541927033e-15
+            ],
+            "ESS": 1.0000000000000222,
+            "maximum_weight": 0.9999999999999889,
+            "winner": 2,
+            "top_to_second_log_odds": 32.364140925044595,
+            "entropy_nats": 3.7223997012155847e-13,
+            "nonwinner_mass": 1.099120794378905e-14,
+            "second_weight": 8.798977045222085e-15
+          },
+          "history_future": {
+            "weights": [
+              1.4928787605713546e-67,
+              1.199084216978515e-29,
+              1.0,
+              7.494641121332478e-26
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 2,
+            "top_to_second_log_odds": 57.853024169847636,
+            "entropy_nats": 4.336675050431687e-24,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.494641121332478e-26
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 1.0757314801924653e-15
+    },
+    {
+      "index": 21,
+      "history_episode": "engineering_22",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 3,
+      "wind_only_history": {
+        "weights": [
+          1.3728408087225412e-18,
+          1.8272078704839888e-32,
+          6.678588049433673e-16,
+          0.9999999999999993
+        ],
+        "ESS": 1.0000000000000013,
+        "maximum_weight": 0.9999999999999993,
+        "winner": 3,
+        "top_to_second_log_odds": 34.94245489254319,
+        "entropy_nats": 2.4059224442375744e-14
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.8664397079410367e-18,
+              2.1151831833346588e-32,
+              5.979832992116762e-16,
+              0.9999999999999993
+            ],
+            "ESS": 1.0000000000000013,
+            "maximum_weight": 0.9999999999999993,
+            "winner": 3,
+            "top_to_second_log_odds": 35.05296884807185,
+            "entropy_nats": 2.170341650674039e-14,
+            "nonwinner_mass": 5.551115123125783e-16,
+            "second_weight": 5.979832992116762e-16
+          },
+          "history_future": {
+            "weights": [
+              2.355133565540767e-29,
+              1.7973923561811032e-53,
+              7.20525952730117e-27,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 60.19498626159217,
+            "entropy_nats": 4.352729639208386e-25,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.20525952730117e-27
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.5591823477809655e-18,
+              1.955197367992387e-32,
+              6.269038725817777e-16,
+              0.9999999999999993
+            ],
+            "ESS": 1.0000000000000013,
+            "maximum_weight": 0.9999999999999993,
+            "winner": 3,
+            "top_to_second_log_odds": 35.005738458280284,
+            "entropy_nats": 2.2675296988573636e-14,
+            "nonwinner_mass": 6.661338147750939e-16,
+            "second_weight": 6.269038725817777e-16
+          },
+          "history_future": {
+            "weights": [
+              1.8001047509058456e-29,
+              1.6029890106815978e-53,
+              7.807970878961364e-27,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 60.114652391376616,
+            "entropy_nats": 4.705648928134606e-25,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.807970878961364e-27
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.7060873628647774e-18,
+              2.0266617443876232e-32,
+              6.094675957303258e-16,
+              0.9999999999999993
+            ],
+            "ESS": 1.0000000000000013,
+            "maximum_weight": 0.9999999999999993,
+            "winner": 3,
+            "top_to_second_log_odds": 35.03394589171653,
+            "entropy_nats": 2.2087988593867083e-14,
+            "nonwinner_mass": 6.661338147750939e-16,
+            "second_weight": 6.094675957303258e-16
+          },
+          "history_future": {
+            "weights": [
+              2.0465285746312632e-29,
+              1.6857697044216024e-53,
+              7.469810090997433e-27,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 60.158927934909585,
+            "entropy_nats": 4.507276796347494e-25,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.469810090997433e-27
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 1.4613915365130802e-17
+    },
+    {
+      "index": 22,
+      "history_episode": "engineering_15",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 0,
+      "wind_only_history": {
+        "weights": [
+          1.0,
+          1.093417395070074e-20,
+          2.076712913371952e-34,
+          7.99673813709724e-18
+        ],
+        "ESS": 1.0,
+        "maximum_weight": 1.0,
+        "winner": 0,
+        "top_to_second_log_odds": 39.36749794822148,
+        "entropy_nats": 3.153141330141141e-16
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.0,
+              1.2431359514174203e-20,
+              2.55950613819223e-34,
+              9.286138855541581e-18
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 39.21800883119328,
+            "entropy_nats": 3.6475365538034617e-16,
+            "nonwinner_mass": 0.0,
+            "second_weight": 9.286138855541581e-18
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              2.884401898687344e-35,
+              1.6041609975431616e-57,
+              1.3714885489197504e-28
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 64.15648592178377,
+            "entropy_nats": 8.79899087206407e-27,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.3714885489197504e-28
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.0,
+              1.3313097242378398e-20,
+              2.956283450185458e-34,
+              1.0237308166712583e-17
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 39.12049296318345,
+            "entropy_nats": 4.010978231641792e-16,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.0237308166712583e-17
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              3.1795995937331956e-35,
+              1.9936323737075454e-57,
+              1.593210616397239e-28
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 64.00663136796169,
+            "entropy_nats": 1.0197606987200441e-26,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.593210616397239e-28
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.0,
+              1.2886203951769362e-20,
+              2.760287887961717e-34,
+              9.782636064417662e-18
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 39.16592268992544,
+            "entropy_nats": 3.8373613184225883e-16,
+            "nonwinner_mass": 0.0,
+            "second_weight": 9.782636064417662e-18
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              3.0385027094475023e-35,
+              1.8020988297855977e-57,
+              1.4881151761036204e-28
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 64.07487226712242,
+            "entropy_nats": 9.535081397735599e-27,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.4881151761036204e-28
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 4.760255244496029e-19
+    },
+    {
+      "index": 23,
+      "history_episode": "engineering_1",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 1,
+      "wind_only_history": {
+        "weights": [
+          1.8094794829440457e-22,
+          0.9999999999966949,
+          3.3050647375026673e-12,
+          5.074083534903573e-30
+        ],
+        "ESS": 1.0000000000066103,
+        "maximum_weight": 0.9999999999966949,
+        "winner": 1,
+        "top_to_second_log_odds": 26.435565055066785,
+        "entropy_nats": 9.067638783282156e-11
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.532463393511014e-22,
+              0.9999999999962561,
+              3.743839879386708e-12,
+              5.2562387812283085e-30
+            ],
+            "ESS": 1.0000000000074878,
+            "maximum_weight": 0.9999999999962561,
+            "winner": 1,
+            "top_to_second_log_odds": 26.310909325481827,
+            "entropy_nats": 1.0224772568699801e-10,
+            "nonwinner_mass": 3.743894083640953e-12,
+            "second_weight": 3.743839879386708e-12
+          },
+          "history_future": {
+            "weights": [
+              2.2682642707208054e-36,
+              1.0,
+              1.090968156916145e-26,
+              1.5116708035532845e-56
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 1,
+            "top_to_second_log_odds": 59.78014689848148,
+            "entropy_nats": 6.5218236700629305e-25,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.090968156916145e-26
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.6274338247243615e-22,
+              0.9999999999965061,
+              3.493957804444538e-12,
+              5.104681616974403e-30
+            ],
+            "ESS": 1.0000000000069877,
+            "maximum_weight": 0.9999999999965061,
+            "winner": 1,
+            "top_to_second_log_odds": 26.379985980861804,
+            "entropy_nats": 9.566442976562368e-11,
+            "nonwinner_mass": 3.4938718584953676e-12,
+            "second_weight": 3.493957804444538e-12
+          },
+          "history_future": {
+            "weights": [
+              2.4961803915164834e-36,
+              1.0,
+              9.784726920720484e-27,
+              1.4482667305812326e-56
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 1,
+            "top_to_second_log_odds": 59.88897481832948,
+            "entropy_nats": 5.859972643638922e-25,
+            "nonwinner_mass": 0.0,
+            "second_weight": 9.784726920720484e-27
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.5774079494261794e-22,
+              0.9999999999963787,
+              3.6212368844328275e-12,
+              5.186644264996686e-30
+            ],
+            "ESS": 1.0000000000072427,
+            "maximum_weight": 0.9999999999963787,
+            "winner": 1,
+            "top_to_second_log_odds": 26.344205467664285,
+            "entropy_nats": 9.90199340002174e-11,
+            "nonwinner_mass": 3.621214439419873e-12,
+            "second_weight": 3.6212368844328275e-12
+          },
+          "history_future": {
+            "weights": [
+              2.372804231889932e-36,
+              1.0,
+              1.0361747722434896e-26,
+              1.4832389142205902e-56
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 1,
+            "top_to_second_log_odds": 59.83167658915926,
+            "entropy_nats": 6.199607388218209e-25,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.0361747722434896e-26
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 2.4995215004862623e-13
+    },
+    {
+      "index": 24,
+      "history_episode": "engineering_16",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 3,
+      "wind_only_history": {
+        "weights": [
+          3.1514854449106158e-18,
+          3.106363847694583e-32,
+          5.658411830363132e-16,
+          0.9999999999999993
+        ],
+        "ESS": 1.0000000000000013,
+        "maximum_weight": 0.9999999999999993,
+        "winner": 3,
+        "top_to_second_log_odds": 35.10821823040608,
+        "entropy_nats": 2.0658810185952757e-14
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              2.1513809172482823e-18,
+              2.808919376138238e-32,
+              6.657475666440635e-16,
+              0.9999999999999993
+            ],
+            "ESS": 1.0000000000000013,
+            "maximum_weight": 0.9999999999999993,
+            "winner": 3,
+            "top_to_second_log_odds": 34.94562110426507,
+            "entropy_nats": 2.4018615112865367e-14,
+            "nonwinner_mass": 6.661338147750939e-16,
+            "second_weight": 6.657475666440635e-16
+          },
+          "history_future": {
+            "weights": [
+              6.312491592835529e-37,
+              4.875317886190225e-62,
+              1.5344309283580998e-28,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 64.04422302224307,
+            "entropy_nats": 9.827143711415948e-27,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.5344309283580998e-28
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              2.3187591258094773e-18,
+              2.852046350445871e-32,
+              6.395980765181949e-16,
+              0.9999999999999993
+            ],
+            "ESS": 1.0000000000000013,
+            "maximum_weight": 0.9999999999999993,
+            "winner": 3,
+            "top_to_second_log_odds": 34.98569170025744,
+            "entropy_nats": 2.3137069304420834e-14,
+            "nonwinner_mass": 6.661338147750939e-16,
+            "second_weight": 6.395980765181949e-16
+          },
+          "history_future": {
+            "weights": [
+              7.446485407344519e-37,
+              5.159473924770319e-62,
+              1.4295841563264078e-28,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 64.11499900162366,
+            "entropy_nats": 9.165778737506217e-27,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.4295841563264078e-28
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              2.2316031452878327e-18,
+              2.8293338836755985e-32,
+              6.52338511478602e-16,
+              0.9999999999999993
+            ],
+            "ESS": 1.0000000000000013,
+            "maximum_weight": 0.9999999999999993,
+            "winner": 3,
+            "top_to_second_log_odds": 34.96596805731399,
+            "entropy_nats": 2.3566482227154312e-14,
+            "nonwinner_mass": 6.661338147750939e-16,
+            "second_weight": 6.52338511478602e-16
+          },
+          "history_future": {
+            "weights": [
+              6.824725368006973e-37,
+              5.002156911260946e-62,
+              1.4808810304522255e-28,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 64.07974540232647,
+            "entropy_nats": 9.489447997084314e-27,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.4808810304522255e-28
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 1.3158434167214903e-17
+    },
+    {
+      "index": 25,
+      "history_episode": "engineering_36",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 0,
+      "wind_only_history": {
+        "weights": [
+          1.0,
+          1.0222156154366881e-27,
+          1.1490317561581035e-39,
+          5.046316870269916e-17
+        ],
+        "ESS": 1.0,
+        "maximum_weight": 1.0,
+        "winner": 0,
+        "top_to_second_log_odds": 37.52528793632375,
+        "entropy_nats": 1.8936449358115955e-15
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.0,
+              9.075162171613158e-28,
+              8.678946288460413e-40,
+              4.223408742431088e-17
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 37.70330402004255,
+            "entropy_nats": 1.5923646382243572e-15,
+            "nonwinner_mass": 0.0,
+            "second_weight": 4.223408742431088e-17
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              8.718377350427772e-45,
+              7.903434269929921e-67,
+              5.822932645087988e-30
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 67.31574876407983,
+            "entropy_nats": 3.9197507100690272e-28,
+            "nonwinner_mass": 0.0,
+            "second_weight": 5.822932645087988e-30
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.0,
+              8.288014403814957e-28,
+              7.011398858769316e-40,
+              3.5863468785360767e-17
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 37.86681247906772,
+            "entropy_nats": 1.3580352473958368e-15,
+            "nonwinner_mass": 0.0,
+            "second_weight": 3.5863468785360767e-17
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              7.649505329952388e-45,
+              5.8687650761254215e-67,
+              4.693315883675365e-30
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 67.53141344573339,
+            "entropy_nats": 3.169462553719094e-28,
+            "nonwinner_mass": 0.0,
+            "second_weight": 4.693315883675365e-30
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.0,
+              8.68793550988972e-28,
+              7.855521561694923e-40,
+              3.9242736613692023e-17
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 37.77676530121732,
+            "entropy_nats": 1.4824636508870662e-15,
+            "nonwinner_mass": 0.0,
+            "second_weight": 3.9242736613692023e-17
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              8.212907333756109e-45,
+              6.921097593606122e-67,
+              5.309260091813921e-30
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 67.4081003066845,
+            "entropy_nats": 3.578871368232706e-28,
+            "nonwinner_mass": 0.0,
+            "second_weight": 5.309260091813921e-30
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 3.1853093195144145e-18
+    },
+    {
+      "index": 26,
+      "history_episode": "engineering_19",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 3,
+      "wind_only_history": {
+        "weights": [
+          2.6855030620886308e-17,
+          1.5898479084224833e-32,
+          6.534464889011977e-17,
+          1.0
+        ],
+        "ESS": 1.0,
+        "maximum_weight": 1.0,
+        "winner": 3,
+        "top_to_second_log_odds": 37.26685612102958,
+        "entropy_nats": 3.4598722852344916e-15
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.9668310044304268e-17,
+              1.4432132283127065e-32,
+              7.32142221777149e-17,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 37.153141979752526,
+            "entropy_nats": 3.4767295597307023e-15,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.32142221777149e-17
+          },
+          "history_future": {
+            "weights": [
+              3.128966585968762e-29,
+              5.691234393524561e-51,
+              7.590798885291909e-25,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 55.53769048400335,
+            "entropy_nats": 4.2159597575983984e-23,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.590798885291909e-25
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              2.088664206567942e-17,
+              1.453676227907696e-32,
+              7.077099529135128e-17,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 37.18708242815736,
+            "entropy_nats": 3.4339689083704345e-15,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.077099529135128e-17
+          },
+          "history_future": {
+            "weights": [
+              3.359298368934014e-29,
+              5.793574878021635e-51,
+              7.36389143173894e-25,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 55.56803880469886,
+            "entropy_nats": 4.092190294794879e-23,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.36389143173894e-25
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              2.029457846219213e-17,
+              1.448532161625825e-32,
+              7.18874018691687e-17,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 37.171430641915,
+            "entropy_nats": 3.4522036006707914e-15,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.18874018691687e-17
+          },
+          "history_future": {
+            "weights": [
+              3.251398845172404e-29,
+              5.745351047710776e-51,
+              7.461232843017556e-25,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 55.55490666383136,
+            "entropy_nats": 4.1452942202857503e-23,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.461232843017556e-25
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 1.8307794538693875e-18
+    },
+    {
+      "index": 27,
+      "history_episode": "engineering_16",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 3,
+      "wind_only_history": {
+        "weights": [
+          3.1514854449106158e-18,
+          3.106363847694583e-32,
+          5.658411830363132e-16,
+          0.9999999999999993
+        ],
+        "ESS": 1.0000000000000013,
+        "maximum_weight": 0.9999999999999993,
+        "winner": 3,
+        "top_to_second_log_odds": 35.10821823040608,
+        "entropy_nats": 2.0658810185952757e-14
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              2.1513809172482823e-18,
+              2.808919376138238e-32,
+              6.657475666440635e-16,
+              0.9999999999999993
+            ],
+            "ESS": 1.0000000000000013,
+            "maximum_weight": 0.9999999999999993,
+            "winner": 3,
+            "top_to_second_log_odds": 34.94562110426507,
+            "entropy_nats": 2.4018615112865367e-14,
+            "nonwinner_mass": 6.661338147750939e-16,
+            "second_weight": 6.657475666440635e-16
+          },
+          "history_future": {
+            "weights": [
+              3.5689555015612126e-35,
+              8.504129479575659e-58,
+              3.051055772314457e-26,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 58.75172473226644,
+            "entropy_nats": 1.7925478916089468e-24,
+            "nonwinner_mass": 0.0,
+            "second_weight": 3.051055772314457e-26
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              2.4540525792997317e-18,
+              2.8672480025074534e-32,
+              6.180286526278825e-16,
+              0.9999999999999993
+            ],
+            "ESS": 1.0000000000000013,
+            "maximum_weight": 0.9999999999999993,
+            "winner": 3,
+            "top_to_second_log_odds": 35.019996854034346,
+            "entropy_nats": 2.2409004150406863e-14,
+            "nonwinner_mass": 6.661338147750939e-16,
+            "second_weight": 6.180286526278825e-16
+          },
+          "history_future": {
+            "weights": [
+              4.357528305195116e-35,
+              8.751313124309567e-58,
+              2.6957756525335894e-26,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 58.875526443193294,
+            "entropy_nats": 1.5871521106041942e-24,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.6957756525335894e-26
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              2.2886029369537546e-18,
+              2.8312374641214764e-32,
+              6.410174683620176e-16,
+              0.9999999999999993
+            ],
+            "ESS": 1.0000000000000013,
+            "maximum_weight": 0.9999999999999993,
+            "winner": 3,
+            "top_to_second_log_odds": 34.98347496560866,
+            "entropy_nats": 2.31841121963647e-14,
+            "nonwinner_mass": 6.661338147750939e-16,
+            "second_weight": 6.410174683620176e-16
+          },
+          "history_future": {
+            "weights": [
+              3.890079729244836e-35,
+              8.574576608799803e-58,
+              2.874158200327456e-26,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 58.81145258635623,
+            "entropy_nats": 1.6903341903246412e-24,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.874158200327456e-26
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 2.401079283911623e-17
+    },
+    {
+      "index": 28,
+      "history_episode": "engineering_20",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 2,
+      "wind_only_history": {
+        "weights": [
+          1.4203027933678906e-31,
+          5.312206233189632e-11,
+          0.9999999999468718,
+          6.020127713930364e-15
+        ],
+        "ESS": 1.0000000001062563,
+        "maximum_weight": 0.9999999999468718,
+        "winner": 2,
+        "top_to_second_log_odds": 23.658428787441743,
+        "entropy_nats": 1.3101098183137075e-09
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.4518994684103083e-31,
+              5.2884177167503257e-11,
+              0.9999999999471096,
+              6.300866479111782e-15
+            ],
+            "ESS": 1.0000000001057807,
+            "maximum_weight": 0.9999999999471096,
+            "winner": 2,
+            "top_to_second_log_odds": 23.662916930118012,
+            "entropy_nats": 1.3044902762845912e-09,
+            "nonwinner_mass": 5.289035875932768e-11,
+            "second_weight": 5.2884177167503257e-11
+          },
+          "history_future": {
+            "weights": [
+              7.105949326282935e-56,
+              3.1269349038889296e-23,
+              1.0,
+              2.9067617139821245e-22
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 2,
+            "top_to_second_log_odds": 49.58983239738636,
+            "entropy_nats": 1.60349416484008e-20,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.9067617139821245e-22
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.1875595032451235e-31,
+              4.787973413713698e-11,
+              0.9999999999521143,
+              5.922976262999887e-15
+            ],
+            "ESS": 1.0000000000957714,
+            "maximum_weight": 0.9999999999521143,
+            "winner": 2,
+            "top_to_second_log_odds": 23.76232878789768,
+            "entropy_nats": 1.1858137165827077e-09,
+            "nonwinner_mass": 4.788558438661994e-11,
+            "second_weight": 4.787973413713698e-11
+          },
+          "history_future": {
+            "weights": [
+              5.150675364035547e-56,
+              2.6168768992824783e-23,
+              1.0,
+              2.677340008394206e-22
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 2,
+            "top_to_second_log_odds": 49.67204827841572,
+            "entropy_nats": 1.4659606141485516e-20,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.677340008394206e-22
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.3095486796881992e-31,
+              5.0212415374646474e-11,
+              0.9999999999497813,
+              6.1206249631479805e-15
+            ],
+            "ESS": 1.0000000001004374,
+            "maximum_weight": 0.9999999999497813,
+            "winner": 2,
+            "top_to_second_log_odds": 23.714758801538707,
+            "entropy_nats": 1.2411943479038373e-09,
+            "nonwinner_mass": 5.021849602826478e-11,
+            "second_weight": 5.0212415374646474e-11
+          },
+          "history_future": {
+            "weights": [
+              5.99363603045755e-56,
+              2.84042443667482e-23,
+              1.0,
+              2.795423994524579e-22
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 2,
+            "top_to_second_log_odds": 49.628888253262524,
+            "entropy_nats": 1.5347999156524683e-20,
+            "nonwinner_mass": 0.0,
+            "second_weight": 2.795423994524579e-22
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 5.004742135493833e-12
+    },
+    {
+      "index": 29,
+      "history_episode": "engineering_5",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 0,
+      "wind_only_history": {
+        "weights": [
+          1.0,
+          9.473486277993754e-26,
+          2.789052349327169e-40,
+          1.3862579900599659e-19
+        ],
+        "ESS": 1.0,
+        "maximum_weight": 1.0,
+        "winner": 0,
+        "top_to_second_log_odds": 43.422508743426654,
+        "entropy_nats": 6.019485427903493e-18
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.0,
+              9.659396889814488e-26,
+              2.8026256666137892e-40,
+              1.3961865318123553e-19
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 43.41537215269612,
+            "entropy_nats": 6.061601351064728e-18,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.3961865318123553e-19
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              1.1190561698666337e-32,
+              2.807696843876252e-60,
+              3.82083915193978e-34
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 73.57023735125455,
+            "entropy_nats": 8.526926529430635e-31,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.1190561698666337e-32
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.0,
+              1.0630539887568314e-25,
+              3.4271654517560737e-40,
+              1.6163401653433146e-19
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 43.26895233058362,
+            "entropy_nats": 6.993740669355284e-18,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.6163401653433146e-19
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              1.2997129790749006e-32,
+              3.8205745500480025e-60,
+              4.7259623882873696e-34
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 73.42057952104564,
+            "entropy_nats": 9.905213895837991e-31,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.2997129790749006e-32
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.0,
+              1.013050091384098e-25,
+              3.1019228922582184e-40,
+              1.5069450551815453e-19
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 43.33903230764073,
+            "entropy_nats": 6.530959873506853e-18,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.5069450551815453e-19
+          },
+          "history_future": {
+            "weights": [
+              1.0,
+              1.2105032289383907e-32,
+              3.305723130371022e-60,
+              4.291784895064327e-34
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 0,
+            "top_to_second_log_odds": 73.49168681097517,
+            "entropy_nats": 9.225935361150013e-31,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.2105032289383907e-32
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 1.1007686532262952e-20
+    },
+    {
+      "index": 30,
+      "history_episode": "engineering_39",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 3,
+      "wind_only_history": {
+        "weights": [
+          1.5077128812104985e-14,
+          1.1323626000523663e-26,
+          5.584713555537944e-14,
+          0.9999999999999292
+        ],
+        "ESS": 1.0000000000001417,
+        "maximum_weight": 0.9999999999999292,
+        "winner": 3,
+        "top_to_second_log_odds": 30.516158158886526,
+        "entropy_nats": 2.254910882539161e-12
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              1.6546217375312348e-14,
+              1.2267819406563561e-26,
+              5.456611112936436e-14,
+              0.999999999999929
+            ],
+            "ESS": 1.000000000000142,
+            "maximum_weight": 0.999999999999929,
+            "winner": 3,
+            "top_to_second_log_odds": 30.539363380144767,
+            "entropy_nats": 2.2625233794178184e-12,
+            "nonwinner_mass": 7.105427357601002e-14,
+            "second_weight": 5.456611112936436e-14
+          },
+          "history_future": {
+            "weights": [
+              1.3339434177157897e-33,
+              2.0571439855295435e-53,
+              1.1271339989309403e-23,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 52.839779012088094,
+            "entropy_nats": 5.955751143061959e-22,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.1271339989309403e-23
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.5611600374367875e-14,
+              1.2056342244785675e-26,
+              5.589658924017556e-14,
+              0.9999999999999285
+            ],
+            "ESS": 1.000000000000143,
+            "maximum_weight": 0.9999999999999285,
+            "winner": 3,
+            "top_to_second_log_odds": 30.51527303199255,
+            "entropy_nats": 2.273502719184787e-12,
+            "nonwinner_mass": 7.149836278586008e-14,
+            "second_weight": 5.589658924017556e-14
+          },
+          "history_future": {
+            "weights": [
+              1.241871665730474e-33,
+              2.0104371887770894e-53,
+              1.1586130953243502e-23,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 52.81223345653262,
+            "entropy_nats": 6.118894528547496e-22,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.1586130953243502e-23
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              1.6099296126317608e-14,
+              1.2164671063947488e-26,
+              5.514452362814262e-14,
+              0.9999999999999287
+            ],
+            "ESS": 1.0000000000001426,
+            "maximum_weight": 0.9999999999999287,
+            "winner": 3,
+            "top_to_second_log_odds": 30.528818953722002,
+            "entropy_nats": 2.266087154853808e-12,
+            "nonwinner_mass": 7.127631818093505e-14,
+            "second_weight": 5.514452362814262e-14
+          },
+          "history_future": {
+            "weights": [
+              1.2903767983765728e-33,
+              2.034752255977366e-53,
+              1.1405186738438666e-23,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 52.8279740028713,
+            "entropy_nats": 6.025129086138511e-22,
+            "nonwinner_mass": 0.0,
+            "second_weight": 1.1405186738438666e-23
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 1.3545921608029722e-15
+    },
+    {
+      "index": 31,
+      "history_episode": "engineering_19",
+      "history_length": 4,
+      "future_length": 3,
+      "sampled_rollout_mode": 3,
+      "wind_only_history": {
+        "weights": [
+          2.6855030620886308e-17,
+          1.5898479084224833e-32,
+          6.534464889011977e-17,
+          1.0
+        ],
+        "ESS": 1.0,
+        "maximum_weight": 1.0,
+        "winner": 3,
+        "top_to_second_log_odds": 37.26685612102958,
+        "entropy_nats": 3.4598722852344916e-15
+      },
+      "source_conditioned": {
+        "a": {
+          "history": {
+            "weights": [
+              2.088664206567942e-17,
+              1.453676227907696e-32,
+              7.077099529135128e-17,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 37.18708242815736,
+            "entropy_nats": 3.4339689083704345e-15,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.077099529135128e-17
+          },
+          "history_future": {
+            "weights": [
+              6.41155287522654e-30,
+              3.5399097794610385e-58,
+              1.847247018801379e-30,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 67.21945129000291,
+            "entropy_nats": 5.57450720740671e-28,
+            "nonwinner_mass": 0.0,
+            "second_weight": 6.41155287522654e-30
+          }
+        },
+        "b": {
+          "history": {
+            "weights": [
+              1.9668310044304268e-17,
+              1.4432132283127065e-32,
+              7.32142221777149e-17,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 37.153141979752526,
+            "entropy_nats": 3.4767295597307023e-15,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.32142221777149e-17
+          },
+          "history_future": {
+            "weights": [
+              5.982827698481597e-30,
+              3.522804979670174e-58,
+              1.928423886426082e-30,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 67.28865947434369,
+            "entropy_nats": 5.345208567029627e-28,
+            "nonwinner_mass": 0.0,
+            "second_weight": 5.982827698481597e-30
+          }
+        },
+        "mid_source": {
+          "history": {
+            "weights": [
+              2.029457846219213e-17,
+              1.448532161625825e-32,
+              7.18874018691687e-17,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 37.171430641915,
+            "entropy_nats": 3.4522036006707914e-15,
+            "nonwinner_mass": 0.0,
+            "second_weight": 7.18874018691687e-17
+          },
+          "history_future": {
+            "weights": [
+              6.200108753685019e-30,
+              3.531830586378269e-58,
+              1.8849305935768874e-30,
+              1.0
+            ],
+            "ESS": 1.0,
+            "maximum_weight": 1.0,
+            "winner": 3,
+            "top_to_second_log_odds": 67.25298595700723,
+            "entropy_nats": 5.459873789878644e-28,
+            "nonwinner_mass": 0.0,
+            "second_weight": 6.200108753685019e-30
+          }
+        }
+      },
+      "all_history_winners_equal_wind_winner": true,
+      "all_full_winners_equal_rollout_mode": true,
+      "history_source_a_b_TV": 1.8307794538693875e-18
+    }
+  ]
+}

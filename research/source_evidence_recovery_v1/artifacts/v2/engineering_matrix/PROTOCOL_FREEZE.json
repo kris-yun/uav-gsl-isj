@@ -1,0 +1,51 @@
+{
+  "scope": "MANUFACTURED_BACKEND_ENGINEERING_ONLY",
+  "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+  "target_sha256": "fdc74a6a3df72832fe85ed158240f2c35d763b0db010dbc4707d4049d066e078",
+  "variants": [
+    [
+      "nll",
+      "nll",
+      true
+    ],
+    [
+      "distribution",
+      "distribution",
+      true
+    ],
+    [
+      "privileged_pair",
+      "privileged_pair",
+      true
+    ],
+    [
+      "mean_log",
+      "mean_log",
+      true
+    ],
+    [
+      "projected_endpoint",
+      "projected_evidence",
+      false
+    ],
+    [
+      "projected_evidence",
+      "projected_evidence",
+      true
+    ],
+    [
+      "projected_no_anchor",
+      "projected_no_anchor",
+      true
+    ]
+  ],
+  "epochs": 8,
+  "seed": 23,
+  "batch_size": 8,
+  "learning_rate": 0.002,
+  "model_capacity": "manifest config; identical in all rows",
+  "data_order": "identical, teacher target sampling uses a separate RNG",
+  "evaluation": "all development rows and all legal source candidates",
+  "selection_rule": "no winner selection or post-result tuning",
+  "scientific_claim": false
+}

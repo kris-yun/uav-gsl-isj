@@ -67,8 +67,9 @@ class JointCodebookBuilder:
         import time
         started=time.perf_counter()
         rng = np.random.default_rng() if rng is None else rng
-        if draws < 1 or not 0 < delta < 1:
+        if draws < 1 or int(draws) != draws or not 0 < delta < 1:
             raise ValueError("draws must be positive and delta in (0,1)")
+        draws = int(draws)
         blocks = [tuple(b) for b in action_blocks]
         if not blocks:
             raise ValueError("No legal action blocks supplied")
@@ -84,13 +85,29 @@ class JointCodebookBuilder:
                 for j, mechanism in enumerate(mechanisms):
                     if wall_seconds is not None and time.perf_counter()-started>wall_seconds:
                         raise RuntimeError('BLOCKED_CODEBOOK_WALL_TIME: no partial book may be used')
-                    for _ in range(int(draws)):
-                        future = self.generator.sample_future(history, actions, source, mechanism, rng)
+                    batch_sampler = getattr(self.generator, "sample_future_batch", None)
+                    if callable(batch_sampler):
+                        # Each row remains one complete causal trajectory.
+                        # Vectorizing independent draws must not replace the
+                        # joint law by products of marginal detection rates.
+                        futures = batch_sampler(history, actions, source, mechanism,
+                                                draws=draws, rng=rng)
+                        if len(futures) != draws:
+                            raise ValueError("Generator returned wrong future batch size")
+                    else:
+                        futures = (self.generator.sample_future(history, actions, source, mechanism, rng)
+                                   for _ in range(draws))
+                    for future in futures:
                         if len(future) != len(actions):
                             raise ValueError("Generator returned wrong future trajectory length")
+                        if any(not np.isfinite(o.gas) or not getattr(o, "gas_available", True)
+                               for o in future):
+                            raise ValueError("Clean future samples require finite available gas observations")
                         word = [int(o.gas > self.threshold) for o in future]
                         p[i, j, encode_word(word)] += 1
-            p /= int(draws)
+                        if wall_seconds is not None and time.perf_counter()-started>wall_seconds:
+                            raise RuntimeError('BLOCKED_CODEBOOK_WALL_TIME: no partial book may be used')
+            p /= draws
             # Bretagnolle-Huber-Carol / finite-alphabet union bound:
             # P(TV(p_hat,p)>r) <= 2**K exp(-2*n*r**2).
             radius = min(1.0, np.sqrt((len(words)*np.log(2) + np.log(all_cells/delta))/(2*draws)))

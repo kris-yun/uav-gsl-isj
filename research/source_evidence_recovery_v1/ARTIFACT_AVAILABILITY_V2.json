@@ -1,0 +1,39 @@
+{
+  "format": "gsl_v2_artifact_availability",
+  "public_data_policy": "Source, configs, receipts and research checkpoints are shipped; raw/private/derived House response vectors and full S2 archive are not redistributed.",
+  "assets": [
+    {
+      "asset": "manufactured engineering data and bank",
+      "status": "BUNDLED",
+      "path": "artifacts/v2/engineering_data",
+      "scope": "ENGINEERING_ONLY"
+    },
+    {
+      "asset": "House02 numerical responses",
+      "status": "REGENERATE_FROM_AUTHORIZED_ORIGINAL",
+      "manifest": "artifacts/v2/house_numerical_data/manifest.json",
+      "scope": "NUMERICAL_ONLY",
+      "excluded": "artifacts/v2/house_numerical_data/episodes/",
+      "command": "python -m gsl_recovery.data.house_v2 --archive /authorized/archive.zip --out runs/house_export --test-fold 0 --dev-fold 1; then prepare-house per contract",
+      "test_response_bytes_opened": 0
+    },
+    {
+      "asset": "S2 raw release",
+      "status": "EXTERNAL_AUTHORIZED_ASSET",
+      "receipt": "docs/data/s2_v2_interface/QUALIFICATION_RECEIPT.json",
+      "scope": "SINGLE_SOURCE_20S_STATIC_DIAGNOSTIC_WIND_ONLY"
+    },
+    {
+      "asset": "native multi-source physical teacher bank",
+      "status": "BLOCKED_MISSING_QUALIFIED_ASSET"
+    },
+    {
+      "asset": "original PMFS and V1 presentations",
+      "status": "BUNDLED",
+      "paths": [
+        "docs/source/PMFS_ORIGINAL.pptx",
+        "docs/METHOD_FRAMEWORK_V1.pptx"
+      ]
+    }
+  ]
+}

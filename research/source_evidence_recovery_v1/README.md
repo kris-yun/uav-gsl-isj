@@ -1,3 +1,40 @@
+# Source Evidence Recovery V2 — projected evidence distillation
+
+三模块主线保持：**M1源证据联合生成、M2机制诊断与可撤销回放、M3容错反证与恢复列表主动规划**。V2新增训练期物理信息教师、源条件历史投影和可部署神经学生，复用V1接口与证据。
+
+**实际状态：可运行参考工程；科学收益未通过。** V2全测试97项通过；真实House02数值训练、制造环境神经训练与主动闭环已运行。没有原生GADEN微分教师、ROS实飞或House→S2稳定提升。保留全部负结果，不能把工程分数当发表证明。
+
+## V2快速开始
+
+```bash
+python -m pip install -e '.[test]'
+python -m pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cpu
+python -m gsl_recovery.v2_cli doctor --out runs/v2_environment.json
+python -m pytest -q
+bash scripts/run_v2_reference.sh runs/v2_reference_01
+```
+
+GPU须按本机官方wheel重新验证；当前CPU成绩不能当GPU成绩。完整合同优先于快捷命令。已有输出不可覆盖。
+
+| V2文档 | 内容 |
+|---|---|
+| [运行指南](docs/RUNBOOK_V2_zh.md) | 安装、训练、恢复、在线接入 |
+| [完整实验合同](docs/CODEX_EXPERIMENT_CONTRACT_V2.md) | 数据、基线、消融、资源、科学验收与停止 |
+| [实现审计](docs/IMPLEMENTATION_AUDIT_V2.md) | 真实测试、训练、负结果、阻碍 |
+| [三模块方法](docs/M1_M2_M3_V2_METHOD.md) | 母机制、二次算子、闭环与独立消融 |
+| [教师学生架构](docs/TEACHER_STUDENT_ARCHITECTURE.md) | 输入输出、参数、模型、概率与权限 |
+| [主创新裁决](docs/M1_MAIN_INNOVATION_DEEP_REVIEW.md) | A/B/C路线与2025—2026一手论文 |
+| [House→湖岸合同](docs/data/HOUSE_TO_LAKESHORE_TRANSFER_CONTRACT.md) | 血统、资格、跨域与有限补数 |
+| [数学推导](docs/THEORY_AND_PROOFS_V2.md) | 条件性命题、必要边界、反例 |
+| [可编辑方法图](docs/METHOD_FRAMEWORK_V2.pptx) | 在原PMFS/V1底稿上更新的3页原生PPTX |
+| [独立专家交叉审查](docs/EXPERT_REVIEW_V2.md) | 真实并行分工、两轮质疑与分项评分 |
+
+新入口：`gsl-recovery-v2` / `python -m gsl_recovery.v2_cli`。新实现：`m1_neural/`、`m1_distill/`、`navigation/v2_session.py`、完整风气EIG、资格与诊断适配器。V1 `gsl-recovery` 命令仍可使用。版本0.2.0，仓库目录继续保留历史名字 `research/source_evidence_recovery_v1/`。
+
+`artifacts/v2/`保存实际收据与小型checkpoint。原始House/S2数据不公开重新分发；包含授权来源、协议和输入哈希，按合同从原包重建。原House测试响应未打开。
+
+## V1历史说明（保留原文）
+
 # Source Evidence Recovery V1
 
 可执行的无人机气源概率定位研究候选，冻结三个模块：

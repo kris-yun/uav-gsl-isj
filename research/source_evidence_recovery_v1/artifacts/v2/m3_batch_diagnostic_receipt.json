@@ -1,0 +1,181 @@
+{
+  "status": "PASS_ACTUAL_NEURAL_BATCH_TO_FOUR_LAYER_LP_INTERFACE",
+  "scope": "untrained_engineering_interface_only_not_localization_performance",
+  "torch": "2.7.1+cpu",
+  "seconds": 0.022051841995562427,
+  "rollout_observations": 384,
+  "probability_shape": [
+    2,
+    2,
+    8
+  ],
+  "diagnostic": {
+    "status": "COMPLETED_MODEL_CONDITIONAL_DIAGNOSTIC",
+    "scope": "one_frozen_generator_codebook_not_physical_identifiability",
+    "model_version": "e0800f97556e1ff61c81",
+    "null_source": 0,
+    "challenge_indices": [
+      1
+    ],
+    "nominal_mechanism": 0,
+    "alpha": 0.025,
+    "cost_normalized_gain_tolerance": 1e-12,
+    "length": 3,
+    "word_alphabet_size": 8,
+    "draws": 32,
+    "exact_codebook": false,
+    "confidence_failure_probability": 0.01,
+    "tv_radius_min": 0.424570407728277,
+    "tv_radius_max": 0.424570407728277,
+    "layer_order": [
+      "nominal_clean",
+      "all_mechanisms_clean",
+      "all_mechanisms_corruption",
+      "all_mechanisms_corruption_tv"
+    ],
+    "layers": {
+      "nominal_clean": {
+        "alpha": 0.025,
+        "null_hypotheses": 1,
+        "alternative_hypotheses": 1,
+        "lp_power": 0.1,
+        "power_bound": 0.1,
+        "null_risk_bound": 0.025,
+        "risk_slack": 0.0,
+        "power_excess_over_alpha": 0.07500000000000001,
+        "cost_adjusted_gain": 0.025000000000000005,
+        "has_certified_gain": true,
+        "null_tv_radius_max": 0.0,
+        "alternative_tv_radius_max": 0.0,
+        "corruption": {
+          "max_flips": 0,
+          "max_erasures": 0,
+          "max_burst": 0
+        },
+        "solver_status": "model_and_MC_bound"
+      },
+      "all_mechanisms_clean": {
+        "alpha": 0.025,
+        "null_hypotheses": 2,
+        "alternative_hypotheses": 2,
+        "lp_power": 0.037500000000000006,
+        "power_bound": 0.037500000000000006,
+        "null_risk_bound": 0.025,
+        "risk_slack": 0.0,
+        "power_excess_over_alpha": 0.012500000000000004,
+        "cost_adjusted_gain": 0.004166666666666668,
+        "has_certified_gain": true,
+        "null_tv_radius_max": 0.0,
+        "alternative_tv_radius_max": 0.0,
+        "corruption": {
+          "max_flips": 0,
+          "max_erasures": 0,
+          "max_burst": 0
+        },
+        "solver_status": "model_and_MC_bound"
+      },
+      "all_mechanisms_corruption": {
+        "alpha": 0.025,
+        "null_hypotheses": 2,
+        "alternative_hypotheses": 2,
+        "lp_power": 0.025,
+        "power_bound": 0.025,
+        "null_risk_bound": 0.025000000000000005,
+        "risk_slack": -3.469446951953614e-18,
+        "power_excess_over_alpha": 0.0,
+        "cost_adjusted_gain": 0.0,
+        "has_certified_gain": false,
+        "null_tv_radius_max": 0.0,
+        "alternative_tv_radius_max": 0.0,
+        "corruption": {
+          "max_flips": 1,
+          "max_erasures": 0,
+          "max_burst": 0
+        },
+        "solver_status": "model_and_MC_bound"
+      },
+      "all_mechanisms_corruption_tv": {
+        "alpha": 0.025,
+        "null_hypotheses": 2,
+        "alternative_hypotheses": 2,
+        "lp_power": 0.025000000000000022,
+        "power_bound": 0.024999999999999984,
+        "null_risk_bound": 0.025000000000000033,
+        "risk_slack": -3.122502256758253e-17,
+        "power_excess_over_alpha": -1.734723475976807e-17,
+        "cost_adjusted_gain": 0.0,
+        "has_certified_gain": false,
+        "null_tv_radius_max": 0.424570407728277,
+        "alternative_tv_radius_max": 0.424570407728277,
+        "corruption": {
+          "max_flips": 1,
+          "max_erasures": 0,
+          "max_burst": 0
+        },
+        "solver_status": "model_and_MC_bound"
+      }
+    },
+    "lp_power_losses": {
+      "adding_mechanisms": 0.0625,
+      "adding_corruption": 0.012500000000000004,
+      "adding_tv_uncertainty": -2.0816681711721685e-17
+    },
+    "nested_lp_power_within_numerical_tolerance": true,
+    "fallback_for_this_block": true,
+    "bottleneck": {
+      "cause": "declared_corruption_budget",
+      "layer": "all_mechanisms_corruption",
+      "power_bound": 0.025,
+      "alpha": 0.025,
+      "power_excess_over_alpha": 0.0,
+      "interpretation": "first_relaxed_layer_without_a_certified_gain_for_this_model"
+    },
+    "pairwise_necessary_bounds": {
+      "closest_clean_pair": {
+        "null_source": 0,
+        "null_mechanism": 1,
+        "alternative_source": 1,
+        "alternative_mechanism": 1,
+        "clean_tv_distance": 0.125,
+        "null_tv_radius": 0.424570407728277,
+        "alternative_tv_radius": 0.424570407728277,
+        "tv_ball_minimum_distance": 0.0,
+        "tv_balls_intersect": true,
+        "clean_pair_power_upper_bound": 0.15,
+        "tv_pair_power_upper_bound": 0.025
+      },
+      "closest_tv_ambiguity_pair": {
+        "null_source": 0,
+        "null_mechanism": 0,
+        "alternative_source": 1,
+        "alternative_mechanism": 0,
+        "clean_tv_distance": 0.3125,
+        "null_tv_radius": 0.424570407728277,
+        "alternative_tv_radius": 0.424570407728277,
+        "tv_ball_minimum_distance": 0.0,
+        "tv_balls_intersect": true,
+        "clean_pair_power_upper_bound": 0.3375,
+        "tv_pair_power_upper_bound": 0.025
+      },
+      "scope": "necessary_pairwise_model_bound_not_physical_identifiability"
+    },
+    "risk_budget_spent": 0.0,
+    "action_taken": false,
+    "limitations": [
+      "Relaxed-layer tests are diagnostic and must not replace the committed robust test.",
+      "A layer's failure does not prove physical source non-identifiability.",
+      "MC bounds describe sampling inside the generator, not physical model discrepancy.",
+      "The nonzero-TV LP uses a conservative range-times-radius constraint; exact recomputed power is a certificate for its chosen test, not a globally optimal exact-TV power.",
+      "No adaptive sampling or new confidence allocation is performed."
+    ]
+  },
+  "source_hashes": {
+    "src/gsl_recovery/m3_codebook/codebook.py": "11d9ef0025bdd5c6f85689386b1558bd82401c6fffe36b32d8bee1a1578798d9",
+    "src/gsl_recovery/m3_planner/diagnostics.py": "9127fe55f7961810691b4638f3ebb133357dbba0c588ccd13517cfab752f2af2",
+    "tests/test_v2_planner_diagnostics.py": "6155b104e370c7ce1e0c157bbde3c6edf97ff3b2ab7f93a54c88249e82e721e1"
+  },
+  "focused_tests": {
+    "command": "PYTHONPATH=src:/tmp/gsl_v5_test_deps python -m pytest tests/test_v2_planner_diagnostics.py tests/test_m3_planner.py -q",
+    "result": "31 passed in 5.93s"
+  }
+}

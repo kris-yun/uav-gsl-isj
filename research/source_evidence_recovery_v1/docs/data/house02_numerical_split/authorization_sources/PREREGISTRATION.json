@@ -1,0 +1,79 @@
+{
+  "decision": "PRE_REGISTERED_METADATA_ONLY",
+  "origin_evidence": "E2_TP_Q_R0_READONLY_QUALIFICATION_20261018",
+  "role": "RETROSPECTIVE_NUMERICAL_SOURCE_HOLDOUT_ONLY",
+  "E2_open_sources_H02": 6,
+  "R0_distinct_sources": 18,
+  "R0_realizations": 288,
+  "R0_outside_E2_source_hull": 16,
+  "fold_assignment_rule": "sort source ID by numeric (pmfs_i,pmfs_j); fold=sorted index modulo 3",
+  "folds": [
+    {
+      "fold": 0,
+      "train_source_count": 12,
+      "test_source_count": 6,
+      "test_outside_train_hull": 4,
+      "test_source_ids": [
+        "pmfs_4_4",
+        "pmfs_9_30",
+        "pmfs_12_27",
+        "pmfs_19_34",
+        "pmfs_23_11",
+        "pmfs_25_15"
+      ]
+    },
+    {
+      "fold": 1,
+      "train_source_count": 12,
+      "test_source_count": 6,
+      "test_outside_train_hull": 3,
+      "test_source_ids": [
+        "pmfs_5_27",
+        "pmfs_11_1",
+        "pmfs_14_1",
+        "pmfs_20_26",
+        "pmfs_23_16",
+        "pmfs_25_32"
+      ]
+    },
+    {
+      "fold": 2,
+      "train_source_count": 12,
+      "test_source_count": 6,
+      "test_outside_train_hull": 3,
+      "test_source_ids": [
+        "pmfs_6_24",
+        "pmfs_11_6",
+        "pmfs_14_33",
+        "pmfs_21_35",
+        "pmfs_23_24",
+        "pmfs_26_35"
+      ]
+    }
+  ],
+  "candidate_panel": "All 18 R0 geometry-defined locations; geometry known, no response from held-out source in train",
+  "source_strength": "ABSOLUTE_Q_HOLD",
+  "historical_wind": "Only wind_iteration_1 independently hashed for R0; not fully source-comparable to E2",
+  "physical_time": "E2C source-reconstructed record clock, not direct R0 runtime dump",
+  "forbidden": [
+    "read sealed House03 / other DEV scientific values",
+    "train with held-out source responses",
+    "tune after test results",
+    "call numerical ppm an absolute physically certified source-rate dataset",
+    "claim E2->R0 18-source model can interpolate 16 extrapolation positions without testing"
+  ],
+  "assets_sha256": {
+    "R0_METADATA_ROWS.json": "596ed9da945829f00ad816dcb8e57edd9a3d2ebbc7d064d504f2c2853974126d",
+    "SOURCE_UNSEEN_ASSET_DECISION.json": "1ea23a347e725410b3a1d049ec689c42f89ce2045b573986219c72a6ab243d7e",
+    "R0_COLD_METADATA_INVENTORY.json": "dcbd17f9b7af8f2e1bd60bc56cdde855bd2f5a4d6cde95de9628d160ff7ca997",
+    "VM_R0_ARCHIVE_POINTER.json": "421fc79a0650bc58e1c11ce8f76039f68e1e03122fa5a72fabcb221ad1ab912f",
+    "R0_ORIGINAL_PROBE_METADATA.json": "0990f13f8758634fa26278688c023a41b54f3faf4a45b2451007679174860600",
+    "E1_HOUSE_SOURCE_PANELS.tsv": "e38bee4467fb9d98ab5ee48a6115eb1b3306df63cd3da409b9412b3032c4b06e",
+    "FROZEN_ORIGINAL_PROBE_READOUT.py": "e099fe249a7f1623784b1d372c4c9fc93892d413b662c1c3fdff1ca282da0453",
+    "READONLY_TP_Q_PROVENANCE_DECISION.json": "c8bcfe9678941bdc321d30975f577bd5f5ea60d3a7bc3af51bb5f691b4f3641b",
+    "E1_HOUSE_PROBE_CONTRACTS.tsv": "364c7a2f0333c95845cfb7a10dbb96ee8c5f30a47282e508e3961d4eec575812",
+    "CODEX_PREVIOUS_READONLY_REPORT.md": "56e99966fd11e3338b80ecb5a0ae6ac51cc97922cd3b3a661678975a5ff2cc6a"
+  },
+  "SOURCE_FOLDS_sha256": "d9f51e24605176c843c5a7f8236b65425d71e12263c33e0944a08bfcf17180dd",
+  "R0_VS_E2_GEOMETRY_sha256": "55bc1a91c88d2103e20f01c9b58e076904c2ed6c66b51c63a57e8a296aacddc6"
+}

@@ -1,0 +1,52 @@
+{
+  "schema": "HOUSE02_NUMERICAL_RECORD_SEQUENCE_V1",
+  "archive_sha256": "32a85615731c5003dfcc4f355d33bafda8028f0d7b5ba9f05ebff978f5d8a4f5",
+  "original_source_folds_sha256": "d9f51e24605176c843c5a7f8236b65425d71e12263c33e0944a08bfcf17180dd",
+  "routing_metadata_sha256": "10f4e69365f647ea7fccaddab2bc1472aac7a186ebea63deda7f2794a7e27083",
+  "authorization": {
+    "decision": "AUTHORIZED_NUMERICAL_OFFLINE_FIT_ON_ORIGINAL_TRAIN_SOURCES_ONLY",
+    "scope_path": "inputs/ARCHIVE_DATA_SCOPE.json",
+    "scope_sha256": "daf7d82a1da4917256c9c63bbc925a5e634686f911991af59cb3a33ebd8c2949",
+    "preregistration_path": "inputs/PREREGISTRATION.json",
+    "preregistration_sha256": "7cfeaadd790beb381a3d96b23b2c882c76cfb16f5f6c8d87f2a0e122896529e6",
+    "scope_role_verbatim": "Only benchmark and offline fit; test source responses must never be online candidate library",
+    "preregistered_role": "RETROSPECTIVE_NUMERICAL_SOURCE_HOLDOUT_ONLY",
+    "original_test_fold": 0,
+    "dev_fold_within_original_train": 1,
+    "training_is_new_user_authorized_offline_research": true,
+    "original_test_response_bytes_opened": false
+  },
+  "train_sources": [
+    "pmfs_11_6",
+    "pmfs_14_33",
+    "pmfs_21_35",
+    "pmfs_23_24",
+    "pmfs_26_35",
+    "pmfs_6_24"
+  ],
+  "dev_sources": [
+    "pmfs_11_1",
+    "pmfs_14_1",
+    "pmfs_20_26",
+    "pmfs_23_16",
+    "pmfs_25_32",
+    "pmfs_5_27"
+  ],
+  "sealed_test_sources": [
+    "pmfs_12_27",
+    "pmfs_19_34",
+    "pmfs_23_11",
+    "pmfs_25_15",
+    "pmfs_4_4",
+    "pmfs_9_30"
+  ],
+  "time_mode": "record_index",
+  "physical_time_available": false,
+  "local_wind_available": false,
+  "full_3d_teacher_state_available": false,
+  "online_response_bank_allowed": false,
+  "scientific_scope": "RETROSPECTIVE_NUMERICAL_SOURCE_HOLDOUT_ONLY",
+  "observations": "4-native-cell mean; 30 probes x 10 saved records; not point instrument or a feasible UAV route",
+  "original_record_index_used": 9,
+  "original_record_native_label": 550
+}

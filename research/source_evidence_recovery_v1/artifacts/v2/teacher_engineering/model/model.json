@@ -1,0 +1,73 @@
+{
+  "format": "gsl_physical_teacher_v2",
+  "config": {
+    "hidden": 96,
+    "geometry_width": 32,
+    "query_width": 64,
+    "modes": 4,
+    "gas_model": "binary",
+    "gas_lod": 1e-06,
+    "length_scale": 2.0,
+    "wind_scale": 1.0,
+    "time_scale": 1.0,
+    "source_height": 0.2,
+    "min_wind_sigma": 0.02,
+    "min_log_gas_sigma": 0.05,
+    "time_semantics": "seconds",
+    "scope": "ENGINEERING_ONLY"
+  },
+  "geometry": {
+    "landmarks": [
+      [
+        0.0,
+        0.0,
+        0.2
+      ],
+      [
+        0.0,
+        3.0,
+        0.2
+      ],
+      [
+        3.0,
+        0.0,
+        0.2
+      ],
+      [
+        3.0,
+        3.0,
+        0.2
+      ]
+    ],
+    "occupancy": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "geometry_id": "manufactured_square_boundary"
+  },
+  "version": "d177075c2c2c1d5cdb93",
+  "parameters": 82733,
+  "receipt": {
+    "status": "COMPLETE",
+    "scope": "ENGINEERING_ONLY",
+    "native_GADEN_teacher": "BLOCKED_QUALIFIED_MULTI_SOURCE_BANK_MISSING",
+    "parameters": 82733,
+    "epochs": 8,
+    "training_episodes": 48,
+    "bank_worlds": 4,
+    "device": "cpu",
+    "wall_seconds": 4.929135769998538,
+    "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+    "test_values_read": 0,
+    "source_ids_as_features": false,
+    "full_field_read_only_during_training": true
+  },
+  "weights_sha256": "16042f076edbac97664ebf5ff41226fb0d703e30bd07b11bcede6cae022826d6",
+  "deployable_inputs": "legal history, candidate coordinates, static geometry, mechanism",
+  "field_width": 32,
+  "training_only": true,
+  "native_malliavin_asd": "BLOCKED_NOT_INSTRUMENTED",
+  "derivative_scope": "smooth_surrogate_only; not unbiased simulator derivative"
+}

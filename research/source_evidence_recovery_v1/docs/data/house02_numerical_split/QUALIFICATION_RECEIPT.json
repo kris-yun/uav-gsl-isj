@@ -1,0 +1,48 @@
+{
+  "status": "PASS_NUMERICAL_ONLY_TRAIN_DEV_EXPORT",
+  "archive": "/workspace/scratch/f825a7b8b273/v6_work/data/library_downloads/研究/HOUSE02_3D_JOINT_EVIDENCE_SIX_CONTROLS_20261020_VERIFIED.zip",
+  "archive_sha256": "32a85615731c5003dfcc4f355d33bafda8028f0d7b5ba9f05ebff978f5d8a4f5",
+  "authorization": {
+    "decision": "AUTHORIZED_NUMERICAL_OFFLINE_FIT_ON_ORIGINAL_TRAIN_SOURCES_ONLY",
+    "scope_path": "inputs/ARCHIVE_DATA_SCOPE.json",
+    "scope_sha256": "daf7d82a1da4917256c9c63bbc925a5e634686f911991af59cb3a33ebd8c2949",
+    "preregistration_path": "inputs/PREREGISTRATION.json",
+    "preregistration_sha256": "7cfeaadd790beb381a3d96b23b2c882c76cfb16f5f6c8d87f2a0e122896529e6",
+    "scope_role_verbatim": "Only benchmark and offline fit; test source responses must never be online candidate library",
+    "preregistered_role": "RETROSPECTIVE_NUMERICAL_SOURCE_HOLDOUT_ONLY",
+    "original_test_fold": 0,
+    "dev_fold_within_original_train": 1,
+    "training_is_new_user_authorized_offline_research": true,
+    "original_test_response_bytes_opened": false
+  },
+  "artifacts": [
+    {
+      "role": "train",
+      "samples": 96,
+      "sources": 6,
+      "sha256": "018162c934a29b534bd5da19ab1f903efd803c552c6e9a97085046fe4416865f"
+    },
+    {
+      "role": "dev",
+      "samples": 96,
+      "sources": 6,
+      "sha256": "a83a9b884ded903c17b89bedfa259f2497a332efd1b173cf705a258c4de1554d"
+    }
+  ],
+  "original_test_samples_unopened": 96,
+  "original_test_response_bytes_opened": false,
+  "future_response_library_exported": false,
+  "local_wind_fabricated": false,
+  "physical_clock_fabricated": false,
+  "teacher_state": "BLOCKED_NO_FULL_3D_HISTORY_IN_THIS_ASSET",
+  "evaluation_status": "NOT_RUN",
+  "native_active_loop_status": "NOT_QUALIFIED_BY_THIS_DATA",
+  "limits": [
+    "Previously opened retrospective development data",
+    "Single House",
+    "All probes at z=0.2m",
+    "Absolute source Q and full historical wind remain HOLD",
+    "Rows sharing a plume seed in different source runs are not automatically independent wind worlds",
+    "10 records are correlated within each realization"
+  ]
+}

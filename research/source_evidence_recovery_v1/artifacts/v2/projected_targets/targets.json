@@ -1,0 +1,5964 @@
+{
+  "format": "gsl_projected_targets_v2",
+  "split": "train",
+  "manifest_sha256": "0cf1d56f10e023017e2a78efb72607bcc2d5fc3455b50dfd16adf02b346b0ec4",
+  "teacher_version": "d177075c2c2c1d5cdb93",
+  "teacher_scope": "ENGINEERING_ONLY",
+  "native_gradient_claim": false,
+  "source_candidates_from": "training_sources_only",
+  "generation": "whole teacher joint rollout; no realized future wind used",
+  "targets": [
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 1.269649154187825,
+            "y": 0.21663421097604896,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.14890631839939283,
+            0.45917462435184525
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.319232067411454,
+            "y": 0.7223698331261866,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.11643699564150777,
+            0.5144096745414016
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 1.289509369027736,
+            "y": 2.2098441008656913,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.3337155656708921,
+            0.5944134782977182
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 1.857840697922909,
+            "y": 2.5199817457479323,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.298608977634071,
+            0.6136117545445675
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 1.5057728898730163,
+            "y": 1.2652069727641433,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.11165186933537141,
+            0.16469299666806386
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.84769087654335,
+            "y": 1.1916485892685025,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.07592894834231832,
+            0.7699350286256597
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 2.482652582268174,
+            "y": 1.426585774253684,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.13887934567502888,
+            0.490470752741518
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        2.5
+      ],
+      "b": [
+        2.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "a",
+      "projected_pair": -0.4671891927719116,
+      "privileged_pair": -0.4671891927719116,
+      "mean_log_pair": -0.4671891927719116,
+      "path_certificate": {
+        "integral": -0.46718910336494446,
+        "endpoint": -0.4671891927719116,
+        "quadrature_defect": 8.940696716308594e-08,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_1",
+      "mid_source": [
+        1.5,
+        1.5
+      ],
+      "direction": [
+        2.0,
+        -2.0
+      ],
+      "projected_direction": -0.45926186442375183,
+      "privileged_direction": -0.45926183462142944,
+      "mean_log_direction": -0.45926183462142944,
+      "privileged_rollout_mode": 1
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 0.9372137179637117,
+            "y": 1.559556767854121,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.594341435438687,
+            -0.025719881242615122
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 0.9593621728071647,
+            "y": 0.2827532579550127,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.6634773829406746,
+            -0.1770664159833492
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 0.371322768979074,
+            "y": 1.2291591559133894,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.4714841451329197,
+            -0.1355541137987868
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 2.369219679167228,
+            "y": 0.4412069066136356,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.6051653464129498,
+            -0.15080369910715674
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 1.3135807010978768,
+            "y": 0.6323083017830767,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.7059064872979335,
+            -0.1627607054521399
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.2686722645821198,
+            "y": 2.5556562122139685,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.6601669184663561,
+            -0.172618425714808
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 0.4692136741683396,
+            "y": 2.028970050130674,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.5816576628508382,
+            -0.3751871590204294
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        2.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "a",
+      "projected_pair": -0.046914100646972656,
+      "privileged_pair": -0.046914100646972656,
+      "mean_log_pair": -0.046914100646972656,
+      "path_certificate": {
+        "integral": -0.046914078295230865,
+        "endpoint": -0.046914100646972656,
+        "quadrature_defect": 2.2351741790771484e-08,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_9",
+      "mid_source": [
+        1.5,
+        0.5
+      ],
+      "direction": [
+        -2.0,
+        0.0
+      ],
+      "projected_direction": -0.04714447259902954,
+      "privileged_direction": -0.047144412994384766,
+      "mean_log_direction": -0.047144412994384766,
+      "privileged_rollout_mode": 2
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 2.1518089931588578,
+            "y": 0.9728243199815869,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.257704394615738,
+            0.6187991731128523
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.6764561185706435,
+            "y": 2.777833826953189,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.31075406838408626,
+            0.6026106495905498
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 0.9892530643335027,
+            "y": 0.7505268766639713,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.08019296810217404,
+            0.5862094623667827
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 1.5051745554218068,
+            "y": 2.213190713872832,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.045061055811339706,
+            0.667366510585378
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 0.5836127651190463,
+            "y": 1.9865235188863632,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.20929391674521822,
+            1.1767589672608083
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 0.10861400234956604,
+            "y": 0.3744182433052051,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.5319276843796235,
+            0.5126207011105762
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 1.4118882263511294,
+            "y": 2.7412814890583794,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.21668855174194657,
+            0.3510545160749931
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        2.5
+      ],
+      "b": [
+        2.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "sensor_offset",
+        "onset": 4,
+        "duration": null,
+        "magnitude": 1.2
+      },
+      "sampled_from": "b",
+      "projected_pair": 0.1163187026977539,
+      "privileged_pair": 0.1163187026977539,
+      "mean_log_pair": 0.1163187026977539,
+      "path_certificate": {
+        "integral": 0.11631863564252853,
+        "endpoint": 0.1163187026977539,
+        "quadrature_defect": 6.705522537231445e-08,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_8",
+      "mid_source": [
+        1.5,
+        1.5
+      ],
+      "direction": [
+        2.0,
+        -2.0
+      ],
+      "projected_direction": 0.12455868721008301,
+      "privileged_direction": 0.12455874681472778,
+      "mean_log_direction": 0.12455874681472778,
+      "privileged_rollout_mode": 1
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 2.475592255664033,
+            "y": 2.1406713614510164,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.4667277966899717,
+            0.03864052842558983
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.624450116258265,
+            "y": 0.5992222851413566,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.6760605340197916,
+            0.12073544311402967
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.7367061582862497,
+            "y": 0.8326482418087583,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.8828992666028925,
+            0.23125294292438445
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 1.2350845539372304,
+            "y": 2.5490951285389407,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.5496061517073878,
+            -0.10075426134410845
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 1.4964487371256538,
+            "y": 1.3720273923658943,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.5238053923626033,
+            0.1612149755936436
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 2.514202875721296,
+            "y": 1.7955051047319024,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            1.0829184389793585,
+            0.340757967349113
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 1.588433480209615,
+            "y": 2.108959083222574,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.6462747515774423,
+            0.3122707689373341
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        2.5
+      ],
+      "mechanism": {
+        "kind": "sensor_offset",
+        "onset": 4,
+        "duration": null,
+        "magnitude": 1.2
+      },
+      "sampled_from": "a",
+      "projected_pair": 0.342531681060791,
+      "privileged_pair": 0.34253162145614624,
+      "mean_log_pair": 0.34253162145614624,
+      "path_certificate": {
+        "integral": 0.3425315320491791,
+        "endpoint": 0.342531681060791,
+        "quadrature_defect": 1.4901161193847656e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_12",
+      "mid_source": [
+        0.5,
+        1.5
+      ],
+      "direction": [
+        0.0,
+        2.0
+      ],
+      "projected_direction": 0.3393617868423462,
+      "privileged_direction": 0.33936169743537903,
+      "mean_log_direction": 0.33936169743537903,
+      "privileged_rollout_mode": 0
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 1.0210011234893306,
+            "y": 0.41665575728501436,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.21238589512669598,
+            -0.5283457157909335
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 0.9768635672559256,
+            "y": 2.309225302665358,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.18296375083586283,
+            -0.4071725464051947
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 1.7528265615930148,
+            "y": 0.9493403754179349,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.15603315395437242,
+            -0.5727110770677742
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 0.6202728404876937,
+            "y": 2.7221866351504094,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.013037587627753894,
+            -0.5394479880756777
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 1.8092612099125256,
+            "y": 0.7628088767640252,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.24890865771119164,
+            -0.5412482934352975
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 2.471761980543446,
+            "y": 2.0441360037367486,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.29014012339412837,
+            -0.5767032598923596
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 2.702576688462607,
+            "y": 2.0206301732667487,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.08286741974041077,
+            -0.4460608098685151
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        2.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        2.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "b",
+      "projected_pair": 0.18530809879302979,
+      "privileged_pair": 0.18530809879302979,
+      "mean_log_pair": 0.18530809879302979,
+      "path_certificate": {
+        "integral": 0.18530809879302979,
+        "endpoint": 0.18530809879302979,
+        "quadrature_defect": 0.0,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_11",
+      "mid_source": [
+        1.5,
+        1.5
+      ],
+      "direction": [
+        -2.0,
+        2.0
+      ],
+      "projected_direction": 0.18098235130310059,
+      "privileged_direction": 0.18098241090774536,
+      "mean_log_direction": 0.18098241090774536,
+      "privileged_rollout_mode": 3
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 2.705885833303956,
+            "y": 2.6064819082761033,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.12901001774463922,
+            -0.7162891655403651
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 0.2149610327898109,
+            "y": 1.6415900683800178,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.0634792368238801,
+            -0.6608733627128042
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.6564377547677482,
+            "y": 2.6055021886132383,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.19557941144537588,
+            -0.3673374833687856
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 0.47449811349943705,
+            "y": 0.8355556650118674,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.01678600217059413,
+            -0.6652202706330318
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 0.5721055249355841,
+            "y": 2.085890362492503,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.07088446124847889,
+            -0.7187213088238769
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.3224888787197533,
+            "y": 2.266799285785759,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.6901845597304654,
+            -0.8678645208903855
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 1.1916392613942584,
+            "y": 1.5288703219045208,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.0813119203726449,
+            -1.1312307345602575
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        2.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        2.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "a",
+      "projected_pair": -0.5171375274658203,
+      "privileged_pair": -0.5171375274658203,
+      "mean_log_pair": -0.5171375274658203,
+      "path_certificate": {
+        "integral": -0.517137885093689,
+        "endpoint": -0.5171375274658203,
+        "quadrature_defect": 3.5762786865234375e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_22",
+      "mid_source": [
+        1.5,
+        1.5
+      ],
+      "direction": [
+        -2.0,
+        2.0
+      ],
+      "projected_direction": -0.5251548290252686,
+      "privileged_direction": -0.5251548290252686,
+      "mean_log_direction": -0.5251548290252686,
+      "privileged_rollout_mode": 3
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 1.445301939027928,
+            "y": 2.437709983934327,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.2011568346002663,
+            -0.742274955625734
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.177461811778497,
+            "y": 2.142683943758228,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.23154359198915023,
+            -0.6674888818162904
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.8895486645172346,
+            "y": 2.5938478499404427,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.15065359878277887,
+            -0.837769811483577
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 1.1825738251186277,
+            "y": 1.1276300557033876,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.1322123345436289,
+            -0.4370869590303754
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 1.3305150229537834,
+            "y": 2.188977068168993,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.19714211585576719,
+            -0.9551025331589744
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.5580831348820796,
+            "y": 1.416228566740848,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.004133278749217401,
+            -0.36728176371179055
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 2.7234251151754116,
+            "y": 2.2604468227434937,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.43525891626325786,
+            -0.4755191101313794
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        0.5
+      ],
+      "b": [
+        2.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "sensor_offset",
+        "onset": 4,
+        "duration": null,
+        "magnitude": 1.2
+      },
+      "sampled_from": "a",
+      "projected_pair": -0.1258985996246338,
+      "privileged_pair": -0.1258985996246338,
+      "mean_log_pair": -0.1258985996246338,
+      "path_certificate": {
+        "integral": -0.12589843571186066,
+        "endpoint": -0.1258985996246338,
+        "quadrature_defect": 1.6391277313232422e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_44",
+      "mid_source": [
+        1.5,
+        0.5
+      ],
+      "direction": [
+        2.0,
+        0.0
+      ],
+      "projected_direction": -0.12749609351158142,
+      "privileged_direction": -0.127496138215065,
+      "mean_log_direction": -0.127496138215065,
+      "privileged_rollout_mode": 3
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 1.139238505077925,
+            "y": 2.3675058163884013,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.18317069142951542,
+            -0.5458334737479658
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 0.7585256019544978,
+            "y": 2.6723094365960236,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.2907339893833221,
+            -0.7076734154371633
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 1.7475933839226085,
+            "y": 1.1683152821754967,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.27082087760716844,
+            -0.7452280322001469
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 2.8406172333228654,
+            "y": 0.1467584871006659,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.027599514505550232,
+            -0.5977182237200251
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 0.7651942802769511,
+            "y": 0.17104989803199294,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.046577240181079976,
+            -0.6926792168619519
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.6714365341023296,
+            "y": 1.2110774213011986,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.057278110152639006,
+            -0.8947715458521948
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 0.10461493098541164,
+            "y": 0.7677873475553122,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.1684141834757426,
+            -0.7594493740622665
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        2.5
+      ],
+      "b": [
+        2.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "b",
+      "projected_pair": 0.1287752389907837,
+      "privileged_pair": 0.1287752389907837,
+      "mean_log_pair": 0.1287752389907837,
+      "path_certificate": {
+        "integral": 0.12877529859542847,
+        "endpoint": 0.1287752389907837,
+        "quadrature_defect": 5.960464477539063e-08,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_7",
+      "mid_source": [
+        1.5,
+        1.5
+      ],
+      "direction": [
+        2.0,
+        -2.0
+      ],
+      "projected_direction": 0.13666561245918274,
+      "privileged_direction": 0.13666553795337677,
+      "mean_log_direction": 0.13666553795337677,
+      "privileged_rollout_mode": 3
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 0.8731054364537925,
+            "y": 2.063987041763757,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.5838286137825452,
+            0.10928499419257535
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.1116886679295175,
+            "y": 1.8976701617361786,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.5792844658313949,
+            0.07321277716769115
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 0.4832459125544609,
+            "y": 1.773664870595794,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.6638995463925336,
+            0.07456506588801581
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 2.0700672617611895,
+            "y": 0.7654943209940142,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.8007286932857981,
+            0.21937446327731375
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 0.3079971163867071,
+            "y": 0.20492993822007746,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.5894111327939057,
+            0.2231963117080717
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.6998482314737757,
+            "y": 0.2800089392856945,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.705881882793167,
+            -0.19581870673004503
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 0.2554319444304468,
+            "y": 1.6568409934548323,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.6202384563232225,
+            0.4911661699155333
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        2.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "b",
+      "projected_pair": 0.3686577081680298,
+      "privileged_pair": 0.3686577081680298,
+      "mean_log_pair": 0.3686577081680298,
+      "path_certificate": {
+        "integral": 0.3686578571796417,
+        "endpoint": 0.3686577081680298,
+        "quadrature_defect": 1.4901161193847656e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_15",
+      "mid_source": [
+        0.5,
+        1.5
+      ],
+      "direction": [
+        0.0,
+        2.0
+      ],
+      "projected_direction": 0.3658272325992584,
+      "privileged_direction": 0.3658273220062256,
+      "mean_log_direction": 0.3658273220062256,
+      "privileged_rollout_mode": 0
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 0.963253099387165,
+            "y": 0.32582846173075597,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.7977039002756567,
+            -0.05885547929820853
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 1.623883725865254,
+            "y": 1.3810807680726334,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.6405284071540743,
+            -0.0034676432266133317
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.055784677931965,
+            "y": 0.11758211231017723,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.9143378111300626,
+            -0.1180201501344221
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 1.5602963464654205,
+            "y": 1.07278607727159,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.7443717184583333,
+            0.14439215044747372
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 2.707873292206302,
+            "y": 1.7722284008062301,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.6954099463958636,
+            0.4667246683834716
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 2.827461303438064,
+            "y": 0.2569583179775704,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.5717881405453664,
+            0.00381574507087494
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 1.9372396439196256,
+            "y": 2.587138092837851,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.5945980421682105,
+            0.28829577733072587
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        2.5
+      ],
+      "b": [
+        0.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "sensor_offset",
+        "onset": 4,
+        "duration": null,
+        "magnitude": 1.2
+      },
+      "sampled_from": "b",
+      "projected_pair": -0.34891223907470703,
+      "privileged_pair": -0.34891223907470703,
+      "mean_log_pair": -0.34891223907470703,
+      "path_certificate": {
+        "integral": -0.3489123284816742,
+        "endpoint": -0.34891223907470703,
+        "quadrature_defect": 8.940696716308594e-08,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_36",
+      "mid_source": [
+        0.5,
+        1.5
+      ],
+      "direction": [
+        0.0,
+        -2.0
+      ],
+      "projected_direction": -0.3459968864917755,
+      "privileged_direction": -0.34599700570106506,
+      "mean_log_direction": -0.34599700570106506,
+      "privileged_rollout_mode": 0
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 0.13586980185714131,
+            "y": 2.2012774040567704,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.60418339042039,
+            -0.01455642473824953
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.678518927611932,
+            "y": 1.2479873933975028,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.741846744341376,
+            0.11992711683347479
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 1.1201846032946914,
+            "y": 1.5220618730200863,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.6628750735811559,
+            0.19131491872276338
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 2.4540076272312445,
+            "y": 0.8764911547175661,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.4995520122342988,
+            0.054152449050190996
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 0.18676797126737615,
+            "y": 1.3410936717480013,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.7287467331357027,
+            0.08268904995804184
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.8484716986191851,
+            "y": 1.7024528510794041,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.9413631701559806,
+            0.3362355645142739
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 0.9655001663446056,
+            "y": 2.626584519598823,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.4421768852973732,
+            -0.006592908452106014
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        2.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "b",
+      "projected_pair": 0.05051314830780029,
+      "privileged_pair": 0.05051314830780029,
+      "mean_log_pair": 0.05051314830780029,
+      "path_certificate": {
+        "integral": 0.05051315203309059,
+        "endpoint": 0.05051314830780029,
+        "quadrature_defect": 3.725290298461914e-09,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_23",
+      "mid_source": [
+        1.5,
+        0.5
+      ],
+      "direction": [
+        -2.0,
+        0.0
+      ],
+      "projected_direction": 0.05121035873889923,
+      "privileged_direction": 0.05121032893657684,
+      "mean_log_direction": 0.05121032893657684,
+      "privileged_rollout_mode": 0
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 2.6597853608852446,
+            "y": 2.5844774400418427,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.48006020133646077,
+            -0.18241284235616317
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.3038193184107416,
+            "y": 1.5740848402190746,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.732796164218447,
+            -0.07117298586761388
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 1.2267606303593757,
+            "y": 2.25319201399089,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.5882136317243789,
+            0.0978915312912006
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 2.7614184170463156,
+            "y": 1.1578987434503798,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.6023704077124896,
+            0.041665558024600646
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 1.702501240902182,
+            "y": 1.0101510790768662,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.8511334747317576,
+            -0.08694378817305307
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 2.01146712429225,
+            "y": 1.4561191490092193,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.6854517750176214,
+            -0.18347577449982513
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 2.5565693349722847,
+            "y": 1.6353821791099556,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.48391090933361686,
+            -0.18418290145540794
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        2.5
+      ],
+      "b": [
+        0.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "b",
+      "projected_pair": -0.11853861808776855,
+      "privileged_pair": -0.11853861808776855,
+      "mean_log_pair": -0.11853861808776855,
+      "path_certificate": {
+        "integral": -0.11853884905576706,
+        "endpoint": -0.11853861808776855,
+        "quadrature_defect": 2.3096799850463867e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_43",
+      "mid_source": [
+        0.5,
+        1.5
+      ],
+      "direction": [
+        0.0,
+        -2.0
+      ],
+      "projected_direction": -0.11802741140127182,
+      "privileged_direction": -0.11802743375301361,
+      "mean_log_direction": -0.11802743375301361,
+      "privileged_rollout_mode": 2
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 1.4973065551417772,
+            "y": 0.6100274342247246,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.524549137428374,
+            0.20241033374035783
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 1.8154484838399896,
+            "y": 0.2512644815023942,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.8829238816278734,
+            0.1039223564155802
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.3655648912185683,
+            "y": 1.4097049615219797,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.556288106990774,
+            0.2831373517949941
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 2.5075671978234593,
+            "y": 1.8062400351491976,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.6427058737774616,
+            0.20315663786622018
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 0.11874617561477639,
+            "y": 2.2247948633177783,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.7755056039032477,
+            0.06746702273594052
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 0.1557558352058935,
+            "y": 0.5096331576632048,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.7098029349108121,
+            0.37224987951135907
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 0.49831916184806024,
+            "y": 1.8289513874276604,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.691519489168733,
+            -0.18409050707573232
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        2.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        2.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "b",
+      "projected_pair": -0.3248780369758606,
+      "privileged_pair": -0.3248780369758606,
+      "mean_log_pair": -0.3248780369758606,
+      "path_certificate": {
+        "integral": -0.3248779773712158,
+        "endpoint": -0.3248780369758606,
+        "quadrature_defect": 5.960464477539063e-08,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_21",
+      "mid_source": [
+        1.5,
+        1.5
+      ],
+      "direction": [
+        -2.0,
+        2.0
+      ],
+      "projected_direction": -0.333016037940979,
+      "privileged_direction": -0.3330160081386566,
+      "mean_log_direction": -0.3330160081386566,
+      "privileged_rollout_mode": 0
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 0.41901904029185333,
+            "y": 1.9662965969228685,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.5940870556511654,
+            -0.0130902887550529
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 1.195891360605208,
+            "y": 2.1575254901331133,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.4800023253779275,
+            -0.023490200022797628
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 0.5456649896127959,
+            "y": 1.627942209701019,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.7206246393453032,
+            -0.0700006180920218
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 2.0085490834295268,
+            "y": 2.2657428627390597,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.5128392479592668,
+            -0.08354408521412915
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 0.5719812707149217,
+            "y": 1.9172426723483753,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.7010646998101888,
+            -0.07595718329143597
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 0.14700597669086474,
+            "y": 1.3254322064814053,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.9973381584151233,
+            -0.1410148041769365
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 2.4294008735382806,
+            "y": 1.3518905620476238,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.3174192510670924,
+            0.18786077487052033
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        2.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "b",
+      "projected_pair": -0.4085179567337036,
+      "privileged_pair": -0.4085179567337036,
+      "mean_log_pair": -0.4085179567337036,
+      "path_certificate": {
+        "integral": -0.40851807594299316,
+        "endpoint": -0.4085179567337036,
+        "quadrature_defect": 1.1920928955078125e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_17",
+      "mid_source": [
+        0.5,
+        1.5
+      ],
+      "direction": [
+        0.0,
+        2.0
+      ],
+      "projected_direction": -0.40997040271759033,
+      "privileged_direction": -0.4099704325199127,
+      "mean_log_direction": -0.4099704325199127,
+      "privileged_rollout_mode": 2
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 0.2894991346125727,
+            "y": 1.9836462794810197,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.01665917596726428,
+            -0.507880289623213
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 0.24339055878043764,
+            "y": 0.5942843898520677,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.23944097506366813,
+            -0.7125307654520245
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.8547253553510124,
+            "y": 2.074240354211551,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.17921995756724274,
+            -0.546627913861494
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 0.8975998767494172,
+            "y": 0.9462354279155352,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.0699983759697839,
+            -0.6722863726933244
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 1.549285425613472,
+            "y": 1.8791386642638759,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.15437864381157848,
+            -0.550640620082699
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.717540629145066,
+            "y": 0.4972682306229085,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.1330241180853492,
+            -0.4337131606885485
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 2.003708300614486,
+            "y": 1.005709569995404,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.3401372736675001,
+            -1.181861899833281
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        2.5
+      ],
+      "mechanism": {
+        "kind": "sensor_offset",
+        "onset": 4,
+        "duration": null,
+        "magnitude": 1.2
+      },
+      "sampled_from": "a",
+      "projected_pair": 0.4788951873779297,
+      "privileged_pair": 0.4788951873779297,
+      "mean_log_pair": 0.4788951873779297,
+      "path_certificate": {
+        "integral": 0.4788951575756073,
+        "endpoint": 0.4788951873779297,
+        "quadrature_defect": 2.9802322387695312e-08,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_0",
+      "mid_source": [
+        0.5,
+        1.5
+      ],
+      "direction": [
+        0.0,
+        2.0
+      ],
+      "projected_direction": 0.4758468568325043,
+      "privileged_direction": 0.4758468568325043,
+      "mean_log_direction": 0.4758468568325043,
+      "privileged_rollout_mode": 3
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 1.9688777835215248,
+            "y": 1.841493574149011,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.0048613334028705935,
+            0.8817081015995445
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.606460615707055,
+            "y": 0.8449702007664014,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.1547350242055382,
+            0.5024480457119133
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.4531043258002483,
+            "y": 1.9225119974047153,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.411170733899568,
+            0.4478377621664855
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 2.655492074480289,
+            "y": 2.627864840650575,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.037282655933675385,
+            0.6101743947557163
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 0.11312926534470123,
+            "y": 0.7175528127826024,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.0956934438381048,
+            0.6299158072699852
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.1739664026282646,
+            "y": 2.305125270107233,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.30451452933513184,
+            0.9116350512112322
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 1.8250796732794308,
+            "y": 1.20162194626261,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.39525545978752186,
+            0.2491112560323906
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        0.5
+      ],
+      "b": [
+        2.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "b",
+      "projected_pair": -0.05220484733581543,
+      "privileged_pair": -0.05220484733581543,
+      "mean_log_pair": -0.05220484733581543,
+      "path_certificate": {
+        "integral": -0.05220481753349304,
+        "endpoint": -0.05220484733581543,
+        "quadrature_defect": 2.9802322387695312e-08,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_3",
+      "mid_source": [
+        1.5,
+        0.5
+      ],
+      "direction": [
+        2.0,
+        0.0
+      ],
+      "projected_direction": -0.053038328886032104,
+      "privileged_direction": -0.053038328886032104,
+      "mean_log_direction": -0.053038328886032104,
+      "privileged_rollout_mode": 1
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 2.367649520415219,
+            "y": 1.4298548917043856,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.6820632352129017,
+            0.08021624894780925
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.0007502806059243,
+            "y": 2.8625033750679982,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.8826738186524028,
+            0.007688415562476944
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 0.5236606364858933,
+            "y": 2.13185824202751,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.7050351404688967,
+            -0.008020231522653243
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 1.9709772346469352,
+            "y": 0.8389489697444061,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.8171729188379939,
+            0.2458329582207931
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 1.1088016823538236,
+            "y": 1.9727433143862674,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.8326217473923382,
+            0.0035929664995562466
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 0.7532878906196143,
+            "y": 2.6598036085611474,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.3933148231025412,
+            0.125255421441691
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 2.2793780861959276,
+            "y": 2.580307572720282,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.6671449569680281,
+            -0.1100793156307022
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        2.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        2.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "a",
+      "projected_pair": -0.1744016408920288,
+      "privileged_pair": -0.1744016408920288,
+      "mean_log_pair": -0.1744016408920288,
+      "path_certificate": {
+        "integral": -0.1744014024734497,
+        "endpoint": -0.1744016408920288,
+        "quadrature_defect": 2.384185791015625e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_5",
+      "mid_source": [
+        1.5,
+        1.5
+      ],
+      "direction": [
+        -2.0,
+        2.0
+      ],
+      "projected_direction": -0.18515798449516296,
+      "privileged_direction": -0.18515801429748535,
+      "mean_log_direction": -0.18515801429748535,
+      "privileged_rollout_mode": 0
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 2.475592255664033,
+            "y": 2.1406713614510164,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.4667277966899717,
+            0.03864052842558983
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.624450116258265,
+            "y": 0.5992222851413566,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.6760605340197916,
+            0.12073544311402967
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.7367061582862497,
+            "y": 0.8326482418087583,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.8828992666028925,
+            0.23125294292438445
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 1.2350845539372304,
+            "y": 2.5490951285389407,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.5496061517073878,
+            -0.10075426134410845
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 1.4964487371256538,
+            "y": 1.3720273923658943,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            1.0048502754252053,
+            0.35211781762081845
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 2.514202875721296,
+            "y": 1.7955051047319024,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.7440002017863858,
+            0.19775025374666294
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 1.588433480209615,
+            "y": 2.108959083222574,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.6902211736360293,
+            0.15923156630088867
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        2.5
+      ],
+      "b": [
+        2.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "sensor_offset",
+        "onset": 4,
+        "duration": null,
+        "magnitude": 1.2
+      },
+      "sampled_from": "a",
+      "projected_pair": -0.3968285322189331,
+      "privileged_pair": -0.3968285322189331,
+      "mean_log_pair": -0.3968285322189331,
+      "path_certificate": {
+        "integral": -0.3968285024166107,
+        "endpoint": -0.3968285322189331,
+        "quadrature_defect": 2.9802322387695312e-08,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_12",
+      "mid_source": [
+        1.5,
+        1.5
+      ],
+      "direction": [
+        2.0,
+        -2.0
+      ],
+      "projected_direction": -0.38659316301345825,
+      "privileged_direction": -0.3865932524204254,
+      "mean_log_direction": -0.3865932524204254,
+      "privileged_rollout_mode": 0
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 1.269649154187825,
+            "y": 0.21663421097604896,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.14890631839939283,
+            0.45917462435184525
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.319232067411454,
+            "y": 0.7223698331261866,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.11643699564150777,
+            0.5144096745414016
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 1.289509369027736,
+            "y": 2.2098441008656913,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.3337155656708921,
+            0.5944134782977182
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 1.857840697922909,
+            "y": 2.5199817457479323,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.298608977634071,
+            0.6136117545445675
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 1.5057728898730163,
+            "y": 1.2652069727641433,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.026770747586986277,
+            0.7476883928208716
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.84769087654335,
+            "y": 1.1916485892685025,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.3133707472127934,
+            0.5178198148314312
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 2.482652582268174,
+            "y": 1.426585774253684,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.42830809445266754,
+            0.5110577638032139
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        2.5
+      ],
+      "b": [
+        2.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "a",
+      "projected_pair": -0.46554720401763916,
+      "privileged_pair": -0.46554720401763916,
+      "mean_log_pair": -0.46554720401763916,
+      "path_certificate": {
+        "integral": -0.46554702520370483,
+        "endpoint": -0.46554720401763916,
+        "quadrature_defect": 1.7881393432617188e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_1",
+      "mid_source": [
+        1.5,
+        1.5
+      ],
+      "direction": [
+        2.0,
+        -2.0
+      ],
+      "projected_direction": -0.45767706632614136,
+      "privileged_direction": -0.45767706632614136,
+      "mean_log_direction": -0.45767706632614136,
+      "privileged_rollout_mode": 1
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 2.832782218383823,
+            "y": 2.101832964539052,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.15545706043708715,
+            -0.5475418828079944
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 1.651803649585563,
+            "y": 2.85801378277517,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.03984598074800817,
+            -0.581033934512416
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 1.004150271270303,
+            "y": 1.134011800480102,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.2491267626823475,
+            -0.5838516337813568
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 1.6352113182368226,
+            "y": 0.18093969250542644,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.02296503345647155,
+            -0.687566219947553
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 2.536370626956155,
+            "y": 2.8261050943104737,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.40441647134930886,
+            -0.2513763690093032
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.5649627726643376,
+            "y": 1.0104461316751943,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.31256492938424973,
+            -0.5454081011317571
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 0.2557360136355299,
+            "y": 0.3309500576933724,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.44102995605717704,
+            -0.36726704136986693
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        2.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "a",
+      "projected_pair": -0.4301934242248535,
+      "privileged_pair": -0.4301934242248535,
+      "mean_log_pair": -0.4301934242248535,
+      "path_certificate": {
+        "integral": -0.43019336462020874,
+        "endpoint": -0.4301934242248535,
+        "quadrature_defect": 5.960464477539063e-08,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_33",
+      "mid_source": [
+        0.5,
+        1.5
+      ],
+      "direction": [
+        0.0,
+        2.0
+      ],
+      "projected_direction": -0.43159595131874084,
+      "privileged_direction": -0.4315958619117737,
+      "mean_log_direction": -0.4315958619117737,
+      "privileged_rollout_mode": 3
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 0.2610380561418709,
+            "y": 1.855596286114559,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.5370522925126497,
+            -0.1535171914549123
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.6212016517485552,
+            "y": 0.7231706019671265,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.7250715544572849,
+            -0.18681715828546588
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.0099946197833822,
+            "y": 2.258917993545788,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.5792481078455864,
+            -0.0236228255168367
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 2.676454296389691,
+            "y": 1.4324645919320997,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.5199210653456433,
+            -0.1251315041997712
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 0.1391016994959263,
+            "y": 2.746650332034105,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.45346557768858814,
+            -0.3525432269457536
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.6556974556667574,
+            "y": 1.191729236414083,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.805421632085447,
+            -0.33436951362297623
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 0.1987462134634867,
+            "y": 2.3648131082846593,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.7759347001986595,
+            -0.13740998259727458
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        2.5
+      ],
+      "b": [
+        2.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "b",
+      "projected_pair": -0.1080164909362793,
+      "privileged_pair": -0.1080164909362793,
+      "mean_log_pair": -0.1080164909362793,
+      "path_certificate": {
+        "integral": -0.10801615566015244,
+        "endpoint": -0.1080164909362793,
+        "quadrature_defect": 3.3527612686157227e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_2",
+      "mid_source": [
+        1.5,
+        1.5
+      ],
+      "direction": [
+        2.0,
+        -2.0
+      ],
+      "projected_direction": -0.10192517936229706,
+      "privileged_direction": -0.10192514955997467,
+      "mean_log_direction": -0.10192514955997467,
+      "privileged_rollout_mode": 2
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 2.705885833303956,
+            "y": 2.6064819082761033,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.12901001774463922,
+            -0.7162891655403651
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 0.2149610327898109,
+            "y": 1.6415900683800178,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.0634792368238801,
+            -0.6608733627128042
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.6564377547677482,
+            "y": 2.6055021886132383,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.19557941144537588,
+            -0.3673374833687856
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 0.47449811349943705,
+            "y": 0.8355556650118674,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.01678600217059413,
+            -0.6652202706330318
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 0.5721055249355841,
+            "y": 2.085890362492503,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.35564824667170764,
+            -0.42444407990632255
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.3224888787197533,
+            "y": 2.266799285785759,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.2289122438546271,
+            -0.41543051375164175
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 1.1916392613942584,
+            "y": 1.5288703219045208,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.1939037295299335,
+            -0.7199468669512818
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        2.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        2.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "b",
+      "projected_pair": -0.043663740158081055,
+      "privileged_pair": -0.04366368055343628,
+      "mean_log_pair": -0.04366368055343628,
+      "path_certificate": {
+        "integral": -0.04366353526711464,
+        "endpoint": -0.043663740158081055,
+        "quadrature_defect": 2.0489096641540527e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_22",
+      "mid_source": [
+        1.5,
+        1.5
+      ],
+      "direction": [
+        -2.0,
+        2.0
+      ],
+      "projected_direction": -0.05299616605043411,
+      "privileged_direction": -0.05299622565507889,
+      "mean_log_direction": -0.05299622565507889,
+      "privileged_rollout_mode": 3
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 0.8731054364537925,
+            "y": 2.063987041763757,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.5838286137825452,
+            0.10928499419257535
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.1116886679295175,
+            "y": 1.8976701617361786,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.5792844658313949,
+            0.07321277716769115
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 0.4832459125544609,
+            "y": 1.773664870595794,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.6638995463925336,
+            0.07456506588801581
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 2.0700672617611895,
+            "y": 0.7654943209940142,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.8007286932857981,
+            0.21937446327731375
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 0.3079971163867071,
+            "y": 0.20492993822007746,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.687776309813039,
+            -0.05095198089166075
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.6998482314737757,
+            "y": 0.2800089392856945,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.719211626408264,
+            0.3918736607547517
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 0.2554319444304468,
+            "y": 1.6568409934548323,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.4337595657997812,
+            -0.15040931236678556
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        2.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "b",
+      "projected_pair": 0.015689611434936523,
+      "privileged_pair": 0.015689611434936523,
+      "mean_log_pair": 0.015689611434936523,
+      "path_certificate": {
+        "integral": 0.0156891830265522,
+        "endpoint": 0.015689611434936523,
+        "quadrature_defect": 4.284083843231201e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_15",
+      "mid_source": [
+        0.5,
+        1.5
+      ],
+      "direction": [
+        0.0,
+        2.0
+      ],
+      "projected_direction": 0.013344060629606247,
+      "privileged_direction": 0.013343939557671547,
+      "mean_log_direction": 0.013343939557671547,
+      "privileged_rollout_mode": 0
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 1.269649154187825,
+            "y": 0.21663421097604896,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.14890631839939283,
+            0.45917462435184525
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.319232067411454,
+            "y": 0.7223698331261866,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.11643699564150777,
+            0.5144096745414016
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 1.289509369027736,
+            "y": 2.2098441008656913,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.3337155656708921,
+            0.5944134782977182
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 1.857840697922909,
+            "y": 2.5199817457479323,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.298608977634071,
+            0.6136117545445675
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 1.5057728898730163,
+            "y": 1.2652069727641433,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.03268959564906701,
+            0.6250090827583464
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.84769087654335,
+            "y": 1.1916485892685025,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.27648577323983137,
+            0.48116616195036555
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 2.482652582268174,
+            "y": 1.426585774253684,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.19346749795067736,
+            1.0408388136495277
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        2.5
+      ],
+      "b": [
+        0.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "b",
+      "projected_pair": 0.48334336280822754,
+      "privileged_pair": 0.48334336280822754,
+      "mean_log_pair": 0.48334336280822754,
+      "path_certificate": {
+        "integral": 0.48334330320358276,
+        "endpoint": 0.48334336280822754,
+        "quadrature_defect": 5.960464477539063e-08,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_1",
+      "mid_source": [
+        0.5,
+        1.5
+      ],
+      "direction": [
+        0.0,
+        -2.0
+      ],
+      "projected_direction": 0.48536354303359985,
+      "privileged_direction": 0.48536360263824463,
+      "mean_log_direction": 0.48536360263824463,
+      "privileged_rollout_mode": 1
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 0.35843712285067497,
+            "y": 0.5940481567663255,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.29211575370392906,
+            -0.6877838927546561
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 1.5942778495792884,
+            "y": 2.6617133651529197,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.049196961932196054,
+            -0.6074745075626632
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.5997789507597897,
+            "y": 2.8624508704991465,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.05926749995028201,
+            -0.5394079086304429
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 1.7589244166963274,
+            "y": 2.771269036427056,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.09730265902995319,
+            -0.5494690999014352
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 1.470371650603735,
+            "y": 1.2924394893795366,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.24444698263845846,
+            -0.6147509397099816
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.7058527786905062,
+            "y": 1.0548026497812257,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.10575800756650364,
+            -1.1342268139809732
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 2.517563594352498,
+            "y": 1.8186914869161082,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.06731637787721548,
+            -0.5894727376711814
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        2.5
+      ],
+      "b": [
+        0.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "sensor_offset",
+        "onset": 4,
+        "duration": null,
+        "magnitude": 1.2
+      },
+      "sampled_from": "a",
+      "projected_pair": -0.16286277770996094,
+      "privileged_pair": -0.16286277770996094,
+      "mean_log_pair": -0.16286277770996094,
+      "path_certificate": {
+        "integral": -0.16286306083202362,
+        "endpoint": -0.16286277770996094,
+        "quadrature_defect": 2.8312206268310547e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_16",
+      "mid_source": [
+        0.5,
+        1.5
+      ],
+      "direction": [
+        0.0,
+        -2.0
+      ],
+      "projected_direction": -0.16001449525356293,
+      "privileged_direction": -0.16001451015472412,
+      "mean_log_direction": -0.16001451015472412,
+      "privileged_rollout_mode": 3
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 0.963253099387165,
+            "y": 0.32582846173075597,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.7977039002756567,
+            -0.05885547929820853
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 1.623883725865254,
+            "y": 1.3810807680726334,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.6405284071540743,
+            -0.0034676432266133317
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.055784677931965,
+            "y": 0.11758211231017723,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.9143378111300626,
+            -0.1180201501344221
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 1.5602963464654205,
+            "y": 1.07278607727159,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.7443717184583333,
+            0.14439215044747372
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 2.707873292206302,
+            "y": 1.7722284008062301,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.5225944814778887,
+            -0.05106144094219536
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 2.827461303438064,
+            "y": 0.2569583179775704,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.7529429706556239,
+            0.16740788722801833
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 1.9372396439196256,
+            "y": 2.587138092837851,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.8562054668196172,
+            0.12336352768483835
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        2.5
+      ],
+      "b": [
+        2.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "sensor_offset",
+        "onset": 4,
+        "duration": null,
+        "magnitude": 1.2
+      },
+      "sampled_from": "b",
+      "projected_pair": 0.49039947986602783,
+      "privileged_pair": 0.49039947986602783,
+      "mean_log_pair": 0.49039947986602783,
+      "path_certificate": {
+        "integral": 0.4903993606567383,
+        "endpoint": 0.49039947986602783,
+        "quadrature_defect": 1.1920928955078125e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_36",
+      "mid_source": [
+        1.5,
+        1.5
+      ],
+      "direction": [
+        2.0,
+        -2.0
+      ],
+      "projected_direction": 0.4977850317955017,
+      "privileged_direction": 0.4977850019931793,
+      "mean_log_direction": 0.4977850019931793,
+      "privileged_rollout_mode": 0
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 1.947357008531791,
+            "y": 0.9731413114136369,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.14312109465343698,
+            -0.5451119300794005
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 0.49929949590811507,
+            "y": 2.6415966801510797,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.16101070740081544,
+            -0.6954689499459763
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.8877872081517295,
+            "y": 2.0347120659309104,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.10306245001088568,
+            -0.5347622254828504
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 2.539048582112734,
+            "y": 1.5459881002426228,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.12932945891833192,
+            -0.5979361115062689
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 0.5244512022712206,
+            "y": 0.7129464828597312,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.05644833280011041,
+            -0.5073044042683259
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.6167622219264495,
+            "y": 0.44585811103946116,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.19519640811874794,
+            -0.592631635307578
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 1.5025400068444408,
+            "y": 1.4821493902271532,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.061814844308025724,
+            -0.32682076195118803
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        0.5
+      ],
+      "b": [
+        2.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "a",
+      "projected_pair": -0.0608978271484375,
+      "privileged_pair": -0.0608978271484375,
+      "mean_log_pair": -0.0608978271484375,
+      "path_certificate": {
+        "integral": -0.06089809536933899,
+        "endpoint": -0.0608978271484375,
+        "quadrature_defect": 2.682209014892578e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_19",
+      "mid_source": [
+        1.5,
+        0.5
+      ],
+      "direction": [
+        2.0,
+        0.0
+      ],
+      "projected_direction": -0.061851903796195984,
+      "privileged_direction": -0.06185193359851837,
+      "mean_log_direction": -0.06185193359851837,
+      "privileged_rollout_mode": 3
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 0.35843712285067497,
+            "y": 0.5940481567663255,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.29211575370392906,
+            -0.6877838927546561
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 1.5942778495792884,
+            "y": 2.6617133651529197,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.049196961932196054,
+            -0.6074745075626632
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.5997789507597897,
+            "y": 2.8624508704991465,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.05926749995028201,
+            -0.5394079086304429
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 1.7589244166963274,
+            "y": 2.771269036427056,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.09730265902995319,
+            -0.5494690999014352
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 1.470371650603735,
+            "y": 1.2924394893795366,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.20537214636112455,
+            -0.8238416021367214
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.7058527786905062,
+            "y": 1.0548026497812257,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.1265239103274788,
+            -0.44555860641975775
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 2.517563594352498,
+            "y": 1.8186914869161082,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.07909262077990956,
+            -0.7391044653292463
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        0.5,
+        2.5
+      ],
+      "b": [
+        2.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "sensor_offset",
+        "onset": 4,
+        "duration": null,
+        "magnitude": 1.2
+      },
+      "sampled_from": "b",
+      "projected_pair": 0.8836114406585693,
+      "privileged_pair": 0.8836114406585693,
+      "mean_log_pair": 0.8836114406585693,
+      "path_certificate": {
+        "integral": 0.8836113214492798,
+        "endpoint": 0.8836114406585693,
+        "quadrature_defect": 1.1920928955078125e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_16",
+      "mid_source": [
+        1.5,
+        1.5
+      ],
+      "direction": [
+        2.0,
+        -2.0
+      ],
+      "projected_direction": 0.8951687216758728,
+      "privileged_direction": 0.8951687812805176,
+      "mean_log_direction": 0.8951687812805176,
+      "privileged_rollout_mode": 3
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 1.4089633109495232,
+            "y": 1.2976673995146721,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.7289656562882174,
+            0.1208787481789746
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.0009621797379897,
+            "y": 0.3221251139439423,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.5540527247355832,
+            0.04220670350171407
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 1.8328247551556611,
+            "y": 2.7683448208973958,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.4222178463308727,
+            -0.19726485535444505
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 2.0786100532538008,
+            "y": 0.6648356107089904,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.36231126498057076,
+            -0.11527986282077127
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 1.355743975506642,
+            "y": 1.2355598173602285,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.5563549962151738,
+            -0.31219725389246017
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.2588383141905197,
+            "y": 1.1754979098107035,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.5645460769353435,
+            -0.08319469408500012
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 2.354120342694531,
+            "y": 0.7398338954202918,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.431833803448108,
+            -0.3536180383946555
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        2.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        2.5
+      ],
+      "mechanism": {
+        "kind": "sensor_offset",
+        "onset": 4,
+        "duration": null,
+        "magnitude": 1.2
+      },
+      "sampled_from": "b",
+      "projected_pair": 0.5827826857566833,
+      "privileged_pair": 0.5827826857566833,
+      "mean_log_pair": 0.5827826857566833,
+      "path_certificate": {
+        "integral": 0.5827824473381042,
+        "endpoint": 0.5827826857566833,
+        "quadrature_defect": 2.384185791015625e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_20",
+      "mid_source": [
+        1.5,
+        1.5
+      ],
+      "direction": [
+        -2.0,
+        2.0
+      ],
+      "projected_direction": 0.5727853775024414,
+      "privileged_direction": 0.5727852582931519,
+      "mean_log_direction": 0.5727852582931519,
+      "privileged_rollout_mode": 2
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 2.367649520415219,
+            "y": 1.4298548917043856,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.6820632352129017,
+            0.08021624894780925
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 2.0007502806059243,
+            "y": 2.8625033750679982,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.8826738186524028,
+            0.007688415562476944
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 0.5236606364858933,
+            "y": 2.13185824202751,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.7050351404688967,
+            -0.008020231522653243
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 1.9709772346469352,
+            "y": 0.8389489697444061,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.8171729188379939,
+            0.2458329582207931
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 1.1088016823538236,
+            "y": 1.9727433143862674,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.646065127117695,
+            0.22875299917555014
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 0.7532878906196143,
+            "y": 2.6598036085611474,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.44020855008204157,
+            0.42864108828257264
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 2.2793780861959276,
+            "y": 2.580307572720282,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.4009996707524099,
+            0.36890470710743045
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        2.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        2.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "a",
+      "projected_pair": -0.6720205545425415,
+      "privileged_pair": -0.6720207929611206,
+      "mean_log_pair": -0.6720207929611206,
+      "path_certificate": {
+        "integral": -0.6720207333564758,
+        "endpoint": -0.6720205545425415,
+        "quadrature_defect": 1.7881393432617188e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_5",
+      "mid_source": [
+        1.5,
+        1.5
+      ],
+      "direction": [
+        -2.0,
+        2.0
+      ],
+      "projected_direction": -0.6814084649085999,
+      "privileged_direction": -0.6814084649085999,
+      "mean_log_direction": -0.6814084649085999,
+      "privileged_rollout_mode": 0
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 0.2852116850793778,
+            "y": 1.2815154369302084,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.06216913827779587,
+            -0.41708394523152326
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 1.1479691913320271,
+            "y": 0.10915253214012105,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.1329742533165586,
+            -0.4042778636519193
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 0.4997762844928546,
+            "y": 0.7085876056113536,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.15122420830211153,
+            -0.4510820770912696
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 2.359258965244261,
+            "y": 0.7929071053208914,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.1073596819903941,
+            -0.6508387793360169
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 0.19677749542024844,
+            "y": 1.7725785984797868,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.05233560195018552,
+            -0.9101347193437854
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 0.7539758725835063,
+            "y": 1.4272532144922156,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            -0.3839668991583576,
+            -0.9034691758223323
+          ],
+          "gas": 1.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 1.5422558512077336,
+            "y": 2.6656932507355005,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.22075449796189694,
+            -0.35648235407543816
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        2.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "a",
+      "projected_pair": 0.0033636093139648438,
+      "privileged_pair": 0.00336456298828125,
+      "mean_log_pair": 0.00336456298828125,
+      "path_certificate": {
+        "integral": 0.0033647429663687944,
+        "endpoint": 0.0033636093139648438,
+        "quadrature_defect": 1.1336524039506912e-06,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_39",
+      "mid_source": [
+        1.5,
+        0.5
+      ],
+      "direction": [
+        -2.0,
+        0.0
+      ],
+      "projected_direction": 0.003696650266647339,
+      "privileged_direction": 0.0036967098712921143,
+      "mean_log_direction": 0.0036967098712921143,
+      "privileged_rollout_mode": 3
+    },
+    {
+      "history": [
+        {
+          "uid": "env_0",
+          "action": {
+            "x": 1.947357008531791,
+            "y": 0.9731413114136369,
+            "z": 0.5,
+            "time": 1.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.14312109465343698,
+            -0.5451119300794005
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_1",
+          "action": {
+            "x": 0.49929949590811507,
+            "y": 2.6415966801510797,
+            "z": 0.5,
+            "time": 2.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.16101070740081544,
+            -0.6954689499459763
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_2",
+          "action": {
+            "x": 2.8877872081517295,
+            "y": 2.0347120659309104,
+            "z": 0.5,
+            "time": 3.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.10306245001088568,
+            -0.5347622254828504
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "env_3",
+          "action": {
+            "x": 2.539048582112734,
+            "y": 1.5459881002426228,
+            "z": 0.5,
+            "time": 4.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.12932945891833192,
+            -0.5979361115062689
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "future": [
+        {
+          "uid": "v2_pred_4",
+          "action": {
+            "x": 0.5244512022712206,
+            "y": 0.7129464828597312,
+            "z": 0.5,
+            "time": 5.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.3715321199006449,
+            -0.8130299983925855
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_5",
+          "action": {
+            "x": 1.6167622219264495,
+            "y": 0.44585811103946116,
+            "z": 0.5,
+            "time": 6.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.09940420556106801,
+            -0.641741985605814
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        },
+        {
+          "uid": "v2_pred_6",
+          "action": {
+            "x": 1.5025400068444408,
+            "y": 1.4821493902271532,
+            "z": 0.5,
+            "time": 7.0,
+            "dwell": 1.0
+          },
+          "wind": [
+            0.05896325269933285,
+            -0.43150199542580403
+          ],
+          "gas": 0.0,
+          "wind_available": [
+            true,
+            true
+          ],
+          "gas_available": true
+        }
+      ],
+      "a": [
+        2.5,
+        0.5
+      ],
+      "b": [
+        0.5,
+        0.5
+      ],
+      "mechanism": {
+        "kind": "nominal",
+        "onset": 0,
+        "duration": null,
+        "magnitude": 0.0
+      },
+      "sampled_from": "a",
+      "projected_pair": -0.05620098114013672,
+      "privileged_pair": -0.05620098114013672,
+      "mean_log_pair": -0.05620098114013672,
+      "path_certificate": {
+        "integral": -0.05620114877820015,
+        "endpoint": -0.05620098114013672,
+        "quadrature_defect": 1.6763806343078613e-07,
+        "min_ess": 1.0,
+        "quadrature_order": 8,
+        "status": "OK_FINITE_BANK",
+        "scope": "numeric consistency under declared regularity; not ranking proof"
+      },
+      "history_world": "engineering_19",
+      "mid_source": [
+        1.5,
+        0.5
+      ],
+      "direction": [
+        -2.0,
+        0.0
+      ],
+      "projected_direction": -0.05668865144252777,
+      "privileged_direction": -0.056688688695430756,
+      "mean_log_direction": -0.056688688695430756,
+      "privileged_rollout_mode": 3
+    }
+  ]
+}
