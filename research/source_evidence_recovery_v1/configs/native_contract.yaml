@@ -1,0 +1,21 @@
+status: BLOCKED_NATIVE_TEACHER_AND_HOUSE_DATA
+baseline_commit: 4e141e162551e674f2f30ddb8859136c72139aac
+b4_fixture_commit: c2aacbac7fb2ef7be4be3c9c7dcfce20c11f823c
+house_scenes: [House01, House02, House03]
+house_roots:
+  - /mnt/hgfs/workspace/GADEN_files/scenarios/House01
+  - /mnt/hgfs/workspace/GADEN_files/scenarios/House02
+  - /mnt/hgfs/workspace/GADEN_files/scenarios/House03
+simulation_seconds: 300
+future_true_wind_permitted: false
+truth_in_planner_permitted: false
+threshold_or_route_retuning_on_test: false
+candidate_deletion_permitted: false
+main_metric: native_ExpectedValue_sourceProbability_0_05_error_m
+resource_caps:
+  cpu_threads: 4
+  memory_gib: 8
+  gpu_memory_fraction: 0.7
+  block_length_max: 8
+  codebook_bytes_max: 536870912
+stop_after_failed_freeze: true

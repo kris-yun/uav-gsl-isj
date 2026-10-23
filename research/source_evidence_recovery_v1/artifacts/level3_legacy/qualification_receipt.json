@@ -1,0 +1,39 @@
+{
+  "status": "PASS_INPUT_AND_LEGACY_DENSITY_REPLAY",
+  "scientific_performance_status": "NOT_EVALUATED",
+  "house_runtime": "BLOCKED_NOT_PRESENT",
+  "training_eligible": false,
+  "truth_owner_opened": false,
+  "future_response_library_used": false,
+  "raw_episodes": 36,
+  "observations_per_episode": 105,
+  "finite_values": true,
+  "monotone_time": true,
+  "legacy_methods": [
+    "markov_poly2",
+    "delay_poly2",
+    "mz_poly2"
+  ],
+  "posterior_reconstruction_max_abs": 2.886579864025407e-15,
+  "posterior_reconstruction_pass": true,
+  "assets": [
+    {
+      "path": "research_work/fault_evidence/inputs/UNSEEN_SOURCE/DEV_OBS.npz",
+      "sha256": "4f588c42ce599f078177837cc736b02be306a78d381988eab42a89b9d82639f5"
+    },
+    {
+      "path": "research_work/fault_evidence/inputs/UNSEEN_SOURCE/GEOMETRY_MOBILE_ONLY.npz",
+      "sha256": "c6fb6ca417dd3858b0241835db8011e6bd9d48dee1cdde542a6ab8cb418bdfbc"
+    },
+    {
+      "path": "research_work/fault_evidence/inputs/UNSEEN_SOURCE/PREDICTIONS.npz",
+      "sha256": "08d83ff17fa6f99146820ae16deb5680f308424d1c37eb3bdd0d57376d8a4ac1"
+    }
+  ],
+  "limitations": [
+    "Legacy source-panel data, not a new House benchmark",
+    "Threshold >0 is only adapter connectivity, not frozen physical sensor calibration",
+    "No teacher training from DEV/CAL/evaluation-only"
+  ],
+  "history_path": "source_evidence_recovery_v1/artifacts/level3_legacy/legacy_history.json"
+}

@@ -1,0 +1,126 @@
+{
+  "status": "COMPLETE_DEVELOPMENT_BUDGET_BENCHMARK",
+  "rows": 180,
+  "episodes": 4,
+  "repeats": 5,
+  "budgets": [
+    2,
+    4,
+    8
+  ],
+  "seed": 2718,
+  "reference_draws": 4,
+  "epsilon": 0.1,
+  "manifest_sha256": "24cdb9cbbc84f0508b59d0c3e1842278450f6c4614eb5070be08749d94e502f8",
+  "generator_sha256": "a75a8328ec15ebda7ae1236ab0a0c1eaeff97da4e9192d22e7ea47c652c67820",
+  "source_aware_checkpoint_sha256": "0a005a7d94c993678d186b71b1e1a4c868888fadf8d4300de9913d059ce3eea7",
+  "model_version": "dea745ea82707df7",
+  "wall_seconds": 2.8120685320027405,
+  "summary": [
+    {
+      "R": 2,
+      "proposal": "uniform",
+      "runs": 20,
+      "l1_to_exact_mean": 0.00025091842105345706,
+      "brier_distance_to_exact_mean": 1.6290713711259605e-07,
+      "likelihood_evaluations_mean": 6.65,
+      "reference_trajectories_mean": 0.0,
+      "wall_seconds_mean": 0.006105338400084292,
+      "l1_to_exact_max": 0.002029965783363453
+    },
+    {
+      "R": 2,
+      "proposal": "source_blind",
+      "runs": 20,
+      "l1_to_exact_mean": 0.00018390160193690753,
+      "brier_distance_to_exact_mean": 1.0542653074093247e-07,
+      "likelihood_evaluations_mean": 4.6,
+      "reference_trajectories_mean": 16.0,
+      "wall_seconds_mean": 0.01927949620039726,
+      "l1_to_exact_max": 0.002265577142156425
+    },
+    {
+      "R": 2,
+      "proposal": "source_aware",
+      "runs": 20,
+      "l1_to_exact_mean": 0.06648910551908677,
+      "brier_distance_to_exact_mean": 0.019626940366593015,
+      "likelihood_evaluations_mean": 5.75,
+      "reference_trajectories_mean": 16.0,
+      "wall_seconds_mean": 0.019973584950275836,
+      "l1_to_exact_max": 0.842500047408681
+    },
+    {
+      "R": 4,
+      "proposal": "uniform",
+      "runs": 20,
+      "l1_to_exact_mean": 0.0002470053037165065,
+      "brier_distance_to_exact_mean": 1.479510739132789e-07,
+      "likelihood_evaluations_mean": 9.8,
+      "reference_trajectories_mean": 0.0,
+      "wall_seconds_mean": 0.007961219500066364,
+      "l1_to_exact_max": 0.001833662354364109
+    },
+    {
+      "R": 4,
+      "proposal": "source_blind",
+      "runs": 20,
+      "l1_to_exact_mean": 8.779981442668567e-05,
+      "brier_distance_to_exact_mean": 1.3079688044092497e-08,
+      "likelihood_evaluations_mean": 5.0,
+      "reference_trajectories_mean": 16.0,
+      "wall_seconds_mean": 0.016963288400074817,
+      "l1_to_exact_max": 0.0005327125226160321
+    },
+    {
+      "R": 4,
+      "proposal": "source_aware",
+      "runs": 20,
+      "l1_to_exact_mean": 0.007769523393194864,
+      "brier_distance_to_exact_mean": 0.00031750244907392084,
+      "likelihood_evaluations_mean": 7.4,
+      "reference_trajectories_mean": 16.0,
+      "wall_seconds_mean": 0.019208647949562875,
+      "l1_to_exact_max": 0.10668462723497257
+    },
+    {
+      "R": 8,
+      "proposal": "uniform",
+      "runs": 20,
+      "l1_to_exact_mean": 0.00023656765968795433,
+      "brier_distance_to_exact_mean": 1.070616677980534e-07,
+      "likelihood_evaluations_mean": 11.45,
+      "reference_trajectories_mean": 0.0,
+      "wall_seconds_mean": 0.009181439699750627,
+      "l1_to_exact_max": 0.0013762388568778665
+    },
+    {
+      "R": 8,
+      "proposal": "source_blind",
+      "runs": 20,
+      "l1_to_exact_mean": 0.00011721152591720535,
+      "brier_distance_to_exact_mean": 5.052447063356311e-08,
+      "likelihood_evaluations_mean": 6.3,
+      "reference_trajectories_mean": 16.0,
+      "wall_seconds_mean": 0.018326366949622752,
+      "l1_to_exact_max": 0.0016135985060486521
+    },
+    {
+      "R": 8,
+      "proposal": "source_aware",
+      "runs": 20,
+      "l1_to_exact_mean": 0.02250126793396273,
+      "brier_distance_to_exact_mean": 0.0035764069377208726,
+      "likelihood_evaluations_mean": 9.25,
+      "reference_trajectories_mean": 16.0,
+      "wall_seconds_mean": 0.020372541900724173,
+      "l1_to_exact_max": 0.393227449493816
+    }
+  ],
+  "frozen_test_used": false,
+  "target": "same Bprime full-history source-mechanism posterior for every proposal",
+  "bias": "unnormalized evidence is unbiased under assumptions; finite-MC normalized posterior is biased",
+  "brier_definition": "sum_s (estimated_p_s - exact_p_s)^2; approximation error, not label Brier score",
+  "scope": "controlled development benchmark only; no diagnosis superiority or physical localization claim",
+  "randomness": "same initial MC seed per episode/R/repeat; reference generation consumes additional draws"
+}

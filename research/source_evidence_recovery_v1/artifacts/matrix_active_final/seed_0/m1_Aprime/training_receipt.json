@@ -1,0 +1,34 @@
+{
+  "variant": "adapted",
+  "n_observations": 640,
+  "n_episodes": 64,
+  "seed": 0,
+  "teacher_status": "NOT_REQUIRED",
+  "wind_calibration": {
+    "status": "TRAIN_ONLY_FIT",
+    "training_transitions": 576,
+    "wind_mean": [
+      0.720358014788679,
+      0.10380492314216748
+    ],
+    "wind_rho": 0.683616293541762,
+    "wind_sigma": 0.4350288673704721,
+    "model_family": "source-blind shared-rho isotropic Gaussian AR; no latent meteorological state"
+  },
+  "score_supervision_scope": "one-step conditional source score at fixed prefix; joint score is the sum",
+  "initial_objective": 0.6931471805599453,
+  "final_objective": 0.2619919052142893,
+  "initial_nll": 0.6931471805599453,
+  "final_nll": 0.2571106606259672,
+  "optimizer_success": true,
+  "optimizer_message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+  "iterations": 62,
+  "gradient_norm": 0.000137640254099042,
+  "model_version": "eb4a90a7ae2adcb0",
+  "wall_seconds": 0.10195776900218334,
+  "manifest_sha256": "24cdb9cbbc84f0508b59d0c3e1842278450f6c4614eb5070be08749d94e502f8",
+  "training_data_scope": "controlled_reference",
+  "model_sha256": "c45b4a7b6dd209613184b9c569d397dbef70be4b8c3657003a01531750a94b1d",
+  "teacher_native_status": "BLOCKED_NOT_INSTRUMENTED",
+  "frozen_test_used_for_training": false
+}

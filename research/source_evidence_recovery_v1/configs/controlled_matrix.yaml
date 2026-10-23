@@ -1,0 +1,20 @@
+# Frozen reference matrix. Only development controls may select hyperparameters.
+seeds: [0, 1, 2]
+maxiter: 200
+rounds: 3
+draws: 128
+block_length: 5
+evaluation_split: frozen_test
+wall_cap_seconds: 3600
+rows:
+  - {name: structural_only, m1: Aprime, m2: Aprime, m3: Aprime}
+  - {name: m1_mother, m1: B, m2: Aprime, m3: Aprime}
+  - {name: m1_secondary, m1: Bprime, m2: Aprime, m3: Aprime}
+  - {name: m1_without_boundary, m1: Bprime_no_boundary, m2: Aprime, m3: Aprime}
+  - {name: m1_without_wind_constraint, m1: Bprime_no_wind_constraint, m2: Aprime, m3: Aprime}
+  - {name: m2_mother, m1: Bprime, m2: B, m3: Aprime}
+  - {name: m2_secondary, m1: Bprime, m2: Bprime, m3: Aprime}
+  - {name: m3_mother, m1: Bprime, m2: Bprime, m3: B}
+  - {name: m3_secondary, m1: Bprime, m2: Bprime, m3: Bprime}
+  - {name: plain_code_distance, m1: Bprime, m2: Bprime, m3: min_hamming}
+  - {name: noisy_channel_eig, m1: Bprime, m2: Bprime, m3: robust_eig}
