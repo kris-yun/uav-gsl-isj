@@ -11,6 +11,8 @@ python native/sameheight3_20261023/degeneracy.py
 
 它们只读取包内派生数组、已冻结模型和已编译C++组件，复算分数及退化关系，不需要VM、ROS或新气体生成，会在解压副本内更新QA收据。先检查ZIP的 `MANIFEST_SHA256.json`，再运行核验。
 
+Linux/网页Pro无需Windows DLL，直接执行 `python native/sameheight3_20261023/portable_score_replay.py`，复算450个普通源评分及216个镜像/原M1源评分。只在内存中规范相对路径分隔符，原冻结JSON不修改；实际C++编译推理的一致性另有Windows实测收据。
+
 `audit_costs.py` 进一步读取包内8个原始tar、对应stdout与清单，检查14,424个帧SHA、参数和CPU成本。tar省去重复风副本；完整共享风束和占据图位于 `results/same_height_three_source_20261023/shared_inputs/`，每个原世界的对应风SHA写在RUN_MANIFEST。原A四个大世界不重复打包，其原始路径/SHA、所用TRAIN全探针响应和唯一DEV窗口均已保存。
 
 `run_guest.py` 是原ELF的有界运行封装，要求精确SHA与原dirty补丁；不编译替代生成器。`run_and_collect.py`、`extract.py`、`analysis.py` 分别执行新世界、原生读出、普通三源对照，并拒绝悄悄覆盖冻结阶段。不要为了“复算”再次调用物理执行入口。
