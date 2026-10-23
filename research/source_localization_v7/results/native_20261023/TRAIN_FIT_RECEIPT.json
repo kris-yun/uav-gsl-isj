@@ -1,0 +1,161 @@
+{
+  "training_worlds": [
+    "ocb_r2_cfg00_r01",
+    "ocb_r2_cfg00_r02",
+    "ocb_r2_s2x_x00_r01",
+    "ocb_r2_s2x_x00_r02"
+  ],
+  "dev_opened": false,
+  "fits": [
+    {
+      "variant": "even",
+      "wall_s": 0.007224299944937229,
+      "cpu_s": 0.0,
+      "selected_filters": [],
+      "alphabet_size": 2
+    },
+    {
+      "variant": "raw_joint",
+      "wall_s": 0.005931900115683675,
+      "cpu_s": 0.0,
+      "selected_filters": null,
+      "alphabet_size": 4
+    },
+    {
+      "variant": "mother",
+      "wall_s": 0.005080200033262372,
+      "cpu_s": 0.015625,
+      "selected_filters": [
+        0
+      ],
+      "alphabet_size": 6
+    },
+    {
+      "variant": "fixed_two",
+      "wall_s": 0.004623400047421455,
+      "cpu_s": 0.0,
+      "selected_filters": [
+        0,
+        3
+      ],
+      "alphabet_size": 18
+    },
+    {
+      "variant": "secondary",
+      "wall_s": 0.004841499961912632,
+      "cpu_s": 0.0,
+      "selected_filters": [],
+      "alphabet_size": 2
+    }
+  ],
+  "shared_gaussian_controls": {
+    "single_left_full_window": {
+      "dimension": 33,
+      "floor": 0.009334606325178024,
+      "sha256": "4a3c60952908fc2490441d7d20b67f7922ea394d4fe2488c5a84dbc431af4a84"
+    },
+    "single_left_mean": {
+      "dimension": 1,
+      "floor": 0.009218917308455036,
+      "sha256": "c54315306fbc6f300b4bd6b131350fb028b363ddacf267c18e285845f2941e66"
+    },
+    "ordinary_two_time_means": {
+      "dimension": 2,
+      "floor": 0.004610702322914382,
+      "sha256": "e83b36b9fbe9bdc0f31eb227425614ed5cb87b94e1b2316d4a41de229e5989b7"
+    },
+    "ordinary_full_raw_window": {
+      "dimension": 66,
+      "floor": 0.004751021987335022,
+      "sha256": "4ac39f028225d48f1ed7e02d83432624f911e1e5302ce41b7659d90d03477142"
+    },
+    "mother_features": {
+      "dimension": 2,
+      "floor": 0.0023058511614571903,
+      "sha256": "2aaf1edd4d076110c6f73935e5fc14639731dbc88784c196966a7807172ed90d"
+    },
+    "selected_M1_features": {
+      "dimension": 1,
+      "floor": 0.0023058511614571903,
+      "sha256": "b7b09d3b334508562809201de165ea408135b67567230ce7995b7cefbb5824b7"
+    }
+  },
+  "wall_s": 0.13322369987145066,
+  "cpu_s": 0.046875,
+  "selected_bank": {
+    "specs": [
+      {
+        "name": "static_gradient",
+        "lag_s": 0.0,
+        "decay_s": 0.25,
+        "inhibition": 0.0,
+        "bias": 0.0,
+        "kind": "gradient"
+      },
+      {
+        "name": "coarse_delay_1.8_inhibit_0.5",
+        "lag_s": 1.8,
+        "decay_s": 1.5,
+        "inhibition": 0.5,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_1.8_inhibit_1",
+        "lag_s": 1.8,
+        "decay_s": 1.5,
+        "inhibition": 1.0,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_3_inhibit_0.5",
+        "lag_s": 3.0,
+        "decay_s": 1.5,
+        "inhibition": 0.5,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_3_inhibit_1",
+        "lag_s": 3.0,
+        "decay_s": 1.5,
+        "inhibition": 1.0,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_6_inhibit_0.5",
+        "lag_s": 6.0,
+        "decay_s": 1.5,
+        "inhibition": 0.5,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_6_inhibit_1",
+        "lag_s": 6.0,
+        "decay_s": 1.5,
+        "inhibition": 1.0,
+        "bias": 0.0,
+        "kind": "mnm"
+      }
+    ],
+    "concentration_scale": 1.0,
+    "background": 0.0
+  },
+  "selection": {
+    "even": [],
+    "mother": [
+      0
+    ],
+    "fixed_two": [
+      0,
+      3
+    ],
+    "secondary": []
+  },
+  "hardware_sensor_response_calibrated": false,
+  "ideal_identity_readout_assumption": true,
+  "sampling_adaptation_is_not_innovation": true
+}

@@ -1,0 +1,161 @@
+{
+  "bank": {
+    "specs": [
+      {
+        "name": "static_gradient",
+        "lag_s": 0.0,
+        "decay_s": 0.25,
+        "inhibition": 0.0,
+        "bias": 0.0,
+        "kind": "gradient"
+      },
+      {
+        "name": "coarse_delay_1.8_inhibit_0.5",
+        "lag_s": 1.8,
+        "decay_s": 1.5,
+        "inhibition": 0.5,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_1.8_inhibit_1",
+        "lag_s": 1.8,
+        "decay_s": 1.5,
+        "inhibition": 1.0,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_3_inhibit_0.5",
+        "lag_s": 3.0,
+        "decay_s": 1.5,
+        "inhibition": 0.5,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_3_inhibit_1",
+        "lag_s": 3.0,
+        "decay_s": 1.5,
+        "inhibition": 1.0,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_6_inhibit_0.5",
+        "lag_s": 6.0,
+        "decay_s": 1.5,
+        "inhibition": 0.5,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_6_inhibit_1",
+        "lag_s": 6.0,
+        "decay_s": 1.5,
+        "inhibition": 1.0,
+        "bias": 0.0,
+        "kind": "mnm"
+      }
+    ],
+    "concentration_scale": 1.0,
+    "background": 0.0
+  },
+  "selection": [
+    [
+      0,
+      3
+    ]
+  ],
+  "even_thresholds": [
+    0.22961639664103675
+  ],
+  "odd_thresholds": [
+    [
+      0.2270870466586613,
+      0.3371196623716778,
+      0.010117000229124389,
+      0.3433425152492618,
+      0.03188960304227304,
+      0.3748161813197918,
+      0.10462670545116096
+    ]
+  ],
+  "times": [
+    50.2998047,
+    50.8997955,
+    51.4997864,
+    52.0997772,
+    52.6997681,
+    53.2997589,
+    53.8997498,
+    54.4997406,
+    55.0997314,
+    55.6997223,
+    56.2997131,
+    56.899704,
+    57.4996948,
+    58.0996857,
+    58.6996765,
+    59.2996674,
+    59.8996582,
+    60.499649,
+    61.0996399,
+    61.6996307,
+    62.2996216,
+    62.8996124,
+    63.4996033,
+    64.0995941,
+    64.699585,
+    65.2995758,
+    65.8995667,
+    66.4995575,
+    67.0995483,
+    67.6995392,
+    68.29953,
+    68.8995209,
+    69.4995117
+  ],
+  "contract": {
+    "continuous": true,
+    "synchronous": true,
+    "clock_error_s": 0.0,
+    "maximum_step_s": 0.61,
+    "sensor_delay_difference_s": 0.0,
+    "bandwidth_calibrated": true,
+    "paired_positions_known": true,
+    "provenance": "CONDITIONAL_IDEAL_NATIVE_SAMPLED_READOUT_identity_transfer_no_hardware_bandwidth_claim"
+  },
+  "receipt": {
+    "operator": "source-pair-cover mirrored bank",
+    "variant": "fixed_two",
+    "actions": [
+      {
+        "action": "frozen_pool12_pool17",
+        "selected": [
+          "static_gradient",
+          "coarse_delay_3_inhibit_0.5"
+        ],
+        "source_pairs": [
+          [
+            0,
+            1
+          ]
+        ],
+        "robust_training_js": [
+          0.36639402756597983
+        ],
+        "search": [],
+        "unseparated_pairs": [],
+        "certificate": "TRAINING_DIAGNOSTIC_ONLY_NOT_A_POPULATION_GUARANTEE"
+      }
+    ],
+    "smoothing_mode": "fixed_total",
+    "alpha_total": 1.0,
+    "training_blocks_per_source_mechanism": 2,
+    "counts_are_not_independent_frames_by_default": true,
+    "static_mode": false,
+    "strictly_temporal_claim": true,
+    "known_statistics": "JS distance, histogram likelihood and Bayes normalization are not claimed new"
+  }
+}

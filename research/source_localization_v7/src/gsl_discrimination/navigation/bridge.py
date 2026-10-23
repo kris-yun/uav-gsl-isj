@@ -7,6 +7,7 @@ integration dependency, not a capability claimed by this reference package.
 from __future__ import annotations
 from pathlib import Path
 import json,subprocess,selectors,time,os
+from contextlib import nullcontext
 import numpy as np
 from ..data import SynchronousBlock,QualificationError
 from ..channel import FiniteChannel,JointPosterior
@@ -33,11 +34,24 @@ class JsonLineBackend:
         request={'id':self.sequence,'method':method,**arguments}
         self.process.stdin.write((json.dumps(request)+'\n').encode());self.process.stdin.flush()
         deadline=time.monotonic()+self.timeout_s
-        with selectors.DefaultSelector() as sel:
-            sel.register(self.process.stdout,selectors.EVENT_READ)
+        # Windows select() only accepts sockets, not subprocess pipe handles.
+        # Keep the same whole-line deadline and byte budget on both platforms.
+        with (nullcontext(None) if os.name=='nt' else selectors.DefaultSelector()) as sel:
+            if sel is not None:sel.register(self.process.stdout,selectors.EVENT_READ)
             while b'\n' not in self._buffer:
                 remaining=deadline-time.monotonic()
-                if remaining<=0 or not sel.select(remaining):raise TimeoutError('backend did not complete a JSONL response before the deadline')
+                if remaining<=0:raise TimeoutError('backend did not complete a JSONL response before the deadline')
+                if sel is None:
+                    import ctypes,msvcrt
+                    available=ctypes.c_ulong()
+                    handle=ctypes.c_void_p(msvcrt.get_osfhandle(self.process.stdout.fileno()))
+                    ok=ctypes.windll.kernel32.PeekNamedPipe(handle,None,0,None,ctypes.byref(available),None)
+                    if not ok:
+                        raise RuntimeError(f'backend pipe closed with an incomplete response, returncode={self.process.poll()}')
+                    if available.value==0:
+                        time.sleep(min(.005,remaining));continue
+                elif not sel.select(remaining):
+                    raise TimeoutError('backend did not complete a JSONL response before the deadline')
                 try:chunk=os.read(self.process.stdout.fileno(),65536)
                 except BlockingIOError:continue
                 if not chunk:raise RuntimeError(f'backend exited with an incomplete response, returncode={self.process.poll()}')

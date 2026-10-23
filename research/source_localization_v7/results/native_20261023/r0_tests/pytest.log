@@ -1,0 +1,67 @@
+.....sss.............................................................FF  [100%]
+================================== FAILURES ===================================
+_________________ test_process_bridge_roundtrip_without_shell _________________
+
+tmp_path = WindowsPath('C:/Users/50176/AppData/Local/Temp/pytest-of-50176/pytest-0/test_process_bridge_roundtrip_0')
+
+    def test_process_bridge_roundtrip_without_shell(tmp_path):
+        server=tmp_path/'server.py'
+        server.write_text('import sys,json\nfor l in sys.stdin:\n q=json.loads(l);print(json.dumps({"id":q["id"],"result":{"received":q["method"]}}),flush=True)\n')
+        bridge=JsonLineBackend([sys.executable,str(server)],tmp_path/'stderr.log')
+>       try:assert bridge.call('describe')['received']=='describe'
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_pipeline_integration.py:159: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\gsl_discrimination\navigation\bridge.py:40: in call
+    if remaining<=0 or not sel.select(remaining):raise TimeoutError('backend did not complete a JSONL response before the deadline')
+                           ^^^^^^^^^^^^^^^^^^^^^
+C:\Users\50176\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\selectors.py:323: in select
+    r, w, _ = self._select(self._readers, self._writers, [], timeout)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selectors.SelectSelector object at 0x000002ACFFCA3A70>, r = {13}
+w = set(), _ = [], timeout = 30.0
+
+    def _select(self, r, w, _, timeout=None):
+>       r, w, x = select.select(r, w, w, timeout)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       OSError: [WinError 10038] 在一个非套接字上尝试了一个操作。
+
+C:\Users\50176\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\selectors.py:314: OSError
+____________ test_process_bridge_partial_line_has_a_real_deadline _____________
+
+tmp_path = WindowsPath('C:/Users/50176/AppData/Local/Temp/pytest-of-50176/pytest-0/test_process_bridge_partial_li0')
+
+    def test_process_bridge_partial_line_has_a_real_deadline(tmp_path):
+        server=tmp_path/'partial.py'
+        server.write_text('import sys,time\nsys.stdin.readline()\nsys.stdout.write("{\\\"id\\\":1")\nsys.stdout.flush()\ntime.sleep(10)\n')
+        bridge=JsonLineBackend([sys.executable,str(server)],tmp_path/'stderr.log',timeout_s=.2)
+        try:
+>           with pytest.raises(TimeoutError,match='complete'):bridge.call('describe')
+                                                              ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_pipeline_integration.py:168: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\gsl_discrimination\navigation\bridge.py:40: in call
+    if remaining<=0 or not sel.select(remaining):raise TimeoutError('backend did not complete a JSONL response before the deadline')
+                           ^^^^^^^^^^^^^^^^^^^^^
+C:\Users\50176\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\selectors.py:323: in select
+    r, w, _ = self._select(self._readers, self._writers, [], timeout)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <selectors.SelectSelector object at 0x000002ACFFD74EF0>, r = {13}
+w = set(), _ = [], timeout = 0.19999999995343387
+
+    def _select(self, r, w, _, timeout=None):
+>       r, w, x = select.select(r, w, w, timeout)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       OSError: [WinError 10038] 在一个非套接字上尝试了一个操作。
+
+C:\Users\50176\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\selectors.py:314: OSError
+=========================== short test summary info ===========================
+FAILED tests/test_pipeline_integration.py::test_process_bridge_roundtrip_without_shell
+FAILED tests/test_pipeline_integration.py::test_process_bridge_partial_line_has_a_real_deadline
+2 failed, 66 passed, 3 skipped in 9.21s

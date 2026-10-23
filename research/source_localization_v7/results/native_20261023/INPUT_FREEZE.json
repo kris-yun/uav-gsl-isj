@@ -1,0 +1,133 @@
+{
+  "time_utc": "2026-10-23T11:25:33Z",
+  "protocol_sha256": "cad8b0ae417d52b21d231b41cf940869c19b39f2530d5df4fcc1c858e20194f9",
+  "protocol": {
+    "schema": "v7-native-recovery-and-m1-pilot-1",
+    "upstream_commit": "1bfdc6f64c017b520d4a478e07d727d67c2d7675",
+    "authorized_runs": [
+      "ocb_r2_cfg00_r01",
+      "ocb_r2_cfg00_r02",
+      "ocb_r2_cfg00_r03",
+      "ocb_r2_cfg00_r04",
+      "ocb_r2_s2x_x00_r01",
+      "ocb_r2_s2x_x00_r02",
+      "ocb_r2_s2x_x00_r03",
+      "ocb_r2_s2x_x00_r04"
+    ],
+    "train_repeats": [
+      1,
+      2
+    ],
+    "dev_repeats": [
+      3,
+      4
+    ],
+    "source_ids": [
+      "A",
+      "B"
+    ],
+    "source_xyz_m": [
+      [
+        -0.6,
+        1.95,
+        0.4
+      ],
+      [
+        -0.4,
+        -2.9,
+        -0.3
+      ]
+    ],
+    "source_height_is_confounded_with_xy": true,
+    "house": "House01",
+    "wind_id": "1,3-2,4_fast",
+    "window_rule": "all original saved records with 50 <= physical_time_s <= 70; no interpolation, no response-dependent selection",
+    "pair_original_probe_ranks": [
+      12,
+      17
+    ],
+    "pair_selection": "reuse Pro frozen TRAIN-only static choice, not a new spatial-selection claim",
+    "readout": "original four native cell-centre concentration values averaged in float64, z=0.20 m; ideal zero-delay simulation readout, no PID hardware claim",
+    "primary_comparison": "source-pair-cover M1 versus full-window raw-joint on exactly the same native windows and independent DEV worlds",
+    "primary_metric": "DEV-world MAP xy error; also report strict Top1, ties, Brier, log-evidence margin and costs",
+    "minimum_relative_improvement": 0.1,
+    "inferential_gate": "four DEV worlds cannot establish broad 95-percent population precision; retain paired world results and do not count frames as worlds",
+    "coarse_sampling_profile": {
+      "profile_id": "archive_native_coarse_v1",
+      "reason": "original approximately 0.5-0.6 s records cannot resolve delivered 0.2 s lag and 0.25 s decay; declare a separate necessary sampling adaptation before concentration decode",
+      "maximum_step_s": 0.61,
+      "lags_s": [
+        1.8,
+        3.0,
+        6.0
+      ],
+      "decay_s": 1.5,
+      "inhibitions": [
+        0.5,
+        1.0
+      ],
+      "include_static_gradient": true,
+      "scope": "discrete native-sampled coarse cues, not reconstruction or validation of fast olfactory motion",
+      "no_interpolation_or_relabeling_of_timestamps": true
+    },
+    "variants": [
+      "even",
+      "raw_joint",
+      "mother",
+      "fixed_two",
+      "secondary"
+    ],
+    "ordinary_reference": "regularized Gaussian on the same log1p full paired window, TRAIN-only mean and pooled covariance",
+    "full_window_shared_density_head_control": "same TRAIN-only pooled-covariance Gaussian for single-side, time-mean pair, mother features and selected M1 features; descriptive adaptation control",
+    "density_regularization": "diagonal floor 0.1 times average within-source TRAIN variance plus 1e-6; frozen, no tuning",
+    "labels_allowed_only_for_train_and_evaluation": true,
+    "new_training_worlds": 0,
+    "new_physical_propagation": 0,
+    "ROS_runs": 0,
+    "sealed_or_H03_access": false,
+    "maximum_wall_clock_s": 3600,
+    "maximum_new_output_bytes": 268435456,
+    "maximum_training_bytes": 536870912,
+    "R3_R4_gate": "no active experiment unless M1 has independent native gain, temporal qualification and complete legal action/response support; no automatic extra seeds, sources or worlds",
+    "frozen_O24": "leave a8d5a764b7cbfc1d5d1887aebfe890e2c75d7533 lineage untouched; V7's 4e141e162551e674f2f30ddb8859136c72139aac is a different audited identity and is not silently substituted"
+  },
+  "git_head": "1bfdc6f64c017b520d4a478e07d727d67c2d7675",
+  "upstream_source_sha256": {
+    "src\\gsl_discrimination\\__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
+    "src\\gsl_discrimination\\baselines.py": "96df7c237e29405d44c8d739ce167ba6a9fa002cb2d6d0642b6a77b3e2417554",
+    "src\\gsl_discrimination\\channel.py": "74bd4c116d8bb7a0d941ea402720d2e2448969d2a4c2514055482b88e6241f49",
+    "src\\gsl_discrimination\\cli.py": "ad54fefcdc61726e24a42fa852c9d79553f31c776fcf1e9654b7f3f6e52f4684",
+    "src\\gsl_discrimination\\data\\__init__.py": "fdac19d2c520e5f96031ecf9022963583e9d0e5d3d9a087a7b103daff4d79747",
+    "src\\gsl_discrimination\\data\\ocb.py": "c054b8186a57a91ad83239f257a8620ab9d151d15b51d3aec3c43e64cc092167",
+    "src\\gsl_discrimination\\data\\schema.py": "f15d8a42c89c66621ee150d62fc39c057197d49e618fb3712e507f76fd620404",
+    "src\\gsl_discrimination\\engine.py": "62b62da1c4d39dbd211d5244c0a5dec8ff8bdcb1bbed65176e74c6f01320a694",
+    "src\\gsl_discrimination\\evaluation\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src\\gsl_discrimination\\evaluation\\block_pipeline.py": "132db126605d113c7d6044fe20c6a2474559a4a81e0040c0411fff7af117e35a",
+    "src\\gsl_discrimination\\evaluation\\control_backend.py": "9623d6a330994c6d115ba6c4175b6f4efe8585fbbab90d277b56949234608a72",
+    "src\\gsl_discrimination\\evaluation\\maps.py": "0c2f9d5205e4dab83502ed01684c24915e33e4c992b3fab4c5195a344819609c",
+    "src\\gsl_discrimination\\evaluation\\matrix.py": "2fda545ea3f0735d5aeb779a010361f68271165cbbabd52fa9e77373668efac9",
+    "src\\gsl_discrimination\\evaluation\\metrics.py": "ee36c41191dc280e761e3d05ba97de67dd1fd4e894e26b4cb87aef612cdb651a",
+    "src\\gsl_discrimination\\evaluation\\ocb_static.py": "f076c09d7654141f01d03e0dfa8f08170fa39d58aa816b48074813da2f7a03b8",
+    "src\\gsl_discrimination\\evaluation\\pmfs_arrays.py": "af79a5b5cb33ad13ebbc5bf4444254a9deb026fdd45994478df73f9a452c1bc3",
+    "src\\gsl_discrimination\\ledger.py": "9c591592a96286d682b72891372eb7c01734776164c4eb9552157379d969778e",
+    "src\\gsl_discrimination\\m1_opponent\\__init__.py": "588c4b73ded7e0fd9a382b8a23b54c3f2032214e27048fa977173bd0155d80df",
+    "src\\gsl_discrimination\\m1_opponent\\calibration.py": "b8f7277248e6fbffe849e4378455b128a7c2fc5a581ae4f89a861d4952199171",
+    "src\\gsl_discrimination\\m1_opponent\\operator.py": "539d3e5eb56b2bca9e907e662bfd28163d3a366991f9e8b9387f6e6f2d796f98",
+    "src\\gsl_discrimination\\m1_opponent\\raw_joint.py": "0579e67015380958c588e95c387c081cc47ae8f924701590c5282f96ffc5418a",
+    "src\\gsl_discrimination\\m2_boundary\\__init__.py": "9339e2882dc0dcdcdcc1350bfa00fb77a863b834e763e74086b69835a0b210ae",
+    "src\\gsl_discrimination\\m2_boundary\\calibration.py": "f528b769721dcf55639b97dc5a32cb0091b1fdd02a8f37d92134ed1c024ce7c7",
+    "src\\gsl_discrimination\\m2_boundary\\formation.py": "b4c7c8c9d0234b3f6493e980c9f274ad229a76ff709400fd8676c23adf49c90a",
+    "src\\gsl_discrimination\\m2_boundary\\memory.py": "16e8574176c7bbdaf8d803122a15bb5792f416665fd7cd321a232dbc8f5cdf22",
+    "src\\gsl_discrimination\\m3_audit\\__init__.py": "54571c4ecd708596384216c2fe12230e644d96a4bce98d2f08d74e097e756433",
+    "src\\gsl_discrimination\\m3_audit\\ledger.py": "acceb6d3462037555900de5e73a558c0f983625be43c097322949b0f6f6d1b1f",
+    "src\\gsl_discrimination\\m3_audit\\planner.py": "44de7415fa13e6f9c1d42be523b73e663890d8e14e49687ab0d6a1070fd1153a",
+    "src\\gsl_discrimination\\navigation\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src\\gsl_discrimination\\navigation\\bridge.py": "773526defe92e20fca66731a4f35beddc4e61ee30a9ea73116241d75e9259ce0",
+    "src\\gsl_discrimination\\navigation\\crossings.py": "63256f7a4e08f8ba016bacc15400169a117aa43b3a74d5dec2c41081a2ecece0",
+    "src\\gsl_discrimination\\navigation\\geometry.py": "049e9a337a07f1585a1448c48179e380da72eea91c364b3ef7d94c0688ff5790"
+  },
+  "first_failures_retained": [
+    "WSL Ubuntu-22.04 startup: ERROR_FILE_NOT_FOUND for its pre-existing ext4.vhdx; no data/distro modification",
+    "Initial format probe tried legacy zlib; failed header check; actual frame has GADEN_RESULT modern header and mode=ZLIB; diagnostic only, no science scoring"
+  ]
+}
