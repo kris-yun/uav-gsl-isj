@@ -1,0 +1,27 @@
+--- /home/zyc/hcmc_gaden_seed_build_20260922/src/GADEN/gaden_common/third_party/gaden_core/src/RunningSimulation.cpp	2026-07-25 22:12:26.821791248 +0800
++++ /home/zyc/ocb_r2_seeded_gaden/src/GADEN/gaden_common/third_party/gaden_core/src/RunningSimulation.cpp	2026-09-29 15:18:38.045179014 +0800
+@@ -4,6 +4,7 @@
+ #include "gaden/internal/MathUtils.hpp"
+ #include "gaden/internal/Serialization.hpp"
+ #include <fstream>
++#include <iomanip>
+ #include <gaden/internal/GPUAcceleration.hpp>
+ #include <gaden/internal/Profiling.hpp>
+ #include <gaden/internal/compression.hpp>
+@@ -448,6 +449,16 @@
+                 std::filesystem::perms::owner_all | std::filesystem::perms::group_all,
+                 std::filesystem::perm_options::add);
+         }
++        // OCB-R2 provenance only: read current writer clock/wind without advancing
++        // simulation state or consuming any RNG. The benchmark runs one OpenMP worker.
++        {
++            std::ofstream timeline(parameters.saveDataDirectory / "RECORD_TIMELINE.tsv", std::ios::app);
++            if (last_saved_step == 0)
++                timeline << "record_index\tinternal_simulation_time_s\twind_index\n";
++            timeline << last_saved_step << '\t' << std::setprecision(9)
++                     << currentTime << '\t' << windIndex << '\n';
++            GADEN_VERIFY(static_cast<bool>(timeline), "Failed to write OCB-R2 record timeline");
++        }
+         last_saved_step++;
+     }
+ 

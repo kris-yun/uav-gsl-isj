@@ -1,0 +1,98 @@
+{
+  "status": "EXACT_NO_NEW_SPATIAL_INFORMATION_IN_FROZEN_PAIR",
+  "TRAIN_equal_budget_pair_correct": 6,
+  "TRAIN_same_decimated_single_correct": 6,
+  "TRAIN_full_sample_single_correct": 5,
+  "explanation": "right response is zero in all six TRAIN and six DEV windows; apparent TRAIN 6-versus-5 comes from time quadrature/subsampling of the left channel, not information from the second point",
+  "mirror_equation_when_right_zero": "h_k=max(<log(1+L), w-kappa*w_delay>,0); mirror branch is nonpositive. The static gradient equals common intensity.",
+  "all_DEV_equal_budget_predictions_match_same_sample_single": true,
+  "checks": [
+    {
+      "scope": "known",
+      "world": "v7h3_A_r03",
+      "pair_prediction": 0,
+      "same_sample_single_prediction": 0,
+      "strict_correct": true
+    },
+    {
+      "scope": "known",
+      "world": "v7h3_A_r04",
+      "pair_prediction": 0,
+      "same_sample_single_prediction": 0,
+      "strict_correct": true
+    },
+    {
+      "scope": "known",
+      "world": "v7h3_B_r03",
+      "pair_prediction": 2,
+      "same_sample_single_prediction": 2,
+      "strict_correct": false
+    },
+    {
+      "scope": "known",
+      "world": "v7h3_B_r04",
+      "pair_prediction": 1,
+      "same_sample_single_prediction": 1,
+      "strict_correct": true
+    },
+    {
+      "scope": "known",
+      "world": "v7h3_C_r03",
+      "pair_prediction": 0,
+      "same_sample_single_prediction": 0,
+      "strict_correct": false
+    },
+    {
+      "scope": "known",
+      "world": "v7h3_C_r04",
+      "pair_prediction": 2,
+      "same_sample_single_prediction": 2,
+      "strict_correct": true
+    },
+    {
+      "scope": "unknown_gain",
+      "world": "v7h3_A_r03",
+      "pair_prediction": -1,
+      "same_sample_single_prediction": -1,
+      "strict_correct": false
+    },
+    {
+      "scope": "unknown_gain",
+      "world": "v7h3_A_r04",
+      "pair_prediction": -1,
+      "same_sample_single_prediction": -1,
+      "strict_correct": false
+    },
+    {
+      "scope": "unknown_gain",
+      "world": "v7h3_B_r03",
+      "pair_prediction": 1,
+      "same_sample_single_prediction": 1,
+      "strict_correct": true
+    },
+    {
+      "scope": "unknown_gain",
+      "world": "v7h3_B_r04",
+      "pair_prediction": 1,
+      "same_sample_single_prediction": 1,
+      "strict_correct": true
+    },
+    {
+      "scope": "unknown_gain",
+      "world": "v7h3_C_r03",
+      "pair_prediction": 2,
+      "same_sample_single_prediction": 2,
+      "strict_correct": true
+    },
+    {
+      "scope": "unknown_gain",
+      "world": "v7h3_C_r04",
+      "pair_prediction": 2,
+      "same_sample_single_prediction": 2,
+      "strict_correct": true
+    }
+  ],
+  "post_primary_attribution_only": true,
+  "original_primary_results_not_overwritten": true,
+  "not_a_proof_mirror_is_useless_at_other_nonzero_receivers": true
+}

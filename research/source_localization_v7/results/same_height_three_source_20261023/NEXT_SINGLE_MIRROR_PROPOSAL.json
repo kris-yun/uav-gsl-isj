@@ -1,0 +1,41 @@
+{
+  "status": "PROPOSAL_ONLY_NOT_EXECUTED",
+  "new_physical_worlds": 0,
+  "primary_candidate": {
+    "window_s": [
+      300,
+      320
+    ],
+    "probe_ranks": [
+      12,
+      30
+    ],
+    "TRAIN_cross_world": {
+      "all_frozen_mirror": 6,
+      "same_pair_full_raw": 4,
+      "same_pair_static": 4,
+      "same_pair_ordinary_delay": 4,
+      "unordered_mirror": 4,
+      "best_endpoint_single": 5,
+      "best_global_single": 6
+    }
+  },
+  "scientific_question": "at fixed measurement geometry, is nonlinear mirror compression better than all frozen ordinary same-input baselines across independent realizations, rather than merely choosing a better location?",
+  "limitations": [
+    "post-primary TRAIN lead after multiple comparisons",
+    "some B/C worlds lack three above-0.1ppm records on both sides",
+    "a different TRAIN single already reaches 6/6",
+    "existing DEV controls already partly opened, so not new blind validation"
+  ],
+  "required_frozen_controls": [
+    "same-pair full raw and means",
+    "ordinary same-kernel delay features",
+    "best same-pair single",
+    "TRAIN-selected global single",
+    "same Gaussian and nearest-profile heads",
+    "original M1 target0.04 unchanged",
+    "static-only and order-destroyed mirror"
+  ],
+  "execution": "one new contract required before a second DEV window; never overwrite this completed trial or call exploratory selection confirmatory",
+  "no_M2_M3_or_robot_ROS": true
+}

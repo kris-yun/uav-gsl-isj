@@ -1,0 +1,279 @@
+diff --git a/.gitmodules b/.gitmodules
+index 0b6d498..8fb3071 100644
+--- a/.gitmodules
++++ b/.gitmodules
+@@ -1,6 +1,6 @@
+ [submodule "gaden_common/third_party/gaden_core"]
+ 	path = gaden_common/third_party/gaden_core
+-	url = git@github.com:MAPIRlab/gaden_core.git
++	url = https://github.com/MAPIRlab/gaden_core.git
+ [submodule "gaden_common/third_party/gaden_gui"]
+ 	path = gaden_common/third_party/gaden_gui
+-	url = git@github.com:MAPIRlab/gaden_gui.git
++	url = https://github.com/MAPIRlab/gaden_gui.git
+diff --git a/gaden_common/CMakeLists.txt b/gaden_common/CMakeLists.txt
+index cb3a38c..eaf51f5 100644
+--- a/gaden_common/CMakeLists.txt
++++ b/gaden_common/CMakeLists.txt
+@@ -15,7 +15,7 @@ ament_target_dependencies(gaden rclcpp std_msgs visualization_msgs)
+ 
+ # Optional! You can comment out this line to disable compilation of the gaden_gui executable
+ #--------------------------------------------------------
+-include(cmake/gui.cmake)
++# include(cmake/gui.cmake)  # disabled for headless gaden_player build
+ 
+ 
+ # set up the libraries / includes for downstream packages
+diff --git a/gaden_common/third_party/gaden_core b/gaden_common/third_party/gaden_core
+--- a/gaden_common/third_party/gaden_core
++++ b/gaden_common/third_party/gaden_core
+@@ -1 +1 @@
+-Subproject commit 9e93c36ae1af74f6a62c42f1c9d7b813153222ed
++Subproject commit 9e93c36ae1af74f6a62c42f1c9d7b813153222ed-dirty
+diff --git a/gaden_common/third_party/gaden_gui b/gaden_common/third_party/gaden_gui
+--- a/gaden_common/third_party/gaden_gui
++++ b/gaden_common/third_party/gaden_gui
+@@ -1 +1 @@
+-Subproject commit fc7493b5c9e84614a7f1700c6b59e57e0adc4bd7
++Subproject commit fc7493b5c9e84614a7f1700c6b59e57e0adc4bd7-dirty
+diff --git a/gaden_filament_simulator/src/filament_simulator.cpp b/gaden_filament_simulator/src/filament_simulator.cpp
+index 2fc875c..17c5d96 100644
+--- a/gaden_filament_simulator/src/filament_simulator.cpp
++++ b/gaden_filament_simulator/src/filament_simulator.cpp
+@@ -99,6 +99,7 @@ void FilamentSimulator::Run()
+                                    .to = static_cast<size_t>(getParameter("loop_to_step", 100))},
+             .saveResults = static_cast<bool>(getParameter("save_results", 1)),
+             .saveDeltaTime = getParameter("results_time_step", 0.5f),
++            .preCalculateConcentrations = static_cast<bool>(getParameter("pre_calculate_concentrations", false)),
+             .saveDataDirectory = getParameter<std::string>("results_location", ""),
+         };
+ 
+diff --git a/gaden_msgs/CMakeLists.txt b/gaden_msgs/CMakeLists.txt
+index e3229c0..616b2ec 100644
+--- a/gaden_msgs/CMakeLists.txt
++++ b/gaden_msgs/CMakeLists.txt
+@@ -12,8 +12,9 @@ rosidl_generate_interfaces(${PROJECT_NAME}
+     srv/GasPosition.srv
+     srv/WindPosition.srv
+     srv/Occupancy.srv
++    srv/SetIteration.srv
++    srv/FrameQuery.srv
+     DEPENDENCIES std_msgs geometry_msgs
+ )
+ ament_export_dependencies(rosidl_default_runtime)
+ ament_package()
+-
+diff --git a/gaden_player/src/simulation_player.cpp b/gaden_player/src/simulation_player.cpp
+index 36b39f9..3bc9eaf 100644
+--- a/gaden_player/src/simulation_player.cpp
++++ b/gaden_player/src/simulation_player.cpp
+@@ -13,6 +13,21 @@
+ #include "gaden/internal/Time.hpp"
+ #include "simulation_player.h"
+ #include <gaden_common/Visualization.hpp>
++#include <cmath>
++#include <cstdlib>
++
++namespace
++{
++    constexpr float kMaxDecodedWindComponent = 1.0e4f;
++
++    bool isValidDecodedWind(const gaden::Vector3& wind)
++    {
++        return std::isfinite(wind.x) && std::isfinite(wind.y) && std::isfinite(wind.z) &&
++               std::abs(wind.x) <= kMaxDecodedWindComponent &&
++               std::abs(wind.y) <= kMaxDecodedWindComponent &&
++               std::abs(wind.z) <= kMaxDecodedWindComponent;
++    }
++}
+ 
+ int main(int argc, char** argv)
+ {
+@@ -33,7 +48,17 @@ Player::Player()
+ 
+ gaden_msgs::msg::GasInCell Player::GetAllGasesSingleCell(float x, float y, float z, const std::vector<gaden::GasType>& gas_types)
+ {
+-    std::map<gaden::GasType, float> concentrations = Scene->SampleConcentrations(gaden::Vector3(x, y, z));
++    const gaden::Vector3 point(x, y, z);
++    const auto indices = environmentConfig->environment.coordsToIndices(point);
++    GADEN_INFO("Service gas query point=({},{},{}) indices=({},{},{}) min=({},{},{}) cell_size={} in_bounds={}",
++               point.x, point.y, point.z,
++               indices.x, indices.y, indices.z,
++               environmentConfig->environment.description.minCoord.x,
++               environmentConfig->environment.description.minCoord.y,
++               environmentConfig->environment.description.minCoord.z,
++               environmentConfig->environment.description.cellSize,
++               environmentConfig->environment.IsInBounds(point));
++    std::map<gaden::GasType, float> concentrations = Scene->SampleConcentrations(point);
+ 
+     // Configure Response
+     gaden_msgs::msg::GasInCell response;
+@@ -68,6 +93,11 @@ bool Player::GetWindValue_srv(gaden_msgs::srv::WindPosition::Request::SharedPtr
+     for (int i = 0; i < req->x.size(); i++)
+     {
+         gaden::Vector3 windVec = Scene->SampleWind(gaden::Vector3{req->x[i], req->y[i], req->z[i]});
++        if (!isValidDecodedWind(windVec))
++        {
++            GADEN_ERROR("Rejected invalid decoded wind vector ({}, {}, {})", windVec.x, windVec.y, windVec.z);
++            return false;
++        }
+         res->u.push_back(windVec.x);
+         res->v.push_back(windVec.y);
+         res->w.push_back(windVec.z);
+@@ -75,6 +105,73 @@ bool Player::GetWindValue_srv(gaden_msgs::srv::WindPosition::Request::SharedPtr
+     return true;
+ }
+ 
++bool Player::SetIteration_srv(gaden_msgs::srv::SetIteration::Request::SharedPtr req, gaden_msgs::srv::SetIteration::Response::SharedPtr res)
++{
++    bool loaded = true;
++    for (const auto& simulation : Scene->GetSimulations())
++    {
++        auto playback = std::dynamic_pointer_cast<gaden::PlaybackSimulation>(simulation);
++        if (!playback || !playback->LoadIteration(static_cast<size_t>(req->iteration)))
++            loaded = false;
++    }
++    res->success = loaded;
++    res->loaded_iteration = loaded ? req->iteration : -1;
++    res->message = loaded ? "loaded recorded iteration" : "requested iteration unavailable";
++    return true;
++}
++
++bool Player::FrameQuery_srv(gaden_msgs::srv::FrameQuery::Request::SharedPtr req, gaden_msgs::srv::FrameQuery::Response::SharedPtr res)
++{
++    bool loaded = true;
++    for (const auto& simulation : Scene->GetSimulations()) {
++        auto playback = std::dynamic_pointer_cast<gaden::PlaybackSimulation>(simulation);
++        if (!playback || !playback->LoadIteration(static_cast<size_t>(req->iteration))) loaded = false;
++    }
++    const gaden::Vector3 point(req->x, req->y, req->z);
++    const auto& environment = environmentConfig->environment;
++    const auto indices = environment.coordsToIndices(point);
++    if (!loaded || !environment.IsInBounds(indices)) {
++        res->valid = false;
++        if (!loaded) {
++            res->error_message = "requested iteration unavailable";
++        } else {
++            const auto& description = environment.description;
++            res->error_message =
++                "query point out of bounds point=(" +
++                std::to_string(point.x) + "," +
++                std::to_string(point.y) + "," +
++                std::to_string(point.z) + ") indices=(" +
++                std::to_string(indices.x) + "," +
++                std::to_string(indices.y) + "," +
++                std::to_string(indices.z) + ") dimensions=(" +
++                std::to_string(description.dimensions.x) + "," +
++                std::to_string(description.dimensions.y) + "," +
++                std::to_string(description.dimensions.z) + ") min=(" +
++                std::to_string(description.minCoord.x) + "," +
++                std::to_string(description.minCoord.y) + "," +
++                std::to_string(description.minCoord.z) + ") cell_size=" +
++                std::to_string(description.cellSize);
++        }
++        return true;
++    }
++    try {
++        const auto gases = Scene->SampleConcentrations(point);
++        float concentration = 0.0f;
++        for (const auto& value : gases) concentration += value.second;
++        const auto wind = Scene->SampleWind(point);
++        if (!isValidDecodedWind(wind)) {
++            res->valid = false;
++            res->error_message = "invalid decoded wind vector";
++            GADEN_ERROR("Rejected invalid decoded wind vector ({}, {}, {}) at iteration {}", wind.x, wind.y, wind.z, req->iteration);
++            return true;
++        }
++        res->valid = true; res->concentration = concentration;
++        res->wind_u = wind.x; res->wind_v = wind.y; res->wind_w = wind.z;
++        res->error_message.clear();
++    } catch (const std::exception& error) { res->valid = false; res->error_message = error.what(); }
++    return true;
++}
++
+ //------------------------ MAIN --------------------------//
+ void Player::run()
+ {
+@@ -92,6 +189,12 @@ void Player::run()
+ 
+     // Init variables
+     initSimulations();
++    const auto& environment = environmentConfig->environment.description;
++    GADEN_INFO("Loaded environment: min={} max={} dimensions={} cell_size={}",
++               environment.minCoord,
++               environment.maxCoord,
++               environment.dimensions,
++               environment.cellSize);
+     rclcpp::Time time_last_loaded_file = now();
+     srand(time(NULL)); // initialize random seed
+ 
+@@ -100,6 +203,10 @@ void Player::run()
+         "odor_value", std::bind(&Player::GetGasValue_srv, this, std::placeholders::_1, std::placeholders::_2));
+     auto serviceWind = create_service<gaden_msgs::srv::WindPosition>(
+         "wind_value", std::bind(&Player::GetWindValue_srv, this, std::placeholders::_1, std::placeholders::_2));
++    auto serviceIteration = create_service<gaden_msgs::srv::SetIteration>(
++        "set_iteration", std::bind(&Player::SetIteration_srv, this, std::placeholders::_1, std::placeholders::_2));
++    auto serviceFrameQuery = create_service<gaden_msgs::srv::FrameQuery>(
++        "frame_query", std::bind(&Player::FrameQuery_srv, this, std::placeholders::_1, std::placeholders::_2));
+ 
+     // Loop
+     rclcpp::Rate r(100); // Set max rate at 100Hz (for handling services - Top Speed!!)
+@@ -107,6 +214,7 @@ void Player::run()
+ 
+     // playback frequency
+     float player_freq = declare_parameter<float>("player_freq", 1); // Hz
++    bool manual_iteration_mode = declare_parameter<bool>("manual_iteration_mode", false);
+     GADEN_INFO("player_freq {:.2f} Hz", player_freq);
+     gaden::Utils::Time::Countdown countdown(1.f / player_freq);
+ 
+@@ -115,7 +223,7 @@ void Player::run()
+ 
+     while (rclcpp::ok())
+     {
+-        if (countdown.isDone())
++        if (!manual_iteration_mode && countdown.isDone())
+         {
+             // Read Gas and Wind data from log_files
+             Scene->AdvanceTimestep();
+@@ -226,6 +334,12 @@ void Player::initSimulations()
+         GADEN_TERMINATE;
+     }
+ 
++    if (std::getenv("GADEN_WIND_CONTRACT_LOG_ORDER") != nullptr)
++    {
++        for (size_t i = 0; i < windFiles.size(); ++i)
++            GADEN_INFO("Wind sequence input order[{}] = '{}'", i, windFiles.at(i).filename());
++    }
++
+     environmentConfig->windSequence.Initialize(windFiles, environmentConfig->environment.numCells(), {});
+     Scene.emplace(playbackMetadata, environmentConfig);
+ }
+diff --git a/gaden_player/src/simulation_player.h b/gaden_player/src/simulation_player.h
+index 1131a6f..8197d24 100644
+--- a/gaden_player/src/simulation_player.h
++++ b/gaden_player/src/simulation_player.h
+@@ -6,6 +6,8 @@
+ #include <gaden_msgs/msg/gas_in_cell.hpp>
+ #include <gaden_msgs/srv/gas_position.hpp>
+ #include <gaden_msgs/srv/wind_position.hpp>
++#include <gaden_msgs/srv/set_iteration.hpp>
++#include <gaden_msgs/srv/frame_query.hpp>
+ 
+ #include <gaden/Scene.hpp>
+ 
+@@ -19,6 +21,8 @@ private:
+     gaden_msgs::msg::GasInCell GetAllGasesSingleCell(float x, float y, float z, const std::vector<gaden::GasType>& gas_types);
+     bool GetGasValue_srv(gaden_msgs::srv::GasPosition::Request::SharedPtr req, gaden_msgs::srv::GasPosition::Response::SharedPtr res);
+     bool GetWindValue_srv(gaden_msgs::srv::WindPosition::Request::SharedPtr req, gaden_msgs::srv::WindPosition::Response::SharedPtr res);
++    bool SetIteration_srv(gaden_msgs::srv::SetIteration::Request::SharedPtr req, gaden_msgs::srv::SetIteration::Response::SharedPtr res);
++    bool FrameQuery_srv(gaden_msgs::srv::FrameQuery::Request::SharedPtr req, gaden_msgs::srv::FrameQuery::Response::SharedPtr res);
+ 
+     void displayCurrentGasDistribution();
+     void loadNodeParameters();
+@@ -36,4 +40,4 @@ private:
+ 
+     rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr sourceMarkerPub;
+     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr gasMarkerPub;
+-};
+\ No newline at end of file
++};

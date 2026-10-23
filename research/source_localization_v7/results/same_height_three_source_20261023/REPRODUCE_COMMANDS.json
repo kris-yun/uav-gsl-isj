@@ -1,0 +1,24 @@
+{
+  "ordered_commands": [
+    "python native/sameheight3_20261023/freeze.py",
+    "python native/sameheight3_20261023/run_and_collect.py train",
+    "python native/sameheight3_20261023/extract.py train",
+    "python native/sameheight3_20261023/analysis.py train",
+    "python native/sameheight3_20261023/mirror_shadow.py train",
+    "python native/sameheight3_20261023/unknown_single.py train",
+    "python native/sameheight3_20261023/run_and_collect.py dev",
+    "python native/sameheight3_20261023/extract.py dev",
+    "python native/sameheight3_20261023/analysis.py dev",
+    "python native/sameheight3_20261023/mirror_shadow.py dev",
+    "python native/sameheight3_20261023/unknown_single.py dev",
+    "python native/sameheight3_20261023/train_motion_diagnostic.py",
+    "python native/sameheight3_20261023/verify.py",
+    "python native/sameheight3_20261023/degeneracy.py",
+    "python native/sameheight3_20261023/audit_costs.py",
+    "python native/sameheight3_20261023/finalize.py"
+  ],
+  "success_exit_code": 0,
+  "first_failures_and_repairs": "ENGINEERING_EVENTS.json and logs, including original KeyError and interrupted I/O run",
+  "external_reviewer_entry": "verify.py requires only bundled derived arrays/models, not a running VM or original gas archives",
+  "frozen_stages_refuse_automatic_reruns": true
+}

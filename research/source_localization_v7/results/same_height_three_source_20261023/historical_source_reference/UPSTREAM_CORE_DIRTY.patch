@@ -1,0 +1,419 @@
+diff --git a/include/gaden/PlaybackSimulation.hpp b/include/gaden/PlaybackSimulation.hpp
+index 358aa49..7556937 100644
+--- a/include/gaden/PlaybackSimulation.hpp
++++ b/include/gaden/PlaybackSimulation.hpp
+@@ -17,7 +17,8 @@ namespace gaden
+     public:
+         PlaybackSimulation() = delete;
+         PlaybackSimulation(Parameters params, std::shared_ptr<EnvironmentConfiguration> const& config, LoopConfig loop);
+-        void AdvanceTimestep() override;
++    void AdvanceTimestep() override;
++    bool LoadIteration(size_t iteration);
+         const std::vector<Filament>& GetFilaments() const override;
+         Mode GetMode() const {return mode;}
+ 
+@@ -39,4 +40,4 @@ namespace gaden
+         std::vector<uint8_t> compressedBuffer;
+         std::vector<uint8_t> rawBuffer;
+     };
+-} // namespace gaden
+\ No newline at end of file
++} // namespace gaden
+diff --git a/include/gaden/internal/MathUtils.hpp b/include/gaden/internal/MathUtils.hpp
+index 9525a6d..d5e50ed 100644
+--- a/include/gaden/internal/MathUtils.hpp
++++ b/include/gaden/internal/MathUtils.hpp
+@@ -2,6 +2,8 @@
+ #include "gaden/core/Logging.hpp"
+ #include "gaden/core/Vectors.hpp"
+ #include <random>
++#include <cstdlib>
++#include <cstdint>
+ 
+ namespace gaden
+ {
+@@ -25,17 +27,34 @@ namespace gaden
+         return val >= min && val < max;
+     }
+ 
++    // Optional seed binding for independent plume realizations.  When the
++    // environment variable is absent, this preserves std::mt19937's default
++    // seed (5489u), which is the historical GADEN behavior.
++    inline std::uint32_t configuredSeed(std::uint32_t salt)
++    {
++        std::uint64_t base = 5489u;
++        const char* raw = std::getenv("GADEN_RNG_SEED");
++        if (raw != nullptr && *raw != '\0')
++        {
++            char* end = nullptr;
++            const unsigned long long parsed = std::strtoull(raw, &end, 10);
++            if (end != raw)
++                base = static_cast<std::uint64_t>(parsed);
++        }
++        return static_cast<std::uint32_t>((base ^ (base >> 32)) + salt);
++    }
++
+     // thread-safe
+     inline float GaussianRandom(float mean, float stdDev)
+     {
+-        static thread_local std::mt19937 engine;
++        static thread_local std::mt19937 engine(configuredSeed(0x9e3779b9u));
+         static thread_local std::normal_distribution<> dist{0, 1};
+         return mean + dist(engine) * stdDev;
+     }
+ 
+     inline float uniformRandom(float min, float max)
+     {
+-        static thread_local std::mt19937 engine;
++        static thread_local std::mt19937 engine(configuredSeed(0x243f6a88u));
+         static thread_local std::uniform_real_distribution<float> distribution{0.0, 1.0};
+         return min + distribution(engine) * (max - min);
+     }
+@@ -45,8 +64,6 @@ namespace gaden
+         return std::abs(x - y) < epsilon;
+     }
+ 
+-    // holds a long list of N(0,1) values, and returns them one at a time, scaled as requested.
+-    // obviously not as good as generating them on the fly, but it's not like we are doing cryptography here
+     template <int Size>
+     class PrecalculatedGaussian
+     {
+@@ -69,4 +86,4 @@ namespace gaden
+         std::array<float, Size> m_precalculatedTable;
+     };
+ 
+-} // namespace gaden
+\ No newline at end of file
++} // namespace gaden
+diff --git a/include/gaden/internal/PathUtils.hpp b/include/gaden/internal/PathUtils.hpp
+index 68e8c30..035eec5 100644
+--- a/include/gaden/internal/PathUtils.hpp
++++ b/include/gaden/internal/PathUtils.hpp
+@@ -1,6 +1,10 @@
+ #pragma once
+ #include "gaden/core/Assertions.hpp"
++#include <algorithm>
+ #include <filesystem>
++#include <optional>
++#include <string>
++#include <string_view>
+ #include <vector>
+ 
+ namespace gaden::paths
+@@ -32,6 +36,43 @@ namespace gaden::paths
+         if (std::filesystem::exists(directory))
+             for (const auto& file : std::filesystem::directory_iterator(directory))
+                 files.push_back(file);
++
++        // Wind files are named wind_iteration_<integer>.  Filesystem iteration
++        // order is not a time order, and lexical sorting would put 10 before 2.
++        // Keep the generic fallback deterministic while sorting this numeric
++        // sequence by its actual iteration index.
++        const auto windIndex = [](const std::filesystem::path& path) -> std::optional<unsigned long long>
++        {
++            const auto name = path.filename().string();
++            constexpr std::string_view prefix = "wind_iteration_";
++            if (name.rfind(prefix, 0) != 0 || name.size() == prefix.size())
++                return std::nullopt;
++            try
++            {
++                size_t parsed = 0;
++                const auto value = std::stoull(name.substr(prefix.size()), &parsed);
++                if (parsed != name.size() - prefix.size())
++                    return std::nullopt;
++                return value;
++            }
++            catch (...)
++            {
++                return std::nullopt;
++            }
++        };
++
++        std::sort(files.begin(), files.end(), [&](const auto& lhs, const auto& rhs)
++        {
++            const auto li = windIndex(lhs);
++            const auto ri = windIndex(rhs);
++            if (li && ri)
++                return *li < *ri;
++            if (li)
++                return true;
++            if (ri)
++                return false;
++            return lhs.string() < rhs.string();
++        });
+         return files;
+     }
+ 
+@@ -83,4 +124,4 @@ namespace gaden::paths
+ 
+         return path;
+     }
+-} // namespace gaden::paths
+\ No newline at end of file
++} // namespace gaden::paths
+diff --git a/include/gaden/internal/Serialization.hpp b/include/gaden/internal/Serialization.hpp
+index 51a6589..49b3939 100644
+--- a/include/gaden/internal/Serialization.hpp
++++ b/include/gaden/internal/Serialization.hpp
+@@ -136,6 +136,11 @@ namespace gaden
+                 return current == end;
+             }
+ 
++            bool CanRead(size_t size) const
++            {
++                return current <= end && size <= static_cast<size_t>(end - current);
++            }
++
+         private:
+             char* start;
+             char* current;
+diff --git a/src/PlaybackSimulation.cpp b/src/PlaybackSimulation.cpp
+index 76b0130..f892b63 100644
+--- a/src/PlaybackSimulation.cpp
++++ b/src/PlaybackSimulation.cpp
+@@ -1,6 +1,9 @@
+ #include "gaden/datatypes/sources/PointSource.hpp"
+ #include "gaden/internal/Serialization.hpp"
+ #include <fstream>
++#include <cmath>
++#include <cstdint>
++#include <cstring>
+ #include <gaden/PlaybackSimulation.hpp>
+ 
+ namespace gaden
+@@ -105,6 +108,20 @@ namespace gaden
+             currentIteration = loopConfig.from;
+     }
+ 
++    bool PlaybackSimulation::LoadIteration(size_t iteration)
++    {
++        const auto previous = currentIteration;
++        currentIteration = iteration;
++        const std::string filename = fmt::format("{}/iteration_{}", parameters.resultsDirectory.c_str(), currentIteration);
++        if (!std::filesystem::exists(filename))
++        {
++            currentIteration = previous;
++            return false;
++        }
++        AdvanceTimestep();
++        return true;
++    }
++
+     const std::vector<Filament>& PlaybackSimulation::GetFilaments() const
+     {
+         return activeFilaments;
+@@ -165,26 +182,66 @@ namespace gaden
+             warned = true;
+         }
+ 
+-        // coordinates were initially written as doubles, but we want to read them as floats now, so we need a buffer
+-        double bufferDoubles[5];
+-        reader.Read(&bufferDoubles, 3 * sizeof(double));
+-        config->environment.description.minCoord.x = bufferDoubles[0];
+-        config->environment.description.minCoord.y = bufferDoubles[1];
+-        config->environment.description.minCoord.z = bufferDoubles[2];
+-
+-        reader.Read(&bufferDoubles, 3 * sizeof(double));
+-        config->environment.description.maxCoord.x = bufferDoubles[0];
+-        config->environment.description.maxCoord.y = bufferDoubles[1];
+-        config->environment.description.maxCoord.z = bufferDoubles[2];
++        // Version-1 datasets exist in two on-disk coordinate variants under
++        // the same version tag.  Newer VGR exports copied float-backed
++        // coordinates into sizeof(double) slots, while older House02/03
++        // exports stored native doubles.  Both variants have identical slot
++        // widths, so decode both interpretations and select the one consistent
++        // with the environment already loaded from OccupancyGrid3D.csv.
++        double coordinatesAsDouble[6];
++        float coordinatesAsFloat[6];
++        for (size_t i = 0; i < 6; ++i)
++        {
++            std::uint8_t slot[sizeof(double)];
++            reader.Read(slot, sizeof(slot));
++            std::memcpy(&coordinatesAsDouble[i], slot, sizeof(double));
++            std::memcpy(&coordinatesAsFloat[i], slot, sizeof(float));
++        }
+ 
+-        reader.Read(&config->environment.description.dimensions.x, sizeof(int));
+-        reader.Read(&config->environment.description.dimensions.y, sizeof(int));
+-        reader.Read(&config->environment.description.dimensions.z, sizeof(int));
++        auto& description = config->environment.description;
++        const double expected[6] = {
++            description.minCoord.x, description.minCoord.y, description.minCoord.z,
++            description.maxCoord.x, description.maxCoord.y, description.maxCoord.z};
++        double doubleScore = 0.0;
++        double floatScore = 0.0;
++        for (size_t i = 0; i < 6; ++i)
++        {
++            doubleScore += std::isfinite(coordinatesAsDouble[i])
++                               ? std::fabs(coordinatesAsDouble[i] - expected[i])
++                               : 1e300;
++            floatScore += std::isfinite(coordinatesAsFloat[i])
++                              ? std::fabs(static_cast<double>(coordinatesAsFloat[i]) - expected[i])
++                              : 1e300;
++        }
++        const bool useFloatSlots = floatScore < doubleScore;
++        const auto coordinate = [&](size_t i) {
++            return useFloatSlots ? static_cast<double>(coordinatesAsFloat[i])
++                                 : coordinatesAsDouble[i];
++        };
++        description.minCoord.x = coordinate(0);
++        description.minCoord.y = coordinate(1);
++        description.minCoord.z = coordinate(2);
++        description.maxCoord.x = coordinate(3);
++        description.maxCoord.y = coordinate(4);
++        description.maxCoord.z = coordinate(5);
++        GADEN_INFO(
++            "Legacy V1 coordinate format={} double_score={} float_slot_score={}",
++            useFloatSlots ? "FLOAT_IN_DOUBLE_SLOT" : "NATIVE_DOUBLE",
++            doubleScore,
++            floatScore);
++
++        reader.Read(&description.dimensions.x, sizeof(int));
++        reader.Read(&description.dimensions.y, sizeof(int));
++        reader.Read(&description.dimensions.z, sizeof(int));
+ 
+-        reader.Read(&bufferDoubles, 3 * sizeof(double));
+-        config->environment.description.cellSize = bufferDoubles[0];
++        double bufferDoubles[5];
++        reader.Read(bufferDoubles, sizeof(double));
++        description.cellSize = bufferDoubles[0];
+ 
+-        reader.Read(&bufferDoubles, 3 * sizeof(double)); // ground truth source position, we can ignore it
++        // Version-1 headers reserve five native-double slots after cell size.
++        // They contain historical source metadata and are never exposed to the
++        // player query API.
++        reader.Read(bufferDoubles, 5 * sizeof(double));
+ 
+         if (!simulationMetadata.source)
+             simulationMetadata.source = std::make_shared<PointSource>();
+@@ -205,7 +262,8 @@ namespace gaden
+         activeFilaments.clear();
+         int filament_index;
+         double x, y, z, stdDev;
+-        while (!reader.Ended())
++        constexpr size_t legacyFilamentRecordBytes = sizeof(int) + 4 * sizeof(double);
++        while (reader.CanRead(legacyFilamentRecordBytes))
+         {
+             reader.Read(&filament_index, sizeof(int));
+             reader.Read(&x, sizeof(double));
+@@ -283,4 +341,4 @@ namespace gaden
+             activeFilaments.emplace_back(x, y, z, stdDev);
+         }
+     }
+-} // namespace gaden
+\ No newline at end of file
++} // namespace gaden
+diff --git a/src/RunningSimulation.cpp b/src/RunningSimulation.cpp
+index 176bb20..72123a1 100644
+--- a/src/RunningSimulation.cpp
++++ b/src/RunningSimulation.cpp
+@@ -4,6 +4,7 @@
+ #include "gaden/internal/MathUtils.hpp"
+ #include "gaden/internal/Serialization.hpp"
+ #include <fstream>
++#include <iomanip>
+ #include <gaden/internal/GPUAcceleration.hpp>
+ #include <gaden/internal/Profiling.hpp>
+ #include <gaden/internal/compression.hpp>
+@@ -448,6 +449,16 @@ namespace gaden
+                 std::filesystem::perms::owner_all | std::filesystem::perms::group_all,
+                 std::filesystem::perm_options::add);
+         }
++        // OCB-R2 provenance only: read current writer clock/wind without advancing
++        // simulation state or consuming any RNG. The benchmark runs one OpenMP worker.
++        {
++            std::ofstream timeline(parameters.saveDataDirectory / "RECORD_TIMELINE.tsv", std::ios::app);
++            if (last_saved_step == 0)
++                timeline << "record_index\tinternal_simulation_time_s\twind_index\n";
++            timeline << last_saved_step << '\t' << std::setprecision(9)
++                     << currentTime << '\t' << windIndex << '\n';
++            GADEN_VERIFY(static_cast<bool>(timeline), "Failed to write OCB-R2 record timeline");
++        }
+         last_saved_step++;
+     }
+ 
+diff --git a/src/WindSequence.cpp b/src/WindSequence.cpp
+index 5b0ce28..4326063 100644
+--- a/src/WindSequence.cpp
++++ b/src/WindSequence.cpp
+@@ -2,7 +2,9 @@
+ #include "gaden/core/Logging.hpp"
+ #include "gaden/internal/MathUtils.hpp"
+ #include "gaden/internal/PathUtils.hpp"
++#include <cmath>
+ #include <fstream>
++#include <limits>
+ #include <gaden/internal/WindSequence.hpp>
+ 
+ namespace gaden
+@@ -136,21 +138,57 @@ namespace gaden
+         try
+         {
+             std::ifstream infile(path, std::ios_base::binary);
+-
+-            // header
+-            int fileVersionMajor;
++            const auto fileBytes = std::filesystem::file_size(path);
++            const auto modernBytes = 2 * sizeof(int) + sizeof(gaden::Vector3) * map.size();
++            const auto legacyBytes = 3 * sizeof(double) * map.size();
++
++            // Probe the version field only after checking the complete file
++            // layout.  Legacy VGR/H02 wind files contain raw doubles without a
++            // header; their first four bytes are arbitrary double payload and
++            // can accidentally look like a modern version number.
++            int fileVersionMajor = -1;
+             infile.read((char*)&fileVersionMajor, sizeof(int));
+ 
+-            // the old style of preprocessed-but-not-simulated wind files always started with a 4-byte 999 (which was not really a gaden version, but whatever)
++            // The old style of preprocessed-but-not-simulated wind files
++            // always started with a 4-byte 999 (which was not really a gaden
++            // version, but whatever).
+             if (fileVersionMajor == 999)
+             {
+                 GADEN_ERROR("The old style wind files (split into three files with suffixes like _U, _V, _W) are no longer supported. Please convert the files to the new format");
+                 return ReadResult::READING_FAILED;
+             }
+-            else if (fileVersionMajor >= 2)
++            else if (fileBytes == modernBytes && fileVersionMajor >= 2 && fileVersionMajor <= gaden::versionMajor)
+                 parseModernFile(infile, map);
+-            else
++            else if (fileBytes == legacyBytes)
++            {
++                // VGR legacy wind files have no version header. Restore the
++                // stream before reading the three double arrays.
++                infile.clear();
++                infile.seekg(0, std::ios::beg);
+                 parseOldFile(infile, map);
++            }
++            else
++            {
++                GADEN_ERROR("Wind file '{}' has an unrecognized layout: bytes={}, expected modern={} or legacy={}",
++                            path.c_str(), fileBytes, modernBytes, legacyBytes);
++                return ReadResult::READING_FAILED;
++            }
++
++            // A successful decode must not inject non-finite or obviously
++            // corrupted values into filament transport.  This is a numeric
++            // integrity guard, not a scenario parameter.
++            constexpr float maxDecodedWindComponent = 1.0e4f;
++            for (const auto& wind : map)
++            {
++                if (!std::isfinite(wind.x) || !std::isfinite(wind.y) || !std::isfinite(wind.z) ||
++                    std::abs(wind.x) > maxDecodedWindComponent ||
++                    std::abs(wind.y) > maxDecodedWindComponent ||
++                    std::abs(wind.z) > maxDecodedWindComponent)
++                {
++                    GADEN_ERROR("Wind file '{}' decoded an invalid vector ({}, {}, {})", path.c_str(), wind.x, wind.y, wind.z);
++                    return ReadResult::READING_FAILED;
++                }
++            }
+ 
+             // contents
+             infile.close();
+@@ -193,4 +231,4 @@ namespace gaden
+         }
+         infile.close();
+     }
+-} // namespace gaden
+\ No newline at end of file
++} // namespace gaden

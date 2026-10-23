@@ -1,0 +1,171 @@
+{
+  "bank": {
+    "specs": [
+      {
+        "name": "static_gradient",
+        "lag_s": 0.0,
+        "decay_s": 0.25,
+        "inhibition": 0.0,
+        "bias": 0.0,
+        "kind": "gradient"
+      },
+      {
+        "name": "coarse_delay_1.8_inhibit_0.5",
+        "lag_s": 1.8,
+        "decay_s": 1.5,
+        "inhibition": 0.5,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_1.8_inhibit_1",
+        "lag_s": 1.8,
+        "decay_s": 1.5,
+        "inhibition": 1.0,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_3_inhibit_0.5",
+        "lag_s": 3.0,
+        "decay_s": 1.5,
+        "inhibition": 0.5,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_3_inhibit_1",
+        "lag_s": 3.0,
+        "decay_s": 1.5,
+        "inhibition": 1.0,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_6_inhibit_0.5",
+        "lag_s": 6.0,
+        "decay_s": 1.5,
+        "inhibition": 0.5,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_6_inhibit_1",
+        "lag_s": 6.0,
+        "decay_s": 1.5,
+        "inhibition": 1.0,
+        "bias": 0.0,
+        "kind": "mnm"
+      }
+    ],
+    "concentration_scale": 1.0,
+    "background": 0.0
+  },
+  "selection": [
+    []
+  ],
+  "even_thresholds": [
+    0.0024557176458125034
+  ],
+  "odd_thresholds": [
+    [
+      0.001522713028138916,
+      0.0047630831094820775,
+      0.0042026975456156005,
+      0.004630904424073682,
+      0.003938340174798811,
+      0.003454050077347355,
+      1e-10
+    ]
+  ],
+  "times": [
+    50.2998047,
+    50.8997955,
+    51.4997864,
+    52.0997772,
+    52.6997681,
+    53.2997589,
+    53.8997498,
+    54.4997406,
+    55.0997314,
+    55.6997223,
+    56.2997131,
+    56.899704,
+    57.4996948,
+    58.0996857,
+    58.6996765,
+    59.2996674,
+    59.8996582,
+    60.499649,
+    61.0996399,
+    61.6996307,
+    62.2996216,
+    62.8996124,
+    63.4996033,
+    64.0995941,
+    64.699585,
+    65.2995758,
+    65.8995667,
+    66.4995575,
+    67.0995483,
+    67.6995392,
+    68.29953,
+    68.8995209,
+    69.4995117
+  ],
+  "contract": {
+    "continuous": true,
+    "synchronous": true,
+    "clock_error_s": 0.0,
+    "maximum_step_s": 0.61,
+    "sensor_delay_difference_s": 0.0,
+    "bandwidth_calibrated": true,
+    "paired_positions_known": true,
+    "provenance": "conditional ideal identity simulator readout only, NOT physical PID calibration"
+  },
+  "receipt": {
+    "operator": "source-pair-cover mirrored bank",
+    "variant": "secondary",
+    "actions": [
+      {
+        "action": "frozen_pair",
+        "selected": [],
+        "source_pairs": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "robust_training_js": [
+          0.24258597169364066,
+          0.06465997358168779,
+          0.06465997358168779
+        ],
+        "search": [
+          {
+            "filter": "static_gradient",
+            "training_objective": 0.12,
+            "gain": 0.0
+          }
+        ],
+        "unseparated_pairs": [],
+        "certificate": "TRAINING_DIAGNOSTIC_ONLY_NOT_A_POPULATION_GUARANTEE"
+      }
+    ],
+    "smoothing_mode": "fixed_total",
+    "alpha_total": 1.0,
+    "training_blocks_per_source_mechanism": 2,
+    "counts_are_not_independent_frames_by_default": true,
+    "static_mode": false,
+    "strictly_temporal_claim": false,
+    "known_statistics": "JS distance, histogram likelihood and Bayes normalization are not claimed new"
+  }
+}

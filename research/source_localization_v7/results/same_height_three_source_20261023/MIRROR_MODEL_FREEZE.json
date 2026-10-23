@@ -1,0 +1,153 @@
+{
+  "status": "FROZEN_TRAIN_ONLY_BEFORE_DEV",
+  "selection_sha256": "c40cf7e39ad0195ed5b221bd78243e3bc593d6b4296c2e951301e2a2bd223dc6",
+  "ordinary_model_freeze_sha256": "0d7a9b585271470cea2d56f6e3463b5c300b8d070fdc44bffcb203abecb4dd82",
+  "code_sha256": "e6a70a13c9540a89b3f02edb2b79607e44d23e88d9adcba6df19ef7c46246908",
+  "models": {
+    "mirror_models\\frozen_all_mirror_features.npz": "f3356b8ab47e63a037ca409610bddb73958784afbd4281092395b7d01e03fe14",
+    "mirror_models\\full_joint_window.npz": "b453773eca77db0e10d29897c38262a589e04711cf274cd8f81331bcbd1c3f00",
+    "mirror_models\\mother_gaussian.npz": "1d821da55258dbfc9e15b8d7c2c2dedf22985b4f00d7d075e9f0be56b3d1d05b",
+    "mirror_models\\ordinary_delayed_linear.npz": "d3fb48d02e58c431caa75c019f44b564160712cefcd66719657a38aed92b001e",
+    "mirror_models\\secondary_gaussian.npz": "21f669a2d64464a679b0adaed6221aaba36234ec0ac4112d4b2148cb0b7567ca",
+    "mirror_models\\static_even_gradient.npz": "1d821da55258dbfc9e15b8d7c2c2dedf22985b4f00d7d075e9f0be56b3d1d05b",
+    "mirror_models\\static_two_means.npz": "69e58ce57b381e6cea3a40f7120f7f5ac11efbf221521ca8035c83c113ba8700",
+    "mirror_models\\unordered_mirror_gaussian.npz": "5ed37dd8316a85ceb6b99dcd3ad6207984423526db671d56f66d9b5d0a2694eb",
+    "mirror_models\\even\\channel.npz": "8c76ce250ce07bee66659a77e3fd83a9015551658e1a824dba1f047698ff60cb",
+    "mirror_models\\even\\operator.json": "f84a0330ae84a0af2b1c28a1e56651b3a42971a349c12dbafde43ba07b285783",
+    "mirror_models\\mother\\channel.npz": "dfe31bbd6aedc7896ca63f2d6544d3460efb1773174c3fa854e61ef1d03d36c9",
+    "mirror_models\\mother\\operator.json": "0acd835ac646dfa59b8bbefa2f5fa210a6040266d5aa85010e64f7e6dd256bd9",
+    "mirror_models\\raw_joint\\channel.npz": "da5bba79de25d5c89c8367f3a87e345ad3218125ea9346885da1455f81fab675",
+    "mirror_models\\raw_joint\\operator.json": "81f9618eddd0d60541c6e1968d2001767c35a1b1fe229d478f171ea4ebf1cb67",
+    "mirror_models\\raw_joint\\raw_joint_quantizer.npz": "60f6d573885eeabbbeaa3e9073a802719f2ae620b168e17eaacc1b0442ce4f32",
+    "mirror_models\\secondary\\channel.npz": "dbf98f54065336a10c15c43905974440cf26e46326bd90b8772610449cf4f703",
+    "mirror_models\\secondary\\operator.json": "9dadb5def2a71a4c9f36aa57e09111f2daffda211da360867bedfd4cdaa9c460"
+  },
+  "Gaussian_heads": {
+    "static_two_means": {
+      "dimension": 2,
+      "floor": 4.171860239515398e-06,
+      "sha256": "69e58ce57b381e6cea3a40f7120f7f5ac11efbf221521ca8035c83c113ba8700"
+    },
+    "full_joint_window": {
+      "dimension": 66,
+      "floor": 1.829830238987596e-05,
+      "sha256": "b453773eca77db0e10d29897c38262a589e04711cf274cd8f81331bcbd1c3f00"
+    },
+    "static_even_gradient": {
+      "dimension": 2,
+      "floor": 2.5859301197576987e-06,
+      "sha256": "1d821da55258dbfc9e15b8d7c2c2dedf22985b4f00d7d075e9f0be56b3d1d05b"
+    },
+    "ordinary_delayed_linear": {
+      "dimension": 12,
+      "floor": 4.935241149962724e-05,
+      "sha256": "d3fb48d02e58c431caa75c019f44b564160712cefcd66719657a38aed92b001e"
+    },
+    "frozen_all_mirror_features": {
+      "dimension": 8,
+      "floor": 7.034019707418493e-05,
+      "sha256": "f3356b8ab47e63a037ca409610bddb73958784afbd4281092395b7d01e03fe14"
+    },
+    "mother_gaussian": {
+      "dimension": 2,
+      "floor": 2.5859301197576987e-06,
+      "sha256": "1d821da55258dbfc9e15b8d7c2c2dedf22985b4f00d7d075e9f0be56b3d1d05b"
+    },
+    "secondary_gaussian": {
+      "dimension": 1,
+      "floor": 2.5859301197576987e-06,
+      "sha256": "21f669a2d64464a679b0adaed6221aaba36234ec0ac4112d4b2148cb0b7567ca"
+    },
+    "unordered_mirror_gaussian": {
+      "dimension": 8,
+      "floor": 4.111901020180893e-05,
+      "sha256": "5ed37dd8316a85ceb6b99dcd3ad6207984423526db671d56f66d9b5d0a2694eb"
+    }
+  },
+  "selection": {
+    "even": [],
+    "mother": [
+      0
+    ],
+    "secondary": []
+  },
+  "bank": {
+    "specs": [
+      {
+        "name": "static_gradient",
+        "lag_s": 0.0,
+        "decay_s": 0.25,
+        "inhibition": 0.0,
+        "bias": 0.0,
+        "kind": "gradient"
+      },
+      {
+        "name": "coarse_delay_1.8_inhibit_0.5",
+        "lag_s": 1.8,
+        "decay_s": 1.5,
+        "inhibition": 0.5,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_1.8_inhibit_1",
+        "lag_s": 1.8,
+        "decay_s": 1.5,
+        "inhibition": 1.0,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_3_inhibit_0.5",
+        "lag_s": 3.0,
+        "decay_s": 1.5,
+        "inhibition": 0.5,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_3_inhibit_1",
+        "lag_s": 3.0,
+        "decay_s": 1.5,
+        "inhibition": 1.0,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_6_inhibit_0.5",
+        "lag_s": 6.0,
+        "decay_s": 1.5,
+        "inhibition": 0.5,
+        "bias": 0.0,
+        "kind": "mnm"
+      },
+      {
+        "name": "coarse_delay_6_inhibit_1",
+        "lag_s": 6.0,
+        "decay_s": 1.5,
+        "inhibition": 1.0,
+        "bias": 0.0,
+        "kind": "mnm"
+      }
+    ],
+    "concentration_scale": 1.0,
+    "background": 0.0
+  },
+  "contract": {
+    "continuous": true,
+    "synchronous": true,
+    "clock_error_s": 0.0,
+    "maximum_step_s": 0.61,
+    "sensor_delay_difference_s": 0.0,
+    "bandwidth_calibrated": true,
+    "paired_positions_known": true,
+    "provenance": "conditional ideal identity simulator readout only, NOT physical PID calibration"
+  },
+  "separation_target": 0.04,
+  "changed_M1_source": false,
+  "same_selected_pair_not_M1_optimized": true,
+  "new_user_steering": "2026-10-23 user requested strongest defensible examination of mirror value in hard conditions, while preserving thresholds and excluding M2/M3/ROS",
+  "original_primary_protocol_unchanged": true,
+  "exploratory_addendum_not_new_main_claim": true,
+  "wall_s": 0.3517956000287086
+}
