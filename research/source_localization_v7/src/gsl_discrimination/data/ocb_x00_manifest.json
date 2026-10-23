@@ -1,0 +1,999 @@
+{
+  "schema_version": "ocb-x00-discovery-1",
+  "repository": "kris-yun/uav-gsl-isj",
+  "commit": "005ba6a34d95fdfe340050df96fe30a688fa71bf",
+  "scope": "previously_open_discovery",
+  "context": "X00",
+  "selection": "lexicographically first already-open context, frozen before numeric decode",
+  "raw_redistribution": "not included; manifest and fetch/check scripts only",
+  "grid": {
+    "axis_order": [
+      "time",
+      "x",
+      "y"
+    ],
+    "min_x": -7.55,
+    "min_y": -7.88,
+    "cell_m": 0.1,
+    "z_m": 0.2,
+    "shape_xy": [
+      87,
+      114
+    ],
+    "coordinate_status": "native-cell centre convention consistent with original 2x2 probe contract; C++ extractor internals not recovered"
+  },
+  "qualification": {
+    "synchronous_spatial": true,
+    "physical_clock": true,
+    "continuous_window": false,
+    "local_wind": false,
+    "independent_realizations": true,
+    "alternative_sources": true,
+    "source_occupancy_validated": false,
+    "native_active_closed_loop": false,
+    "sensor_response_calibrated": false,
+    "native_samples_only": true,
+    "scope": "previously_open_OCB_R2_X00_spatial_discovery",
+    "limitations": [
+      "native snapshots about 50 seconds apart; no continuous window",
+      "local wind vector bytes missing; wind index is not local wind",
+      "original House01 occupancy bytes and source/birth voxel validation absent",
+      "two releases differ in x,y,z; not a pure XY source intervention",
+      "native-cell centre formula consistent with probe contract; original extractor C++ internals not recovered",
+      "same native 3D physics sliced at z=0.2m; no UAV/rotor/sensor dynamics",
+      "all worlds were historically open discovery, not new confirmation"
+    ]
+  },
+  "probes": [
+    {
+      "probe_rank": 1,
+      "native_x0": 40,
+      "native_x1_exclusive": 42,
+      "native_y0": 54,
+      "native_y1_exclusive": 56,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -3.4499999999999993,
+        -2.38,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 2,
+      "native_x0": 82,
+      "native_x1_exclusive": 84,
+      "native_y0": 108,
+      "native_y1_exclusive": 110,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        0.7500000000000009,
+        3.0200000000000005,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 3,
+      "native_x0": 82,
+      "native_x1_exclusive": 84,
+      "native_y0": 4,
+      "native_y1_exclusive": 6,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        0.7500000000000009,
+        -7.38,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 4,
+      "native_x0": 6,
+      "native_x1_exclusive": 8,
+      "native_y0": 108,
+      "native_y1_exclusive": 110,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -6.85,
+        3.0200000000000005,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 5,
+      "native_x0": 4,
+      "native_x1_exclusive": 6,
+      "native_y0": 4,
+      "native_y1_exclusive": 6,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -7.05,
+        -7.38,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 6,
+      "native_x0": 82,
+      "native_x1_exclusive": 84,
+      "native_y0": 48,
+      "native_y1_exclusive": 50,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        0.7500000000000009,
+        -2.9799999999999995,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 7,
+      "native_x0": 44,
+      "native_x1_exclusive": 46,
+      "native_y0": 94,
+      "native_y1_exclusive": 96,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -3.05,
+        1.62,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 8,
+      "native_x0": 42,
+      "native_x1_exclusive": 44,
+      "native_y0": 14,
+      "native_y1_exclusive": 16,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -3.25,
+        -6.38,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 9,
+      "native_x0": 4,
+      "native_x1_exclusive": 6,
+      "native_y0": 68,
+      "native_y1_exclusive": 70,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -7.05,
+        -0.9799999999999995,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 10,
+      "native_x0": 12,
+      "native_x1_exclusive": 14,
+      "native_y0": 36,
+      "native_y1_exclusive": 38,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -6.25,
+        -4.18,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 11,
+      "native_x0": 72,
+      "native_x1_exclusive": 74,
+      "native_y0": 78,
+      "native_y1_exclusive": 80,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -0.2499999999999991,
+        0.020000000000000462,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 12,
+      "native_x0": 60,
+      "native_x1_exclusive": 62,
+      "native_y0": 34,
+      "native_y1_exclusive": 36,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -1.4499999999999993,
+        -4.38,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 13,
+      "native_x0": 26,
+      "native_x1_exclusive": 28,
+      "native_y0": 78,
+      "native_y1_exclusive": 80,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -4.85,
+        0.020000000000000462,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 14,
+      "native_x0": 60,
+      "native_x1_exclusive": 62,
+      "native_y0": 60,
+      "native_y1_exclusive": 62,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -1.4499999999999993,
+        -1.7799999999999994,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 15,
+      "native_x0": 60,
+      "native_x1_exclusive": 62,
+      "native_y0": 4,
+      "native_y1_exclusive": 6,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -1.4499999999999993,
+        -7.38,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 16,
+      "native_x0": 22,
+      "native_x1_exclusive": 24,
+      "native_y0": 18,
+      "native_y1_exclusive": 20,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -5.25,
+        -5.9799999999999995,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 17,
+      "native_x0": 62,
+      "native_x1_exclusive": 64,
+      "native_y0": 104,
+      "native_y1_exclusive": 106,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -1.2499999999999991,
+        2.62,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 18,
+      "native_x0": 30,
+      "native_x1_exclusive": 32,
+      "native_y0": 108,
+      "native_y1_exclusive": 110,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -4.449999999999999,
+        3.0200000000000005,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 19,
+      "native_x0": 46,
+      "native_x1_exclusive": 48,
+      "native_y0": 74,
+      "native_y1_exclusive": 76,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -2.8499999999999996,
+        -0.3799999999999999,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 20,
+      "native_x0": 76,
+      "native_x1_exclusive": 78,
+      "native_y0": 22,
+      "native_y1_exclusive": 24,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        0.15000000000000036,
+        -5.58,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 21,
+      "native_x0": 22,
+      "native_x1_exclusive": 24,
+      "native_y0": 60,
+      "native_y1_exclusive": 62,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -5.25,
+        -1.7799999999999994,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 22,
+      "native_x0": 18,
+      "native_x1_exclusive": 20,
+      "native_y0": 94,
+      "native_y1_exclusive": 96,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -5.6499999999999995,
+        1.62,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 23,
+      "native_x0": 28,
+      "native_x1_exclusive": 30,
+      "native_y0": 42,
+      "native_y1_exclusive": 44,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -4.6499999999999995,
+        -3.58,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 24,
+      "native_x0": 4,
+      "native_x1_exclusive": 6,
+      "native_y0": 22,
+      "native_y1_exclusive": 24,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -7.05,
+        -5.58,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 25,
+      "native_x0": 4,
+      "native_x1_exclusive": 6,
+      "native_y0": 84,
+      "native_y1_exclusive": 86,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -7.05,
+        0.6200000000000001,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 26,
+      "native_x0": 60,
+      "native_x1_exclusive": 62,
+      "native_y0": 88,
+      "native_y1_exclusive": 90,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -1.4499999999999993,
+        1.0200000000000005,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 27,
+      "native_x0": 34,
+      "native_x1_exclusive": 36,
+      "native_y0": 28,
+      "native_y1_exclusive": 30,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -4.05,
+        -4.9799999999999995,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 28,
+      "native_x0": 8,
+      "native_x1_exclusive": 10,
+      "native_y0": 54,
+      "native_y1_exclusive": 56,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -6.6499999999999995,
+        -2.38,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 29,
+      "native_x0": 48,
+      "native_x1_exclusive": 50,
+      "native_y0": 108,
+      "native_y1_exclusive": 110,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -2.6499999999999995,
+        3.0200000000000005,
+        0.2
+      ]
+    },
+    {
+      "probe_rank": 30,
+      "native_x0": 48,
+      "native_x1_exclusive": 50,
+      "native_y0": 42,
+      "native_y1_exclusive": 44,
+      "native_cell_count": 4,
+      "center_xyz_m": [
+        -2.6499999999999995,
+        -3.58,
+        0.2
+      ]
+    }
+  ],
+  "worlds": [
+    {
+      "run_id": "ocb_r2_cfg00_r01",
+      "source_id": "House01_configured_1",
+      "source_xyz": [
+        -0.6,
+        1.95,
+        0.4
+      ],
+      "master_seed": 2026900001,
+      "split": "train",
+      "times_s": [
+        50.2998047,
+        100.099045,
+        149.799942,
+        199.802994,
+        249.806046,
+        299.809082,
+        349.812134,
+        399.815186,
+        449.818237,
+        499.821289
+      ],
+      "wind_indices": [
+        8,
+        3,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "files": {
+        "cube": {
+          "filename": "ocb_r2_cfg00_r01.cube.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_cfg00_r01.cube.npy",
+          "git_blob_sha": "3af102fe7374fc7a369974273d267ea30a3df5fd",
+          "sha256": "cce6ed0d4eccc708c28761b28a90dd66429ab105c6f0a47c13158753736fbe0e",
+          "size_bytes": 396848,
+          "shape": [
+            10,
+            87,
+            114
+          ],
+          "dtype": "float32"
+        },
+        "pooled": {
+          "filename": "ocb_r2_cfg00_r01.pooled.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_cfg00_r01.pooled.npy",
+          "git_blob_sha": "9b0414c72fe47ea3741b0f21ab8ac9fc60e662a0",
+          "sha256": "017bef078d7f364ad724810c31b89e15a61a0d45eb0ef0a64b35aa9c7cb2f209",
+          "size_bytes": 2528,
+          "shape": [
+            10,
+            30
+          ],
+          "dtype": "float64"
+        }
+      },
+      "asset_hashes": {
+        "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+        "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+        "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+        "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+      }
+    },
+    {
+      "run_id": "ocb_r2_cfg00_r02",
+      "source_id": "House01_configured_1",
+      "source_xyz": [
+        -0.6,
+        1.95,
+        0.4
+      ],
+      "master_seed": 2026900002,
+      "split": "train",
+      "times_s": [
+        50.2998047,
+        100.099045,
+        149.799942,
+        199.802994,
+        249.806046,
+        299.809082,
+        349.812134,
+        399.815186,
+        449.818237,
+        499.821289
+      ],
+      "wind_indices": [
+        8,
+        3,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "files": {
+        "cube": {
+          "filename": "ocb_r2_cfg00_r02.cube.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_cfg00_r02.cube.npy",
+          "git_blob_sha": "06c7bb058316f701fa75e625369109935a936c20",
+          "sha256": "caa395a9adbf77341903dbd44fe8f45d1bbd003c382af2ade88357a4e35ab3f8",
+          "size_bytes": 396848,
+          "shape": [
+            10,
+            87,
+            114
+          ],
+          "dtype": "float32"
+        },
+        "pooled": {
+          "filename": "ocb_r2_cfg00_r02.pooled.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_cfg00_r02.pooled.npy",
+          "git_blob_sha": "ad1533e944a18267686d43ee4d0cfd88d6ae80de",
+          "sha256": "cae79df014172795571c48906aa1ca17bcaed9afd1cbf9162b72992bf9492df7",
+          "size_bytes": 2528,
+          "shape": [
+            10,
+            30
+          ],
+          "dtype": "float64"
+        }
+      },
+      "asset_hashes": {
+        "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+        "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+        "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+        "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+      }
+    },
+    {
+      "run_id": "ocb_r2_cfg00_r03",
+      "source_id": "House01_configured_1",
+      "source_xyz": [
+        -0.6,
+        1.95,
+        0.4
+      ],
+      "master_seed": 2026900003,
+      "split": "dev",
+      "times_s": [
+        50.2998047,
+        100.099045,
+        149.799942,
+        199.802994,
+        249.806046,
+        299.809082,
+        349.812134,
+        399.815186,
+        449.818237,
+        499.821289
+      ],
+      "wind_indices": [
+        8,
+        3,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "files": {
+        "cube": {
+          "filename": "ocb_r2_cfg00_r03.cube.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_cfg00_r03.cube.npy",
+          "git_blob_sha": "9f15d0178012ba1b1a10befd176d3e59e3256e9d",
+          "sha256": "6613b5571c60c8110123c8e838f9ddee0581741c9eb2627af1d2dbf260a9a261",
+          "size_bytes": 396848,
+          "shape": [
+            10,
+            87,
+            114
+          ],
+          "dtype": "float32"
+        },
+        "pooled": {
+          "filename": "ocb_r2_cfg00_r03.pooled.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_cfg00_r03.pooled.npy",
+          "git_blob_sha": "91a654e2d219a83746af2a111aca034e901fc59f",
+          "sha256": "8b3be3b13780fada2ed3711e706e49b72461affd41dca40e16788587c38e488d",
+          "size_bytes": 2528,
+          "shape": [
+            10,
+            30
+          ],
+          "dtype": "float64"
+        }
+      },
+      "asset_hashes": {
+        "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+        "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+        "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+        "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+      }
+    },
+    {
+      "run_id": "ocb_r2_cfg00_r04",
+      "source_id": "House01_configured_1",
+      "source_xyz": [
+        -0.6,
+        1.95,
+        0.4
+      ],
+      "master_seed": 2026900004,
+      "split": "dev",
+      "times_s": [
+        50.2998047,
+        100.099045,
+        149.799942,
+        199.802994,
+        249.806046,
+        299.809082,
+        349.812134,
+        399.815186,
+        449.818237,
+        499.821289
+      ],
+      "wind_indices": [
+        8,
+        3,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "files": {
+        "cube": {
+          "filename": "ocb_r2_cfg00_r04.cube.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_cfg00_r04.cube.npy",
+          "git_blob_sha": "489e0df18bea984c55f3964ca6eeb67d2a777c72",
+          "sha256": "b24c47ac3b6453ed9d7b3c86421c5ff1052d1f8da3ffa90d17260cab63567f34",
+          "size_bytes": 396848,
+          "shape": [
+            10,
+            87,
+            114
+          ],
+          "dtype": "float32"
+        },
+        "pooled": {
+          "filename": "ocb_r2_cfg00_r04.pooled.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_cfg00_r04.pooled.npy",
+          "git_blob_sha": "f8104a1771713460e81ab08d43a8c928935f71b2",
+          "sha256": "9adc879de0cba86bfe218c69be72051a722b471ddc69d8ef659675e3b68915c5",
+          "size_bytes": 2528,
+          "shape": [
+            10,
+            30
+          ],
+          "dtype": "float64"
+        }
+      },
+      "asset_hashes": {
+        "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+        "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+        "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+        "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+      }
+    },
+    {
+      "run_id": "ocb_r2_s2x_x00_r01",
+      "source_id": "House01_configured_2",
+      "source_xyz": [
+        -0.4,
+        -2.9,
+        -0.3
+      ],
+      "master_seed": 2026910001,
+      "split": "train",
+      "times_s": [
+        50.2998047,
+        100.099045,
+        149.799942,
+        199.802994,
+        249.806046,
+        299.809082,
+        349.812134,
+        399.815186,
+        449.818237,
+        499.821289
+      ],
+      "wind_indices": [
+        8,
+        3,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "files": {
+        "cube": {
+          "filename": "ocb_r2_s2x_x00_r01.cube.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_s2x_x00_r01.cube.npy",
+          "git_blob_sha": "34a655968c8d3431a7c7d1be0b2ca0c51a07fb9f",
+          "sha256": "c6784316592f3a53a72f7a7fa5f5d30215287344a3aa0502fb35e4eb4a4ca1e9",
+          "size_bytes": 396848,
+          "shape": [
+            10,
+            87,
+            114
+          ],
+          "dtype": "float32"
+        },
+        "pooled": {
+          "filename": "ocb_r2_s2x_x00_r01.pooled.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_s2x_x00_r01.pooled.npy",
+          "git_blob_sha": "30bafb706fff29f475724b61ce35cdc4199c3154",
+          "sha256": "c0d836d387f8daedb57720b6e96ba619e7fd351101ab7261f59abcd5a411cf9a",
+          "size_bytes": 2528,
+          "shape": [
+            10,
+            30
+          ],
+          "dtype": "float64"
+        }
+      },
+      "asset_hashes": {
+        "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+        "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+        "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+        "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+      }
+    },
+    {
+      "run_id": "ocb_r2_s2x_x00_r02",
+      "source_id": "House01_configured_2",
+      "source_xyz": [
+        -0.4,
+        -2.9,
+        -0.3
+      ],
+      "master_seed": 2026910002,
+      "split": "train",
+      "times_s": [
+        50.2998047,
+        100.099045,
+        149.799942,
+        199.802994,
+        249.806046,
+        299.809082,
+        349.812134,
+        399.815186,
+        449.818237,
+        499.821289
+      ],
+      "wind_indices": [
+        8,
+        3,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "files": {
+        "cube": {
+          "filename": "ocb_r2_s2x_x00_r02.cube.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_s2x_x00_r02.cube.npy",
+          "git_blob_sha": "bcde89175af96334f0d71c67c87aba6829e41cfc",
+          "sha256": "330c097513b975a1f587d6ab9c1e2fedf56aabc59a4a6184f2663953b5e3f982",
+          "size_bytes": 396848,
+          "shape": [
+            10,
+            87,
+            114
+          ],
+          "dtype": "float32"
+        },
+        "pooled": {
+          "filename": "ocb_r2_s2x_x00_r02.pooled.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_s2x_x00_r02.pooled.npy",
+          "git_blob_sha": "02781160b655a00d6ad98c5306d4235a3d64d180",
+          "sha256": "0421eba8d7bad75a7bd12b9a75bce4903c2ddb61712892a77dfa76acb1da5db7",
+          "size_bytes": 2528,
+          "shape": [
+            10,
+            30
+          ],
+          "dtype": "float64"
+        }
+      },
+      "asset_hashes": {
+        "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+        "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+        "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+        "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+      }
+    },
+    {
+      "run_id": "ocb_r2_s2x_x00_r03",
+      "source_id": "House01_configured_2",
+      "source_xyz": [
+        -0.4,
+        -2.9,
+        -0.3
+      ],
+      "master_seed": 2026910003,
+      "split": "dev",
+      "times_s": [
+        50.2998047,
+        100.099045,
+        149.799942,
+        199.802994,
+        249.806046,
+        299.809082,
+        349.812134,
+        399.815186,
+        449.818237,
+        499.821289
+      ],
+      "wind_indices": [
+        8,
+        3,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "files": {
+        "cube": {
+          "filename": "ocb_r2_s2x_x00_r03.cube.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_s2x_x00_r03.cube.npy",
+          "git_blob_sha": "099def981d4eed5bdb0bcd108c193e1c06e465d8",
+          "sha256": "85dd297e2fcc8ae0d5734ef32f290b4f757954c34ed93cbb237792f311ca5a1b",
+          "size_bytes": 396848,
+          "shape": [
+            10,
+            87,
+            114
+          ],
+          "dtype": "float32"
+        },
+        "pooled": {
+          "filename": "ocb_r2_s2x_x00_r03.pooled.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_s2x_x00_r03.pooled.npy",
+          "git_blob_sha": "e8592e98f1e6814f3b8486f6059d11a8bc7ca2e3",
+          "sha256": "a148e0888a4ee380a83e5d797a6f9f3660c769bb071b11d56ed9df1ce738c8d7",
+          "size_bytes": 2528,
+          "shape": [
+            10,
+            30
+          ],
+          "dtype": "float64"
+        }
+      },
+      "asset_hashes": {
+        "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+        "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+        "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+        "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+      }
+    },
+    {
+      "run_id": "ocb_r2_s2x_x00_r04",
+      "source_id": "House01_configured_2",
+      "source_xyz": [
+        -0.4,
+        -2.9,
+        -0.3
+      ],
+      "master_seed": 2026910004,
+      "split": "dev",
+      "times_s": [
+        50.2998047,
+        100.099045,
+        149.799942,
+        199.802994,
+        249.806046,
+        299.809082,
+        349.812134,
+        399.815186,
+        449.818237,
+        499.821289
+      ],
+      "wind_indices": [
+        8,
+        3,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "files": {
+        "cube": {
+          "filename": "ocb_r2_s2x_x00_r04.cube.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_s2x_x00_r04.cube.npy",
+          "git_blob_sha": "ed6e610534fd78d43ed39ca1dc0bccbd3e380e1f",
+          "sha256": "d81f275ef46c81343cf3d41963ced510ffbd29435166f79c08c9720fefbf7d2d",
+          "size_bytes": 396848,
+          "shape": [
+            10,
+            87,
+            114
+          ],
+          "dtype": "float32"
+        },
+        "pooled": {
+          "filename": "ocb_r2_s2x_x00_r04.pooled.npy",
+          "remote_path": "evidence/ocb_r2/aod_r2_f0/targets/ocb_r2_s2x_x00_r04.pooled.npy",
+          "git_blob_sha": "767be1ce0abc43dfc93dfdd8967c30a180b3fbba",
+          "sha256": "8d63edb2e706e0477e14076628829639aac51285c0c58ec6fd4f275c10188a22",
+          "size_bytes": 2528,
+          "shape": [
+            10,
+            30
+          ],
+          "dtype": "float64"
+        }
+      },
+      "asset_hashes": {
+        "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+        "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+        "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+        "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+      }
+    }
+  ],
+  "upstream_provenance": {
+    "extraction_json": {
+      "path": "evidence/ocb_r2/aod_r2_f0/targets/AOD_R2_F0_TARGET_EXTRACTION.json",
+      "git_blob_sha": "ef9e23e97e77ab03629bf47aa71d5a60324e6877"
+    },
+    "time_mapping": {
+      "path": "evidence/ocb_r2/aod_r2_f0/AOD_R2_F0_TIME_MAPPING.tsv",
+      "git_blob_sha": "6b6fd1d08c891a18b9f5a87c7c403e75e316c785"
+    },
+    "probe_contract": {
+      "path": "research/marked_encounter_pmfs_d0/protocol/E1_HOUSE_PROBE_CONTRACTS.tsv",
+      "git_blob_sha": "322714b6b60944bc136384cb4d60017346789551"
+    }
+  }
+}

@@ -1,0 +1,672 @@
+{
+  "version": "v7",
+  "frozen_date": "2026-10-23",
+  "independent_auditor": "PMFS_B_fluid_C_redteam_G",
+  "report": "pmfs_physics_independent.md",
+  "assets": [
+    {
+      "asset_id": "ocb_r2_x00",
+      "available": true,
+      "status": "PASS_RETROSPECTIVE_SPATIAL_DEVELOPMENT_ONLY",
+      "capabilities": {
+        "synchronous_spatial": true,
+        "physical_clock": true,
+        "continuous_window": false,
+        "local_wind": false,
+        "alternative_sources": 2,
+        "independent_realizations": 8,
+        "native_active_closed_loop": false
+      },
+      "source_validity": "unknown_occupancy_bytes_unavailable",
+      "spatial_coordinate_status": "native_cell_center_formula_consistent_with_original_2x2_probe_contract; original C++ extractor not recovered",
+      "readout": "float32 native molar-ppm slice; original 2x2 pooling recomputed bit-exact as float64; no sensor filter",
+      "gas_type": 13,
+      "source_changes": [
+        "x",
+        "y",
+        "z"
+      ],
+      "permitted_claim": "two 3D release locations discriminated from synchronized z=0.2m spatial snapshots",
+      "forbidden_claims": [
+        "continuous dynamic boundary motion",
+        "high frequency temporal lag",
+        "pure XY source perturbation",
+        "full 3D inference",
+        "multi-source simultaneous release",
+        "full Level-2 closed loop",
+        "legal UAV trajectories",
+        "new blind confirmation"
+      ],
+      "split": {
+        "train": [
+          "ocb_r2_cfg00_r01",
+          "ocb_r2_cfg00_r02",
+          "ocb_r2_s2x_x00_r01",
+          "ocb_r2_s2x_x00_r02"
+        ],
+        "dev": [
+          "ocb_r2_cfg00_r03",
+          "ocb_r2_cfg00_r04",
+          "ocb_r2_s2x_x00_r03",
+          "ocb_r2_s2x_x00_r04"
+        ],
+        "unit": "whole independent realization; frames never randomly split"
+      },
+      "repository": "kris-yun/uav-gsl-isj",
+      "commit": "005ba6a34d95fdfe340050df96fe30a688fa71bf",
+      "raw_repo_path": "evidence/ocb_r2/aod_r2_f0/targets/{run}.{cube,pooled}.npy",
+      "runs": [
+        {
+          "run_id": "ocb_r2_cfg00_r01",
+          "master_seed": 2026900001,
+          "source_id": "House01_configured_1",
+          "source_xyz": [
+            -0.6,
+            1.95,
+            0.4
+          ],
+          "source_label_role": "offline discovery provenance only",
+          "cube_shape": [
+            10,
+            87,
+            114
+          ],
+          "cube_dtype": "float32",
+          "cube_sha256": "cce6ed0d4eccc708c28761b28a90dd66429ab105c6f0a47c13158753736fbe0e",
+          "pooled_shape": [
+            10,
+            30
+          ],
+          "pooled_dtype": "float64",
+          "pooled_sha256": "017bef078d7f364ad724810c31b89e15a61a0d45eb0ef0a64b35aa9c7cb2f209",
+          "pooling_bit_exact": true,
+          "actual_time_s": [
+            50.2998047,
+            100.099045,
+            149.799942,
+            199.802994,
+            249.806046,
+            299.809082,
+            349.812134,
+            399.815186,
+            449.818237,
+            499.821289
+          ],
+          "wind_index": [
+            8,
+            3,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10
+          ],
+          "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+          "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+          "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+          "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+        },
+        {
+          "run_id": "ocb_r2_cfg00_r02",
+          "master_seed": 2026900002,
+          "source_id": "House01_configured_1",
+          "source_xyz": [
+            -0.6,
+            1.95,
+            0.4
+          ],
+          "source_label_role": "offline discovery provenance only",
+          "cube_shape": [
+            10,
+            87,
+            114
+          ],
+          "cube_dtype": "float32",
+          "cube_sha256": "caa395a9adbf77341903dbd44fe8f45d1bbd003c382af2ade88357a4e35ab3f8",
+          "pooled_shape": [
+            10,
+            30
+          ],
+          "pooled_dtype": "float64",
+          "pooled_sha256": "cae79df014172795571c48906aa1ca17bcaed9afd1cbf9162b72992bf9492df7",
+          "pooling_bit_exact": true,
+          "actual_time_s": [
+            50.2998047,
+            100.099045,
+            149.799942,
+            199.802994,
+            249.806046,
+            299.809082,
+            349.812134,
+            399.815186,
+            449.818237,
+            499.821289
+          ],
+          "wind_index": [
+            8,
+            3,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10
+          ],
+          "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+          "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+          "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+          "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+        },
+        {
+          "run_id": "ocb_r2_s2x_x00_r01",
+          "master_seed": 2026910001,
+          "source_id": "House01_configured_2",
+          "source_xyz": [
+            -0.4,
+            -2.9,
+            -0.3
+          ],
+          "source_label_role": "offline discovery provenance only",
+          "cube_shape": [
+            10,
+            87,
+            114
+          ],
+          "cube_dtype": "float32",
+          "cube_sha256": "c6784316592f3a53a72f7a7fa5f5d30215287344a3aa0502fb35e4eb4a4ca1e9",
+          "pooled_shape": [
+            10,
+            30
+          ],
+          "pooled_dtype": "float64",
+          "pooled_sha256": "c0d836d387f8daedb57720b6e96ba619e7fd351101ab7261f59abcd5a411cf9a",
+          "pooling_bit_exact": true,
+          "actual_time_s": [
+            50.2998047,
+            100.099045,
+            149.799942,
+            199.802994,
+            249.806046,
+            299.809082,
+            349.812134,
+            399.815186,
+            449.818237,
+            499.821289
+          ],
+          "wind_index": [
+            8,
+            3,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10
+          ],
+          "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+          "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+          "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+          "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+        },
+        {
+          "run_id": "ocb_r2_s2x_x00_r02",
+          "master_seed": 2026910002,
+          "source_id": "House01_configured_2",
+          "source_xyz": [
+            -0.4,
+            -2.9,
+            -0.3
+          ],
+          "source_label_role": "offline discovery provenance only",
+          "cube_shape": [
+            10,
+            87,
+            114
+          ],
+          "cube_dtype": "float32",
+          "cube_sha256": "330c097513b975a1f587d6ab9c1e2fedf56aabc59a4a6184f2663953b5e3f982",
+          "pooled_shape": [
+            10,
+            30
+          ],
+          "pooled_dtype": "float64",
+          "pooled_sha256": "0421eba8d7bad75a7bd12b9a75bce4903c2ddb61712892a77dfa76acb1da5db7",
+          "pooling_bit_exact": true,
+          "actual_time_s": [
+            50.2998047,
+            100.099045,
+            149.799942,
+            199.802994,
+            249.806046,
+            299.809082,
+            349.812134,
+            399.815186,
+            449.818237,
+            499.821289
+          ],
+          "wind_index": [
+            8,
+            3,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10
+          ],
+          "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+          "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+          "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+          "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+        },
+        {
+          "run_id": "ocb_r2_cfg00_r03",
+          "master_seed": 2026900003,
+          "source_id": "House01_configured_1",
+          "source_xyz": [
+            -0.6,
+            1.95,
+            0.4
+          ],
+          "source_label_role": "offline discovery provenance only",
+          "cube_shape": [
+            10,
+            87,
+            114
+          ],
+          "cube_dtype": "float32",
+          "cube_sha256": "6613b5571c60c8110123c8e838f9ddee0581741c9eb2627af1d2dbf260a9a261",
+          "pooled_shape": [
+            10,
+            30
+          ],
+          "pooled_dtype": "float64",
+          "pooled_sha256": "8b3be3b13780fada2ed3711e706e49b72461affd41dca40e16788587c38e488d",
+          "pooling_bit_exact": true,
+          "actual_time_s": [
+            50.2998047,
+            100.099045,
+            149.799942,
+            199.802994,
+            249.806046,
+            299.809082,
+            349.812134,
+            399.815186,
+            449.818237,
+            499.821289
+          ],
+          "wind_index": [
+            8,
+            3,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10
+          ],
+          "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+          "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+          "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+          "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+        },
+        {
+          "run_id": "ocb_r2_cfg00_r04",
+          "master_seed": 2026900004,
+          "source_id": "House01_configured_1",
+          "source_xyz": [
+            -0.6,
+            1.95,
+            0.4
+          ],
+          "source_label_role": "offline discovery provenance only",
+          "cube_shape": [
+            10,
+            87,
+            114
+          ],
+          "cube_dtype": "float32",
+          "cube_sha256": "b24c47ac3b6453ed9d7b3c86421c5ff1052d1f8da3ffa90d17260cab63567f34",
+          "pooled_shape": [
+            10,
+            30
+          ],
+          "pooled_dtype": "float64",
+          "pooled_sha256": "9adc879de0cba86bfe218c69be72051a722b471ddc69d8ef659675e3b68915c5",
+          "pooling_bit_exact": true,
+          "actual_time_s": [
+            50.2998047,
+            100.099045,
+            149.799942,
+            199.802994,
+            249.806046,
+            299.809082,
+            349.812134,
+            399.815186,
+            449.818237,
+            499.821289
+          ],
+          "wind_index": [
+            8,
+            3,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10
+          ],
+          "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+          "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+          "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+          "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+        },
+        {
+          "run_id": "ocb_r2_s2x_x00_r03",
+          "master_seed": 2026910003,
+          "source_id": "House01_configured_2",
+          "source_xyz": [
+            -0.4,
+            -2.9,
+            -0.3
+          ],
+          "source_label_role": "offline discovery provenance only",
+          "cube_shape": [
+            10,
+            87,
+            114
+          ],
+          "cube_dtype": "float32",
+          "cube_sha256": "85dd297e2fcc8ae0d5734ef32f290b4f757954c34ed93cbb237792f311ca5a1b",
+          "pooled_shape": [
+            10,
+            30
+          ],
+          "pooled_dtype": "float64",
+          "pooled_sha256": "a148e0888a4ee380a83e5d797a6f9f3660c769bb071b11d56ed9df1ce738c8d7",
+          "pooling_bit_exact": true,
+          "actual_time_s": [
+            50.2998047,
+            100.099045,
+            149.799942,
+            199.802994,
+            249.806046,
+            299.809082,
+            349.812134,
+            399.815186,
+            449.818237,
+            499.821289
+          ],
+          "wind_index": [
+            8,
+            3,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10
+          ],
+          "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+          "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+          "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+          "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+        },
+        {
+          "run_id": "ocb_r2_s2x_x00_r04",
+          "master_seed": 2026910004,
+          "source_id": "House01_configured_2",
+          "source_xyz": [
+            -0.4,
+            -2.9,
+            -0.3
+          ],
+          "source_label_role": "offline discovery provenance only",
+          "cube_shape": [
+            10,
+            87,
+            114
+          ],
+          "cube_dtype": "float32",
+          "cube_sha256": "d81f275ef46c81343cf3d41963ced510ffbd29435166f79c08c9720fefbf7d2d",
+          "pooled_shape": [
+            10,
+            30
+          ],
+          "pooled_dtype": "float64",
+          "pooled_sha256": "8d63edb2e706e0477e14076628829639aac51285c0c58ec6fd4f275c10188a22",
+          "pooling_bit_exact": true,
+          "actual_time_s": [
+            50.2998047,
+            100.099045,
+            149.799942,
+            199.802994,
+            249.806046,
+            299.809082,
+            349.812134,
+            399.815186,
+            449.818237,
+            499.821289
+          ],
+          "wind_index": [
+            8,
+            3,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10,
+            10
+          ],
+          "occupancy_sha256": "846003ffbbc8e99aa322cf189356399412763710e937bb5e5316186afccf17cb",
+          "wind_bundle_sha256": "beab5f715fbff2912726517444d0807272cdcbf40322fdc74bba9aa84c9f5fb5",
+          "timeline_sha256": "ad08a481961387a3a83af94059fda23fa7e3b46fbb81234c6fe457ad5c532d23",
+          "generator_binary_sha256": "ec840fa1f87fca7b7d3af3014895a642562acaacb86e5950ddb07e732adc3688"
+        }
+      ],
+      "time_gap_s": [
+        49.70089699999998,
+        50.003052000000025
+      ],
+      "dynamic_scope_opened": false,
+      "raw_redistribution": "not included in final artifact; minimal manifest and scripts only"
+    },
+    {
+      "asset_id": "house02_18x16",
+      "available": true,
+      "status": "OFFLINE_FIT_AND_BENCHMARK_ONLY",
+      "capabilities": {
+        "synchronous_spatial": "same_pooled_record_only",
+        "physical_clock": false,
+        "continuous_window": false,
+        "local_wind": false,
+        "alternative_sources": 18,
+        "independent_realizations": "16 historical per source; native independence provenance not upgraded",
+        "native_active_closed_loop": false
+      },
+      "readout": "30 probes x 10 record indices; 2x2 native-cell mean at z=.2",
+      "restriction": "record_index is not physical time; original test response must never enter online candidate library"
+    },
+    {
+      "asset_id": "o24_six_worlds",
+      "available": true,
+      "status": "SCRIPTED_MECHANISM_SCREEN",
+      "capabilities": {
+        "synchronous_spatial": "original selected queries only",
+        "physical_clock": "original tick mapping",
+        "continuous_window": false,
+        "local_wind": "where originally recorded",
+        "alternative_sources": 6,
+        "independent_realizations": "no new independent seeds",
+        "native_active_closed_loop": false
+      },
+      "restriction": "240 queries contain only 48 unique frames per world; original scripted route is not arbitrary new closed-loop replay"
+    },
+    {
+      "asset_id": "cross_house_h07_h14",
+      "available": true,
+      "status": "H14_ELIGIBLE_H07_FAULT_ONLY",
+      "capabilities": {
+        "synchronous_spatial": "record dependent",
+        "physical_clock": true,
+        "continuous_window": "original logged interval only",
+        "local_wind": true,
+        "alternative_sources": "2 houses x fast/slow",
+        "independent_realizations": "4 tasks are not 4 independent seeds",
+        "native_active_closed_loop": false
+      },
+      "restriction": "H07 receptor domain invalid; use only fault detection. H14 two tasks can be reused without upgrading seed count"
+    },
+    {
+      "asset_id": "native_b4",
+      "available": true,
+      "status": "KNOWN_FAILURE_ATTRIBUTION",
+      "capabilities": {
+        "synchronous_spatial": false,
+        "physical_clock": true,
+        "continuous_window": "original stops only",
+        "local_wind": "observed/estimated along original trajectory",
+        "alternative_sources": 1,
+        "independent_realizations": 1,
+        "native_active_closed_loop": "historical actual PMFS episode"
+      },
+      "restriction": "one known failure; not training distribution; success is variance threshold not true localization"
+    },
+    {
+      "asset_id": "ch4_s2_t0_day_night",
+      "available": true,
+      "status": "SHORT_WINDOW_READOUT_SMOKE_ONLY",
+      "capabilities": {
+        "synchronous_spatial": true,
+        "physical_clock": true,
+        "continuous_window": true,
+        "local_wind": true,
+        "alternative_sources": 1,
+        "independent_realizations": "no independent seed variation",
+        "native_active_closed_loop": false
+      },
+      "duration_s": 20,
+      "tick_s": 0.1,
+      "readout": "full Gaussian + exact voxel LOS extension; ideal CH4 point and local wind",
+      "restriction": "one fixed elevated source; DAY/NIGHT are wind conditions not independent source worlds; numerical readout PASS does not confer meteorological/whole-search qualification"
+    }
+  ],
+  "native_generation_runtime": {
+    "official_commit": "4e141e162551e674f2f30ddb8859136c72139aac",
+    "source_files": {
+      "PMFS.cpp": {
+        "sha256": "f410731cc77fa714baac41da4fd05a53cbff87e577ab2c21ddad811739bd0392",
+        "lines": 198
+      },
+      "HitProbability.hpp": {
+        "sha256": "f3205bfe6f1d7c278e45acd19cbaca93b1aecefb82cc5fdd4f3912ae8f544332",
+        "lines": 52
+      },
+      "B4_Algorithm.cpp": {
+        "sha256": "7c05b6695e698c9561305d0b8e5e57d0b63e686f9ee08c1b246829d138419529",
+        "lines": 365
+      },
+      "B4_PMFSLib.cpp": {
+        "sha256": "e1cf87e4998e91ed48e59c529c792bfdff09dc96b867374dc43b9523de963483",
+        "lines": 448
+      },
+      "MovingStatePMFS.cpp": {
+        "sha256": "9951ba972cb3fa6b41b0f3b4f2797e775aa88180581b8972e502e6be87de09d9",
+        "lines": 422
+      },
+      "B4_Simulations.cpp": {
+        "sha256": "4aeb9091129164e16942a3cc558ae98cd5406c800e3a0f3731be363c6710db5f",
+        "lines": 524
+      },
+      "B4_PMFS.cpp": {
+        "sha256": "c66127dd5b7c2640e10d73239a0551b740399509ca2f299a8074313f6532332f",
+        "lines": 211
+      },
+      "Simulations.cpp": {
+        "sha256": "70a2ae2afe6224dd822c264e6093fa94f1ed5ef72bc28b96fc4d8e3f14e22148",
+        "lines": 517
+      },
+      "StopAndMeasureState.cpp": {
+        "sha256": "660a480c0f71d3691828a696a097f6e2d8147151e8b98c58ad54a0c05b1f30f7",
+        "lines": 101
+      },
+      "PMFS_utils.cpp": {
+        "sha256": "47dbdfa6ab119d8d063790de771aeca84008f45b6ea0d10d86483e8810be62d1",
+        "lines": 97
+      },
+      "PMFSLib.cpp": {
+        "sha256": "e1cf87e4998e91ed48e59c529c792bfdff09dc96b867374dc43b9523de963483",
+        "lines": 448
+      }
+    },
+    "commands": {
+      "g++": "/usr/bin/g++",
+      "cmake": null,
+      "roscore": null,
+      "ros2": null,
+      "clang": null,
+      "clinfo": null
+    },
+    "libraries": {
+      "gomp": "libgomp.so.1",
+      "z": "libz.so.1",
+      "fmt": null,
+      "yaml-cpp": null,
+      "bsc": null,
+      "OpenCL": "libOpenCL.so.1",
+      "gaden": null
+    },
+    "generation_performed": false,
+    "native_generation_ready": false
+  },
+  "required_supplement": [
+    "original House01 occupancy bytes and source/birth-support free-voxel check",
+    "original extractor source/coordinate and sensor-readout contract",
+    "existing discovery full-clock continuous window; no new propagation required initially",
+    "time-linked local wind vectors and invalid-domain mask",
+    "whole-realization split and original authorization scope"
+  ],
+  "public_data_candidates": [
+    {
+      "id": "TURB-Smoke",
+      "paper_url": "https://arxiv.org/html/2507.22749v1",
+      "portal": "http://smart-turb.roma2.infn.it",
+      "download_verified": false,
+      "use": "native continuous DNS source contrasts; exclude interpolated dt/10 from independent temporal evidence"
+    },
+    {
+      "id": "enose_PLIF_2026",
+      "paper_url": "https://arxiv.org/html/2604.19626v1",
+      "dataset_url": "https://hdl.handle.net/20.500.11850/782611",
+      "download_verified": false,
+      "use": "20Hz native PLIF and high-rate sensor dynamics; 1kHz PLIF is interpolation"
+    },
+    {
+      "id": "RED_VAPOR",
+      "paper_url": "https://www.nature.com/articles/s41597-026-06927-8",
+      "dataset_url": "https://zenodo.org/records/16414473",
+      "landing_verified": true,
+      "download_verified": false,
+      "use": "real synchronized multiheight gas/local-wind records; raster volume is sequential not simultaneous"
+    }
+  ],
+  "new_physics_generated": false,
+  "confirmation_or_H03_dynamic_targets_opened": false
+}

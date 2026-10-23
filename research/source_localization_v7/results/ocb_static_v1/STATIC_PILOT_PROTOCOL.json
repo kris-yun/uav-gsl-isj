@@ -1,0 +1,31 @@
+{
+  "schema": "v7-static-pilot-1",
+  "scientific_level": "retrospective synchronous spatial diagnostic",
+  "full_Level2": false,
+  "no_dynamic_claim": true,
+  "truth_uses": "training labels / evaluator only",
+  "train_worlds": [
+    "ocb_r2_cfg00_r01",
+    "ocb_r2_cfg00_r02",
+    "ocb_r2_s2x_x00_r01",
+    "ocb_r2_s2x_x00_r02"
+  ],
+  "dev_worlds": [
+    "ocb_r2_cfg00_r03",
+    "ocb_r2_cfg00_r04",
+    "ocb_r2_s2x_x00_r03",
+    "ocb_r2_s2x_x00_r04"
+  ],
+  "units_of_independence": "whole plume realization, NOT ten snapshot frames",
+  "action_selection": "one source-pair contrast maximum on TRAIN ONLY over 435 original probe pairs; freeze before dev scoring",
+  "fixed_test": "all ten original snapshots, one identical frozen paired probe for every scoring method",
+  "geometry": "two original 3D release locations differ in z as well as xy; source occupancy HOLD",
+  "baselines": [
+    "mean_only_gaussian",
+    "raw_joint_gaussian",
+    "even_odd_gaussian_equivalent",
+    "opponent_joint_histogram"
+  ],
+  "tuning": "none after dev scoring; histogram alpha=.5; Gaussian ridge .03 times trace/dimension",
+  "claim_limit": "open discovery only; does not establish paper novelty or >10% improvement"
+}

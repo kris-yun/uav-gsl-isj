@@ -1,0 +1,133 @@
+{
+  "configuration": {
+    "schema": "gsl-v7-control-matrix-1",
+    "purpose": "L1 implementation and whole-matrix ablation only",
+    "budget_s": 300.0,
+    "max_steps": 100,
+    "calibration_blocks": 32,
+    "wrong_priors": [
+      false,
+      true
+    ],
+    "worlds": [
+      {
+        "source": 0,
+        "mechanism": 0,
+        "seed": 8800
+      },
+      {
+        "source": 1,
+        "mechanism": 1,
+        "seed": 8801
+      },
+      {
+        "source": 2,
+        "mechanism": 2,
+        "seed": 8802
+      },
+      {
+        "source": 3,
+        "mechanism": 0,
+        "seed": 8803
+      },
+      {
+        "source": 4,
+        "mechanism": 1,
+        "seed": 8804
+      },
+      {
+        "source": 5,
+        "mechanism": 2,
+        "seed": 8805
+      }
+    ],
+    "variants": [
+      {
+        "name": "A_adapted_variance",
+        "m1": "even",
+        "planner": "variance_adapted",
+        "m2": "none"
+      },
+      {
+        "name": "Aprime_joint_eig",
+        "m1": "raw_joint",
+        "planner": "joint_eig",
+        "m2": "none"
+      },
+      {
+        "name": "M1_direct_best_one",
+        "m1": "mother",
+        "planner": "full",
+        "m2": "full"
+      },
+      {
+        "name": "M1_fixed_two",
+        "m1": "fixed_two",
+        "planner": "full",
+        "m2": "full"
+      },
+      {
+        "name": "M1_raw_joint_strong",
+        "m1": "raw_joint",
+        "planner": "full",
+        "m2": "full"
+      },
+      {
+        "name": "M2_off",
+        "m1": "secondary",
+        "planner": "full",
+        "m2": "none"
+      },
+      {
+        "name": "M2_geometry_no_memory",
+        "m1": "secondary",
+        "planner": "full",
+        "m2": "geometry"
+      },
+      {
+        "name": "M2_boundary_only",
+        "m1": "secondary",
+        "planner": "full",
+        "m2": "boundary"
+      },
+      {
+        "name": "M3_joint_eig",
+        "m1": "secondary",
+        "planner": "joint_eig",
+        "m2": "full"
+      },
+      {
+        "name": "M3_direct_cost",
+        "m1": "secondary",
+        "planner": "mother",
+        "m2": "full"
+      },
+      {
+        "name": "M3_no_coverage",
+        "m1": "secondary",
+        "planner": "no_coverage",
+        "m2": "full"
+      },
+      {
+        "name": "M3_no_audit_feedback",
+        "m1": "secondary",
+        "planner": "no_audit",
+        "m2": "full"
+      },
+      {
+        "name": "full",
+        "m1": "secondary",
+        "planner": "full",
+        "m2": "full"
+      }
+    ]
+  },
+  "configuration_sha256": "25d5d047a238c3c846179c3098e2f848ce5fd0d8df28b67cba37082d5053d303",
+  "level": 1,
+  "scientific_gain_claim": false,
+  "world_unit": "analytical seed/source/mechanism tuple",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+  "frozen_before_runs": true,
+  "no_optional_tuning_after_outcomes": true
+}

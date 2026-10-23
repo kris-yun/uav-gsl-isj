@@ -1,0 +1,73 @@
+{
+  "bank": {
+    "specs": [
+      {
+        "name": "static_gradient",
+        "lag_s": 0.0,
+        "decay_s": 0.25,
+        "inhibition": 0.0,
+        "bias": 0.0,
+        "kind": "gradient"
+      }
+    ],
+    "concentration_scale": 1.0,
+    "background": 0.0
+  },
+  "selection": [
+    []
+  ],
+  "even_thresholds": [
+    0.6018840428010652
+  ],
+  "odd_thresholds": [
+    [
+      0.37200158349005036
+    ]
+  ],
+  "times": [
+    50.2998047
+  ],
+  "contract": {
+    "continuous": false,
+    "synchronous": true,
+    "clock_error_s": 0.0,
+    "maximum_step_s": 0.25,
+    "sensor_delay_difference_s": 0.0,
+    "bandwidth_calibrated": false,
+    "paired_positions_known": true,
+    "provenance": "native OCB same-frame 2x2 pooled pair; no temporal window"
+  },
+  "receipt": {
+    "operator": "source-pair-cover mirrored bank",
+    "variant": "secondary",
+    "actions": [
+      {
+        "action": "fixed_pair",
+        "selected": [],
+        "source_pairs": [
+          [
+            0,
+            1
+          ]
+        ],
+        "robust_training_js": [
+          0.07442805552914186
+        ],
+        "search": [
+          {
+            "filter": "static_gradient",
+            "training_objective": 0.04,
+            "gain": 0.0
+          }
+        ],
+        "unseparated_pairs": [],
+        "certificate": "TRAINING_DIAGNOSTIC_ONLY_NOT_A_POPULATION_GUARANTEE"
+      }
+    ],
+    "training_blocks_per_source_mechanism": 20,
+    "counts_are_not_independent_frames_by_default": true,
+    "static_mode": true,
+    "strictly_temporal_claim": false,
+    "known_statistics": "JS distance, histogram likelihood and Bayes normalization are not claimed new"
+  }
+}

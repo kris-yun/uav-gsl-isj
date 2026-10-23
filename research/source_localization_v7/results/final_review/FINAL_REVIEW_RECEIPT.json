@@ -1,0 +1,81 @@
+{
+  "status": "PASS_CONDITIONAL_RESEARCH_DELIVERY",
+  "review_date": "2026-10-23",
+  "reviewer": "radar_information_theory_agent",
+  "source_files_modified_by_reviewer": false,
+  "theory_status": "core conditional statements match implementation; zero-gradient degeneracy corrected",
+  "F01_fixed_episode_identity": {
+    "status": "PASS_REPRODUCTION",
+    "evidence": {
+      "baseline": {
+        "accepted": true,
+        "status": "FIXED_TRAJECTORY_REPLAY_COMPLETE"
+      },
+      "changed_nuisance": {
+        "accepted": false,
+        "exception": "QualificationError",
+        "message": "shared nuisance changed within episode; split episodes or supply a different conditional model"
+      },
+      "changed_realization": {
+        "accepted": false,
+        "exception": "QualificationError",
+        "message": "physical realization changed within episode"
+      }
+    }
+  },
+  "F02_units_and_sensor_order": {
+    "status": "PASS_REPRODUCTION",
+    "evidence": {
+      "changed_units": {
+        "accepted": false,
+        "exception": "QualificationError",
+        "message": "observation units or ordered sensor identity differs from training"
+      },
+      "changed_sensor_order": {
+        "accepted": false,
+        "exception": "QualificationError",
+        "message": "observation units or ordered sensor identity differs from training"
+      }
+    }
+  },
+  "F03_frozen_geometry_covariance": {
+    "status": "PASS_CODE_REVIEW",
+    "actual_branch": "joint_covariance from frozen formation_predictions.npz; only explicit CONTROLLED_LEVEL1 fallback uses declared construction; native missing covariance rejects",
+    "provenance_output": "covariance_source in per-step bridge row"
+  },
+  "transport_partial_jsonl_deadline": {
+    "type": "TimeoutError",
+    "elapsed_s": 0.05163514400192071,
+    "error": "backend did not complete a JSONL response before the deadline"
+  },
+  "evidence_level": "constructed input-contract checks and code review only",
+  "reviewed_sha256": {
+    "docs/THREE_INNOVATIONS_AND_THEORY.md": "a9c193eec503593296fb6bbac0ea87e7531a051616f6cb150f33b71c80355392",
+    "src/gsl_discrimination/evaluation/block_pipeline.py": "132db126605d113c7d6044fe20c6a2474559a4a81e0040c0411fff7af117e35a",
+    "src/gsl_discrimination/navigation/bridge.py": "773526defe92e20fca66731a4f35beddc4e61ee30a9ea73116241d75e9259ce0",
+    "src/gsl_discrimination/m2_boundary/calibration.py": "cd5f5a53818d2631b77eaa3c144b38fa4f08a1c1ae5e112b4f19ca0720569a21",
+    "src/gsl_discrimination/m1_opponent/raw_joint.py": "0579e67015380958c588e95c387c081cc47ae8f924701590c5282f96ffc5418a",
+    "src/gsl_discrimination/evaluation/maps.py": "0c2f9d5205e4dab83502ed01684c24915e33e4c992b3fab4c5195a344819609c",
+    "src/gsl_discrimination/m3_audit/planner.py": "44de7415fa13e6f9c1d42be523b73e663890d8e14e49687ab0d6a1070fd1153a",
+    "src/gsl_discrimination/m3_audit/ledger.py": "acceb6d3462037555900de5e73a558c0f983625be43c097322949b0f6f6d1b1f"
+  },
+  "remaining_scientific_limits": [
+    "no independent M1/M2/M3 gain established above saturated strong L1 baselines",
+    "bridge demonstration is CONTROLLED_LEVEL1, not native flight",
+    "dwell-only probability and travel geometry side-channel",
+    "uniform motion phase absorbs source translation",
+    "native continuous data, sensor response, occupancy legality and true conditional-family coverage not certified"
+  ],
+  "pre_fix_receipt": "PRE_FIX_BOUNDARY_CHECKS.json",
+  "packaging_requirement": "rebuild distribution from final src; do not ship stale build/lib",
+  "targeted_pytest": {
+    "command": "PYTHONPATH=/tmp/gsl_v5_test_deps:src python -m pytest -q tests/test_pipeline_integration.py -k \"ppb_block or fixed_episode_cannot_mix\"",
+    "exit_code": 0,
+    "result": "2 passed, 13 deselected in 0.67s"
+  },
+  "final_document_sha256": {
+    "EXPERT_MEETING_AND_DECISION.md": "0091cc74a6096d071699ebf5faf1e6bfe3ad49b99872a26b29c5d6d84d48caeb",
+    "SCIENTIFIC_PROBLEM_AND_FAILURE_MECHANISMS.md": "bc521da6bed0b5c56d46ba9ab3b77918c9f477245274020fda3744d58cd30042",
+    "FINAL_THEORY_IMPLEMENTATION_REVIEW.md": "f3483b66e3705ce35df73575c7d4c5235dabd3312e8a317f946c0dbe2228e17a"
+  }
+}

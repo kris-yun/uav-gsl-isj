@@ -1,0 +1,247 @@
+{
+  "status": "PASS_RETROSPECTIVE_SYNC_SPATIAL_ONLY",
+  "worlds": 8,
+  "sources": 2,
+  "independent_master_seeds": 8,
+  "raw_bytes": 3195008,
+  "train_worlds": [
+    "ocb_r2_cfg00_r01",
+    "ocb_r2_cfg00_r02",
+    "ocb_r2_s2x_x00_r01",
+    "ocb_r2_s2x_x00_r02"
+  ],
+  "dev_worlds": [
+    "ocb_r2_cfg00_r03",
+    "ocb_r2_cfg00_r04",
+    "ocb_r2_s2x_x00_r03",
+    "ocb_r2_s2x_x00_r04"
+  ],
+  "native_times_s": [
+    50.2998047,
+    100.099045,
+    149.799942,
+    199.802994,
+    249.806046,
+    299.809082,
+    349.812134,
+    399.815186,
+    449.818237,
+    499.821289
+  ],
+  "snapshot_gap_s": [
+    49.70089699999998,
+    50.003052000000025
+  ],
+  "pooling_bit_exact": true,
+  "qualification": {
+    "synchronous_spatial": true,
+    "physical_clock": true,
+    "continuous_window": false,
+    "local_wind": false,
+    "independent_realizations": true,
+    "alternative_sources": true,
+    "source_occupancy_validated": false,
+    "native_active_closed_loop": false,
+    "sensor_response_calibrated": false,
+    "native_samples_only": true,
+    "scope": "previously_open_OCB_R2_X00_spatial_discovery",
+    "limitations": [
+      "native snapshots about 50 seconds apart; no continuous window",
+      "local wind vector bytes missing; wind index is not local wind",
+      "original House01 occupancy bytes and source/birth voxel validation absent",
+      "two releases differ in x,y,z; not a pure XY source intervention",
+      "native-cell centre formula consistent with probe contract; original extractor C++ internals not recovered",
+      "same native 3D physics sliced at z=0.2m; no UAV/rotor/sensor dynamics",
+      "all worlds were historically open discovery, not new confirmation"
+    ]
+  },
+  "source_z_difference_m": 0.7,
+  "source_occupancy_verdict": "HOLD_original_House01_occupancy_bytes_missing",
+  "new_worlds_generated": 0,
+  "new_propagation_steps": 0,
+  "confirmation_or_H03_targets_read": false,
+  "fixed_replay_pilot": {
+    "scope": "data path only; no policy, no prediction, no source inference",
+    "selection": "original source-blind probe ranks 1 and 2; all ten native frames",
+    "worlds": [
+      {
+        "run_id": "ocb_r2_cfg00_r01",
+        "master_seed": 2026900001,
+        "split": "train",
+        "frames": 10,
+        "probe_ranks": [
+          "1",
+          "2"
+        ],
+        "observations": 20,
+        "same_frame_sync": true,
+        "block_sha256": "7e3d1b02253ac1d981234a01a6d7e006cafa71595fd9221221f7178011468b81",
+        "ppm_min": 0.0,
+        "ppm_max": 0.06235882546752691,
+        "csv_npz_bit_exact": true,
+        "unqualified_operations_refused": [
+          "continuous_dynamic",
+          "local_wind",
+          "temporal_interpolation",
+          "source_occupancy"
+        ]
+      },
+      {
+        "run_id": "ocb_r2_cfg00_r02",
+        "master_seed": 2026900002,
+        "split": "train",
+        "frames": 10,
+        "probe_ranks": [
+          "1",
+          "2"
+        ],
+        "observations": 20,
+        "same_frame_sync": true,
+        "block_sha256": "9b54b246ef05b8d2c0ff978c7f53ec001d31e7aaf1dcc2b73432e8371df45c7a",
+        "ppm_min": 0.0,
+        "ppm_max": 0.002885162248276174,
+        "csv_npz_bit_exact": true,
+        "unqualified_operations_refused": [
+          "continuous_dynamic",
+          "local_wind",
+          "temporal_interpolation",
+          "source_occupancy"
+        ]
+      },
+      {
+        "run_id": "ocb_r2_cfg00_r03",
+        "master_seed": 2026900003,
+        "split": "dev",
+        "frames": 10,
+        "probe_ranks": [
+          "1",
+          "2"
+        ],
+        "observations": 20,
+        "same_frame_sync": true,
+        "block_sha256": "264ca6ff66a5001683681be2b9001be68de4db63dfb3a00c0b355742db0a9585",
+        "ppm_min": 0.0,
+        "ppm_max": 1.7083883881568909,
+        "csv_npz_bit_exact": true,
+        "unqualified_operations_refused": [
+          "continuous_dynamic",
+          "local_wind",
+          "temporal_interpolation",
+          "source_occupancy"
+        ]
+      },
+      {
+        "run_id": "ocb_r2_cfg00_r04",
+        "master_seed": 2026900004,
+        "split": "dev",
+        "frames": 10,
+        "probe_ranks": [
+          "1",
+          "2"
+        ],
+        "observations": 20,
+        "same_frame_sync": true,
+        "block_sha256": "8fedaa7b25d3b9dc3a0f7d239718c1c373f9cc640e54c97bda1925e4731065f4",
+        "ppm_min": 0.0,
+        "ppm_max": 0.30886147916316986,
+        "csv_npz_bit_exact": true,
+        "unqualified_operations_refused": [
+          "continuous_dynamic",
+          "local_wind",
+          "temporal_interpolation",
+          "source_occupancy"
+        ]
+      },
+      {
+        "run_id": "ocb_r2_s2x_x00_r01",
+        "master_seed": 2026910001,
+        "split": "train",
+        "frames": 10,
+        "probe_ranks": [
+          "1",
+          "2"
+        ],
+        "observations": 20,
+        "same_frame_sync": true,
+        "block_sha256": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4",
+        "ppm_min": 0.0,
+        "ppm_max": 0.0,
+        "csv_npz_bit_exact": true,
+        "unqualified_operations_refused": [
+          "continuous_dynamic",
+          "local_wind",
+          "temporal_interpolation",
+          "source_occupancy"
+        ]
+      },
+      {
+        "run_id": "ocb_r2_s2x_x00_r02",
+        "master_seed": 2026910002,
+        "split": "train",
+        "frames": 10,
+        "probe_ranks": [
+          "1",
+          "2"
+        ],
+        "observations": 20,
+        "same_frame_sync": true,
+        "block_sha256": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4",
+        "ppm_min": 0.0,
+        "ppm_max": 0.0,
+        "csv_npz_bit_exact": true,
+        "unqualified_operations_refused": [
+          "continuous_dynamic",
+          "local_wind",
+          "temporal_interpolation",
+          "source_occupancy"
+        ]
+      },
+      {
+        "run_id": "ocb_r2_s2x_x00_r03",
+        "master_seed": 2026910003,
+        "split": "dev",
+        "frames": 10,
+        "probe_ranks": [
+          "1",
+          "2"
+        ],
+        "observations": 20,
+        "same_frame_sync": true,
+        "block_sha256": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4",
+        "ppm_min": 0.0,
+        "ppm_max": 0.0,
+        "csv_npz_bit_exact": true,
+        "unqualified_operations_refused": [
+          "continuous_dynamic",
+          "local_wind",
+          "temporal_interpolation",
+          "source_occupancy"
+        ]
+      },
+      {
+        "run_id": "ocb_r2_s2x_x00_r04",
+        "master_seed": 2026910004,
+        "split": "dev",
+        "frames": 10,
+        "probe_ranks": [
+          "1",
+          "2"
+        ],
+        "observations": 20,
+        "same_frame_sync": true,
+        "block_sha256": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4",
+        "ppm_min": 0.0,
+        "ppm_max": 0.0,
+        "csv_npz_bit_exact": true,
+        "unqualified_operations_refused": [
+          "continuous_dynamic",
+          "local_wind",
+          "temporal_interpolation",
+          "source_occupancy"
+        ]
+      }
+    ],
+    "total_scalar_readouts": 160,
+    "no_new_physics": true
+  }
+}
