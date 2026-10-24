@@ -1,0 +1,285 @@
+{
+  "status": "PASS_EXACT_REPLAY_THEN16_ARMS",
+  "mechanism_runs": 16,
+  "native_replay_runs": 2,
+  "new_ROS_goals": 0,
+  "new_GADEN_worlds": 0,
+  "training": 0,
+  "cost": [
+    {
+      "stage": "compile",
+      "argv": [
+        "g++",
+        "-std=gnu++17",
+        "-O3",
+        "-DNDEBUG",
+        "-include",
+        "bits/stdc++.h",
+        "-I/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/compatibility_headers",
+        "-I/mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/src",
+        "-I/mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/third_party/DDA/include",
+        "-I/mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/third_party/xxHash/include",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_function_runner.cpp",
+        "/mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/src/gsl_server/algorithms/Common/Utils/NQAQuadtree.cpp",
+        "-o",
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner"
+      ],
+      "exit_code": 0,
+      "wall_s": 13.020062878000317,
+      "cpu_s": 11.850672
+    },
+    {
+      "stage": "replay_589",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "replay",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/replay_call_589.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/replay_589",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07321448699804023,
+      "cpu_s": 0.030645000000001144
+    },
+    {
+      "stage": "replay_660",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "replay",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/replay_call_660.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/replay_660",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07163394600502215,
+      "cpu_s": 0.032673999999999204
+    },
+    {
+      "stage": "run_A_0",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_A_0.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/A_0",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07218083100451622,
+      "cpu_s": 0.03275099999999975
+    },
+    {
+      "stage": "run_A_1",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_A_1.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/A_1",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07178468799975235,
+      "cpu_s": 0.02826900000000121
+    },
+    {
+      "stage": "run_A_2",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_A_2.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/A_2",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.0718435310118366,
+      "cpu_s": 0.031058999999999948
+    },
+    {
+      "stage": "run_A_3",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_A_3.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/A_3",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07218236899643671,
+      "cpu_s": 0.028777999999999082
+    },
+    {
+      "stage": "run_B_0",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_B_0.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/B_0",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07186466199345887,
+      "cpu_s": 0.029363000000000916
+    },
+    {
+      "stage": "run_B_1",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_B_1.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/B_1",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07163642800878733,
+      "cpu_s": 0.030397999999999925
+    },
+    {
+      "stage": "run_B_2",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_B_2.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/B_2",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07454875299299601,
+      "cpu_s": 0.02906799999999965
+    },
+    {
+      "stage": "run_B_3",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_B_3.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/B_3",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07376848701096606,
+      "cpu_s": 0.030747000000000746
+    },
+    {
+      "stage": "run_C_0",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_C_0.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/C_0",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07254246999218594,
+      "cpu_s": 0.03121899999999833
+    },
+    {
+      "stage": "run_C_1",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_C_1.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/C_1",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07375882100313902,
+      "cpu_s": 0.03202500000000086
+    },
+    {
+      "stage": "run_C_2",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_C_2.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/C_2",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07397373099229299,
+      "cpu_s": 0.030281000000000446
+    },
+    {
+      "stage": "run_C_3",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_C_3.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/C_3",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07128902700787876,
+      "cpu_s": 0.029398000000000923
+    },
+    {
+      "stage": "run_D_0",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_D_0.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/D_0",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07356776100641582,
+      "cpu_s": 0.033811000000000924
+    },
+    {
+      "stage": "run_D_1",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_D_1.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/D_1",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07052672500140034,
+      "cpu_s": 0.02878000000000025
+    },
+    {
+      "stage": "run_D_2",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_D_2.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/D_2",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07144808699376881,
+      "cpu_s": 0.030132999999999743
+    },
+    {
+      "stage": "run_D_3",
+      "argv": [
+        "/home/zyc/ros2_ws/research_runs/v11_function_trial_20261024/native_function_runner",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/scene.json",
+        "arm",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/spec_D_3.json",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/results/D_3",
+        "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_rng_states.jsonl.cache.thread1.f32"
+      ],
+      "exit_code": 0,
+      "wall_s": 0.07029412500560284,
+      "cpu_s": 0.031163000000001162
+    }
+  ],
+  "total_wall_s": 14.662955357998726
+}

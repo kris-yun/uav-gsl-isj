@@ -1,0 +1,29 @@
+In file included from /mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/src/gsl_server/algorithms/PMFS/internal/Simulations.hpp:5,
+                 from /mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_function_runner.cpp:5:
+/mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/src/gsl_server/algorithms/PMFS/internal/VisibilityMap.hpp: In member function ‘void GSL::VisibilityMap::emplace(const Vector2Int&, const std::vector<DDA::Vector2Int>&)’:
+/mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/src/gsl_server/algorithms/PMFS/internal/VisibilityMap.hpp:79:46: warning: narrowing conversion of ‘(& value)->std::vector<DDA::Vector2Int>::size()’ from ‘std::vector<DDA::Vector2Int>::size_type’ {aka ‘long unsigned int’} to ‘int’ [-Wnarrowing]
+   79 |             m_map[indexOf(key)] = {value.size(), value.size()};
+      |                                    ~~~~~~~~~~^~
+/mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/src/gsl_server/algorithms/PMFS/internal/VisibilityMap.hpp:79:60: warning: narrowing conversion of ‘(& value)->std::vector<DDA::Vector2Int>::size()’ from ‘std::vector<DDA::Vector2Int>::size_type’ {aka ‘long unsigned int’} to ‘int’ [-Wnarrowing]
+   79 |             m_map[indexOf(key)] = {value.size(), value.size()};
+      |                                                  ~~~~~~~~~~^~
+In file included from /mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/src/gsl_server/algorithms/PMFS/internal/HitProbability.hpp:3,
+                 from /mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/src/gsl_server/algorithms/PMFS/internal/Simulations.hpp:3,
+                 from /mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_function_runner.cpp:5:
+/mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/src/gsl_server/algorithms/Common/Grid2D.hpp: In instantiation of ‘T& GSL::Grid2D<T>::dataAt(size_t, size_t) const [with T = DDA::Vector2; size_t = long unsigned int]’:
+/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_function_runner.cpp:67:39:   required from here
+/mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/src/gsl_server/algorithms/Common/Grid2D.hpp:74:43: warning: narrowing conversion of ‘i’ from ‘size_t’ {aka ‘long unsigned int’} to ‘int’ [-Wnarrowing]
+   74 |             return data[metadata.indexOf({i, j})];
+      |                                           ^
+/mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/src/gsl_server/algorithms/Common/Grid2D.hpp:74:46: warning: narrowing conversion of ‘j’ from ‘size_t’ {aka ‘long unsigned int’} to ‘int’ [-Wnarrowing]
+   74 |             return data[metadata.indexOf({i, j})];
+      |                                              ^
+/mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/src/gsl_server/algorithms/Common/Grid2D.hpp: In instantiation of ‘GSL::Occupancy& GSL::Grid2D<T>::occupancyAt(size_t, size_t) const [with T = GSL::PMFS_internal::HitProbability; size_t = long unsigned int]’:
+/mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/src/gsl_server/algorithms/Common/Grid2D.hpp:84:20:   required from ‘bool GSL::Grid2D<T>::freeAt(size_t, size_t) const [with T = GSL::PMFS_internal::HitProbability; size_t = long unsigned int]’
+/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/V11_REVIEW_20261024/function_trial/native_function_runner.cpp:190:36:   required from here
+/mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/src/gsl_server/algorithms/Common/Grid2D.hpp:79:48: warning: narrowing conversion of ‘i’ from ‘size_t’ {aka ‘long unsigned int’} to ‘int’ [-Wnarrowing]
+   79 |             return occupancy[metadata.indexOf({i, j})];
+      |                                                ^
+/mnt/hgfs/workspace/FROZEN_O24_1M2_SCREEN12_20261024/source_snapshot/src/gsl_server/algorithms/Common/Grid2D.hpp:79:51: warning: narrowing conversion of ‘j’ from ‘size_t’ {aka ‘long unsigned int’} to ‘int’ [-Wnarrowing]
+   79 |             return occupancy[metadata.indexOf({i, j})];
+      |                                                   ^

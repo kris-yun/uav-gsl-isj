@@ -1,0 +1,65 @@
+{
+  "identity": "V11_E3_FUNCTION4ARMS_16_V1",
+  "status": "PREREGISTERED_BEFORE_NEW_FORWARD_OUTPUT",
+  "arms": {
+    "A": "native per-filament uniform source over the frozen5x4region",
+    "B": "one precommitted uniformly sampled region point per full scenario",
+    "C": "fixed exact true point, offline mechanism diagnostic only",
+    "D": "fixed previously locked wrong MAP point"
+  },
+  "replicate_uniform_seeds": [
+    11001,
+    11002,
+    11003,
+    11004
+  ],
+  "B_fixed_points": [
+    [
+      -2.9600512794332414,
+      -2.459386965862397
+    ],
+    [
+      -3.3758627936197865,
+      -1.5014205928990638
+    ],
+    [
+      -3.077814404875498,
+      -1.7205836643652446
+    ],
+    [
+      -3.8357907542310623,
+      -2.4207352018547823
+    ]
+  ],
+  "C_fixed_point": [
+    -4.0,
+    -1.9
+  ],
+  "D_fixed_point": [
+    -2.375,
+    -4.875
+  ],
+  "full_mechanism_simulations": 16,
+  "mandatory_original_replay_calls": [
+    589,
+    660
+  ],
+  "event": "native at-least-one-puff-center-in-cell-per-record-step",
+  "record_steps": 200,
+  "max_warmup": 500,
+  "noiseSTDev": 0.5,
+  "deltaTime": 0.1,
+  "full_truth_wind": false,
+  "neural_training": 0,
+  "ROS_goals": 0,
+  "new_GADEN_worlds": 0,
+  "per_process_wall_cap_s": 120,
+  "full_stage_wall_cap_s": 300,
+  "new_output_cap_bytes": 16777216,
+  "RNG_scope": "Four predetermined distinct uniform initial states and the original default-normal2500entry native cache. No claim of fully independent Gaussian trajectories. Same cache initialization semantics; record all state endpoints.",
+  "normal_stop_m2": 1.0,
+  "scientific_scope": "Fixed-history transport diagnostics, not a new posterior map/closedloop/localization gain",
+  "input_SHA256": {
+    "scene.json": "580e6577c2534393071a3b4232cecb6409320c1e22e27dfd124d9070f78c68aa"
+  }
+}
