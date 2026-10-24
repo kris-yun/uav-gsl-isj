@@ -1,0 +1,89 @@
+gsl_server/src/gsl_server/algorithms/Common/Grid2D.hpp L91-L125
+91:         GridUtils() = delete;
+92: 
+93:         //reduce the resolution of an occupancy grid, considering that a cell in the smaller map is occupied as soon as a single smaller cell in it is
+94:         static void reduceOccupancyMap(const std::vector<int8_t>& map, size_t mapWidth, std::vector<Occupancy>& occupancy,
+95:                                        const Grid2DMetadata& metadata)
+96:         {
+97:             int scale = metadata.scale; // scale for dynamic map reduction
+98:             for (int j = 0; j < metadata.dimensions.y; j++)
+99:             {
+100:                 for (int i = 0; i < metadata.dimensions.x; i++)
+101:                 {
+102:                     bool squareIsFree = true;
+103: 
+104:                     for (int row = j * scale; row < (j + 1) * scale; row++)
+105:                     {
+106:                         for (int col = i * scale; col < (i + 1) * scale; col++)
+107:                         {
+108:                             if (map[col + row * mapWidth] != 0)
+109:                                 squareIsFree = false;
+110:                         }
+111:                     }
+112:                     if (squareIsFree)
+113:                         occupancy[metadata.indexOf({i, j})] = Occupancy::Free;
+114:                     occupancy[metadata.indexOf({i, j})] = squareIsFree ? Occupancy::Free : Occupancy::Obstacle;
+115:                 }
+116:             }
+117:         }
+118:     };
+119: 
+120: } // namespace GSL
+
+gsl_server/src/gsl_server/algorithms/PMFS/PMFSLib.cpp L195-L242
+195:     void PMFSLib::initializeMap(Algorithm& algorithm, Grid2D<HitProbability> grid, PMFS_internal::Simulations& simulations,
+196:                                 VisibilityMap& visibilityMap)
+197:     {
+198:         // create the PMFS cells
+199:         {
+200:             GridUtils::reduceOccupancyMap(algorithm.map.data, algorithm.map.info.width, grid.occupancy, grid.metadata);
+201:             for (HitProbability& hp : grid.data)
+202:                 hp.auxWeight = -1;
+203:             GSL_TRACE("Created grid");
+204:         }
+205: 
+206:         std::vector<std::vector<uint8_t>> occupancyMap(grid.metadata.dimensions.x, std::vector<uint8_t>(grid.metadata.dimensions.y));
+207:         // prune unreachable free cells
+208:         {
+209:             // get an arbitrary seed value into the cell the robot is currently in and propagagate it. If a cell has not received that value by the
+210:             // end, it must not be reachable
+211:             {
+212:                 HashSet openPropagationSet;
+213:                 HashSet activePropagationSet;
+214:                 HashSet closedPropagationSet;
+215:                 Vector2Int currentIndices = grid.metadata.coordinatesToIndex(algorithm.currentRobotPose.pose.pose.position.x,
+216:                                             algorithm.currentRobotPose.pose.pose.position.y);
+217:                 grid.dataAt(currentIndices.x, currentIndices.y).auxWeight = 0; // the arbitrary value
+218:                 activePropagationSet.insert(currentIndices);
+219:                 PMFSLib::propagateProbabilities(grid, PMFS_internal::HitProbabilitySettings(), openPropagationSet, closedPropagationSet,
+220:                                                 activePropagationSet, {1, {1, 0}, 0});
+221:             }
+222: 
+223:             for (int i = 0; i < grid.metadata.dimensions.x; i++)
+224:             {
+225:                 for (int j = 0; j < grid.metadata.dimensions.y; j++)
+226:                 {
+227:                     if (!grid.freeAt(i, j) || grid.dataAt(i, j).auxWeight == -1)
+228:                     {
+229:                         grid.dataAt(i, j).logOdds = DBL_MIN;
+230:                         grid.occupancyAt(i, j) = Occupancy::Obstacle;
+231:                     }
+232:                     else
+233:                         grid.metadata.numFreeCells++;
+234:                     occupancyMap[i][j] = grid.occupancyAt(i, j) == Occupancy::Free ? 1 : 0;
+235:                 }
+236:             }
+237:             GSL_TRACE("Pruned unreachable cells");
+238:         }
+239: 
+240:         // precomputed visibility map
+241:         {
+242:             for (int i = 0; i < grid.metadata.dimensions.x; i++)
+
+gsl_server/src/gsl_server/algorithms/PMFS/PMFSLib.cpp L273-L278
+273:             }
+274:             GSL_TRACE("Created visibility map");
+275:         }
+276: 
+277:         simulations.initializeMap(occupancyMap);
+278:         simulations.visibilityMap = &visibilityMap;

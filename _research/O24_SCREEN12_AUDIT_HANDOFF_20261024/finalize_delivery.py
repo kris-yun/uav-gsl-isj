@@ -7,8 +7,12 @@ def sha(p):
   for b in iter(lambda:f.read(4*1024**2),b''):h.update(b)
  return h.hexdigest()
 def finalize():
- records=json.loads((R/'BATCH_LEDGER.json').read_text());complete=len(records)==12;out=repo/'_research/O24_SCREEN12_AUDIT_HANDOFF_20261024';out.mkdir(parents=True,exist_ok=True)
- for name in ['PREREGISTERED_SCREEN12_R2_INPUT_FINAL.json','BATCH_CHECKPOINT.json','EPISODE_RESULTS.csv','SCENARIO_SUMMARY.csv','RNG_REPETITION_AUDIT.json','中文筛查报告.md','CONTROLLED_RNG_ADAPTER_DESIGN_ONLY.md','NAVIGATION_AND_TIMELINE_INPUT_MANIFEST.json','PRE_EXECUTION_METADATA_CORRECTION.json']:
+ for x in json.loads((R/'domain_audit/MANIFEST_SHA256.json').read_text()):assert sha(R/'domain_audit'/x['path'])==x['sha256'],x['path']
+ # Fresh read-only report code; the watcher may have imported an earlier version.
+ import importlib.util
+ spec=importlib.util.spec_from_file_location('final_report_latest',R/'summarize_screen12.py');mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod);mod.summarize()
+ records=json.loads((R/'BATCH_LEDGER.json').read_text());complete=len(records)==12;qualified=sum(x['QA']['qualification'].startswith('PASS')for x in records);technical=len(records)-qualified;out=repo/'_research/O24_SCREEN12_AUDIT_HANDOFF_20261024';out.mkdir(parents=True,exist_ok=True)
+ for name in ['PREREGISTERED_SCREEN12_R2_INPUT_FINAL.json','BATCH_CHECKPOINT.json','EPISODE_RESULTS.csv','SCENARIO_SUMMARY.csv','RNG_REPETITION_AUDIT.json','中文筛查报告.md','CONTROLLED_RNG_ADAPTER_DESIGN_ONLY.md','NAVIGATION_AND_TIMELINE_INPUT_MANIFEST.json','PRE_EXECUTION_METADATA_CORRECTION.json','RESUME_AMENDMENT_R3.json','DOMAIN_SUPPLEMENT_RECEIPT.json']:
   if(R/name).exists():shutil.copyfile(R/name,out/name)
  for p in(A/'AUDIT_DELIVERY').glob('*'):
   if p.is_file():shutil.copyfile(p,out/p.name)
@@ -19,9 +23,13 @@ def finalize():
    if(C/name).exists():shutil.copyfile(C/name,dest/name)
  for name in ['SAFE_CLEANUP_BEFORE_AFTER.md','O24_VS_H24_H26_SOURCE_AND_PARAMETER_DIFF.md','EXPERIMENT_VERSION_IDENTITY_MATRIX.csv','FINAL_REPRODUCTION_RECEIPT.json']:
   shutil.copyfile(registry/name,out/name)
- for name in ['analyze_completed_case.py','run_batch_host.py','run_batch_host_LAUNCHED_V1.py','run_case_guest.py','summarize_screen12.py','finalize_delivery.py','RESTORE_SCREEN12.py','CONTROLLER_SOURCE_PROVENANCE.json']:
+ for name in ['analyze_completed_case.py','run_batch_host.py','run_batch_host_LAUNCHED_V1.py','run_batch_host_RESUME_R3.py','run_case_guest.py','summarize_screen12.py','finalize_delivery.py','RESTORE_SCREEN12.py','CONTROLLER_SOURCE_PROVENANCE.json','prepare_resume_R3.py','recovery_gate_guest.py']:
   if(R/name).exists():shutil.copyfile(R/name,out/name)
- status=dict(status='SCREEN12_COMPLETE'if complete else'SCREEN12_STOPPED_PARTIAL_EVIDENCE',completed=len(records),actual_independent_worlds_claim=False,original_O24_ELF_unchanged=True,new_worlds=0,preregistration_sha256=sha(R/'PREREGISTERED_SCREEN12_R2_INPUT_FINAL.json'));(out/'DELIVERY_STATUS.json').write_text(json.dumps(status,indent=2)+'\n')
+ for folder in ['domain_audit','recovery']:
+  for p in(R/folder).rglob('*'):
+   if p.is_file()and '__pycache__'not in p.parts:
+    dest=out/folder/p.relative_to(R/folder);dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,dest)
+ status=dict(status=('SCREEN12_ALL_SLOTS_ACCOUNTED_WITH_TECHNICAL_ABORTS'if technical else'SCREEN12_COMPLETE')if complete else'SCREEN12_STOPPED_PARTIAL_EVIDENCE',accounted_slots=len(records),qualified_scientific_runs=qualified,technical_abort_slots=technical,completed=len(records),completed_field_scope='Accounted preregistered slots, including explicitly retained technical aborts; not the number of completed localization runs.',actual_independent_worlds_claim=False,original_O24_ELF_unchanged=True,new_worlds=0,preregistration_sha256=sha(R/'PREREGISTERED_SCREEN12_R2_INPUT_FINAL.json'));(out/'DELIVERY_STATUS.json').write_text(json.dumps(status,indent=2)+'\n')
  # Isolated Git index: preserve the user's working tree, staged files and branch.
  gitrec={};branch='research/o24-screen12-20261024';tmp=R/'delivery_tmp';tmp.mkdir(exist_ok=True);env=os.environ.copy();env.update(GIT_INDEX_FILE=str(tmp/'index'),GIT_TERMINAL_PROMPT='0',GCM_INTERACTIVE='Never')
  def git(*args):
@@ -30,7 +38,7 @@ def finalize():
   head=git('rev-parse','HEAD');ref=subprocess.run(['git','rev-parse','--verify','refs/heads/'+branch],cwd=repo,env=env,capture_output=True,text=True);parent=ref.stdout.strip()if ref.returncode==0 else head;git('read-tree',parent);git('add','-f','--',out.relative_to(repo).as_posix());tree=git('write-tree');commit=git('commit-tree',tree,'-p',parent,'-m','Audit O24 official lineage and record bounded paper-stop native screening');git('update-ref','refs/heads/'+branch,commit,parent if ref.returncode==0 else'0'*40);push=git('-c','credential.interactive=never','push','origin',branch);assert git('rev-parse','HEAD')==head;gitrec=dict(status='COMMIT_PUSHED_WITHOUT_CHECKOUT',commit=commit,branch=branch,url='https://github.com/kris-yun/uav-gsl-isj/commit/'+commit,current_worktree_branch_unchanged=True,push_output=push)
  except Exception as e:gitrec=dict(status='GIT_DELIVERY_UNCONFIRMED_EVIDENCE_PRESERVED',error=str(e))
  (R/'GITHUB_DELIVERY_RECEIPT.json').write_text(json.dumps(gitrec,ensure_ascii=False,indent=2)+'\n')
- dest=Path('C:/Users/50176/Downloads')/('O24_SCREEN12_'+('COMPLETE'if complete else'PARTIAL')+'_FULL_EVIDENCE_20261024.zip');assert not dest.exists();files=[]
+ dest=Path('C:/Users/50176/Downloads')/('O24_SCREEN12_'+('ACCOUNTED'if complete and technical else'COMPLETE'if complete else'PARTIAL_R3')+'_FULL_EVIDENCE_20261024.zip');assert not dest.exists();files=[]
  for p in out.rglob('*'):
   if p.is_file():files.append((p,'review/'+p.relative_to(out).as_posix()))
  for x in records:
