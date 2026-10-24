@@ -1,0 +1,44 @@
+{
+  "status": "ONE_PREREGISTERED_ATTEMPT_COMPLETE",
+  "result": {
+    "case": "E3",
+    "input_class": "O24_PAPER_STOP_1M2_SCREEN12",
+    "physical_qualification": "WIND_FULL_ARRAY_AND_SHORT_RUNTIME_GATE_PASS_CONSUMER_AUDIT_PENDING",
+    "native_goal_count": 0,
+    "fixture_messages_injected": 0,
+    "generated_gas_data": 0,
+    "processes": [
+      {
+        "name": "launch",
+        "pid": 73477,
+        "returncode": -15
+      },
+      {
+        "name": "gmrf",
+        "pid": 73478,
+        "returncode": 0
+      }
+    ],
+    "result": "RUNTIME_ERROR",
+    "error": "preflight missing sensor/map/action output",
+    "traceback": "Traceback (most recent call last):\n  File \"/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/E3_R01/runtime_driver.py\", line 118, in <module>\n    else:raise RuntimeError('preflight missing sensor/map/action output')\nRuntimeError: preflight missing sensor/map/action output\n",
+    "counts": {
+      "/tf_static": 4,
+      "/PioneerP3DX/ground_truth": 691,
+      "/tf": 691,
+      "/clock": 691,
+      "/PioneerP3DX/Anemometer/WindSensor_reading": 1342,
+      "/native20/wind_to": 1342,
+      "/PioneerP3DX/PID/Sensor_reading": 670
+    },
+    "nonzero_cmd_vel_messages": 0,
+    "pose_samples": 691
+  },
+  "forced": null,
+  "wall_s": 81.69025626100483,
+  "child_CPU_s": 64.25257800000001,
+  "binary_unchanged": true,
+  "host_free": 1080111104,
+  "guest_free": 4829405184,
+  "new_gas_worlds": 0
+}

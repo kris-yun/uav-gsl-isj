@@ -1,0 +1,27 @@
+{
+  "stage": "PAUSED_AT_CONCRETE_GATE",
+  "error": "",
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\run_batch_host_RESUME_R4.py\", line 64, in <module>\n    a=archive(role['id'],C);records.append(dict(role=role['id'],QA=qa,archive=a));put(R/'BATCH_LEDGER.json',records);table(records);summarize()\n      ^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\run_batch_host_RESUME_R4.py\", line 18, in archive\n    dst=archives/(role+'_FULL.zip');assert not dst.exists();files=[p for p in C.rglob('*')if p.is_file()and p.name not in ['ARCHIVE_RECEIPT.json','ARCHIVE_PRUNE_PLAN.json','ARCHIVE_PRUNE_RECEIPT.json']];manifest=[dict(path=p.relative_to(C).as_posix(),bytes=p.stat().st_size,sha256=sha(p))for p in files];temp=dst.with_suffix('.zip.partial')\n                                           ^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "completed": [
+    "A2_R01_REFERENCE",
+    "B2_R01",
+    "B2_R02",
+    "B2_R03",
+    "B2_R04",
+    "B2_R05"
+  ],
+  "last_checkpoint": {
+    "stage": "RUNNING",
+    "completed": [
+      "A2_R01_REFERENCE",
+      "B2_R01",
+      "B2_R02",
+      "B2_R03",
+      "B2_R04",
+      "B2_R05"
+    ],
+    "current": "A2_R02",
+    "total": 12,
+    "host_free": 1194565632
+  }
+}
