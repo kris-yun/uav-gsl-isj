@@ -1,0 +1,42 @@
+{
+  "identity": "PMFS_O24_ACTUAL_SOURCE_LAUNCH_SCREEN12_20261024",
+  "UTC": "2026-10-24T09:45:09.909183+00:00",
+  "baseline": "PMFS-O24-PORT-GMRF",
+  "source_commit": "631145657461c41840f6844f118de57d1e747ea4",
+  "upstream_snapshot": "a8d5a764b7cbfc1d5d1887aebfe890e2c75d7533",
+  "exact_frozen_PMFS_source_files": 128,
+  "GSL_ELF_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+  "runtime_collection_sha256": "d2d9b1f19e4ce785b359ec18afd2960003d5d27f77f745556b994fc45e665e36",
+  "binary_sha256": {
+    "public_clock_player": "ca8989091885fe920957e977bf7efac382633c9b4862dc968e5ca4cfbed9d80c",
+    "gsl_actionserver_node": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+    "gmrf_wind_mapping_node": "6882e2e60440c5d5cb600eed454d160ded227fbbc8ed3c55a7fcf9572ad4efe2",
+    "basic_sim": "1056a8a51c1e9ee1f1c27add0fc4a0f26c44da31a035680605ecabb65ab58e22",
+    "simulated_anemometer": "7776cbb62ce1b0bb8ba55b07b662622563b08f7efd65c5ee1016735027c86d06",
+    "simulated_gas_sensor": "6fdb3e60709f3ee3a67ec0fecda03594000586e3d739d6376365f222fedd4206"
+  },
+  "current_protocol": {
+    "D": 0.2,
+    "convergence_thr_m2": 1.0,
+    "wind": "Local wind/GMRF, useWindGroundTruth=false",
+    "noiseSTDev": {
+      "C3": 0.25,
+      "others": 0.5
+    },
+    "maxSearchTime": 1000000000.0,
+    "normal_stop": "Native posterior covariance trace<1m2",
+    "no_saved_world_loop": true,
+    "BasicSim_speed": 1.0
+  },
+  "historical_frozen_protocol": {
+    "convergence_thr_m2": 1.5,
+    "path": "frozen_o24/parameters"
+  },
+  "new_compile": 0,
+  "new_ROS": 0,
+  "new_gas_worlds": 0,
+  "reproducibility_scope": "Exact archived frozen PMFS source/binary and actual launch snapshots plus current custom-runtime production source/build metadata. No fresh compilation or clean-machine execution is claimed. External complete gas worlds and system ROS/Nav2 required.",
+  "author_identity_scope": "Pinned public author snapshot with documented port/audit differences, not proof of the exact authors paper-experiment commit or full paper-performance reproduction.",
+  "zip_root_directory": ".",
+  "windows_extraction_note": "Flat ZIP root; extract into its own short directory. No duplicated long wrapper directory."
+}

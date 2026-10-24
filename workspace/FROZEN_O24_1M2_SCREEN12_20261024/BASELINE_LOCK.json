@@ -1,0 +1,84 @@
+{
+  "freeze_identity": "PMFS-O24-PORT-GMRF-PAPERSTOP1M2-SCREEN12-20261024",
+  "frozen_UTC": "2026-10-24T13:12:37.875418+00:00",
+  "source_commit": "631145657461c41840f6844f118de57d1e747ea4",
+  "public_author_snapshot": "a8d5a764b7cbfc1d5d1887aebfe890e2c75d7533",
+  "evidence_commit": "120bb2e833bfc6aa96a356101203570b476b6b9f",
+  "ELF_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+  "source_file_count": 128,
+  "normal_stop": {
+    "parameter": "convergence_thr",
+    "value": 1.0,
+    "unit": "m2",
+    "definition": "sum_s p(s)*((x_s-E[x])^2+(y_s-E[y])^2), covariance trace",
+    "comparison": "strictly less than",
+    "not_localization_error_threshold": true,
+    "source_function": "PMFS_utils.cpp::varianceSourcePosition and checkSourceFound"
+  },
+  "baseline_core": {
+    "sourceDiscriminationPower": 0.2,
+    "USE_GADEN": false,
+    "useWindGroundTruth": false,
+    "wind_information": "local measurements/GMRF only",
+    "noiseSTDev_by_case": {
+      "A2": 0.5,
+      "B2": 0.5,
+      "C3": 0.25,
+      "D4": 0.5,
+      "E3": 0.5
+    }
+  },
+  "time_protocol": {
+    "BasicSim_speed": 1.0,
+    "use_sim_time": true,
+    "gas_world_looping": false,
+    "maxSearchTime": 1000000000.0,
+    "fixed_300_or_600_normal_stop": false,
+    "data_exhaustion": "censored not native declaration",
+    "safety_caps": "preserve preregistered1100s pergoal and1250s perattempt separately from normal stop"
+  },
+  "RNG": "Original frozen RNG retained; actual states recorded; no prescribed-independent-seed or bitwise-replay claim",
+  "roles": [
+    "A2_R01_REFERENCE",
+    "B2_R01",
+    "B2_R02",
+    "B2_R03",
+    "B2_R04",
+    "B2_R05",
+    "A2_R02",
+    "A2_R03",
+    "C3_R01",
+    "C3_R02",
+    "D4_R01",
+    "E3_R01"
+  ],
+  "legal_source_roles": [
+    "A2_R01_REFERENCE",
+    "A2_R02",
+    "A2_R03",
+    "C3_R01",
+    "C3_R02",
+    "D4_R01",
+    "E3_R01"
+  ],
+  "excluded_source_diagnostic_roles": [
+    "B2_R01",
+    "B2_R02",
+    "B2_R03",
+    "B2_R04",
+    "B2_R05"
+  ],
+  "observed_outcome_classes": {
+    "native_declarations": 10,
+    "recording_exhaustion_censor": 1,
+    "technical_isolation_abort": 1
+  },
+  "paper_scope": "Paper 1m2 declaration threshold adopted with frozen O24 scoring. Not a claim that every parameter, author experiment commit, original clock, or30-repeat performance has been reproduced.",
+  "source_config_archive_sha256": "9ecec278724279a304288fc0174f2c41ae7a9615eb22f5ef43a9c374e6555b19",
+  "full_evidence_archive_sha256": "553ed6d0d3de761d2e2a13fff2b2fd1e205271bdce0e6bd75414fb1a24ac6ee3",
+  "historical_1p5_protocol": "Retained inside original code archive only; not active for this frozen comparison identity",
+  "modification_policy": "Do not edit this freeze. New user methods and any future protocol changes require separate identities and output roots.",
+  "new_builds": 0,
+  "new_ROS_runs": 0,
+  "new_worlds": 0
+}

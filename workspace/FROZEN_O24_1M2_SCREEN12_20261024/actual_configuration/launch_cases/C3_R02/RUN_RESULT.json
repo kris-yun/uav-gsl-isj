@@ -1,0 +1,40 @@
+{
+  "case": "C3",
+  "input_class": "O24_PAPER_STOP_1M2_SCREEN12",
+  "physical_qualification": "WIND_FULL_ARRAY_AND_SHORT_RUNTIME_GATE_PASS_CONSUMER_AUDIT_PENDING",
+  "native_goal_count": 1,
+  "fixture_messages_injected": 0,
+  "generated_gas_data": 0,
+  "processes": [
+    {
+      "name": "launch",
+      "pid": 71415,
+      "returncode": 0
+    },
+    {
+      "name": "gmrf",
+      "pid": 71416,
+      "returncode": 0
+    }
+  ],
+  "preflight": "PASS",
+  "counts": {
+    "/tf_static": 4,
+    "/PioneerP3DX/map": 1,
+    "/PioneerP3DX/PID/Sensor_reading": 7277,
+    "/PioneerP3DX/Anemometer/WindSensor_reading": 14555,
+    "/native20/wind_to": 14555,
+    "/clock": 7277,
+    "/PioneerP3DX/ground_truth": 7281,
+    "/tf": 7283,
+    "/PioneerP3DX/cmd_vel": 10813
+  },
+  "nonzero_cmd_vel_messages": 8164,
+  "pose_samples": 7281,
+  "goal_invocation_ROS_ns": 16100274185,
+  "goal_accepted": true,
+  "resource_stop_reason": "EXISTING_CONTINUOUS_PHYSICAL_RECORDING_EXHAUSTED",
+  "result": "RUNTIME_ERROR",
+  "error": "External data recording ended; not a PMFS scientific failure or manuscript time cutoff",
+  "traceback": "Traceback (most recent call last):\n  File \"/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/C3_R02/runtime_driver.py\", line 220, in <module>\n    status['resource_stop_reason']='EXISTING_CONTINUOUS_PHYSICAL_RECORDING_EXHAUSTED';handle.cancel_goal_async();raise RuntimeError('External data recording ended; not a PMFS scientific failure or manuscript time cutoff')\nRuntimeError: External data recording ended; not a PMFS scientific failure or manuscript time cutoff\n"
+}
