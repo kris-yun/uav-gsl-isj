@@ -1,0 +1,1504 @@
+--- upstream/gsl_server/CMakeLists.txt
++++ source_runtime/CMakeLists.txt
+@@ -1,21 +1,21 @@
+ cmake_minimum_required(VERSION 3.11)
+ project(gsl_server) 
+-set(CMAKE_CXX_FLAGS "-g -Wno-narrowing ${CMAKE_CXX_FLAGS}")
++set(CMAKE_CXX_FLAGS "-g0 -Wno-narrowing ${CMAKE_CXX_FLAGS}")
+ set(CMAKE_CXX_STANDARD 20)
+ set(CMAKE_VERBOSE_MAKEFILE ON) #Outputs the compiler command to the build log file
+ 
+ #########################
+ #OPTIONS
+ #########################
+-set(GSL_DEBUG ON) #enabling debug mode disables optimizations and activates a bunch of assertions in the code.
++set(GSL_DEBUG OFF) #enabling debug mode disables optimizations and activates a bunch of assertions in the code.
+ set(GSL_TRACING ON) #extra logging to tell you what is being executed
+ 
+-set(USE_GADEN ON) #if ON, the code is compiled with support for directly querying gaden simulations to obtain the wind ground truth. If you dont have gaden in this workspace, you need to set this to OFF or it wont compile (duh)
++set(USE_GADEN OFF) #if ON, the code is compiled with support for directly querying gaden simulations to obtain the wind ground truth. If you dont have gaden in this workspace, you need to set this to OFF or it wont compile (duh)
+ 
+ set(USE_NAV_ASSISTANT OFF) # if ON uses the nav_assistant package rather than directly communicating with nav_2. It adds some extra features, but currently it has a relatively high performance cost due to async inter-process communication  
+ 
+ # Compile graphical interface with DearImGUI. Currently only affects the PMFS algorithm. Not required to function, it is mostly for debugging purposes
+-set(USE_GUI ON)
++set(USE_GUI OFF)
+ 
+ set(USE_TRACY OFF) # Tracy is a profiler. ON enables some instrumentation macros (and adds a dependency to tracy). To do sampling-based profiling you also need to run the node as sudo
+ set(USE_TRACY_INSTRUMENTATION OFF) #disable to do sampling-only profiling
+@@ -32,6 +32,7 @@
+ 
+ include_directories(
+   src
++  /usr/local/include/magic_enum
+   third_party/xxHash/include
+   third_party/DDA/include
+   third_party/DDA/third_party/glm
+@@ -52,12 +53,12 @@
+ )
+ # You can disable the compilation of any of these algorithms by commenting them out here (useful if you don't want to install their dependencies)
+ include(src/gsl_server/algorithms/Common/CMakeLists.txt)
+-include(src/gsl_server/algorithms/PlumeTracking/CMakeLists.txt)
+-include(src/gsl_server/algorithms/Spiral/CMakeLists.txt)
+-include(src/gsl_server/algorithms/ParticleFilter/CMakeLists.txt)
+-include(src/gsl_server/algorithms/GrGSL/CMakeLists.txt)
++# Build only the selected PMFS action implementation: include(src/gsl_server/algorithms/PlumeTracking/CMakeLists.txt)
++# Build only the selected PMFS action implementation: include(src/gsl_server/algorithms/Spiral/CMakeLists.txt)
++# Build only the selected PMFS action implementation: include(src/gsl_server/algorithms/ParticleFilter/CMakeLists.txt)
++# Build only the selected PMFS action implementation: include(src/gsl_server/algorithms/GrGSL/CMakeLists.txt)
+ include(src/gsl_server/algorithms/PMFS/CMakeLists.txt)
+-include(src/gsl_server/algorithms/Semantics/CMakeLists.txt)
++# Build only the selected PMFS action implementation: include(src/gsl_server/algorithms/Semantics/CMakeLists.txt)
+ 
+ 
+ ##### Call node
+--- upstream/gsl_server/src/gsl_server/algorithms/Common/StopAndMeasureState.cpp
++++ source_runtime/src/gsl_server/algorithms/Common/StopAndMeasureState.cpp
+@@ -1,6 +1,9 @@
+ #include <gsl_server/algorithms/Common/StopAndMeasureState.hpp>
+ #include <gsl_server/algorithms/Common/Algorithm.hpp>
+ #include <gsl_server/algorithms/Common/Utils/Math.hpp>
++#include <fstream>
++#include <iomanip>
++#include <cstdlib>
+ 
+ namespace GSL
+ {
+@@ -22,11 +25,23 @@
+     {
+         if ((algorithm->node->now() - time_stopped).seconds() >= measure_time)
+         {
++            const char* tracePath = std::getenv("NATIVE_PMFS_WINDOW_TRACE");
++            static std::ofstream trace;
++            static size_t windowEvent = 0;
++            if (tracePath && !trace.is_open()) {
++                trace.open(tracePath);
++                trace << "event,node_clock_ns,window_start_node_ns,gas_count,wind_count,concentration_mean_ppm,wind_speed_mean,wind_direction_mean,status\n" << std::setprecision(17);
++            }
++            if (gas_v.empty() || windSpeed_v.empty() || windDirection_v.empty()) {
++                if (trace.is_open()) {trace << ++windowEvent << "," << algorithm->node->now().nanoseconds() << "," << time_stopped.nanoseconds() << "," << gas_v.size() << "," << windSpeed_v.size() << ",,,,WAIT_EMPTY_OBSERVATION\n";trace.flush();}
++                return;
++            }
+             double concentration = average_concentration();
+             double windSpeed = average_windSpeed();
+             double windDirection = average_windDirection();
+ 
+             GSL_INFO("avg_gas={:.2};  avg_windSpeed={:.2};  avg_wind_dir={:.2}", concentration, windSpeed, windDirection);
++            if (trace.is_open()) {trace << ++windowEvent << "," << algorithm->node->now().nanoseconds() << "," << time_stopped.nanoseconds() << "," << gas_v.size() << "," << windSpeed_v.size() << "," << concentration << "," << windSpeed << "," << windDirection << ",CONSUMED\n";trace.flush();}
+             algorithm->processGasAndWindMeasurements(concentration, windSpeed, windDirection);
+         }
+     }
+--- upstream/gsl_server/src/gsl_server/algorithms/Common/Utils/Math.cpp
++++ source_runtime/src/gsl_server/algorithms/Common/Utils/Math.cpp
+@@ -2,10 +2,28 @@
+ #include <xxHash/xxhash32.h>
+ #include <random>
+ #include <chrono>
++#include <atomic>
++#include <cstring>
++#include <sstream>
++#include <fstream>
++#include <iomanip>
++#include <stdexcept>
+ 
+ namespace GSL::Utils
+ {
+     static thread_local std::minstd_rand0 RNGengine;
++
++    namespace { struct O24AuditState {O24Snapshot snap;uint32_t *seed=nullptr,*state=nullptr;uint16_t *index=nullptr;const float*table=nullptr;std::normal_distribution<>*dist=nullptr;bool written=false;};
++    static thread_local O24AuditState oa;static std::atomic<uint64_t> oat{0};
++    uint64_t hstep(uint64_t h,uint64_t x){return (h^x)*1099511628211ULL;}}
++    void O24NoteUniform(uint32_t*seed,uint32_t*state){oa.seed=seed;oa.state=state;++oa.snap.uc;oa.snap.uh=hstep(oa.snap.uh,*state);}
++    void O24NoteNormal(void*distribution,double value){oa.dist=static_cast<std::normal_distribution<>*>(distribution);uint64_t b;std::memcpy(&b,&value,8);++oa.snap.nc;oa.snap.nh=hstep(oa.snap.nh,b);}
++    void O24NoteCache(uint16_t*index,const float*table,int size){oa.index=index;oa.table=table;oa.snap.size=size;oa.snap.initial=*index;}
++    void O24NoteCacheNext(float value){uint32_t b;std::memcpy(&b,&value,4);++oa.snap.gc;oa.snap.gh=hstep(oa.snap.gh,b);}
++    O24Snapshot O24Capture(){if(!oa.snap.tid)oa.snap.tid=++oat;auto s=oa.snap;s.ui=oa.seed!=nullptr;if(s.ui){s.seed=*oa.seed;s.state=*oa.state;}s.ci=oa.index!=nullptr;if(s.ci)s.index=*oa.index;std::ostringstream e;e<<RNGengine;s.engine=e.str();if(oa.dist){std::ostringstream d;d<<std::setprecision(17)<<*oa.dist;s.distribution=d.str();}return s;}
++    void O24WriteCache(const std::string&prefix){if(oa.table&&!oa.written){std::ofstream f(prefix+".thread"+std::to_string(oa.snap.tid)+".f32",std::ios::binary);if(!f)throw std::runtime_error("Cannot write RNG cache");f.write(reinterpret_cast<const char*>(oa.table),oa.snap.size*sizeof(float));if(!f)throw std::runtime_error("RNG cache write failed");oa.written=true;}}
++    std::string O24Snapshot::json()const{std::ostringstream s;s<<"{\"ui\":"<<int(ui)<<",\"seed\":"<<seed<<",\"state\":"<<state<<",\"uc\":"<<uc<<",\"uh\":"<<uh<<",\"gc\":"<<gc<<",\"gh\":"<<gh<<",\"nc\":"<<nc<<",\"nh\":"<<nh<<",\"tid\":"<<tid<<",\"ci\":"<<int(ci)<<",\"size\":"<<size<<",\"index\":"<<index<<",\"initial\":"<<initial<<",\"engine\":\""<<engine<<"\",\"distribution\":\""<<distribution<<"\"}";return s.str();}
++
+ 
+     double lerp(double start, double end, double proportion)
+     {
+@@ -54,7 +72,9 @@
+             previousStdev = stdev;
+         }
+ 
+-        return mean + dist(RNGengine);
++        const double nativeValue = mean + dist(RNGengine);
++        O24NoteNormal(&dist,nativeValue);
++        return nativeValue;
+     }
+ 
+     double uniformRandom(double min, double max)
+@@ -64,6 +84,7 @@
+         static thread_local uint32_t seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+         static thread_local uint32_t state = 0xFFFF;
+         state = XXHash32::hash(&state, sizeof(state), seed);
++        O24NoteUniform(&seed,&state);
+ 
+         constexpr double reciprocalMax = 1 / (double)std::numeric_limits<uint32_t>::max();
+         double rndVal01 = state * reciprocalMax;
+--- upstream/gsl_server/src/gsl_server/algorithms/Common/Utils/Math.hpp
++++ source_runtime/src/gsl_server/algorithms/Common/Utils/Math.hpp
+@@ -1,5 +1,6 @@
+ #pragma once
+ #include <vector>
++#include <gsl_server/algorithms/Common/Utils/O24RandomAudit.hpp>
+ #include <deque>
+ #include <gsl_server/core/Vectors.hpp>
+ #include <cfloat>
+@@ -71,11 +72,13 @@
+             m_index = uniformRandom(0, Size);
+             for (size_t i = 0; i < Size; i++)
+                 m_precalculatedTable[i] = Utils::randomFromGaussian(0, 1);
++            O24NoteCache(&m_index,m_precalculatedTable.data(),Size);
+         }
+ 
+         float nextValue(float mean, float stdev)
+         {
+             m_index = (m_index + 1) % Size;
++            O24NoteCacheNext(m_precalculatedTable[m_index]);
+             return mean + stdev * m_precalculatedTable[m_index];
+         }
+     private:
+--- upstream/gsl_server/src/gsl_server/algorithms/Common/Utils/O24RandomAudit.hpp
++++ source_runtime/src/gsl_server/algorithms/Common/Utils/O24RandomAudit.hpp
+@@ -0,0 +1,12 @@
++#pragma once
++#include <cstdint>
++#include <string>
++namespace GSL::Utils {
++struct O24Snapshot { bool ui=false,ci=false;uint32_t seed=0,state=65535;uint64_t uc=0,uh=1469598103934665603ULL,gc=0,gh=1469598103934665603ULL,nc=0,nh=1469598103934665603ULL,tid=0;int size=0,index=-1,initial=-1;std::string engine,distribution;std::string json()const;};
++void O24NoteUniform(uint32_t*seed,uint32_t*state);
++void O24NoteNormal(void*distribution,double value);
++void O24NoteCache(uint16_t*index,const float*table,int size);
++void O24NoteCacheNext(float value);
++O24Snapshot O24Capture();
++void O24WriteCache(const std::string&prefix);
++}
+--- upstream/gsl_server/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp
++++ source_runtime/src/gsl_server/algorithms/PMFS/internal/Simulations.cpp
+@@ -10,11 +10,18 @@
+ #include <opencv2/imgproc.hpp>
+ 
+ #include <DDA/DDA.h>
++#include <fstream>
++#include <atomic>
++#include <omp.h>
++#include <chrono>
++#include <iomanip>
++#include <cstdlib>
+ #include <gsl_server/algorithms/Common/Utils/Profiling.hpp>
+ 
+ namespace GSL::PMFS_internal
+ {
+     namespace NQA = Utils::NQA;
++    static std::atomic<size_t> auditUpdate{0};
+     using HashSet = std::unordered_set<Vector2Int>;
+ 
+     // We have a long list of pre-calculated random values for Speeeeeeeeeeeeeeeeed
+@@ -64,6 +71,7 @@
+         ZoneScoped;
+         GSL_INFO_COLOR(fmt::terminal_color::yellow, "Started simulations. Might take a while!");
+         Utils::Time::Stopwatch stopwatch;
++        ++auditUpdate; // Passive identity for each source update; never used by the algorithm.
+         std::vector<NQA::Node> localCopyLeaves = QTleaves;
+ 
+         // first, coarse simulation based on the quadtree decomposition of the map
+@@ -159,6 +167,15 @@
+ 
+         Utils::NormalizeDistribution(sourceProb);
+         GSL_INFO("Time ellapsed in simulation = {} s", stopwatch.ellapsed());
++        if (const char* path = std::getenv("NATIVE_PMFS_POSTERIOR_TRACE")) {
++            static std::ofstream trace(path);static size_t update = 0;
++            if (update==0) trace << "update,row,col,x_m,y_m,cell_size_m,source_probability,hit_log_odds,hit_omega,hit_confidence,estimated_wind_u,estimated_wind_v\n";
++            trace << std::setprecision(17);++update;
++            for (int y=0;y<sourceProb.metadata.dimensions.y;++y) for (int x=0;x<sourceProb.metadata.dimensions.x;++x) if(sourceProb.freeAt(x,y)) {
++                const auto p=sourceProb.metadata.indexToCoordinates(x,y);const auto h=measuredHitProb.dataAt(x,y);const auto w=wind.dataAt(x,y);
++                trace<<update<<","<<y<<","<<x<<","<<p.x<<","<<p.y<<","<<sourceProb.metadata.cellSize<<","<<sourceProb.dataAt(x,y)<<","<<h.logOdds<<","<<h.omega<<","<<h.confidence<<","<<w.x<<","<<w.y<<"\n";
++            } trace.flush();
++        }
+     }
+ 
+     Simulations::SimulationResult Simulations::runSimulation(std::vector<LeafScore>& scores, size_t index)
+@@ -171,11 +188,31 @@
+         result.valid = true;
+         result.hitMap.resize(measuredHitProb.data.size(), 0.0);
+ 
++        const auto rngBefore = Utils::O24Capture();
+         SimulationSource source(node, measuredHitProb.metadata);
+         simulateSourceInPosition(source, result.hitMap, true, settings.maxWarmupIterations, settings.iterationsToRecord, settings.deltaTime,
+                                  settings.noiseSTDev);
+ 
+         result.sourceProb = sourceProbFromMaps(measuredHitProb, result.hitMap);
++        const auto rngAfter = Utils::O24Capture();
++        // Capture the exact maps already computed by the native forward model.
++        // No random draws, parameters, source choices, or score values change.
++        if (const char* base = std::getenv("NATIVE_PMFS_CANDIDATE_AUDIT")) {
++            #pragma omp critical(native_passive_candidate_audit)
++            {
++                static std::ofstream maps(std::string(base)+".f32",std::ios::binary);
++                static std::ofstream rows(std::string(base)+".csv");
++                static size_t call=0;
++                if(call==0) rows<<"update,call,origin_x,origin_y,size_x,size_y,score,offset_bytes,count\n";
++                const auto offset=maps.tellp();
++                maps.write(reinterpret_cast<const char*>(result.hitMap.data()),result.hitMap.size()*sizeof(float));
++                rows<<std::setprecision(17)<<auditUpdate.load()<<","<<++call<<","<<node->origin.x<<","<<node->origin.y<<","<<node->size.x<<","<<node->size.y<<","<<result.sourceProb<<","<<offset<<","<<result.hitMap.size()<<"\n";
++                maps.flush();rows.flush();
++                if(const char*rp=std::getenv("O24_RNG_TRACE")){static std::ofstream rng(rp);rng<<"{\"update\":"<<auditUpdate.load()<<",\"call\":"<<call<<",\"omp_thread\":"<<omp_get_thread_num()<<",\"origin_x\":"<<node->origin.x<<",\"origin_y\":"<<node->origin.y<<",\"size_x\":"<<node->size.x<<",\"size_y\":"<<node->size.y<<",\"before\":"<<rngBefore.json()<<",\"after\":"<<rngAfter.json()<<"}\n";rng.flush();Utils::O24WriteCache(std::string(rp)+".cache");}
++
++            }
++        }
++
+ 
+         scores[index].score = result.sourceProb;
+ 
+--- upstream/gsl_server/src/gsl_server/algorithms/PMFS/PMFS.cpp
++++ source_runtime/src/gsl_server/algorithms/PMFS/PMFS.cpp
+@@ -110,6 +110,7 @@
+         functionQueue.run();
+ 
+         // Update visualization
++        if (!visibilityMap.has_value()) return; // Do not read map-derived arrays before the map callback.
+         dynamic_cast<MovingStatePMFS*>(movingState.get())->publishMarkers();
+         PMFSViz::ShowHitProb(Grid2D<HitProbability>(hitProbability, occupancy, gridMetadata), settings.visualization, pubs);
+         PMFSViz::ShowSourceProb(Grid2D<double>(sourceProbability, occupancy, gridMetadata), settings.visualization, pubs);
+--- upstream/gsl_server/src/gsl_server/algorithms/PMFS/PMFS_utils.cpp
++++ source_runtime/src/gsl_server/algorithms/PMFS/PMFS_utils.cpp
+@@ -69,7 +69,7 @@
+         std::vector<CellData> data;
+         for (int i = 0; i < gridMetadata.dimensions.x; i++)
+         {
+-            for (int j = 0; j < gridMetadata.dimensions.x; j++)
++            for (int j = 0; j < gridMetadata.dimensions.y; j++)
+             {
+                 if (occupancy[gridMetadata.indexOf({i, j})] == Occupancy::Free)
+                 {
+@@ -104,7 +104,7 @@
+         double x = 0, y = 0;
+         for (int i = 0; i < gridMetadata.dimensions.x; i++)
+         {
+-            for (int j = 0; j < gridMetadata.dimensions.x; j++)
++            for (int j = 0; j < gridMetadata.dimensions.y; j++)
+             {
+                 if (occupancy[gridMetadata.indexOf({i, j})] == Occupancy::Free)
+                 {
+--- upstream/gsl_server/third_party/DDA/.gitignore
++++ source_runtime/third_party/DDA/.gitignore
+@@ -0,0 +1,3 @@
++.vscode
++build
++third_party--- upstream/gsl_server/third_party/DDA/CMakeLists.txt
++++ source_runtime/third_party/DDA/CMakeLists.txt
+@@ -0,0 +1,8 @@
++cmake_minimum_required(VERSION 3.5)
++project(test_dda)
++
++set(CMAKE_BUILD_TYPE "None") 
++set(CMAKE_CXX_FLAGS "-std=c++17 ${CMAKE_CXX_FLAGS}")
++
++
++add_executable(test_dda test/test.cpp)--- upstream/gsl_server/third_party/DDA/include/DDA/2D/Map.h
++++ source_runtime/third_party/DDA/include/DDA/2D/Map.h
+@@ -0,0 +1,29 @@
++#pragma once
++#include <vector>
++#include "../Vector2Int.h"
++#include "../Common.h"
++
++namespace DDA::_2D
++{
++    template <typename T> struct Map
++    {
++        Map()
++        {}
++
++        Map(const std::vector<T>& _cells, Vector2 _origin, float _resolution, Vector2Int _dimensions)
++            : cells(&_cells), origin(_origin), resolution(_resolution), dimensions(_dimensions)
++        {}
++
++        Vector2 origin;
++        float resolution;
++        Vector2Int dimensions;
++
++        const T& at(size_t i, size_t j) const
++        {
++            return (*cells)[j * dimensions.x + i];
++        }
++
++    private:
++        const std::vector<T>* cells;
++    };
++} // namespace DDA::_2D--- upstream/gsl_server/third_party/DDA/include/DDA/2D/RayCast.h
++++ source_runtime/third_party/DDA/include/DDA/2D/RayCast.h
+@@ -0,0 +1,83 @@
++#pragma once 
++#include "Map.h"
++
++namespace DDA::_2D
++{
++    struct RayCastInfo
++    {
++        bool hitSomething;
++        float distance;
++    };
++    
++    // returns true if a blocked cell was hit. The outline of the map is considered blocked.
++    template <typename T>
++    RayCastInfo castRay(
++        const Vector2& start, Vector2 direction, const float maxDistance, const Map<T>& map, const std::function<bool(const T&)>& mapPredicate,
++        const std::function<bool(const Vector2&)>& positionPredicate = [](const Vector2& v) { return true; })
++    {
++        if (direction.norm() == 0)
++        {
++            Warn();
++            printf("Ray of length 0\n");
++            return {false, 0};
++        }
++
++        Vector2 currentPosition = start;
++        Vector2Int currentCell = Vector2Int((start - map.origin) / map.resolution);
++        if (currentCell.x < 0 || currentCell.x >= map.dimensions.x || currentCell.y < 0 || currentCell.y >= map.dimensions.y)
++        {
++            Error();
++            printf("Ray outside the environment!\n");
++            return {false, 0};
++        }
++            
++        if(!mapPredicate(map.at(currentCell.x, currentCell.y)) || !positionPredicate(currentPosition))
++        {
++            Error();
++            printf("Ray starts inside an obstacle!\n");
++            return {false, 0};
++        }
++
++        direction.normalize();
++        int stepX = sign(direction.x);
++        int stepY = sign(direction.y);
++
++        float currentDistance = 0;
++        while (true)
++        {
++            float xCoordNext = (stepX > 0 ? currentCell.x + 1 : currentCell.x) * map.resolution + map.origin.x;
++            float yCoordNext = (stepY > 0 ? currentCell.y + 1 : currentCell.y) * map.resolution + map.origin.y;
++
++            // how far to move along direction, correcting for floating-point shenanigans
++            float tX = (xCoordNext - currentPosition.x) / direction.x;
++            if (tX <= 0)
++            {
++                xCoordNext += stepX * map.resolution;
++                tX = (xCoordNext - currentPosition.x) / direction.x;
++            }
++            float tY = (yCoordNext - currentPosition.y) / direction.y;
++            if (tY <= 0)
++            {
++                yCoordNext += stepY * map.resolution;
++                tY = (yCoordNext - currentPosition.y) / direction.y;
++            }
++
++            if ((stepX != 0 && tX > 0 && tX < tY) || (stepY == 0 || tY <= 0))
++            {
++                currentPosition += direction * tX;
++                currentDistance += tX;
++            }
++            else
++            {
++                currentPosition += direction * tY;
++                currentDistance += tY;
++            }
++            currentCell = Vector2Int((currentPosition - map.origin) / map.resolution);
++
++            if (currentDistance > maxDistance || currentCell.x < 0 || currentCell.x >= map.dimensions.x || currentCell.y < 0 || currentCell.y >= map.dimensions.y)
++                return {false, maxDistance};
++            else if (!mapPredicate(map.at(currentCell.x, currentCell.y)) || !positionPredicate(currentPosition))
++                return {true, currentDistance};
++        }
++    }
++}--- upstream/gsl_server/third_party/DDA/include/DDA/2D/RayMarch.h
++++ source_runtime/third_party/DDA/include/DDA/2D/RayMarch.h
+@@ -0,0 +1,94 @@
++#pragma once
++#include "Map.h"
++
++namespace DDA::_2D
++{
++    struct RayMarchInfo
++    {
++        std::vector<std::pair<Vector2Int, float>> lengthInCell;
++        float totalLength;
++        RayMarchInfo() : totalLength(0)
++        {}
++        RayMarchInfo(std::vector<std::pair<Vector2Int, float>> inputMap, float length) : lengthInCell(std::move(inputMap)), totalLength(length)
++        {}
++    };
++
++    // returns how far through each cell the ray has traveled. Useful for volumetric calculations
++    template <typename T>
++    RayMarchInfo marchRay(
++        const Vector2& start, Vector2 direction, const float maxDistance, const Map<T>& map, const std::function<bool(const T&)>& mapPredicate,
++        const std::function<bool(const Vector2&)>& positionPredicate = [](const Vector2& v) { return true; })
++    {
++        if (direction.norm() == 0)
++        {
++            Warn();
++            printf("Ray of length 0\n");
++
++            return RayMarchInfo();
++        }
++
++        Vector2 currentPosition = start;
++        Vector2Int currentCell = Vector2Int((currentPosition - map.origin) / map.resolution);
++
++        if (currentCell.x < 0 || currentCell.x >= map.dimensions.x || currentCell.y < 0 || currentCell.y >= map.dimensions.y)
++        {
++            Error();
++            printf("Ray outside the environment!\n");
++            return RayMarchInfo();
++        }
++
++        if (!mapPredicate(map.at(currentCell.x, currentCell.y)) || !positionPredicate(currentPosition))
++        {
++            Error();
++            printf("Ray starts inside an obstacle!\n");
++            return RayMarchInfo();
++        }
++
++        direction = direction / direction.norm();
++        int stepX = sign(direction.x);
++        int stepY = sign(direction.y);
++
++        float currentDistance = 0;
++        std::vector<std::pair<Vector2Int, float>> lengthsMap;
++        while (true)
++        {
++            float xCoordNext = (stepX > 0 ? currentCell.x + 1 : currentCell.x) * map.resolution + map.origin.x;
++            float yCoordNext = (stepY > 0 ? currentCell.y + 1 : currentCell.y) * map.resolution + map.origin.y;
++
++            // how far to move along direction, correcting for floating-point shenanigans
++            float tX = (xCoordNext - currentPosition.x) / direction.x;
++            if (tX <= 0)
++            {
++                xCoordNext += stepX * map.resolution;
++                tX = (xCoordNext - currentPosition.x) / direction.x;
++            }
++            float tY = (yCoordNext - currentPosition.y) / direction.y;
++            if (tY <= 0)
++            {
++                yCoordNext += stepY * map.resolution;
++                tY = (yCoordNext - currentPosition.y) / direction.y;
++            }
++
++            if ((stepX != 0 && tX > 0 && tX < tY) || (stepY == 0 || tY <= 0))
++            {
++                lengthsMap.emplace_back(currentCell, tX);
++                currentPosition += direction * tX;
++                currentDistance += tX;
++            }
++            else
++            {
++                lengthsMap.emplace_back(currentCell, tY);
++                currentPosition += direction * tY;
++                currentDistance += tY;
++            }
++
++            currentCell = Vector2Int((currentPosition - map.origin) / map.resolution);
++
++            if (currentDistance > maxDistance || currentCell.x < 0 || currentCell.x >= map.dimensions.x || currentCell.y < 0 ||
++                currentCell.y >= map.dimensions.y)
++                return RayMarchInfo();
++            else if (!mapPredicate(map.at(currentCell.x, currentCell.y)) || !positionPredicate(currentPosition))
++                return {lengthsMap, currentDistance};
++        }
++    }
++} // namespace DDA::_2D--- upstream/gsl_server/third_party/DDA/include/DDA/3D/Map.h
++++ source_runtime/third_party/DDA/include/DDA/3D/Map.h
+@@ -0,0 +1,29 @@
++#pragma once
++#include <vector>
++#include "../Vector3Int.h"
++#include "../Common.h"
++
++namespace DDA::_3D
++{
++    template <typename T> struct Map
++    {
++        Map()
++        {}
++
++        Map(const std::vector<T>& _cells, Vector3 _origin, float _resolution, Vector3Int _dimensions)
++            : cells(&_cells), origin(_origin), resolution(_resolution), dimensions(_dimensions)
++        {}
++
++        Vector3 origin;
++        float resolution;
++        Vector3Int dimensions;
++
++        const T& at(size_t i, size_t j, size_t h) const
++        {
++            return (*cells)[h * dimensions.x * dimensions.y + j * dimensions.x + i];
++        }
++
++    private:
++        const std::vector<T>* cells;
++    };
++} // namespace DDA::_3D--- upstream/gsl_server/third_party/DDA/include/DDA/3D/RayCast.h
++++ source_runtime/third_party/DDA/include/DDA/3D/RayCast.h
+@@ -0,0 +1,100 @@
++#pragma once 
++#include "Map.h"
++
++namespace DDA::_3D
++{
++    struct RayCastInfo
++    {
++        bool hitSomething;
++        float distance;
++    };
++
++    // returns true if a blocked cell was hit. The outline of the map is considered blocked.
++    template <typename T>
++    RayCastInfo castRay(
++        const Vector3& start, Vector3 direction, const float maxDistance, const Map<T>& map, const std::function<bool(const T&)>& mapPredicate,
++        const std::function<bool(const Vector3&)>& positionPredicate = [](const Vector3& v) { return true; })
++    {
++        if (direction.norm() == 0)
++        {
++            Warn();
++            printf("Ray of length 0\n");
++            return {false, 0};
++        }
++
++        Vector3 currentPosition = start;
++        Vector3Int currentCell = static_cast<Vector3Int>((currentPosition - map.origin) / map.resolution);
++        if (currentCell.x < 0 || currentCell.x >= map.dimensions.x || currentCell.y < 0 || currentCell.y >= map.dimensions.y ||
++            currentCell.z < 0 || currentCell.z >= map.dimensions.z)
++        {
++            Error();
++            printf("Ray origin in invalid position: (%f, %f, %f)\n", start.x, start.y, start.z);
++
++            return {false, 0};
++        }
++            
++        if(!mapPredicate(map.at(currentCell.x, currentCell.y, currentCell.z)) || !positionPredicate(currentPosition))
++        {
++            Error();
++            printf("Ray starts inside an obstacle!\n");
++            return {false, 0};
++        }
++
++        direction = direction / direction.norm();
++        int stepX = sign(direction.x);
++        int stepY = sign(direction.y);
++        int stepZ = sign(direction.z);
++
++        float currentDistance = 0;
++        while (true)
++        {
++            float xCoordNext = (stepX > 0 ? currentCell.x + 1 : currentCell.x) * map.resolution + map.origin.x;
++            float yCoordNext = (stepY > 0 ? currentCell.y + 1 : currentCell.y) * map.resolution + map.origin.y;
++            float zCoordNext = (stepZ > 0 ? currentCell.z + 1 : currentCell.z) * map.resolution + map.origin.z;
++
++            // how far to move along direction, correcting for floating-point shenanigans
++            float tX = (xCoordNext - currentPosition.x) / direction.x;
++            if (tX <= 0)
++            {
++                xCoordNext += stepX * map.resolution;
++                tX = (xCoordNext - currentPosition.x) / direction.x;
++            }
++            float tY = (yCoordNext - currentPosition.y) / direction.y;
++            if (tY <= 0)
++            {
++                yCoordNext += stepY * map.resolution;
++                tY = (yCoordNext - currentPosition.y) / direction.y;
++            }
++            float tZ = (zCoordNext - currentPosition.z) / direction.z;
++            if (tZ <= 0)
++            {
++                zCoordNext += stepZ * map.resolution;
++                tZ = (zCoordNext - currentPosition.z) / direction.z;
++            }
++
++            if ((stepX != 0 && tX > 0) && (tX < tY || stepY == 0 || tY <= 0) && (tX < tZ || stepZ == 0 || tZ <= 0))
++            {
++                currentPosition += direction * tX;
++                currentDistance += tX;
++            }
++            else if ((stepY != 0 && tY > 0) && (tY < tZ || stepZ == 0 || tZ <= 0))
++            {
++                currentPosition += direction * tY;
++                currentDistance += tY;
++            }
++            else
++            {
++                currentPosition += direction * tZ;
++                currentDistance += tZ;
++            }
++
++            currentCell = static_cast<Vector3Int>((currentPosition - map.origin) / map.resolution);
++
++            if (currentDistance > maxDistance || currentCell.x < 0 || currentCell.x >= map.dimensions.x || currentCell.y < 0 ||
++                currentCell.y >= map.dimensions.y || currentCell.z < 0 || currentCell.z >= map.dimensions.z)
++                return {false, maxDistance};
++            else if (!mapPredicate(map.at(currentCell.x, currentCell.y, currentCell.z)) || !positionPredicate(currentPosition))
++                return {true, currentDistance};
++        }
++    }
++}--- upstream/gsl_server/third_party/DDA/include/DDA/3D/RayMarch.h
++++ source_runtime/third_party/DDA/include/DDA/3D/RayMarch.h
+@@ -0,0 +1,115 @@
++#pragma once
++#include "Map.h"
++
++namespace DDA::_3D
++{
++
++    struct RayMarchInfo
++    {
++        std::vector<std::pair<Vector3Int, float>> lengthInCell;
++        float totalLength;
++        RayMarchInfo() : totalLength(0)
++        {}
++        RayMarchInfo(std::vector<std::pair<Vector3Int, float>> inputMap, float length) : lengthInCell(std::move(inputMap)), totalLength(length)
++        {}
++    };
++
++
++    // returns how far through each cell the ray has traveled. Useful for volumetric calculations
++    template <typename T>
++    RayMarchInfo marchRay(
++        const Vector3& start, Vector3 direction, const float maxDistance, const Map<T>& map, const std::function<bool(const T&)>& mapPredicate,
++        const std::function<bool(const Vector3&)>& positionPredicate = [](const Vector3& v) { return true; })
++    {
++        if (direction.norm() == 0)
++        {
++            Warn();
++            printf("Ray of length 0\n");
++
++            return RayMarchInfo();
++        }
++
++        Vector3 currentPosition = start;
++        Vector3Int currentCell = static_cast<Vector3Int>((currentPosition - map.origin) / map.resolution);
++
++        if (currentCell.x < 0 || currentCell.x >= map.dimensions.x || currentCell.y < 0 || currentCell.y >= map.dimensions.y ||
++            currentCell.z < 0 || currentCell.z >= map.dimensions.z)
++        {
++            Error();
++            printf("Ray origin in invalid position: (%f, %f, %f)\n", start.x, start.y, start.z);
++
++            return RayMarchInfo();
++        }
++            
++        if(!mapPredicate(map.at(currentCell.x, currentCell.y, currentCell.z)) || !positionPredicate(currentPosition))
++        {
++            Error();
++            printf("Ray starts inside an obstacle!\n");
++            return RayMarchInfo();
++        }
++
++        direction = direction / direction.norm();
++        int stepX = sign(direction.x);
++        int stepY = sign(direction.y);
++        int stepZ = sign(direction.z);
++
++        float currentDistance = 0;
++        std::vector<std::pair<Vector3Int, float>> lengthsMap;
++        while (true)
++        {
++            float xCoordNext = (stepX > 0 ? currentCell.x + 1 : currentCell.x) * map.resolution + map.origin.x;
++            float yCoordNext = (stepY > 0 ? currentCell.y + 1 : currentCell.y) * map.resolution + map.origin.y;
++            float zCoordNext = (stepZ > 0 ? currentCell.z + 1 : currentCell.z) * map.resolution + map.origin.z;
++
++            // how far to move along direction, correcting for floating-point shenanigans
++            float tX = (xCoordNext - currentPosition.x) / direction.x;
++            if (tX <= 0)
++            {
++                xCoordNext += stepX * map.resolution;
++                tX = (xCoordNext - currentPosition.x) / direction.x;
++            }
++            float tY = (yCoordNext - currentPosition.y) / direction.y;
++            if (tY <= 0)
++            {
++                yCoordNext += stepY * map.resolution;
++                tY = (yCoordNext - currentPosition.y) / direction.y;
++            }
++            float tZ = (zCoordNext - currentPosition.z) / direction.z;
++            if (tZ <= 0)
++            {
++                zCoordNext += stepZ * map.resolution;
++                tZ = (zCoordNext - currentPosition.z) / direction.z;
++            }
++
++            if (stepX != 0 && (tX < tY || stepY == 0) && (tX < tZ || stepZ == 0))
++            {
++                if (tX > 0)
++                    lengthsMap.emplace_back(currentCell, tX);
++                currentPosition += direction * tX;
++                currentDistance += tX;
++            }
++            else if (stepY != 0 && (tY < tZ || stepZ == 0))
++            {
++                if (tY > 0)
++                    lengthsMap.emplace_back(currentCell, tY);
++                currentPosition += direction * tY;
++                currentDistance += tY;
++            }
++            else
++            {
++                if (tZ > 0)
++                    lengthsMap.emplace_back(currentCell, tZ);
++                currentPosition += direction * tZ;
++                currentDistance += tZ;
++            }
++
++            currentCell = static_cast<Vector3Int>((currentPosition - map.origin) / map.resolution);
++
++            if (currentDistance > maxDistance || currentCell.x < 0 || currentCell.x >= map.dimensions.x || currentCell.y < 0 ||
++                currentCell.y >= map.dimensions.y || currentCell.z < 0 || currentCell.z >= map.dimensions.z)
++                return RayMarchInfo();
++            else if (!mapPredicate(map.at(currentCell.x, currentCell.y, currentCell.z)) || !positionPredicate(currentPosition))
++                return {lengthsMap, currentDistance};
++        }
++    }
++} // namespace DDA::_3D
+--- upstream/gsl_server/third_party/DDA/include/DDA/Common.h
++++ source_runtime/third_party/DDA/include/DDA/Common.h
+@@ -0,0 +1,31 @@
++#pragma once 
++#include <functional>
++#include <iostream>
++
++inline int sign(float x)
++{
++    if (x > 0)
++        return 1;
++    if (x < 0)
++        return -1;
++    return 0;
++}
++
++inline void resetColor()
++{
++    printf("\033[0m");
++}
++
++inline void Error()
++{
++    printf("\033[1;31m");
++    printf("[ERROR] ");
++    resetColor();
++}
++
++inline void Warn()
++{
++    printf("\033[1;33m");
++    printf("[WARN] ");
++    resetColor();
++}--- upstream/gsl_server/third_party/DDA/include/DDA/DDA.h
++++ source_runtime/third_party/DDA/include/DDA/DDA.h
+@@ -0,0 +1,5 @@
++#include "2D/RayCast.h"
++#include "2D/RayMarch.h"
++
++#include "3D/RayCast.h"
++#include "3D/RayMarch.h"
+--- upstream/gsl_server/third_party/DDA/include/DDA/Vector2.h
++++ source_runtime/third_party/DDA/include/DDA/Vector2.h
+@@ -0,0 +1,112 @@
++#pragma once
++#include <math.h>
++#include <functional>
++
++namespace DDA
++{
++
++    class Vector2;
++    inline Vector2 operator/(const Vector2& vec, const float& other);
++
++    class Vector2
++    {
++    public:
++        float x, y;
++
++        Vector2()
++        {
++            x = 0;
++            y = 0;
++        }
++        Vector2(const float& x, const float& y)
++        {
++            this->x = x;
++            this->y = y;
++        }
++
++        inline Vector2 operator+(const Vector2& other) const
++        {
++            return Vector2(x + other.x, y + other.y);
++        }
++        inline Vector2 operator-(const Vector2& other) const
++        {
++            return Vector2(x - other.x, y - other.y);
++        }
++        inline void operator+=(const Vector2& other)
++        {
++            x += other.x;
++            y += other.y;
++        }
++        inline void operator-=(const Vector2& other)
++        {
++            x -= other.x;
++            y -= other.y;
++        }
++        inline Vector2 operator-()
++        {
++            return Vector2(-x, -y);
++        }
++
++        // other stuff
++        inline float dot(const Vector2& other) const
++        {
++            return x * other.x + y * other.y;
++        }
++
++        inline float norm() const
++        {
++            return std::sqrt(x * x + y * y);
++        }
++
++        inline Vector2 normalized() const
++        {
++            float n = norm();
++            if (n == 0)
++                return {0, 0};
++
++            return *this / n;
++        }
++
++        inline void normalize()
++        {
++            float n = norm();
++            if (n != 0)
++            {
++                x /= n;
++                y /= n;
++            }
++        }
++
++        inline Vector2 rotate(float signedAngleRadians) const
++        {
++            float c = std::cos(signedAngleRadians);
++            float s = std::sin(signedAngleRadians);
++            return {x * c - y * s, x * s + y * c};
++        }
++    };
++
++    // scalar multiplication
++    inline Vector2 operator*(const Vector2& vec, const float& other)
++    {
++        return Vector2(vec.x * other, vec.y * other);
++    }
++    inline Vector2 operator*(const float& other, const Vector2& vec)
++    {
++        return vec * other;
++    }
++
++    inline Vector2 operator/(const Vector2& vec, const float& other)
++    {
++        return Vector2(vec.x / other, vec.y / other);
++    }
++    
++} // namespace DDA
++
++template<>
++struct std::hash<DDA::Vector2>
++{
++    size_t operator()(const DDA::Vector2& vec) const
++    {
++        return *(size_t*) &vec.x + (*(size_t*)(&vec.y) << 32);
++    }
++};--- upstream/gsl_server/third_party/DDA/include/DDA/Vector2Int.h
++++ source_runtime/third_party/DDA/include/DDA/Vector2Int.h
+@@ -0,0 +1,81 @@
++#pragma once
++#include "Vector2.h"
++
++namespace DDA
++{
++    struct Vector2Int
++    {
++        int x, y;
++        Vector2Int()
++        {
++            x = y = 0;
++        }
++        Vector2Int(int i, int j)
++        {
++            x = i;
++            y = j;
++        }
++        Vector2Int(const Vector2Int& other)
++        {
++            x = other.x;
++            y = other.y;
++        }
++
++        explicit Vector2Int(const Vector2& point) : x(point.x), y(point.y)
++        {}
++
++        bool operator==(const Vector2Int& other) const
++        {
++            return other.x == x && other.y == y;
++        }
++
++        bool operator!=(const Vector2Int& other) const
++        {
++            return other.x != x || other.y != y;
++        }
++
++        inline Vector2Int operator+(const Vector2Int& other) const
++        {
++            return Vector2Int(x + other.x, y + other.y);
++        }
++
++        inline Vector2Int operator-(const Vector2Int& other) const
++        {
++            return Vector2Int(x - other.x, y - other.y);
++        }
++
++        inline Vector2Int operator/(const float& other) const
++        {
++            return Vector2Int(x / other, y / other);
++        }
++
++        inline float norm() const
++        {
++            return std::sqrt(x * x + y * y);
++        }
++
++        explicit operator Vector2() const
++        {
++            return Vector2(x, y);
++        }
++    };
++
++    inline Vector2Int operator*(const Vector2Int& p, const float& f)
++    {
++        return Vector2Int(p.x * f, p.y * f);
++    }
++    inline Vector2Int operator*(const float& f, const Vector2Int& p)
++    {
++        return p * f;
++    }
++} // namespace DDA
++
++
++template<>
++struct std::hash<DDA::Vector2Int>
++{
++    size_t operator()(const DDA::Vector2Int& vec) const
++    {
++        return *(size_t*) &vec.x + (*(size_t*)(&vec.y) << 32);
++    }
++};--- upstream/gsl_server/third_party/DDA/include/DDA/Vector3.h
++++ source_runtime/third_party/DDA/include/DDA/Vector3.h
+@@ -0,0 +1,112 @@
++#pragma once
++#include <math.h>
++
++namespace DDA
++{
++    class Vector3;
++    inline Vector3 operator/(const Vector3& vec, const float& other);
++
++    class Vector3
++    {
++    public:
++        float x, y, z;
++
++        Vector3()
++        {
++            x = 0;
++            y = 0;
++            z = 0;
++        }
++        Vector3(const float& x, const float& y, const float& z)
++        {
++            this->x = x;
++            this->y = y;
++            this->z = z;
++        }
++
++        inline Vector3 operator+(const Vector3& other) const
++        {
++            return Vector3(x + other.x, y + other.y, z + other.z);
++        }
++        inline Vector3 operator-(const Vector3& other) const
++        {
++            return Vector3(x - other.x, y - other.y, z - other.z);
++        }
++        inline void operator+=(const Vector3& other)
++        {
++            x += other.x;
++            y += other.y;
++            z += other.z;
++        }
++        inline void operator-=(const Vector3& other)
++        {
++            x -= other.x;
++            y -= other.y;
++            z -= other.z;
++        }
++        inline Vector3 operator-()
++        {
++            return Vector3(-x, -y, -z);
++        }
++
++        // other stuff
++        inline float dot(const Vector3& other) const
++        {
++            return x * other.x + y * other.y + z * other.z;
++        }
++
++        inline Vector3 cross(const Vector3& other) const
++        {
++            return Vector3(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
++        }
++
++        inline float norm() const
++        {
++            return std::sqrt(x * x + y * y + z * z);
++        }
++
++        inline Vector3 normalized() const
++        {
++            float n = norm();
++            if (n == 0)
++                return {0, 0, 0};
++            return *this / n;
++        }
++
++        void normalize()
++        {
++            Vector3 n = normalized();
++            x = n.x;
++            y = n.y;
++        }
++    };
++
++    // scalar multiplication
++    inline Vector3 operator*(const Vector3& vec, const float& other)
++    {
++        return Vector3(vec.x * other, vec.y * other, vec.z * other);
++    }
++    inline Vector3 operator*(const int& other, const Vector3& vec)
++    {
++        return vec * other;
++    }
++    inline Vector3 operator*(const float& other, const Vector3& vec)
++    {
++        return vec * other;
++    }
++
++    inline Vector3 operator/(const Vector3& vec, const float& other)
++    {
++        return Vector3(vec.x / other, vec.y / other, vec.z / other);
++    }
++} // namespace DDA
++
++
++template<>
++struct std::hash<DDA::Vector3>
++{
++    size_t operator()(const DDA::Vector3& vec) const
++    {
++        return *(size_t*) &vec.x + *(size_t*)(&vec.y) + (*(size_t*)(&vec.z) << 32);
++    }
++};--- upstream/gsl_server/third_party/DDA/include/DDA/Vector3Int.h
++++ source_runtime/third_party/DDA/include/DDA/Vector3Int.h
+@@ -0,0 +1,78 @@
++#pragma once
++#include "Vector3.h"
++
++namespace DDA
++{
++    struct Vector3Int
++    {
++        int x, y, z;
++        Vector3Int()
++        {
++            x = y = z = 0;
++        }
++        Vector3Int(int i, int j, int k)
++        {
++            x = i;
++            y = j;
++            z = k;
++        }
++        Vector3Int(const Vector3Int& other)
++        {
++            x = other.x;
++            y = other.y;
++            z = other.z;
++        }
++
++        explicit Vector3Int(const Vector3& point) : x(point.x), y(point.y), z(point.z)
++        {}
++
++        bool operator==(const Vector3Int& other) const
++        {
++            return other.x == x && other.y == y && other.z == z;
++        }
++
++        bool operator!=(const Vector3Int& other) const
++        {
++            return other.x != x || other.y != y || other.z != z;
++        }
++
++        inline Vector3Int operator+(const Vector3Int& other) const
++        {
++            return Vector3Int(x + other.x, y + other.y, z + other.z);
++        }
++
++        inline Vector3Int operator-(const Vector3Int& other) const
++        {
++            return Vector3Int(x - other.x, y - other.y, z - other.z);
++        }
++
++        inline float norm() const
++        {
++            return std::sqrt(x * x + y * y);
++        }
++
++        operator Vector3() const
++        {
++            return Vector3(x, y, z);
++        }
++    };
++
++    inline Vector3Int operator*(const Vector3Int& p, const float& f)
++    {
++        return Vector3Int(p.x * f, p.y * f, p.z * f);
++    }
++    inline Vector3Int operator*(const float& f, const Vector3Int& p)
++    {
++        return p * f;
++    }
++} // namespace DDA
++
++
++template<>
++struct std::hash<DDA::Vector3Int>
++{
++    size_t operator()(const DDA::Vector3Int& vec) const
++    {
++        return *(size_t*) &vec.x + *(size_t*)(&vec.y) + (*(size_t*)(&vec.z) << 32);
++    }
++};--- upstream/gsl_server/third_party/DDA/include/DDA/Vectors.h
++++ source_runtime/third_party/DDA/include/DDA/Vectors.h
+@@ -0,0 +1,5 @@
++#pragma once
++#include "Vector2.h"
++#include "Vector3.h"
++#include "Vector2Int.h"
++#include "Vector3Int.h"--- upstream/gsl_server/third_party/DDA/test/test.cpp
++++ source_runtime/third_party/DDA/test/test.cpp
+@@ -0,0 +1,91 @@
++#include "../include/DDA/DDA.h"
++
++#include <iostream>
++
++void test()
++{
++    std::cout<<"Expected result:\n"
++    "2D\n"
++    "Raycast:\n"
++    "1 4.5m\n"
++    "Raymarch:\n"
++    "(2,0): 0.424264\n"
++    "(3,0): 0.282843\n"
++    "(3,1): 1.13137\n"
++    "(4,1): 0.282843\n"
++    "(4,2): 1.13137\n"
++    "3D\n"
++    "Raycast:\n"
++    "1 8.66025m\n"
++    "Raymarch:\n"
++    "(0,0): 1.73205\n"
++    "(1,1): 1.73205\n"
++    "(2,2): 1.73205\n"
++    "(3,3): 1.73205\n"
++    "(4,4): 1.73205\n";
++
++    std::cout<<"\n\nActual result:\n";
++    
++    //2D
++    {
++        std::cout<<"2D\n";
++
++        DDA::_2D::Map<bool> map;
++        map.cells = {
++            {1, 1, 1, 1, 1},
++            {1, 1, 0, 1, 1},
++            {1, 1, 0, 1, 1},
++            {1, 1, 0, 1, 1},
++            {1, 1, 1, 1, 1}
++        };
++        map.origin = {0,0};
++        map.resolution = 1;
++
++        std::cout<<"Raycast:\n";
++        {
++            auto result = DDA::_2D::castRay<bool>({0.5, 0.5}, {0,1}, 10.0f, map, [](bool b){return b;});
++            std::cout<<result.hitSomething<<" "<<result.distance<<"m\n";
++        }
++
++        std::cout<<"Raymarch:\n";
++        {
++            auto result = DDA::_2D::marchRay<bool>({2.7, 0.5}, {1,1}, 10, map,[](bool b){return b;});
++            for(const auto& p : result.lengthInCell)
++            {
++                DDA::Vector2Int cell =p.first;
++                std::cout<<"("<<cell.x<<","<<cell.y<<")"<<": "<<p.second<<"\n";
++            }
++        }
++    }
++
++    //3D
++    {
++        std::cout<<"3D\n";
++        DDA::_3D::Map<bool> map;
++        map.origin = {0,0,0};
++        map.resolution = 1;
++        map.cells = std::vector<std::vector<std::vector<bool>>> (5, std::vector<std::vector<bool>>(5, std::vector<bool>(5, true)) );
++        std::cout<<"Raycast:\n";
++        {
++            auto result = DDA::_3D::castRay<bool>({0, 0, 0}, {1, 1, 1}, 10, map, [](bool b){return b;});
++            std::cout<<result.hitSomething<<" "<<result.distance<<"m\n";
++        }
++
++        std::cout<<"Raymarch:\n";
++        {
++            auto result = DDA::_3D::marchRay<bool>({0, 0, 0}, {1,1,1}, 10, map,[](bool b){return b;});
++            for(const auto& p : result.lengthInCell)
++            {
++                DDA::Vector3Int cell =p.first;
++                std::cout<<"("<<cell.x<<","<<cell.y<<")"<<": "<<p.second<<"\n";
++            }
++            
++        }
++    }
++}
++
++int main()
++{
++    test();
++    return 0; 
++}--- upstream/gsl_server/third_party/StateMachine/CMakeLists.txt
++++ source_runtime/third_party/StateMachine/CMakeLists.txt
+@@ -0,0 +1,9 @@
++cmake_minimum_required(VERSION 3.10)
++project(StateMachines)
++set(CMAKE_CXX_FLAGS "-w -std=c++11 -O3 -g ${CMAKE_CXX_FLAGS}")
++
++include_directories(
++    include
++)
++
++add_executable(Test test.cpp) --- upstream/gsl_server/third_party/StateMachine/include/StateMachines/State.h
++++ source_runtime/third_party/StateMachine/include/StateMachines/State.h
+@@ -0,0 +1,35 @@
++#pragma once
++namespace StateMachines{
++
++    /*this class is templated so you can control the type of the arguments that are passed to the functions
++    Almost always, the way it is supposed to be used is:
++        
++    class My_State : public State<My_State> 
++    {};
++
++    ...
++
++    class Whatever
++    {
++        StateMachine<My_State> sm;
++        ...
++    };
++
++    That way, inside of (for example) CanExitState(next), you know that the next state is not just any State, but specifically My_State, and can access its members accordingly.
++    */
++
++    template <class T>
++    class State
++    {
++    public:
++        State() = default;
++        State(const State<T>& other) = default;
++        ~State() = default;
++
++        virtual bool CanEnterState(const T* previousState) const {return true;}
++        virtual bool CanExitState(const T* nextState) const {return true;}
++        virtual void OnEnterState(T* previousState) = 0;
++        virtual void OnExitState(T* nextState) = 0;
++        virtual void OnUpdate() = 0;
++    };
++}--- upstream/gsl_server/third_party/StateMachine/include/StateMachines/StateMachine.h
++++ source_runtime/third_party/StateMachine/include/StateMachines/StateMachine.h
+@@ -0,0 +1,62 @@
++#pragma once
++#include <StateMachines/State.h>
++#include <type_traits>
++
++namespace StateMachines
++{
++    template<class T>
++    class StateMachine
++    {
++    private:
++        T* currentState;
++        bool canChange(const T* next)
++        {
++            bool canDo = true;
++            if(currentState != nullptr)
++                canDo = canDo && currentState->CanExitState(next);
++            
++            if(next != nullptr)
++                canDo = canDo && next->CanEnterState(currentState);
++            else
++                canDo = false;
++
++            return canDo;
++        }
++    public:
++        StateMachine()
++        {
++            static_assert(std::is_base_of<State<T>, T>::value, "Invalid template argument on StateMachine<T> class. T must be a class inheriting from StateMachine::State<T>\n");
++            currentState = nullptr;
++        }
++
++        //sets currentState = next if both current->CanExitState() and next->CanEnterState() return true. If current == next, nothing happens
++        void trySetState(T* next)
++        {
++            if(canChange(next))      
++                forceSetState(next);
++        }
++        //same as trySetState, but OnExitState and OnEnterState will trigger even if current == next
++        void tryResetState(T* next)
++        {
++            if(canChange(next))
++                forceResetState(next);
++        }
++        //same as trySetState, but does not check canEnter or canExit 
++        void forceSetState(T* next)
++        {
++            if(currentState != next)
++                forceResetState(next);
++        }
++        //same as tryResetState, but does not check canEnter or canExit  
++        void forceResetState(T* next)
++        {
++            if(currentState != nullptr)
++                currentState->OnExitState(next);
++            T* previous = currentState;
++            currentState = next;
++            currentState->OnEnterState(previous);
++        }
++        T* getCurrentState() const{return currentState;}
++    };
++
++}--- upstream/gsl_server/third_party/StateMachine/test/test.cpp
++++ source_runtime/third_party/StateMachine/test/test.cpp
+@@ -0,0 +1,94 @@
++#include <StateMachine.h>
++#include <stdio.h>
++#include <iostream>
++
++using namespace StateMachines;
++
++class My_State : public State<My_State>
++{
++    public:
++    virtual int priority() const = 0;
++
++    bool CanEnterState(const My_State* previousState) const override
++    {
++        return previousState->priority()<=priority();
++    }
++};
++
++class StateA : public My_State
++{
++    int priority() const override
++    {
++        return 1;
++    } 
++
++    void OnEnterState(My_State* previous) override
++    {
++        printf("Entering State A\n");
++    }
++
++    void OnExitState(My_State* next) override
++    {
++        printf("Exiting State A\n");
++    }
++
++    void OnUpdate() override
++    {
++        printf("I'm on state A!\n");
++    }
++};
++
++class StateB : public My_State
++{
++    int priority() const override
++    {
++        return 2;
++    }
++
++    void OnEnterState(My_State* previous) override
++    {
++        printf("Entering State B\n");
++    }
++
++    void OnExitState(My_State* next) override
++    {
++        printf("Exiting State B\n");
++    }
++
++    void OnUpdate() override
++    {
++        printf("I'm on state B!\n");
++    }
++};
++
++class TestClass
++{
++    public:
++    StateMachines::StateMachine<My_State> stateMachine;
++    StateA stateA;
++    StateB stateB;
++};
++
++int main()
++{
++    TestClass test;
++    
++    test.stateMachine.forceSetState(&test.stateA);
++
++
++    char input = 'a';
++    while(input != 'x')
++    {
++        std::cin >> input;
++        if(input=='b')
++            test.stateMachine.trySetState(&test.stateB);
++        else if(input=='a')
++            test.stateMachine.trySetState(&test.stateA);
++        else if (input=='A')
++        {
++            test.stateMachine.forceResetState(&test.stateA);
++        }
++        test.stateMachine.getCurrentState()->OnUpdate();
++    }
++    
++}
