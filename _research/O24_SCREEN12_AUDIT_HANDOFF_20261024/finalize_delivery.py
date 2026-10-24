@@ -13,7 +13,7 @@ def finalize():
  spec=importlib.util.spec_from_file_location('final_report_latest',R/'summarize_screen12.py');mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod);mod.summarize()
  spec_nav=importlib.util.spec_from_file_location('nav_report_latest',R/'summarize_navigation_cost.py');nav=importlib.util.module_from_spec(spec_nav);spec_nav.loader.exec_module(nav);nav.summarize()
  records=json.loads((R/'BATCH_LEDGER.json').read_text());complete=len(records)==12;qualified=sum(x['QA']['qualification'].startswith('PASS')for x in records);technical=len(records)-qualified;out=repo/'_research/O24_SCREEN12_AUDIT_HANDOFF_20261024';out.mkdir(parents=True,exist_ok=True)
- for name in ['PREREGISTERED_SCREEN12_R2_INPUT_FINAL.json','BATCH_CHECKPOINT.json','EPISODE_RESULTS.csv','SCENARIO_SUMMARY.csv','RNG_REPETITION_AUDIT.json','中文筛查报告.md','CONTROLLED_RNG_ADAPTER_DESIGN_ONLY.md','NAVIGATION_AND_TIMELINE_INPUT_MANIFEST.json','PRE_EXECUTION_METADATA_CORRECTION.json','RESUME_AMENDMENT_R3.json','RESUME_AMENDMENT_R4.json','ROLE_EXECUTION_OVERRIDES_R4.json','TECHNICAL_PREGOAL_ATTEMPTS.json','DOMAIN_SUPPLEMENT_RECEIPT.json','COLLECTION_RECOVERY_R5.json','B2_LEGAL_PROXY_POSTERIOR_AUDIT.csv','B2_LEGAL_PROXY_POSTERIOR_AUDIT.json','audit_B2_legal_proxy_posterior.py']:
+ for name in ['PREREGISTERED_SCREEN12_R2_INPUT_FINAL.json','BATCH_CHECKPOINT.json','EPISODE_RESULTS.csv','SCENARIO_SUMMARY.csv','RNG_REPETITION_AUDIT.json','中文筛查报告.md','CONTROLLED_RNG_ADAPTER_DESIGN_ONLY.md','NAVIGATION_AND_TIMELINE_INPUT_MANIFEST.json','PRE_EXECUTION_METADATA_CORRECTION.json','RESUME_AMENDMENT_R3.json','RESUME_AMENDMENT_R4.json','RESUME_AMENDMENT_R6.json','ROLE_EXECUTION_OVERRIDES_R4.json','ROLE_EXECUTION_OVERRIDES_R6.json','TECHNICAL_PREGOAL_ATTEMPTS.json','DOMAIN_SUPPLEMENT_RECEIPT.json','COLLECTION_RECOVERY_R5.json','B2_LEGAL_PROXY_POSTERIOR_AUDIT.csv','B2_LEGAL_PROXY_POSTERIOR_AUDIT.json','audit_B2_legal_proxy_posterior.py']:
   if(R/name).exists():shutil.copyfile(R/name,out/name)
  for name in ['NAVIGATION_AND_COST_SUMMARY.csv','summarize_navigation_cost.py','PAPER_TIMEBASE_COMPARISON.md']:
   shutil.copyfile(R/name,out/name)
@@ -26,7 +26,7 @@ def finalize():
    if(C/name).exists():shutil.copyfile(C/name,dest/name)
  for name in ['SAFE_CLEANUP_BEFORE_AFTER.md','O24_VS_H24_H26_SOURCE_AND_PARAMETER_DIFF.md','EXPERIMENT_VERSION_IDENTITY_MATRIX.csv','FINAL_REPRODUCTION_RECEIPT.json','CANONICAL_DATA_INDEX.json','ARCHIVE_MANIFEST_SHA256.json','RESTORE_ARCHIVED_DATA.py','O24_QUALIFIED_NATIVE_EVIDENCE.md','SCIENTIFIC_CONCLUSION_FOR_PRO.md','INVENTORY_COMPLETE.json']:
   shutil.copyfile(registry/name,out/name)
- for name in ['analyze_completed_case.py','run_batch_host.py','run_batch_host_LAUNCHED_V1.py','run_batch_host_RESUME_R3.py','run_batch_host_RESUME_R4.py','run_batch_host_RESUME_R5.py','run_case_guest.py','run_case_guest_R4.py','process_ownership_R4.py','summarize_screen12.py','finalize_delivery.py','RESTORE_SCREEN12.py','CONTROLLER_SOURCE_PROVENANCE.json','prepare_resume_R3.py','prepare_resume_R4.py','recovery_gate_guest.py','reproduce_complete_bundle.py','make_pro_complete_readme.py']:
+ for name in ['analyze_completed_case.py','run_batch_host.py','run_batch_host_LAUNCHED_V1.py','run_batch_host_RESUME_R3.py','run_batch_host_RESUME_R4.py','run_batch_host_RESUME_R5.py','run_batch_host_RESUME_R6.py','run_case_guest.py','run_case_guest_R4.py','run_case_guest_R6.py','process_ownership_R4.py','summarize_screen12.py','finalize_delivery.py','RESTORE_SCREEN12.py','CONTROLLER_SOURCE_PROVENANCE.json','prepare_resume_R3.py','prepare_resume_R4.py','prepare_E3_pre_goal_resume_R6.py','recovery_gate_guest.py','reproduce_complete_bundle.py','make_pro_complete_readme.py']:
   if(R/name).exists():shutil.copyfile(R/name,out/name)
  for folder in ['domain_audit','recovery']:
   for p in(R/folder).rglob('*'):
@@ -47,7 +47,7 @@ def finalize():
   head=git('rev-parse','HEAD');ref=subprocess.run(['git','rev-parse','--verify','refs/heads/'+branch],cwd=repo,env=env,capture_output=True,text=True);parent=ref.stdout.strip()if ref.returncode==0 else head;git('read-tree',parent);git('add','-f','--',out.relative_to(repo).as_posix());tree=git('write-tree');commit=git('commit-tree',tree,'-p',parent,'-m','Audit O24 official lineage and record bounded paper-stop native screening');git('update-ref','refs/heads/'+branch,commit,parent if ref.returncode==0 else'0'*40);push=git('-c','credential.interactive=never','push','origin',branch);assert git('rev-parse','HEAD')==head;gitrec=dict(status='COMMIT_PUSHED_WITHOUT_CHECKOUT',commit=commit,branch=branch,url='https://github.com/kris-yun/uav-gsl-isj/commit/'+commit,current_worktree_branch_unchanged=True,push_output=push)
  except Exception as e:gitrec=dict(status='GIT_DELIVERY_UNCONFIRMED_EVIDENCE_PRESERVED',error=str(e))
  (R/'GITHUB_DELIVERY_RECEIPT.json').write_text(json.dumps(gitrec,ensure_ascii=False,indent=2)+'\n')
- dest=Path('C:/Users/50176/Downloads')/('O24_SCREEN12_'+('ACCOUNTED'if complete and technical else'COMPLETE'if complete else'PARTIAL_R4')+'_FULL_EVIDENCE_20261024.zip')
+ dest=Path('C:/Users/50176/Downloads')/('O24_SCREEN12_'+('COMBINED_FINAL'if complete else'PARTIAL_R6')+'_FULL_EVIDENCE_20261024.zip')
  if dest.exists():
   import datetime
   dest=dest.with_name(dest.stem+'_'+datetime.datetime.now(datetime.timezone.utc).strftime('%H%M%S')+'.zip')

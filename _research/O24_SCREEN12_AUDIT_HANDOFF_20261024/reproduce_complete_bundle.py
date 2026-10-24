@@ -44,7 +44,8 @@ for x in index['runs']:
  else:
   result=json.loads((target/'RUN_RESULT.json').read_text())
   owners=json.loads((target/'PROCESS_OWNERS_AND_MONITOR.json').read_text())
-  assert owners.get('forced')=='ISOLATION_FAILURE'
+  if result['native_goal_count']>0:assert owners.get('forced')=='ISOLATION_FAILURE'
+  else:assert not result.get('goal_accepted')and not(target/'runtime/native_posterior_updates.csv').exists()
   assert x['official_success']is None
   result=dict(role=x['role'],status='PASS_TECHNICAL_ABORT_EVIDENCE_PRESERVED',native_goal_count=result['native_goal_count'],excluded_from_localization_metrics=True)
  results.append(result)
