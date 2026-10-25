@@ -1,0 +1,17 @@
+{
+  "identity": "E3_HEIGHT_COUPLED_HORIZONTAL_WIND_EXTENSION_20261025",
+  "created_utc": "2026-10-25T15:12:10.289289+00:00",
+  "basis": "Preregistered full3D vs plane recovered20vs0late positive windows in bothstreams; zero_vz retains20; zero_buoyancy weakens/varies. Isolate horizontal wind sampling height.",
+  "candidate_calls": 4,
+  "baseline_exact_replays": 2,
+  "intervention": "Keep strict full3D position, vertical wind, buoyancy, xyznoise, native fine collision/LOS andrelease. Replace only u/v by same x/y fine cell at sourceheight0.7m; keep w from currentheight.",
+  "same_existing_initializations": true,
+  "new_target_worlds": 0,
+  "new_ROS": 0,
+  "limits": {
+    "cumulative_execution_wall_s": 900,
+    "child_CPU_s": 120,
+    "cumulative_output_bytes": 134217728
+  },
+  "stop": "After4calls, stop this causal campaign and package; no height orparameter search."
+}

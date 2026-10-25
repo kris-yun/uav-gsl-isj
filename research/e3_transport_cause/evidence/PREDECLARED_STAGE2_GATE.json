@@ -1,0 +1,32 @@
+{
+  "vertical_effect_in_both_streams": true,
+  "recovery": [
+    {
+      "prediction": "pred_r0",
+      "counts": {
+        "strict_bounds_full3d": 20,
+        "strict_bounds_plane": 0
+      }
+    },
+    {
+      "prediction": "pred_r1",
+      "counts": {
+        "strict_bounds_full3d": 20,
+        "strict_bounds_plane": 0
+      }
+    }
+  ],
+  "additional_arms": [
+    [
+      "strict_bounds_no_vertical_wind",
+      "no_vwind",
+      true
+    ],
+    [
+      "strict_bounds_no_buoyancy",
+      "no_buoyancy",
+      true
+    ]
+  ],
+  "gate_scope": "resource routing fixed in preregistration, not method tuning or significance"
+}

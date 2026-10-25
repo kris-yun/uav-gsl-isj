@@ -1,0 +1,376 @@
+[
+  {
+    "stage": "build_cause_driver",
+    "argv": [
+      "g++",
+      "-std=c++20",
+      "-O2",
+      "-DGADEN_ROS=0",
+      "-DGPU_ACCELERATION=0",
+      "-include",
+      "bits/stdc++.h",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-fopenmp",
+      "-I/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/override",
+      "-I/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/include",
+      "-I/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/third_party/DDA/include",
+      "-I/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/third_party/DDA/third_party/glm",
+      "-I/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/third_party/yaml-cpp/include",
+      "-I/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/third_party/libbsc",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/method_source/E3_TRANSPORT_CAUSE_20261025/driver.cpp",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/src/Simulation.cpp",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/src/PlaybackSimulation.cpp",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/src/WindSequence.cpp",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/src/GasSource.cpp",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/core_patch/RunningSimulation.cpp",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/core_patch/Environment.cpp",
+      "-L/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/native_runtime",
+      "-Wl,-rpath,/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/native_runtime",
+      "-Wl,--gc-sections",
+      "-lfmt",
+      "-lyaml-cpp",
+      "-lz",
+      "-lbsc",
+      "-o",
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver"
+    ],
+    "returncode": 1,
+    "wall_s": 38.12822832498932,
+    "CPU_s": 32.022814
+  },
+  {
+    "stage": "build_cause_driver_attempt2",
+    "argv": [
+      "g++",
+      "-std=c++20",
+      "-O2",
+      "-DGADEN_ROS=0",
+      "-DGPU_ACCELERATION=0",
+      "-include",
+      "bits/stdc++.h",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-fopenmp",
+      "-I/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/override",
+      "-I/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/include",
+      "-I/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/third_party/DDA/include",
+      "-I/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/third_party/DDA/third_party/glm",
+      "-I/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/third_party/yaml-cpp/include",
+      "-I/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/third_party/libbsc",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/method_source/E3_TRANSPORT_CAUSE_20261025/driver.cpp",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/src/Simulation.cpp",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/src/PlaybackSimulation.cpp",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/src/WindSequence.cpp",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/src/GasSource.cpp",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/core_patch/RunningSimulation.cpp",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/core_patch/Environment.cpp",
+      "-L/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/native_runtime",
+      "-Wl,-rpath,/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/native_runtime",
+      "-Wl,--gc-sections",
+      "-lfmt",
+      "-lyaml-cpp",
+      "-lz",
+      "-lbsc",
+      "-o",
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver"
+    ],
+    "returncode": 0,
+    "wall_s": 42.72130391700193,
+    "CPU_s": 36.366888
+  },
+  {
+    "stage": "qualification_original_true_r0",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/qualification_original_true_r0/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/qualification_original_true_r0"
+    ],
+    "returncode": 0,
+    "wall_s": 1.1313104220025707,
+    "CPU_s": 0.9334140000000013
+  },
+  {
+    "stage": "original_bounds_full3d_true_pred_r0",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/original_bounds_full3d_true_pred_r0/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/original_bounds_full3d_true_pred_r0"
+    ],
+    "returncode": 0,
+    "wall_s": 0.965791630995227,
+    "CPU_s": 0.7368840000000061
+  },
+  {
+    "stage": "original_bounds_full3d_true_pred_r1",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/original_bounds_full3d_true_pred_r1/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/original_bounds_full3d_true_pred_r1"
+    ],
+    "returncode": 0,
+    "wall_s": 1.0169953859876841,
+    "CPU_s": 0.8451279999999985
+  },
+  {
+    "stage": "original_bounds_full3d_rival_pred_r0",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/original_bounds_full3d_rival_pred_r0/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/original_bounds_full3d_rival_pred_r0"
+    ],
+    "returncode": 0,
+    "wall_s": 1.0441352670022752,
+    "CPU_s": 0.7957780000000003
+  },
+  {
+    "stage": "original_bounds_full3d_rival_pred_r1",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/original_bounds_full3d_rival_pred_r1/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/original_bounds_full3d_rival_pred_r1"
+    ],
+    "returncode": 0,
+    "wall_s": 1.0989085799956229,
+    "CPU_s": 0.8598960000000013
+  },
+  {
+    "stage": "strict_bounds_full3d_true_pred_r0",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_full3d_true_pred_r0/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_full3d_true_pred_r0"
+    ],
+    "returncode": 0,
+    "wall_s": 0.9027865399839357,
+    "CPU_s": 0.7191249999999951
+  },
+  {
+    "stage": "strict_bounds_full3d_true_pred_r1",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_full3d_true_pred_r1/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_full3d_true_pred_r1"
+    ],
+    "returncode": 0,
+    "wall_s": 1.2577437260188162,
+    "CPU_s": 0.8582600000000014
+  },
+  {
+    "stage": "strict_bounds_full3d_rival_pred_r0",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_full3d_rival_pred_r0/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_full3d_rival_pred_r0"
+    ],
+    "returncode": 0,
+    "wall_s": 1.0248466749908403,
+    "CPU_s": 0.8433169999999981
+  },
+  {
+    "stage": "strict_bounds_full3d_rival_pred_r1",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_full3d_rival_pred_r1/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_full3d_rival_pred_r1"
+    ],
+    "returncode": 0,
+    "wall_s": 1.4001722529937979,
+    "CPU_s": 0.9261880000000016
+  },
+  {
+    "stage": "strict_bounds_plane_true_pred_r0",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_plane_true_pred_r0/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_plane_true_pred_r0"
+    ],
+    "returncode": 0,
+    "wall_s": 1.0912717120081652,
+    "CPU_s": 0.6958999999999982
+  },
+  {
+    "stage": "strict_bounds_plane_true_pred_r1",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_plane_true_pred_r1/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_plane_true_pred_r1"
+    ],
+    "returncode": 0,
+    "wall_s": 1.1069420120038558,
+    "CPU_s": 0.6594980000000028
+  },
+  {
+    "stage": "strict_bounds_plane_rival_pred_r0",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_plane_rival_pred_r0/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_plane_rival_pred_r0"
+    ],
+    "returncode": 0,
+    "wall_s": 0.7733881059975829,
+    "CPU_s": 0.2659580000000048
+  },
+  {
+    "stage": "strict_bounds_plane_rival_pred_r1",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_plane_rival_pred_r1/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_plane_rival_pred_r1"
+    ],
+    "returncode": 0,
+    "wall_s": 0.803617249999661,
+    "CPU_s": 0.27247099999999236
+  },
+  {
+    "stage": "strict_bounds_no_vertical_wind_true_pred_r0",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_vertical_wind_true_pred_r0/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_vertical_wind_true_pred_r0"
+    ],
+    "returncode": 0,
+    "wall_s": 1.2585468479956035,
+    "CPU_s": 0.8421540000000001
+  },
+  {
+    "stage": "strict_bounds_no_vertical_wind_true_pred_r1",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_vertical_wind_true_pred_r1/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_vertical_wind_true_pred_r1"
+    ],
+    "returncode": 0,
+    "wall_s": 1.2570318980142474,
+    "CPU_s": 0.874207
+  },
+  {
+    "stage": "strict_bounds_no_vertical_wind_rival_pred_r0",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_vertical_wind_rival_pred_r0/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_vertical_wind_rival_pred_r0"
+    ],
+    "returncode": 0,
+    "wall_s": 1.3022513610194437,
+    "CPU_s": 0.86996
+  },
+  {
+    "stage": "strict_bounds_no_vertical_wind_rival_pred_r1",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_vertical_wind_rival_pred_r1/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_vertical_wind_rival_pred_r1"
+    ],
+    "returncode": 0,
+    "wall_s": 1.3552806060179137,
+    "CPU_s": 0.8899570000000003
+  },
+  {
+    "stage": "strict_bounds_no_buoyancy_true_pred_r0",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_buoyancy_true_pred_r0/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_buoyancy_true_pred_r0"
+    ],
+    "returncode": 0,
+    "wall_s": 0.5718524139956571,
+    "CPU_s": 0.3948739999999998
+  },
+  {
+    "stage": "strict_bounds_no_buoyancy_true_pred_r1",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_buoyancy_true_pred_r1/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_buoyancy_true_pred_r1"
+    ],
+    "returncode": 0,
+    "wall_s": 0.9192362040048465,
+    "CPU_s": 0.4391470000000005
+  },
+  {
+    "stage": "strict_bounds_no_buoyancy_rival_pred_r0",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_buoyancy_rival_pred_r0/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_buoyancy_rival_pred_r0"
+    ],
+    "returncode": 0,
+    "wall_s": 1.019525704003172,
+    "CPU_s": 0.4222410000000001
+  },
+  {
+    "stage": "strict_bounds_no_buoyancy_rival_pred_r1",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_transport_cause_20261025/cause_driver",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_buoyancy_rival_pred_r1/TASK.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/inputs/QUERIES.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_TRANSPORT_CAUSE_20261025/runs/strict_bounds_no_buoyancy_rival_pred_r1"
+    ],
+    "returncode": 0,
+    "wall_s": 0.6558684869960416,
+    "CPU_s": 0.46099100000000015
+  }
+]

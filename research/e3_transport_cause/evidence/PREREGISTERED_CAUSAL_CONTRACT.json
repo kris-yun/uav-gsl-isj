@@ -1,0 +1,101 @@
+{
+  "identity": "E3_SAME_GADEN_KERNEL_TRANSPORT_CAUSE_20261025",
+  "created_utc": "2026-10-25T14:57:00.406506+00:00",
+  "parent_commit": "02ba595f07e03b46c3f63a7e6702c7f8f19d21c9",
+  "authority": "User: continue until the cause is found; preserve frozen O24 and prior evidence",
+  "scope": "bounded offline source-pair causal diagnostics, not ROS, a new dataset, or main-innovation validation",
+  "discovered_boundary_issue": "Original coordsToIndices truncates negative fractional coordinates toward0. Slightly out-of-domain centers can pass native index-bounds tests. Native fidelity is not physical validity.",
+  "control": "First exactly reproduce original true_r0 all604archived queries under the unchanged original-index mode",
+  "stage1_arms": [
+    "original_bounds_full3d",
+    "strict_bounds_full3d",
+    "strict_bounds_plane"
+  ],
+  "stage1_interventions": {
+    "original_bounds_full3d": "untouched original GADEN transport, native RNG initialization adapted exactly as prior",
+    "strict_bounds_full3d": "only coordsToIndices uses floor; existing native OutOfBounds collision response otherwise unchanged",
+    "strict_bounds_plane": "same strict kernel, force newPosition.z to source0.7m after drawing all3noise components; horizontal advection,3D fine collision map,release,mass,growth,clock andPID readout unchanged"
+  },
+  "physical_parameters": {
+    "source_height_m": 0.7,
+    "gas_type": 10,
+    "gas": "butane",
+    "dt_s": 0.1,
+    "release_filaments_per_s": 10,
+    "sigma_initial_cm": 10,
+    "gamma_cm2_per_s": 15,
+    "noise_input": 0.015,
+    "noise_effective": 0.15,
+    "temperature_K": 298,
+    "pressure_atm": 1,
+    "duration_s": 240
+  },
+  "wind": "same original full fine3D wind file for every matched-kernel arm; oracle-only diagnostic privilege, not deployment input",
+  "prediction_streams": [
+    {
+      "id": "pred_r0",
+      "uniform_seed": 187031,
+      "cache_seed_words": [
+        1485900244,
+        3306190032,
+        2815851392,
+        520462069
+      ]
+    },
+    {
+      "id": "pred_r1",
+      "uniform_seed": 194950,
+      "cache_seed_words": [
+        1129961506,
+        1201228274,
+        1697647958,
+        820522943
+      ]
+    }
+  ],
+  "RNG": "Use already preregistered prediction cache_seed_words for Gaussian MT seed_seq and uniform_seed as its one-word MT seed_seq. No target-world seeds enter candidate predictions. Same initial engines within each paired source/stream; consume xyznoise even in plane. After survival differs, later per-particle noise assignment need not stay matched.",
+  "sources": {
+    "true": [
+      -4.0,
+      -1.9,
+      0.7
+    ],
+    "rival": [
+      -2.375,
+      -4.875,
+      0.7
+    ]
+  },
+  "target": "existing4actual paired physical worlds and untouched original E3; source labels are evaluation only",
+  "endpoints": [
+    "source pair rankings on untouched observed65windows",
+    "per-window ppm and0.1ppm event recovery at critical8to13",
+    "exact boundary-plane intervention, state bounds, gas heights and source-evidence differences",
+    "all normal/negative contrasts andcost"
+  ],
+  "adaptive_stage2": {
+    "if_full3d_has_more_positive_late_windows_than_plane_in_both_prediction_streams": [
+      "strict_bounds_no_vertical_wind",
+      "strict_bounds_no_buoyancy"
+    ],
+    "otherwise": [
+      "strict_bounds_plane_coarse_wind",
+      "strict_bounds_plane_native_noise"
+    ],
+    "purpose": "isolate vertical mechanism, or fine-horizontal wind/noise discrepancy. No position, source, threshold, duration or seed search"
+  },
+  "max_initial_candidate_calls": 12,
+  "max_additional_candidate_calls": 8,
+  "engineering_original_exact_replays": 1,
+  "limits": {
+    "total_execution_wall_s": 900,
+    "child_CPU_s": 120,
+    "new_output_bytes": 134217728,
+    "sequential": true
+  },
+  "output": "query-only independent candidate forward computations; save at most13anchor states per call, no full world archive",
+  "no_overwrite": true,
+  "no_ROS": true,
+  "no_new_neural_module": true,
+  "stop": "Stop after the preregistered finite stage; do not claim a unique cause if effects are mixed or unqualified."
+}
