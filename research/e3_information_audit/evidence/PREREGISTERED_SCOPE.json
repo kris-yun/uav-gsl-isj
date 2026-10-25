@@ -1,0 +1,60 @@
+{
+  "identity": "FROZEN_O24_E3_INFORMATION_SOURCE_AUDIT_20261025",
+  "created_utc": "2026-10-25T09:09:35.197346+00:00",
+  "status": "RETROSPECTIVE_AUDIT_PLUS_FIXED_NEW_QUERIES_NOT_BLIND",
+  "cases": [
+    "E3_R01",
+    "A2_R01_REFERENCE",
+    "A2_R02",
+    "A2_R03"
+  ],
+  "B2": "source-domain diagnostic only, no active comparison",
+  "truth_usage": "evaluation and leaf binding only; never action selection",
+  "neural_training": 0,
+  "new_worlds": 0,
+  "forward_simulations": 0,
+  "ROS_runs": 0,
+  "native_replay": "all saved updates and all saved candidate maps; score and normalized posterior parity required",
+  "replacements": [
+    "native_full_map",
+    "actual_cells_only",
+    "raw_window_compatibility",
+    "stop_frequency_compatibility"
+  ],
+  "replacement_scope": "fixed native tree/table diagnostic; not a new PMFS execution or calibrated likelihood",
+  "action_anchors": "E3 source updates 1,2,3 at consumed events20,35,50; no label-based anchor selection",
+  "actions": [
+    "hold",
+    "east_0p5",
+    "north_0p5",
+    "west_0p5",
+    "south_0p5",
+    "recorded_future_route"
+  ],
+  "motion": {
+    "max_speed_mps": 0.5,
+    "assumed_rest_acceleration_mps2": 0.5,
+    "body_radius_m": 0.2,
+    "motion_slot_s": 2.0,
+    "dwell_s": 2.5,
+    "total_s": 4.5
+  },
+  "windows": {
+    "count": 5,
+    "duration_s": 0.4,
+    "sample_dt_s": 0.1,
+    "window_start_relative_s": [
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0
+    ]
+  },
+  "eligibility": "whole segment: frozen navigation clearance plus native3D free at sensor0.5m, no bypass/replacement on rejection",
+  "ordinary_EIG": "single-station Bernoulli mutual information from full native source support and current cached hit frequencies; not asserted PID likelihood; no future gas queried for choice",
+  "physical_queries": "existing E3 and eligible E4 companion archive only; all legal fixed actions share times; maximum720 gas point queries plus native historical regression290",
+  "E4_scope": "different actual source coordinate/height; no substitution for locked wrong MAP world; no independent-realization claim",
+  "gates": "no algorithm promotion or ROS from a model-only IG/observed one-world difference",
+  "code_sha256": "9e5010a19aab73a2192fe0e11fb54252b70a04d59bacfb4dd5ac7fab43b5c674"
+}
