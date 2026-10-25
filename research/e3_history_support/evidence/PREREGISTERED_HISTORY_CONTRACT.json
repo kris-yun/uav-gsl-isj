@@ -1,0 +1,65 @@
+{
+  "identity": "E3_HISTORY_SUPPORT_INTERVENTION_20261025",
+  "created_utc": "2026-10-25T14:09:23.203847+00:00",
+  "parent_commit": "58d8610f95a501d2347844740d9b495ba193b099",
+  "objective": "One native warmup termination intervention, with local GMRF and2D transport fixed",
+  "development_only": true,
+  "new_physical_worlds": 0,
+  "new_ROS": 0,
+  "neural_training": 0,
+  "history_rule": "ceil(concentration-weighted99percentile original critical gas age/20s)*20s, fixed before outputs",
+  "q99_age_s": 208.3,
+  "fixed_history_s": 220,
+  "native_reference": "first exiting filament or max500warmup iterations, record200steps, dt0.1s; warmup dt0.2s",
+  "intervention": "continue warmup to exactly1100steps; exiting particles removed, all remaining particles updated; same movement/noise/mask and200recordsteps",
+  "same_RNG_scope": "same cached Gaussian tables and uniform initial state, exact shared prefix until native exit; after unequal consumption trajectories are not bitwise paired",
+  "prediction_streams": [
+    {
+      "id": "pred_r0",
+      "uniform_seed": 187031,
+      "cache_seed_words": [
+        1485900244,
+        3306190032,
+        2815851392,
+        520462069
+      ]
+    },
+    {
+      "id": "pred_r1",
+      "uniform_seed": 194950,
+      "cache_seed_words": [
+        1129961506,
+        1201228274,
+        1697647958,
+        820522943
+      ]
+    }
+  ],
+  "E3_sources": {
+    "true": [
+      -4.0,
+      -1.9
+    ],
+    "rival": [
+      -2.375,
+      -4.875
+    ]
+  },
+  "A2_scope": "normal-case source-pair guard only; does not establish full1195cell posterior or closed-loop nondegradation",
+  "max_point_forwards": 16,
+  "technical_native_leaf_replays": 4,
+  "limits": {
+    "total_execution_wall_s": 900,
+    "child_CPU_s": 120,
+    "new_output_bytes": 134217728,
+    "sequential": true
+  },
+  "preregistered_endpoints": [
+    "critical8to13 true-source center andPID response",
+    "source-pair signed compatibility on four retained actual worlds",
+    "age support and active-particle residence",
+    "A2 normal pair native full-map score difference",
+    "all positive/negative contrasts andcost"
+  ],
+  "interpretation": "A rescue establishes conditional intervention effect, not unique physical cause; a failure rules out sufficiency of this fixed warmup extension only. No adaptive longer duration, true-wind substitution or3D upgrade."
+}
