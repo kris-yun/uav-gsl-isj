@@ -1,0 +1,177 @@
+{
+  "identity": "E3_CAUSAL_PAIR_NATIVE_PHYSICS_AND_EVENT_OPERATOR_20261025",
+  "created_utc": "2026-10-25T12:46:20.430985+00:00",
+  "parent_commit": "01b2a9507590b770503e138151ede211c0a08b82",
+  "authorization": "Explicit user instruction: paired two-source two-realization physics after generator/RNG/resource gate",
+  "worlds": [
+    {
+      "id": "true_r0",
+      "source": "true",
+      "replicate": 0,
+      "source_xyz": [
+        -4.0,
+        -1.9,
+        0.7
+      ],
+      "gaussian_seed_words": [
+        2300026112,
+        952632815,
+        384603433,
+        820133004
+      ],
+      "uniform_seed_words": [
+        3210715177,
+        2169004736,
+        230807161,
+        1958938693
+      ]
+    },
+    {
+      "id": "true_r1",
+      "source": "true",
+      "replicate": 1,
+      "source_xyz": [
+        -4.0,
+        -1.9,
+        0.7
+      ],
+      "gaussian_seed_words": [
+        1209083353,
+        3475096109,
+        3311229114,
+        88213607
+      ],
+      "uniform_seed_words": [
+        3842395380,
+        2731339764,
+        3415076351,
+        3042299264
+      ]
+    },
+    {
+      "id": "rival_r0",
+      "source": "rival",
+      "replicate": 0,
+      "source_xyz": [
+        -2.375,
+        -4.875,
+        0.7
+      ],
+      "gaussian_seed_words": [
+        1641938537,
+        2901391209,
+        560228622,
+        2945227586
+      ],
+      "uniform_seed_words": [
+        1563012284,
+        51686332,
+        1265433543,
+        1784955545
+      ]
+    },
+    {
+      "id": "rival_r1",
+      "source": "rival",
+      "replicate": 1,
+      "source_xyz": [
+        -2.375,
+        -4.875,
+        0.7
+      ],
+      "gaussian_seed_words": [
+        1531163161,
+        4167486730,
+        4073958272,
+        2797403814
+      ],
+      "uniform_seed_words": [
+        1180587214,
+        3367577646,
+        2147053712,
+        600106838
+      ]
+    }
+  ],
+  "prediction_streams": [
+    {
+      "id": "pred_r0",
+      "uniform_seed": 187031,
+      "cache_seed_words": [
+        1485900244,
+        3306190032,
+        2815851392,
+        520462069
+      ]
+    },
+    {
+      "id": "pred_r1",
+      "uniform_seed": 194950,
+      "cache_seed_words": [
+        1129961506,
+        1201228274,
+        1697647958,
+        820522943
+      ]
+    }
+  ],
+  "source_positions_fixed": true,
+  "physical": {
+    "duration_s": 240.0,
+    "deltaTime": 0.1,
+    "gas_type": 10,
+    "temperature_K": 298.0,
+    "pressure_atm": 1.0,
+    "filaments_per_s": 10.0,
+    "initial_center_ppm": 10.0,
+    "initial_sigma_cm": 10.0,
+    "growth_gamma_cm2_s": 15.0,
+    "filament_noise_std": 0.015,
+    "wind": "original E3 single loaded3D field, evaluator/generator only",
+    "source_height_m": 0.7
+  },
+  "source_shape": "native PointSource; no jitter; same empty initial field and continuous release",
+  "independence": "OS-entropy independent128bit initialization of separate MT19937 Gaussian/uniform streams; actual engine/distribution/cache initial/final states logged. Within-world1000Gaussian cyclic cache retained: not iid increments.",
+  "output": "No full concentration grids; native-format complete filament snapshots only at predeclared query times plus endpoints; all propagation from0to240s.",
+  "clock": "Native RunningSimulation pre-step snapshot timestamp after that step advection, with post-step timestamp also saved; preserves original convention, not interpolated.",
+  "caps": {
+    "total_execution_wall_s": 900,
+    "per_process_CPU_s": 120,
+    "new_output_bytes": 134217728,
+    "parallel_processes": 1
+  },
+  "observations": {
+    "original_windows": 65,
+    "critical_stops": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "query_rows": 604,
+    "distinct_positions": 65,
+    "all_legal_previous_actions": true,
+    "threshold_ppm": 0.1,
+    "sensor": "PID30 uncorrected direct ppm; original physical response, no invented filtering/noise"
+  },
+  "controls": {
+    "native_center": "verbatim native2D simulation, source point diagnostic at the same two coordinates; frozen posterior1132cells remains separate",
+    "ordinary_PID": "same2D native paths/GMRF/RNG/budget; ordinary GADEN Gaussian mass/spread/3DLOS plus window-mean threshold. Derive quadrature puff mass from physical10filaments/s divided by native5paths/step. No new wind reconstruction.",
+    "source_support": "Both diagnostic response arms use the same two fixed point hypotheses. Never present two-source MAP as full-domain localization gain.",
+    "same_budget": "Two prediction streams per source; center and PID readout run on same trajectories; extra readout CPU reported separately.",
+    "physical_observability": "Predeclared source-labelled physical-reference diagnostic only: realization0 reference, realization1 test, and swap; all13stops and8to13 reported. No reference bank enters deployable action choice.",
+    "likelihood": "Station-balanced continuous template MSE and ordinary nonnegative amplitude-fit reference diagnostic; native and PID event source ranking use identical stationwise compatibility and ordinary Beta(1,1) smoothing sensitivity, not calibrated Bayes claims.",
+    "planner": "Only after response directional adequacy on held-out physical realizations; full original cache IG retained as negative control. No new active neural model."
+  },
+  "no_retuning": true,
+  "no_new_ROS": true,
+  "A2": "all3previous normal runs preserved; any operator diagnostic must include normal reference or report missing inputs",
+  "permitted_verdicts": [
+    "真实物理可分，原生响应错序",
+    "真实物理可分，普通可靠模型已能解决",
+    "现有动作物理不可分，其他动作可能可分",
+    "当前数据仍不足以可靠归因"
+  ]
+}
