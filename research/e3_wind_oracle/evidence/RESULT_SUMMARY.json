@@ -1,0 +1,140 @@
+{
+  "source_pair": [
+    {
+      "scope": "whole13",
+      "arm": "native_center",
+      "wind": "GMRF",
+      "correct_true_world_by_prediction": 0,
+      "true_world_by_prediction_count": 4,
+      "correct_all_world_by_prediction": 4,
+      "all_world_by_prediction_count": 8,
+      "actual_independent_worlds": 4
+    },
+    {
+      "scope": "whole13",
+      "arm": "native_center",
+      "wind": "horizontal_oracle",
+      "correct_true_world_by_prediction": 0,
+      "true_world_by_prediction_count": 4,
+      "correct_all_world_by_prediction": 4,
+      "all_world_by_prediction_count": 8,
+      "actual_independent_worlds": 4
+    },
+    {
+      "scope": "whole13",
+      "arm": "PID_window",
+      "wind": "GMRF",
+      "correct_true_world_by_prediction": 0,
+      "true_world_by_prediction_count": 4,
+      "correct_all_world_by_prediction": 4,
+      "all_world_by_prediction_count": 8,
+      "actual_independent_worlds": 4
+    },
+    {
+      "scope": "whole13",
+      "arm": "PID_window",
+      "wind": "horizontal_oracle",
+      "correct_true_world_by_prediction": 0,
+      "true_world_by_prediction_count": 4,
+      "correct_all_world_by_prediction": 4,
+      "all_world_by_prediction_count": 8,
+      "actual_independent_worlds": 4
+    },
+    {
+      "scope": "critical8to13",
+      "arm": "native_center",
+      "wind": "GMRF",
+      "correct_true_world_by_prediction": 0,
+      "true_world_by_prediction_count": 4,
+      "correct_all_world_by_prediction": 4,
+      "all_world_by_prediction_count": 8,
+      "actual_independent_worlds": 4
+    },
+    {
+      "scope": "critical8to13",
+      "arm": "native_center",
+      "wind": "horizontal_oracle",
+      "correct_true_world_by_prediction": 0,
+      "true_world_by_prediction_count": 4,
+      "correct_all_world_by_prediction": 4,
+      "all_world_by_prediction_count": 8,
+      "actual_independent_worlds": 4
+    },
+    {
+      "scope": "critical8to13",
+      "arm": "PID_window",
+      "wind": "GMRF",
+      "correct_true_world_by_prediction": 0,
+      "true_world_by_prediction_count": 4,
+      "correct_all_world_by_prediction": 4,
+      "all_world_by_prediction_count": 8,
+      "actual_independent_worlds": 4
+    },
+    {
+      "scope": "critical8to13",
+      "arm": "PID_window",
+      "wind": "horizontal_oracle",
+      "correct_true_world_by_prediction": 0,
+      "true_world_by_prediction_count": 4,
+      "correct_all_world_by_prediction": 4,
+      "all_world_by_prediction_count": 8,
+      "actual_independent_worlds": 4
+    }
+  ],
+  "native_score": [
+    {
+      "prediction": "pred_r0",
+      "wind": "GMRF",
+      "true_minus_rival_native_log_score": -6.784615639191152,
+      "wrong_over_true_native_full_observation_map_score": 884.1401927886525,
+      "pair_preference": "rival",
+      "full1132_source_posterior": false
+    },
+    {
+      "prediction": "pred_r0",
+      "wind": "horizontal_oracle",
+      "true_minus_rival_native_log_score": -6.929600867230774,
+      "wrong_over_true_native_full_observation_map_score": 1022.0859502034046,
+      "pair_preference": "rival",
+      "full1132_source_posterior": false
+    },
+    {
+      "prediction": "pred_r1",
+      "wind": "GMRF",
+      "true_minus_rival_native_log_score": -6.98075979303934,
+      "wrong_over_true_native_full_observation_map_score": 1075.7353928348418,
+      "pair_preference": "rival",
+      "full1132_source_posterior": false
+    },
+    {
+      "prediction": "pred_r1",
+      "wind": "horizontal_oracle",
+      "true_minus_rival_native_log_score": -7.362990418102704,
+      "wrong_over_true_native_full_observation_map_score": 1576.5440466341881,
+      "pair_preference": "rival",
+      "full1132_source_posterior": false
+    }
+  ],
+  "qualification": {
+    "status": "PASS_NATIVE_PARSER_AND_INDEPENDENT_RAW_DECODER",
+    "native_and_independent_wind_samples_exact": 2112,
+    "only_scene_wind_xy_changed": true,
+    "physical_wind_version": [
+      3,
+      0
+    ],
+    "physical_wind_sha256": "135690ce4679f43bb02d7d40fe39b338a250f2aa94cf3e71d0f2dbf8bbe4705a",
+    "source_coarse_centers_physically_free": true,
+    "coarse_free_center_mismatches": 36,
+    "mismatches_not_filled_or_unmasked": true,
+    "coarse_free_cells": 1132,
+    "horizontal_difference_RMS_mps": 0.29322177171707153,
+    "GMRF_horizontal_RMS_mps": 0.22537405788898468,
+    "reference_horizontal_RMS_mps": 0.3582034707069397,
+    "reference_vertical_RMS_mps": 0.11351389659019005,
+    "height_query_m": 0.7,
+    "projection_scope": "native voxel value at coarse center; not exact continuous2D flow or all3D trajectories"
+  },
+  "full_source_new_localization_claim": false,
+  "new_ROS": false
+}

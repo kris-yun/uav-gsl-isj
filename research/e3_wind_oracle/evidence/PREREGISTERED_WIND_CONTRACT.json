@@ -1,0 +1,80 @@
+{
+  "identity": "E3_FIXED220_HORIZONTAL_ORACLE_ONLY_20261025",
+  "created_utc": "2026-10-25T14:31:34.969016+00:00",
+  "parent_commit": "d6295dc942a32e39711204a4d2c9ad07ae686fa6",
+  "baseline_commit": "631145657461c41840f6844f118de57d1e747ea4",
+  "hypothesis": "Whether replacing only local GMRF horizontal wind by the archived physical-world reference slice rescues the locked source pair under identical fixed220warmup/2D transport",
+  "diagnostic_oracle_not_deployable": true,
+  "new_physical_worlds": 0,
+  "new_ROS": 0,
+  "neural_training": 0,
+  "wind": {
+    "source": "original E3 single loaded native wind_iteration_0",
+    "sha256": "135690ce4679f43bb02d7d40fe39b338a250f2aa94cf3e71d0f2dbf8bbe4705a",
+    "projection": "At each of all44x48 native PMFS coarse-cell centers, call the actual GADEN Environment coordsToIndices at the fixed common candidate height0.7m and sample native WindSequence; use u,v only. No averaging, filling, smoothing, scaling, source-specific editing, or new height search.",
+    "height_m": 0.7,
+    "vertical_component": "audited but never supplied to2D predictor",
+    "geometry": "both native2D occupancy and3D PID readout occupancy unchanged; source/query cells must be physically free; other coarse/3D center state mismatches reported, never repaired"
+  },
+  "constants": {
+    "history_s": 220,
+    "warmup_dt": 0.2,
+    "record_dt": 0.1,
+    "record_steps": 200,
+    "noise": 0.5,
+    "D": 0.2,
+    "PID_threshold_ppm": 0.1
+  },
+  "sources": {
+    "true": [
+      -4.0,
+      -1.9
+    ],
+    "rival": [
+      -2.375,
+      -4.875
+    ]
+  },
+  "prediction_streams": [
+    {
+      "id": "pred_r0",
+      "uniform_seed": 187031,
+      "cache_seed_words": [
+        1485900244,
+        3306190032,
+        2815851392,
+        520462069
+      ]
+    },
+    {
+      "id": "pred_r1",
+      "uniform_seed": 194950,
+      "cache_seed_words": [
+        1129961506,
+        1201228274,
+        1697647958,
+        820522943
+      ]
+    }
+  ],
+  "shared_randomness": "reuse exactly existing cache/uniform initial states; changed wind changes later survival/draw consumption, not claimed identical physical trajectories",
+  "qualification": "native parser and independent raw float32 decoder agree at all coarse centers; coords/index/unit/source-height checks; exact GMRF control map andRNG replay before oracle",
+  "limits": {
+    "total_execution_wall_s": 900,
+    "child_CPU_s": 120,
+    "new_scientific_output_bytes": 134217728,
+    "sequential": true
+  },
+  "calls": {
+    "existing_GMRF_long220_exact_replays": 4,
+    "new_oracle_point_forwards": 4
+  },
+  "endpoints": [
+    "true-source response at frozen8to13stations",
+    "source-pair signed compatibility and ranks on all4existing real worlds",
+    "native full-observation-map point-candidate score ratios",
+    "all source/prediction contrasts and costs"
+  ],
+  "full_map_scope": "no new1132cell posterior or closed-loop localization claim",
+  "stop": "Stop after this wind-only contrast. Do not auto-start3D armC, tune slice, alter history or noise, or add seeds."
+}

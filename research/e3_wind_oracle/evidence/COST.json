@@ -1,0 +1,210 @@
+[
+  {
+    "stage": "build_export_wind",
+    "argv": [
+      "g++",
+      "-std=c++20",
+      "-O2",
+      "-DGADEN_ROS=0",
+      "-include",
+      "bits/stdc++.h",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-I/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/include",
+      "-I/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/third_party/DDA/third_party/glm",
+      "-I/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/third_party/yaml-cpp/include",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/method_source/E3_HORIZONTAL_WIND_ORACLE_20261025/export_wind.cpp",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/src/Environment.cpp",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/build_source/gaden_core/src/WindSequence.cpp",
+      "-Wl,--gc-sections",
+      "-lfmt",
+      "-lyaml-cpp",
+      "-o",
+      "/home/zyc/ros2_ws/research_runs/e3_wind_oracle_20261025/export_wind"
+    ],
+    "returncode": 0,
+    "wall_s": 16.56500442500692,
+    "CPU_s": 14.54392
+  },
+  {
+    "stage": "native_export",
+    "argv": [
+      "/home/zyc/ros2_ws/research_runs/e3_wind_oracle_20261025/export_wind",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/E3_scene.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/wind_iteration_0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025"
+    ],
+    "returncode": 0,
+    "wall_s": 0.222317313979147,
+    "CPU_s": 0.04335299999999975
+  },
+  {
+    "stage": "replay_true_pred_r0",
+    "argv": [
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HISTORY_SUPPORT_20261025/history_observer",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/E3_scene.json",
+      "arm",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/control_E3_true_pred_r0_long220.spec.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/control_true_pred_r0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/pred_r0.cache.f32"
+    ],
+    "returncode": 0,
+    "wall_s": 0.6643910720013082,
+    "CPU_s": 0.21795399999999976
+  },
+  {
+    "stage": "oracle_true_pred_r0",
+    "argv": [
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HISTORY_SUPPORT_20261025/history_observer",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/E3_ORACLE_scene.json",
+      "arm",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/control_E3_true_pred_r0_long220.spec.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/oracle_true_pred_r0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/pred_r0.cache.f32"
+    ],
+    "returncode": 0,
+    "wall_s": 0.6643291620130185,
+    "CPU_s": 0.2221869999999999
+  },
+  {
+    "stage": "kernel_true_pred_r0",
+    "argv": [
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/event_control/kernel",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/oracle_true_pred_r0.particles.bin",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/E3_UNIQUE_POINTS.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/E3_CONSTANTS.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/oracle_true_pred_r0.timeseries.csv"
+    ],
+    "returncode": 0,
+    "wall_s": 0.4463881129922811,
+    "CPU_s": 0.20535600000000054
+  },
+  {
+    "stage": "replay_true_pred_r1",
+    "argv": [
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HISTORY_SUPPORT_20261025/history_observer",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/E3_scene.json",
+      "arm",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/control_E3_true_pred_r1_long220.spec.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/control_true_pred_r1",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/pred_r1.cache.f32"
+    ],
+    "returncode": 0,
+    "wall_s": 0.6680875709862448,
+    "CPU_s": 0.21761200000000125
+  },
+  {
+    "stage": "oracle_true_pred_r1",
+    "argv": [
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HISTORY_SUPPORT_20261025/history_observer",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/E3_ORACLE_scene.json",
+      "arm",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/control_E3_true_pred_r1_long220.spec.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/oracle_true_pred_r1",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/pred_r1.cache.f32"
+    ],
+    "returncode": 0,
+    "wall_s": 0.6787528620043304,
+    "CPU_s": 0.27118799999999954
+  },
+  {
+    "stage": "kernel_true_pred_r1",
+    "argv": [
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/event_control/kernel",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/oracle_true_pred_r1.particles.bin",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/E3_UNIQUE_POINTS.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/E3_CONSTANTS.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/oracle_true_pred_r1.timeseries.csv"
+    ],
+    "returncode": 0,
+    "wall_s": 0.451968189998297,
+    "CPU_s": 0.26923100000000133
+  },
+  {
+    "stage": "replay_rival_pred_r0",
+    "argv": [
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HISTORY_SUPPORT_20261025/history_observer",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/E3_scene.json",
+      "arm",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/control_E3_rival_pred_r0_long220.spec.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/control_rival_pred_r0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/pred_r0.cache.f32"
+    ],
+    "returncode": 0,
+    "wall_s": 0.705235300003551,
+    "CPU_s": 0.2404569999999997
+  },
+  {
+    "stage": "oracle_rival_pred_r0",
+    "argv": [
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HISTORY_SUPPORT_20261025/history_observer",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/E3_ORACLE_scene.json",
+      "arm",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/control_E3_rival_pred_r0_long220.spec.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/oracle_rival_pred_r0",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/pred_r0.cache.f32"
+    ],
+    "returncode": 0,
+    "wall_s": 0.4562042449833825,
+    "CPU_s": 0.1716300000000004
+  },
+  {
+    "stage": "kernel_rival_pred_r0",
+    "argv": [
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/event_control/kernel",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/oracle_rival_pred_r0.particles.bin",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/E3_UNIQUE_POINTS.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/E3_CONSTANTS.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/oracle_rival_pred_r0.timeseries.csv"
+    ],
+    "returncode": 0,
+    "wall_s": 0.24274825499742292,
+    "CPU_s": 0.14758099999999974
+  },
+  {
+    "stage": "replay_rival_pred_r1",
+    "argv": [
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HISTORY_SUPPORT_20261025/history_observer",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/E3_scene.json",
+      "arm",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/control_E3_rival_pred_r1_long220.spec.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/control_rival_pred_r1",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/pred_r1.cache.f32"
+    ],
+    "returncode": 0,
+    "wall_s": 0.68136843200773,
+    "CPU_s": 0.21270700000000176
+  },
+  {
+    "stage": "oracle_rival_pred_r1",
+    "argv": [
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HISTORY_SUPPORT_20261025/history_observer",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/E3_ORACLE_scene.json",
+      "arm",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/control_E3_rival_pred_r1_long220.spec.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/oracle_rival_pred_r1",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/pred_r1.cache.f32"
+    ],
+    "returncode": 0,
+    "wall_s": 0.4590040710172616,
+    "CPU_s": 0.17397899999999966
+  },
+  {
+    "stage": "kernel_rival_pred_r1",
+    "argv": [
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_CAUSAL_PAIR_20261025/event_control/kernel",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/oracle_rival_pred_r1.particles.bin",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/OccupancyGrid3D.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/E3_UNIQUE_POINTS.csv",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/inputs/E3_CONSTANTS.json",
+      "/mnt/hgfs/workspace/METHOD_COMPARISON_O24_1M2_20261024/outputs/E3_HORIZONTAL_WIND_ORACLE_20261025/runs/oracle_rival_pred_r1.timeseries.csv"
+    ],
+    "returncode": 0,
+    "wall_s": 0.24357849400257692,
+    "CPU_s": 0.16466300000000178
+  }
+]
