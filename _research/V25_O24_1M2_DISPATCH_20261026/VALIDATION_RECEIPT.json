@@ -1,0 +1,60 @@
+{
+  "status": "PASS_CHEAP_METADATA_AND_NEGATIVE_GATES",
+  "tests": [
+    {
+      "check": "actual audited metadata",
+      "status": "PASS"
+    },
+    {
+      "check": "reject variance1.5",
+      "status": "PASS_REJECTED",
+      "reason": "Not strict variance < 1 m2"
+    },
+    {
+      "check": "reject D0.4",
+      "status": "PASS_REJECTED",
+      "reason": "D/information/build permission mismatch"
+    },
+    {
+      "check": "reject full truth wind",
+      "status": "PASS_REJECTED",
+      "reason": "D/information/build permission mismatch"
+    },
+    {
+      "check": "reject360s normal cap",
+      "status": "PASS_REJECTED",
+      "reason": "Normal stop must not be replaced by a short time cap"
+    },
+    {
+      "check": "reject role selection",
+      "status": "PASS_REJECTED",
+      "reason": "Frozen role list changed"
+    },
+    {
+      "check": "reject C3 noise homogenization",
+      "status": "PASS_REJECTED",
+      "reason": "C3_R01: noise mismatch"
+    },
+    {
+      "check": "strict boundary 1.0 rejects, .999999 accepts",
+      "status": "PASS_DEFINITION_ONLY"
+    },
+    {
+      "check": "metadata-only executable smoke",
+      "status": "PASS",
+      "stdout": "{\"status\": \"METADATA_ONLY_NOT_RUNTIME_QUALIFICATION\", \"out_root\": \"/workspace/scratch/0788c93b6064/v25_work/baseline/validation/metadata_export_001\", \"execution_ready\": false, \"archives_verified\": 0, \"new_ROS_runs\": 0}"
+    },
+    {
+      "check": "partial Git checkout refuses full execution qualification",
+      "status": "PASS_REJECTED",
+      "stderr": "{\"status\": \"REJECT_WITHOUT_MODIFYING_FREEZE\", \"error\": \"Freeze file inventory mismatch: missing=['.gitignore', 'LIVE_VM_SEAL_CHECK.json', 'actual_configuration/active_protocol/COLLECTION_RECOVERY_R5.json', 'actual_configuration/active_protocol/CONTROLLED_RNG_ADAPTER_DESIGN_ONLY.md', 'actual_configuration/active_protocol/CONTROLLER_SOURCE_PROVENANCE.json', 'actual_configuration/active_protocol/CURRENT_RUNTIME_CODE_COLLECTION.json', 'actual_configuration/active_protocol/PAPER_TIMEBASE_COMPARISON.m"
+    }
+  ],
+  "guard_wall_s": 0.04178482899988012,
+  "subprocess_peak_RSS_kib_linux": 12544,
+  "native_PMFS_peak_RSS_measured": false,
+  "native_PMFS_runs": 0,
+  "new_worlds": 0,
+  "new_training": 0,
+  "evidence_limit": "These tests validate the dispatch guard, not ROS runtime, algorithm performance, or ZIP extraction without the original binary archives."
+}
