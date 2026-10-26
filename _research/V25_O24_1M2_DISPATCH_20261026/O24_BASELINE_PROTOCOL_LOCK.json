@@ -1,0 +1,1944 @@
+{
+  "schema_version": "v25-o24-protocol-1.0",
+  "status": "AUDITED_CONFIGURATION_DISPATCH_LOCAL_RUNTIME_UNVERIFIED",
+  "execution_ready": false,
+  "scope": "A read-only extension of the actual SCREEN12 freeze, not a replacement for it",
+  "provenance": {
+    "user_authoritative_path": "D:/ZYC/A-gas/workspace/FROZEN_O24_1M2_SCREEN12_20261024/BASELINE_LOCK.json",
+    "readable_mirror_repository": "kris-yun/uav-gsl-isj",
+    "readable_mirror_branch": "research/o24-1m2-frozen-20261024",
+    "readable_mirror_commit": "a339136931c4f285697c6e2c7804869646971ed3",
+    "lock_url": "https://github.com/kris-yun/uav-gsl-isj/blob/a339136931c4f285697c6e2c7804869646971ed3/workspace/FROZEN_O24_1M2_SCREEN12_20261024/BASELINE_LOCK.json",
+    "lock_git_blob": "ee086dfe21c82e6b76a8bea65f74cd5ca516b9ad",
+    "lock_lf_sha256": "68e4cda7038b2c9f28db00c012bd4d55c60a344e4cb711779504b458607553f0",
+    "lock_lf_bytes": 2883,
+    "original_windows_crlf_sha256": "e376f7a02be97b40332f8c7d98c9abcfa08c89e7c957c319f89e73722e65293e",
+    "original_windows_crlf_bytes": 2967,
+    "line_ending_equivalence": "Verified: replacing LF with CRLF produces the exact original frozen hash. No parameter differs. Do not rewrite the frozen input.",
+    "frozen_cases_url": "https://github.com/kris-yun/uav-gsl-isj/blob/a339136931c4f285697c6e2c7804869646971ed3/workspace/FROZEN_O24_1M2_SCREEN12_20261024/FROZEN_CASES.json",
+    "source_identity_url": "https://github.com/kris-yun/uav-gsl-isj/blob/a339136931c4f285697c6e2c7804869646971ed3/workspace/FROZEN_O24_1M2_SCREEN12_20261024/FROZEN_SOURCE_IDENTITY_128.json",
+    "freeze_manifest_url": "https://github.com/kris-yun/uav-gsl-isj/blob/a339136931c4f285697c6e2c7804869646971ed3/workspace/FROZEN_O24_1M2_SCREEN12_20261024/FREEZE_MANIFEST_SHA256.json",
+    "local_windows_volume_read": false,
+    "new_native_runs_performed_by_v25_dispatch": 0
+  },
+  "actual_baseline_lock": {
+    "freeze_identity": "PMFS-O24-PORT-GMRF-PAPERSTOP1M2-SCREEN12-20261024",
+    "frozen_UTC": "2026-10-24T13:12:37.875418+00:00",
+    "source_commit": "631145657461c41840f6844f118de57d1e747ea4",
+    "public_author_snapshot": "a8d5a764b7cbfc1d5d1887aebfe890e2c75d7533",
+    "evidence_commit": "120bb2e833bfc6aa96a356101203570b476b6b9f",
+    "ELF_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+    "source_file_count": 128,
+    "normal_stop": {
+      "parameter": "convergence_thr",
+      "value": 1.0,
+      "unit": "m2",
+      "definition": "sum_s p(s)*((x_s-E[x])^2+(y_s-E[y])^2), covariance trace",
+      "comparison": "strictly less than",
+      "not_localization_error_threshold": true,
+      "source_function": "PMFS_utils.cpp::varianceSourcePosition and checkSourceFound"
+    },
+    "baseline_core": {
+      "sourceDiscriminationPower": 0.2,
+      "USE_GADEN": false,
+      "useWindGroundTruth": false,
+      "wind_information": "local measurements/GMRF only",
+      "noiseSTDev_by_case": {
+        "A2": 0.5,
+        "B2": 0.5,
+        "C3": 0.25,
+        "D4": 0.5,
+        "E3": 0.5
+      }
+    },
+    "time_protocol": {
+      "BasicSim_speed": 1.0,
+      "use_sim_time": true,
+      "gas_world_looping": false,
+      "maxSearchTime": 1000000000.0,
+      "fixed_300_or_600_normal_stop": false,
+      "data_exhaustion": "censored not native declaration",
+      "safety_caps": "preserve preregistered1100s pergoal and1250s perattempt separately from normal stop"
+    },
+    "RNG": "Original frozen RNG retained; actual states recorded; no prescribed-independent-seed or bitwise-replay claim",
+    "roles": [
+      "A2_R01_REFERENCE",
+      "B2_R01",
+      "B2_R02",
+      "B2_R03",
+      "B2_R04",
+      "B2_R05",
+      "A2_R02",
+      "A2_R03",
+      "C3_R01",
+      "C3_R02",
+      "D4_R01",
+      "E3_R01"
+    ],
+    "legal_source_roles": [
+      "A2_R01_REFERENCE",
+      "A2_R02",
+      "A2_R03",
+      "C3_R01",
+      "C3_R02",
+      "D4_R01",
+      "E3_R01"
+    ],
+    "excluded_source_diagnostic_roles": [
+      "B2_R01",
+      "B2_R02",
+      "B2_R03",
+      "B2_R04",
+      "B2_R05"
+    ],
+    "observed_outcome_classes": {
+      "native_declarations": 10,
+      "recording_exhaustion_censor": 1,
+      "technical_isolation_abort": 1
+    },
+    "paper_scope": "Paper 1m2 declaration threshold adopted with frozen O24 scoring. Not a claim that every parameter, author experiment commit, original clock, or30-repeat performance has been reproduced.",
+    "source_config_archive_sha256": "9ecec278724279a304288fc0174f2c41ae7a9615eb22f5ef43a9c374e6555b19",
+    "full_evidence_archive_sha256": "553ed6d0d3de761d2e2a13fff2b2fd1e205271bdce0e6bd75414fb1a24ac6ee3",
+    "historical_1p5_protocol": "Retained inside original code archive only; not active for this frozen comparison identity",
+    "modification_policy": "Do not edit this freeze. New user methods and any future protocol changes require separate identities and output roots.",
+    "new_builds": 0,
+    "new_ROS_runs": 0,
+    "new_worlds": 0
+  },
+  "frozen_cases": [
+    {
+      "role": "A2_R01_REFERENCE",
+      "case": "A2",
+      "configuration_prefix": "actual_configuration/launch_cases/A2_R01_REFERENCE",
+      "source_domain": "LEGAL",
+      "GSL_parameters": {
+        "use_sim_time": true,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 0.2,
+        "convergence_thr": 1.0,
+        "maxSearchTime": 1000000000.0,
+        "stop_and_measure_time": 0.4,
+        "confidenceMeasurementWeight": 1.0,
+        "confidenceSigmaSpatial": 1.0,
+        "kernelSigma": 1.5,
+        "kernelStretchConstant": 1.5,
+        "hitPriorProbability": 0.3,
+        "scale": 25,
+        "maxUpdatesPerStop": 5,
+        "stepsSourceUpdate": 3,
+        "refineFraction": 0.1,
+        "maxRegionSize": 5,
+        "deltaTime": 0.1,
+        "noiseSTDev": 0.5,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500,
+        "th_gas_present": 0.1,
+        "th_wind_present": 0.02,
+        "robot_location_topic": "ground_truth",
+        "enose_topic": "PID/Sensor_reading",
+        "anemometer_topic": "/native20/wind_to",
+        "anemometer_frame": "PioneerP3DX_anemometer_frame",
+        "openMoveSetExpasion": 5,
+        "explorationProbability": 0.05,
+        "initialExplorationMoves": 2,
+        "localEstimationWindowSize": 2,
+        "convergence_steps": 5,
+        "markers_height": 0.2,
+        "distanceThreshold": 0.5
+      },
+      "navigation_map_sha256": "b4da15d43d95fba7602a207b8770ceaee979f71082fe55c15699d5611cb75ff0",
+      "physical_time_csv_sha256": "a954b24338d9c52fdba031d3deffa460518cbd881f85e2cd44f30bbb9969a08f",
+      "native_ELF_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+      "full_original_archive": {
+        "status": "PASS_FULL_MEMBER_SHA_ROUNDTRIP",
+        "archive": "C:\\Users\\50176\\Downloads\\O24_SCREEN12_EVIDENCE_20261024\\A2_R01_REFERENCE_FULL.zip",
+        "archive_sha256": "a103e124b73a0d33751549780727902e2fe74ecdde0f217e54820ee6db01de8f",
+        "source_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_STOP_A2_20261024\\cases\\PAPERSTOP_A2_R02",
+        "files": 141,
+        "raw_bytes": 34431387,
+        "archive_bytes": 4592270,
+        "all_unique_bytes_preserved": true
+      }
+    },
+    {
+      "role": "B2_R01",
+      "case": "B2",
+      "configuration_prefix": "actual_configuration/launch_cases/B2_R01",
+      "source_domain": "EXCLUDED_DIAGNOSTIC_ONLY",
+      "GSL_parameters": {
+        "use_sim_time": true,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 0.2,
+        "convergence_thr": 1.0,
+        "maxSearchTime": 1000000000.0,
+        "stop_and_measure_time": 0.4,
+        "confidenceMeasurementWeight": 1.0,
+        "confidenceSigmaSpatial": 1.0,
+        "kernelSigma": 1.5,
+        "kernelStretchConstant": 1.5,
+        "hitPriorProbability": 0.3,
+        "scale": 25,
+        "maxUpdatesPerStop": 5,
+        "stepsSourceUpdate": 3,
+        "refineFraction": 0.1,
+        "maxRegionSize": 5,
+        "deltaTime": 0.1,
+        "noiseSTDev": 0.5,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500,
+        "th_gas_present": 0.1,
+        "th_wind_present": 0.02,
+        "robot_location_topic": "ground_truth",
+        "enose_topic": "PID/Sensor_reading",
+        "anemometer_topic": "/native20/wind_to",
+        "anemometer_frame": "PioneerP3DX_anemometer_frame",
+        "openMoveSetExpasion": 5,
+        "explorationProbability": 0.05,
+        "initialExplorationMoves": 2,
+        "localEstimationWindowSize": 2,
+        "convergence_steps": 5,
+        "markers_height": 0.2,
+        "distanceThreshold": 0.5
+      },
+      "navigation_map_sha256": "0d4c7436fecf3ac37f8ebac99241abf9fcdab49bd1b485e54824d6a368adf5e9",
+      "physical_time_csv_sha256": "815f9b73e05ed953bd57382e8c647928b2b65e478091e780d6a4cff8fabcc4af",
+      "native_ELF_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+      "full_original_archive": {
+        "status": "PASS_FULL_MEMBER_SHA_ROUNDTRIP",
+        "archive": "C:\\Users\\50176\\Downloads\\O24_SCREEN12_EVIDENCE_20261024\\B2_R01_FULL.zip",
+        "archive_sha256": "e916952f924f60c6c0d211e4e9404d50c16cf0eb866c05ac97f1af7ef33b33fd",
+        "source_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\B2_R01",
+        "files": 149,
+        "raw_bytes": 18822527,
+        "archive_bytes": 2192729,
+        "all_unique_bytes_preserved": true
+      }
+    },
+    {
+      "role": "B2_R02",
+      "case": "B2",
+      "configuration_prefix": "actual_configuration/launch_cases/B2_R02",
+      "source_domain": "EXCLUDED_DIAGNOSTIC_ONLY",
+      "GSL_parameters": {
+        "use_sim_time": true,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 0.2,
+        "convergence_thr": 1.0,
+        "maxSearchTime": 1000000000.0,
+        "stop_and_measure_time": 0.4,
+        "confidenceMeasurementWeight": 1.0,
+        "confidenceSigmaSpatial": 1.0,
+        "kernelSigma": 1.5,
+        "kernelStretchConstant": 1.5,
+        "hitPriorProbability": 0.3,
+        "scale": 25,
+        "maxUpdatesPerStop": 5,
+        "stepsSourceUpdate": 3,
+        "refineFraction": 0.1,
+        "maxRegionSize": 5,
+        "deltaTime": 0.1,
+        "noiseSTDev": 0.5,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500,
+        "th_gas_present": 0.1,
+        "th_wind_present": 0.02,
+        "robot_location_topic": "ground_truth",
+        "enose_topic": "PID/Sensor_reading",
+        "anemometer_topic": "/native20/wind_to",
+        "anemometer_frame": "PioneerP3DX_anemometer_frame",
+        "openMoveSetExpasion": 5,
+        "explorationProbability": 0.05,
+        "initialExplorationMoves": 2,
+        "localEstimationWindowSize": 2,
+        "convergence_steps": 5,
+        "markers_height": 0.2,
+        "distanceThreshold": 0.5
+      },
+      "navigation_map_sha256": "0d4c7436fecf3ac37f8ebac99241abf9fcdab49bd1b485e54824d6a368adf5e9",
+      "physical_time_csv_sha256": "815f9b73e05ed953bd57382e8c647928b2b65e478091e780d6a4cff8fabcc4af",
+      "native_ELF_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+      "full_original_archive": {
+        "status": "PASS_FULL_MEMBER_SHA_ROUNDTRIP",
+        "archive": "C:\\Users\\50176\\Downloads\\O24_SCREEN12_EVIDENCE_20261024\\B2_R02_FULL.zip",
+        "archive_sha256": "7768a20f97bbdccf2ce76e4e81ccb02188e3e7c6fe0ea450f393be301a73e8e0",
+        "source_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\B2_R02",
+        "files": 149,
+        "raw_bytes": 14836709,
+        "archive_bytes": 1647556,
+        "all_unique_bytes_preserved": true
+      }
+    },
+    {
+      "role": "B2_R03",
+      "case": "B2",
+      "configuration_prefix": "actual_configuration/launch_cases/B2_R03",
+      "source_domain": "EXCLUDED_DIAGNOSTIC_ONLY",
+      "GSL_parameters": {
+        "use_sim_time": true,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 0.2,
+        "convergence_thr": 1.0,
+        "maxSearchTime": 1000000000.0,
+        "stop_and_measure_time": 0.4,
+        "confidenceMeasurementWeight": 1.0,
+        "confidenceSigmaSpatial": 1.0,
+        "kernelSigma": 1.5,
+        "kernelStretchConstant": 1.5,
+        "hitPriorProbability": 0.3,
+        "scale": 25,
+        "maxUpdatesPerStop": 5,
+        "stepsSourceUpdate": 3,
+        "refineFraction": 0.1,
+        "maxRegionSize": 5,
+        "deltaTime": 0.1,
+        "noiseSTDev": 0.5,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500,
+        "th_gas_present": 0.1,
+        "th_wind_present": 0.02,
+        "robot_location_topic": "ground_truth",
+        "enose_topic": "PID/Sensor_reading",
+        "anemometer_topic": "/native20/wind_to",
+        "anemometer_frame": "PioneerP3DX_anemometer_frame",
+        "openMoveSetExpasion": 5,
+        "explorationProbability": 0.05,
+        "initialExplorationMoves": 2,
+        "localEstimationWindowSize": 2,
+        "convergence_steps": 5,
+        "markers_height": 0.2,
+        "distanceThreshold": 0.5
+      },
+      "navigation_map_sha256": "0d4c7436fecf3ac37f8ebac99241abf9fcdab49bd1b485e54824d6a368adf5e9",
+      "physical_time_csv_sha256": "815f9b73e05ed953bd57382e8c647928b2b65e478091e780d6a4cff8fabcc4af",
+      "native_ELF_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+      "full_original_archive": {
+        "status": "PASS_FULL_MEMBER_SHA_ROUNDTRIP",
+        "archive": "C:\\Users\\50176\\Downloads\\O24_SCREEN12_EVIDENCE_20261024\\B2_R03_FULL.zip",
+        "archive_sha256": "0b4c7a60acd13bccd3d51dda4da1a723d8bb4540b2f548c55b7b8e5474586faa",
+        "source_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\B2_R03",
+        "files": 149,
+        "raw_bytes": 17973142,
+        "archive_bytes": 2116169,
+        "all_unique_bytes_preserved": true
+      }
+    },
+    {
+      "role": "B2_R04",
+      "case": "B2",
+      "configuration_prefix": "actual_configuration/launch_cases/B2_R04",
+      "source_domain": "EXCLUDED_DIAGNOSTIC_ONLY",
+      "GSL_parameters": {
+        "use_sim_time": true,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 0.2,
+        "convergence_thr": 1.0,
+        "maxSearchTime": 1000000000.0,
+        "stop_and_measure_time": 0.4,
+        "confidenceMeasurementWeight": 1.0,
+        "confidenceSigmaSpatial": 1.0,
+        "kernelSigma": 1.5,
+        "kernelStretchConstant": 1.5,
+        "hitPriorProbability": 0.3,
+        "scale": 25,
+        "maxUpdatesPerStop": 5,
+        "stepsSourceUpdate": 3,
+        "refineFraction": 0.1,
+        "maxRegionSize": 5,
+        "deltaTime": 0.1,
+        "noiseSTDev": 0.5,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500,
+        "th_gas_present": 0.1,
+        "th_wind_present": 0.02,
+        "robot_location_topic": "ground_truth",
+        "enose_topic": "PID/Sensor_reading",
+        "anemometer_topic": "/native20/wind_to",
+        "anemometer_frame": "PioneerP3DX_anemometer_frame",
+        "openMoveSetExpasion": 5,
+        "explorationProbability": 0.05,
+        "initialExplorationMoves": 2,
+        "localEstimationWindowSize": 2,
+        "convergence_steps": 5,
+        "markers_height": 0.2,
+        "distanceThreshold": 0.5
+      },
+      "navigation_map_sha256": "0d4c7436fecf3ac37f8ebac99241abf9fcdab49bd1b485e54824d6a368adf5e9",
+      "physical_time_csv_sha256": "815f9b73e05ed953bd57382e8c647928b2b65e478091e780d6a4cff8fabcc4af",
+      "native_ELF_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+      "full_original_archive": {
+        "status": "PASS_FULL_MEMBER_SHA_ROUNDTRIP",
+        "archive": "C:\\Users\\50176\\Downloads\\O24_SCREEN12_EVIDENCE_20261024\\B2_R04_FULL.zip",
+        "archive_sha256": "1eeec223a40f20d2e13f3991a160a14620cf40192f9c6dd42578745105d38d17",
+        "source_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\B2_R04",
+        "files": 137,
+        "raw_bytes": 3727758,
+        "archive_bytes": 420578,
+        "all_unique_bytes_preserved": true
+      }
+    },
+    {
+      "role": "B2_R05",
+      "case": "B2",
+      "configuration_prefix": "actual_configuration/launch_cases/B2_R05",
+      "source_domain": "EXCLUDED_DIAGNOSTIC_ONLY",
+      "GSL_parameters": {
+        "use_sim_time": true,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 0.2,
+        "convergence_thr": 1.0,
+        "maxSearchTime": 1000000000.0,
+        "stop_and_measure_time": 0.4,
+        "confidenceMeasurementWeight": 1.0,
+        "confidenceSigmaSpatial": 1.0,
+        "kernelSigma": 1.5,
+        "kernelStretchConstant": 1.5,
+        "hitPriorProbability": 0.3,
+        "scale": 25,
+        "maxUpdatesPerStop": 5,
+        "stepsSourceUpdate": 3,
+        "refineFraction": 0.1,
+        "maxRegionSize": 5,
+        "deltaTime": 0.1,
+        "noiseSTDev": 0.5,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500,
+        "th_gas_present": 0.1,
+        "th_wind_present": 0.02,
+        "robot_location_topic": "ground_truth",
+        "enose_topic": "PID/Sensor_reading",
+        "anemometer_topic": "/native20/wind_to",
+        "anemometer_frame": "PioneerP3DX_anemometer_frame",
+        "openMoveSetExpasion": 5,
+        "explorationProbability": 0.05,
+        "initialExplorationMoves": 2,
+        "localEstimationWindowSize": 2,
+        "convergence_steps": 5,
+        "markers_height": 0.2,
+        "distanceThreshold": 0.5
+      },
+      "navigation_map_sha256": "0d4c7436fecf3ac37f8ebac99241abf9fcdab49bd1b485e54824d6a368adf5e9",
+      "physical_time_csv_sha256": "815f9b73e05ed953bd57382e8c647928b2b65e478091e780d6a4cff8fabcc4af",
+      "native_ELF_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+      "full_original_archive": {
+        "status": "PASS_FULL_MEMBER_SHA_ROUNDTRIP",
+        "archive": "C:\\Users\\50176\\Downloads\\O24_SCREEN12_EVIDENCE_20261024\\B2_R05_FULL.zip",
+        "archive_sha256": "39117e8b72f5f153887e36af1d58a178be8297d29ced2303abb390a6b885e5f8",
+        "source_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\B2_R05",
+        "files": 149,
+        "raw_bytes": 53551340,
+        "archive_bytes": 5066060,
+        "all_unique_bytes_preserved": true
+      }
+    },
+    {
+      "role": "A2_R02",
+      "case": "A2",
+      "configuration_prefix": "actual_configuration/launch_cases/A2_R02",
+      "source_domain": "LEGAL",
+      "GSL_parameters": {
+        "use_sim_time": true,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 0.2,
+        "convergence_thr": 1.0,
+        "maxSearchTime": 1000000000.0,
+        "stop_and_measure_time": 0.4,
+        "confidenceMeasurementWeight": 1.0,
+        "confidenceSigmaSpatial": 1.0,
+        "kernelSigma": 1.5,
+        "kernelStretchConstant": 1.5,
+        "hitPriorProbability": 0.3,
+        "scale": 25,
+        "maxUpdatesPerStop": 5,
+        "stepsSourceUpdate": 3,
+        "refineFraction": 0.1,
+        "maxRegionSize": 5,
+        "deltaTime": 0.1,
+        "noiseSTDev": 0.5,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500,
+        "th_gas_present": 0.1,
+        "th_wind_present": 0.02,
+        "robot_location_topic": "ground_truth",
+        "enose_topic": "PID/Sensor_reading",
+        "anemometer_topic": "/native20/wind_to",
+        "anemometer_frame": "PioneerP3DX_anemometer_frame",
+        "openMoveSetExpasion": 5,
+        "explorationProbability": 0.05,
+        "initialExplorationMoves": 2,
+        "localEstimationWindowSize": 2,
+        "convergence_steps": 5,
+        "markers_height": 0.2,
+        "distanceThreshold": 0.5
+      },
+      "navigation_map_sha256": "b4da15d43d95fba7602a207b8770ceaee979f71082fe55c15699d5611cb75ff0",
+      "physical_time_csv_sha256": "a954b24338d9c52fdba031d3deffa460518cbd881f85e2cd44f30bbb9969a08f",
+      "native_ELF_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+      "full_original_archive": {
+        "status": "PASS_FULL_MEMBER_SHA_ROUNDTRIP",
+        "archive": "C:\\Users\\50176\\Downloads\\O24_SCREEN12_EVIDENCE_20261024\\A2_R02_RESTART_R4_FULL.zip",
+        "archive_sha256": "5b383e50f9ac33b07e0e77e84932365681497938cb8fb86468fc56df70a6ad38",
+        "source_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\A2_R02_RESTART_R4",
+        "files": 86,
+        "raw_bytes": 24735868,
+        "archive_bytes": 3373847,
+        "all_unique_bytes_preserved": true
+      }
+    },
+    {
+      "role": "A2_R03",
+      "case": "A2",
+      "configuration_prefix": "actual_configuration/launch_cases/A2_R03",
+      "source_domain": "LEGAL",
+      "GSL_parameters": {
+        "use_sim_time": true,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 0.2,
+        "convergence_thr": 1.0,
+        "maxSearchTime": 1000000000.0,
+        "stop_and_measure_time": 0.4,
+        "confidenceMeasurementWeight": 1.0,
+        "confidenceSigmaSpatial": 1.0,
+        "kernelSigma": 1.5,
+        "kernelStretchConstant": 1.5,
+        "hitPriorProbability": 0.3,
+        "scale": 25,
+        "maxUpdatesPerStop": 5,
+        "stepsSourceUpdate": 3,
+        "refineFraction": 0.1,
+        "maxRegionSize": 5,
+        "deltaTime": 0.1,
+        "noiseSTDev": 0.5,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500,
+        "th_gas_present": 0.1,
+        "th_wind_present": 0.02,
+        "robot_location_topic": "ground_truth",
+        "enose_topic": "PID/Sensor_reading",
+        "anemometer_topic": "/native20/wind_to",
+        "anemometer_frame": "PioneerP3DX_anemometer_frame",
+        "openMoveSetExpasion": 5,
+        "explorationProbability": 0.05,
+        "initialExplorationMoves": 2,
+        "localEstimationWindowSize": 2,
+        "convergence_steps": 5,
+        "markers_height": 0.2,
+        "distanceThreshold": 0.5
+      },
+      "navigation_map_sha256": "b4da15d43d95fba7602a207b8770ceaee979f71082fe55c15699d5611cb75ff0",
+      "physical_time_csv_sha256": "a954b24338d9c52fdba031d3deffa460518cbd881f85e2cd44f30bbb9969a08f",
+      "native_ELF_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+      "full_original_archive": {
+        "status": "PASS_FULL_MEMBER_SHA_ROUNDTRIP",
+        "archive": "C:\\Users\\50176\\Downloads\\O24_SCREEN12_EVIDENCE_20261024\\A2_R03_FULL.zip",
+        "archive_sha256": "0079fa155e924fb3d5ad8307900d79af43c960be73046d6c8122034a1744aab5",
+        "source_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\A2_R03",
+        "files": 149,
+        "raw_bytes": 20122989,
+        "archive_bytes": 2688972,
+        "all_unique_bytes_preserved": true
+      }
+    },
+    {
+      "role": "C3_R01",
+      "case": "C3",
+      "configuration_prefix": "actual_configuration/launch_cases/C3_R01",
+      "source_domain": "LEGAL",
+      "GSL_parameters": {
+        "use_sim_time": true,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 0.2,
+        "convergence_thr": 1.0,
+        "maxSearchTime": 1000000000.0,
+        "stop_and_measure_time": 0.4,
+        "confidenceMeasurementWeight": 1.0,
+        "confidenceSigmaSpatial": 1.0,
+        "kernelSigma": 1.5,
+        "kernelStretchConstant": 1.5,
+        "hitPriorProbability": 0.3,
+        "scale": 25,
+        "maxUpdatesPerStop": 5,
+        "stepsSourceUpdate": 3,
+        "refineFraction": 0.1,
+        "maxRegionSize": 5,
+        "deltaTime": 0.1,
+        "noiseSTDev": 0.25,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500,
+        "th_gas_present": 0.1,
+        "th_wind_present": 0.02,
+        "robot_location_topic": "ground_truth",
+        "enose_topic": "PID/Sensor_reading",
+        "anemometer_topic": "/native20/wind_to",
+        "anemometer_frame": "PioneerP3DX_anemometer_frame",
+        "openMoveSetExpasion": 5,
+        "explorationProbability": 0.05,
+        "initialExplorationMoves": 2,
+        "localEstimationWindowSize": 2,
+        "convergence_steps": 5,
+        "markers_height": 0.2,
+        "distanceThreshold": 0.5
+      },
+      "navigation_map_sha256": "60c75ceadd50e33b3312b4f84a0e240e3c034ac83e04aa4956319e8918b431e4",
+      "physical_time_csv_sha256": "ab38256bb0c2df47806c87e4bc9bbfa0ed1fa021761119fb4410a093ecda9731",
+      "native_ELF_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+      "full_original_archive": {
+        "status": "PASS_FULL_MEMBER_SHA_ROUNDTRIP",
+        "archive": "C:\\Users\\50176\\Downloads\\O24_SCREEN12_EVIDENCE_20261024\\C3_R01_FULL.zip",
+        "archive_sha256": "736fe8b1fd8d904b09516a862f7c7e041cd75530533e96807ad55374d9cb094e",
+        "source_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\C3_R01",
+        "files": 148,
+        "raw_bytes": 22404591,
+        "archive_bytes": 2707841,
+        "all_unique_bytes_preserved": true
+      }
+    },
+    {
+      "role": "C3_R02",
+      "case": "C3",
+      "configuration_prefix": "actual_configuration/launch_cases/C3_R02",
+      "source_domain": "LEGAL",
+      "GSL_parameters": {
+        "use_sim_time": true,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 0.2,
+        "convergence_thr": 1.0,
+        "maxSearchTime": 1000000000.0,
+        "stop_and_measure_time": 0.4,
+        "confidenceMeasurementWeight": 1.0,
+        "confidenceSigmaSpatial": 1.0,
+        "kernelSigma": 1.5,
+        "kernelStretchConstant": 1.5,
+        "hitPriorProbability": 0.3,
+        "scale": 25,
+        "maxUpdatesPerStop": 5,
+        "stepsSourceUpdate": 3,
+        "refineFraction": 0.1,
+        "maxRegionSize": 5,
+        "deltaTime": 0.1,
+        "noiseSTDev": 0.25,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500,
+        "th_gas_present": 0.1,
+        "th_wind_present": 0.02,
+        "robot_location_topic": "ground_truth",
+        "enose_topic": "PID/Sensor_reading",
+        "anemometer_topic": "/native20/wind_to",
+        "anemometer_frame": "PioneerP3DX_anemometer_frame",
+        "openMoveSetExpasion": 5,
+        "explorationProbability": 0.05,
+        "initialExplorationMoves": 2,
+        "localEstimationWindowSize": 2,
+        "convergence_steps": 5,
+        "markers_height": 0.2,
+        "distanceThreshold": 0.5
+      },
+      "navigation_map_sha256": "60c75ceadd50e33b3312b4f84a0e240e3c034ac83e04aa4956319e8918b431e4",
+      "physical_time_csv_sha256": "ab38256bb0c2df47806c87e4bc9bbfa0ed1fa021761119fb4410a093ecda9731",
+      "native_ELF_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+      "full_original_archive": {
+        "status": "PASS_FULL_MEMBER_SHA_ROUNDTRIP",
+        "archive": "C:\\Users\\50176\\Downloads\\O24_SCREEN12_EVIDENCE_20261024\\C3_R02_FULL.zip",
+        "archive_sha256": "df9ab22bab3dcbc9d9ca4056527329642b79923cdcbf22d4b8dbe8ed6b9a1634",
+        "source_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\C3_R02",
+        "files": 147,
+        "raw_bytes": 27439081,
+        "archive_bytes": 3468897,
+        "all_unique_bytes_preserved": true
+      }
+    },
+    {
+      "role": "D4_R01",
+      "case": "D4",
+      "configuration_prefix": "actual_configuration/launch_cases/D4_R01",
+      "source_domain": "LEGAL",
+      "GSL_parameters": {
+        "use_sim_time": true,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 0.2,
+        "convergence_thr": 1.0,
+        "maxSearchTime": 1000000000.0,
+        "stop_and_measure_time": 0.4,
+        "confidenceMeasurementWeight": 1.0,
+        "confidenceSigmaSpatial": 1.0,
+        "kernelSigma": 1.5,
+        "kernelStretchConstant": 1.5,
+        "hitPriorProbability": 0.3,
+        "scale": 25,
+        "maxUpdatesPerStop": 5,
+        "stepsSourceUpdate": 3,
+        "refineFraction": 0.1,
+        "maxRegionSize": 5,
+        "deltaTime": 0.1,
+        "noiseSTDev": 0.5,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500,
+        "th_gas_present": 0.1,
+        "th_wind_present": 0.01,
+        "robot_location_topic": "ground_truth",
+        "enose_topic": "PID/Sensor_reading",
+        "anemometer_topic": "/native20/wind_to",
+        "anemometer_frame": "PioneerP3DX_anemometer_frame",
+        "openMoveSetExpasion": 5,
+        "explorationProbability": 0.05,
+        "initialExplorationMoves": 2,
+        "localEstimationWindowSize": 2,
+        "convergence_steps": 5,
+        "markers_height": 0.2,
+        "distanceThreshold": 0.5
+      },
+      "navigation_map_sha256": "a56126489f644b273326deb1637421ac3b42b97348999046a73b8c95f984c002",
+      "physical_time_csv_sha256": "b221767c0e4a6c6b61edce41b42fae0e54f0d0b30d4fd9f777fa535bdd810121",
+      "native_ELF_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+      "full_original_archive": {
+        "status": "PASS_FULL_MEMBER_SHA_ROUNDTRIP",
+        "archive": "C:\\Users\\50176\\Downloads\\O24_SCREEN12_EVIDENCE_20261024\\D4_R01_FULL.zip",
+        "archive_sha256": "c74beabd382474d3a33fa50de3b7c870d303611d9f676ea6fe20be017f708c83",
+        "source_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\D4_R01",
+        "files": 149,
+        "raw_bytes": 5862591,
+        "archive_bytes": 795028,
+        "all_unique_bytes_preserved": true
+      }
+    },
+    {
+      "role": "E3_R01",
+      "case": "E3",
+      "configuration_prefix": "actual_configuration/launch_cases/E3_R01",
+      "source_domain": "LEGAL",
+      "GSL_parameters": {
+        "use_sim_time": true,
+        "useWindGroundTruth": false,
+        "sourceDiscriminationPower": 0.2,
+        "convergence_thr": 1.0,
+        "maxSearchTime": 1000000000.0,
+        "stop_and_measure_time": 0.4,
+        "confidenceMeasurementWeight": 1.0,
+        "confidenceSigmaSpatial": 1.0,
+        "kernelSigma": 1.5,
+        "kernelStretchConstant": 1.5,
+        "hitPriorProbability": 0.3,
+        "scale": 25,
+        "maxUpdatesPerStop": 5,
+        "stepsSourceUpdate": 3,
+        "refineFraction": 0.1,
+        "maxRegionSize": 5,
+        "deltaTime": 0.1,
+        "noiseSTDev": 0.5,
+        "iterationsToRecord": 200,
+        "maxWarmupIterations": 500,
+        "th_gas_present": 0.1,
+        "th_wind_present": 0.02,
+        "robot_location_topic": "ground_truth",
+        "enose_topic": "PID/Sensor_reading",
+        "anemometer_topic": "/native20/wind_to",
+        "anemometer_frame": "PioneerP3DX_anemometer_frame",
+        "openMoveSetExpasion": 5,
+        "explorationProbability": 0.05,
+        "initialExplorationMoves": 2,
+        "localEstimationWindowSize": 2,
+        "convergence_steps": 5,
+        "markers_height": 0.2,
+        "distanceThreshold": 0.5
+      },
+      "navigation_map_sha256": "f18463c865dce6720c9718876a2ef086b88785a2ec7691bf94c3d3594f521e84",
+      "physical_time_csv_sha256": "11e2dae11d1866e7ac003409deabbe445f5fa258bf6ca23784256ff6e3fc1881",
+      "native_ELF_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+      "full_original_archive": {
+        "status": "PASS_FULL_MEMBER_SHA_ROUNDTRIP",
+        "archive": "C:\\Users\\50176\\Downloads\\O24_SCREEN12_EVIDENCE_20261024\\E3_R01_RESTART_R6_FULL.zip",
+        "archive_sha256": "fb0597d8b942341c069816559cb84138d727077e0304ba432fec6ff7ec327287",
+        "source_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\E3_R01_RESTART_R6",
+        "files": 86,
+        "raw_bytes": 11649395,
+        "archive_bytes": 1298680,
+        "all_unique_bytes_preserved": true
+      }
+    }
+  ],
+  "existing_run_archive_index": [
+    {
+      "role": "A2_R01_REFERENCE",
+      "source_domain": "LEGAL",
+      "archive_in_bundle": "full_runs/A2_R01_REFERENCE_FULL.zip",
+      "archive_sha256": "a103e124b73a0d33751549780727902e2fe74ecdde0f217e54820ee6db01de8f"
+    },
+    {
+      "role": "B2_R01",
+      "source_domain": "EXCLUDED_DIAGNOSTIC_ONLY",
+      "archive_in_bundle": "full_runs/B2_R01_FULL.zip",
+      "archive_sha256": "e916952f924f60c6c0d211e4e9404d50c16cf0eb866c05ac97f1af7ef33b33fd"
+    },
+    {
+      "role": "B2_R02",
+      "source_domain": "EXCLUDED_DIAGNOSTIC_ONLY",
+      "archive_in_bundle": "full_runs/B2_R02_FULL.zip",
+      "archive_sha256": "7768a20f97bbdccf2ce76e4e81ccb02188e3e7c6fe0ea450f393be301a73e8e0"
+    },
+    {
+      "role": "B2_R03",
+      "source_domain": "EXCLUDED_DIAGNOSTIC_ONLY",
+      "archive_in_bundle": "full_runs/B2_R03_FULL.zip",
+      "archive_sha256": "0b4c7a60acd13bccd3d51dda4da1a723d8bb4540b2f548c55b7b8e5474586faa"
+    },
+    {
+      "role": "B2_R04",
+      "source_domain": "EXCLUDED_DIAGNOSTIC_ONLY",
+      "archive_in_bundle": "full_runs/B2_R04_FULL.zip",
+      "archive_sha256": "1eeec223a40f20d2e13f3991a160a14620cf40192f9c6dd42578745105d38d17"
+    },
+    {
+      "role": "B2_R05",
+      "source_domain": "EXCLUDED_DIAGNOSTIC_ONLY",
+      "archive_in_bundle": "full_runs/B2_R05_FULL.zip",
+      "archive_sha256": "39117e8b72f5f153887e36af1d58a178be8297d29ced2303abb390a6b885e5f8"
+    },
+    {
+      "role": "A2_R02",
+      "source_domain": "LEGAL",
+      "archive_in_bundle": "full_runs/A2_R02_RESTART_R4_FULL.zip",
+      "archive_sha256": "5b383e50f9ac33b07e0e77e84932365681497938cb8fb86468fc56df70a6ad38"
+    },
+    {
+      "role": "A2_R03",
+      "source_domain": "LEGAL",
+      "archive_in_bundle": "full_runs/A2_R03_FULL.zip",
+      "archive_sha256": "0079fa155e924fb3d5ad8307900d79af43c960be73046d6c8122034a1744aab5"
+    },
+    {
+      "role": "C3_R01",
+      "source_domain": "LEGAL",
+      "archive_in_bundle": "full_runs/C3_R01_FULL.zip",
+      "archive_sha256": "736fe8b1fd8d904b09516a862f7c7e041cd75530533e96807ad55374d9cb094e"
+    },
+    {
+      "role": "C3_R02",
+      "source_domain": "LEGAL",
+      "archive_in_bundle": "full_runs/C3_R02_FULL.zip",
+      "archive_sha256": "df9ab22bab3dcbc9d9ca4056527329642b79923cdcbf22d4b8dbe8ed6b9a1634"
+    },
+    {
+      "role": "D4_R01",
+      "source_domain": "LEGAL",
+      "archive_in_bundle": "full_runs/D4_R01_FULL.zip",
+      "archive_sha256": "c74beabd382474d3a33fa50de3b7c870d303611d9f676ea6fe20be017f708c83"
+    },
+    {
+      "role": "E3_R01",
+      "source_domain": "LEGAL",
+      "archive_in_bundle": "full_runs/E3_R01_RESTART_R6_FULL.zip",
+      "archive_sha256": "fb0597d8b942341c069816559cb84138d727077e0304ba432fec6ff7ec327287"
+    }
+  ],
+  "frozen_screen12_preregistration": {
+    "identity": "O24_PAPER_SCREEN12_20261024",
+    "quota": {
+      "A2": 3,
+      "B2": 5,
+      "C3": 2,
+      "D4": 1,
+      "E3": 1
+    },
+    "total_slots": 12,
+    "new_attempt_slots": 11,
+    "representative_selection": "First lexicographically eligible C,D,E configuration by source legality and saved asset completeness; no new score-based selection",
+    "RNG_contract": "Direct user amended: frozen ELF unchanged, actual RNG snapshots only; no prescribed/independent seed or bitwise replay claim",
+    "physical_world_contract": "Fixed existing world per scenario; repeats are algorithm executions only",
+    "normal_stopping": "Native covariance trace<1m2",
+    "legacy_maxSearchTime": 1000000000.0,
+    "data_end": "Original saved timeline exhausted; no looping, record censor not failure/success",
+    "safety_wall_cap_per_goal_s": 1100,
+    "outer_safety_cap_per_attempt_s": 1250,
+    "technical_failure_policy": "Retain first failure; stop batch on input/clock/identity violation, no silent algorithm or scientific-parameter repair",
+    "B2_qualification": "3D source free, original2D source cell excluded. All B2 rows diagnostic only; not counted as qualified inference-failure evidence.",
+    "binary_path": "/home/zyc/ros2_ws/pmfs_o24_port_gmrf_20261018/gsl_actionserver_node",
+    "binary_sha256": "e63fadfdb5b4b20ea6936f38c3a1d5edf0d1e9e236ed8d78a4846b009aefed78",
+    "source_commit": "631145657461c41840f6844f118de57d1e747ea4",
+    "author_snapshot": "a8d5a764b7cbfc1d5d1887aebfe890e2c75d7533",
+    "source_snapshot_guest": "/mnt/hgfs/workspace/PMFS_O24_FROZEN_CODE_PACKAGE_20261019/source_runtime",
+    "domain": 228,
+    "roles": [
+      {
+        "id": "A2_R01_REFERENCE",
+        "case": "A2",
+        "repeat": 1,
+        "already_completed": true,
+        "host_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_STOP_A2_20261024\\cases\\PAPERSTOP_A2_R02",
+        "shared_case": "/mnt/hgfs/workspace/O24_PAPER_STOP_A2_20261024/cases/PAPERSTOP_A2_R02",
+        "qualification": "PASS_NATIVE_DECLARATION_AND_OFFLINE_REPLAY"
+      },
+      {
+        "id": "B2_R01",
+        "case": "B2",
+        "repeat": 1,
+        "already_completed": false,
+        "host_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\B2_R01",
+        "shared_case": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/B2_R01",
+        "guest_case": "/home/zyc/ros2_ws/research_runs/o24_paper_screen12_20261024/cases/B2_R01",
+        "timeline_guest": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/PHYSICAL_FRAME_TIME.csv",
+        "source_domain_class": "G2_3D_LEGAL_2D_EXCLUDED",
+        "source_exclusion_stage": "FINE_2D_OBSTACLE_OR_UNKNOWN",
+        "world_identity": "4e7b43a3cd961a42608d4b493ec8cca79c674169f4285934876329e0a22651b8",
+        "world_source_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/generation.yaml",
+        "official_case_sha256": "fb7ee8b622096b3c205f1ef867ff73a23d6b836b6e70ff30c0bb517da6747585",
+        "parameter_sha256": "df66284382f1c62e3c219a5b683537860dc783ccba83c045a5fea6b19a2d6e7e",
+        "qualification": "STATIC_REPLAY_PASS_RUNTIME_ADMISSION_PENDING",
+        "matching_paper_world": "Locally regenerated original scenario; not author historical gas trajectories",
+        "timeline_sha256": "815f9b73e05ed953bd57382e8c647928b2b65e478091e780d6a4cff8fabcc4af"
+      },
+      {
+        "id": "B2_R02",
+        "case": "B2",
+        "repeat": 2,
+        "already_completed": false,
+        "host_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\B2_R02",
+        "shared_case": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/B2_R02",
+        "guest_case": "/home/zyc/ros2_ws/research_runs/o24_paper_screen12_20261024/cases/B2_R02",
+        "timeline_guest": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/PHYSICAL_FRAME_TIME.csv",
+        "source_domain_class": "G2_3D_LEGAL_2D_EXCLUDED",
+        "source_exclusion_stage": "FINE_2D_OBSTACLE_OR_UNKNOWN",
+        "world_identity": "4e7b43a3cd961a42608d4b493ec8cca79c674169f4285934876329e0a22651b8",
+        "world_source_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/generation.yaml",
+        "official_case_sha256": "fb7ee8b622096b3c205f1ef867ff73a23d6b836b6e70ff30c0bb517da6747585",
+        "parameter_sha256": "0aebf53ab1b3adbb1a19ac96e21fcf5fb566fb041f7562017aea390362c9840d",
+        "qualification": "STATIC_REPLAY_PASS_RUNTIME_ADMISSION_PENDING",
+        "matching_paper_world": "Locally regenerated original scenario; not author historical gas trajectories",
+        "timeline_sha256": "815f9b73e05ed953bd57382e8c647928b2b65e478091e780d6a4cff8fabcc4af"
+      },
+      {
+        "id": "B2_R03",
+        "case": "B2",
+        "repeat": 3,
+        "already_completed": false,
+        "host_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\B2_R03",
+        "shared_case": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/B2_R03",
+        "guest_case": "/home/zyc/ros2_ws/research_runs/o24_paper_screen12_20261024/cases/B2_R03",
+        "timeline_guest": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/PHYSICAL_FRAME_TIME.csv",
+        "source_domain_class": "G2_3D_LEGAL_2D_EXCLUDED",
+        "source_exclusion_stage": "FINE_2D_OBSTACLE_OR_UNKNOWN",
+        "world_identity": "4e7b43a3cd961a42608d4b493ec8cca79c674169f4285934876329e0a22651b8",
+        "world_source_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/generation.yaml",
+        "official_case_sha256": "fb7ee8b622096b3c205f1ef867ff73a23d6b836b6e70ff30c0bb517da6747585",
+        "parameter_sha256": "f6bd0134fa275969093fe1e9e42b9956f848cbbeb86cd237fc5c0c90be55a905",
+        "qualification": "STATIC_REPLAY_PASS_RUNTIME_ADMISSION_PENDING",
+        "matching_paper_world": "Locally regenerated original scenario; not author historical gas trajectories",
+        "timeline_sha256": "815f9b73e05ed953bd57382e8c647928b2b65e478091e780d6a4cff8fabcc4af"
+      },
+      {
+        "id": "B2_R04",
+        "case": "B2",
+        "repeat": 4,
+        "already_completed": false,
+        "host_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\B2_R04",
+        "shared_case": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/B2_R04",
+        "guest_case": "/home/zyc/ros2_ws/research_runs/o24_paper_screen12_20261024/cases/B2_R04",
+        "timeline_guest": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/PHYSICAL_FRAME_TIME.csv",
+        "source_domain_class": "G2_3D_LEGAL_2D_EXCLUDED",
+        "source_exclusion_stage": "FINE_2D_OBSTACLE_OR_UNKNOWN",
+        "world_identity": "4e7b43a3cd961a42608d4b493ec8cca79c674169f4285934876329e0a22651b8",
+        "world_source_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/generation.yaml",
+        "official_case_sha256": "fb7ee8b622096b3c205f1ef867ff73a23d6b836b6e70ff30c0bb517da6747585",
+        "parameter_sha256": "0f02c09d47488528755a79a07d92818175dac678499030a1d1e62743e11743e3",
+        "qualification": "STATIC_REPLAY_PASS_RUNTIME_ADMISSION_PENDING",
+        "matching_paper_world": "Locally regenerated original scenario; not author historical gas trajectories",
+        "timeline_sha256": "815f9b73e05ed953bd57382e8c647928b2b65e478091e780d6a4cff8fabcc4af"
+      },
+      {
+        "id": "B2_R05",
+        "case": "B2",
+        "repeat": 5,
+        "already_completed": false,
+        "host_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\B2_R05",
+        "shared_case": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/B2_R05",
+        "guest_case": "/home/zyc/ros2_ws/research_runs/o24_paper_screen12_20261024/cases/B2_R05",
+        "timeline_guest": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/PHYSICAL_FRAME_TIME.csv",
+        "source_domain_class": "G2_3D_LEGAL_2D_EXCLUDED",
+        "source_exclusion_stage": "FINE_2D_OBSTACLE_OR_UNKNOWN",
+        "world_identity": "4e7b43a3cd961a42608d4b493ec8cca79c674169f4285934876329e0a22651b8",
+        "world_source_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/generation.yaml",
+        "official_case_sha256": "fb7ee8b622096b3c205f1ef867ff73a23d6b836b6e70ff30c0bb517da6747585",
+        "parameter_sha256": "ed5cf127c518dbcdb85af85286cd6b94b9a41e514b6b4fc54d6fc78ba06b51ff",
+        "qualification": "STATIC_REPLAY_PASS_RUNTIME_ADMISSION_PENDING",
+        "matching_paper_world": "Locally regenerated original scenario; not author historical gas trajectories",
+        "timeline_sha256": "815f9b73e05ed953bd57382e8c647928b2b65e478091e780d6a4cff8fabcc4af"
+      },
+      {
+        "id": "A2_R02",
+        "case": "A2",
+        "repeat": 2,
+        "already_completed": false,
+        "host_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\A2_R02",
+        "shared_case": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/A2_R02",
+        "guest_case": "/home/zyc/ros2_ws/research_runs/o24_paper_screen12_20261024/cases/A2_R02",
+        "timeline_guest": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/PHYSICAL_FRAME_TIME.csv",
+        "source_domain_class": "G1_3D_AND_2D_LEGAL",
+        "source_exclusion_stage": "SUPPORTED",
+        "world_identity": "9c8a1b6ff793d883172fb0d674dc0199008e8e3900511b16539b30f3693ad2f6",
+        "world_source_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/generation.yaml",
+        "official_case_sha256": "215d5fe972a0aed2dae3fe8e1cbc1f50666e147cba63ef5e5069f37f2cb13cef",
+        "parameter_sha256": "95f6b7bb61fe73c3e61799c8136ce2230eee8d67c2917127bf4f887f15495c43",
+        "qualification": "STATIC_REPLAY_PASS_RUNTIME_ADMISSION_PENDING",
+        "matching_paper_world": "Locally regenerated original scenario; not author historical gas trajectories",
+        "timeline_sha256": "a954b24338d9c52fdba031d3deffa460518cbd881f85e2cd44f30bbb9969a08f"
+      },
+      {
+        "id": "A2_R03",
+        "case": "A2",
+        "repeat": 3,
+        "already_completed": false,
+        "host_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\A2_R03",
+        "shared_case": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/A2_R03",
+        "guest_case": "/home/zyc/ros2_ws/research_runs/o24_paper_screen12_20261024/cases/A2_R03",
+        "timeline_guest": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/PHYSICAL_FRAME_TIME.csv",
+        "source_domain_class": "G1_3D_AND_2D_LEGAL",
+        "source_exclusion_stage": "SUPPORTED",
+        "world_identity": "9c8a1b6ff793d883172fb0d674dc0199008e8e3900511b16539b30f3693ad2f6",
+        "world_source_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/generation.yaml",
+        "official_case_sha256": "215d5fe972a0aed2dae3fe8e1cbc1f50666e147cba63ef5e5069f37f2cb13cef",
+        "parameter_sha256": "de2858f35e4c168dcd71923102685ef845d34710709364f83a668ed875d8537b",
+        "qualification": "STATIC_REPLAY_PASS_RUNTIME_ADMISSION_PENDING",
+        "matching_paper_world": "Locally regenerated original scenario; not author historical gas trajectories",
+        "timeline_sha256": "a954b24338d9c52fdba031d3deffa460518cbd881f85e2cd44f30bbb9969a08f"
+      },
+      {
+        "id": "C3_R01",
+        "case": "C3",
+        "repeat": 1,
+        "already_completed": false,
+        "host_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\C3_R01",
+        "shared_case": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/C3_R01",
+        "guest_case": "/home/zyc/ros2_ws/research_runs/o24_paper_screen12_20261024/cases/C3_R01",
+        "timeline_guest": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/C3/PHYSICAL_FRAME_TIME.csv",
+        "source_domain_class": "G1_3D_AND_2D_LEGAL",
+        "source_exclusion_stage": "SUPPORTED",
+        "world_identity": "143f3a1214cf3845069049906d55d00bf121f8448d26a9b843c22b35a43ac17f",
+        "world_source_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/C3/generation.yaml",
+        "official_case_sha256": "94e4e9eee76b747cc282055b72b15d8f49f9dc65559fc54ddd2db40e646383ca",
+        "parameter_sha256": "06568d1462d895e0f9fc4e21cf5fbe1ba93d2a9bf6c554e62b41b300eab459c0",
+        "qualification": "STATIC_REPLAY_PASS_RUNTIME_ADMISSION_PENDING",
+        "matching_paper_world": "Locally regenerated original scenario; not author historical gas trajectories",
+        "timeline_sha256": "ab38256bb0c2df47806c87e4bc9bbfa0ed1fa021761119fb4410a093ecda9731"
+      },
+      {
+        "id": "C3_R02",
+        "case": "C3",
+        "repeat": 2,
+        "already_completed": false,
+        "host_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\C3_R02",
+        "shared_case": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/C3_R02",
+        "guest_case": "/home/zyc/ros2_ws/research_runs/o24_paper_screen12_20261024/cases/C3_R02",
+        "timeline_guest": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/C3/PHYSICAL_FRAME_TIME.csv",
+        "source_domain_class": "G1_3D_AND_2D_LEGAL",
+        "source_exclusion_stage": "SUPPORTED",
+        "world_identity": "143f3a1214cf3845069049906d55d00bf121f8448d26a9b843c22b35a43ac17f",
+        "world_source_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/C3/generation.yaml",
+        "official_case_sha256": "94e4e9eee76b747cc282055b72b15d8f49f9dc65559fc54ddd2db40e646383ca",
+        "parameter_sha256": "3e7ec73b6dc1878c1754e11fcf4d848eb53725daf613526975afc496502712f6",
+        "qualification": "STATIC_REPLAY_PASS_RUNTIME_ADMISSION_PENDING",
+        "matching_paper_world": "Locally regenerated original scenario; not author historical gas trajectories",
+        "timeline_sha256": "ab38256bb0c2df47806c87e4bc9bbfa0ed1fa021761119fb4410a093ecda9731"
+      },
+      {
+        "id": "D4_R01",
+        "case": "D4",
+        "repeat": 1,
+        "already_completed": false,
+        "host_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\D4_R01",
+        "shared_case": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/D4_R01",
+        "guest_case": "/home/zyc/ros2_ws/research_runs/o24_paper_screen12_20261024/cases/D4_R01",
+        "timeline_guest": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/D4/PHYSICAL_FRAME_TIME.csv",
+        "source_domain_class": "G1_3D_AND_2D_LEGAL",
+        "source_exclusion_stage": "SUPPORTED",
+        "world_identity": "8f24f97a46ae755c9dfe312a0ba7e36c45137a51f0c205eae2fdaf1bfd7c7d08",
+        "world_source_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/D4/generation.yaml",
+        "official_case_sha256": "6e0f2a0e6e7bc30cf184774ce758c59344d1e6911683f76013e014c87eb45369",
+        "parameter_sha256": "f173e663329994357d4cc5d02c0aa06498a3770a22ba81b2b8dd2aa901c49cc6",
+        "qualification": "STATIC_REPLAY_PASS_RUNTIME_ADMISSION_PENDING",
+        "matching_paper_world": "Locally regenerated original scenario; not author historical gas trajectories",
+        "timeline_sha256": "b221767c0e4a6c6b61edce41b42fae0e54f0d0b30d4fd9f777fa535bdd810121"
+      },
+      {
+        "id": "E3_R01",
+        "case": "E3",
+        "repeat": 1,
+        "already_completed": false,
+        "host_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\E3_R01",
+        "shared_case": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/E3_R01",
+        "guest_case": "/home/zyc/ros2_ws/research_runs/o24_paper_screen12_20261024/cases/E3_R01",
+        "timeline_guest": "/home/zyc/pmfs_e3_native_validation_20261009/PHYSICAL_FRAME_TIME.csv",
+        "source_domain_class": "G1_3D_AND_2D_LEGAL",
+        "source_exclusion_stage": "SUPPORTED",
+        "world_identity": "6177345862987f8d9759ce61c650e35a086375cf6eedd572d567df2f13bdcd64",
+        "world_source_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/REUSED_GENERATION_PROVENANCE/E3/E3_generation_RESOLVED.yaml",
+        "official_case_sha256": "89cd754d40817e2702d04cdd249fab770bd3043e9579992ffd3f54ab89867c6c",
+        "parameter_sha256": "1396fd6a1aaeef34b9458b9fe4746ec3e189fd8fba0fe69e112132ae7bc62ab2",
+        "qualification": "STATIC_REPLAY_PASS_RUNTIME_ADMISSION_PENDING",
+        "matching_paper_world": "Locally regenerated original scenario; not author historical gas trajectories",
+        "timeline_sha256": "11e2dae11d1866e7ac003409deabbe445f5fa258bf6ca23784256ff6e3fc1881"
+      }
+    ],
+    "archive_destination": "C:/Users/50176/Downloads/O24_SCREEN12_EVIDENCE_20261024",
+    "no_new_worlds": true,
+    "statistical_scope": "Descriptive screening only; no IID CI/significance and no30-run replication claim",
+    "input_identity_finalized_before_first_new_goal": true
+  },
+  "active_role_execution_overrides": {
+    "R4": {
+      "A2_R02": {
+        "host_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\A2_R02_RESTART_R4",
+        "shared_case": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/A2_R02_RESTART_R4",
+        "guest_case": "/home/zyc/ros2_ws/research_runs/o24_paper_screen12_20261024/cases/A2_R02_RESTART_R4",
+        "parameter_sha256": "c1d1ae6c1ba8ddcb0e13cf5fe2cbe6fcf1e592d9f68cf7e3ec8462275ca0b4b5",
+        "timeline_sha256": "a954b24338d9c52fdba031d3deffa460518cbd881f85e2cd44f30bbb9969a08f"
+      }
+    },
+    "R6": {
+      "A2_R02": {
+        "host_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\A2_R02_RESTART_R4",
+        "shared_case": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/A2_R02_RESTART_R4",
+        "guest_case": "/home/zyc/ros2_ws/research_runs/o24_paper_screen12_20261024/cases/A2_R02_RESTART_R4",
+        "parameter_sha256": "c1d1ae6c1ba8ddcb0e13cf5fe2cbe6fcf1e592d9f68cf7e3ec8462275ca0b4b5",
+        "timeline_sha256": "a954b24338d9c52fdba031d3deffa460518cbd881f85e2cd44f30bbb9969a08f"
+      },
+      "E3_R01": {
+        "host_case": "D:\\ZYC\\A-gas\\workspace\\O24_PAPER_SCREEN12_20261024\\cases\\E3_R01_RESTART_R6",
+        "shared_case": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/E3_R01_RESTART_R6",
+        "guest_case": "/home/zyc/ros2_ws/research_runs/o24_paper_screen12_20261024/cases/E3_R01_RESTART_R6",
+        "parameter_sha256": "614ba645ee3b9f9db2c97efbe0365ede16eaa6aac8096f372025544edcd154a9",
+        "timeline_sha256": "11e2dae11d1866e7ac003409deabbe445f5fa258bf6ca23784256ff6e3fc1881"
+      }
+    }
+  },
+  "navigation_and_physical_timeline_inputs": {
+    "working_navigation_files": [
+      {
+        "target": "environment_overlay/share/pmfs_env/launch/gaden_player_launch.py",
+        "source": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/paper2024_overlay/share/pmfs_env/launch/gaden_player_launch.py",
+        "sha256": "a7677ff9fcf2ddf1e10e04f38312fb94c4e8617d716a77cda6165842f534fbed"
+      },
+      {
+        "target": "environment_overlay/share/pmfs_env/launch/gaden_preproc_launch.py",
+        "source": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/paper2024_overlay/share/pmfs_env/launch/gaden_preproc_launch.py",
+        "sha256": "d6b3b2c543078eda7d626ba75c0c2ce9e218f3b3f826d73c22468577f30030b1"
+      },
+      {
+        "target": "environment_overlay/share/pmfs_env/launch/gaden_sim_launch.py",
+        "source": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/paper2024_overlay/share/pmfs_env/launch/gaden_sim_launch.py",
+        "sha256": "9dd0a753d20697a58977b80a5301f879796e25403609c3074fc87132c72a4ad5"
+      },
+      {
+        "target": "environment_overlay/share/pmfs_env/launch/main_simbot_launch.py",
+        "source": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/paper2024_overlay/share/pmfs_env/launch/main_simbot_launch.py",
+        "sha256": "f5cc1fe6dc91d430c84dd4a782a2920f9d05bbeaead4430f1c4d3f8fc8e3bbe0"
+      },
+      {
+        "target": "environment_overlay/share/pmfs_env/navigation_config/conditional_coppelia_launch.py",
+        "source": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/paper2024_overlay/share/pmfs_env/navigation_config/conditional_coppelia_launch.py",
+        "sha256": "47ac56d6d70e5485b50c635c7046aea7e87810c7d8c0bc93423ada6a44f373b8"
+      },
+      {
+        "target": "environment_overlay/share/pmfs_env/navigation_config/nav2_launch.py",
+        "source": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/paper2024_overlay/share/pmfs_env/navigation_config/nav2_launch.py",
+        "sha256": "bfb5d5304bd2511e0c570554218c82a9f8933403637be532e926d840855b9647"
+      },
+      {
+        "target": "environment_overlay/share/pmfs_env/navigation_config/nav2_params.yaml",
+        "source": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/paper2024_overlay/share/pmfs_env/navigation_config/nav2_params.yaml",
+        "sha256": "0c67cb82265fdede04bde4589876e6ed29206336022d8607cd24dd1e84209f98"
+      },
+      {
+        "target": "environment_overlay/share/pmfs_env/navigation_config/nav_to_pose_no_recovery.xml",
+        "source": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/paper2024_overlay/share/pmfs_env/navigation_config/nav_to_pose_no_recovery.xml",
+        "sha256": "b6ae58300755beac69e34bf3ba84dcabbf7e4c6c55d3f20d139994f023e1c433"
+      },
+      {
+        "target": "environment_overlay/share/pmfs_env/navigation_config/nav_to_pose_with_recovery.xml",
+        "source": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/paper2024_overlay/share/pmfs_env/navigation_config/nav_to_pose_with_recovery.xml",
+        "sha256": "7b45fb194b9ca575373dfa85c3418f44428744bbee32407686645bc6fc4a9384"
+      },
+      {
+        "target": "environment_overlay/share/pmfs_env/navigation_config/simulation_base.py",
+        "source": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/paper2024_overlay/share/pmfs_env/navigation_config/simulation_base.py",
+        "sha256": "94de4d98fc2f3b72d548d0e299306895b5a8580f296fae60ab8cb0261cbfa7dc"
+      },
+      {
+        "target": "environment_overlay/share/pmfs_env/navigation_config/resources/giraff.urdf",
+        "source": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/paper2024_overlay/share/pmfs_env/navigation_config/resources/giraff.urdf",
+        "sha256": "2c141d85392022dce46b11b9789bfdd711d3a61593160a0a96ae634e2f42d88e"
+      },
+      {
+        "target": "environment_overlay/share/pmfs_env/navigation_config/resources/giraff.xacro",
+        "source": "/home/zyc/ros2_ws/pmfs_official_repro_audit_20261016/paper2024_overlay/share/pmfs_env/navigation_config/resources/giraff.xacro",
+        "sha256": "ce2e89f6a3ad0de9300079901bc53eb71016195f26d975b36146297ebc74e760"
+      }
+    ],
+    "scenario_source": "Exact pinned a8 official scenario files; no truth cell edits",
+    "timelines": [
+      {
+        "role": "B2_R01",
+        "source": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/PHYSICAL_FRAME_TIME.csv",
+        "sha256": "815f9b73e05ed953bd57382e8c647928b2b65e478091e780d6a4cff8fabcc4af"
+      },
+      {
+        "role": "B2_R02",
+        "source": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/PHYSICAL_FRAME_TIME.csv",
+        "sha256": "815f9b73e05ed953bd57382e8c647928b2b65e478091e780d6a4cff8fabcc4af"
+      },
+      {
+        "role": "B2_R03",
+        "source": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/PHYSICAL_FRAME_TIME.csv",
+        "sha256": "815f9b73e05ed953bd57382e8c647928b2b65e478091e780d6a4cff8fabcc4af"
+      },
+      {
+        "role": "B2_R04",
+        "source": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/PHYSICAL_FRAME_TIME.csv",
+        "sha256": "815f9b73e05ed953bd57382e8c647928b2b65e478091e780d6a4cff8fabcc4af"
+      },
+      {
+        "role": "B2_R05",
+        "source": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/cases/B2/PHYSICAL_FRAME_TIME.csv",
+        "sha256": "815f9b73e05ed953bd57382e8c647928b2b65e478091e780d6a4cff8fabcc4af"
+      },
+      {
+        "role": "A2_R02",
+        "source": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/PHYSICAL_FRAME_TIME.csv",
+        "sha256": "a954b24338d9c52fdba031d3deffa460518cbd881f85e2cd44f30bbb9969a08f"
+      },
+      {
+        "role": "A2_R03",
+        "source": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/PHYSICAL_FRAME_TIME.csv",
+        "sha256": "a954b24338d9c52fdba031d3deffa460518cbd881f85e2cd44f30bbb9969a08f"
+      },
+      {
+        "role": "C3_R01",
+        "source": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/C3/PHYSICAL_FRAME_TIME.csv",
+        "sha256": "ab38256bb0c2df47806c87e4bc9bbfa0ed1fa021761119fb4410a093ecda9731"
+      },
+      {
+        "role": "C3_R02",
+        "source": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/C3/PHYSICAL_FRAME_TIME.csv",
+        "sha256": "ab38256bb0c2df47806c87e4bc9bbfa0ed1fa021761119fb4410a093ecda9731"
+      },
+      {
+        "role": "D4_R01",
+        "source": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/D4/PHYSICAL_FRAME_TIME.csv",
+        "sha256": "b221767c0e4a6c6b61edce41b42fae0e54f0d0b30d4fd9f777fa535bdd810121"
+      },
+      {
+        "role": "E3_R01",
+        "source": "/home/zyc/pmfs_e3_native_validation_20261009/PHYSICAL_FRAME_TIME.csv",
+        "sha256": "11e2dae11d1866e7ac003409deabbe445f5fa258bf6ca23784256ff6e3fc1881"
+      }
+    ],
+    "new_propagation": 0,
+    "new_ROS_goals": 0
+  },
+  "legal_role_setup_metadata": {
+    "C3_R02": {
+      "case": "C3",
+      "scenario": "C",
+      "source_xyz": [
+        -2.7,
+        0.8,
+        -0.1
+      ],
+      "robot_start_xyz": [
+        -1.4,
+        -5.8,
+        -0.9
+      ],
+      "sensor_xyz": [
+        -1.4,
+        -5.8,
+        -0.4
+      ],
+      "player": {
+        "use_sim_time": true,
+        "player_freq": 2.0,
+        "initial_iteration": 500,
+        "num_simulators": 1,
+        "allow_looping": false,
+        "loop_from_iteration": 800,
+        "loop_to_iteration": 900,
+        "simulation_data_0": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/C3/one_realization",
+        "occupancyFile": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/derived/c5f5c47a61f0/OccupancyGrid3D.csv",
+        "r7_frame_time_csv": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/C3_R02/PHYSICAL_FRAME_TIME.csv",
+        "r7_clock_trace_path": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/C3_R02/runtime/physical_clock_trace.csv"
+      },
+      "original_physical_frame_timeline": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/C3/PHYSICAL_FRAME_TIME.csv",
+      "source_support_policy": "Pinned official map and all-pixels-free rule unchanged; B2 excluded source explicitly retained, not repaired by opening map or moving truth.",
+      "clock_policy": "Shared ROS physical clock at realtime1; original per-frame physical timeline; continuous no-loop",
+      "world_identity": "143f3a1214cf3845069049906d55d00bf121f8448d26a9b843c22b35a43ac17f",
+      "generation_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/C3/generation.yaml",
+      "truth_labels_access": "evaluation/setup only; not passed to inference/planner"
+    },
+    "E3_R01": {
+      "case": "E3",
+      "scenario": "E",
+      "source_xyz": [
+        -4.0,
+        -1.9,
+        0.7
+      ],
+      "robot_start_xyz": [
+        -3.0,
+        4.5,
+        0.0
+      ],
+      "sensor_xyz": [
+        -3.0,
+        4.5,
+        0.5
+      ],
+      "player": {
+        "allow_looping": false,
+        "gas_display_color_0": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "initial_iteration": 200,
+        "loop_from_iteration": 800,
+        "loop_to_iteration": 900,
+        "num_simulators": 1,
+        "occupancyFile": "/home/zyc/pmfs_e3_native_validation_20261009/derived_E3/OccupancyGrid3D.csv",
+        "player_freq": 2.0,
+        "projectPath": "",
+        "qos_overrides": {
+          "/clock": {
+            "subscription": {
+              "depth": 1,
+              "durability": "volatile",
+              "history": "keep_last",
+              "reliability": "best_effort"
+            }
+          },
+          "/parameter_events": {
+            "publisher": {
+              "depth": 1000,
+              "durability": "volatile",
+              "history": "keep_last",
+              "reliability": "reliable"
+            }
+          }
+        },
+        "r7_clock_trace_path": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/E3_R01_RESTART_R6/runtime/physical_clock_trace.csv",
+        "r7_frame_time_csv": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/E3_R01_RESTART_R6/PHYSICAL_FRAME_TIME.csv",
+        "simulation_data_0": "/home/zyc/pmfs_e3_native_validation_20261009/one_realization_E3",
+        "use_sim_time": true
+      },
+      "original_physical_frame_timeline": "/home/zyc/pmfs_e3_native_validation_20261009/PHYSICAL_FRAME_TIME.csv",
+      "source_support_policy": "Pinned official map and all-pixels-free rule unchanged; B2 excluded source explicitly retained, not repaired by opening map or moving truth.",
+      "clock_policy": "Shared ROS physical clock at realtime1; original per-frame physical timeline; continuous no-loop",
+      "world_identity": "6177345862987f8d9759ce61c650e35a086375cf6eedd572d567df2f13bdcd64",
+      "generation_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/REUSED_GENERATION_PROVENANCE/E3/E3_generation_RESOLVED.yaml",
+      "truth_labels_access": "evaluation/setup only; not passed to inference/planner"
+    },
+    "A2_R03": {
+      "case": "A2",
+      "scenario": "A",
+      "source_xyz": [
+        1.75,
+        8.6,
+        0.5
+      ],
+      "robot_start_xyz": [
+        5.8,
+        0.8,
+        0.0
+      ],
+      "sensor_xyz": [
+        5.8,
+        0.8,
+        0.5
+      ],
+      "player": {
+        "use_sim_time": true,
+        "player_freq": 2.0,
+        "initial_iteration": 200,
+        "num_simulators": 1,
+        "allow_looping": false,
+        "loop_from_iteration": 100,
+        "loop_to_iteration": 200,
+        "simulation_data_0": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/one_realization",
+        "occupancyFile": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/derived/9b7d81f6083d/OccupancyGrid3D.csv",
+        "r7_frame_time_csv": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/A2_R03/PHYSICAL_FRAME_TIME.csv",
+        "r7_clock_trace_path": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/A2_R03/runtime/physical_clock_trace.csv"
+      },
+      "original_physical_frame_timeline": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/PHYSICAL_FRAME_TIME.csv",
+      "source_support_policy": "Pinned official map and all-pixels-free rule unchanged; B2 excluded source explicitly retained, not repaired by opening map or moving truth.",
+      "clock_policy": "Shared ROS physical clock at realtime1; original per-frame physical timeline; continuous no-loop",
+      "world_identity": "9c8a1b6ff793d883172fb0d674dc0199008e8e3900511b16539b30f3693ad2f6",
+      "generation_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/generation.yaml",
+      "truth_labels_access": "evaluation/setup only; not passed to inference/planner"
+    },
+    "C3_R01": {
+      "case": "C3",
+      "scenario": "C",
+      "source_xyz": [
+        -2.7,
+        0.8,
+        -0.1
+      ],
+      "robot_start_xyz": [
+        -1.4,
+        -5.8,
+        -0.9
+      ],
+      "sensor_xyz": [
+        -1.4,
+        -5.8,
+        -0.4
+      ],
+      "player": {
+        "use_sim_time": true,
+        "player_freq": 2.0,
+        "initial_iteration": 500,
+        "num_simulators": 1,
+        "allow_looping": false,
+        "loop_from_iteration": 800,
+        "loop_to_iteration": 900,
+        "simulation_data_0": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/C3/one_realization",
+        "occupancyFile": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/derived/c5f5c47a61f0/OccupancyGrid3D.csv",
+        "r7_frame_time_csv": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/C3_R01/PHYSICAL_FRAME_TIME.csv",
+        "r7_clock_trace_path": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/C3_R01/runtime/physical_clock_trace.csv"
+      },
+      "original_physical_frame_timeline": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/C3/PHYSICAL_FRAME_TIME.csv",
+      "source_support_policy": "Pinned official map and all-pixels-free rule unchanged; B2 excluded source explicitly retained, not repaired by opening map or moving truth.",
+      "clock_policy": "Shared ROS physical clock at realtime1; original per-frame physical timeline; continuous no-loop",
+      "world_identity": "143f3a1214cf3845069049906d55d00bf121f8448d26a9b843c22b35a43ac17f",
+      "generation_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/C3/generation.yaml",
+      "truth_labels_access": "evaluation/setup only; not passed to inference/planner"
+    },
+    "A2_R02": {
+      "case": "A2",
+      "scenario": "A",
+      "source_xyz": [
+        1.75,
+        8.6,
+        0.5
+      ],
+      "robot_start_xyz": [
+        5.8,
+        0.8,
+        0.0
+      ],
+      "sensor_xyz": [
+        5.8,
+        0.8,
+        0.5
+      ],
+      "player": {
+        "use_sim_time": true,
+        "player_freq": 2.0,
+        "initial_iteration": 200,
+        "num_simulators": 1,
+        "allow_looping": false,
+        "loop_from_iteration": 100,
+        "loop_to_iteration": 200,
+        "simulation_data_0": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/one_realization",
+        "occupancyFile": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/derived/9b7d81f6083d/OccupancyGrid3D.csv",
+        "r7_frame_time_csv": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/A2_R02_RESTART_R4/PHYSICAL_FRAME_TIME.csv",
+        "r7_clock_trace_path": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/A2_R02_RESTART_R4/runtime/physical_clock_trace.csv"
+      },
+      "original_physical_frame_timeline": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/PHYSICAL_FRAME_TIME.csv",
+      "source_support_policy": "Pinned official map and all-pixels-free rule unchanged; B2 excluded source explicitly retained, not repaired by opening map or moving truth.",
+      "clock_policy": "Shared ROS physical clock at realtime1; original per-frame physical timeline; continuous no-loop",
+      "world_identity": "9c8a1b6ff793d883172fb0d674dc0199008e8e3900511b16539b30f3693ad2f6",
+      "generation_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/generation.yaml",
+      "truth_labels_access": "evaluation/setup only; not passed to inference/planner"
+    },
+    "D4_R01": {
+      "case": "D4",
+      "scenario": "D",
+      "source_xyz": [
+        4.7,
+        4.3,
+        0.5
+      ],
+      "robot_start_xyz": [
+        1.7,
+        1.8,
+        0.1
+      ],
+      "sensor_xyz": [
+        1.7,
+        1.8,
+        0.6
+      ],
+      "player": {
+        "use_sim_time": true,
+        "player_freq": 2.0,
+        "initial_iteration": 700,
+        "num_simulators": 1,
+        "allow_looping": false,
+        "loop_from_iteration": 500,
+        "loop_to_iteration": 900,
+        "simulation_data_0": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/D4/one_realization",
+        "occupancyFile": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/derived/c9c394cd9b0e/OccupancyGrid3D.csv",
+        "r7_frame_time_csv": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/D4_R01/PHYSICAL_FRAME_TIME.csv",
+        "r7_clock_trace_path": "/mnt/hgfs/workspace/O24_PAPER_SCREEN12_20261024/cases/D4_R01/runtime/physical_clock_trace.csv"
+      },
+      "original_physical_frame_timeline": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/D4/PHYSICAL_FRAME_TIME.csv",
+      "source_support_policy": "Pinned official map and all-pixels-free rule unchanged; B2 excluded source explicitly retained, not repaired by opening map or moving truth.",
+      "clock_policy": "Shared ROS physical clock at realtime1; original per-frame physical timeline; continuous no-loop",
+      "world_identity": "8f24f97a46ae755c9dfe312a0ba7e36c45137a51f0c205eae2fdaf1bfd7c7d08",
+      "generation_config_path": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/D4/generation.yaml",
+      "truth_labels_access": "evaluation/setup only; not passed to inference/planner"
+    },
+    "A2_R01_REFERENCE": {
+      "case": "A2",
+      "scenario": "A",
+      "source_xyz": [
+        1.75,
+        8.6,
+        0.5
+      ],
+      "robot_start_xyz": [
+        5.8,
+        0.8,
+        0.0
+      ],
+      "sensor_xyz": [
+        5.8,
+        0.8,
+        0.5
+      ],
+      "player": {
+        "use_sim_time": true,
+        "player_freq": 2.0,
+        "initial_iteration": 200,
+        "num_simulators": 1,
+        "allow_looping": false,
+        "loop_from_iteration": 100,
+        "loop_to_iteration": 199,
+        "simulation_data_0": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/one_realization",
+        "occupancyFile": "/mnt/hgfs/workspace/NATIVE_PMFS_FULL20_20261014/derived/9b7d81f6083d/OccupancyGrid3D.csv",
+        "r7_frame_time_csv": "/mnt/hgfs/workspace/O24_PAPER_STOP_A2_20261024/cases/PAPERSTOP_A2_R02/PHYSICAL_FRAME_TIME.csv",
+        "r7_clock_trace_path": "/mnt/hgfs/workspace/O24_PAPER_STOP_A2_20261024/cases/PAPERSTOP_A2_R02/runtime/physical_clock_trace.csv"
+      },
+      "original_physical_frame_timeline": "/mnt/hgfs/workspace/NATIVE_PMFS_WIND_RECOVERY_20261014/cases/A2/PHYSICAL_FRAME_TIME.csv",
+      "source_support_policy": "Pinned official map and all-pixels-free rule unchanged; B2 excluded source explicitly retained, not repaired by opening map or moving truth.",
+      "clock_policy": "One shared ROS physical clock, BasicSim realtime factor1; player/PMFS/robot use_sim_timeTrue; source time = recorded physical base + ROS elapsed. No looping.",
+      "pinned_configuration_sha256": "215d5fe972a0aed2dae3fe8e1cbc1f50666e147cba63ef5e5069f37f2cb13cef",
+      "pinned_start_sha256": "aa0612dab32dc8f40d4dd332ac2bab11a07f279973de2ee50ec3c41063b95a18",
+      "truth_labels_access": "evaluation/setup only; not passed to inference/planner"
+    }
+  },
+  "source_support": {
+    "candidate_space": "The original free and connected 2D cells computed from each actual runtime/navigation_map.s8; all original source candidates are retained",
+    "scale": 25,
+    "fine_cells_per_candidate": 625,
+    "coarse_cell_free_rule": "Original all625free rule, plus original 8-connected reachability; do not replace with truth-cell patch or legal proxy",
+    "map_identity": "Per-role navigation_map_sha256 and original runtime NAVIGATION_MAP_METADATA.json",
+    "B2": "Original true source cell excluded. Five roles remain diagnostic only, including the technical abort.",
+    "source_domain_repair": "Only a separately identified ordinary adaptation, shared by all methods; never silently edits O24"
+  },
+  "source_probability_and_declaration": {
+    "score_code": "product_i [1-D*alpha_i*abs(p_i-f_i(s))], followed by source normalization",
+    "D": 0.2,
+    "code_confidence": "alpha_i = 1-exp(-Omega_i / sigma_c^2)",
+    "paper_Eq6": "alpha_i = 1-exp(-Omega_i^2 / sigma_c^2)",
+    "paper_Eq8": "No explicit D; setting D=1 alone does not reproduce the paper due to Eq6 and other protocol differences",
+    "variance": "sum_s p_s*((x_s-mu_x)^2+(y_s-mu_y)^2), full posterior covariance trace",
+    "native_stop": "variance strictly < 1.0 m2 in PMFS::checkSourceFound; search-time and map-wait precedence retained",
+    "convergence_steps_parameter": 5,
+    "convergence_steps_semantics": "Present parameter is not an extra five-success stopping requirement in the audited checkSourceFound implementation",
+    "readout": "expectedValueSource(0.05): probability-weighted XY of highest-probability ceil(0.05*N) original candidate cells",
+    "tie_rule": "Original std::sort probability-only comparator; no stable tie-break promised. Retain saved native readout. Report ambiguity if tied cutoff is material.",
+    "truth_distanceThreshold": "0.5 m only for the separate truth-assisted navigation-time diagnostic; never a causal inference/planning input or variance declaration gate",
+    "native_metrics": [
+      "Top-5% weighted declaration XY error in meters",
+      "physical search time to native declaration in seconds"
+    ],
+    "censoring": "Original recording exhaustion and separate safety stop do not produce native declarations; do not replace absent times with a short cap"
+  },
+  "observation_and_planning": {
+    "online_inputs": [
+      "native gas sensor messages",
+      "local anemometer messages",
+      "causal robot pose/time",
+      "original navigation map",
+      "GMRF estimates from those observations"
+    ],
+    "forbidden_online_inputs": [
+      "true source label",
+      "future gas states",
+      "ideal evaluation-only concentration",
+      "complete 3D ground-truth wind",
+      "other candidate hidden outcomes"
+    ],
+    "native_rate_preflight_reference": {
+      "wall_delta_s": 2.005484964000061,
+      "ROS_delta_s": 1.999971144,
+      "real_time_factor": 0.9972506300974386,
+      "gas_samples_per_ROS_second": 10.0001442820817,
+      "wind_samples_per_ROS_second": 20.0002885641634,
+      "stop_window_physical_s": 0.4,
+      "expected_robot_clock_window_s": 0.4,
+      "gas_samples_per_wall_second": 9.972650186371276,
+      "wind_samples_per_wall_second": 19.94530037274255
+    },
+    "target_native_gas_rate_hz": 10,
+    "target_native_local_wind_rate_hz": 20,
+    "stop_and_measure_time_s": 0.4,
+    "per_update_limits": "All per-role GSL parameters embedded above; maxUpdatesPerStop=5, stepsSourceUpdate=3, initialExplorationMoves=2",
+    "propagation": "deltaTime=.1, iterationsToRecord=200, maxWarmupIterations=500. Retain native termination criterion; no mandatory200-step warmup.",
+    "planning": "Original openMoveSetExpasion=5, explorationProbability=.05, localEstimationWindowSize=2; retain native planner and move-set ordering",
+    "S2_sensor_contract_not_inherited": true
+  },
+  "randomness": {
+    "original_RNG_audit": {
+      "source": "O24 uniform=clock-seeded xxHash; Gaussian=minstd_rand0 default +2500cache. Not MT19937.",
+      "rows": [
+        {
+          "role": "A2_R01_REFERENCE",
+          "actual_available_uniform_seeds": [
+            1480657303,
+            1480970625,
+            1480787635,
+            2929853371
+          ],
+          "capture_phase": [
+            "after",
+            "after",
+            "after",
+            "before"
+          ],
+          "actual_first_engine_states": [
+            "1",
+            "1",
+            "1",
+            "1"
+          ],
+          "cache_hashes": [
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1"
+          ],
+          "interpretation": "Before.ui=False means seed field0 is a placeholder, not a captured seed. Equal Gaussian tables do not imply identical consumed order; offsets/thread ownership may differ. Different uniform seeds/trajectories do not establish independence."
+        },
+        {
+          "role": "B2_R01",
+          "actual_available_uniform_seeds": [
+            2365595421,
+            2045114726,
+            2366573024,
+            2365899483
+          ],
+          "capture_phase": [
+            "after",
+            "before",
+            "after",
+            "after"
+          ],
+          "actual_first_engine_states": [
+            "1",
+            "1",
+            "1",
+            "1"
+          ],
+          "cache_hashes": [
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1"
+          ],
+          "interpretation": "Before.ui=False means seed field0 is a placeholder, not a captured seed. Equal Gaussian tables do not imply identical consumed order; offsets/thread ownership may differ. Different uniform seeds/trajectories do not establish independence."
+        },
+        {
+          "role": "B2_R02",
+          "actual_available_uniform_seeds": [
+            3323249914,
+            3323402446,
+            3002580932,
+            3323225375
+          ],
+          "capture_phase": [
+            "after",
+            "after",
+            "before",
+            "after"
+          ],
+          "actual_first_engine_states": [
+            "1",
+            "1",
+            "1",
+            "1"
+          ],
+          "cache_hashes": [
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1"
+          ],
+          "interpretation": "Before.ui=False means seed field0 is a placeholder, not a captured seed. Equal Gaussian tables do not imply identical consumed order; offsets/thread ownership may differ. Different uniform seeds/trajectories do not establish independence."
+        },
+        {
+          "role": "B2_R03",
+          "actual_available_uniform_seeds": [
+            3281432298,
+            3281394542,
+            3281432298,
+            3281233843
+          ],
+          "capture_phase": [
+            "after",
+            "after",
+            "before",
+            "after"
+          ],
+          "actual_first_engine_states": [
+            "1",
+            "1",
+            "1026038550",
+            "1"
+          ],
+          "cache_hashes": [
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1"
+          ],
+          "interpretation": "Before.ui=False means seed field0 is a placeholder, not a captured seed. Equal Gaussian tables do not imply identical consumed order; offsets/thread ownership may differ. Different uniform seeds/trajectories do not establish independence."
+        },
+        {
+          "role": "B2_R04",
+          "actual_available_uniform_seeds": [],
+          "capture_phase": [],
+          "actual_first_engine_states": [],
+          "cache_hashes": [],
+          "interpretation": "Before.ui=False means seed field0 is a placeholder, not a captured seed. Equal Gaussian tables do not imply identical consumed order; offsets/thread ownership may differ. Different uniform seeds/trajectories do not establish independence."
+        },
+        {
+          "role": "B2_R05",
+          "actual_available_uniform_seeds": [
+            663344751,
+            666276704,
+            663378307,
+            343529019
+          ],
+          "capture_phase": [
+            "after",
+            "after",
+            "after",
+            "before"
+          ],
+          "actual_first_engine_states": [
+            "1",
+            "1",
+            "1",
+            "1"
+          ],
+          "cache_hashes": [
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1"
+          ],
+          "interpretation": "Before.ui=False means seed field0 is a placeholder, not a captured seed. Equal Gaussian tables do not imply identical consumed order; offsets/thread ownership may differ. Different uniform seeds/trajectories do not establish independence."
+        },
+        {
+          "role": "A2_R02",
+          "actual_available_uniform_seeds": [
+            4112262032,
+            4111850923,
+            4111764591,
+            4112262032
+          ],
+          "capture_phase": [
+            "after",
+            "after",
+            "after",
+            "before"
+          ],
+          "actual_first_engine_states": [
+            "1",
+            "1",
+            "1",
+            "1026038550"
+          ],
+          "cache_hashes": [
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1"
+          ],
+          "interpretation": "Before.ui=False means seed field0 is a placeholder, not a captured seed. Equal Gaussian tables do not imply identical consumed order; offsets/thread ownership may differ. Different uniform seeds/trajectories do not establish independence."
+        },
+        {
+          "role": "A2_R03",
+          "actual_available_uniform_seeds": [
+            966669082,
+            2915633493,
+            968207431,
+            966660401
+          ],
+          "capture_phase": [
+            "after",
+            "before",
+            "after",
+            "after"
+          ],
+          "actual_first_engine_states": [
+            "1",
+            "1",
+            "1",
+            "1"
+          ],
+          "cache_hashes": [
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1"
+          ],
+          "interpretation": "Before.ui=False means seed field0 is a placeholder, not a captured seed. Equal Gaussian tables do not imply identical consumed order; offsets/thread ownership may differ. Different uniform seeds/trajectories do not establish independence."
+        },
+        {
+          "role": "C3_R01",
+          "actual_available_uniform_seeds": [
+            3568817694,
+            3568697240,
+            2248062371,
+            3568819160
+          ],
+          "capture_phase": [
+            "after",
+            "after",
+            "before",
+            "after"
+          ],
+          "actual_first_engine_states": [
+            "1",
+            "1",
+            "1",
+            "1"
+          ],
+          "cache_hashes": [
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1"
+          ],
+          "interpretation": "Before.ui=False means seed field0 is a placeholder, not a captured seed. Equal Gaussian tables do not imply identical consumed order; offsets/thread ownership may differ. Different uniform seeds/trajectories do not establish independence."
+        },
+        {
+          "role": "C3_R02",
+          "actual_available_uniform_seeds": [
+            1029037429,
+            3502908487,
+            1029520486,
+            1029764577
+          ],
+          "capture_phase": [
+            "after",
+            "before",
+            "after",
+            "after"
+          ],
+          "actual_first_engine_states": [
+            "1",
+            "1",
+            "1",
+            "1"
+          ],
+          "cache_hashes": [
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1"
+          ],
+          "interpretation": "Before.ui=False means seed field0 is a placeholder, not a captured seed. Equal Gaussian tables do not imply identical consumed order; offsets/thread ownership may differ. Different uniform seeds/trajectories do not establish independence."
+        },
+        {
+          "role": "D4_R01",
+          "actual_available_uniform_seeds": [
+            2359961579,
+            2359738021,
+            2359961579,
+            2362120952
+          ],
+          "capture_phase": [
+            "after",
+            "after",
+            "before",
+            "after"
+          ],
+          "actual_first_engine_states": [
+            "1",
+            "1",
+            "1026038550",
+            "1"
+          ],
+          "cache_hashes": [
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1"
+          ],
+          "interpretation": "Before.ui=False means seed field0 is a placeholder, not a captured seed. Equal Gaussian tables do not imply identical consumed order; offsets/thread ownership may differ. Different uniform seeds/trajectories do not establish independence."
+        },
+        {
+          "role": "E3_R01",
+          "actual_available_uniform_seeds": [
+            1181513035,
+            2335112378,
+            1181997832,
+            1181513035
+          ],
+          "capture_phase": [
+            "after",
+            "before",
+            "after",
+            "before"
+          ],
+          "actual_first_engine_states": [
+            "1",
+            "1",
+            "1",
+            "1026038550"
+          ],
+          "cache_hashes": [
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1",
+            "55380962a17c5e233347fed87fdbe50452a19f7f7f36a975fde136424312edf1"
+          ],
+          "interpretation": "Before.ui=False means seed field0 is a placeholder, not a captured seed. Equal Gaussian tables do not imply identical consumed order; offsets/thread ownership may differ. Different uniform seeds/trajectories do not establish independence."
+        }
+      ],
+      "independence_claim": false
+    },
+    "uniform": "Original clock-seeded xxHash path",
+    "normal": "Original minstd_rand0/normal_distribution with 2500-value cached Gaussian table",
+    "claimed_seed_independence": false,
+    "claimed_bitwise_closed_loop_replay": false,
+    "matching": "Same frozen world and input support; actual consumed RNG states logged. A new RNG adapter is a different identity, offered equally to methods."
+  },
+  "reuse_and_resource_policy": {
+    "first_action": "Verify the existing 12 frozen role packages and export their causal traces before deciding any new native goal",
+    "all_slots_accounted": true,
+    "complete_numerical_runs": 11,
+    "native_declarations": 10,
+    "legal_source_runs": 7,
+    "legal_source_declarations": 6,
+    "legal_source_recording_censors": 1,
+    "technical_aborts": 1,
+    "B2_R04_replacement": false,
+    "new_baseline_goal_condition": "Only when a required trace is genuinely missing/unrecoverable, with immutable MISSING_EVIDENCE_JUSTIFICATION and new output identity; preserve historical result",
+    "normal_stop_maxSearchTime": 1000000000.0,
+    "safety_wall_cap_per_goal_s": 1100,
+    "safety_wall_cap_per_attempt_s": 1250,
+    "RAM_hardware_GiB": 32,
+    "execution_parallelism": 1,
+    "dense_matrices_or_full_network_training": false,
+    "new_data_upload_permission": "Return private local/download deliverables; do not publish unpublished research or raw new data to public GitHub"
+  },
+  "remaining_runtime_gates": [
+    "Read the authoritative local lock and validate original complete freeze bytes",
+    "Verify live ELF and original world/timeline hashes",
+    "Certify isolated owned ROS processes/domain before each goal",
+    "Capture actual ROS parameter equality and original native rates",
+    "Verify every output path lies outside the frozen input"
+  ]
+}
