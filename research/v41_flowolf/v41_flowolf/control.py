@@ -27,6 +27,7 @@ def _safe_velocity(v: np.ndarray, pos: np.ndarray, used: np.ndarray,
     v=np.asarray(v,float)
     n=len(pos)
     if v.shape!=(n,3) or not np.isfinite(v).all():raise ValueError('bad velocity')
+    was_commanded=bool(np.linalg.norm(v)>1e-12)
     limits=cfg.speed_xy_max/np.maximum(np.linalg.norm(v[:,:2],axis=1),1e-12)
     zlimits=cfg.speed_z_max/np.maximum(np.abs(v[:,2]),1e-12)
     scale=min(1.,float(limits.min()),float(zlimits.min()))
@@ -52,7 +53,12 @@ def _safe_velocity(v: np.ndarray, pos: np.ndarray, used: np.ndarray,
                         ok=False;break
                 if not ok:break
             if not ok:break
-        if ok:return trial,True
+        if ok:
+            # A clipped-to-zero non-hover command is not a successful move;
+            # otherwise action-name metrics would report fictitious sampling.
+            if was_commanded and np.linalg.norm(trial)<1e-10:
+                return np.zeros_like(v),False
+            return trial,True
     return np.zeros_like(v),False
 
 
