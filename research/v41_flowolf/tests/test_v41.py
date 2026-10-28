@@ -107,7 +107,10 @@ def test_legality_group_collision_and_budget():
     assert np.min([np.linalg.norm((obs().pos+r)[i]-(obs().pos+r)[j])
                    for i,j in [(0,1),(0,2),(1,2)]])>=c.cfg.min_separation-1e-8
     r,ok=_safe_velocity(np.ones((3,3)),obs().pos,np.array([54.,54.,54.]),OpenGeometry(),c.cfg)
-    assert ok and np.linalg.norm(r)<1e-8
+    assert not ok and np.linalg.norm(r)<1e-8
+    hover,hok=_safe_velocity(np.zeros((3,3)),obs().pos,
+                             np.array([54.,54.,54.]),OpenGeometry(),c.cfg)
+    assert hok and np.linalg.norm(hover)<1e-8
 
 
 def test_no_future_clock_or_skip():
