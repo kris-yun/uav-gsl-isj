@@ -13,7 +13,8 @@ class Posterior:
     mass: np.ndarray
     q_values: np.ndarray
     joint_source_q: np.ndarray
-    map_source: np.ndarray
+    map_source: np.ndarray  # highest individual 3D candidate, not the horizontal MAP
+    map_xy: np.ndarray      # highest XY-marginal probability after summing all heights
     entropy: float
     xy_covariance: np.ndarray
     ess: float
@@ -56,7 +57,11 @@ def joint_posterior(observations: list[Reading], sources: np.ndarray,
     norm=logsumexp(logjoint)
     joint=np.exp(logjoint-norm)
     mass=joint.sum(axis=1)
-    mapidx=int(np.argmax(mass)); mean=(mass[:,None]*s[:,:2]).sum(axis=0)
+    mapidx=int(np.argmax(mass))
+    xy,inverse=np.unique(s[:,:2],axis=0,return_inverse=True)
+    xy_mass=np.bincount(inverse,weights=mass,minlength=len(xy))
+    map_xy=xy[int(np.argmax(xy_mass))].copy()
+    mean=(mass[:,None]*s[:,:2]).sum(axis=0)
     diff=s[:,:2]-mean; cov=diff.T@(mass[:,None]*diff)
-    return Posterior(s,mass,q,joint,s[mapidx].copy(),float(-np.sum(mass*np.log(np.maximum(mass,1e-300)))),
+    return Posterior(s,mass,q,joint,s[mapidx].copy(),map_xy,float(-np.sum(mass*np.log(np.maximum(mass,1e-300)))),
                      cov,float(1/np.sum(mass**2)),float(norm))
