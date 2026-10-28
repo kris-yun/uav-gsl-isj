@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "status": "TEMPLATE_NOT_FROZEN",
+  "scope": "VGR_SAVED_FIELD_NATIVE_300S",
+  "budget_s": 300.0,
+  "source_labels_evaluation_only": true,
+  "no_new_s2_generation": true,
+  "primary_endpoint": "expected_value_source_probability_005_xy_error_at_300s",
+  "primary_estimator_call": "ExpectedValue(sourceProbability, 0.05)",
+  "primary_estimator_alignment": "same_2d_map_same_frozen_function_same_physical_units_for_both_methods",
+  "parallel_prespecified_endpoint": "common_xy_map_error_at_300s",
+  "controlled_mechanism_endpoint": "same_backend_xy_map_error_at_300s_not_primary_native_endpoint",
+  "K_primary": 8,
+  "K_curve": [4, 8, 16, "ALL"],
+  "noise_seeds": [2026102801, 2026102802, 2026102803],
+  "controlled_methods": ["m1_full", "upwind", "ordinary_array", "gradient", "information_uniform"],
+  "ablations": ["no_history", "merged_r", "t_only", "r_only", "no_polarity_t", "fixed_identity_misassociation", "no_time_gate", "no_model_gate"],
+  "native_pmfs": {"status": "PENDING_SOURCE_AND_RUNTIME_CHECK", "estimator_call": "ExpectedValue(sourceProbability, 0.05)"},
+  "required_freeze_fields": ["dataset_version", "raw_files_and_sha256", "clock_probe_receipt", "sensor_calibration", "coordinate_units", "concentration_units", "sample_period", "warmup_budget_rule", "source_and_nuisance_support", "forward_model_version", "shared_posterior_version", "candidate_catalog_hash", "speed_path_separation_limits", "decision_and_prediction_horizon", "hold_and_remeasure_limits", "physical_parameter_scaling", "confirmation_rule_or_disabled", "test_households_and_prior_use_audit", "hardware_threads", "code_commit"],
+  "freeze": {},
+  "cases": []
+}

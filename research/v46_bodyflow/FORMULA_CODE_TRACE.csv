@@ -1,0 +1,20 @@
+﻿paper_label,code,classification,scope
+eq:forward/eq:sensor,GreenZOHModel.field/_advance,CLASSICAL_SHARED_REFERENCE,"known U/kappa/age; midpoint ZOH, not native continuous exact"
+eq:body/eq:radial,m1_decoders.encode,M1_INPUT_ASSOCIATION,same time/physical ID; full relative wind retained
+eq:memory,Controller._encode_decode/odor_memory,M1_ENGINEERING_DESIGN,known gain/background; fixed mask before normalization; exponential causal rho
+eq:polar,m1_decoders.encode,M1_ENGINEERING_DESIGN,paired half waves classical; same ID/history/position association new design
+eq:requests/eq:moments/eq:T,m1_decoders.decode.translation,M1_ENGINEERING_DESIGN,regularized least squares classical; requests and readout relation proposed
+eq:C/eq:phi/eq:g/eq:R,m1_decoders.decode.relative,M1_ENGINEERING_DESIGN,separate polarity matrices/inverses then zero-mean; logdet classical
+eq:rank,test_certificates and chain actual_relative_rank,MATHEMATICAL_PROPERTY,geometric rank only; actual projected action rechecked
+eq:coupling,Controller._anchors/common_catalog/common_scale,M1_ACTION_COUPLING,T/R/T+R anchors; shared finite catalog quantization logged
+eq:jacobians/eq:Ieff,separate theory/support certificates,CLASSICAL_SUPPORT,not computed from ReLU; core score is not claimed as adaptive Fisher
+eq:greenE/eq:greencond/eq:contrastInfo,separate Green theorem certificate,CONDITIONAL_THEORY,log-noise fixed design differs from core raw Gaussian reference
+eq:distance,Controller._score,FINITE_BANK_PROXY,same theta across realized history and future; no continuous certification
+eq:modelbound,Qualifications.model/confirmation disabled by default,THEORY_INTERFACE,no invented uniform errors; continuous covering certificate native pending
+eq:safe,ConvexBoxSafety.legal,CLASSICAL_EXACT_REFERENCE_SAFETY,constant velocity in convex box + tracking margin; general flight pending
+eq:blockkernel/eq:posterior,GaussianPosterior.update_once,CLASSICAL_POSTERIOR_PLUS_LEDGER,deterministic per-theta sensor state/independent raw Gaussian reference
+eq:horizontal,GaussianPosterior.xy_probability,CLASSICAL_MARGINALIZATION,aggregate h/q rows before XY entropy; not M1 gain
+algorithm1 init/observe,Controller.observe,IMPLEMENTED,archive raw; updateonce; fixed-set history; refresh conditional confirmation
+algorithm1 select,Controller.decide/_fallback/_shortlist/_score,IMPLEMENTED,safe final candidates before score; fallback no expensive scores
+algorithm1 execute,ReferenceWorld.execute/Controller.execute_and_update,IMPLEMENTED_REFERENCE,actual path and sample IDs; public-clock native adapter pending
+qualification revocation,Controller.refresh_confirmation,M3_ENGINEERING_CONNECTION,all used history qualified; current PASS cannot certify old UNKNOWN

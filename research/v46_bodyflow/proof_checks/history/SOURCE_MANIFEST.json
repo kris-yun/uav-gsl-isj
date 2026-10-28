@@ -1,0 +1,100 @@
+{
+  "scope": "Minimal historical source and diagnostic wrappers; no native S2 backend is included or certified.",
+  "files": [
+    {
+      "file": "legacy_v43/v41_flowolf/__init__.py",
+      "source": "V41 base plus supplied V43 overlay/v41_flowolf/__init__.py",
+      "sha256": "d571cc575ef3d9858f9654956734d0aa03c7ac747ffc90ed9da55932b275da5d",
+      "modified": false
+    },
+    {
+      "file": "legacy_v43/v41_flowolf/types.py",
+      "source": "V41 base plus supplied V43 overlay/v41_flowolf/types.py",
+      "sha256": "017cb1408934027fd743cc741fcad2201693d41bf2b7fa78eca70b35a9915c4b",
+      "modified": false
+    },
+    {
+      "file": "legacy_v43/v41_flowolf/encoder.py",
+      "source": "V41 base plus supplied V43 overlay/v41_flowolf/encoder.py",
+      "sha256": "0bf5ce8f9c5363035e48b1b89fe7def926d4bc734cdb5e6c776d02fef1fd6944",
+      "modified": false
+    },
+    {
+      "file": "legacy_v43/v41_flowolf/control.py",
+      "source": "V41 base plus supplied V43 overlay/v41_flowolf/control.py",
+      "sha256": "ac7a7a9a2d4a5b15c47884735610178bff7db43a31361bd0c779a30980cd9a01",
+      "modified": false
+    },
+    {
+      "file": "legacy_v43/v41_flowolf/inference.py",
+      "source": "V41 base plus supplied V43 overlay/v41_flowolf/inference.py",
+      "sha256": "ae5d27a3a4033f312b98e9be8a632a03421630456cf51f4ad7d3627440fec3aa",
+      "modified": false
+    },
+    {
+      "file": "legacy_v43/v41_flowolf/physics.py",
+      "source": "V41 base plus supplied V43 overlay/v41_flowolf/physics.py",
+      "sha256": "f875885ee379615a7544754bd90d954217318b1e70715aaa01e84f1914cab6ff",
+      "modified": false
+    },
+    {
+      "file": "legacy_v43/v41_flowolf/legacy_forward.py",
+      "source": "V41 base plus supplied V43 overlay/v41_flowolf/legacy_forward.py",
+      "sha256": "723685abb66bf2930bfd8759855844d29eb2c529c3eab2c88339980e2330e44b",
+      "modified": false
+    },
+    {
+      "file": "legacy_v43/v41_flowolf/legacy_v34/__init__.py",
+      "source": "V41 base plus supplied V43 overlay/v41_flowolf/legacy_v34/__init__.py",
+      "sha256": "536a18989efa1b0e6fe35566eabc98cc5e1754f9eb7a2306540f6985c499bc35",
+      "modified": false
+    },
+    {
+      "file": "legacy_v43/v41_flowolf/legacy_v34/continuous_baseline.py",
+      "source": "V41 base plus supplied V43 overlay/v41_flowolf/legacy_v34/continuous_baseline.py",
+      "sha256": "80b1efa2104a8cd0383d3812942bfad9e17f2afed15012217f81a3427d91005e",
+      "modified": false
+    },
+    {
+      "file": "legacy_v43/tests/test_v43_scientific_fixes.py",
+      "source": "V41 base plus supplied V43 overlay/tests/test_v43_scientific_fixes.py",
+      "sha256": "084d89b6dfaea32202b01242d4956777c8cfd215a0a9073161884b638bf28069",
+      "modified": false
+    },
+    {
+      "file": "diagnostics/reference_repairs.py",
+      "source": "history_audit/diagnostics/reference_repairs.py",
+      "source_sha256": "489eee6d048db3b7fdcda8a26059725a8141a3ea21d238085ba3893f8f6f4136",
+      "sha256": "489eee6d048db3b7fdcda8a26059725a8141a3ea21d238085ba3893f8f6f4136",
+      "path_only_changes": []
+    },
+    {
+      "file": "diagnostics/audit_v43.py",
+      "source": "history_audit/diagnostics/audit_v43.py",
+      "source_sha256": "bcef06282b4263bec53de1271fcb824bbd195dc5efbdab4473578830254d8ae2",
+      "sha256": "91cdc59ff305d98ac0cefc37a1e17e0830a37e16a4f978e44f4605cc0f7defac",
+      "path_only_changes": [
+        "Input directory made package-relative: legacy_v43",
+        "Output redirected to results; all diagnostic functions unchanged"
+      ]
+    },
+    {
+      "file": "diagnostics/verify_reference_repairs.py",
+      "source": "history_audit/diagnostics/verify_reference_repairs.py",
+      "source_sha256": "755ad773558c0ab4ec35899efd9f1390910b78bcbb308aec495594f75fe843bb",
+      "sha256": "931714d8fda46287adf5fe17c49c47c70e1a3c4245f50723da91d4fd514804c9",
+      "path_only_changes": [
+        "Input/source/output paths made package-relative; mathematical computations unchanged"
+      ]
+    },
+    {
+      "file": "diagnostics/nonoracle_closed_loop.py",
+      "source": "history_audit/diagnostics/nonoracle_closed_loop.py",
+      "source_sha256": "4ada677aab0200b1232ba248251c9eef896e0204dc065465e64bba413d1132f9",
+      "sha256": "3de7f2b38cfbb1550fae88faf47fa499adb87a9793b2c44aa38edc130ea5da8f",
+      "path_only_changes": [
+        "Output path made package-relative; computations and settings unchanged"
+      ]
+    }
+  ]
+}
