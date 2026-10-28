@@ -12,6 +12,7 @@
 - `v41_flowolf/physics.py`：普通风条件高斯羽流（合成软件测试专用）、完整时滞/一阶传感器预测接口。
 - `v41_flowolf/legacy_forward.py` 和 `legacy_v34/`：**复用原 V34 普通** `CompiledLocalPuffs` 源条件模拟，统一供 BIO 和普通基线，不是 S2 原生真值或已经修复的 E3/B4 前向。
 - `v41_flowolf/native.py` + `public_geometry.py`：S2 原始 `AgentSession` 接口适配；控制器仅拿历史观测与**公共**障碍/DEM；完整原始气团数据和 3Agent 同步并未在此运行。
+- `synthetic_grid_v41.py`：冻结的3源×2噪声种子多方法合成软件对照，未进行独立物理场泛化。
 - `demo_v41.py`：同数据/同控制源域的普通 EIG、投影 E-opt、普通覆盖、BIO 和删除模块的合成联动测试。
 - `run_v41_s2.py`：在 Codex 本机找到完整原始包后使用的入口。默认严格可靠性门，不把未经独立校准的传播模型评分当作可信定位证据。
 - `tests/test_v41.py`：源码单元/接口/安全/闭环测试。
@@ -23,6 +24,7 @@ Python 3.10+，依赖 `numpy scipy pytest`。
 ```bash
 python -m pytest tests/test_v41.py -q
 python demo_v41.py --steps 20 --seed 9001 --out V41_SYNTHETIC_20.json
+python synthetic_grid_v41.py  # 3个合成源×2噪声种子，全候选普通方法与消融
 ```
 
 可以在真实安装的原始 S2 目录运行**原生接口 smoke**：
@@ -56,7 +58,7 @@ python run_v41_s2.py \
 
 ## 5. Codex 接受和提交步骤
 
-1. 先在这个 GitHub 分支真实运行所有 Python 测试、记录 python/numpy/scipy 版本与 26项测试；必要时先修**代码 bug**，不可根据真实标签优化方法参数。
+1. 先在这个 GitHub 分支真实运行所有 Python 测试、记录 python/numpy/scipy 版本与 27项测试；必要时先修**代码 bug**，不可根据真实标签优化方法参数。
 2. 在本地完整 S2 包执行 `--seconds 5` 的原生 API 契约对齐和 3机同步核查，保留逐 0.1s 源格式的日志；有真实问题先修 API，不改仿真参数/传感器模型。B0/BIO 均用相同读取器。
 3. 只要 E0 真实回放可用，继续 60s 五世界原生接触实验；模型前向不合格也仍可完成 E0。
 4. 源条件生成核、释放历史及风模型合格后再执行 E1 与 E2（V40 Codex 合同）；比较 full-EIG/普通 E-opt，记录前向耗时和全源域后验，报告正常组 harm。
