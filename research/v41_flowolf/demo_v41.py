@@ -41,7 +41,7 @@ def run(mode='bio',source=(0.,0.,10.),steps=24,seed=9001,error_bound=None,
                         'model_certified':dec.qualified,
                         'm3_candidate_scores':dec.evaluated})
         positions=positions+dec.action.velocity
-    estimate=ctrl.posterior.map_source[:2]
+    estimate=ctrl.posterior.map_xy
     result={'mode':mode,'seed':seed,'steps':steps,
             'synthetic_truth_xy_eval_only':true_s[:2].tolist(),
             'estimated_source_xy':estimate.tolist(),
