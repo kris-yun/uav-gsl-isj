@@ -69,7 +69,7 @@ E.UNKNOWN：无前向/缺真值版本/数据不足不能确定。
 
 对于每个模型都记录 J_s、J_q/h 等块秩、I_{s|η} 两个特征值、全域竞争源的 profiled separation、对数似然/后验预测合格度及计算复杂度。存在 rank(K_s)=m 且自由 q 内点时必须标 NUISANCE_SATURATION，不得因为高拟合度就认定恢复源位置。
 
-共享强普通对照：固定轨迹上的完整因果 GLR/GLS/粒子源后验、普通固定 q、普通时间平滑/混合发行、普通同源支持修复。所有方法统一数据/候选源域/前向预算；新算法没有专属oracle。
+共享强普通对照：固定轨迹上的完整因果 GLR/GLS/粒子源后验、普通固定 q、普通时间平滑/混合释放模型、普通同源支持修复。所有方法统一数据/候选源域/前向预算；新算法没有专属oracle。
 
 **相干性门**：若各探头可接触不同释放年龄，必须测试“公共幅度”的拟合残差与窗间漂移。只有独立时窗/超定探头/合格生成核能约束共同幅度才开放 V39 log 双差作动作代理。动态不相干时退回原始因果前向，不允许把 V39 经典双差作为额外独立 likelihood。
 
@@ -113,7 +113,7 @@ E.UNKNOWN：无前向/缺真值版本/数据不足不能确定。
 输出到项目隔离 evidence/v40_native_20261028/（或仓库现有契约的等价路径），包含：
 - PROTOCOL_FREEZE.json、SOURCE_LINEAGE.json、EXECUTION_RECEIPT.json、COMMANDS.txt、HASHES.sha256；
 - RAW_OBSERVATIONS/（逐原生tick/每机）、ACTIONS/、POSTERIORS/、EVAL_ONLY/（仅评价端读标签）；
-- S1_FAILURE_MATRIX.csv、S2_CONTACT_RESULTS.csv、S3_Q0_Q1_Q2.csv、S4_LOCALIZATION_RESULTS.csv、ABLATONS.csv、RUN_RESOURCES.csv；
+- S1_FAILURE_MATRIX.csv、S2_CONTACT_RESULTS.csv、S3_Q0_Q1_Q2.csv、S4_LOCALIZATION_RESULTS.csv、ABLATIONS.csv、RUN_RESOURCES.csv；
 - REPORT_ZH.md，第一行 decision=...，准确区分普通前向修复/普通覆盖收益/BIO独立增益；
 - 提交实际源码/测试/锁与证据索引到新研究分支并推送，报告 commit SHA。大原生 ZIP 不重复入库；保留外部路径及哈希。禁止用未来输出或假的命令冒充执行。
 
