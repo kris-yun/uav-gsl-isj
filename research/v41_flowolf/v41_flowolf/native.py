@@ -109,11 +109,13 @@ def run_native(root,world_id,controller:Controller,start_xyz,
     for t in range(duration_s):
         snapshot=reading_from_sessions(sessions,meta,expected_tick=t*10)
         dec=controller.step(snapshot)
+        xy,pxy=controller.posterior.source_xy_probability()
         rows.append({'time':float(snapshot.t),'measured_excess_ppm':snapshot.gas_ppm.tolist(),
                      'pose_ENU':snapshot.pos.tolist(),'wind_ENU':snapshot.wind.tolist(),
                      'decision':dec.action.name,'velocity':dec.action.velocity.tolist(),
-                     'source_map':controller.posterior.map_source.tolist(),
-                     'source_xy_mass':controller.posterior.mass.tolist(),
+                     'source_candidate_map_3d':controller.posterior.map_source.tolist(),
+                     'source_map_xy':controller.posterior.map_xy.tolist(),
+                     'xy_grid_ENU':xy.tolist(), 'source_xy_probability':pxy.tolist(),
                      'model_gate_certified':dec.qualified,'phase':dec.stage,
                      'estimated_profile_margin':dec.pair_margin,
                      'future_response_calls':dec.forward_calls})
@@ -124,11 +126,13 @@ def run_native(root,world_id,controller:Controller,start_xyz,
     # retroactively change any previous action. Store and update once.
     final=reading_from_sessions(sessions,meta,expected_tick=duration_s*10)
     controller.observe(final)
+    xy,pxy=controller.posterior.source_xy_probability()
     rows.append({'time':final.t,'measured_excess_ppm':final.gas_ppm.tolist(),
                  'pose_ENU':final.pos.tolist(),'wind_ENU':final.wind.tolist(),
                  'decision':'FINAL_ONLY_NO_ACTION',
-                 'source_map':controller.posterior.map_source.tolist(),
-                 'source_xy_mass':controller.posterior.mass.tolist(),
+                 'source_candidate_map_3d':controller.posterior.map_source.tolist(),
+                 'source_map_xy':controller.posterior.map_xy.tolist(),
+                 'xy_grid_ENU':xy.tolist(), 'source_xy_probability':pxy.tolist(),
                  'model_gate_certified':False})
     audit['actual_sensor_records_per_uav']=len(rows)
     audit['model_verified_for_true_native_response']=False
