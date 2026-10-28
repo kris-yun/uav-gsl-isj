@@ -163,14 +163,16 @@ def test_no_double_evidence_when_recomputing_history():
     assert np.allclose(c.posterior.mass,direct.mass,atol=1e-14)
 
 
-def test_indexed_signal_changes_per_agent_action_without_relabeling_sources():
+def test_clean_identity_ablation_uses_same_physical_candidates():
     from v41_flowolf.control import all_actions
     base=np.array([[10.,-5.,10.],[10.,0.,10.],[10.,5.,10.]])
     h0=[obs(0,gas=(0.3,0.08,0.01),pos=base)]
     h1=[obs(0,gas=(0.01,0.08,0.3),pos=base)]
     v0={a.name:a.velocity for a in all_actions(h0[-1],encode(h0),0)}
     v1={a.name:a.velocity for a in all_actions(h1[-1],encode(h1),0)}
-    assert not np.allclose(v0['reconfigure_gap_indexed'],v1['reconfigure_gap_indexed'])
+    # Clean ablation: both policies see identical world-coordinate actions;
+    # only the bounded inward/outward motor readout differs.
+    assert np.allclose(v0['reconfigure_gap_indexed'],v1['reconfigure_gap_indexed'])
     assert np.allclose(v0['reconfigure_cross'],v1['reconfigure_cross'])
     assert np.allclose(v0['reconfigure_gap_indexed'].mean(axis=0),0,atol=1e-12)
 

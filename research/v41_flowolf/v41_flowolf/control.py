@@ -62,13 +62,49 @@ def _safe_velocity(v: np.ndarray, pos: np.ndarray, used: np.ndarray,
     return np.zeros_like(v),False
 
 
+def _physical_order(pos: np.ndarray, along: np.ndarray, cross: np.ndarray) -> np.ndarray:
+    """Permutation-equivariant receptor ordering by real ENU/wind geometry.
+
+    Distinct sensor positions are required by the flight separation contract.
+    Merely permuting array rows must permute assigned motor commands, not
+    change the action in world coordinates.
+    """
+    d=np.asarray(pos,float)-np.asarray(pos,float).mean(axis=0)
+    along_coord=d[:,:2]@along
+    cross_coord=d[:,:2]@cross
+    return np.lexsort((d[:,2],along_coord,cross_coord))
+
+
+def _bipolar_motor_score(sig: Signature, action: Trajectory, speed: float=.9)->float:
+    """Source-independent IN/OUT-to-motor alignment; bounded and cheap.
+
+    The mapping is an *engineering hypothesis* motivated by differentiated
+    biological motor projections, not a claim about zebrafish motor decoding.
+    A shared action library is mandatory for BIO/noidentity comparisons.
+    """
+    if sig.contact_count==0 or sig.stage in ('wind_weak','invalid'):
+        return 0.
+    v=np.asarray(action.velocity,float)
+    loc=sig.effective_positions
+    d=loc-loc.mean(axis=0)
+    n=d/np.maximum(np.linalg.norm(d,axis=1,keepdims=True),1e-9)
+    relative=v-v.mean(axis=0)
+    radial_motion=np.einsum('ij,ij->i',relative,n)
+    # Positive outflow favors relative expansion; inflow favors contraction.
+    # Zero for whole-team translations (tested), so the primitive differs
+    # from ordinary EIG only when identity-conditioned reconfiguration matters.
+    balance=sig.outward_flow-sig.inward_flow
+    denominator=(np.sum(sig.outward_flow+sig.inward_flow)+1e-9)*max(speed,1e-9)
+    return float(np.clip(np.dot(balance,radial_motion)/denominator,-1.,1.))
+
+
 def all_actions(b: Reading, sig: Signature, t: float, speed=.9) -> list[Trajectory]:
     p=b.pos;n=len(p)
     u=sig.wind_along;c=sig.wind_cross
     center=p.mean(axis=0)
     d=p[:,:2]-center[:2]
     proj=d@c
-    indexed=np.argsort(proj)
+    indexed=_physical_order(p,sig.wind_along,sig.wind_cross)
     rank=np.empty(n,dtype=float);rank[indexed]=np.linspace(-1.,1.,n)
     rank-=rank.mean()
     def tri(name,velocity,family,reason):
@@ -89,12 +125,12 @@ def all_actions(b: Reading, sig: Signature, t: float, speed=.9) -> list[Trajecto
     # complements previously sampled relative positions. SOURCE-INDEPENDENT.
     gap=sig.missing_axis
     scores=d@gap
-    order=np.argsort(scores)
+    order=_physical_order(p,sig.wind_along,gap)
     ranks=np.empty(n,dtype=float);ranks[order]=np.linspace(-1.,1.,n)
-    directional=np.tanh(sig.signed_flow[:,:2]@gap)
-    odor=sig.contact_prob-np.mean(sig.contact_prob)
-    identity=directional+odor
-    move=(ranks+.4*(identity-identity.mean()))[:,None]*gap[None,:]
+    # A fixed, receptor-identity-neutral action library: BIO and the
+    # noidentity control see exactly the same trajectory vectors.  Identity
+    # enters only via the separated M1 motor-readout bonus in the scorer.
+    move=ranks[:,None]*gap[None,:]
     move-=move.mean(axis=0)
     vgap=np.c_[speed*move,np.zeros(n)]
     actions.append(tri('reconfigure_gap_indexed',vgap,'reconfiguration',
@@ -103,9 +139,11 @@ def all_actions(b: Reading, sig: Signature, t: float, speed=.9) -> list[Trajecto
                        'identity-indexed complementary inverse action'))
     # 2D full-rank deformation for N>=3; geometry is not a source certificate.
     if n>=3:
+        physical_order=_physical_order(p,u,c)
         angles=2*np.pi*np.arange(n)/n
         simplex=np.c_[np.cos(angles),np.sin(angles)]
-        xy=speed*(simplex@np.stack([u,c]))
+        xy=np.zeros((n,2),float)
+        xy[physical_order]=speed*(simplex@np.stack([u,c]))
         actions.append(tri('reconfigure_2d_rank',np.c_[xy,np.zeros(n)],'reconfiguration',
                            'two-dimensional relative-motion Gram rank proposal'))
         actions.append(tri('reconfigure_2d_reverse',np.c_[-xy,np.zeros(n)],'reconfiguration',
@@ -124,8 +162,6 @@ def shortlisted_actions(actions: list[Trajectory], sig: Signature, mode: str) ->
                 'ordinary_eig_full','ordinary_projected_full'):return actions
     if mode=='ordinary_coverage':
         names=['translate_cross+','translate_cross-','translate_upwind','translate_z+']
-    elif mode=='bio_noidentity':
-        names=['translate_cross+','translate_cross-','translate_upwind','translate_z+','hover']
     elif mode=='bio_noflow':
         names=['reconfigure_2d_rank','reconfigure_2d_reverse','translate_z+','hover']
     elif mode=='bio_nogap':
@@ -355,11 +391,11 @@ class Controller:
                         'ordinary deterministic wind-cast/height coverage; no future source forecast',
                         len(subset),False,0,0,0,0,None,0,())
                     self.trace.append(result);return result
-        if self.cfg.mode in ('bio','bio_nogap') and sig.stage in ('precontact','wind_weak','invalid'):
+        if self.cfg.mode in ('bio','bio_noidentity','bio_nogap') and sig.stage in ('precontact','wind_weak','invalid'):
             # Index-retaining stage-conditioned SCOUT, unqualified to use log,
             # Fisher or any source-conditional response to infer zero-contact.
             order=(['reconfigure_gap_indexed','reconfigure_cross','translate_cross+',
-                    'translate_cross-','translate_z+','hover'] if self.cfg.mode=='bio' else
+                    'translate_cross-','translate_z+','hover'] if self.cfg.mode in ('bio','bio_noidentity') else
                    ['reconfigure_cross','translate_cross+','translate_cross-',
                     'translate_z+','hover'])
             i=min(int(max(0,reading.t)//6)%len(order),len(order)-1)
@@ -424,6 +460,11 @@ class Controller:
             elif self.cfg.mode=='ordinary_coverage':score=.01*length+eig*.01
             elif self.cfg.mode in ('ordinary_projected','ordinary_projected_full'):score=np.log1p(lam)+.01*margin-1e-4*length
             else:score=eig+.10*np.log1p(lam)+.10*robust_margin-1e-4*length
+            # Clean one-factor identity ablation: identical candidate actions,
+            # response calls and Bayesian likelihood. Only the biologically
+            # motivated identity-conditioned motor-readout term is removed.
+            if self.cfg.mode=='bio':
+                score+=.05*_bipolar_motor_score(sig,candidate)
             # Do not grant model-reliability certificate when eps unknown.
             qualified=bool(eb is not None and self.cfg.model_error_calibrated and
                            robust_margin>self.cfg.gain_min and

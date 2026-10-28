@@ -8,6 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import numpy as np
 from scipy.special import ndtr
+from scipy.stats import chi2
 from .types import Reading
 
 
@@ -30,6 +31,10 @@ class Signature:
     motion_gram: np.ndarray
     motion_rank: int
     footprint_available: bool
+    inward_flow: np.ndarray
+    outward_flow: np.ndarray
+    profile_stable: bool
+    profile_statistic: float
 
 
 def _footprint(history: list[Reading], target_t: float) -> tuple[np.ndarray,bool]:
@@ -67,7 +72,12 @@ def encode(history: list[Reading], sigma: float=.02, threshold: float=.06,
     relwind=b.wind-vel
     radial=np.einsum('ij,ij->i',relwind,normals)
     weights=np.where(b.valid,ndtr((b.gas_ppm-threshold)/sigma),0.)
+    # Keep the physical receptor label and its IN/OUT polarity separately.
+    # signed_flow remains a vector projection for backward compatibility;
+    # it is NOT an encoding of inward/outward polarity by itself.
     signed=(weights*radial)[:,None]*normals
+    inward=weights*np.maximum(-radial,0.)
+    outward=weights*np.maximum(radial,0.)
     u=b.wind[:,:2].mean(axis=0)
     speed=float(np.linalg.norm(u))
     along=u/speed if speed>min_wind else np.array([1.,0.])
@@ -94,7 +104,29 @@ def encode(history: list[Reading], sigma: float=.02, threshold: float=.06,
     steady=(len(history)>=stationarity_window and all(
         np.all(h.valid & (h.gas_ppm>=threshold)) for h in history[-stationarity_window:]))
     aligned=np.ptp(d[:,:2]@along)<1.0 and np.ptp(p[:,2])<.5
-    shape_cert=bool(steady and time_cert and aligned and speed>min_wind and footprint_available)
+    # Conservative *observed profile stability* qualification; cannot certify
+    # common puff release-age or a correct source-conditioned transport model.
+    # We test normalized log-shape, NOT overall concentration amplitude.
+    profile_stable=False
+    profile_statistic=np.inf
+    if steady and time_cert:
+        yhist=np.stack([h.gas_ppm for h in history[-stationarity_window:]])
+        # C=I-11'/N removes an unknown common log-amplitude at each timestamp.
+        center=np.eye(n)-np.ones((n,n))/n
+        contrast=np.log(yhist) @ center
+        # Delta method variance for logs; serial sensor correlation would need
+        # a calibrated covariance, so this is only an initial screening gate.
+        var=(sigma/yhist)**2
+        qcrit=float(chi2.ppf(1.-.01/max(1,stationarity_window-1),df=n-1))
+        stats=[]
+        for j in range(1,stationarity_window):
+            delta=contrast[j]-contrast[j-1]
+            cov=center@np.diag(var[j]+var[j-1])@center
+            stats.append(float(delta@np.linalg.pinv(cov,hermitian=True)@delta))
+        profile_statistic=max(stats,default=np.inf)
+        profile_stable=bool(np.isfinite(profile_statistic) and profile_statistic<=qcrit)
+    shape_cert=bool(steady and time_cert and aligned and speed>min_wind
+                    and footprint_available and profile_stable)
     ecc=float(np.dot(weights,d[:,:2]@cross)/max(float(weights.sum()),1e-12))
     if not np.all(b.valid):stage='invalid'; reason='invalid instrument; not a negative gas sample'
     elif speed<=min_wind:stage='wind_weak';reason='wind azimuth unqualified'
@@ -103,4 +135,5 @@ def encode(history: list[Reading], sigma: float=.02, threshold: float=.06,
     elif shape_cert:stage='section';reason='provisional common slice; puff-age not certified'
     else:stage='contact_uncertain';reason='gas seen but causal section qualification weak'
     return Signature(stage,along,cross,signed,radial,weights,ecc,count,spread,
-                     time_cert,shape_cert,reason,p.copy(),gap,gram,rank,footprint_available)
+                     time_cert,shape_cert,reason,p.copy(),gap,gram,rank,
+                     footprint_available,inward,outward,profile_stable,profile_statistic)
