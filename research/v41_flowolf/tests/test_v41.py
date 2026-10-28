@@ -280,3 +280,20 @@ def test_explicit_unknown_mode_and_identity_guard():
     ctrl.observe(first)
     second=Reading(1.,a.pos,a.gas_ppm,a.wind,a.valid,sensor_ids=('b','a','c'))
     with pytest.raises(ValueError,match='identity'):ctrl.observe(second)
+
+
+def test_horizontal_marginal_map_not_confused_with_max_3d_candidate():
+    # Two source heights together carry 0.6 probability at same XY; a third
+    # candidate has 0.4 individually. Horizontal MAP must be the 0.6 cell.
+    candidates=np.array([[0.,0.,10.],[0.,0.,20.],[5.,0.,10.]])
+    prior=np.array([.3,.3,.4])
+    c=Configuration()
+    class NullForward:
+        def response(self,s,history):return np.zeros((len(s),len(history),3))
+    a=obs(t=0)
+    invalid=Reading(0.,a.pos,a.gas_ppm,a.wind,np.zeros(3,dtype=bool))
+    post=joint_posterior([invalid],candidates,NullForward(),c,source_prior=prior)
+    assert np.array_equal(post.map_source,np.array([5.,0.,10.]))
+    assert np.array_equal(post.map_xy,np.array([0.,0.]))
+    grid,pxy=post.source_xy_probability()
+    assert len(grid)==2 and np.isclose(pxy[0],.6)
