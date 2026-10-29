@@ -1,0 +1,288 @@
+--- a/v46_flowolf/core.py
++++ b/v46_flowolf/core.py
+@@ -418,6 +418,7 @@
+     source_tolerance: float = 0.5
+     path_penalty: float = 0.0
+     score_kind: str = "min_separation"
++    shortlist_rule: str = "branch_cover"
+     eig_samples: int = 32
+     seed: int = 20261028
+     confirmation_threshold: float | None = None
+@@ -429,14 +430,27 @@
+     damping_t: float = 0.2
+     speed_reconfigure: float = 0.5
+     ridge_r: float = 0.15
++    diagnostic_velocity_tolerance: float = 1e-10
++    diagnostic_displacement_tolerance: float = 1e-9
++    # Shared catalogue resolution, not an M1-specific benefit.  (1.,) exactly
++    # retains the V47 catalogue; all methods must use the same frozen tuple.
++    catalog_scales: tuple[float, ...] = (1.0,)
+ 
+     def __post_init__(self):
++        if (not self.catalog_scales or self.catalog_scales[0] != 1.0
++                or not np.all(np.isfinite(self.catalog_scales))
++                or any(not 0 < x <= 1 for x in self.catalog_scales)
++                or any(b >= a for a,b in zip(self.catalog_scales, self.catalog_scales[1:]))):
++            raise ValueError("catalog_scales must begin at 1 and decrease strictly in (0,1]")
+         if (self.budget_s <= 0 or self.action_s <= 0 or self.horizon_steps < 1
+                 or self.K < 1 or not 0 <= self.beta < 1
+                 or self.contact_threshold < 0 or self.remeasure_limit_s < 0
+                 or self.catalog_speed <= 0 or self.relative_fraction < 0
+                 or self.source_tolerance <= 0 or self.path_penalty < 0
+-                or self.eig_samples < 1 or self.score_kind not in {"min_separation", "xy_eig"}):
++                or self.eig_samples < 1 or self.score_kind not in {"min_separation", "xy_eig"}
++                or self.shortlist_rule not in {"branch_cover", "union_topk"}
++                or not np.isfinite([self.diagnostic_velocity_tolerance,self.diagnostic_displacement_tolerance]).all()
++                or min(self.diagnostic_velocity_tolerance,self.diagnostic_displacement_tolerance)<=0):
+             raise ValueError("Invalid frozen controller settings")
+         if (self.confirmation_radius <= 0 or
+                 (self.confirmation_threshold is not None and not 0 < self.confirmation_threshold < 1)):
+@@ -481,6 +495,30 @@
+         vel=np.zeros_like(positions)
+         vel[:,:2]=translations[ti]+rel[ri]
+         out.append(common_scale(Candidate(f"T{ti:02d}_R{ri:02d}",ids,vel,cfg.action_s),specs))
++    return refine_catalog(out, cfg.catalog_scales)
++
++
++def refine_catalog(catalog, scales=(1.0,)):
++    """Common, source-blind speed refinement with unchanged action duration.
++
++    Every refinement is subsequently checked by the SAME continuous safety
++    predicate.  No collision clearance is relaxed.  The zero action is not
++    repeated; positive-scale semantic IDs are stable under storage permutation.
++    Candidate count/safety cost must be logged separately from expensive K.
++    """
++    if (not scales or scales[0] != 1.0 or not np.all(np.isfinite(scales))
++            or any(not 0 < x <= 1 for x in scales)
++            or any(b >= a for a,b in zip(scales,scales[1:]))):
++        raise ValueError("Invalid common scales")
++    out=list(catalog)
++    if len({a.semantic_id for a in out}) != len(out):
++        raise ValueError("Duplicate base candidate IDs")
++    for level,scale in enumerate(scales[1:],start=1):
++        for a in catalog:
++            if np.linalg.norm(a.velocities) <= 1e-12:
++                continue
++            out.append(Candidate(a.semantic_id+f"_S{level:02d}", a.sensor_ids,
++                         scale*a.velocities, a.duration, scale*a.common_scale))
+     return out
+ 
+ 
+@@ -492,7 +530,7 @@
+     """
+     MODES = {"m1_full","no_history","merged_r","t_only","r_only",
+              "no_polarity_t","upwind","ordinary_array","gradient",
+-             "information_uniform"}
++             "ordinary_dual","gradient_dual","information_uniform"}
+ 
+     def __init__(self, posterior: GaussianPosterior, safety: ConvexBoxSafety,
+                  config=ControllerConfig(), mode="m1_full"):
+@@ -512,6 +550,7 @@
+         self.confirmation_events=[]
+         self.baseline_fallback=None
+         self.has_been_confirmed=False
++        self.shortlist_diagnostics={}
+ 
+     def observe(self, block: RawBlock):
+         # Arrival of unprocessed or unsupported data invalidates any previous
+@@ -613,65 +652,118 @@
+             w=f.ambient_wind[valid,:2].mean(axis=0)
+             v=-self.cfg.catalog_speed*w/max(np.linalg.norm(w),1e-15)
+             return np.tile(v,(n,1))
++        def ordinary_relative():
++            delta=f.positions[:,:2]-f.positions[:,:2].mean(axis=0)
++            return (self.cfg.catalog_speed*self.cfg.relative_fraction*delta
++                    /max(np.linalg.norm(delta,axis=1).max(),1e-15))
+         if self.mode in {"m1_full","no_history","merged_r","t_only","r_only","no_polarity_t"}:
+             T=np.tile(d["translation"],(n,1));R=d["relative"]
++            if self.mode=="t_only":return [T]
++            if self.mode=="r_only":return [R]
+             return [T,R,T+R]
+         if self.mode=="upwind":
+             return [qualified_upwind()]
+         if self.mode=="ordinary_array":
+-            delta=f.positions[:,:2]-f.positions[:,:2].mean(axis=0)
+-            r=self.cfg.catalog_speed*delta/max(np.linalg.norm(delta,axis=1).max(),1e-15)
+-            return [r]
+-        if self.mode=="gradient":
++            return [ordinary_relative()]
++        if self.mode=="ordinary_dual":
++            T=qualified_upwind();R=ordinary_relative()
++            return [T,R,T+R]
++        if self.mode in {"gradient","gradient_dual"}:
+             gain=np.array([s.gain for s in self.specs]);bias=np.array([s.background for s in self.specs])
+             c=(f.raw[valid]-bias[valid])/gain[valid]
+             X=np.column_stack([np.ones(np.count_nonzero(valid)),f.positions[valid,:2]])
+             if len(X)<3 or np.linalg.matrix_rank(X)<3:
+                 self.baseline_fallback="GRADIENT_RANK_DEFICIENT_TO_QUALIFIED_UPWIND"
+-                return [qualified_upwind()]
+-            grad=np.linalg.lstsq(X,c,rcond=None)[0][1:]
+-            v=self.cfg.catalog_speed*grad/max(np.linalg.norm(grad),1e-15)
+-            return [np.tile(v,(n,1))]
++                T=qualified_upwind()
++            else:
++                grad=np.linalg.lstsq(X,c,rcond=None)[0][1:]
++                v=self.cfg.catalog_speed*grad/max(np.linalg.norm(grad),1e-15)
++                T=np.tile(v,(n,1))
++            if self.mode=="gradient_dual":
++                R=ordinary_relative()
++                return [T,R,T+R]
++            return [T]
+         return []
+ 
+     def _shortlist(self,catalog,e,d):
+         K=min(self.cfg.K,len(catalog))
+-        if K==len(catalog):
+-            return sorted(catalog,key=lambda a:a.semantic_id)
++        order=sorted(catalog,key=lambda a:a.semantic_id)
++        if not order:
++            raise ValueError("Shortlisting requires a nonempty safe catalog")
+         if self.mode=="information_uniform":
+             # Broad deterministic direction/shape coverage; no source truth or
+             # posterior-dependent cheap preview is hidden outside the K budget.
+-            order=sorted(catalog,key=lambda a:a.semantic_id)
+             ix=np.linspace(0,len(order)-1,K,dtype=int)
++            self.shortlist_diagnostics={"rule":"uniform", "branches":[],
++                                        "safe_count":len(order),"budget":K}
+             return [order[i] for i in ix]
+         anchors=self._anchors(e,d)
+-        def key(a):
+-            distance=min(float(np.mean(np.sum((a.velocities[:,:2]-x)**2,axis=1))) for x in anchors)
+-            return distance,a.semantic_id
+-        return sorted(catalog,key=key)[:K]
++        # Each row is one cheap, source-blind proposal.  The distance is
++        # evaluated against the same already-scaled and safety-filtered catalog.
++        distances=np.array([[float(np.mean(np.sum((a.velocities[:,:2]-x)**2,axis=1)))
++                             for a in order] for x in anchors])
++        nearest=[int(np.argmin(row)) for row in distances]
++        near_unique=list(dict.fromkeys(nearest))
++        ranked=sorted(range(len(order)),key=lambda j:(float(distances[:,j].min()),order[j].semantic_id))
++        if K==len(order):
++            chosen=list(range(len(order)))
++        elif self.cfg.shortlist_rule=="union_topk":
++            chosen=ranked[:K]
++        else:
++            # Preserve at least the nearest legal representative of every
++            # proposal when K covers their distinct union.  Below that budget,
++            # the declared T, R, T+R order is a deterministic degradation.
++            chosen=near_unique[:K]
++            chosen+= [j for j in ranked if j not in chosen][:K-len(chosen)]
++        single={"t_only":"T","r_only":"R"}.get(self.mode,self.mode)
++        labels=["T","R","T+R"] if len(anchors)==3 else [single]*len(anchors)
++        branches=[]
++        for label,x,row,j in zip(labels,anchors,distances,nearest):
++            rel=x-x.mean(axis=0)
++            command=order[j].velocities[:,:2]
++            command_rel=command-command.mean(axis=0)
++            branches.append({"branch":label,"nearest_candidate":order[j].semantic_id,
++                "nearest_in_shortlist":j in chosen,"velocity_mse":float(row[j]),
++                "relative_velocity_error_fro":float(np.linalg.norm(command_rel-rel)),
++                "proposal_relative_norm":float(np.linalg.norm(rel)),
++                "nearest_command_relative_norm":float(np.linalg.norm(command_rel)),
++                "proposal_is_zero":bool(np.linalg.norm(x)<=1e-12)})
++        self.shortlist_diagnostics={"rule":self.cfg.shortlist_rule,"branches":branches,
++            "safe_count":len(order),"budget":K,"distinct_nearest_count":len(near_unique),
++            "branch_coverage_budget_sufficient":K>=len(near_unique),
++            "all_nearest_in_shortlist":all(j in chosen for j in near_unique),
++            "shortlisted_ids":[order[j].semantic_id for j in chosen]}
++        return [order[j] for j in chosen]
+ 
+     def _score(self, candidate):
+         model=self.posterior.model
+         future=model.predict(candidate)
+         sigma=np.array([s.sigma for s in self.specs])
+         whitened=(future/sigma[None,None,:]).reshape(len(model.bank.theta),-1)
+-        # Same nuisance row carries the entire observed history and future.
+-        allmean=np.concatenate(model.history_whitened+[whitened],axis=1)
+-        source=model.bank.theta[:,:2]
+-        best=np.inf; pairs=0
+-        active=np.flatnonzero(model.bank.prior>0)
+-        for ii,i in enumerate(active):
+-            for j in active[:ii]:
+-                if np.linalg.norm(source[i]-source[j])>=self.cfg.source_tolerance:
+-                    pairs+=1
+-                    best=min(best,float(np.linalg.norm(allmean[i]-allmean[j])))
+-        separation=0.0 if pairs==0 else best
++        # Preserve the V47 separation diagnostic only when it is the requested
++        # score.  EIG needs no O(P^2) source-pair loop.  Both branches still count
++        # the same one model.predict call per candidate.
++        separation=None; pairs=0
+         if self.cfg.score_kind=="min_separation":
++            allmean=np.concatenate(model.history_whitened+[whitened],axis=1)
++            source=model.bank.theta[:,:2]
++            best=np.inf
++            active=np.flatnonzero(model.bank.prior>0)
++            for ii,i in enumerate(active):
++                for j in active[:ii]:
++                    if np.linalg.norm(source[i]-source[j])>=self.cfg.source_tolerance:
++                        pairs+=1
++                        best=min(best,float(np.linalg.norm(allmean[i]-allmean[j])))
++            separation=0.0 if pairs==0 else best
+             value=separation
+         else:
+             value=self._xy_eig(whitened)
+         path=float(candidate.duration*np.linalg.norm(candidate.velocities,axis=1).sum())
+         return {"score":value-self.cfg.path_penalty*path,
++                "score_kind":self.cfg.score_kind,
++                "response_domain":"all_positive_prior_joint_source_nuisance_rows",
++                "observed_value_compatibility_pruning":False,
++                "uses_current_posterior_weights":self.cfg.score_kind=="xy_eig",
+                 "bank_separation":separation,"pair_count":pairs,
+                 "continuous_source_certificate":GateStatus.UNKNOWN.value,
+                 "source_confirmation":False}
+@@ -717,6 +809,7 @@
+         self.posterior.assert_same_model()
+         f=self.last_frame
+         self.baseline_fallback=None
++        self.shortlist_diagnostics={"rule":"not_scored", "branches":[]}
+         if f.t-self.start_time >= self.cfg.budget_s-1e-12:
+             return None,{"stage":"STOP_BUDGET","source_confirmation":self.source_confirmation}
+         remaining=self.cfg.budget_s-(f.t-self.start_time)
+@@ -749,17 +842,20 @@
+                                   for name in ["time","shape","coherence","model"]},
+                 "source_confirmation":self.source_confirmation,
+                 "baseline_fallback":self.baseline_fallback,
++                "shortlist":self.shortlist_diagnostics,
+                 "confirmation":dict(self.confirmation),"safe_under_reference_model":True}
+         actual_relative=choice.velocities[:,:2]-choice.velocities[:,:2].mean(axis=0)
+         record.update({"command_velocity_by_canonical_id":choice.velocities.tolist(),
+                        "command_sensor_ids":list(choice.sensor_ids),
+                        "common_scale":choice.common_scale,
+-                       "actual_relative_rank":int(np.linalg.matrix_rank(actual_relative))})
++                       "command_relative_rank":int(np.linalg.matrix_rank(actual_relative,tol=self.cfg.diagnostic_velocity_tolerance)),
++                       "command_rank_tolerance_m_per_s":self.cfg.diagnostic_velocity_tolerance,
++                       "execution":None})
+         if d is not None:
+             anchors=self._anchors(e,d)
+             record["m1_translation"]=d["translation"].tolist()
+             record["m1_relative"]=d["relative"].tolist()
+-            record["m1_relative_rank"]=int(np.linalg.matrix_rank(d["relative"]))
++            record["m1_relative_rank"]=int(np.linalg.matrix_rank(d["relative"],tol=self.cfg.diagnostic_velocity_tolerance))
+             record["catalog_projection_mean_square_error"]=min(float(np.mean(np.sum((choice.velocities[:,:2]-x)**2,axis=1))) for x in anchors)
+         self.decisions.append(record)
+         return choice,record
+@@ -768,7 +864,24 @@
+         if candidate is None:return self.posterior.xy_probability()
+         if not self.safety.legal(self.last_frame.positions,candidate.ordered(self.ids)):
+             raise RuntimeError("Final safety check failed")
++        start=self.last_frame.ordered(self.ids)
++        command=candidate.ordered(self.ids)
+         block=world.execute(candidate)
++        end=block.frames[-1].ordered(self.ids)
++        delta0=start.positions[:,:2]-start.positions[:,:2].mean(axis=0)
++        delta1=end.positions[:,:2]-end.positions[:,:2].mean(axis=0)
++        actual_D=delta1-delta0
++        command_relative=command.velocities[:,:2]-command.velocities[:,:2].mean(axis=0)
++        execution={"start_time":start.t,"end_time":end.t,"duration":end.t-start.t,
++            "planned_duration":command.duration,"sensor_ids":list(self.ids),
++            "relative_displacement":actual_D.tolist(),
++            "relative_displacement_rank":int(np.linalg.matrix_rank(actual_D,tol=self.cfg.diagnostic_displacement_tolerance)),
++            "relative_singular_values":np.linalg.svd(actual_D,compute_uv=False).tolist(),
++            "rank_tolerance_m":self.cfg.diagnostic_displacement_tolerance,
++            "relative_displacement_error_fro":float(np.linalg.norm(actual_D-command.duration*command_relative)),
++            "new_raw_frame_ids":[frame.sample_id for frame in block.frames]}
++        if self.decisions and self.decisions[-1]["candidate"]==candidate.semantic_id:
++            self.decisions[-1]["execution"]=execution
+         # Actual path, not commanded endpoint, drives the sensor prediction.
+         return self.observe(block)
+ 
