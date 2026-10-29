@@ -1,5 +1,5 @@
 """Minimal executable regression for the repository's static reference.
-Run: python -m research.v52_goal_wind.test_seq (or cd here; python test_seq.py).
+Run: cd research/v52_goal_wind && python test_seq.py
 Not a native gas source localization test.
 """
 import numpy as np
