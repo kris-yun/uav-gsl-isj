@@ -1,0 +1,87 @@
+{
+  "status": "PASS: exact finite certificates; no native plume/controller evidence claimed",
+  "units": "nats, except abstract restart times/rates",
+  "symmetric_actions": {
+    "source_entropy_nat": 0.6931471805599453,
+    "source_MI_nat": {
+      "left": 0.3680642071684971,
+      "right": 0.3680642071684971,
+      "stay": 0.0
+    },
+    "claim": "Mirror symmetry permits equal positive EIG; it does not imply zero EIG."
+  },
+  "EFE_identity": {
+    "seed": 190729,
+    "finite_joint_models": 256,
+    "max_source_EFE_identity_error": 4.440892098500626e-16,
+    "max_full_latent_EFE_identity_error": 4.440892098500626e-16,
+    "max_uniform_preference_EFE_plus_MI_minus_constant_error": 4.440892098500626e-16,
+    "claim": "Exact risk+ambiguity equals preference cross entropy minus the MI for the specified latent target."
+  },
+  "nuisance_target_mismatch": {
+    "prior": "S~Bernoulli(1/2), W~Bernoulli(1/2), Q~Uniform({0,1,2,3}), mutually independent",
+    "equal_cost_one_step_actions": {
+      "source_measurement": {
+        "source_MI_nat": 0.6931471805599453,
+        "all_latent_MI_nat": 0.6931471805599453
+      },
+      "release_measurement": {
+        "source_MI_nat": 0.0,
+        "all_latent_MI_nat": 1.3862943611198906
+      }
+    },
+    "source_target_choice": "source_measurement",
+    "all_latent_target_choice": "release_measurement",
+    "claim": "The all-latent objective can strictly prefer information unrelated to source location."
+  },
+  "nonidentifiability_and_synergy": {
+    "masked_gas_source_MI_nat": 0.0,
+    "wind_source_MI_nat": 0.0,
+    "joint_wind_masked_gas_source_MI_nat": 0.6931471805599453,
+    "wrongly_conditioning_on_known_wind_MI_nat": 0.6931471805599453,
+    "nonidentifiable_policy_family_depth": 3,
+    "nonidentifiable_policy_trees_exhaustively_evaluated": 128,
+    "maximum_source_MI_in_nonidentifiable_family_nat": 0.0,
+    "claim": "Complementary observations may be informative jointly; an unidentifiable legal channel family remains uninformative under every adaptive policy."
+  },
+  "proposal_coverage_and_scoring": {
+    "coverage_illustrations": {
+      "uniform_illustration": {
+        "assumed_optimal_policy_probability_per_draw": 0.2,
+        "draws": 4,
+        "exact_miss_probability": 0.4095999999999984,
+        "exact_expected_restriction_regret_nat": 0.08343187460056875,
+        "coverage_regret_upper_bound_nat": 0.28391308515735364
+      },
+      "focused_illustration": {
+        "assumed_optimal_policy_probability_per_draw": 0.5,
+        "draws": 4,
+        "exact_miss_probability": 0.0625,
+        "exact_expected_restriction_regret_nat": 0.012730693756190372,
+        "coverage_regret_upper_bound_nat": 0.04332169878499658
+      }
+    },
+    "uniform_score_error_bound_nat": 0.03,
+    "subsets_and_extreme_score_error_cases": 992,
+    "maximum_regret_minus_bound_nat": -5.551115123125783e-17,
+    "claim": "Coverage and score-error bounds are conditional mathematical qualifications, not measured biological-proposal performance."
+  },
+  "resetting_and_coverage": {
+    "deterministic_T_equal_1_reset_means": {
+      "0.1": 1.0517091807564762,
+      "1.0": 1.718281828459045,
+      "2.0": 3.194528049465325
+    },
+    "exponential_T_mean_1_reset_means": {
+      "0.1": 1.0000000000000002,
+      "1.0": 1.0,
+      "2.0": 1.0000000000000002
+    },
+    "hyperexponential_original_mean": 2.75,
+    "hyperexponential_restart_rate": 0.2,
+    "hyperexponential_reset_mean": 2.0967741935483866,
+    "two_site_exact_occupation_error": 0.0,
+    "two_site_total_source_MI_nat": 0.0,
+    "claim": "Restart can help, hurt, or have no effect; occupation matching alone cannot ensure source identification."
+  }
+}

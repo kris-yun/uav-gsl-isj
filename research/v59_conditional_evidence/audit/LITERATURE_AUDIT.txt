@@ -1,0 +1,79 @@
+V59 primary-source and official-code audit (2026-10-29)
+Read-only research; no user repository mutated; no native closed-loop result claimed.
+
+DECISION
+The four named works are real. COPEx is formally ICML 2026; ALINE is formally NeurIPS 2025; POLAR is accepted/listed for NeurIPS 2026 (the available paper still bears its June preprint header); AD-EKI is JCP 545 (2026), 114469, despite the 2025 DOI. These identities do not establish applicability, an onboard compute advantage, or novelty of the user's proposed method.
+
+1. COPEx
+Title: Constrained Bayesian Experimental Design via Online Planning.
+Authors: Yujia Guo, Daolang Huang, Xinyu Zhang, Sammie Katt, Samuel Kaski, Ayush Bharti.
+Venue: ICML 2026, PMLR 306:37961-37984.
+Primary: https://proceedings.mlr.press/v306/guo26g.html
+Paper: https://arxiv.org/html/2605.26990v1
+Code: https://github.com/yujiag21/COPEx
+Audited default branch budget-al, commit cc301c6af44c6fd6f191dcfb0fdc1c26e46600c8.
+
+Inputs are observation/design history, a task likelihood/simulator, pretrained inference and design networks, current location/constraint state, and remaining physical experiment budget. Output is the root design of a jointly optimized observation-branching scenario tree; only that root is executed, then replanning occurs. This is genuine multi-step contingent planning, not merely a fixed open-loop trajectory.
+
+Code evidence:
+- acquisition_functions/multi_step_lookahead.py recursively computes stage utilities, samples fantasy observations, and invokes model.condition_on_observations. H=0 is myopic; H=1 is root plus one future stage. With constant branch factor m, design node count is sum_{l=0}^H m^l.
+- algorithm/optimize.py uses gradient-based SLSQP and per-node transition constraints; budget mode enforces every undiscounted root-to-leaf path cost <= remaining budget.
+- algorithm/utils.py distinguishes discounted mean tree cost (soft cost normalization) from undiscounted per-path cost (hard budget feasibility). Neither is a CPU/forward-call budget.
+- config/config_location_finding.yaml defaults to optimize_mode=hard, cost_mode=null, L-infinity step size 0.1, H=1, m=2, n_y=20, one policy warm start and one optimized tree. The name Location_budgeted does not mean this default configuration enforces a total travel or computational budget.
+- acquisition_functions/eig_acquisition.py ACEInfoGain defaults to L=32 contrastive samples. Each node draws 20 initial parameters, computes 20 x 33 likelihood terms plus further numerator/generation work. Root plus two children entails at least 1980 batch-contained contrastive likelihood terms per objective evaluation. This is NOT 1980 Python calls or necessarily 1980 PDE solves: caching and vectorization must be separately measured. The default SLSQP maximum is 600 iterations, not a fixed small forward budget.
+- main.py evaluates acquisition_function.forward on ALL warm-start trees before top_k selection. It records warmstart, initial acquisition, optimization, memory, and total-step timing, but lacks a complete physical-forward sample counter. top_k cannot be advertised as total expensive evaluations.
+- tasks/location_finding_budgeted.py models y=log(0.1+sum_k 1/(1e-4+||x-theta_k||^2))+Normal(0,0.5^2). Current task config has K=1 and 2D source coordinates. There is no wind, temporal transport, unknown release, obstacle geometry, or swarm dynamics.
+
+Migration recommendation: borrow interfaces, physical constraint propagation, common random numbers, and a short scenario tree. Replace the task with a qualified shared source/wind/release model and marginal source-targeted utility; retain a raw-history ordinary planner as a strong baseline. Add an independent compute ledger for training, shared cache construction, surrogate calls, every physics sample, gradient/adjoint work, and selection. The paper itself acknowledges exponential tree growth, approximation accumulation and model misspecification; its Appendix A.5 decomposition is explicitly informal, not an unconditional optimality or symmetry-breaking theorem. Its reported 5000 GPU hours covers the whole research effort, not a single deployed controller.
+
+2. ALINE
+Title: ALINE: Joint Amortization for Bayesian Inference and Active Data Acquisition.
+Authors: Daolang Huang, Xinyi Wen, Ayush Bharti, Samuel Kaski, Luigi Acerbi.
+Venue: NeurIPS 2025, volume 38; DOI 10.52202/085713-1805.
+Primary: https://papers.nips.cc/paper_files/paper/2025/hash/4df9a5e6bad9e64ebcea453e031142bb-Abstract-Conference.html
+Code: https://github.com/huangdaolang/ALINE
+Audited commit 8aefb29f43721165a2a8a513cd1eec3b3904272f.
+
+It takes context data, candidate designs and target masks, and returns posterior/predictive approximations plus a candidate acquisition decision. Its target mask is relevant to source-only versus full-latent information. The official location training recipe is 100000 epochs including 20000 inference warmup epochs, 200 candidates, 30 stages. Training distribution and simulation cost are material; instant deployment inference is not zero cost. Original repository tree contains training/evaluation code, not the pretrained checkpoint files bundled in the adapted COPEx repository.
+
+Implementation caveat: train_aline.py clamps adjacent NLL improvements to nonnegative values, detaches and standardizes rewards across each batch/time, then multiplies corresponding action log-probabilities by those increments. Do not identify this actual loss with an unmodified telescoping sum of exact trajectory information gains or attach a generic non-myopic optimality guarantee. It remains a useful official amortized baseline.
+
+3. POLAR
+Title: Efficient Adaptive Data Acquisition via Pretrained Belief Representations.
+Authors: Daolang Huang, Zhuoyue Huang, Conor Hassan, Luigi Acerbi, Samuel Kaski, Tom Rainforth.
+Accepted/listed for NeurIPS 2026. Author page updated 2026-10-19; official conference Downloads lists the title. Available paper: arXiv:2606.25197v1, 2026-06-23.
+Official conference: https://neurips.cc/Downloads/2026
+Author: https://zhuoyue-huang.github.io/publication/pretrained-belief-representations/
+Paper: https://arxiv.org/pdf/2606.25197
+
+POLAR maps context and candidate designs through pretrained TabPFN/TabICL hidden representations, trains a policy head with task-specific utility, and selects the largest candidate logit at deployment. It is a pool-based trained policy, not an exact universal Bayesian planner. The paper explicitly says the learned representation is not an exact sufficient statistic. It reports approximately 5 hours of policy training for location finding on the study's H200-based setup; full-study total is approximately 2000 GPU hours. These figures exclude any claim that the user's House worlds suffice for training or transfer. No standalone official POLAR repository/checkpoint was verified in the paper, author links or targeted GitHub search; linked backbone repositories are not the full POLAR implementation.
+
+Independent applicability counterexample: a source-only posterior is not generally sufficient for sequential design when nuisance states govern future observations. Histories h_E and h_N may both induce S~Bernoulli(1/2), while identifying different wind histories eta=E or N. Let action a_E reveal S only under eta=E, and a_N reveal S only under eta=N; otherwise the observation is uninformative. The optimal actions differ despite identical source marginals. Thus use joint p(S,eta|h), or a proved predictive-equivalence statistic, not only the plotted 2D source marginal. This identifies a boundary on transferring the paper's Section 3 task-relevant-belief argument to this application; it is not a claimed reproduction failure of POLAR.
+
+4. AD-EKI
+Title: Bayesian experimental design for model discrepancy calibration: An auto-differentiable ensemble Kalman inversion approach.
+Authors: Huchen Yang, Xinghao Dong, Jin-Long Wu.
+Venue: Journal of Computational Physics 545 (2026), 114469.
+DOI: https://doi.org/10.1016/j.jcp.2025.114469
+Primary metadata: https://arxiv.org/abs/2504.20319
+Revised paper: https://arxiv.org/html/2504.20319v2
+
+It alternates ordinary Bayesian design/inference for low-dimensional physical parameters with differentiable ensemble-Kalman discrepancy calibration at a current physical MAP estimate. The latter approximates information through ensemble Gaussian statistics, allowing outer design gradients through the inner update. It provides a close prior example in convection-diffusion source inversion with discrepancy, not an obstacle-aware aerial swarm controller. Ensemble size, EKI iterations, differentiated forwards and discrepancy-network training must be counted. A Gaussian ensemble update is not an automatic representation of competing source modes. The data-availability statement directs readers to the corresponding author; no public official implementation was verified. It is a relevant prior/qualification mechanism, not a ready drop-in baseline.
+
+ONLY TWO ADDITIONAL MECHANISMS SCREENED IN
+
+A. Resolution-aware experimental design (RAED)
+Sofianos Panagiotis Fotias, Resolution-Aware Experimental Design under Partial Identifiability, arXiv:2609.03686, 2026-09-03. PREPRINT, not verified as a peer-reviewed conference paper. https://arxiv.org/html/2609.03686v1
+Under persistent nuisance uncertainty, compare designs by the smallest expected nonempty structural candidate set that meets a declared false-exclusion constraint. This directly suggests a diagnostic: expected source MI may favor an experiment whose rare adverse wind realizations are misleading. No public author code was verified. Do not replace the main 2D source posterior with a scalar set-size score; optional calibrated set area/coverage diagnostics or a risk-constrained strong baseline are the appropriate first use.
+
+Executable independent example: raed_aliasing_toy.py uses exact finite-channel mutual information and a linear program, not the author's benchmark/code. S is an equal-probability binary source and persistent nuisance reversal has probability .01. Experiment A reports S xor reversal. Experiment B reveals S with probability .8 and otherwise gives an erasure. At equal cost, A has MI .6371456462 nat > B .5545177444 nat. Under 95% source retention for EVERY nuisance state, optimal expected nonempty candidate-set sizes are A 1.9 and B 1.1. Hence average-MI ranking and uniform-valid-resolution ranking disagree for a fully specified reason. This does not prove gas-localization improvement or a biological advantage.
+
+B. MF-EIG
+Thomas E. Coons and Xun Huan, A Multifidelity Estimator of the Expected Information Gain for Bayesian Optimal Experimental Design, SIAM/ASA Journal on Uncertainty Quantification 13(4), 1990-2021 (2025), DOI10.1137/25M1731812.
+Primary: https://epubs.siam.org/doi/10.1137/25M1731812
+Paper: https://arxiv.org/html/2501.10845v2
+Code: https://github.com/tcoonsUM/mf-eig , commit310b53e54841a0fe69018cb75a96fae81d929096.
+Actual scripts form empirical cross-model utility covariance and call MXMCPy Optimizer(cost_vector,covariance).optimize(method,target_cost) to allocate samples. This directly addresses real forward-computation tradeoffs. Use paired common randomness and a cheap utility as a control variate with a costly utility. Pilot covariance estimation and all low-fidelity work must be billed too. Unbiasedness is relative to the chosen high-fidelity NUMERICAL utility mean; finite-inner-loop NMC bias and physical discrepancy remain. It changes estimation efficiency, not the available action family. Compare to same-cost high-fidelity-only MC and a correctly priced cheap-screen/full-score pipeline, without treating it as a new biological mechanism.
+
+SOURCE-CODE CACHE
+Official code excerpts were saved under COPEx/, ALINE/ and MF_EIG/. manifest.json pins repositories/commits. None of these codebases was executed as a full benchmark in this audit. Only raed_aliasing_toy.py was run; its machine-readable exact/LP results are in raed_aliasing_toy.json.

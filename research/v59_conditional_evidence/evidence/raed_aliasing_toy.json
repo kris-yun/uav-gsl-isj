@@ -1,0 +1,62 @@
+{
+  "kind": "exact_finite_channel_counterexample_not_gas_experiment",
+  "alpha": 0.05,
+  "rare_nuisance_probability": 0.01,
+  "physical_cost_equal": true,
+  "A_aliasing": {
+    "source_mi_nats": 0.637145646205098,
+    "expected_set_size": 1.9,
+    "inclusion_probabilities": [
+      [
+        0.95,
+        0.95
+      ],
+      [
+        0.95,
+        0.95
+      ]
+    ],
+    "worst_retention": 0.95
+  },
+  "B_erasure": {
+    "source_mi_nats": 0.5545177444479562,
+    "expected_set_size": 1.0999999999999999,
+    "inclusion_probabilities": [
+      [
+        1.0,
+        0.0,
+        0.7499999999999996
+      ],
+      [
+        -0.0,
+        1.0,
+        0.7499999999999996
+      ]
+    ],
+    "worst_retention": 0.95
+  },
+  "mi_choice": "A_aliasing",
+  "valid_resolution_choice": "B_erasure",
+  "source_marginal_insufficiency": {
+    "p_source_given_h_E": [
+      0.5,
+      0.5
+    ],
+    "p_source_given_h_N": [
+      0.5,
+      0.5
+    ],
+    "mi_actions_given_h_E": [
+      0.6931471805599453,
+      0.0
+    ],
+    "mi_actions_given_h_N": [
+      0.0,
+      0.6931471805599453
+    ],
+    "action_labels": [
+      "a_E",
+      "a_N"
+    ]
+  }
+}

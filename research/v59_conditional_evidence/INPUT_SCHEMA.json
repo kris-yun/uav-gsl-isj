@@ -1,0 +1,379 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:uav-gsl:v59:native-input:1",
+  "title": "V59 native adapter: immutable local payloads and explicit availability",
+  "description": "This is a schema, not fabricated sample data. Required sections may be missing with value=null and a concrete reason. JSON validity only checks the envelope; referenced private payload contents and scientific gates must be validated under the accompanying contract.",
+  "type": "object",
+  "properties": {
+    "schema_version": {"const": "v59.native-input.1"},
+    "record_kind": {"enum": ["availability_export", "decision_state", "branch_execution", "native_episode"]},
+    "bundle_id": {"type": "string", "minLength": 1},
+    "eligibility": {"enum": ["EXPORT_ONLY", "CANDIDATE_DIAGNOSTIC", "SAME_STATE_BRANCH_READY", "NATIVE_300S_READY"]},
+    "intended_use": {"enum": ["input_audit", "mechanism_diagnostic", "development_qualification", "independent_test"]},
+    "reference_base_commit": {"const": "0245a62bc6f385c4a08df7b17c0251e0018e0c06"},
+    "required_fixture_sha256": {"const": "aebc934b8e7badf91a059c4627563102f722bc523be8318844db662e92c6eb98"},
+    "observed_fixture": {
+      "$ref": "#/$defs/artifact_availability",
+      "description": "Original 415-state file, private. Missing is valid for public packages. Recompute and match required_fixture_sha256 before fixture-dependent work."
+    },
+    "case_descriptor": {
+      "allOf": [
+        {"$ref": "#/$defs/availability"},
+        {
+          "properties": {
+            "value": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "world_id": {"type": "string", "minLength": 1},
+                    "existing_seed": {"type": ["integer", "string"]},
+                    "robot_count": {"type": "integer", "minimum": 1},
+                    "source_run_id": {"type": "string", "minLength": 1},
+                    "decision_world_time_s": {"type": ["number", "null"]}
+                  },
+                  "required": ["world_id", "existing_seed", "robot_count", "source_run_id", "decision_world_time_s"],
+                  "additionalProperties": false
+                },
+                {"type": "null"}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "code_build_and_runtime": {
+      "$ref": "#/$defs/artifact_availability",
+      "description": "Actual VM path, git HEAD/diff, base ancestry, binary/dependency/build hashes and inventory of existing V50-V57 jobs; do not interrupt old runs."
+    },
+    "clock_and_units": {
+      "$ref": "#/$defs/artifact_availability",
+      "description": "World clock/agent-clock mappings and errors; position m, time s, velocity m/s, concentration declared units; world/body frames and preheat/300s convention."
+    },
+    "raw_measurement_history": {
+      "$ref": "#/$defs/artifact_availability",
+      "description": "Rows must contain measurement_id, probe_id, measured_world_time_s, available_world_time_s, position_world_m[3], orientation_body_to_world_xyzw[4], velocity_world_mps[3], measured_wind[3] with ambient/relative and frame semantics, gas value/unit/censoring, quality and calibration IDs. Missing columns require a separate missing_fields entry; do not fabricate timestamps, poses or past winds."
+    },
+    "sensor_response_and_time_qualification": {
+      "$ref": "#/$defs/artifact_availability",
+      "description": "Per-probe response/lag/noise models, latency/calibration, actual internal sensor state, lag edges and weights, accepted/rejected/consumed unique measurement IDs; support_qualified must be justified."
+    },
+    "joint_source_wind_release_posterior": {
+      "$ref": "#/$defs/artifact_availability",
+      "description": "Joint particles/grid/parametric law over source_xy, wind_history and release plus relevant sensor states; weights/normalization, causal conditioning IDs and model version; include the plotted source marginal. A source marginal alone is insufficient for planning."
+    },
+    "world_and_sensor_checkpoint": {
+      "$ref": "#/$defs/artifact_availability",
+      "description": "Existing frozen world/geometry/release configuration hashes, full world/sensor/actuator checkpoint, public-state history prefix and random-stream manifest; never regenerate a House or CFD seed."
+    },
+    "common_action_domain": {
+      "$ref": "#/$defs/artifact_availability",
+      "description": "Shared catalogue or continuous reachable domain, dynamics/limits, physical motion/time budgets, safety implementation, quantization/deduplication, tie rule and fixed final-action/trajectory difference tolerance."
+    },
+    "preparatory_observation_model": {
+      "$ref": "#/$defs/artifact_availability",
+      "description": "Reachable raw wind/gas C, historical W mode definitions, causal spatiotemporal/transport likelihood and held-out validation linking C to W, preparation time/motion/computation. Current local wind is not assumed to reveal past W; latent truth is not a measurement."
+    },
+    "decision_proposals_scores_and_command": {
+      "$ref": "#/$defs/artifact_availability",
+      "description": "Complete continuous/limited/deduplicated/shortlisted/scored/selected/safety-projected action trace, source-only utility and costs, final command ID/vector/time, contingent policy branches and fallback reason. Selected is not executed."
+    },
+    "actual_execution_and_new_observations": {
+      "$ref": "#/$defs/artifact_availability",
+      "description": "Actual branch commands, trajectory and timing; new raw measurements, sensor-state trajectory and causally updated joint beliefs; world and wall clocks, pauses, interruptions. Do not copy old-policy future concentration."
+    },
+    "prediction_cost_ledger": {
+      "allOf": [{"$ref": "#/$defs/availability"}, {"properties": {"value": {"anyOf": [{"$ref": "#/$defs/cost_ledger"}, {"type": "null"}]}}}]
+    },
+    "native_300s_endpoint": {
+      "allOf": [{"$ref": "#/$defs/availability"}, {"properties": {"value": {"anyOf": [{"$ref": "#/$defs/endpoint"}, {"type": "null"}]}}}]
+    },
+    "gates": {
+      "type": "object",
+      "properties": {
+        "analytic": {"$ref": "#/$defs/gate"},
+        "input_and_time": {"$ref": "#/$defs/gate"},
+        "unique_evidence": {"$ref": "#/$defs/gate"},
+        "native_build": {"$ref": "#/$defs/gate"},
+        "full_cost_ledger": {"$ref": "#/$defs/gate"},
+        "shared_forward": {"$ref": "#/$defs/gate"},
+        "preparatory_observation": {"$ref": "#/$defs/gate"},
+        "safe_branching": {"$ref": "#/$defs/gate"},
+        "same_state_controls": {"$ref": "#/$defs/gate"},
+        "independent_test": {"$ref": "#/$defs/gate"}
+      },
+      "required": [
+        "analytic",
+        "input_and_time",
+        "unique_evidence",
+        "native_build",
+        "full_cost_ledger",
+        "shared_forward",
+        "preparatory_observation",
+        "safe_branching",
+        "same_state_controls",
+        "independent_test"
+      ],
+      "additionalProperties": false
+    },
+    "missing_fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "json_pointer_or_payload_column": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "minLength": 1},
+          "blocks_stages": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+          "recovery_action": {"type": "string", "minLength": 1}
+        },
+        "required": ["json_pointer_or_payload_column", "reason", "blocks_stages", "recovery_action"],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "reconstruction_provenance": {
+      "$ref": "#/$defs/artifact_availability",
+      "description": "Required for every reconstructed field: source files/hashes, algorithm/version, causal cutoff, measured-vs-derived distinction, assumptions and uncertainty. Mark not_applicable with reason if nothing is reconstructed."
+    },
+    "online_ground_truth_used": {"const": false},
+    "private_payloads_uploaded": {"const": false},
+    "historical_evidence_overwritten": {"const": false}
+  },
+  "required": [
+    "schema_version",
+    "record_kind",
+    "bundle_id",
+    "eligibility",
+    "intended_use",
+    "reference_base_commit",
+    "required_fixture_sha256",
+    "observed_fixture",
+    "case_descriptor",
+    "code_build_and_runtime",
+    "clock_and_units",
+    "raw_measurement_history",
+    "sensor_response_and_time_qualification",
+    "joint_source_wind_release_posterior",
+    "world_and_sensor_checkpoint",
+    "common_action_domain",
+    "preparatory_observation_model",
+    "decision_proposals_scores_and_command",
+    "actual_execution_and_new_observations",
+    "prediction_cost_ledger",
+    "native_300s_endpoint",
+    "gates",
+    "missing_fields",
+    "reconstruction_provenance",
+    "online_ground_truth_used",
+    "private_payloads_uploaded",
+    "historical_evidence_overwritten"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "local_artifact": {
+      "type": "object",
+      "properties": {
+        "local_path": {"type": "string", "minLength": 1, "pattern": "^(?!https?://|s3://|gs://).+"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "description": {"type": "string", "minLength": 1},
+        "contains_private_data": {"type": "boolean"}
+      },
+      "required": ["local_path", "sha256", "description", "contains_private_data"],
+      "additionalProperties": false
+    },
+    "availability": {
+      "type": "object",
+      "properties": {
+        "status": {"enum": ["present", "reconstructed", "missing", "invalid", "not_applicable"]},
+        "value": {},
+        "reason": {"type": ["string", "null"]},
+        "source_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0},
+        "reconstruction_method": {"type": ["string", "null"]}
+      },
+      "required": ["status", "value", "reason", "source_ids", "reconstruction_method"],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"enum": ["present", "reconstructed"]}}},
+          "then": {"properties": {"value": {"not": {"type": "null"}}, "reason": {"type": "null"}, "source_ids": {"minItems": 1}}}
+        },
+        {
+          "if": {"properties": {"status": {"enum": ["missing", "invalid", "not_applicable"]}}},
+          "then": {
+            "properties": {"value": {"type": "null"}, "reason": {"type": "string", "minLength": 1}, "reconstruction_method": {"type": "null"}}
+          }
+        },
+        {"if": {"properties": {"status": {"const": "present"}}}, "then": {"properties": {"reconstruction_method": {"type": "null"}}}},
+        {
+          "if": {"properties": {"status": {"const": "reconstructed"}}},
+          "then": {"properties": {"reconstruction_method": {"type": "string", "minLength": 1}}}
+        }
+      ]
+    },
+    "artifact_availability": {
+      "allOf": [{"$ref": "#/$defs/availability"}, {"properties": {"value": {"anyOf": [{"$ref": "#/$defs/local_artifact"}, {"type": "null"}]}}}]
+    },
+    "gate": {
+      "type": "object",
+      "properties": {
+        "status": {"enum": ["PASS", "FAIL", "OPEN", "BLOCKED", "NOT_RUN", "NOT_APPLICABLE"]},
+        "reason": {"type": "string", "minLength": 1},
+        "frozen_protocol": {"anyOf": [{"$ref": "#/$defs/local_artifact"}, {"type": "null"}]},
+        "evidence": {"type": "array", "items": {"$ref": "#/$defs/local_artifact"}, "minItems": 0}
+      },
+      "required": ["status", "reason", "frozen_protocol", "evidence"],
+      "additionalProperties": false
+    },
+    "cost_ledger": {
+      "type": "object",
+      "properties": {
+        "accounting_unit": {"const": "declared_latent_trajectory"},
+        "unit_definition": {"type": "string", "minLength": 1},
+        "K_score": {"type": "integer", "minimum": 0},
+        "high_limit": {"type": "integer", "minimum": 0},
+        "high_charged": {"type": "integer", "minimum": 0},
+        "low_limit": {"type": "integer", "minimum": 0},
+        "low_charged": {"type": "integer", "minimum": 0},
+        "online_wall_limit_s": {"type": "number", "minimum": 0},
+        "online_wall_s": {"type": "number", "minimum": 0},
+        "all_events": {"$ref": "#/$defs/local_artifact"},
+        "stage_seconds": {"type": "object", "additionalProperties": {"type": "number", "minimum": 0}},
+        "training_pilot_precompute": {"$ref": "#/$defs/local_artifact"},
+        "derivative_network_memory": {"$ref": "#/$defs/local_artifact"},
+        "cold_hot_shared_costs": {"$ref": "#/$defs/local_artifact"},
+        "cache_key_definition": {"$ref": "#/$defs/local_artifact"},
+        "charges_before_calls": {"const": true},
+        "no_budget_reset_between_branches": {"const": true}
+      },
+      "required": [
+        "accounting_unit",
+        "unit_definition",
+        "K_score",
+        "high_limit",
+        "high_charged",
+        "low_limit",
+        "low_charged",
+        "online_wall_limit_s",
+        "online_wall_s",
+        "all_events",
+        "stage_seconds",
+        "training_pilot_precompute",
+        "derivative_network_memory",
+        "cold_hot_shared_costs",
+        "cache_key_definition",
+        "charges_before_calls",
+        "no_budget_reset_between_branches"
+      ],
+      "additionalProperties": false
+    },
+    "endpoint": {
+      "type": "object",
+      "properties": {
+        "elapsed_common_world_time_s": {"const": 300},
+        "estimator_call": {"const": "ExpectedValue(sourceProbability, 0.05)"},
+        "cpp_implementation": {"$ref": "#/$defs/local_artifact"},
+        "parameter_semantics": {"type": "string", "minLength": 1},
+        "common_xy_grid_and_transform": {"$ref": "#/$defs/local_artifact"},
+        "source_probability": {"$ref": "#/$defs/local_artifact"},
+        "horizontal_euclidean_error_m": {"type": ["number", "null"], "minimum": 0},
+        "failure_reason": {"type": ["string", "null"]},
+        "secondary_metrics": {"$ref": "#/$defs/local_artifact"}
+      },
+      "required": [
+        "elapsed_common_world_time_s",
+        "estimator_call",
+        "cpp_implementation",
+        "parameter_semantics",
+        "common_xy_grid_and_transform",
+        "source_probability",
+        "horizontal_euclidean_error_m",
+        "failure_reason",
+        "secondary_metrics"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {"properties": {"horizontal_euclidean_error_m": {"type": "null"}}},
+          "then": {"properties": {"failure_reason": {"type": "string", "minLength": 1}}}
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"eligibility": {"enum": ["SAME_STATE_BRANCH_READY", "NATIVE_300S_READY"]}}},
+      "then": {
+        "properties": {
+          "case_descriptor": {"properties": {"status": {"enum": ["present", "reconstructed"]}}},
+          "code_build_and_runtime": {"properties": {"status": {"enum": ["present", "reconstructed"]}}},
+          "clock_and_units": {"properties": {"status": {"enum": ["present", "reconstructed"]}}},
+          "raw_measurement_history": {"properties": {"status": {"enum": ["present", "reconstructed"]}}},
+          "sensor_response_and_time_qualification": {"properties": {"status": {"enum": ["present", "reconstructed"]}}},
+          "joint_source_wind_release_posterior": {"properties": {"status": {"enum": ["present", "reconstructed"]}}},
+          "world_and_sensor_checkpoint": {"properties": {"status": {"enum": ["present", "reconstructed"]}}},
+          "common_action_domain": {"properties": {"status": {"enum": ["present", "reconstructed"]}}},
+          "preparatory_observation_model": {"properties": {"status": {"enum": ["present", "reconstructed"]}}},
+          "prediction_cost_ledger": {"properties": {"status": {"enum": ["present", "reconstructed"]}}},
+          "gates": {
+            "properties": {
+              "analytic": {"properties": {"status": {"const": "PASS"}}},
+              "input_and_time": {"properties": {"status": {"const": "PASS"}}},
+              "unique_evidence": {"properties": {"status": {"const": "PASS"}}},
+              "native_build": {"properties": {"status": {"const": "PASS"}}},
+              "full_cost_ledger": {"properties": {"status": {"const": "PASS"}}},
+              "shared_forward": {"properties": {"status": {"const": "PASS"}}},
+              "preparatory_observation": {"properties": {"status": {"const": "PASS"}}},
+              "safe_branching": {"properties": {"status": {"const": "PASS"}}}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"eligibility": {"const": "NATIVE_300S_READY"}}},
+      "then": {"properties": {"gates": {"properties": {"same_state_controls": {"properties": {"status": {"const": "PASS"}}}}}}}
+    },
+    {
+      "if": {"properties": {"record_kind": {"const": "native_episode"}}},
+      "then": {
+        "properties": {
+          "eligibility": {"const": "NATIVE_300S_READY"},
+          "decision_proposals_scores_and_command": {"properties": {"status": {"enum": ["present", "reconstructed"]}}},
+          "actual_execution_and_new_observations": {"properties": {"status": {"enum": ["present", "reconstructed"]}}},
+          "native_300s_endpoint": {"properties": {"status": {"enum": ["present", "reconstructed"]}}}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"record_kind": {"const": "native_episode"}, "intended_use": {"const": "development_qualification"}}},
+      "then": {
+        "properties": {
+          "case_descriptor": {
+            "properties": {"value": {"properties": {"world_id": {"enum": ["House01", "House02", "House03"]}, "existing_seed": {"enum": [0, 1]}}}}
+          },
+          "gates": {"properties": {"independent_test": {"properties": {"status": {"enum": ["OPEN", "NOT_RUN", "NOT_APPLICABLE"]}}}}}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"intended_use": {"const": "independent_test"}}},
+      "then": {"properties": {"gates": {"properties": {"independent_test": {"properties": {"status": {"const": "PASS"}}}}}}}
+    }
+  ],
+  "x-semantic-validation-required": [
+    "Recompute file hashes; verify base ancestry and actual model/solver/calibration versions.",
+    "Original 415 fixture has three robots and overlapping states; it is not 415 independent worlds.",
+    "For every consumed raw measurement verify measured_time<=available_time<=decision_time after validated clock mapping. Decision index is not time.",
+    "Validate frame joins, orientation, ambient/relative wind, calibration, missing data, sensor memory and historical support. Never backfill old winds with current wind.",
+    "Posterior weights normalize; source map is the joint source marginal; wind/release nuisances are integrated, not fixed to hidden truth.",
+    "Every raw measurement is consumed once; BIO/history feature transforms are not additional independent evidence.",
+    "Preparation C must be physically reachable and predictive of historical W through qualified likelihood; otherwise preparatory-observation gate stays FAIL/OPEN.",
+    "All controlled methods share raw inputs, posterior/model, safe domain, derivative access and full budgets; K_score alone is not computation cost.",
+    "Charge full batched latent trajectories before forward calls; count all warmstart/cache/derivative/tree/score/pilot/training/failed work and enforce high, low and wall limits.",
+    "PredictionKey must hash model, geometry, causal history, latent+noise bank, action schedule, sensor state, horizon and fidelity. Branches cannot reset budget.",
+    "Check actual execution and new sensor observations, not just selected commands or shortlist changes; do not reuse old-policy future gas.",
+    "Use original 300s C++ ExpectedValue(sourceProbability,0.05) horizontal metre error; preserve failure/timeout cases and parallel MAP separately.",
+    "House01/02/03 seed0/1 are original development qualification only. Independent testing requires separately frozen and authorized data.",
+    "A PASS needs predeclared criteria and immutable evidence; schema/analytic success does not override physical FAIL or historical files."
+  ]
+}

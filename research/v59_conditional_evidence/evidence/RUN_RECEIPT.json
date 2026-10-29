@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "scope": "analytic and accounting certificates only; no native localization run",
+  "python": "3.12.14",
+  "numpy": "2.3.5",
+  "scipy": "1.17.0",
+  "tasks": [
+    {
+      "script": "src/adaptive_source_design.py",
+      "exit_code": 0,
+      "seconds": 0.16819578199920215,
+      "source_sha256": "4885283eca41226bc6f9295e28ef3a6673c0386028004dc8e66696183ada760b"
+    },
+    {
+      "script": "src/prediction_budget.py",
+      "exit_code": 0,
+      "seconds": 0.06410744000004343,
+      "source_sha256": "e532b743b038177159bd53c50e224f616267767e2cf803f8b0a74c9c6662667e"
+    },
+    {
+      "script": "src/body_history_adapter.py",
+      "exit_code": 0,
+      "seconds": 0.11595933599983255,
+      "source_sha256": "32700df6378c255efa3d7c581a367ecfa634d6ff54071affad286c872c01d231"
+    },
+    {
+      "script": "checks/finite_certificates.py",
+      "exit_code": 0,
+      "seconds": 0.0642624860001888,
+      "source_sha256": "89fe13e8b4aebb305aaf3fd212281232a9e0f4ed1e93d6dd3fb17668acea04fc"
+    },
+    {
+      "script": "checks/local_curvature_certificate.py",
+      "exit_code": 0,
+      "seconds": 0.11435769300078391,
+      "source_sha256": "5562295b2eb238672f9a074851eff49ab790b0083d92efc4d22c8bad1a5a5715"
+    },
+    {
+      "script": "checks/raed_aliasing_toy.py",
+      "exit_code": 0,
+      "seconds": 0.8231870170002367,
+      "source_sha256": "e5f6697bc6ceeb766a46687a0832a1bf3f63c9ac269164375a897ea76128785b"
+    }
+  ],
+  "prior_v58_run": false
+}

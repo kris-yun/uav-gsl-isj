@@ -1,0 +1,128 @@
+{
+  "status": "PASS: local mixture information evaluated by 80-node Gauss-Hermite quadrature",
+  "scope": "S,W,Q are marginalized; fixed curvature-optimal directions evaluated, not global finite-step optima or physical plume/controller performance",
+  "parameters": {
+    "source_probability": 0.35,
+    "release_values": [
+      0.6,
+      1.4
+    ],
+    "release_probabilities": [
+      0.4,
+      0.6
+    ],
+    "wind_error": 0.12,
+    "wind_derivatives": [
+      [
+        1.0,
+        0.15
+      ],
+      [
+        -0.1,
+        1.2
+      ]
+    ],
+    "common_cost_metric": [
+      [
+        1.0,
+        0.15
+      ],
+      [
+        0.15,
+        1.6
+      ]
+    ],
+    "gas_variance": 1.0,
+    "nuisance_prior_independent_of_source": true
+  },
+  "coefficients_before_kappa_alpha_squared": {
+    "no_cue": 0.5090753724247223,
+    "cue_fixed_direction": 0.5100460631300855,
+    "cue_adaptive_direction": 0.8704885715372418,
+    "direction_adaptation_gain": 0.3604425084071563,
+    "improved_interpretation_gain": 0.000970690705363153
+  },
+  "variance_identity_max_error": 5.551115123125783e-17,
+  "quadrature_80_vs_160_max_absolute_difference_nat_at_alpha_0p4": 7.28583859910259e-17,
+  "variance_matrix_eigenvalues": [
+    -6.938893903907228e-17,
+    0.3894901199999999
+  ],
+  "restricted_basis": {
+    "physical_column": [
+      0.8660254037844387,
+      0.49999999999999994
+    ],
+    "branch_gaps": [
+      0.1731264985607689,
+      0.5558455618329642
+    ],
+    "branch_angular_upper_bounds": [
+      0.17312649856076892,
+      0.5558455618329642
+    ]
+  },
+  "small_step_quadrature": [
+    {
+      "alpha": 0.4,
+      "no_cue_information_nat": 0.009158262880746396,
+      "cue_fixed_direction_information_nat": 0.00917212961075722,
+      "cue_adaptive_direction_information_nat": 0.01546887615579081,
+      "cue_arbitrary_restricted_basis_information_nat": 0.009078902424778396,
+      "adaptive_minus_fixed_information_nat": 0.00629674654503359,
+      "predicted_adaptive_minus_fixed_information_nat": 0.006560053653010245,
+      "adaptive_normalized_remainder": -0.020550321219065415,
+      "fixed_normalized_remainder": -0.006082897703864609,
+      "no_cue_normalized_remainder": -0.005874115240854461
+    },
+    {
+      "alpha": 0.2,
+      "no_cue_information_nat": 0.0023095581338321144,
+      "cue_fixed_direction_information_nat": 0.002313732483787344,
+      "cue_adaptive_direction_information_nat": 0.0039369936837295675,
+      "cue_arbitrary_restricted_basis_information_nat": 0.0022940805298943883,
+      "adaptive_minus_fixed_information_nat": 0.0016232611999422233,
+      "predicted_adaptive_minus_fixed_information_nat": 0.0016400134132525614,
+      "adaptive_normalized_remainder": -0.005215234453820439,
+      "fixed_normalized_remainder": -0.0015334293306692448,
+      "no_cue_normalized_remainder": -0.0014801781759059551
+    },
+    {
+      "alpha": 0.1,
+      "no_cue_information_nat": 0.0005786514787631642,
+      "cue_fixed_direction_information_nat": 0.0005797404207481358,
+      "cue_adaptive_direction_information_nat": 0.0009886921368857625,
+      "cue_arbitrary_restricted_basis_information_nat": 0.0005750621251655151,
+      "adaptive_minus_fixed_information_nat": 0.0004089517161376267,
+      "predicted_adaptive_minus_fixed_information_nat": 0.00041000335331314034,
+      "adaptive_normalized_remainder": -0.0013086709783297623,
+      "fixed_normalized_remainder": -0.0003841547800760292,
+      "no_cue_normalized_remainder": -0.0003707757098526665
+    },
+    {
+      "alpha": 0.05,
+      "no_cue_information_nat": 0.00014474193619072812,
+      "cue_fixed_direction_information_nat": 0.00014501702401299363,
+      "cue_adaptive_direction_information_nat": 0.0002474520628085136,
+      "cue_arbitrary_restricted_basis_information_nat": 0.0001438622166113946,
+      "adaptive_minus_fixed_information_nat": 0.00010243503879551997,
+      "predicted_adaptive_minus_fixed_information_nat": 0.00010250083832828508,
+      "adaptive_normalized_remainder": -0.0003274715512598947,
+      "fixed_normalized_remainder": -9.60885788990895e-05,
+      "no_cue_normalized_remainder": -9.273966611800244e-05
+    },
+    {
+      "alpha": 0.025,
+      "no_cue_information_nat": 3.6190428752425176e-05,
+      "cue_fixed_direction_information_nat": 3.625937925461435e-05,
+      "cue_adaptive_direction_information_nat": 6.188047523784552e-05,
+      "cue_arbitrary_restricted_basis_information_nat": 3.59716018443075e-05,
+      "adaptive_minus_fixed_information_nat": 2.5621095983231167e-05,
+      "predicted_adaptive_minus_fixed_information_nat": 2.562520958207127e-05,
+      "adaptive_normalized_remainder": -8.188687304111486e-05,
+      "fixed_normalized_remainder": -2.4025262982507734e-05,
+      "no_cue_normalized_remainder": -2.318777522536397e-05
+    }
+  ],
+  "cost_warning": "The preliminary cue's time/energy cost is omitted here; these positive information gains are not net policy-utility guarantees."
+}

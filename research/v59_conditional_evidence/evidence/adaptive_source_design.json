@@ -1,0 +1,3505 @@
+{
+  "model_status": "EXACT_ANALYTIC_CHANNEL_NOT_NATIVE_GSL",
+  "units": "natural logarithm (nat); costs are declared information-equivalent penalties",
+  "assumptions": [
+    "S,W,N are independent uniform bits before measurements",
+    "all two-step actions are safe and reachable in this toy",
+    "mismatch noises independent across repeated measurements",
+    "no unknown release amplitude or sensor memory in this toy"
+  ],
+  "perfect_case": {
+    "wind_error": 0.0,
+    "gas_error": 0.0,
+    "cost_per_measurement": 0.03,
+    "one_step": {
+      "action": "G0",
+      "information": 0.130812035941137,
+      "utility": 0.100812035941137
+    },
+    "adaptive": {
+      "information": 0.6931471805599453,
+      "expected_cost": 0.06,
+      "utility": 0.6331471805599453,
+      "policy": {
+        "action": "C",
+        "branches": {
+          "0": {
+            "action": "G0",
+            "branches": {
+              "0": {
+                "action": null,
+                "branches": {}
+              },
+              "1": {
+                "action": null,
+                "branches": {}
+              }
+            }
+          },
+          "1": {
+            "action": "G1",
+            "branches": {
+              "0": {
+                "action": null,
+                "branches": {}
+              },
+              "1": {
+                "action": null,
+                "branches": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "best_fixed": {
+      "sequence": [
+        "C",
+        "G0"
+      ],
+      "information": 0.34657359027997264,
+      "expected_cost": 0.06,
+      "utility": 0.28657359027997265
+    },
+    "receding_one_step": {
+      "information": 0.34657359027997264,
+      "expected_cost": 0.06,
+      "utility": 0.28657359027997265,
+      "policy": {
+        "action": "G0",
+        "branches": {
+          "0": {
+            "action": "C",
+            "branches": {
+              "0": {
+                "action": null,
+                "branches": {}
+              },
+              "1": {
+                "action": null,
+                "branches": {}
+              }
+            }
+          },
+          "1": {
+            "action": "C",
+            "branches": {
+              "0": {
+                "action": null,
+                "branches": {}
+              },
+              "1": {
+                "action": null,
+                "branches": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "adaptive_ledger": {
+      "kernel_builds": 4,
+      "latent_response_evaluations": 32,
+      "kernel_cache_hits": 28,
+      "information_node_evaluations": 32,
+      "policy_leaf_evaluations": 0
+    },
+    "all_comparisons_ledger": {
+      "kernel_builds": 4,
+      "latent_response_evaluations": 32,
+      "kernel_cache_hits": 94,
+      "information_node_evaluations": 98,
+      "policy_leaf_evaluations": 51
+    },
+    "wall_seconds_all_comparisons": 0.002492507999704685
+  },
+  "noise_sweep": [
+    {
+      "wind_error": 0.0,
+      "gas_error": 0.0,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.130812035941137,
+        "utility": 0.100812035941137
+      },
+      "adaptive": {
+        "information": 0.6931471805599453,
+        "expected_cost": 0.06,
+        "utility": 0.6331471805599453,
+        "policy": {
+          "action": "C",
+          "branches": {
+            "0": {
+              "action": "G0",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "C",
+          "G0"
+        ],
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265
+      },
+      "receding_one_step": {
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "C",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "C",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 51
+      },
+      "wall_seconds_all_comparisons": 0.0021013980003772303
+    },
+    {
+      "wind_error": 0.0,
+      "gas_error": 0.05,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.10497840320575458,
+        "utility": 0.07497840320575458
+      },
+      "adaptive": {
+        "information": 0.49463193721407267,
+        "expected_cost": 0.06,
+        "utility": 0.43463193721407267,
+        "policy": {
+          "action": "C",
+          "branches": {
+            "0": {
+              "action": "G0",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "C",
+          "G0"
+        ],
+        "information": 0.24731596860703634,
+        "expected_cost": 0.06,
+        "utility": 0.18731596860703634
+      },
+      "receding_one_step": {
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "C",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 51
+      },
+      "wall_seconds_all_comparisons": 0.002134387000296556
+    },
+    {
+      "wind_error": 0.0,
+      "gas_error": 0.15,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.06256615217393058,
+        "utility": 0.03256615217393058
+      },
+      "adaptive": {
+        "information": 0.27043809275395436,
+        "expected_cost": 0.06,
+        "utility": 0.21043809275395436,
+        "policy": {
+          "action": "C",
+          "branches": {
+            "0": {
+              "action": "G0",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "C",
+          "G0"
+        ],
+        "information": 0.13521904637697718,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697718
+      },
+      "receding_one_step": {
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "C",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "C",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 51
+      },
+      "wall_seconds_all_comparisons": 0.002095679000376549
+    },
+    {
+      "wind_error": 0.0,
+      "gas_error": 0.3,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "H",
+        "information": 0.0,
+        "utility": 0.0
+      },
+      "adaptive": {
+        "information": 0.08228287850505189,
+        "expected_cost": 0.06,
+        "utility": 0.022282878505051895,
+        "policy": {
+          "action": "C",
+          "branches": {
+            "0": {
+              "action": "G0",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "H",
+          "H"
+        ],
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0
+      },
+      "receding_one_step": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 88,
+        "information_node_evaluations": 92,
+        "policy_leaf_evaluations": 48
+      },
+      "wall_seconds_all_comparisons": 0.001957204000063939
+    },
+    {
+      "wind_error": 0.0,
+      "gas_error": 0.5,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "H",
+        "information": 0.0,
+        "utility": 0.0
+      },
+      "adaptive": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "H",
+          "H"
+        ],
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0
+      },
+      "receding_one_step": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 88,
+        "information_node_evaluations": 92,
+        "policy_leaf_evaluations": 48
+      },
+      "wall_seconds_all_comparisons": 0.0019290319996798644
+    },
+    {
+      "wind_error": 0.05,
+      "gas_error": 0.0,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.130812035941137,
+        "utility": 0.100812035941137
+      },
+      "adaptive": {
+        "information": 0.5762403314224143,
+        "expected_cost": 0.06,
+        "utility": 0.5162403314224142,
+        "policy": {
+          "action": "C",
+          "branches": {
+            "0": {
+              "action": "G0",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265
+      },
+      "receding_one_step": {
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.00213463700038119
+    },
+    {
+      "wind_error": 0.05,
+      "gas_error": 0.05,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.10497840320575458,
+        "utility": 0.07497840320575458
+      },
+      "adaptive": {
+        "information": 0.43308899419437874,
+        "expected_cost": 0.06,
+        "utility": 0.37308899419437874,
+        "policy": {
+          "action": "C",
+          "branches": {
+            "0": {
+              "action": "G0",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364
+      },
+      "receding_one_step": {
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.002187907000006817
+    },
+    {
+      "wind_error": 0.05,
+      "gas_error": 0.15,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.06256615217393058,
+        "utility": 0.03256615217393058
+      },
+      "adaptive": {
+        "information": 0.24124727010866964,
+        "expected_cost": 0.06,
+        "utility": 0.18124727010866964,
+        "policy": {
+          "action": "C",
+          "branches": {
+            "0": {
+              "action": "G0",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724
+      },
+      "receding_one_step": {
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.002118342999892775
+    },
+    {
+      "wind_error": 0.05,
+      "gas_error": 0.3,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "H",
+        "information": 0.0,
+        "utility": 0.0
+      },
+      "adaptive": {
+        "information": 0.07404651613435825,
+        "expected_cost": 0.06,
+        "utility": 0.014046516134358256,
+        "policy": {
+          "action": "C",
+          "branches": {
+            "0": {
+              "action": "G0",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "H",
+          "H"
+        ],
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0
+      },
+      "receding_one_step": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 88,
+        "information_node_evaluations": 92,
+        "policy_leaf_evaluations": 50
+      },
+      "wall_seconds_all_comparisons": 0.0019372039996596868
+    },
+    {
+      "wind_error": 0.05,
+      "gas_error": 0.5,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "H",
+        "information": 0.0,
+        "utility": 0.0
+      },
+      "adaptive": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "H",
+          "H"
+        ],
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0
+      },
+      "receding_one_step": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 88,
+        "information_node_evaluations": 92,
+        "policy_leaf_evaluations": 50
+      },
+      "wall_seconds_all_comparisons": 0.0019713450001290767
+    },
+    {
+      "wind_error": 0.1,
+      "gas_error": 0.0,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.130812035941137,
+        "utility": 0.100812035941137
+      },
+      "adaptive": {
+        "information": 0.4946319372140728,
+        "expected_cost": 0.06,
+        "utility": 0.4346319372140728,
+        "policy": {
+          "action": "C",
+          "branches": {
+            "0": {
+              "action": "G0",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265
+      },
+      "receding_one_step": {
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.0021031910000601783
+    },
+    {
+      "wind_error": 0.1,
+      "gas_error": 0.05,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.10497840320575458,
+        "utility": 0.07497840320575458
+      },
+      "adaptive": {
+        "information": 0.3791913303282928,
+        "expected_cost": 0.06,
+        "utility": 0.3191913303282928,
+        "policy": {
+          "action": "C",
+          "branches": {
+            "0": {
+              "action": "G0",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364
+      },
+      "receding_one_step": {
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.00219442599973263
+    },
+    {
+      "wind_error": 0.1,
+      "gas_error": 0.15,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.06256615217393058,
+        "utility": 0.03256615217393058
+      },
+      "adaptive": {
+        "information": 0.21425604150860142,
+        "expected_cost": 0.06,
+        "utility": 0.15425604150860142,
+        "policy": {
+          "action": "C",
+          "branches": {
+            "0": {
+              "action": "G0",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724
+      },
+      "receding_one_step": {
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.002092945000185864
+    },
+    {
+      "wind_error": 0.1,
+      "gas_error": 0.3,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "H",
+        "information": 0.0,
+        "utility": 0.0
+      },
+      "adaptive": {
+        "information": 0.06627772298751894,
+        "expected_cost": 0.06,
+        "utility": 0.006277722987518941,
+        "policy": {
+          "action": "C",
+          "branches": {
+            "0": {
+              "action": "G0",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "H",
+          "H"
+        ],
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0
+      },
+      "receding_one_step": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 88,
+        "information_node_evaluations": 92,
+        "policy_leaf_evaluations": 50
+      },
+      "wall_seconds_all_comparisons": 0.0019830129995170864
+    },
+    {
+      "wind_error": 0.1,
+      "gas_error": 0.5,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "H",
+        "information": 0.0,
+        "utility": 0.0
+      },
+      "adaptive": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "H",
+          "H"
+        ],
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0
+      },
+      "receding_one_step": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 88,
+        "information_node_evaluations": 92,
+        "policy_leaf_evaluations": 50
+      },
+      "wall_seconds_all_comparisons": 0.002003192999836756
+    },
+    {
+      "wind_error": 0.2,
+      "gas_error": 0.0,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.130812035941137,
+        "utility": 0.100812035941137
+      },
+      "adaptive": {
+        "information": 0.368064207168497,
+        "expected_cost": 0.06,
+        "utility": 0.30806420716849703,
+        "policy": {
+          "action": "C",
+          "branches": {
+            "0": {
+              "action": "G0",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265
+      },
+      "receding_one_step": {
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.0021423179996418185
+    },
+    {
+      "wind_error": 0.2,
+      "gas_error": 0.05,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.10497840320575458,
+        "utility": 0.07497840320575458
+      },
+      "adaptive": {
+        "information": 0.28818369549600664,
+        "expected_cost": 0.06,
+        "utility": 0.22818369549600664,
+        "policy": {
+          "action": "C",
+          "branches": {
+            "0": {
+              "action": "G0",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364
+      },
+      "receding_one_step": {
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.002093745999445673
+    },
+    {
+      "wind_error": 0.2,
+      "gas_error": 0.15,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.06256615217393058,
+        "utility": 0.03256615217393058
+      },
+      "adaptive": {
+        "information": 0.16623921912856476,
+        "expected_cost": 0.06,
+        "utility": 0.10623921912856477,
+        "policy": {
+          "action": "C",
+          "branches": {
+            "0": {
+              "action": "G0",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724
+      },
+      "receding_one_step": {
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.0021181619995331857
+    },
+    {
+      "wind_error": 0.2,
+      "gas_error": 0.3,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "H",
+        "information": 0.0,
+        "utility": 0.0
+      },
+      "adaptive": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "H",
+          "H"
+        ],
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0
+      },
+      "receding_one_step": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 88,
+        "information_node_evaluations": 92,
+        "policy_leaf_evaluations": 50
+      },
+      "wall_seconds_all_comparisons": 0.001968980999663472
+    },
+    {
+      "wind_error": 0.2,
+      "gas_error": 0.5,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "H",
+        "information": 0.0,
+        "utility": 0.0
+      },
+      "adaptive": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "H",
+          "H"
+        ],
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0
+      },
+      "receding_one_step": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 88,
+        "information_node_evaluations": 92,
+        "policy_leaf_evaluations": 50
+      },
+      "wall_seconds_all_comparisons": 0.0019818900000245776
+    },
+    {
+      "wind_error": 0.3,
+      "gas_error": 0.0,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.130812035941137,
+        "utility": 0.100812035941137
+      },
+      "adaptive": {
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265
+      },
+      "receding_one_step": {
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.002080426999782503
+    },
+    {
+      "wind_error": 0.3,
+      "gas_error": 0.05,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.10497840320575458,
+        "utility": 0.07497840320575458
+      },
+      "adaptive": {
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364
+      },
+      "receding_one_step": {
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.0021088890007376904
+    },
+    {
+      "wind_error": 0.3,
+      "gas_error": 0.15,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.06256615217393058,
+        "utility": 0.03256615217393058
+      },
+      "adaptive": {
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724
+      },
+      "receding_one_step": {
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.0020850330001849215
+    },
+    {
+      "wind_error": 0.3,
+      "gas_error": 0.3,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "H",
+        "information": 0.0,
+        "utility": 0.0
+      },
+      "adaptive": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "H",
+          "H"
+        ],
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0
+      },
+      "receding_one_step": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 88,
+        "information_node_evaluations": 92,
+        "policy_leaf_evaluations": 50
+      },
+      "wall_seconds_all_comparisons": 0.001970975000403996
+    },
+    {
+      "wind_error": 0.3,
+      "gas_error": 0.5,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "H",
+        "information": 0.0,
+        "utility": 0.0
+      },
+      "adaptive": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "H",
+          "H"
+        ],
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0
+      },
+      "receding_one_step": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 88,
+        "information_node_evaluations": 92,
+        "policy_leaf_evaluations": 50
+      },
+      "wall_seconds_all_comparisons": 0.001965536999705364
+    },
+    {
+      "wind_error": 0.4,
+      "gas_error": 0.0,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.130812035941137,
+        "utility": 0.100812035941137
+      },
+      "adaptive": {
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265
+      },
+      "receding_one_step": {
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.0024421839998467476
+    },
+    {
+      "wind_error": 0.4,
+      "gas_error": 0.05,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.10497840320575458,
+        "utility": 0.07497840320575458
+      },
+      "adaptive": {
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364
+      },
+      "receding_one_step": {
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.002217509999354661
+    },
+    {
+      "wind_error": 0.4,
+      "gas_error": 0.15,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.06256615217393058,
+        "utility": 0.03256615217393058
+      },
+      "adaptive": {
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724
+      },
+      "receding_one_step": {
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.0021227899997029454
+    },
+    {
+      "wind_error": 0.4,
+      "gas_error": 0.3,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "H",
+        "information": 0.0,
+        "utility": 0.0
+      },
+      "adaptive": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "H",
+          "H"
+        ],
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0
+      },
+      "receding_one_step": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 88,
+        "information_node_evaluations": 92,
+        "policy_leaf_evaluations": 50
+      },
+      "wall_seconds_all_comparisons": 0.0019650450003609876
+    },
+    {
+      "wind_error": 0.4,
+      "gas_error": 0.5,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "H",
+        "information": 0.0,
+        "utility": 0.0
+      },
+      "adaptive": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "H",
+          "H"
+        ],
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0
+      },
+      "receding_one_step": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 88,
+        "information_node_evaluations": 92,
+        "policy_leaf_evaluations": 50
+      },
+      "wall_seconds_all_comparisons": 0.0019381660004000878
+    },
+    {
+      "wind_error": 0.5,
+      "gas_error": 0.0,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.130812035941137,
+        "utility": 0.100812035941137
+      },
+      "adaptive": {
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265
+      },
+      "receding_one_step": {
+        "information": 0.34657359027997264,
+        "expected_cost": 0.06,
+        "utility": 0.28657359027997265,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.0020963799997844035
+    },
+    {
+      "wind_error": 0.5,
+      "gas_error": 0.05,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.10497840320575458,
+        "utility": 0.07497840320575458
+      },
+      "adaptive": {
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364
+      },
+      "receding_one_step": {
+        "information": 0.2473159686070364,
+        "expected_cost": 0.06,
+        "utility": 0.1873159686070364,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.002017563999288541
+    },
+    {
+      "wind_error": 0.5,
+      "gas_error": 0.15,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "G0",
+        "information": 0.06256615217393058,
+        "utility": 0.03256615217393058
+      },
+      "adaptive": {
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "G0",
+          "G1"
+        ],
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724
+      },
+      "receding_one_step": {
+        "information": 0.13521904637697724,
+        "expected_cost": 0.06,
+        "utility": 0.07521904637697724,
+        "policy": {
+          "action": "G0",
+          "branches": {
+            "0": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            },
+            "1": {
+              "action": "G1",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                },
+                "1": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 94,
+        "information_node_evaluations": 98,
+        "policy_leaf_evaluations": 53
+      },
+      "wall_seconds_all_comparisons": 0.007857368000259157
+    },
+    {
+      "wind_error": 0.5,
+      "gas_error": 0.3,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "H",
+        "information": 0.0,
+        "utility": 0.0
+      },
+      "adaptive": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "H",
+          "H"
+        ],
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0
+      },
+      "receding_one_step": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 88,
+        "information_node_evaluations": 92,
+        "policy_leaf_evaluations": 50
+      },
+      "wall_seconds_all_comparisons": 0.0014724949996889336
+    },
+    {
+      "wind_error": 0.5,
+      "gas_error": 0.5,
+      "cost_per_measurement": 0.03,
+      "one_step": {
+        "action": "H",
+        "information": 0.0,
+        "utility": 0.0
+      },
+      "adaptive": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "best_fixed": {
+        "sequence": [
+          "H",
+          "H"
+        ],
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0
+      },
+      "receding_one_step": {
+        "information": 0.0,
+        "expected_cost": 0.0,
+        "utility": 0.0,
+        "policy": {
+          "action": "H",
+          "branches": {
+            "0": {
+              "action": "H",
+              "branches": {
+                "0": {
+                  "action": null,
+                  "branches": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "adaptive_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 28,
+        "information_node_evaluations": 32,
+        "policy_leaf_evaluations": 0
+      },
+      "all_comparisons_ledger": {
+        "kernel_builds": 4,
+        "latent_response_evaluations": 32,
+        "kernel_cache_hits": 88,
+        "information_node_evaluations": 92,
+        "policy_leaf_evaluations": 50
+      },
+      "wall_seconds_all_comparisons": 0.0015225990000544698
+    }
+  ],
+  "same_source_map_different_action": [
+    {
+      "wind_known": 0,
+      "source_posterior": [
+        0.5,
+        0.5
+      ],
+      "best_action": "G0",
+      "source_information": 0.6931471805599453
+    },
+    {
+      "wind_known": 1,
+      "source_posterior": [
+        0.5,
+        0.5
+      ],
+      "best_action": "G1",
+      "source_information": 0.6931471805599453
+    }
+  ],
+  "wrong_target": {
+    "source_target": {
+      "policy": {
+        "action": "C",
+        "branches": {
+          "0": {
+            "action": "G0",
+            "branches": {
+              "0": {
+                "action": null,
+                "branches": {}
+              },
+              "1": {
+                "action": null,
+                "branches": {}
+              }
+            }
+          },
+          "1": {
+            "action": "G1",
+            "branches": {
+              "0": {
+                "action": null,
+                "branches": {}
+              },
+              "1": {
+                "action": null,
+                "branches": {}
+              }
+            }
+          }
+        }
+      },
+      "source_information": 0.3791913303282928,
+      "utility": 0.3191913303282928
+    },
+    "all_latent_target": {
+      "policy": {
+        "action": "C",
+        "branches": {
+          "0": {
+            "action": "U",
+            "branches": {
+              "0": {
+                "action": null,
+                "branches": {}
+              },
+              "1": {
+                "action": null,
+                "branches": {}
+              }
+            }
+          },
+          "1": {
+            "action": "U",
+            "branches": {
+              "0": {
+                "action": null,
+                "branches": {}
+              },
+              "1": {
+                "action": null,
+                "branches": {}
+              }
+            }
+          }
+        }
+      },
+      "source_information": 0.0,
+      "source_utility": -0.06,
+      "joint_information": 1.0612113877284421
+    }
+  },
+  "budget_gate": {
+    "kernel_builds": 2,
+    "latent_response_evaluations": 16,
+    "kernel_cache_hits": 1,
+    "information_node_evaluations": 0,
+    "policy_leaf_evaluations": 0,
+    "third_unique_kernel_blocked": true,
+    "scope": "API mechanism check only; no native runtime/energy saving claim"
+  }
+}

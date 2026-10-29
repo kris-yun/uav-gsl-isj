@@ -1,0 +1,84 @@
+{
+  "status": "PASS",
+  "scope": "accounting interface, not native cost saving",
+  "actual_callbacks": [
+    "A",
+    "B"
+  ],
+  "ledger": {
+    "high_limit": 8,
+    "high_charged": 8,
+    "low_charged": 0,
+    "forward_callbacks": 2,
+    "cache_hits": 1,
+    "failed_callbacks": 0,
+    "blocked_requests": 1,
+    "stage_seconds": {
+      "feature_generation": 2.7320999834046233e-05,
+      "candidate_predict": 1.6020003386074677e-06,
+      "branch_predict": 9.410005077370442e-07
+    },
+    "events": [
+      {
+        "stage": "candidate_predict",
+        "status": "completed",
+        "key": {
+          "model_version": "analytic-test-v1",
+          "geometry_digest": "fixed-world",
+          "history_digest": "causal-prefix-1",
+          "latent_bank_digest": "bank-4",
+          "action_digest": "root-C-child-G0",
+          "sensor_state_digest": "sensor-state-1",
+          "horizon": 2,
+          "fidelity": "high"
+        },
+        "charge": 4
+      },
+      {
+        "stage": "candidate_predict",
+        "status": "cache_hit",
+        "key": {
+          "model_version": "analytic-test-v1",
+          "geometry_digest": "fixed-world",
+          "history_digest": "causal-prefix-1",
+          "latent_bank_digest": "bank-4",
+          "action_digest": "root-C-child-G0",
+          "sensor_state_digest": "sensor-state-1",
+          "horizon": 2,
+          "fidelity": "high"
+        },
+        "charge": 0
+      },
+      {
+        "stage": "branch_predict",
+        "status": "completed",
+        "key": {
+          "model_version": "analytic-test-v1",
+          "geometry_digest": "fixed-world",
+          "history_digest": "causal-prefix-1",
+          "latent_bank_digest": "bank-4",
+          "action_digest": "root-C-child-G1",
+          "sensor_state_digest": "sensor-state-1",
+          "horizon": 2,
+          "fidelity": "high"
+        },
+        "charge": 4
+      },
+      {
+        "stage": "candidate_predict",
+        "status": "blocked",
+        "key": {
+          "model_version": "analytic-test-v1",
+          "geometry_digest": "fixed-world",
+          "history_digest": "causal-prefix-2",
+          "latent_bank_digest": "bank-4",
+          "action_digest": "root-C-child-G0",
+          "sensor_state_digest": "sensor-state-1",
+          "horizon": 2,
+          "fidelity": "high"
+        },
+        "requested_charge": 4
+      }
+    ]
+  }
+}
