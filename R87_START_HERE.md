@@ -3,8 +3,8 @@
 **完整代码与原生开发数组**：Google Drive（用户账号私有）
 https://drive.google.com/file/d/1pKG2D0ORaQqrjFwSifJMD6lvMOSC3y9v/view?usp=drivesdk
 
-**SHA-256**: `f2943be4595714176f9369966e723be3249c77d32c6c1b4f11ef192cf2744b45`
-**大小**：832,534 bytes，23项ZIP文件。
+**SHA-256**: `39944d5e6355da41a8dcb99b009a428506e0a950b788cb25e2c9b066822c114b`
+**大小**：832,660 bytes，23项ZIP文件，已在独立目录解压并重跑全部接口测试。
 此GitHub分支只是稳定的下载与交接入口；原R81源码/权重尚存于Codex本地而非本GitHub仓库，勿覆盖旧main。
 
 ## 技术路线（一次只测这一个组合）
